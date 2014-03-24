@@ -111,6 +111,7 @@
             [self getMyUserInfoFromNet];//获得“我”信息
            
         }
+        //[self getSayHiUserIdWithNet];
 
         [self displayMsgsForDefaultView];
     }
@@ -309,57 +310,91 @@
 {
     //获取所有聊过天人的id （你对他）
     [allSayHelloArray removeAllObjects];
-        [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
-   // }
+    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
     //获取所有消息
     allMsgArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
-    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
     //获取所有未读
-    allMsgUnreadArray = (NSMutableArray *)[DataStoreManager queryUnreadCountForCommonMsg];
+   
     if (sayhellocoArray.count>0) {
         [sayhellocoArray removeAllObjects];
     
-    }else{
-        
-    }
-    //便利数组 获取所有打招呼人员的消息
+    }    //便利数组 获取所有打招呼人员的消息
     int unreadCount = 0;
+    NSMutableArray *numArray = [NSMutableArray array];
+    NSInteger j;
     NSMutableArray *unReadsayHiArray = [NSMutableArray array];
-    
-    for (int i =0;i<array.count;i++) {
-        NSDictionary *dic = [array objectAtIndex:i];
-        
+    [unReadsayHiArray removeAllObjects];
+    for (int i =0;i<allMsgArray.count;i++) {
+        NSDictionary *dic = [allMsgArray objectAtIndex:i];
         if (![allSayHelloArray containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
             [sayhellocoArray addObject:dic];
-            [unReadsayHiArray addObject:[allMsgUnreadArray objectAtIndex:i]];
-            [allMsgUnreadArray removeObjectAtIndex:i];
+            j = [allMsgArray indexOfObject:dic];
+            [numArray addObject:[NSString stringWithFormat:@"%ld",(long)j]];
         }
     }
+
+    NSArray *sortedArray = [numArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+        if ([obj1 intValue] < [obj2 intValue]){
+            return NSOrderedDescending;
+        }
+        if ([obj1 intValue] > [obj2 intValue]){
+            return NSOrderedAscending;
+        }
+        return NSOrderedSame;
+    }];
+    NSLog(@"numarray%@",numArray);
+    NSLog(@"sortArray%@",sortedArray);
+     allMsgUnreadArray = (NSMutableArray *)[DataStoreManager queryUnreadCountForCommonMsg];
+    for (int i =0;i <sortedArray.count;i++) {
+        NSString *str = [sortedArray objectAtIndex:i];
+    [unReadsayHiArray addObject:[allMsgUnreadArray objectAtIndex:[str intValue]]];
+    }
+//倒序 方式  删除未读消息中打招呼的信息未读提示
+    for (int i =0;i <sortedArray.count;i++) {
+        NSString *str = [sortedArray objectAtIndex:i];
+        [allMsgUnreadArray removeObjectAtIndex:[str intValue]];
+    }
+
+    
+    
     [self readAllnickName];
+    
     
     for (NSString *str in unReadsayHiArray) {
         unreadCount += [str intValue];
     }
-    NSLog(@"%d",unreadCount);
     //在所有消息里面删除打招呼人员信息
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", sayhellocoArray];;
     [allMsgArray filterUsingPredicate:predicate ];
-    NSLog(@"allMsgArray!!%@",allMsgArray);
     
-  //  NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", unReadsayHiArray];;
-  //  [allMsgUnreadArray filterUsingPredicate:predicate1 ];
-
-    [allMsgUnreadArray addObject:[NSString stringWithFormat:@"%d",unreadCount]];
-    
+    //把打招呼的人综合 向消息界面放入一个条目
     if (sayhellocoArray.count!=0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         [dic setValue:@"1234567" forKeyPath:@"sender"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0]objectForKey:@"msg"] forKey:@"msg"];
         [dic setValue:@"sayHi" forKey:@"msgType"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0]objectForKey:@"time"] forKeyPath:@"time"];
+        
         [allMsgArray addObject:dic];
-       
+
     }
+    
+    // 把消息按照时间重新排序
+    NSArray *sortDescriptors1 = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"time" ascending:NO]];
+    [allMsgArray sortUsingDescriptors:sortDescriptors1];
+    NSInteger unreadSayhiCount=0;//打招呼未读位置
+    for (int i = 0; i<allMsgArray.count; i++) {
+        NSDictionary *dic =[allMsgArray objectAtIndex:i];
+        if ([KISDictionaryHaveKey(dic, @"sender")isEqualToString:@"1234567" ]) {
+            //获取打招呼cell在消息中的位置
+            unreadSayhiCount  = [allMsgArray indexOfObject:dic];
+        }
+    }
+    //把打招呼的未读重新放回未读消息条目中
+    if (sayhellocoArray.count>0) {
+        [allMsgUnreadArray insertObject:[NSString stringWithFormat:@"%d",unreadCount] atIndex:unreadSayhiCount];
+    }
+    
     [self readAllnickNameAndImage];
     [m_messageTable reloadData];
     [self displayTabbarNotification];

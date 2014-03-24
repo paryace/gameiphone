@@ -1253,8 +1253,6 @@
     }
     self.textView.text = @"";
     
-    NSMutableArray *array =[NSMutableArray array];
-    [array addObject:@"asdadsfasfasf"];
     [wxSDArray removeAllObjects];
     [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
 
@@ -1285,9 +1283,6 @@
 -(void)getSayHello
 {
     
-    [wxSDArray addObject:self.chatWithUser];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
-    [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
     
     
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
@@ -1301,7 +1296,10 @@
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
-        
+        [wxSDArray addObject:self.chatWithUser];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
+        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
     

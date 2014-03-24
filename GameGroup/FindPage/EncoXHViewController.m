@@ -49,6 +49,7 @@
     BOOL     isSuccessToshuaishen;
     BOOL     isXiaoshuaishen;
     BOOL     isXuyuanchi;//刚开始的时候
+    BOOL     isCardOrAttion;//点卡或者激活码
     NSInteger   heightAox;
     NSInteger   EncoCount;
     NSInteger   encoLastCount;
@@ -276,8 +277,8 @@
 
     [paramDict setObject:@"1" forKey:@"gameid"];
     [paramDict setObject:self.characterId forKey:@"characterid"];
-    
-    [self getSayHelloForNetWithDictionary:paramDict method:@"149" prompt:nil type:1];
+ //   [paramDict setObject:@"6" forKey:@"testIndex"];
+    [self getSayHelloForNetWithDictionary:paramDict method:@"164" prompt:nil type:1];
 
     promptLabel.text =@"你将一枚金币抛入了许愿池中，然后耐心的等待池水平静下来…";
    int i= promptLabel.text.length/20;
@@ -297,17 +298,21 @@
         return;
     }
     
+    if (isCardOrAttion) {
+        return;
+    }
+    
     if (isSuccessToshuaishen) {
        promptLabel.text  =@"很遗憾，无法和小衰神打招呼，点击“换一个”远离小衰神" ;
         sayHelloBtn.enabled = NO;
     }else{
-    NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
-    [paramDict setObject:@"1" forKey:@"gameid"];
-    [paramDict setObject:self.characterId forKey:@"characterid"];
-    [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
-    [paramDict setObject:KISDictionaryHaveKey(getDic,@"roll") forKey:@"roll"];
-
-    [self getSayHelloForNetWithDictionary:paramDict method:@"158" prompt:@"打招呼ING" type:2];
+        NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
+        [paramDict setObject:@"1" forKey:@"gameid"];
+        [paramDict setObject:self.characterId forKey:@"characterid"];
+        [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
+        [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
+        [paramDict setObject:KISDictionaryHaveKey(getDic, @"index") forKey:@"index"];
+        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
     }
 }
 #pragma mark ---网络请求
@@ -356,6 +361,12 @@
             [inABtn setTitle:[NSString stringWithFormat:@"换一个(%d)",encoLastCount-EncoCount] forState:UIControlStateNormal];
             }
             inABtn.titleLabel.textColor = [UIColor blackColor];
+            
+            
+            
+            
+            if ([KISDictionaryHaveKey(getDic, @"encounterType")intValue] ==0) {
+                isCardOrAttion =NO;
             //男♀♂
             if ([KISDictionaryHaveKey(getDic, @"gender")isEqualToString:@"1"]) {
                 sexLabel.text = @"♀";
@@ -411,7 +422,65 @@
             i= promptLabel.text.length/20;
             promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
             promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
-            
+            }
+            else if ([KISDictionaryHaveKey(getDic, @"encounterType") intValue] ==1)
+            {
+                isCardOrAttion =YES;
+                    sexLabel.text = @"♀";
+                    sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
+                NickNameLabel.text = @"陌游激活码";
+                customLabel.text = [NSString stringWithFormat:@"    0 | 陌游"];
+                
+                promptLabel.text =[NSString stringWithFormat:@"恭喜您,获得陌游激活码一枚!\n激活码:%@",KISDictionaryHaveKey(getDic,@"code")];
+                promptLabel.textAlignment = NSTextAlignmentCenter;
+                NSInteger i;
+                
+                headImageView.imageURL = Nil;
+                headImageView.image =KUIImage(@"Activation");
+                
+                [headImageView rotate360WithDuration:1.0 repeatCount:1 timingMode:i7Rotate360TimingModeEaseInEaseOut];
+                headImageView.animationDuration = 2.0;
+                headImageView.animationImages =
+                [NSArray arrayWithObjects:
+                 headImageView.image,
+                 nil];
+                headImageView.animationRepeatCount = 1;
+                [headImageView startAnimating];
+                
+                i= promptLabel.text.length/20;
+                promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
+                promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
+            }
+            else{
+                isCardOrAttion =YES;
+
+                sexLabel.text = @"♀";
+                sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
+                NickNameLabel.text = @"魔兽世界点卡";
+                customLabel.text = [NSString stringWithFormat:@"    0 | 魔兽"];
+                
+                int mst =[KISDictionaryHaveKey(getDic,@"amt")intValue];
+                promptLabel.text =[NSString stringWithFormat:@"恭喜您,获得魔兽世界%d元点卡一张!\n卡密:%@",mst/100,KISDictionaryHaveKey(getDic,@"secretCode")];
+                
+                promptLabel.textAlignment = NSTextAlignmentCenter;
+                NSInteger i;
+                
+                headImageView.imageURL = Nil;
+                headImageView.image =KUIImage(@"card");
+                
+                [headImageView rotate360WithDuration:1.0 repeatCount:1 timingMode:i7Rotate360TimingModeEaseInEaseOut];
+                headImageView.animationDuration = 2.0;
+                headImageView.animationImages =
+                [NSArray arrayWithObjects:
+                 headImageView.image,
+                 nil];
+                headImageView.animationRepeatCount = 1;
+                [headImageView startAnimating];
+                
+                i= promptLabel.text.length/20;
+                promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
+                promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
+            }
         }
         if (COME_TYPE ==2) {
             
@@ -624,17 +693,19 @@
         promptLabel.text = @"不要触碰神迹! 这有可能会影响你接下来的运气…";
         return;
     }
+    
+    if (isCardOrAttion) {
+        return;
+    }
      if (isSuccessToshuaishen ==NO) {
         TestViewController *pv = [[TestViewController alloc]init];
         pv.userId =KISDictionaryHaveKey(getDic, @"userid");
         pv.nickName = KISDictionaryHaveKey(getDic, @"nickname");
         [self.navigationController pushViewController:pv animated:YES];
-        
     }
     else{
         promptLabel.text = @"发现了一只神明，但神明的世界是你无法窥伺的";
            }
-    
 }
 #pragma mark--- 查看角色列表
 

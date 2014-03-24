@@ -374,7 +374,6 @@
         
         //        [hud hide:YES];
         // [slimeView_friend endRefresh];
-        [m_Friendheader endRefreshing];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
@@ -426,7 +425,10 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
+            
             [m_myTableView reloadData];
+            [m_Friendheader endRefreshing];
+
             [self refreshTopLabel];
         });
     });
@@ -462,7 +464,6 @@
         }
         
         //        [hud hide:YES];
-        [m_attentionheader endRefreshing];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_attentionheader endRefreshing];
@@ -511,6 +512,8 @@
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
+            [m_attentionheader endRefreshing];
+
             [m_myAttentionsTableView reloadData];
             [self refreshTopLabel];
         });
@@ -565,8 +568,6 @@
             
             m_currentPage ++;//从0开始
             
-            [m_fansheader endRefreshing];
-            [m_fansfooter endRefreshing];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -600,6 +601,9 @@
         //        [m_fansArray sortUsingSelector:@selector(compare:)];
         m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
+            [m_fansheader endRefreshing];
+            [m_fansfooter endRefreshing];
+
             [m_myFansTableView reloadData];
             [self refreshTopLabel];
         });

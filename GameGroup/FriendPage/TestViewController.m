@@ -30,7 +30,7 @@
     AppDelegate*    m_delegate;
     
     UIView*         m_buttonBgView;
-    
+    NSMutableArray *wxSDArray;
     UIButton *        delFriendBtn;
     UIButton *        addFriendBtn;
     UIButton *        attentionBtn;
@@ -64,6 +64,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    wxSDArray = [NSMutableArray array];
+    
     if (self.hostInfo!=NULL) {//有值 查找用户
         [self buildMainView];
         [self setBottomView];
@@ -1082,6 +1085,13 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
             
         }
+        [wxSDArray removeAllObjects];
+        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
+        
+        if (![wxSDArray containsObject:self.hostInfo.userId]) {
+            [self getSayHello];
+        }
+
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
@@ -1101,6 +1111,33 @@
         [hud hide:YES];
     }];
 }
+
+-(void)getSayHello
+{
+    
+    
+    
+    NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.hostInfo.userId forKey:@"touserid"];
+    [postDict1 addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict1 setObject:@"153" forKey:@"method"];
+    [postDict1 setObject:paramDict forKey:@"params"];
+    
+    [postDict1 setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    
+    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [wxSDArray addObject:self.hostInfo.userId];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
+        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+    
+}
+
+
 
 - (void)deleteFriend:(id)sender
 {
