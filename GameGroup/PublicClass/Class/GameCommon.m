@@ -524,7 +524,7 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"wx_buttonTitleOfPage"];
-    
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
 //    [SFHFKeychainUtils deleteItemForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil];
     [SFHFKeychainUtils deleteItemForUsername:PASSWORD andServiceName:LOCALACCOUNT error:nil];
     [SFHFKeychainUtils deleteItemForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil];

@@ -32,6 +32,7 @@
     BOOL myActive;
     
     UILabel* unReadL;
+    NSMutableArray *wxSDArray;
 }
 
 @end
@@ -90,6 +91,7 @@
 {
     [super viewDidLoad];
     
+    wxSDArray = [NSMutableArray array];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
     DSFriends *friend = [DSFriends MR_findFirstWithPredicate:predicate];
@@ -1250,7 +1252,10 @@
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
     self.textView.text = @"";
-    [self getSayHello];
+    
+    if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]containsObject:chatWithUser]) {
+        [self getSayHello];
+    }
 }
 
 #pragma mark -
@@ -1271,9 +1276,18 @@
         }
     }
 }
-
+//是否是打招呼  如果改变打招呼则运行
 -(void)getSayHello
 {
+    wxSDArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"];
+    NSString *str = chatWithUser;
+    NSLog(@"str%@",str);
+    [wxSDArray setObject:chatWithUser atIndexedSubscript:1];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
+    [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
+    
+    
+    
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:chatWithUser forKey:@"touserid"];
@@ -1284,18 +1298,11 @@
     [postDict1 setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
     
-//    if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"] containsObject:chatWithUser]) {
-//        NSMutableArray *array =[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"];
-//        [array addObject:chatWithUser];
-//        [[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"] removeAllObjects];
-//        
-//        [[NSUserDefaults standardUserDefaults]setObject:array forKey:@"sayHello_wx_info"];
-//    }
-//
-
 }
 
 

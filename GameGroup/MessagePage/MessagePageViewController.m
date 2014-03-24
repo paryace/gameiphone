@@ -105,6 +105,7 @@
         else
         {
             titleLabel.text = @"消息(未连接)";
+            [self getSayHiUserIdWithNet];
             [self getFriendByHttp];
             [self sendDeviceToken];
             [self getMyUserInfoFromNet];//获得“我”信息
@@ -257,11 +258,12 @@
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info"];
 
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [allSayHelloArray removeAllObjects];
-            [allSayHelloArray addObjectsFromArray:responseObject];
-            [m_messageTable reloadData];
-        }
+        [self displayMsgsForDefaultView];
+       // if ([responseObject isKindOfClass:[NSArray class]]) {
+//            [allSayHelloArray removeAllObjects];
+//            [allSayHelloArray addObjectsFromArray:responseObject];
+//            [m_messageTable reloadData];
+      //  }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
         
@@ -305,27 +307,22 @@
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {
-    [self getSayHiUserIdWithNet];
     //获取所有聊过天人的id （你对他）
-    if (allSayHelloArray.count<1) {
         allSayHelloArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"];
-    }
+   // }
     //获取所有消息
     allMsgArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
     //获取所有未读
     allMsgUnreadArray = (NSMutableArray *)[DataStoreManager queryUnreadCountForCommonMsg];
-    for (int i =0;i<allMsgArray.count; i++) {
-        if ([[[allMsgArray objectAtIndex:i]objectForKey:@"msgType"]isEqualToString:@"sayHello"]||[[[allMsgArray objectAtIndex:i]objectForKey:@"msgType"]isEqualToString:@"deletePerson"]) {
-            [allMsgArray removeObjectAtIndex:i];
-            [array removeObjectAtIndex:i];
-            [allMsgUnreadArray removeObjectAtIndex:i];
-        }
-    }
+    if (sayhellocoArray.count>0) {
+        [sayhellocoArray removeAllObjects];
     
-    [sayhellocoArray removeAllObjects];
+    }else{
+        
+    }
     //便利数组 获取所有打招呼人员的消息
-    int i = 0;
+    int unreadCount = 0;
     NSMutableArray *unReadsayHiArray = [NSMutableArray array];
     
     for (int i =0;i<array.count;i++) {
@@ -334,26 +331,26 @@
         if (![allSayHelloArray containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
             [sayhellocoArray addObject:dic];
             [unReadsayHiArray addObject:[allMsgUnreadArray objectAtIndex:i]];
+            [allMsgUnreadArray removeObjectAtIndex:i];
         }
     }
     [self readAllnickName];
     
     for (NSString *str in unReadsayHiArray) {
-        i += [str intValue];
+        unreadCount += [str intValue];
     }
-    NSLog(@"%d",i);
+    NSLog(@"%d",unreadCount);
     //在所有消息里面删除打招呼人员信息
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", sayhellocoArray];;
     [allMsgArray filterUsingPredicate:predicate ];
     NSLog(@"allMsgArray!!%@",allMsgArray);
     
-    NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", unReadsayHiArray];;
-    [allMsgUnreadArray filterUsingPredicate:predicate1 ];
+  //  NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", unReadsayHiArray];;
+  //  [allMsgUnreadArray filterUsingPredicate:predicate1 ];
 
-    [allMsgUnreadArray addObject:[NSString stringWithFormat:@"%d",i]];
+    [allMsgUnreadArray addObject:[NSString stringWithFormat:@"%d",unreadCount]];
     
     if (sayhellocoArray.count!=0) {
-        NSLog(@"11111");
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         [dic setValue:@"1234567" forKeyPath:@"sender"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0]objectForKey:@"msg"] forKey:@"msg"];
