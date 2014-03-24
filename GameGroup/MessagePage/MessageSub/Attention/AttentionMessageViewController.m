@@ -15,7 +15,6 @@
 {
     UITableView*  m_myTableView;
     
-    NSMutableArray*     m_tableData;
     NSMutableArray *allHeadImgArray;
     NSMutableArray * allMsgUnreadArray;
     
@@ -202,16 +201,10 @@
 {
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
-        NSDictionary* tempDic = [m_tableData objectAtIndex:indexPath.row];
+        //NSDictionary* tempDic = [self.dataArray objectAtIndex:indexPath.row];
 
-        if ([m_tableData count] == 1) {//最后一条
-            [DataStoreManager deleteAllHello];
-        }
-        else
-        {
-            [DataStoreManager deleteReceivedHelloWithUserId:KISDictionaryHaveKey(tempDic, @"userid") withTime:KISDictionaryHaveKey(tempDic, @"receiveTime")];
-        }
-        [m_tableData removeObjectAtIndex:indexPath.row];
+            [DataStoreManager deleteThumbMsgWithSender:[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"sender"]];
+        [self.dataArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
     }
 }

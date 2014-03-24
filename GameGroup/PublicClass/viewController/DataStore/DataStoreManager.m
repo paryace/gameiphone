@@ -1468,6 +1468,7 @@
 
 +(NSMutableDictionary *)queryAllFriends
 {
+
     NSArray * fri = [DSFriends MR_findAll];
     NSMutableArray * nameKeyArray = [NSMutableArray array];
     NSMutableDictionary * theDict = [NSMutableDictionary dictionary];

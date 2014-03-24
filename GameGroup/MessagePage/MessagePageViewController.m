@@ -347,8 +347,8 @@
     [allMsgArray filterUsingPredicate:predicate ];
     NSLog(@"allMsgArray!!%@",allMsgArray);
     
-//    NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", unReadsayHiArray];;
-//    [allMsgUnreadArray filterUsingPredicate:predicate1 ];
+    NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"NOT (SELF in %@)", unReadsayHiArray];;
+    [allMsgUnreadArray filterUsingPredicate:predicate1 ];
 
     [allMsgUnreadArray addObject:[NSString stringWithFormat:@"%d",i]];
     
@@ -362,11 +362,7 @@
         [allMsgArray addObject:dic];
        
     }
-    
     [self readAllnickNameAndImage];
-    
-   
-    
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }
@@ -411,6 +407,7 @@
 
 -(void)displayTabbarNotification
 {
+    NSLog(@"allunread%d",allMsgUnreadArray.count);
     int allUnread = 0;
     for (int i = 0; i<allMsgUnreadArray.count; i++) {
         allUnread = allUnread+[[allMsgUnreadArray objectAtIndex:i] intValue];
