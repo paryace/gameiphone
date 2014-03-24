@@ -308,7 +308,8 @@
 - (void)displayMsgsForDefaultView
 {
     //获取所有聊过天人的id （你对他）
-        allSayHelloArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"];
+    [allSayHelloArray removeAllObjects];
+        [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
    // }
     //获取所有消息
     allMsgArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];

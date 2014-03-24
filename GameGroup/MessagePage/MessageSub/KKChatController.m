@@ -91,7 +91,7 @@
 {
     [super viewDidLoad];
     
-    wxSDArray = [NSMutableArray array];
+    wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
     DSFriends *friend = [DSFriends MR_findFirstWithPredicate:predicate];
@@ -1253,7 +1253,12 @@
     }
     self.textView.text = @"";
     
-    if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]containsObject:chatWithUser]) {
+    NSMutableArray *array =[NSMutableArray array];
+    [array addObject:@"asdadsfasfasf"];
+    [wxSDArray removeAllObjects];
+    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
+
+    if (![wxSDArray containsObject:self.chatWithUser]) {
         [self getSayHello];
     }
 }
@@ -1279,13 +1284,10 @@
 //是否是打招呼  如果改变打招呼则运行
 -(void)getSayHello
 {
-    wxSDArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"];
-    NSString *str = chatWithUser;
-    NSLog(@"str%@",str);
-    [wxSDArray setObject:chatWithUser atIndexedSubscript:1];
+    
+    [wxSDArray addObject:self.chatWithUser];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
     [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
-    
     
     
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
