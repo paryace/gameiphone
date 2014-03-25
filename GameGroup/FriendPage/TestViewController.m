@@ -35,6 +35,7 @@
     UIButton *        addFriendBtn;
     UIButton *        attentionBtn;
     UIButton *        attentionOffBtn;
+    NSMutableArray *littleImgArray;
 }
 
 @end
@@ -66,7 +67,7 @@
     [super viewDidLoad];
     
     wxSDArray = [NSMutableArray array];
-    
+    littleImgArray = [NSMutableArray array];
     if (self.hostInfo!=NULL) {//有值 查找用户
         [self buildMainView];
         [self setBottomView];
@@ -479,10 +480,15 @@
     [self.view addSubview:m_myScrollView];
     m_myScrollView.backgroundColor = [UIColor clearColor];
 
+    [littleImgArray removeAllObjects];
+    for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
+        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/80"];
+        [littleImgArray addObject:str];
+    }
     
     m_photoWall = [[HGPhotoWall alloc] initWithFrame:CGRectZero];
     m_photoWall.descriptionType = DescriptionTypeImage;
-    [m_photoWall setPhotos:[self imageToURL:self.hostInfo.headImgArray]];
+    [m_photoWall setPhotos:[self imageToURL:littleImgArray]];
     m_photoWall.delegate = self; 
     [m_myScrollView addSubview:m_photoWall];
     m_photoWall.backgroundColor = kColorWithRGB(105, 105, 105, 1.0);
@@ -1432,13 +1438,11 @@
 - (void)photoWallPhotoTaped:(NSUInteger)index WithPhotoWall:(UIView *)photoWall
 {
     //放大
-    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:self.hostInfo.headImgArray indext:index];
+    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:[self imageToURL:littleImgArray] images:self.hostInfo.headImgArray indext:index];
     [self presentViewController:pV animated:NO completion:^{
         
     }];
 }
-
-
 
 
 - (void)photoWallMovePhotoFromIndex:(NSInteger)index toIndex:(NSInteger)newIndex

@@ -80,8 +80,9 @@
 
 - (void)setPhotoUrl:(NSString*)photoUrl
 {
-
-    [self.viewPhoto setImageWithURL:[NSURL URLWithString:photoUrl] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    self.viewPhoto.imageURL = [NSURL URLWithString:photoUrl];
+    self.viewPhoto.placeholderImage =KUIImage(@"placeholder.png");
+   // [self.viewPhoto setImageWithURL:[NSURL URLWithString:photoUrl] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
 
 }
 
@@ -92,6 +93,7 @@
     if (range.location!=NSNotFound) {
 //        self.viewPhoto.image =
         NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+        NSLog(@"path%@",path);
         NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,[url substringFromIndex:7]];
         NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
         UIImage * openPic= [UIImage imageWithData:nsData];

@@ -267,12 +267,8 @@
       //  }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
-        
     }];
-
 }
-
-
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -370,7 +366,7 @@
     //把打招呼的人综合 向消息界面放入一个条目
     if (sayhellocoArray.count!=0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        [dic setValue:@"1234567" forKeyPath:@"sender"];
+        [dic setValue:@"1234567wxxxxxxxxx" forKeyPath:@"sender"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0]objectForKey:@"msg"] forKey:@"msg"];
         [dic setValue:@"sayHi" forKey:@"msgType"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0]objectForKey:@"time"] forKeyPath:@"time"];
@@ -385,7 +381,7 @@
     NSInteger unreadSayhiCount=0;//打招呼未读位置
     for (int i = 0; i<allMsgArray.count; i++) {
         NSDictionary *dic =[allMsgArray objectAtIndex:i];
-        if ([KISDictionaryHaveKey(dic, @"sender")isEqualToString:@"1234567" ]) {
+        if ([KISDictionaryHaveKey(dic, @"sender")isEqualToString:@"1234567wxxxxxxxxx" ]) {
             //获取打招呼cell在消息中的位置
             unreadSayhiCount  = [allMsgArray indexOfObject:dic];
         }
@@ -803,7 +799,7 @@
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         [self.navigationController pushViewController:friq animated:YES];
         [searchDisplay setActive:NO animated:NO];
-        [self cleanUnReadCountWithType:3 Content:@"" typeStr:@""];
+        [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
         
         return;
 
@@ -908,6 +904,19 @@
             thumbMsgs.unRead = @"0";
         }];//清数字
     }
+    else if (5 == type)//打招呼
+    {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            for (NSDictionary *dic in sayhellocoArray) {
+                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",KISDictionaryHaveKey(dic, @"sender")];
+                DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+                thumbMsgs.unRead = @"0";
+            }
+//            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+//            thumbMsgs.unRead = @"0";
+        }];//清数字
+    }
+
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -922,11 +931,18 @@
         {
 //            [DataStoreManager deleteThumbMsgWithUUID:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"messageuuid"]];
             [DataStoreManager cleanOtherMsg];
-        }else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] isEqualToString:@"sys00000011"])
+        }
+        else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] isEqualToString:@"sys00000011"])
         {
             [DataStoreManager deleteAllNewsMsgs];
         }
         else{
+            if ([[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"sender"]isEqualToString:@"1234567wxxxxxxxxx"])
+            {
+                for (NSDictionary *dic in sayhellocoArray) {
+                    [DataStoreManager deleteThumbMsgWithSender:KISDictionaryHaveKey(dic, @"sender")];
+                }
+            }
             [DataStoreManager deleteThumbMsgWithSender:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"]];
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
