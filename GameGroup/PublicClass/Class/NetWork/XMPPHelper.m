@@ -60,7 +60,7 @@
     host = [hostArray objectAtIndex:0];
 //    host = @"192.168.0.133";
     
-//    host = @"221.122.114.219";
+ //   host = @"221.122.114.216";
 //    theaccount = @"15100000000@52pet.net";
 //    thepassword = @"0AB89AC5C55D40198EF10B39257DA1C4";
     [self setupStream];
@@ -367,10 +367,11 @@
             }else if (payload.length > 0&&[payload JSONValue][@"active"]){
                 //发送通知 判断账号是否激活
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
-                return;
+                [dict setObject:@"normalchat" forKey:@"msgType"];
+            }else{
+                [dict setObject:@"normalchat" forKey:@"msgType"];
             }
             
-            [dict setObject:@"normalchat" forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             
             [self.chatDelegate newMessageReceived:dict];

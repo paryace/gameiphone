@@ -14,8 +14,6 @@
 {
     UITableView *m_myTableView;
     NSMutableArray *m_tableArray;
-    PullUpRefreshView      *refreshView;
-    SRRefreshView   *_slimeView;
     NSInteger    *m_pageNum;
     NSMutableDictionary *dictDic;
 

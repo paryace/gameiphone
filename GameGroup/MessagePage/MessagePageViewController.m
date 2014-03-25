@@ -213,7 +213,7 @@
 #pragma mark 收到验证好友请求
 - (void)sayHelloReceived:(NSNotification*)notification
 {
-    //[self displayMsgsForDefaultView];
+    [self displayMsgsForDefaultView];
 }
 
 #pragma mark 收到取消关注 删除好友请求
@@ -688,8 +688,12 @@
 //        }
        else
         {
-
-            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[allHeadImgArray objectAtIndex:indexPath.row]]];
+            NSURL * theUrl;
+            if ([[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
+                theUrl =nil;
+            }else{
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[allHeadImgArray objectAtIndex:indexPath.row]]];
+            }
 //            if ([[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
 //                cell.headImageV.imageURL = nil;
 //            }else{
@@ -961,6 +965,8 @@
     self.appDel.xmppHelper.notConnect = self;
 //    [self.appDel.xmppHelper connect:[[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] host:[[TempData sharedInstance] getServer] success:^(void){
     [self.appDel.xmppHelper connect:[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] host:[[TempData sharedInstance] getServer] success:^(void){
+//    [self.appDel.xmppHelper connect:[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] host:@"221.122.114.216" success:^(void){
+
         NSLog(@"登陆成功xmpp");
         [hud hide:YES];
         titleLabel.text = @"消息";

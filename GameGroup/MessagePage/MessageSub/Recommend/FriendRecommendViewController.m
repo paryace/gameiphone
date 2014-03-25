@@ -208,6 +208,11 @@
     else if ([KISDictionaryHaveKey(tempDic, @"type") isEqualToString:@"2"]) {
         [paramDict setObject:@"4" forKey:@"type"];
     }
+    else if ([KISDictionaryHaveKey(tempDic, @"type")isEqualToString:@"4"]||[KISDictionaryHaveKey(tempDic, @"type")isEqualToString:@"5"])
+    {
+        [paramDict setObject:@"7" forKey:@"type"];
+
+    }
     else  {
         [paramDict setObject:@"3" forKey:@"type"];
     }

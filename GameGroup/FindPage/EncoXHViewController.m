@@ -86,15 +86,15 @@
     //        NSLog(@"空走不走");
     NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
     [paramDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
-    AppDelegate *app = [[UIApplication sharedApplication]delegate];
-    if (app.reach.currentReachabilityStatus ==NotReachable) {
-        [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
-        return;
-    }
-    else{
+//    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+//    if (app.reach.currentReachabilityStatus ==NotReachable) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
+//        return;
+//    }
+//    else{
 
     [self getSayHelloForNetWithDictionary:paramDict method:@"125" prompt:@"获取中..." type:3];
-    }
+  //  }
     //}else{
     //  m_characterArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"];
     //  }
@@ -358,7 +358,7 @@
             if (encoLastCount==-1) {
                 
             }else{
-            [inABtn setTitle:[NSString stringWithFormat:@"换一个(%d)",encoLastCount-EncoCount] forState:UIControlStateNormal];
+            [inABtn setTitle:[NSString stringWithFormat:@"换一个(%ld)",encoLastCount-EncoCount] forState:UIControlStateNormal];
             }
             inABtn.titleLabel.textColor = [UIColor blackColor];
             

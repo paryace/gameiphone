@@ -912,9 +912,9 @@
         case VIEW_TYPE_FriendPage1:
         {
             UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
-            editButton.frame=CGRectMake(270, startX - 38, 37, 30);
-            [editButton setBackgroundImage:KUIImage(@"note_normal") forState:UIControlStateNormal];
-            [editButton setBackgroundImage:KUIImage(@"note_click") forState:UIControlStateHighlighted];
+            editButton.frame=CGRectMake(255, KISHighVersion_7 ? 20 : 0 , 65, 43);
+            [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
+            [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             //[editButton setTitle:@"备注" forState:UIControlStateNormal];
             editButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
             [self.view addSubview:editButton];

@@ -10,7 +10,6 @@
 #import "PersonTableCell.h"
 #import "LocationManager.h"
 #import "TestViewController.h"
-#import "AppDelegate.h"
 #import "MJRefresh.h"
 @interface NearByViewController ()
 {

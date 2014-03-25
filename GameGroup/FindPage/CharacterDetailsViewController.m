@@ -569,8 +569,8 @@
         ranking.pageCount3 = -1;
         ranking.characterName =m_characterName;
         ranking. titleOfRanking = [titleArray objectAtIndex:indexPath.row];
-        NSArray *array = [m_charaInfo.friendOfRanking allKeys];
-        NSLog(@"array%@",array);
+      //  NSArray *array = [m_charaInfo.friendOfRanking allKeys];
+     //   NSLog(@"array%@",array);
         /*
          pvpScore,
          pveScore,

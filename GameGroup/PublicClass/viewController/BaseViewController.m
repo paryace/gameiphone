@@ -249,6 +249,24 @@
     }
 }
 
+#pragma mark--- 检测网络是否连接
+-(void)DetectNetwork
+{
+    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        [self showMessageWindowWithContent:@"请求数据失败，请检查网络" imageType:0];
+        hud =[[MBProgressHUD alloc]initWithView:self.view];
+        hud.mode = MBProgressHUDModeText;
+        hud.labelText =@"网络有点问题，检查下网络吧";
+        [hud showAnimated:YES whileExecutingBlock:^{
+            sleep(1);
+        }];
+        return;
+    }
+}
+
+
+
 #pragma mark 弹出显示框
 - (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)bTitle
 {
