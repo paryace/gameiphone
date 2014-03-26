@@ -1013,7 +1013,7 @@
     detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel") ;
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"sex");
     
-    detailVC.titleImage =[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] ;
+    detailVC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] ;
     
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");

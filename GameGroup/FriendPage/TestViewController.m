@@ -65,7 +65,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+
     wxSDArray = [NSMutableArray array];
     littleImgArray = [NSMutableArray array];
     if (self.hostInfo!=NULL) {//有值 查找用户
@@ -76,8 +78,18 @@
     else//没有详情 请求
     {
 
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonoo%@",self.userId]]!=nil) {//有值 查找用户
-        self.hostInfo = [[HostInfo alloc] initWithHostInfo:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonoo%@",self.userId]]];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]!=nil) {//有值 查找用户
+        
+         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
+        NSMutableData *data= [NSMutableData data];
+        NSDictionary *dic = [NSDictionary dictionary];
+        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+       dic = [unarchiver decodeObjectForKey: @"getDatat"];
+        [unarchiver finishDecoding];
+        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
+        
+        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
         [self buildMainView];
         [self setBottomView];
         
@@ -90,6 +102,7 @@
         [self getUserInfoByNet];
     }
     }
+    
 }
 
 -(void)buildInitialize
@@ -369,21 +382,21 @@
     [postDict setObject:@"106" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
         
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"swxInPersonoo%@",self.userId]];
+        //将获取到的数据转换成NSData类型保存到nsuserdefaults中
+        NSMutableData *data= [[NSMutableData alloc]init];
+        NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+        [archiver encodeObject:responseObject forKey: @"getDatat"];
+        [archiver finishEncoding];
+        [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
         
         NSArray *views = [self.view subviews];
         for(UIView* view in views)
         {
             [view removeFromSuperview];
         }
-        
-        
-        NSLog(@"responseObjectresponseObject%@", responseObject);
         
         self.hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
         
@@ -443,7 +456,6 @@
                 [alert show];
             }
         }
-        [hud hide:YES];
     }];
 }
 
@@ -1029,7 +1041,6 @@
 
 - (void)addFriendClick:(id)sender
 {
-    [hud show:YES];
     addFriendBtn.userInteractionEnabled = NO;
     delFriendBtn.userInteractionEnabled = NO;
     attentionBtn.userInteractionEnabled = NO;
@@ -1046,11 +1057,14 @@
     [postDict setObject:@"109" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [hud show:YES];
+    MBProgressHUD *hud1 =[[ MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud1];
+    [self.view bringSubviewToFront:hud];
+    [hud1 show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        [hud hide:YES];
+        [hud1 hide:YES];
         addFriendBtn.userInteractionEnabled = YES;
         delFriendBtn.userInteractionEnabled = YES;
         attentionBtn.userInteractionEnabled = YES;
@@ -1092,7 +1106,7 @@
             
         }
         [wxSDArray removeAllObjects];
-        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
+        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
         
         if (![wxSDArray containsObject:self.hostInfo.userId]) {
             [self getSayHello];
@@ -1114,7 +1128,7 @@
                 [alert show];
             }
         }
-        [hud hide:YES];
+        [hud1 hide:YES];
     }];
 }
 
@@ -1135,8 +1149,8 @@
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [wxSDArray addObject:self.hostInfo.userId];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
-        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
+        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
@@ -1330,6 +1344,12 @@
 
 - (void)attentionClick:(id)sender
 {
+    MBProgressHUD *hud2 = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud2];
+    
+    [self.view bringSubviewToFront:hud2];
+    [hud2 show:YES];
+
     addFriendBtn.userInteractionEnabled = NO;
     delFriendBtn.userInteractionEnabled = NO;
     attentionBtn.userInteractionEnabled = NO;
@@ -1347,11 +1367,11 @@
     [postDict setObject:@"109" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [hud show:YES];
+    
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"dicresponseObject%@",responseObject);
-        [hud hide:YES];
+        [hud2 hide:YES];
         addFriendBtn.userInteractionEnabled = YES;
         delFriendBtn.userInteractionEnabled = YES;
         attentionBtn.userInteractionEnabled = YES;
@@ -1390,7 +1410,13 @@
             [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
         }
 
+        [wxSDArray removeAllObjects];
+        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
         
+        if (![wxSDArray containsObject:self.hostInfo.userId]) {
+            [self getSayHello];
+        }
+
         [self showMessageWindowWithContent:@"关注成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
@@ -1407,7 +1433,7 @@
                 [alert show];
             }
         }
-        [hud hide:YES];
+        [hud2 hide:YES];
     }];
 }
 

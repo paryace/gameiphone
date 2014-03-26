@@ -368,7 +368,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info"];
+        
+        
+        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [array addObjectsFromArray:responseObject];

@@ -47,7 +47,7 @@
     [self readAllnickNameAndImage];
     [self.dataArray removeAllObjects];
     for (NSDictionary *dic in array) {
-        if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"] containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
+        if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"] containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
             if (![KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"sayHello"]) {
                 [self.dataArray addObject:dic];
             }

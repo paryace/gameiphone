@@ -105,15 +105,15 @@
         else
         {
             titleLabel.text = @"消息(未连接)";
-            [self getSayHiUserIdWithNet];
             [self getFriendByHttp];
+            [self getSayHiUserIdWithNet];
             [self sendDeviceToken];
             [self getMyUserInfoFromNet];//获得“我”信息
            
         }
-        //[self getSayHiUserIdWithNet];
-
         [self displayMsgsForDefaultView];
+
+        //[self getSayHiUserIdWithNet];
     }
 }
 -(void)RegisterViewControllerFinishRegister
@@ -257,7 +257,7 @@
    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info"];
+        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
 
         [self displayMsgsForDefaultView];
        // if ([responseObject isKindOfClass:[NSArray class]]) {
@@ -306,7 +306,7 @@
 {
     //获取所有聊过天人的id （你对他）
     [allSayHelloArray removeAllObjects];
-    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
+    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
     //获取所有消息
     allMsgArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
     //获取所有未读
@@ -736,7 +736,7 @@
 //    if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"normalchat"]&&![allSayHelloArray containsObject:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"]]) {//关注
 //        NSMutableArray *array = [NSMutableArray array];
 //        for (NSDictionary *dic in allMsgArray) {
-//            if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"] containsObject:KISDictionaryHaveKey(dic, @"sender")]) {
+//            if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"] containsObject:KISDictionaryHaveKey(dic, @"sender")]) {
 //                [array addObject:dic];
 //            }
 //        }
@@ -1053,6 +1053,8 @@
 //        [self parseFansList:(KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users"))];
         [self parseContentListWithData:responseObject];
         
+      //  [self getFriendId:responseObject];
+        
         [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
         
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -1065,6 +1067,67 @@
 //        [hud hide:YES];
     }];
 }
+
+
+-(void)getFriendId:(id)dic
+{
+    NSMutableArray *friendAllIdArray = [NSMutableArray array];
+    NSArray *friendArray = [NSArray array];
+    NSArray *attentionArray = [NSArray array];
+    friendArray = [KISDictionaryHaveKey(dic, @"1")allKeys];
+    for (int i =0; i<friendArray.count; i++) {
+        NSMutableArray *array2 = [NSMutableArray array ];
+        array2 = [KISDictionaryHaveKey(dic, @"1")objectForKey:friendArray[i]];
+        for (NSDictionary *dic1 in array2) {
+            [friendAllIdArray addObject:KISDictionaryHaveKey(dic1, @"id")];
+        }
+    }
+    attentionArray =[KISDictionaryHaveKey(dic, @"2")allKeys];
+    for (int i =0; i<attentionArray.count; i++) {
+        NSMutableArray *array2 = [NSMutableArray array ];
+        array2 = [KISDictionaryHaveKey(dic, @"1")objectForKey:attentionArray[i]];
+        for (NSDictionary *dic1 in array2) {
+            [friendAllIdArray addObject:KISDictionaryHaveKey(dic1, @"id")];
+        }
+    }
+    NSMutableArray *array = [NSMutableArray array ];
+    [array removeAllObjects];
+    [array addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+    BOOL isAdd;
+    isAdd =NO;
+    for (NSString *idStr in friendAllIdArray) {
+        if (![array containsObject:idStr]) {
+            [self getSayHelloWithUserid:idStr];
+            [array addObject:idStr];
+            isAdd =YES;
+        }
+    }
+    if (isAdd ==YES) {
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
+        [[NSUserDefaults standardUserDefaults]setObject:array forKey:@"sayHello_wx_info_id"];
+        [self displayMsgsForDefaultView];
+    }
+
+}
+-(void)getSayHelloWithUserid:(NSString*)userId
+{
+    NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:userId forKey:@"touserid"];
+    [postDict1 addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict1 setObject:@"153" forKey:@"method"];
+    [postDict1 setObject:paramDict forKey:@"params"];
+    
+    [postDict1 setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    
+    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+    
+}
+
+
 
 - (void)parseContentListWithData:(NSDictionary*)dataDic
 {

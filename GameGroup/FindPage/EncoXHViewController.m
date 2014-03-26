@@ -358,7 +358,7 @@
             if (encoLastCount==-1) {
                 
             }else{
-            [inABtn setTitle:[NSString stringWithFormat:@"换一个(%ld)",encoLastCount-EncoCount] forState:UIControlStateNormal];
+            [inABtn setTitle:[NSString stringWithFormat:@"换一个(%d)",encoLastCount-EncoCount] forState:UIControlStateNormal];
             }
             inABtn.titleLabel.textColor = [UIColor blackColor];
             
@@ -431,7 +431,7 @@
                 NickNameLabel.text = @"陌游激活码";
                 customLabel.text = [NSString stringWithFormat:@"    0 | 陌游"];
                 
-                promptLabel.text =[NSString stringWithFormat:@"恭喜您,获得陌游激活码一枚!\n激活码:%@",KISDictionaryHaveKey(getDic,@"code")];
+                promptLabel.text =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(getDic, @"prompt")];
                 promptLabel.textAlignment = NSTextAlignmentCenter;
                 NSInteger i;
                 
@@ -459,8 +459,7 @@
                 NickNameLabel.text = @"魔兽世界点卡";
                 customLabel.text = [NSString stringWithFormat:@"    0 | 魔兽"];
                 
-                int mst =[KISDictionaryHaveKey(getDic,@"amt")intValue];
-                promptLabel.text =[NSString stringWithFormat:@"恭喜您,获得魔兽世界%d元点卡一张!\n卡密:%@",mst/100,KISDictionaryHaveKey(getDic,@"secretCode")];
+                promptLabel.text =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(getDic, @"prompt")];
                 
                 promptLabel.textAlignment = NSTextAlignmentCenter;
                 NSInteger i;
@@ -526,7 +525,7 @@
                     tf.center  = CGPointMake(160, startX+50);
 
                 }
-                [[NSUserDefaults standardUserDefaults]setObject:m_characterArray forKey:@"CharacterArrayOfAllForYou"];
+              //  [[NSUserDefaults standardUserDefaults]setObject:m_characterArray forKey:@"CharacterArrayOfAllForYou"];
 
         }
             else{

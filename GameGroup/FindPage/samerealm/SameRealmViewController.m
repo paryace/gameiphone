@@ -28,9 +28,10 @@
     NSMutableArray *m_imgArray;
     NSInteger       sealmPage;
     
+    UIImageView *m_loadImageView;
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
-
+    BOOL isGetNetSuccess;
 }
 
 @end
@@ -42,7 +43,19 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"" withBackButton:YES];
+    isGetNetSuccess = YES;
+    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 0, 20, 20)];
+    NSMutableArray *imageArray = [NSMutableArray array];
+    for (int i = 0; i<12; i++) {
+        NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
+        [imageArray addObject:[UIImage imageNamed:str]];
+    }
     
+    m_loadImageView.animationImages = imageArray;
+    m_loadImageView.animationDuration = 1;
+    [m_loadImageView startAnimating];
+    [self.view addSubview:m_loadImageView];
+
     m_tabelData = [[NSMutableArray alloc] init];
     m_realmsArray = [[NSMutableArray alloc] init];
     m_imgArray = [NSMutableArray array];
@@ -89,6 +102,12 @@
     [menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
     [menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
     [self.view addSubview:menuButton];
+    if (isGetNetSuccess) {
+        menuButton.userInteractionEnabled = YES;
+    }
+    else{
+        menuButton.userInteractionEnabled =NO;
+    }
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     m_searchType = 3;
@@ -107,6 +126,7 @@
 
 - (void)getRealmsDataByNet
 {
+    isGetNetSuccess = NO;
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -120,7 +140,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
-         
+         isGetNetSuccess =YES;
 //         if ([responseObject isEqualToString:@""]) {
 //             [self showAlertViewWithTitle:nil message:@"你还没有角色呢" buttonTitle:@"确定"];
              [hud hide: YES];
@@ -190,6 +210,7 @@
 
 - (void)getSameRealmDataByNet
 {
+    [m_loadImageView startAnimating];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -221,7 +242,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-
+        [m_loadImageView stopAnimating];
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
             [m_header endRefreshing];
             [m_footer endRefreshing];
@@ -230,7 +251,11 @@
         if (m_currentPage == 0) {
             [m_tabelData removeAllObjects];
             
+            
             [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+            if (m_tabelData.count<1) {
+                [self showMessageWithContent:@"暂无玩家信息" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            }
             
             m_totalPage = [[responseObject objectForKey:@"totalResults"] intValue];
         }
@@ -248,6 +273,7 @@
         [m_footer endRefreshing];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_loadImageView stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -294,7 +320,7 @@
     }
 
     m_currentPage = 0;
-    [m_tabelData removeAllObjects];
+//    [m_tabelData removeAllObjects];
     [self getSameRealmDataByNet];
 }
 
@@ -316,7 +342,7 @@
     if (buttonIndex == actionSheet.cancelButtonIndex) {
         return;
     }
-    [m_tabelData removeAllObjects];
+  //  [m_tabelData removeAllObjects];
     [m_myTableView reloadData];
     
     m_currentPage = 0;
@@ -463,9 +489,8 @@
 
     VC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"createTime")];
 
-    NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")] componentsSeparatedByString:@","];
     VC.constellationStr =KISDictionaryHaveKey(recDict, @"constellation");
-    VC.titleImage = [BaseImageUrl stringByAppendingString:[heardImgArray count] != 0 ? [heardImgArray objectAtIndex:0] : @""];
+    VC.titleImage = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")];
     VC.isChatPage = NO;
     [self.navigationController pushViewController:VC animated:YES];
 }

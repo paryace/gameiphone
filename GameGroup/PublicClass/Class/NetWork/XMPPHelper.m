@@ -228,7 +228,6 @@
 
 //此方法在stream连接断开的时候调用
 - (void)xmppStreamDidDisconnect:(XMPPStream *)sender withError:(NSError *)error{
-    NSLog(@"disconnected。。。：%@",error);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_disconnect" object:nil userInfo:nil];
 }
 
@@ -421,27 +420,28 @@
             if ([arr isKindOfClass:[NSArray class]]) {
                 if ([arr count] != 0) {
                     NSMutableDictionary* dic = [arr objectAtIndex:0];
-                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"1"]) {
-                        dis = [NSString stringWithFormat:@"获得通讯录好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
-                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"2"]) {
-                        dis = [NSString stringWithFormat:@"获得明星好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
-                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"3"]) {
-                        dis = [NSString stringWithFormat:@"获得公会好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
-                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"4"])
-                    {
-                        dis = [NSString stringWithFormat:@"同服务器激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
-                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"5"])
-                    {
-                        dis = [NSString stringWithFormat:@"服务器达人%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
-                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"6"])
-                    {
-                        dis = [NSString stringWithFormat:@"激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-                    }
+//                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"1"]) {
+//                        dis = [NSString stringWithFormat:@"获得通讯录好友%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"2"]) {
+//                        dis = [NSString stringWithFormat:@"获得明星好友%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"3"]) {
+//                        dis = [NSString stringWithFormat:@"获得公会好友%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"4"])
+//                    {
+//                        dis = [NSString stringWithFormat:@"同服务器激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"5"])
+//                    {
+//                        dis = [NSString stringWithFormat:@"服务器达人%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"6"])
+//                    {
+//                        dis = [NSString stringWithFormat:@"激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
+//                    }
+                    dis = [NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(dic, @"recommendMsg") ,KISDictionaryHaveKey(dic, @"nickname")];
                 }
             }
             [dict setObject:dis forKey:@"disStr"];

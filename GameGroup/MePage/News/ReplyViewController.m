@@ -171,7 +171,7 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"137" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    
+    hud.labelText = @"发表中...";
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {

@@ -26,6 +26,8 @@
     NSMutableArray *m_imgArray;
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
+    UIImageView *m_loadImageView;
+    BOOL isGetNetSuccess;
 
 }
 @end
@@ -37,7 +39,7 @@
     [super viewDidLoad];
 
     [self setTopViewWithTitle:@"" withBackButton:YES];
-
+    isGetNetSuccess =YES;
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
     m_titleLabel.backgroundColor = [UIColor clearColor];
@@ -82,47 +84,77 @@
     m_totalPage = 0;
     m_currentPage = 0;
     
-//    hud = [[MBProgressHUD alloc] initWithView:self.view];
-//    [self.view addSubview:hud];
-//    hud.labelText = @"定位中...";
-//    
+    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 0, 20, 20)];
+    NSMutableArray *imageArray = [NSMutableArray array];
+    for (int i = 0; i<12; i++) {
+       NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
+        [imageArray addObject:[UIImage imageNamed:str]];
+    }
+    
+    m_loadImageView.animationImages = imageArray;
+    m_loadImageView.animationDuration = 1;
+    [m_loadImageView startAnimating];
+    [self.view addSubview:m_loadImageView];
+    
+    
+//
     
     //if ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)){} 是否开启了本应用的定位服务
-    
+
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"]) {
+        
+        NSMutableData *data= [NSMutableData data];
+     //   NSDictionary *dic = [NSDictionary dictionary];
+        data =[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"];
+        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+        m_tabelData = [unarchiver decodeObjectForKey: @"getDatat"];
+        [unarchiver finishDecoding];
+
+       // [m_tabelData  addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"]];
+    }else{
+    }
+    [self addFooter];
+    [self addHeader];
+    [self getLocationForNet];
+ //   [self getLocationForNet];
+}
+#pragma mark --获取位置 并且获取附近的人
+-(void)getLocationForNet
+{
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
+        [hud hide:YES];
+        [m_loadImageView stopAnimating];
+
         return;
     }
     else{
-      //  [hud show:YES];
-//    [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-//        [[TempData sharedInstance] setLat:lat Lon:lon];
-//        [hud hide:YES];
-//
-//        [self getNearByDataByNet];
-//    } Failure:^{
-//        [hud hide:YES];
-//        [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-//    }
-//     ];
-        [self addFooter];
-        [self addHeader];
-       // [self getNearByDataByNet];
-    }
-    
-}
+        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+            [[TempData sharedInstance] setLat:lat Lon:lon];
+            [hud hide:YES];
+            
+            [self getNearByDataByNet];
+        } Failure:^{
+            [hud hide:YES];
+            [m_loadImageView stopAnimating];
 
+            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+        }
+         ];
+    }
+}
 - (void)getNearByDataByNet
 {
+    isGetNetSuccess =NO;
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"isGetNearByDataByNet"];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
    
     if (m_searchType != 2) {
-        [paramDict setObject:[NSString stringWithFormat:@"%d", m_searchType] forKey:@"gender"];
+        [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:@"gender"];
     }
-    [paramDict setObject:[NSString stringWithFormat:@"%d", m_currentPage] forKey:@"pageIndex"];
+    [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_currentPage] forKey:@"pageIndex"];
     [paramDict setObject:@"10" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
@@ -132,23 +164,28 @@
     [postDict setObject:@"120" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    hud.labelText = @"查询中...";
-    [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      
+        isGetNetSuccess =YES;
+        [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
             
-            [[NSUserDefaults standardUserDefaults]setBool:NO forKey:@"isGetNearByDataByNet"];
+            [[NSUserDefaults standardUserDefaults]setBool:NO forKey:@"isGetNearByDataByNet"];//保存上一次看到的附近的人
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;
         }
         if (m_currentPage == 0) {
             [m_tabelData removeAllObjects];
-
             [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+
+            NSMutableData *data= [[NSMutableData alloc]init];
+            NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+            [archiver encodeObject:KISDictionaryHaveKey(responseObject, @"users") forKey: @"getDatat"];
+            [archiver finishEncoding];
+
+            [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"wx_nearbypersonCount"];
             
             m_totalPage = [[responseObject objectForKey:@"totalResults"] intValue];
         }
@@ -164,12 +201,15 @@
         [m_header endRefreshing];
         [m_footer endRefreshing];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_loadImageView stopAnimating];
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
-            }
+            }else
+                NSLog(@"获取失败");
         }
         
         [m_header endRefreshing];
@@ -198,8 +238,11 @@
     if (buttonIndex == actionSheet.cancelButtonIndex) {
         return;
     }
-    [m_tabelData removeAllObjects];
-    [m_myTableView reloadData];
+    if (isGetNetSuccess ==NO) {
+        return;
+    }
+   // [m_tabelData removeAllObjects];
+   // [m_myTableView reloadData];
     
     m_currentPage = 0;
     if (buttonIndex == 0) {//男
@@ -215,7 +258,7 @@
         m_titleLabel.text = @"附近的玩家";
         m_searchType = 2;
     }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", m_searchType] forKey:NearByKey];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self getNearByDataByNet];
 }
@@ -316,7 +359,6 @@
     VC.sexStr = [NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(recDict, @"gender")intValue]];
     VC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"updateUserLocationDate")];
     VC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"distance")];
-    NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")] componentsSeparatedByString:@","];
     
     VC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"createTime")];
 
@@ -327,7 +369,7 @@
     
     VC.constellationStr =KISDictionaryHaveKey(recDict, @"constellation");
     NSLog(@"vc.VC.constellationStr%@",VC.constellationStr);
-    VC.titleImage = [BaseImageUrl stringByAppendingString:[heardImgArray count] != 0 ? [heardImgArray objectAtIndex:0] : @""];
+    VC.titleImage = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")];
     [self.navigationController pushViewController:VC animated:YES];
 }
 #pragma mark --加载刷新
@@ -356,7 +398,7 @@
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
     };
-    [header beginRefreshing];
+   // [header beginRefreshing];
     m_header = header;
 }
 

@@ -1254,7 +1254,7 @@
     self.textView.text = @"";
     
     [wxSDArray removeAllObjects];
-    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info"]];
+    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
 
     if (![wxSDArray containsObject:self.chatWithUser]) {
         [self getSayHello];
@@ -1282,9 +1282,6 @@
 //是否是打招呼  如果改变打招呼则运行
 -(void)getSayHello
 {
-    
-    
-    
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:chatWithUser forKey:@"touserid"];
@@ -1297,8 +1294,9 @@
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
         [wxSDArray addObject:self.chatWithUser];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info"];
-        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info"];
+        
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
+        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
