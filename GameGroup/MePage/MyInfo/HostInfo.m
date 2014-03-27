@@ -7,6 +7,58 @@
 //
 
 #import "HostInfo.h"
+/*
+ characters =     {
+ 1 =         (游戏
+ {
+ clazz = 0;
+ content = " ";
+ failedmsg = " ";
+ failednum = 0;
+ filepath = "/home/appusr/characters/\U77f3\U722a\U5cf0/\U9f99\U6218\U4e5d\U5929.zip";
+ gender = 0;
+ guild = "Dark Legion";工会
+ guildRealm = "\U77f3\U722a\U5cf0";服务器
+ id = 5448;
+ iscatch = 1;
+ lastModified = 0;
+ level = 0;角色等级
+ mountsnum = 0;
+ name = "\U9f99\U6218\U4e5d\U5929";角色名
+ pveScore = 0;战斗力
+ realm = "\U77f3\U722a\U5cf0";服务器
+ totalHonorableKills = 0;荣誉击杀数
+ 
+ titlesObj =                     (//头衔
+ {
+ characterid = 1802;   //游戏角色ID
+ 
+ hasDate = 1387870544000;
+ hide = 0;
+ id = 379;
+ rarememo = 9;
+ realm = "\U77f3\U722a\U5cf0";
+ sortnum = 3;
+ titleObj =                             {
+ createDate = 1387853956000;
+ evolution = 0;
+ gameid = 1;
+ id = 6;
+ img = " ";
+ rarenum = 1;
+ remark = " ";
+ simpletitle = "\U670d\U52a1\U5668\U5341\U5927\U6218\U795e";
+ sortnum = 1;
+ title = "\U670d\U52a1\U5668\U5341\U5927\U6218\U795e";
+ titlekey = "wow_pvescore_realm";
+ };
+ titleid = 6;
+ userimg = " ";
+ },
+ }
+ );
+ 
+ */
 @implementation HostInfo
 - (id)initWithHostInfo:(NSDictionary*)info
 {

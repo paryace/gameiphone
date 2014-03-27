@@ -343,7 +343,7 @@
     if ([userid isEqualToString:@"1"]) {
         return @"有新的角色动态";
     }
-    if ([userid isEqualToString:@"1234567wxxxxxxxxx"]) {
+    if ([userid isEqualToString:@"1234567"]) {
         return @"有新的打招呼信息";
     }
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",userid];

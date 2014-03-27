@@ -45,14 +45,10 @@
     tapOne.numberOfTapsRequired = 1;
     [_sc addGestureRecognizer:tapOne];
 
-    
-    
     for (int i = 0;i < self.imgIDArray.count;i++) {
         UIScrollView * subSC = [[UIScrollView alloc]initWithFrame:CGRectMake(i*320, 0, 320, _sc.frame.size.height)];
         EGOImageView* imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
-        EGOImageView *imgview = [[EGOImageView alloc]init];
-        imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
-        imageV.placeholderImage = imgview.image;
+        imageV.placeholderImage = _smallImageArray[i];
         [subSC addSubview:imageV];
         imageV.userInteractionEnabled = YES;
         UIActivityIndicatorView*act = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((_sc.frame.size.width-10)/2, (_sc.frame.size.height-10)/2, 10, 10)];
@@ -71,7 +67,7 @@
             [self imageViewLoadedImage:imageV];
         }
         else
-            imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
+            imageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl"%@",self.imgIDArray[i]]];
 //            self.viewPhoto.imageURL = [NSURL URLWithString:url];
         
         }
@@ -185,9 +181,9 @@
 - (void)imageViewFailedToLoadImage:(EGOImageView*)imageView error:(NSError*)error
 {
     //未完待续
-//    [self dismissViewControllerAnimated:NO completion:^{
-//        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"图片加载失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
-//        [alert show];
-//    }];
+    [self dismissViewControllerAnimated:NO completion:^{
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"图片加载失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
+        [alert show];
+    }];
 }
 @end

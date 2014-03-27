@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PhotoViewController : BaseViewController
+@interface PhotoViewController : UIViewController
 @property (nonatomic,strong)NSArray* imgIDArray;
 @property (nonatomic,assign)int indext;
 @property(nonatomic,assign)BOOL isComeFrmeUrl;//来自后台推送网页

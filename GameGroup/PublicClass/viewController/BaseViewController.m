@@ -216,10 +216,6 @@
         case 6:
             warnImage.image = KUIImage(@"show_nozan");
             break;
-        case 7:
-            warnImage.image = nil;
-            break;
-
         default:
             break;
     }
