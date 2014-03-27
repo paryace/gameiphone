@@ -60,7 +60,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     [self setTopViewWithTitle:@"评论" withBackButton:YES];
     m_pageIndex = 0;
     m_dataReply = [[NSMutableArray alloc] initWithCapacity:1];
@@ -86,7 +86,7 @@
     _slimeView.slime.shadowBlur = 4;
     _slimeView.slime.shadowColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
     [m_replyTabel addSubview:_slimeView];
-//    [_slimeView setLoadingWithexpansion];
+    //    [_slimeView setLoadingWithexpansion];
     
     inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
     [self.view addSubview:inPutView];
@@ -176,7 +176,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-     
+        
         if (![responseObject isKindOfClass:[NSArray class]]) {
             [refreshView stopLoading:YES];
             [_slimeView endRefresh];
@@ -213,7 +213,7 @@
         
         [hud hide:YES];
     }];
-
+    
 }
 
 #pragma mark 原文
@@ -254,17 +254,19 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-
+        
         self.textView.text = nil;
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
                 [self.delegate dynamicListJustReload];
-          
-            m_pageIndex = 0;
-            [self getDataByNet];
             
-//            [self showMessageWithContent:@"评论成功" point:CGPointMake(kScreenWidth/2, kScreenHeigth-100)];
+            //m_pageIndex = 0;
+            // [self getDataByNet];
+            
+            [m_dataReply insertObject:responseObject atIndex:0];
+            [m_replyTabel reloadData];
+            //            [self showMessageWithContent:@"评论成功" point:CGPointMake(kScreenWidth/2, kScreenHeigth-100)];
             [self showMessageWindowWithContent:@"评论成功" imageType:0];
         }
         
@@ -296,8 +298,8 @@
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
 {
     [self.textView resignFirstResponder];
-
-//    [self okButtonClick:nil];
+    
+    //    [self okButtonClick:nil];
     return YES;
 }
 
@@ -343,8 +345,8 @@
 
 -(void) autoMovekeyBoard: (float) h{
     
-//    [UIView beginAnimations:nil context:nil];
-//    [UIView setAnimationDuration:0.2];
+    //    [UIView beginAnimations:nil context:nil];
+    //    [UIView setAnimationDuration:0.2];
 	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
     
     CGRect containerFrame = inPutView.frame;
@@ -383,17 +385,17 @@
         cell = [[ReplyCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.accessoryType = UITableViewCellAccessoryNone;
-     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+    cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
     NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"userimg")];
     if ([imageName isEqualToString:@""]||[imageName isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{
-    if (imageName) {
-        cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80"]];;
-    }else
-    {
-        cell.headImageV.imageURL = nil;
-    }
+        if (imageName) {
+            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80"]];;
+        }else
+        {
+            cell.headImageV.imageURL = nil;
+        }
     }
     
     cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
@@ -412,9 +414,9 @@
     [m_replyTabel deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary* tempDict = [m_dataReply objectAtIndex:indexPath.row];
-//    NSString* nickName = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
+    //    NSString* nickName = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
     NSString* nickName = KISDictionaryHaveKey(tempDict, @"nickname");
-
+    
     self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
     [self.textView becomeFirstResponder];
     
@@ -424,18 +426,18 @@
 -(void)CellHeardButtonClick:(int)rowIndex
 {
     NSDictionary* tempDict = [m_dataReply objectAtIndex:rowIndex];
-//    if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]]) {
-//        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
-//        [self.navigationController pushViewController:myP animated:YES];
-//    }
-//    else
-//    {
-        TestViewController* detailV = [[TestViewController alloc] init];
-        detailV.userId = KISDictionaryHaveKey(tempDict, @"userid");
-        detailV.nickName = KISDictionaryHaveKey(tempDict, @"nickname");
-        detailV.isChatPage = NO;
-        [self.navigationController pushViewController:detailV animated:YES];
-//    }
+    //    if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]]) {
+    //        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
+    //        [self.navigationController pushViewController:myP animated:YES];
+    //    }
+    //    else
+    //    {
+    TestViewController* detailV = [[TestViewController alloc] init];
+    detailV.userId = KISDictionaryHaveKey(tempDict, @"userid");
+    detailV.nickName = KISDictionaryHaveKey(tempDict, @"nickname");
+    detailV.isChatPage = NO;
+    [self.navigationController pushViewController:detailV animated:YES];
+    //    }
 }
 
 #pragma mark  scrollView  delegate
@@ -472,7 +474,7 @@
 }
 
 - (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
-{    
+{
     [self getDataByNet];
 }
 

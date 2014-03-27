@@ -13,6 +13,7 @@
 #import "AboutViewController.h"
 #import "FeedBackViewController.h"
 #import "ShowTextViewController.h"
+#import "ActivationCodeViewController.h"
 @interface SetViewController ()
 {
     UITableView*  m_myTableView;
@@ -25,7 +26,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     [self setTopViewWithTitle:@"设置" withBackButton:YES];
     
     
@@ -51,8 +52,8 @@
     [topVIew addSubview:banbenView];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-   
-
+    
+    
 }
 
 #pragma mark 表格
@@ -64,7 +65,7 @@
 {
     switch (section) {
         case 0:
-            return 4;
+            return 5;
             break;
         default:
             return 1;
@@ -84,38 +85,43 @@
     switch (indexPath.section) {
         case 0:
         {
-//            if (indexPath.row == 0) {
-//                cell.leftImageView.image = KUIImage(@"me_set_info");
-//                cell.titleLable.text = @"关于陌游";
-//            }
-//            else
-//            {
-//                cell.leftImageView.image = KUIImage(@"me_set_delete");
-//                cell.titleLable.text = @"清理缓存";
-//            }
+            //            if (indexPath.row == 0) {
+            //                cell.leftImageView.image = KUIImage(@"me_set_info");
+            //                cell.titleLable.text = @"关于陌游";
+            //            }
+            //            else
+            //            {
+            //                cell.leftImageView.image = KUIImage(@"me_set_delete");
+            //                cell.titleLable.text = @"清理缓存";
+            //            }
             
             switch (indexPath.row) {
                 case 0:
                     cell.leftImageView.image = KUIImage(@"clean_me");
                     cell.titleLable.text = @"清理缓存";
-
+                    
                     break;
                 case 1:
                     cell.leftImageView.image = KUIImage(@"updata_me");
                     cell.titleLable.text = @"检查更新";
-
+                    
                     break;
                 case 2:
                     cell.leftImageView.image = KUIImage(@"xieyi_me");
                     cell.titleLable.text = @"用户协议";
-
+                    
                     break;
                 case 3:
                     cell.leftImageView.image = KUIImage(@"feedback_me");
                     cell.titleLable.text = @"意见反馈";
-
+                    
                     break;
-   
+                case 4:
+                    cell.leftImageView.image = KUIImage(@"activationCode");
+                    cell.titleLable.text = @"兑换码";
+                    
+                    break;
+                    
                 default:
                     break;
             }
@@ -151,7 +157,7 @@
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"IOSURL"]==nil) {
                     [self showAlertViewWithTitle:nil message:@"您已经是最新版本了" buttonTitle:@"确定"];
                 }else{
-                UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+                    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
                     alert.tag = 111;
                     [alert show];
                 }
@@ -169,6 +175,12 @@
                 FeedBackViewController* VC = [[FeedBackViewController alloc] init];
                 [self.navigationController pushViewController:VC animated:YES];
             }
+            else if (indexPath.row ==4)
+            {
+                ActivationCodeViewController* VC = [[ActivationCodeViewController alloc] init];
+                [self.navigationController pushViewController:VC animated:YES];
+            }
+            
         } break;
         case 1:
         {
@@ -197,18 +209,18 @@
             
             // myProgressTask uses the HUD instance to update progress
             [hud showWhileExecuting:@selector(myProgressTask) onTarget:self withObject:nil animated:YES];
-
+            
             NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)objectAtIndex:0];
             NSFileManager *fm = [NSFileManager defaultManager];
             NSDirectoryEnumerator *e = [fm enumeratorAtPath:cache];
             NSString *fileName = nil;
-              while (fileName = [e nextObject]) {
-                  NSError *error = nil;
-                  NSString *filePath = [cache stringByAppendingPathComponent:fileName];
-                  BOOL flag =[fm removeItemAtPath:filePath error:&error];
-                  NSLog(@"%d %@",flag,[error localizedDescription]);
-                  
-              }
+            while (fileName = [e nextObject]) {
+                NSError *error = nil;
+                NSString *filePath = [cache stringByAppendingPathComponent:fileName];
+                BOOL flag =[fm removeItemAtPath:filePath error:&error];
+                NSLog(@"%d %@",flag,[error localizedDescription]);
+                
+            }
         }
         else if(112 == alertView.tag)
         {
@@ -221,7 +233,7 @@
                 [[UIApplication sharedApplication] openURL:url];
             }
         }
-
+        
     }
 }
 
@@ -232,22 +244,22 @@
 }
 - (void)loginOutNet
 {
-//    XMPPHelper *xmppHelper = [[XMPPHelper alloc]init];
-   
+    //    XMPPHelper *xmppHelper = [[XMPPHelper alloc]init];
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:paramDict forKey:@"params"];
+    //    [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"102" forKey:@"method"];//退出登陆
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"layoutresponseObject%@", responseObject);
-       // [GameCommon loginOut];//注销
-
+        // [GameCommon loginOut];//注销
+        
         //[self.navigationController popViewControllerAnimated:NO];
-
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-
+        
     }];
     [GameCommon loginOut];
     [self.navigationController popViewControllerAnimated:NO];
@@ -260,7 +272,7 @@
 		hud.progress = progress;
 		usleep(50000);
 	}
-
+    
 }
 
 
