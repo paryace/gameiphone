@@ -28,7 +28,7 @@
     MJRefreshFooterView *m_footer;
     UIImageView *m_loadImageView;
     BOOL isGetNetSuccess;
-
+    UIButton *menuButton;
 }
 @end
 
@@ -37,7 +37,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     [self setTopViewWithTitle:@"" withBackButton:YES];
     isGetNetSuccess =YES;
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
@@ -49,7 +49,7 @@
     [self.view addSubview:m_titleLabel];
     
     m_searchType = 2;
-
+    
     if ([[NSUserDefaults standardUserDefaults] objectForKey:NearByKey] && [[[NSUserDefaults standardUserDefaults] objectForKey:NearByKey] length] > 0) {
         NSString* type = [[NSUserDefaults standardUserDefaults] objectForKey:NearByKey];
         if ([type isEqualToString:@"0"]) {
@@ -68,12 +68,16 @@
     m_imgArray = [NSMutableArray array];
     m_tabelData = [[NSMutableArray alloc] init];
     
-    UIButton *menuButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    menuButton=[UIButton buttonWithType:UIButtonTypeCustom];
     menuButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
     [menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
     [menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
     [self.view addSubview:menuButton];
+    
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    
     
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_myTableView.dataSource = self;
@@ -87,58 +91,62 @@
     m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 0, 20, 20)];
     NSMutableArray *imageArray = [NSMutableArray array];
     for (int i = 0; i<12; i++) {
-       NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
+        NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
         [imageArray addObject:[UIImage imageNamed:str]];
     }
     
     m_loadImageView.animationImages = imageArray;
     m_loadImageView.animationDuration = 1;
-    [m_loadImageView startAnimating];
+     [m_loadImageView startAnimating];
     [self.view addSubview:m_loadImageView];
     
     
-//
+    //
     
     //if ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)){} 是否开启了本应用的定位服务
-
+    
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"]) {
         
         NSMutableData *data= [NSMutableData data];
-     //   NSDictionary *dic = [NSDictionary dictionary];
+        //   NSDictionary *dic = [NSDictionary dictionary];
         data =[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"];
         NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
         m_tabelData = [unarchiver decodeObjectForKey: @"getDatat"];
         [unarchiver finishDecoding];
-
-       // [m_tabelData  addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"]];
+        
+        // [m_tabelData  addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_nearbypersonCount"]];
     }else{
     }
     [self addFooter];
     [self addHeader];
     [self getLocationForNet];
- //   [self getLocationForNet];
+    //   [self getLocationForNet];
 }
 #pragma mark --获取位置 并且获取附近的人
 -(void)getLocationForNet
 {
+    [m_loadImageView startAnimating];
+    menuButton.userInteractionEnabled = NO;
+    
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
         [hud hide:YES];
         [m_loadImageView stopAnimating];
-
+        menuButton.userInteractionEnabled = YES;
+        
         return;
     }
     else{
+        [self getNearByDataByNet];
         [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
             [[TempData sharedInstance] setLat:lat Lon:lon];
             [hud hide:YES];
-            
             [self getNearByDataByNet];
         } Failure:^{
             [hud hide:YES];
             [m_loadImageView stopAnimating];
-
+            menuButton.userInteractionEnabled = YES;
             [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
         }
          ];
@@ -150,7 +158,7 @@
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"isGetNearByDataByNet"];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-   
+    
     if (m_searchType != 2) {
         [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:@"gender"];
     }
@@ -158,7 +166,7 @@
     [paramDict setObject:@"10" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
-
+    
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"120" forKey:@"method"];
@@ -167,6 +175,8 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
+        menuButton.userInteractionEnabled = YES;
+        
         [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
@@ -179,12 +189,12 @@
         if (m_currentPage == 0) {
             [m_tabelData removeAllObjects];
             [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
-
+            
             NSMutableData *data= [[NSMutableData alloc]init];
             NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
             [archiver encodeObject:KISDictionaryHaveKey(responseObject, @"users") forKey: @"getDatat"];
             [archiver finishEncoding];
-
+            
             [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"wx_nearbypersonCount"];
             
             m_totalPage = [[responseObject objectForKey:@"totalResults"] intValue];
@@ -202,7 +212,8 @@
         [m_footer endRefreshing];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loadImageView stopAnimating];
-
+        menuButton.userInteractionEnabled = YES;
+        
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -214,15 +225,16 @@
         
         [m_header endRefreshing];
         [m_footer endRefreshing];
-
+        
     }];
     //////
-
+    
 }
 
 #pragma mark 筛选
-- (void)menuButtonClick:(id)sender
+- (void)menuButtonClick:(UIButton *)sender
 {
+    
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"筛选条件"
                                   delegate:self
@@ -238,11 +250,8 @@
     if (buttonIndex == actionSheet.cancelButtonIndex) {
         return;
     }
-    if (isGetNetSuccess ==NO) {
-        return;
-    }
-   // [m_tabelData removeAllObjects];
-   // [m_myTableView reloadData];
+    // [m_tabelData removeAllObjects];
+    // [m_myTableView reloadData];
     
     m_currentPage = 0;
     if (buttonIndex == 0) {//男
@@ -260,6 +269,7 @@
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [m_loadImageView startAnimating];
     [self getNearByDataByNet];
 }
 
@@ -291,11 +301,11 @@
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
     cell.gameImg_one.image = KUIImage(@"wow");
     
-//    cell.sexImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
+    //    cell.sexImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
     
-//    cell.sexBg.backgroundColor = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? kColorWithRGB(33, 193, 250, 1.0) : kColorWithRGB(238, 100, 196, 1.0);
+    //    cell.sexBg.backgroundColor = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? kColorWithRGB(33, 193, 250, 1.0) : kColorWithRGB(238, 100, 196, 1.0);
     
-//    cell.ageLabel.text = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
+    //    cell.ageLabel.text = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
@@ -309,15 +319,15 @@
     }
     if ([KISDictionaryHaveKey(tempDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
-       
+        
     }else{
-    NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
-
-    if (heardImgArray.count>0&&(![[heardImgArray objectAtIndex:0] isEqualToString:@""]||![KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "])) {
-        cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",[heardImgArray objectAtIndex:0]]];
-    }else{
-        cell.headImageV.imageURL = nil;
-    }
+        NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
+        
+        if (heardImgArray.count>0&&(![[heardImgArray objectAtIndex:0] isEqualToString:@""]||![KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "])) {
+            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",[heardImgArray objectAtIndex:0]]];
+        }else{
+            cell.headImageV.imageURL = nil;
+        }
     }
     NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
     if ([titleDic isKindOfClass:[NSDictionary class]]) {
@@ -333,7 +343,7 @@
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
     [cell refreshCell];
-
+    
     return cell;
 }
 
@@ -343,9 +353,9 @@
     
     NSDictionary* recDict = [m_tabelData objectAtIndex:indexPath.row];
     
-   // PersonDetailViewController* VC = [[PersonDetailViewController alloc] init];
+    // PersonDetailViewController* VC = [[PersonDetailViewController alloc] init];
     TestViewController* VC = [[TestViewController alloc] init];
-
+    
     if([KISDictionaryHaveKey(recDict, @"active")intValue] ==2){
         VC.isActiveAc =YES;
     }
@@ -361,7 +371,7 @@
     VC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"distance")];
     
     VC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"createTime")];
-
+    
     VC.achievementStr =[[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"title");
     
     VC.achievementColor =[[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" :KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"rarenum");
@@ -378,7 +388,7 @@
     MJRefreshFooterView *footer = [MJRefreshFooterView footer];
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-            [self getNearByDataByNet];
+        [self getNearByDataByNet];
         
     };
     m_footer = footer;
@@ -398,7 +408,7 @@
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
     };
-   // [header beginRefreshing];
+    // [header beginRefreshing];
     m_header = header;
 }
 

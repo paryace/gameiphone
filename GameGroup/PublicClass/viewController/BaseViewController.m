@@ -255,12 +255,7 @@
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showMessageWindowWithContent:@"请求数据失败，请检查网络" imageType:0];
-        hud =[[MBProgressHUD alloc]initWithView:self.view];
-        hud.mode = MBProgressHUDModeText;
-        hud.labelText =@"网络有点问题，检查下网络吧";
-        [hud showAnimated:YES whileExecutingBlock:^{
-            sleep(1);
-        }];
+        [self showMessageWithContent:@"暂无玩家信息" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
 }

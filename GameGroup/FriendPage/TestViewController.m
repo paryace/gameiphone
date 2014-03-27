@@ -1035,6 +1035,7 @@
 
 - (void)addFriendClick:(id)sender
 {
+    [self DetectNetwork];
     addFriendBtn.userInteractionEnabled = NO;
     delFriendBtn.userInteractionEnabled = NO;
     attentionBtn.userInteractionEnabled = NO;

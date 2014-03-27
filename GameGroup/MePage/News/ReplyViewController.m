@@ -255,16 +255,19 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
-        self.textView.text = nil;
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
                 [self.delegate dynamicListJustReload];
             
-            //m_pageIndex = 0;
-            // [self getDataByNet];
             
-            [m_dataReply insertObject:responseObject atIndex:0];
+            NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+            dic  = responseObject;
+            [dic removeObjectForKey:@"msg"];
+            [dic setObject:self.textView.text forKey:@"msg"];
+            self.textView.text = nil;
+
+            [m_dataReply insertObject:dic atIndex:0];
             [m_replyTabel reloadData];
             //            [self showMessageWithContent:@"评论成功" point:CGPointMake(kScreenWidth/2, kScreenHeigth-100)];
             [self showMessageWindowWithContent:@"评论成功" imageType:0];
