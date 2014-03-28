@@ -362,7 +362,7 @@
     [postDict setObject:@"111" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     //[hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_1];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
@@ -453,7 +453,7 @@
     
     [self.view bringSubviewToFront:hud];
     //[hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_2];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
@@ -539,7 +539,7 @@
     [paramDict setObject:sort forKey:@"sorttype_3"];
     
     //[hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
         

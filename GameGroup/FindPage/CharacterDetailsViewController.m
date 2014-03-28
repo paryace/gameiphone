@@ -193,7 +193,7 @@
     [postDict setObject:@"146" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         m_contentTableView.hidden =NO;
         m_reamlTableView.hidden = NO;
         m_countryTableView.hidden =NO;
@@ -240,6 +240,13 @@
             
             
             m_charaDetailsView.itemlevelView.text = [NSString stringWithFormat:@"%@/%@",m_charaInfo.itemlevelequipped,m_charaInfo.itemlevel] ;//
+            m_charaDetailsView.itemlevelView.frame =
+            CGRectMake(323-m_charaDetailsView.itemlevelView.text.length*13,
+                       33,
+                       m_charaDetailsView.itemlevelView.text.length*13,
+                       25);
+            NSLog(@"长度%u",m_charaDetailsView.itemlevelView.text.length*12);
+
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             if (m_charaInfo.thumbnail) {
@@ -315,7 +322,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     //[hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"res%@",responseObject);
         if ([KISDictionaryHaveKey(responseObject, @"systemstate")isEqualToString:@"ok"]) {
             
@@ -399,7 +406,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         m_charaDetailsView.reloadingBtn.userInteractionEnabled =YES;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_charaInfo = [[CharaInfo alloc] initWithReLoadingInfo:responseObject];

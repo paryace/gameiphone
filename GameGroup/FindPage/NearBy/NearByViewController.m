@@ -72,6 +72,7 @@
     menuButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
     [menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
     [menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
+    menuButton.userInteractionEnabled =NO;
     [self.view addSubview:menuButton];
     
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -126,15 +127,13 @@
 -(void)getLocationForNet
 {
     [m_loadImageView startAnimating];
-    menuButton.userInteractionEnabled = NO;
     
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
         [hud hide:YES];
-        [m_loadImageView stopAnimating];
         menuButton.userInteractionEnabled = YES;
-        
+        [m_loadImageView stopAnimating];
         return;
     }
     else{
@@ -145,8 +144,9 @@
             [self getNearByDataByNet];
         } Failure:^{
             [hud hide:YES];
-            [m_loadImageView stopAnimating];
             menuButton.userInteractionEnabled = YES;
+
+            [m_loadImageView stopAnimating];
             [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
         }
          ];
@@ -173,14 +173,14 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
-        menuButton.userInteractionEnabled = YES;
         
         [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
-            
+            menuButton.userInteractionEnabled = YES;
+
             [[NSUserDefaults standardUserDefaults]setBool:NO forKey:@"isGetNearByDataByNet"];//保存上一次看到的附近的人
             [m_footer endRefreshing];
             [m_header endRefreshing];
@@ -213,7 +213,7 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loadImageView stopAnimating];
         menuButton.userInteractionEnabled = YES;
-        
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -234,7 +234,11 @@
 #pragma mark 筛选
 - (void)menuButtonClick:(UIButton *)sender
 {
-    
+    if(isGetNetSuccess ==NO)
+    {
+        [self showMessageWithContent:@"正在处理上次请求" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+    }else{
+
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"筛选条件"
                                   delegate:self
@@ -243,6 +247,7 @@
                                   otherButtonTitles:@"只看男", @"只看女", @"看全部", nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
+    }
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

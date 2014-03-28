@@ -201,7 +201,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [bg1 removeFromSuperview];
         [headBtn1 removeFromSuperview];
@@ -335,7 +335,7 @@
     [postDict setObject:@"134" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         zanBtn.userInteractionEnabled = YES;
 
         zanBtn.selected = !zanBtn.selected;
@@ -777,7 +777,7 @@
         [self.view bringSubviewToFront:hud];
         hud.labelText = @"发送中...";
         [hud show:YES];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             m_shareViewBg.hidden = YES;
             m_shareView.hidden = YES;
@@ -820,7 +820,7 @@
             [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 [hud hide:YES];
                 [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
             } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -884,7 +884,7 @@
 //    
 //    [hud show:YES];
 //    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        [hud hide:YES];
 //        [self.textView resignFirstResponder];
 //        self.textView.text = @"";

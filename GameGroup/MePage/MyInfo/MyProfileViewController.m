@@ -339,11 +339,11 @@
     if (waitingUploadImgArray.count>0) {
         
        
-//        [NetManager uploadImagesWithCompres:waitingUploadImgArray WithURLStr:BaseUploadImageUrl ImageName:waitingUploadStrArray TheController:self Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传一张压缩图片成功后 上传一张不压缩图片
+//        [NetManager uploadImagesWithCompres:waitingUploadImgArray WithURLStr:BaseUploadImageUrl ImageName:waitingUploadStrArray   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传一张压缩图片成功后 上传一张不压缩图片
         
 //            NSDictionary* CompresID = responseObject;//"<local>0_me.jpg" = 8; 8为id
         
-        [self uploadImages:waitingUploadImgArray WithURLStr:BaseUploadImageUrl view:self.view ImageName:waitingUploadStrArray TheController:self Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+        [self uploadImages:waitingUploadImgArray WithURLStr:BaseUploadImageUrl view:self.view ImageName:waitingUploadStrArray TheController:self   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
             hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picPage+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
         } Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
             [hud hide:YES];
@@ -367,7 +367,7 @@
         [NetManager uploadImages:waitingUploadImgArray
                       WithURLStr:BaseUploadImageUrl
                        ImageName:waitingUploadStrArray
-                   TheController:self
+                    
                         Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
         {
             hud.labelText = [NSString stringWithFormat:@"图片上传中..%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
@@ -452,7 +452,7 @@
 
 -(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
 {
-    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex] TheController:self Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
         hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
     }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
@@ -506,7 +506,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@", responseObject);
         
         [self showMessageWindowWithContent:@"保存成功" imageType:0];
@@ -532,7 +532,7 @@
 }
 - (void)deleteImageIdByNet
 {
-    [NetManager deleteImagesWithURLStr:BaseDeleteImageUrl ImageName:deleteImageIdArray TheController:self Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+    [NetManager deleteImagesWithURLStr:BaseDeleteImageUrl ImageName:deleteImageIdArray TheController:self  Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     }];
@@ -908,7 +908,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
        // [hud hide:YES];
         hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HUD_isok"]];
         hud.labelText = @"保存成功";

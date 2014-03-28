@@ -10,7 +10,7 @@
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "FindPageViewController.h"
+#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "FindPasswordViewController.h"
@@ -165,7 +165,7 @@
     [body setObject:@"101" forKey:@"method"];
 
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
 
         [[NSUserDefaults standardUserDefaults] setValue:phoneTextField.text forKey:PhoneNumKey];
@@ -219,7 +219,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
 
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         

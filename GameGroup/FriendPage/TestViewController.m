@@ -382,7 +382,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         //将获取到的数据转换成NSData类型保存到nsuserdefaults中
         NSMutableData *data= [[NSMutableData alloc]init];
@@ -750,7 +750,7 @@
     for (int i = 0; i < [charactersArr count]; i++) {
         NSDictionary* characterDic = [charactersArr objectAtIndex:i];
         NSString* realm = [KISDictionaryHaveKey(characterDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(characterDic, @"raceObj"), @"sidename") : @"";
-        if ([KISDictionaryHaveKey(characterDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
+        if ([KISDictionaryHaveKey(characterDic, @"failedmsg")intValue ]==404)//角色不存在
         {
             UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:@"0" auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
@@ -1057,7 +1057,7 @@
     [self.view bringSubviewToFront:hud];
     [hud1 show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud1 hide:YES];
         addFriendBtn.userInteractionEnabled = YES;
@@ -1184,7 +1184,7 @@
             
             [hud show:YES];
             
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 [hud hide:YES];
                 addFriendBtn.userInteractionEnabled = YES;
                 delFriendBtn.userInteractionEnabled = YES;
@@ -1252,7 +1252,7 @@
             
             [hud show:YES];
             
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 [hud hide:YES];
                 addFriendBtn.userInteractionEnabled = YES;
                 delFriendBtn.userInteractionEnabled = YES;
@@ -1301,7 +1301,7 @@
             [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 [hud hide:YES];
                 [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
             } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1364,7 +1364,7 @@
     
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"dicresponseObject%@",responseObject);
         [hud2 hide:YES];
         addFriendBtn.userInteractionEnabled = YES;

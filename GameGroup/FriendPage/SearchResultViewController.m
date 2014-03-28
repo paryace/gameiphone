@@ -117,7 +117,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
             if (m_pageNum ==0) {
                 refreshView.pullUpDelegate =self;
@@ -131,7 +131,7 @@
 
             }
         
-        
+
         if ([KISDictionaryHaveKey(responseObject, @"totalResults")integerValue]<=m_tabelData.count&&m_pageNum!=0) {
             refreshView.pullUpDelegate =nil;
             [refreshView stopLoading:YES];

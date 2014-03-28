@@ -14,49 +14,54 @@
 #import "DDTTYLogger.h"
 #import "GetDataAfterManager.h"
 #import "BaseViewController.h"
-
+#import "ReconnectMessage.h"
 #import "AddAddressBookViewController.h"
+#import "SendAckListener.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-//    [NSThread sleepForTimeInterval:3.0];//开机图停留秒数
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-//    AddAddressBookViewController * add = [[AddAddressBookViewController alloc]init];
-//    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:add];
-//    self.window.rootViewController =nav;
-//    [self.window makeKeyAndVisible];
-//    
-//    return YES;
+
     // Override point for customization after application launch.
     self.startViewController = [[StartViewController alloc] init];
     
     self.window.rootViewController = self.startViewController;
     
+    //网络变化
+    self.reach = [Reachability reachabilityForInternetConnection];
+    [_reach startNotifier];
+    
+    if ([[TempData sharedInstance] isHaveLogin] ) {
+        [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
+        NSLog(@"getMyUserID: %@", [DataStoreManager getMyUserID]);
+        GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
+        [SendAckListener singleton];
+        self.xmppHelper=[[XMPPHelper alloc] init];
+        self.xmppHelper.chatDelegate = getDataAfterManager;
+        self.xmppHelper.addReqDelegate = getDataAfterManager;
+        self.xmppHelper.commentDelegate = getDataAfterManager;
+        self.xmppHelper.deletePersonDelegate = getDataAfterManager;
+        self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
+        self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
+        [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
+        [[ReconnectMessage singleton] getChatServer];
+    }
+    
     
     
 //    [DDLog addLogger:[DDTTYLogger sharedInstance]];//打印xmpp输出
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    self.xmppHelper=[[XMPPHelper alloc] init];
-
+    
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     [MobClick startWithAppkey:@"52caacec56240b18e2035237"];
 //    [MobClick startWithAppkey:@"xxxxxxxxxxxxxxx" reportPolicy:BATCH   channelId:@""];
-    
-    
-    [GetDataAfterManager shareManageCommon];
-    
-    //网络变化
-//    Reachability * reach = [Reachability reachabilityForInternetConnection];
-  
-    self.reach = [Reachability reachabilityForInternetConnection];
-    [_reach startNotifier];
-    
+
     [self.window makeKeyAndVisible];
-    
+
     return YES;
 }
 

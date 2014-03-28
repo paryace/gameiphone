@@ -104,7 +104,7 @@
     if (!m_hostInfo) {
         [hud show:YES];
     }
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"responseObject%@", responseObject);
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -437,7 +437,7 @@
             cell.gameImg.hidden = NO;
             cell.pveLabel.hidden = NO;
             NSDictionary* tempDic = [characterArray objectAtIndex:indexPath.row];
-            if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
+            if ([KISDictionaryHaveKey(tempDic, @"failedmsg")intValue] ==404)//角色不存在
             {
                 cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
                 cell.realmLabel.text = @"角色不存在";
@@ -561,7 +561,7 @@
                 
                 [hud show:YES];
                 
-                [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     [hud hide:YES];
                     NSLog(@"新角色信息：：：%@", responseObject);
                     if ([responseObject isKindOfClass:[NSDictionary class]]) {

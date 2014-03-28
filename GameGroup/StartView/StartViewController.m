@@ -11,7 +11,7 @@
 #import "IntroduceViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "FindPageViewController.h"
+#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "NewFindViewController.h"
 
@@ -117,7 +117,7 @@
     [postDict setObject:paramsDic forKey:@"params"];
     [postDict setObject:@"142" forKey:@"method"];
   
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -229,7 +229,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         

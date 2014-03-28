@@ -70,7 +70,7 @@
     [postDict setObject:paramsDic forKey:@"params"];
     [postDict setObject:@"142" forKey:@"method"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide: YES];
         if (![responseObject isKindOfClass:[NSDictionary class]]) {
             return ;
@@ -317,7 +317,7 @@
 //    [body setObject:@"D8AE3A8AE4634E799029AF2BFB5B13DD" forKey:@"token"];
     
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
 
         if (![responseObject isKindOfClass:[NSDictionary class]]) {

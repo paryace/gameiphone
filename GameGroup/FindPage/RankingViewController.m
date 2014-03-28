@@ -792,7 +792,7 @@
 
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
        // [hud hide:YES];
         
         [loginActivity stopAnimating];
@@ -862,7 +862,7 @@
     
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [loginActivity stopAnimating];
         [loginActivity removeFromSuperview];
@@ -872,12 +872,12 @@
             NSMutableArray *array = [NSMutableArray array];
             [array addObjectsFromArray:responseObject];
 
-            for (int i = 0; i<array.count; i++) {
-                if ([KISDictionaryHaveKey([array objectAtIndex:i], @"characterid") isEqualToString:self.characterid]&&[KISDictionaryHaveKey([array objectAtIndex:i], @"ranking")intValue]>15) {
-                    
-                   // [array insertObject:@"1111" atIndex:10];
-                }
-            }
+//            for (int i = 0; i<array.count; i++) {
+//                if ([KISDictionaryHaveKey([array objectAtIndex:i], @"characterid")intValue] ==[self.characterid intValue]&&[KISDictionaryHaveKey([array objectAtIndex:i], @"ranking")intValue]>15) {
+//                    
+//                   // [array insertObject:@"1111" atIndex:10];
+//                }
+//            }
             
             
             
@@ -930,7 +930,7 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"130" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // [hud hide:YES];
         
         [loginActivity stopAnimating];
@@ -1072,7 +1072,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
        // [hud hide:YES];
         
         [loginActivity stopAnimating];
@@ -1165,7 +1165,7 @@
     [postDict setObject:@"130" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         //[hud hide:YES];
         
         [loginActivity stopAnimating];

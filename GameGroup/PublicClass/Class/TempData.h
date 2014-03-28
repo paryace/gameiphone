@@ -31,4 +31,5 @@
 -(double)returnLat;//经度
 -(double)returnLon;//纬度
 -(NSString*)getMyUserID;
+- (BOOL)isHaveLogin;
 @end

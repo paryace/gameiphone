@@ -157,7 +157,7 @@
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"IOSURL"]==nil) {
                     [self showAlertViewWithTitle:nil message:@"您已经是最新版本了" buttonTitle:@"确定"];
                 }else{
-                    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+                    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
                     alert.tag = 111;
                     [alert show];
                 }
@@ -227,13 +227,14 @@
             [self loginOutNet];
         }else if(111==alertView.tag)
         {
+            if(buttonIndex==1){
             NSURL *url = [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"IOSURL"]];
             if([[UIApplication sharedApplication] canOpenURL:url])
             {
                 [[UIApplication sharedApplication] openURL:url];
             }
+            }
         }
-        
     }
 }
 
@@ -252,7 +253,7 @@
     //    [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"102" forKey:@"method"];//退出登陆
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"layoutresponseObject%@", responseObject);
         // [GameCommon loginOut];//注销
         

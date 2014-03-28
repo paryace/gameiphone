@@ -20,7 +20,7 @@
 
 @interface GetDataAfterManager : NSObject
 
-@property(nonatomic,strong)AppDelegate* appDel;
+@property(nonatomic,strong)XMPPHelper* xmppHelper;
 
 + (GetDataAfterManager*)shareManageCommon;
 

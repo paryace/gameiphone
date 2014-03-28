@@ -147,7 +147,7 @@
         hud.labelText = @"上传图片中...";
         [hud show:YES];
 
-        [NetManager uploadImages:imageArray WithURLStr:BaseUploadImageUrl ImageName:nameArray TheController:self Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传图片
+        [NetManager uploadImages:imageArray WithURLStr:BaseUploadImageUrl ImageName:nameArray TheController:self   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传图片
             [hud hide:YES];
 
             self.imageId = [[NSMutableString alloc]init];
@@ -186,7 +186,7 @@
     hud.labelText = @"发表中...";
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
 //            [self addNewNewsToStore:responseObject];

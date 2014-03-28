@@ -70,10 +70,12 @@
     self.fail=Fail;
     if (![self.xmppStream isDisconnected]) {
         return YES;
+        NSLog(@"连接不成功");
     }
     
     if (theaccount == nil) {
         return NO;
+         NSLog(@"连接不成功");
     }
     
     [self.xmppStream setMyJID:[XMPPJID jidWithString:theaccount]];
@@ -372,7 +374,8 @@
             }
             
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            
+            [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
+
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
@@ -408,6 +411,8 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             title = KISDictionaryHaveKey([title JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
+            
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
         }
@@ -420,31 +425,11 @@
             if ([arr isKindOfClass:[NSArray class]]) {
                 if ([arr count] != 0) {
                     NSMutableDictionary* dic = [arr objectAtIndex:0];
-//                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"1"]) {
-//                        dis = [NSString stringWithFormat:@"获得通讯录好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"2"]) {
-//                        dis = [NSString stringWithFormat:@"获得明星好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"3"]) {
-//                        dis = [NSString stringWithFormat:@"获得公会好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"4"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"同服务器激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"5"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"服务器达人%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"6"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
                     dis = [NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(dic, @"recommendMsg") ,KISDictionaryHaveKey(dic, @"nickname")];
                 }
             }
             [dict setObject:dis forKey:@"disStr"];
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
         }
@@ -469,6 +454,7 @@
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])

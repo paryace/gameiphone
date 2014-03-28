@@ -46,13 +46,32 @@
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
     [self readAllnickNameAndImage];
     [self.dataArray removeAllObjects];
-    for (NSDictionary *dic in array) {
-        if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"] containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
-            if (![KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"sayHello"]) {
-                [self.dataArray addObject:dic];
-            }
+    
+    NSMutableArray *unarray = [NSMutableArray array];
+    
+    unarray = [[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+    
+    for (int i = 0; i <array.count; i++) {
+        if (![unarray containsObject:[[array objectAtIndex:i] sender]]&&[[[array objectAtIndex:i] msgType]isEqualToString:@"normalchat"]) {
+            NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] sender] forKey:@"sender"];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] msgContent] forKey:@"msg"];
+            NSDate * tt = [[array objectAtIndex:i] sendTime];
+            NSTimeInterval uu = [tt timeIntervalSince1970];
+            [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] msgType] forKey:@"msgType"];
+            [self.dataArray addObject:thumbMsgsDict];
+
         }
     }
+//    for (NSDictionary *dic in array) {
+//        if (![[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"] containsObject:KISDictionaryHaveKey(dic, @"sender")]&&[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
+//            if (![KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"sayHello"]) {
+//                [self.dataArray addObject:dic];
+//            }
+//        }
+//    }
     [self readAllnickNameAndImage];
     [m_myTableView reloadData];
 }

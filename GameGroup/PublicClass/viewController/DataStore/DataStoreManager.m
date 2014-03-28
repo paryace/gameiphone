@@ -343,7 +343,7 @@
     if ([userid isEqualToString:@"1"]) {
         return @"有新的角色动态";
     }
-    if ([userid isEqualToString:@"1234567"]) {
+    if ([userid isEqualToString:@"1234567wxxxxxxxxx"]) {
         return @"有新的打招呼信息";
     }
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",userid];
@@ -613,29 +613,28 @@
 
 +(NSArray *)qureyAllThumbMessages
 {
-    NSMutableArray * allMsgArray = [NSMutableArray array];
-    NSArray * thumbCommonMsgsArray = [DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-    for (int i = 0; i<thumbCommonMsgsArray.count; i++) {
-        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderNickname] forKey:@"nickname"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-        NSDate * tt = [[thumbCommonMsgsArray objectAtIndex:i] sendTime];
-        NSTimeInterval uu = [tt timeIntervalSince1970];
-        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
-
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgType] forKey:@"msgType"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] status]?[[thumbCommonMsgsArray objectAtIndex:i] status]:@"" forKey:@"status"];
-
-        //添加去重复  不知道管不管事---标记
-        if ( [[[thumbCommonMsgsArray objectAtIndex:i]messageuuid] isEqualToString:[[thumbCommonMsgsArray objectAtIndex:i]messageuuid]]) {
-            NSLog(@"[thumbCommonMsgsArray objectAtIndex:i]messageuuid]%@",[[thumbCommonMsgsArray objectAtIndex:i]messageuuid]);
-        }
-        [allMsgArray addObject:thumbMsgsDict];
-    }
-    NSLog(@"allMsgArray%@",allMsgArray);
-    return allMsgArray;  
+    return (NSMutableArray *)[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+//    NSMutableArray * allMsgArray = [NSMutableArray array];
+//    NSArray * thumbCommonMsgsArray = [DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+//    for (int i = 0; i<thumbCommonMsgsArray.count; i++) {
+//        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
+//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
+////        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderNickname] forKey:@"nickname"];
+//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
+//        NSDate * tt = [[thumbCommonMsgsArray objectAtIndex:i] sendTime];
+//        NSTimeInterval uu = [tt timeIntervalSince1970];
+//        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
+//
+//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
+//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgType] forKey:@"msgType"];
+//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] status]?[[thumbCommonMsgsArray objectAtIndex:i] status]:@"" forKey:@"status"];
+//        
+//        
+//        
+//        [allMsgArray addObject:thumbMsgsDict];
+//    }
+//    NSLog(@"allMsgArray%@",allMsgArray);
+//    return allMsgArray;  
 }
 
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
@@ -934,10 +933,10 @@
     else
         return @"no";
 }
-+(void)deleteAttentionWithUserName:(NSString*)username
++(void)deleteAttentionWithUserId:(NSString*)userId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",username];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
         DSAttentions * attention = [DSAttentions MR_findFirstWithPredicate:predicate];
         if (attention) {
             [attention MR_deleteInContext:localContext];
@@ -947,10 +946,10 @@
     }];
 }
 
-+ (BOOL)ifIsAttentionWithUserName:(NSString*)userName
++ (BOOL)ifIsAttentionWithUserId:(NSString*)userId
 {
-    if (userName) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
+    if (userId) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
         DSAttentions * dFriends = [DSAttentions MR_findFirstWithPredicate:predicate];
         if (dFriends) {
             return YES;

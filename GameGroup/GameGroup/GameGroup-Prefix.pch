@@ -103,6 +103,12 @@
 
 #define kLastVersion @"lastVersion"//上个版本的版本号 因1.0是用username登陆 后面版本是userid 必须清掉聊天消息和关注表
 
+#define receiveregularMsg @"wx_receiveregularMsg"//接收普通聊天信息
+#define receiverFriendRecommended @"wx_receiverFriendRecommended"//接收好友推荐
+#define receiverNewsMsg @"wx_receiverNewsMsg"//接收新闻消息
+
+#define receiverOtherChrarterMsg @"wx_receiverOtherChrarterMsg"//关于角色动态消息
+
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])
 #define RootDocPath ([NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0])
