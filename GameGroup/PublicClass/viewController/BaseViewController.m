@@ -274,16 +274,6 @@
     return UIStatusBarStyleLightContent;
 }
 
-#pragma mark 是否登陆
-- (BOOL)isHaveLogin
-{
-//    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] && ![[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] isEqualToString:@""]) {
-        return YES;
-    }
-    return NO;
-}
-
 #pragma mark 手势
 - (void)tapTopViewClick:(id)sender
 {
