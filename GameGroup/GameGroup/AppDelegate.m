@@ -46,7 +46,9 @@
         self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
         self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
         [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
-        [[ReconnectMessage singleton] getChatServer];
+        [[ReconnectMessage singleton]sendDeviceToken];
+        [[ReconnectMessage singleton]getMyUserInfoFromNet];
+        
     }
     
     
@@ -85,7 +87,9 @@
     //它是类里自带的方法,这个方法得说下，很多人都不知道有什么用，它一般在整个应用程序加载时执行，挂起进入后也会执行，所以很多时候都会使用到，将小红圈清空
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_BecomeActive" object:nil userInfo:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-    
+    if(![self.xmppHelper ifXMPPConnected]){
+        [[ReconnectMessage singleton]getChatServer];
+    }
 }
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary *)userInfo

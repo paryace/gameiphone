@@ -18,7 +18,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     if (self) {
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
-       // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logInToChatServer) name:@"Notification_BecomeActive" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getChatServer) name:@"xmppReconnect_wx_xx" object:nil];
     }
     return self;
 }
@@ -34,6 +34,47 @@ static ReconnectMessage *my_reconectMessage = NULL;
 	}
 	return my_reconectMessage;
 }
+- (void)getMyUserInfoFromNet
+{
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
+    [paramDict setObject:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] forKey:@"username"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"106" forKey:@"method"];
+    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [DataStoreManager saveUserInfo:KISDictionaryHaveKey(responseObject, @"user")];
+        [self getChatServer];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+}
+
+
+
+- (void)sendDeviceToken
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary* locationDict = [NSMutableDictionary dictionaryWithCapacity:1];
+    [locationDict setObject:[GameCommon shareGameCommon].deviceToken forKey:@"deviceToken"];
+    [locationDict setObject:appType forKey:@"appType"];
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [postDict setObject:@"140" forKey:@"method"];
+    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:locationDict forKey:@"params"];
+    
+    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"deviceToken fail");
+    }];
+}
+
 
 
 #pragma mark 进入程序网络变化

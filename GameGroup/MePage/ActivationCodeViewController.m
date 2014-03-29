@@ -202,6 +202,8 @@
 
 -(void)goOnUploadWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId
 {
+    hud.labelText = @"提交中";
+    [hud show:YES];
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -209,7 +211,9 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:dic forKey:@"params"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
+        sleep(1);
+        hud.labelText = @"提交成功";
+        [hud hide:YES afterDelay:2];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

@@ -84,4 +84,5 @@ typedef void (^CallBackBlockErr) (NSError *result);
 -(void)getIt;
 -(void)disconnect;
 -(BOOL)sendMessage:(NSXMLElement *)message;
+- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId;
 @end

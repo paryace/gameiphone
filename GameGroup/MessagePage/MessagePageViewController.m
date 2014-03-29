@@ -19,7 +19,7 @@
 #import "FriendRecommendViewController.h"
 #import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
-
+#import "ReconnectMessage.h"
 //#import "Reachability.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
@@ -102,6 +102,7 @@
                 self.titleLabel.text = @"消息";
             }else{
                 self.titleLabel.text = @"消息(未连接)";
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"xmppReconnect_wx_xx" object:nil];
             }
         }
         else
@@ -234,7 +235,6 @@
 {
     [self displayMsgsForDefaultView];
     //[self conversionMsg:notification.userInfo];
-
 }
 
 #pragma mark 收到验证好友请求
@@ -768,11 +768,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (tableView.editing) {
-        NSLog(@"11111");
-        [deleteDic setObject:indexPath forKey:[allMsgArray objectAtIndex:indexPath.row]];
-        
-    }else{
+//    if (tableView.editing) {
+//        NSLog(@"11111");
+//        [deleteDic setObject:indexPath forKey:[allMsgArray objectAtIndex:indexPath.row]];
+//        
+//    }else{
 
     [m_messageTable deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -850,16 +850,16 @@
     [self.navigationController pushViewController:kkchat animated:YES];
     kkchat.msgDelegate = self;
     [searchDisplay setActive:NO animated:NO];
-    }
+    //}
 }
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (tableView.editing) {
-        NSLog(@"2222222");
-        [deleteDic removeObjectForKey:[allMsgArray objectAtIndex:indexPath.row]];
-    }
-    
-}
+//- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
+//    if (tableView.editing) {
+//        NSLog(@"2222222");
+//        [deleteDic removeObjectForKey:[allMsgArray objectAtIndex:indexPath.row]];
+//    }
+//    
+//}
 
 
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
@@ -919,10 +919,10 @@
     return YES;
 }
 
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
-}
+//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
+//}
 
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -1009,7 +1009,11 @@
         //        [self parseAttentionList:KISDictionaryHaveKey(responseObject, @"2")];
         //
         //        [self parseFansList:(KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users"))];
+        
+        
         [self parseContentListWithData:responseObject];
+        
+
         
         //  [self getFriendId:responseObject];
         
@@ -1106,12 +1110,20 @@
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
                     //                    [dict setObject:key forKey:@"nameindex"];
                     [DataStoreManager saveUserInfo:dict];
+                    if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
+                        [DataStoreManager saveAllUserWithUserManagerList:dict];
+                    }
+
                 }
             }
         }
         else if([friendsList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in friendsList) {
                 [DataStoreManager saveUserInfo:dict];
+                if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
+                    [DataStoreManager saveAllUserWithUserManagerList:dict];
+                }
+
             }
         }
         //关注
@@ -1121,6 +1133,10 @@
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
                     //                    [dict setObject:key forKey:@"nameindex"];
                     [DataStoreManager saveUserAttentionInfo:dict];
+                    if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
+                        [DataStoreManager saveAllUserWithUserManagerList:dict];
+                    }
+
                 }
             }
         }

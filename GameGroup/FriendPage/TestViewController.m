@@ -384,6 +384,10 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
+        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
+            [DataStoreManager saveAllUserWithUserManagerList:responseObject];
+        }
+
         //将获取到的数据转换成NSData类型保存到nsuserdefaults中
         NSMutableData *data= [[NSMutableData alloc]init];
         NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];

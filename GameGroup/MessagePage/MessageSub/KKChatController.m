@@ -524,7 +524,7 @@
 {
 	if(textField == self.messageTextField)
 	{
-        //		[self moveViewUp];
+        
 	}
 }
 

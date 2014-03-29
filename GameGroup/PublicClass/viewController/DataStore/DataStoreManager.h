@@ -29,6 +29,7 @@
 #import "DSOtherMsgs.h"
 
 #import "DSNewsMsgs.h"//新闻
+#import "DSuserManager.h"
 
 @interface DataStoreManager : NSObject
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
@@ -60,6 +61,16 @@
 +(NSArray *)qureyAllNewsMessage;
 +(NSArray *)queryAllReceivedHellos;
 +(NSDictionary *)qureyLastReceivedHello;
+
+//储存所有看到过的用户信息
++(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo;
++(NSMutableDictionary *)queryallUserManagerInfo;
++(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
++(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
++(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
++(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
+
+
 
 //存储“好友”的关注人列表
 +(void)saveUserAttentionWithFriendList:(NSString*)userid;//从好友表到关注表
