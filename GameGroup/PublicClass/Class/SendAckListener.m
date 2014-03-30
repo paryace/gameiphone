@@ -48,7 +48,7 @@ static SendAckListener *my_SendAckListener = NULL;
     [mes addAttributeWithName:@"type" stringValue:@"normal"];
     
     //发送给谁
-    [mes addAttributeWithName:@"to" stringValue:[sender stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+    [mes addAttributeWithName:@"to" stringValue:[messageContent objectForKey:@"sender"]];
     //由谁发送
     [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     

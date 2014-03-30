@@ -20,6 +20,7 @@
 #import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
+#import "UserManager.h"
 //#import "Reachability.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
@@ -30,14 +31,13 @@
     UISearchBar * searchBar;
     UISearchDisplayController * searchDisplay;
     
-    
-    
+    NSMutableArray *allsayHelloImageArray;
+    NSMutableArray *allsayHellonickNameArray;
     SystemSoundID soundID;
     
     NSMutableArray * newReceivedMsgArray;//新接收的消息
     NSMutableArray * allMsgArray;
     
-    NSMutableArray * pyChineseArray;
     NSArray * searchResultArray;
     
     NSMutableArray * allMsgUnreadArray;
@@ -81,7 +81,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (![self isHaveLogin]) {
+    if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
         IntroduceViewController* vc = [[IntroduceViewController alloc] init];
@@ -144,7 +144,7 @@
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectFail:) name:@"connectFail" object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];
     
     
    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
@@ -162,15 +162,14 @@
     newReceivedMsgArray = [NSMutableArray array];
     allNickNameArray = [NSMutableArray array];
     allHeadImgArray = [NSMutableArray array];
-    pyChineseArray = [NSMutableArray array];
     searchResultArray = [NSArray array];
     allSayHelloArray = [NSMutableArray array];
     sayhellocoArray = [NSMutableArray array];
     sayHelloNickNameArray = [NSMutableArray array];
     deleteDic = [NSMutableDictionary dictionary];
     dellArray = [NSMutableArray array];
-    
-    
+    allsayHelloImageArray =[NSMutableArray array];
+    allsayHellonickNameArray =[NSMutableArray array];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
@@ -475,7 +474,7 @@
     if (sayhellocoArray.count!=0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         [dic setValue:@"1234567wxxxxxxxxx" forKeyPath:@"sender"];
-        [dic setValue:[[sayhellocoArray lastObject] msgContent] forKey:@"msg"];
+        [dic setValue:[[sayhellocoArray objectAtIndex:0] msgContent] forKey:@"msg"];
         [dic setValue:@"sayHi" forKey:@"msgType"];
         NSDate * tt = [[sayhellocoArray objectAtIndex:0] sendTime];
         NSTimeInterval uu = [tt timeIntervalSince1970];
@@ -514,15 +513,25 @@
 {
     NSMutableArray * nickName = [NSMutableArray array];
     NSMutableArray * headimg = [NSMutableArray array];
-    NSMutableArray * pinyin = [NSMutableArray array];
+    NSMutableArray *sayHelloImg = [NSMutableArray array];
+    NSMutableArray *sayHellonickName = [NSMutableArray array];
     for (int i = 0; i<allMsgArray.count; i++) {
         NSString * nickName2 = [DataStoreManager queryMsgRemarkNameForUser:[[allMsgArray objectAtIndex:i] objectForKey:@"sender"]];
         [nickName addObject:nickName2?nickName2 : @""];
         [headimg addObject:[DataStoreManager queryMsgHeadImageForUser:[[allMsgArray objectAtIndex:i] objectForKey:@"sender"]]];
     }
+    for (int i = 0; i<sayhellocoArray.count; i++) {
+        NSString * nickName2 = [DataStoreManager queryMsgRemarkNameForUser:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]];
+        [sayHellonickName addObject:nickName2?nickName2 : @""];
+        [sayHelloImg addObject:[DataStoreManager queryMsgHeadImageForUser:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]]];
+    }
     allNickNameArray = nickName;
     allHeadImgArray = headimg;
-    pyChineseArray = pinyin;
+    allsayHelloImageArray = sayHelloImg;
+    allsayHellonickNameArray = sayHellonickName;
+    
+    
+    
 }
 
 -(void)readAllnickName
@@ -717,13 +726,9 @@
         if ([[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
             theUrl =nil;
         }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[allHeadImgArray objectAtIndex:indexPath.row]]];
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[allHeadImgArray objectAtIndex:indexPath.row]]]];
         }
-        //            if ([[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
-        //                cell.headImageV.imageURL = nil;
-        //            }else{
         cell.headImageV.imageURL = theUrl;
-        //  }
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
         
     }
@@ -784,6 +789,9 @@
         // if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"normalchat"]&&![allSayHelloArray containsObject:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"]])
     if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHi"]) {
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
+        friq.personCount = sayhellocoArray.count;
+        friq.nickNameArray = allsayHellonickNameArray;
+        friq.imgArray =allsayHelloImageArray;
         [self.navigationController pushViewController:friq animated:YES];
         [searchDisplay setActive:NO animated:NO];
         [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
@@ -940,7 +948,9 @@
         else{
             if ([[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"sender"]isEqualToString:@"1234567wxxxxxxxxx"])
             {
-                for (NSDictionary *dic in sayhellocoArray) {
+                for (int i =0;i<sayhellocoArray.count;i++) {
+                    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                    [dic setObject:[[sayhellocoArray objectAtIndex:i]sender] forKey:@"sender"];
                     [DataStoreManager deleteThumbMsgWithSender:KISDictionaryHaveKey(dic, @"sender")];
                 }
             }
@@ -1230,6 +1240,10 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+}
+
+-(void) onUserUpdate:(NSNotification*)notification{
+    [self displayMsgsForDefaultView];
 }
 
 @end

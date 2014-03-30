@@ -10,6 +10,7 @@
 #import "PersonTableCell.h"
 #import "LocationManager.h"
 #import "TestViewController.h"
+#import "MJRefresh.h"
 @interface SearchResultViewController ()
 {
     UILabel*            m_titleLabel;
@@ -18,10 +19,10 @@
     NSMutableArray*     m_tabelData;
     
     
-    NSInteger           m_pageNum;
+    int            m_pageNum;
     
-    PullUpRefreshView      *refreshView;
-    SRRefreshView   *_slimeView;
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
     NSMutableArray  *m_imgArray;
 }
 
@@ -65,41 +66,16 @@
     m_myTableView.delegate = self;
     [self.view addSubview:m_myTableView];
     
-    _slimeView = [[SRRefreshView alloc] init];
-    _slimeView.delegate = self;
-    _slimeView.upInset = 0;
-    _slimeView.slimeMissWhenGoingBack = NO;
-    _slimeView.slime.bodyColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-    _slimeView.slime.skinColor = [UIColor whiteColor];
-    _slimeView.slime.lineWith = 1;
-    _slimeView.slime.shadowBlur = 4;
-    _slimeView.slime.shadowColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-    [m_myTableView addSubview:_slimeView];
-    
-    refreshView = [[PullUpRefreshView alloc] initWithFrame:CGRectMake(0, kScreenHeigth - startX-(KISHighVersion_7?0:20), 320, REFRESH_HEADER_HEIGHT)];//上拉加载
-    [m_myTableView addSubview:refreshView];
-    refreshView.pullUpDelegate = self;
-    refreshView.myScrollView = m_myTableView;
-    [refreshView stopLoading:YES];
-    [refreshView setRefreshViewFrame];
-
    
     m_pageNum = 0;
 
-//    if ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)){}// 是否开启了本应用的定位服务
-//    
-//    [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-//        [[TempData sharedInstance] setLat:lat Lon:lon];
-//        
-//        [self getNearByDataByNet];
-//    } Failure:^{
-//        [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-//    }];
-
+    [self addHeader];
+    [self addFooter];
+    [self getNearByDataByNet];
     hud = [[MBProgressHUD alloc]initWithView: self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
-     [self getNearByDataByNet];
+    
 }
 
 - (void)getNearByDataByNet
@@ -109,10 +85,10 @@
     NSMutableDictionary *postDict = [[NSMutableDictionary alloc]init];
     
     [paramDict setObject:self.nickNameList forKey:@"nickname"];
+    [paramDict setObject:[NSString stringWithFormat:@"%d", m_pageNum] forKey:@"pageIndex"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon]getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"150" forKey:@"method"];
-    [postDict setObject:[NSString stringWithFormat:@"%d", m_pageNum] forKey:@"pageIndex"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     [hud show:YES];
@@ -120,31 +96,22 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
             if (m_pageNum ==0) {
-                refreshView.pullUpDelegate =self;
-                refreshView.hidden = NO;
+                m_titleLabel.text = [NSString stringWithFormat:@"查询结果(%@)",KISDictionaryHaveKey(responseObject,@"totalResults")];
                 [m_tabelData removeAllObjects];
                 [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
             }
             else{
                 
-                [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+                [m_tabelData addObjectsFromArray:responseObject];
 
             }
         
 
-        if ([KISDictionaryHaveKey(responseObject, @"totalResults")integerValue]<=m_tabelData.count&&m_pageNum!=0) {
-            refreshView.pullUpDelegate =nil;
-            [refreshView stopLoading:YES];
-            NSLog(@"11");
-            return;
-        }
         
         [m_myTableView reloadData];
-        [refreshView stopLoading:NO];
         m_pageNum ++;
-        [refreshView setRefreshViewFrame];
-        [_slimeView endRefresh];
-
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
 
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -159,9 +126,8 @@
             }
         }
         [hud hide:YES];
-        [_slimeView endRefresh];
-        [refreshView stopLoading:YES];
-        [refreshView setRefreshViewFrame];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
 
 
     }];
@@ -197,11 +163,6 @@
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
     cell.gameImg_one.image = KUIImage(@"wow");
     
-    //    cell.sexImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
-    
-    //    cell.sexBg.backgroundColor = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? kColorWithRGB(33, 193, 250, 1.0) : kColorWithRGB(238, 100, 196, 1.0);
-    
-    //    cell.ageLabel.text = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
@@ -281,58 +242,34 @@
     NSLog(@"age%@ sex%@",VC.ageStr,VC.sexStr);
     [self.navigationController pushViewController:VC animated:YES];
 }
-#pragma mark  scrollView  delegate
-#pragma mark  scrollView  delegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+#pragma mark --加载刷新
+- (void)addFooter
 {
-    if (m_myTableView.contentSize.height < m_myTableView.frame.size.height) {
-        refreshView.viewMaxY = 0;
-    }
-    else
-        refreshView.viewMaxY = m_myTableView.contentSize.height - m_myTableView.frame.size.height;
-    [refreshView viewdidScroll:scrollView];
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    footer.scrollView = m_myTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getNearByDataByNet];
+        
+    };
+    m_footer = footer;
     
-    [_slimeView scrollViewDidScroll];
 }
-
-#pragma mark pull up refresh
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+- (void)addHeader
 {
-    if(scrollView == m_myTableView)
-    {
-        [refreshView viewWillBeginDragging:scrollView];
-    }
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    if(scrollView == m_myTableView)
-    {
-        [refreshView didEndDragging:scrollView];
-        [_slimeView scrollViewDidEndDraging];
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    header.scrollView = m_myTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_pageNum = 0;
+        [self getNearByDataByNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
         
-    }
-}
-//上拉加载
-- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
-{
-    NSLog(@"start");
-    [self getNearByDataByNet];
-}
-
-#pragma mark - slimeRefresh delegate
-//刷新
-- (void)slimeRefreshStartRefresh:(SRRefreshView *)refreshView
-{
-    m_pageNum = 0;
-    [self getNearByDataByNet];
-}
-
--(void)endRefresh
-{
-    [_slimeView endRefreshFinish:^{
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
-    }];
+    };
+    // [header beginRefreshing];
+    m_header = header;
 }
 
 - (void)didReceiveMemoryWarning

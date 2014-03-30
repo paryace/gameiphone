@@ -167,7 +167,7 @@
         <attribute name="receivedHellosUnread" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="subscribedUnread" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="DSuserManager" representedClassName="DSuserManager" syncable="YES">
+    <entity name="DSuser" representedClassName="DSuserManager" syncable="YES">
         <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="action" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -210,7 +210,7 @@
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="163"/>
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="223"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
-        <element name="DSuserManager" positionX="-288" positionY="-196" width="128" height="403"/>
+        <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
         <element name="Entity" positionX="-288" positionY="423" width="128" height="43"/>
     </elements>
 </model>

@@ -7,6 +7,6 @@
 //
 
 #import "BaseViewController.h"
-@interface NearByViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
+@interface NearByViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIAlertViewDelegate>
 @property (strong,nonatomic) AppDelegate * appDel;
 @end

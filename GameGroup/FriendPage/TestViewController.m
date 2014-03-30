@@ -15,7 +15,7 @@
 #import "NewsViewController.h"//动态界面
 #import "AppDelegate.h"
 #import "CharacterDetailsViewController.h"
-
+#import "UserManager.h"
 @interface TestViewController ()
 {
     UILabel*        m_titleLabel;
@@ -77,31 +77,132 @@
     else//没有详情 请求
     {
 
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]!=nil) {//有值 查找用户
-        
-         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
-        NSMutableData *data= [NSMutableData data];
-        NSDictionary *dic = [NSDictionary dictionary];
-        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-       dic = [unarchiver decodeObjectForKey: @"getDatat"];
-        [unarchiver finishDecoding];
-        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
-        
-        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
-        [self buildMainView];
-        [self setBottomView];
-        
-        [self getUserInfoByNet];
-    }
-    else//没有详情 请求
-    {
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]!=nil) {//有值 查找用户
+//        
+//         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
+//        NSMutableData *data= [NSMutableData data];
+//        NSDictionary *dic = [NSDictionary dictionary];
+//        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+//        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+//       dic = [unarchiver decodeObjectForKey: @"getDatat"];
+//        [unarchiver finishDecoding];
+//        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
+//        
+//        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
+//        [self buildMainView];
+//        [self setBottomView];
+//        
+//        [[UserManager singleton]requestUserFromNet:self.userId];
+//    }
+//    else//没有详情 请求
+//    {
         [self buildInitialize];
         
-        [self getUserInfoByNet];
-    }
+        [[UserManager singleton]requestUserFromNet:self.userId];
+//    }
     }
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
+
+    
+}
+
+-(void)getInfoFromUserManager:(NSNotification *)notification
+{
+    NSDictionary *dictionary = notification.userInfo;
+    //将获取到的数据转换成NSData类型保存到nsuserdefaults中
+    
+    NSMutableData *data= [[NSMutableData alloc]init];
+    
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    
+    [archiver encodeObject:dictionary forKey: @"getDatat"];
+    
+    [archiver finishEncoding];
+    
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+    
+    NSArray *views = [self.view subviews];
+    
+    for(UIView* view in views)
+    {
+        [view removeFromSuperview];
+    }
+    self.hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+    
+    m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
+    
+    NSLog(@"m_titlelabel%@",m_titleLabel.text);
+    
+    if ([self.hostInfo.relation isEqualToString:@"1"]) {
+        
+        self.viewType = VIEW_TYPE_FriendPage1;
+        
+        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
+            
+            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
+            
+            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
+            
+            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+            
+            [DataStoreManager saveUserInfo:dic];
+        }
+        
+        else
+            [DataStoreManager saveUserInfo:self.hostInfo.infoDic];
+    }
+    
+    else if([self.hostInfo.relation isEqualToString:@"2"]) {
+        
+        self.viewType = VIEW_TYPE_AttentionPage1;
+        
+        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
+            
+            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
+            
+            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
+            
+            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+            [DataStoreManager saveUserAttentionInfo:dic];
+        }
+        else
+            [DataStoreManager saveUserAttentionInfo:self.hostInfo.infoDic];
+    }
+    
+    else if([self.hostInfo.relation isEqualToString:@"3"]) {
+        
+        self.viewType = VIEW_TYPE_FansPage1;
+        
+        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
+            
+            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
+            
+            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
+            
+            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+            [DataStoreManager saveUserFansInfo:dic];
+        }
+        else
+            [DataStoreManager saveUserFansInfo:self.hostInfo.infoDic];
+    }
+    else if([self.hostInfo.userId isEqualToString:[DataStoreManager getMyUserID]])
+    {
+        self.viewType = VIEW_TYPE_Self1;
+    }
+    else  {
+        self.viewType = VIEW_TYPE_STRANGER1;
+    }
+    
+    [self buildMainView];
+    [self setBottomView];
+}
+
+
+-(void)getInfoFromUserManagerFail
+{
+    NSLog(@"获取失败");
 }
 
 -(void)buildInitialize
@@ -370,97 +471,9 @@
     }
     return temp;
 }
-- (void)getUserInfoByNet
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
-    [paramDict setObject:self.userId forKey:@"userid"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
-            [DataStoreManager saveAllUserWithUserManagerList:responseObject];
-        }
 
-        //将获取到的数据转换成NSData类型保存到nsuserdefaults中
-        NSMutableData *data= [[NSMutableData alloc]init];
-        NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-        [archiver encodeObject:responseObject forKey: @"getDatat"];
-        [archiver finishEncoding];
-        [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-        
-        NSArray *views = [self.view subviews];
-        for(UIView* view in views)
-        {
-            [view removeFromSuperview];
-        }
-        
-        self.hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
-        
-        m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
-        NSLog(@"m_titlelabel%@",m_titleLabel.text);
-        if ([self.hostInfo.relation isEqualToString:@"1"]) {
-            self.viewType = VIEW_TYPE_FriendPage1;
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserInfo:self.hostInfo.infoDic];
-        }
-        else if([self.hostInfo.relation isEqualToString:@"2"]) {
-            self.viewType = VIEW_TYPE_AttentionPage1;
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserAttentionInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserAttentionInfo:self.hostInfo.infoDic];
-        }
-        else if([self.hostInfo.relation isEqualToString:@"3"]) {
-            self.viewType = VIEW_TYPE_FansPage1;
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserFansInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserFansInfo:self.hostInfo.infoDic];
-        }
-        else if([self.hostInfo.userId isEqualToString:[DataStoreManager getMyUserID]])
-        {
-            self.viewType = VIEW_TYPE_Self1;
-        }
-        else  {
-            self.viewType = VIEW_TYPE_STRANGER1;
-        }
-        [self buildMainView];
-        [self setBottomView];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-    }];
-}
+
+
 
 -(void)ltttt:(id)sender
 {
@@ -1134,7 +1147,7 @@
 -(void)getSayHello
 {
     
-    
+    [self DetectNetwork];
     
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
@@ -1167,7 +1180,10 @@
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    [self DetectNetwork];
+
     if (alertView.tag == 234) {//删除好友
+        
         if (buttonIndex != alertView.cancelButtonIndex) {
             //后台存储
             addFriendBtn.userInteractionEnabled = NO;
@@ -1343,6 +1359,8 @@
 
 - (void)attentionClick:(id)sender
 {
+    [self DetectNetwork];
+
     MBProgressHUD *hud2 = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud2];
     

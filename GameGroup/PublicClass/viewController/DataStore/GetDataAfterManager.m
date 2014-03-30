@@ -9,6 +9,8 @@
 #import "GetDataAfterManager.h"
 #import "NSObject+SBJSON.h"
 #import "SoundSong.h"
+#import "UserManager.h"
+#import "DSuser.h"
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
@@ -95,21 +97,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     
     
     if ([DataStoreManager savedMsgWithID:KISDictionaryHaveKey(messageContent, @"msgId")]) {
+        [self.xmppHelper comeBackDelivered:sender msgId:msgId];
         NSLog(@"消息已存在");
         return;
     }
     [self storeNewMessage:messageContent];
     [self.xmppHelper comeBackDelivered:sender msgId:msgId];
     
-    
-    if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
-        [self requestPeopleInfoWithName:sender ForType:1 Msg:nil userInfo:messageContent];
-    }
-    else
-    {
-        [DataStoreManager storeThumbMsgUser:sender nickName:[DataStoreManager queryRemarkNameForUserManager:sender] andImg:[DataStoreManager queryFirstHeadImageForUser_userManager:sender]];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
-    }
 }
 
 
@@ -212,39 +207,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendFriendReceived object:nil userInfo:info];
 }
-
--(void)requestPeopleInfoWithName:(NSString *)userid ForType:(int)type Msg:(NSString *)msg userInfo:(NSDictionary*)messageContent
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:userid forKey:@"userid"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-            [recDict setObject:[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0] forKey:@"title"];
-        }
-                [DataStoreManager saveAllUserWithUserManagerList:recDict];
-        
-        
-        NSString* nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"alias")];
-        if ([nickName isEqualToString:@""]) {
-            nickName = KISDictionaryHaveKey(recDict, @"nickname");
-        }
-        [DataStoreManager storeThumbMsgUser:userid nickName:nickName andImg:[GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")]]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
-
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-    }];
-}
-
 
 
 #pragma mark --获取你和谁说过话

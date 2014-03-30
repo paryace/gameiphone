@@ -1,5 +1,5 @@
 //
-//  DSuserManager.h
+//  DSuser.h
 //  GameGroup
 //
 //  Created by 魏星 on 14-3-29.
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 
 
-@interface DSuserManager : NSManagedObject
+@interface DSuser : NSManagedObject
 
 @property (nonatomic, retain) NSString * userId;
 @property (nonatomic, retain) NSString * userName;

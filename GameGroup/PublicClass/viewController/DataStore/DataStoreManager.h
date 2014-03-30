@@ -29,7 +29,7 @@
 #import "DSOtherMsgs.h"
 
 #import "DSNewsMsgs.h"//新闻
-#import "DSuserManager.h"
+#import "DSuser.h"
 
 @interface DataStoreManager : NSObject
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
@@ -64,11 +64,11 @@
 
 //储存所有看到过的用户信息
 +(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo;
-+(NSMutableDictionary *)queryallUserManagerInfo;
-+(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
++(DSuser *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
 +(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
 +(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
++(void)deleteAllUserWithUserName:(NSString*)userid;//删除userid是这个的
 
 
 

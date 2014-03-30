@@ -51,25 +51,25 @@
     
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     
-    if (![self isHaveLogin]) {
+    if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
+   // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
 
     [self getUserInfoByNet];
 }
 
-#pragma mark 进入程序网络变化
-- (void)appBecomeActiveWithNet:(NSNotification*)notification
-{
-    Reachability* reach = notification.object;
-    if ([reach currentReachabilityStatus] != NotReachable  && [self isHaveLogin]) {//有网
-        if (m_hostInfo == nil) {
-            [self getUserInfoByNet];
-        }
-    }
-}
+//#pragma mark 进入程序网络变化
+//- (void)appBecomeActiveWithNet:(NSNotification*)notification
+//{
+//    Reachability* reach = notification.object;
+//    if ([reach currentReachabilityStatus] != NotReachable  && [self isHaveLogin]) {//有网
+//        if (m_hostInfo == nil) {
+//            [self getUserInfoByNet];
+//        }
+//    }
+//}
 
 - (void)viewDidLoad
 {

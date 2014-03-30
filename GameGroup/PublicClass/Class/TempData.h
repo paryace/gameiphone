@@ -23,6 +23,7 @@
 @property (nonatomic,assign)BOOL wxAlreadydidClickniehe;//捏合返回首页手势提示
 @property (nonatomic,retain)NSString * characterID;//注册时的角色ID
 @property (nonatomic,retain)NSString * gamerealm;//注册时的服务器名
+@property (nonatomic,retain)NSString * token;
 + (id)sharedInstance;
 -(NSString *)getServer;
 -(NSString *)getDomain;

@@ -834,7 +834,7 @@
                 cell.headImgV.imageURL = nil;
             }else{
             if (self.chatUserImg) {
-                NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",self.chatUserImg]];
+                NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
                 cell.headImgV.imageURL = theUrl;
             }else
             {
@@ -944,7 +944,7 @@
                   cell.headImgV.imageURL = nil;
             }else{
             if (self.chatUserImg) {
-                NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",self.chatUserImg]];
+                NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
                 cell.headImgV.imageURL = theUrl;
             }else
             {

@@ -99,14 +99,6 @@
     return YES;
 }
 
--(void) reg:(NSString *)theaccount password:(NSString *)thepassword host:(NSString *)host success:(CallBackBlock)thesuccess fail:(CallBackBlockErr)thefail{
-    self.account=[theaccount stringByAppendingString:[[TempData sharedInstance] getDomain]];
-    self.password=thepassword;
-    self.regsuccess=thesuccess;
-    self.regfail=thefail;
-    [self connect:self.account password:thepassword host:host success:thesuccess fail:thefail];
-}
-
 -(void)disconnect{
     [self goOffline];
     [self.xmppStream disconnect];
@@ -159,11 +151,6 @@
     return self.xmppvCardTemp;
 }
 
--(XMPPvCardTemp *)getvcard:(NSString *)Account{
-    [self.xmppvCardTempModule fetchvCardTempForJID:[XMPPJID jidWithString:[Account stringByAppendingString:[[TempData sharedInstance] getDomain]]]];
-    return [self.xmppvCardTempModule vCardTempForJID:[XMPPJID jidWithString:[Account stringByAppendingString:[[TempData sharedInstance] getDomain]]] shouldFetch:YES];
-}
-
 - (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule
         didReceivevCardTemp:(XMPPvCardTemp *)vCardTemp
                      forJID:(XMPPJID *)jid
@@ -176,43 +163,7 @@
     self.success();
 }
 
-- (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule failedToUpdateMyvCard:(NSXMLElement *)error{
-    NSLog(@"%@",error);
-    NSError *err=[[NSError alloc] initWithDomain:[[TempData sharedInstance] getDomain] code:-1000 userInfo:nil];
-    self.fail(err);
-}
 
-//添加好友
--(BOOL)addFriend:(NSString *)user{
-    if (![self ifXMPPConnected]) {
-        return NO;
-    }
-    else
-    {
-        NSString * nickName = [SFHFKeychainUtils getPasswordForUsername:USERNICKNAME andServiceName:LOCALACCOUNT error:nil];
-        [self.xmppRoster addUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]] withNickname:nickName];
-        return YES;
-    }
-    
-}
--(void)addFriend:(NSString *)user WithMsg:(NSString *)msg HeadID:(NSString *)headID{
-    NSString * nickName = [SFHFKeychainUtils getPasswordForUsername:USERNICKNAME andServiceName:LOCALACCOUNT error:nil];
-    [self.xmppRoster addUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]] withNickname:nickName Msg:msg HeadID:headID];
-}
-#pragma mark- 删除好友
--(void)delFriend:(NSString *)user{
-    [self.xmppRoster removeUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]]];
-}
-
-#pragma mark- 处理加好友
--(void)addOrDenyFriend:(Boolean)issubscribe user:(NSString *)user{
-    XMPPJID *jid=[XMPPJID jidWithString:[NSString stringWithFormat:@"%@%@",user,[[TempData sharedInstance] getDomain]]];
-    if(issubscribe){
-        [self.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
-    }else{
-        [self.xmppRoster rejectPresenceSubscriptionRequestFrom:jid];
-    }
-}
 //===========XMPP委托事件============
 
 //此方法在stream开始连接服务器的时候调用
@@ -310,7 +261,7 @@
     
     //生成XML消息文档
     NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    [mes addAttributeWithName:@"id" stringValue:msgId];
+    [mes addAttributeWithName:@"id" stringValue:[[GameCommon shareGameCommon] uuid]];
     [mes addAttributeWithName:@"msgtype" stringValue:@"msgStatus"];
     //消息类型
     [mes addAttributeWithName:@"type" stringValue:@"normal"];

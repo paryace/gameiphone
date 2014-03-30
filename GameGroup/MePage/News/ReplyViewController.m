@@ -264,7 +264,7 @@
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             dic  = responseObject;
             [dic removeObjectForKey:@"msg"];
-            [dic setObject:self.textView.text forKey:@"msg"];
+            [dic setObject:[NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text] forKey:@"msg"];
             self.textView.text = nil;
 
             [m_dataReply insertObject:dic atIndex:0];

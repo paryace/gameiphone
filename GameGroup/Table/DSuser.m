@@ -1,15 +1,15 @@
 //
-//  DSuserManager.m
+//  DSuser.m
 //  GameGroup
 //
 //  Created by 魏星 on 14-3-29.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
-#import "DSuserManager.h"
+#import "DSuser.h"
 
 
-@implementation DSuserManager
+@implementation DSuser
 
 @dynamic userId;
 @dynamic userName;

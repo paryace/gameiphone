@@ -14,6 +14,7 @@
 #import "ShowTextViewController.h"
 #import "AuthViewController.h"
 #import "TempData.h"
+#import "ReconnectMessage.h"
 
 @interface RegisterViewController ()
 {
@@ -1190,6 +1191,7 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
+    [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];

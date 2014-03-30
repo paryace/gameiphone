@@ -65,7 +65,7 @@
     
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     
-    if (![self isHaveLogin]) {
+    if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
