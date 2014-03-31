@@ -11,6 +11,7 @@
 #import "SoundSong.h"
 #import "UserManager.h"
 #import "DSuser.h"
+#import "VibrationSong.h"
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
@@ -108,6 +109,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         if (isSoundOpen) {
              [SoundSong soundSong];
         }
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
         [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
     }
     else if([type isEqualToString:@"payloadchat"])
@@ -115,6 +119,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         if (isSoundOpen) {
             [SoundSong soundSong];
         }
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
+
         [DataStoreManager storeNewMsgs:messageContent senderType:PAYLOADMSG];//动态消息
     }
     else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//关注和取消关注
@@ -122,7 +130,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         if (isSoundOpen) {
             [SoundSong soundSong];
         }
-        
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
+
         [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//打招呼消息
     }
     else if([type isEqualToString:@"recommendfriend"])
@@ -139,6 +150,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         if (isSoundOpen) {
             [SoundSong soundSong];
         }
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
+
         [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
     }
 }
@@ -282,6 +297,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if (isSoundOpen) {
         [SoundSong soundSong];
     }
+    if (isVibrationopen) {
+        [VibrationSong vibrationSong];
+    }
+
 }
 
 #pragma mark 收到推荐好友

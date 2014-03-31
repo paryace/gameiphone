@@ -135,8 +135,8 @@
         } break;
         case 1:
         {
-            cell.leftImageView.image = KUIImage(@"me_set_exit");
-            cell.titleLable.text = @"消息设置";
+            cell.leftImageView.image = KUIImage(@"messageinfo");
+            cell.titleLable.text = @"新消息提醒";
         } break;
         case 2:
         {

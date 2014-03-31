@@ -61,42 +61,61 @@
         if (indexPath.section ==0) {
             cell.textLabel.text = @"声音";
             UISwitch *soundSwitch = [[UISwitch alloc]initWithFrame:CGRectMake(320-80, 5, 60, 30)];
-            soundSwitch.on = YES;//设置初始为ON的一边
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
+            {
+                if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
+                    soundSwitch.on =YES;
+                }else{
+                    soundSwitch.on =NO;
+                }
+            }else{
+                soundSwitch.on =YES;
+            }
+
             [soundSwitch addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
             [cell.contentView addSubview:soundSwitch];
         }
         else{
             cell.textLabel.text = @"震动";
             UISwitch *soundSwitch = [[UISwitch alloc]initWithFrame:CGRectMake(320-80, 5, 60, 30)];
-            soundSwitch.on = YES;//设置初始为ON的一边
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
+            {
+                if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
+                    soundSwitch.on =YES;
+                }else{
+                    soundSwitch.on =NO;
+                }
+            }else{
+                soundSwitch.on =YES;
+            }
+
             [soundSwitch addTarget:self action:@selector(switchActionoff:) forControlEvents:UIControlEventValueChanged];
 
             [cell.contentView addSubview:soundSwitch];
 
         }
     }
+    
+    
+
     return cell;
 
-}
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"testSoundOff_wx" object:nil];
 }
 
 -(void)switchAction:(UISwitch*)sender
 {
     if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_sounds_open" object:nil];
-    }else{
         [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_sounds_off" object:nil];
+    }else{
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_sounds_open" object:nil];
     }
 }
 -(void)switchActionoff:(UISwitch*)sender
 {
     if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_open" object:nil];
-    }else{
         [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_off" object:nil];
+    }else{
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_open" object:nil];
     }
 }
 
