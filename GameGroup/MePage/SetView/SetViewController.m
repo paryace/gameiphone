@@ -14,6 +14,8 @@
 #import "FeedBackViewController.h"
 #import "ShowTextViewController.h"
 #import "ActivationCodeViewController.h"
+#import "MessageInformationViewController.h"
+
 @interface SetViewController ()
 {
     UITableView*  m_myTableView;
@@ -59,7 +61,7 @@
 #pragma mark 表格
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 3;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -67,6 +69,10 @@
         case 0:
             return 5;
             break;
+        case 1:
+            return 1;
+            break;
+
         default:
             return 1;
             break;
@@ -130,8 +136,14 @@
         case 1:
         {
             cell.leftImageView.image = KUIImage(@"me_set_exit");
+            cell.titleLable.text = @"消息设置";
+        } break;
+        case 2:
+        {
+            cell.leftImageView.image = KUIImage(@"me_set_exit");
             cell.titleLable.text = @"退出登录";
         } break;
+
         default:
             break;
     }
@@ -183,6 +195,13 @@
             
         } break;
         case 1:
+        {
+            MessageInformationViewController *msVC = [[MessageInformationViewController alloc]init];
+            [self.navigationController pushViewController:msVC animated:YES];
+        }
+            break;
+
+        case 2:
         {
             UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要退出登陆吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
             alert.tag = 112;

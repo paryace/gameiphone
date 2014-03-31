@@ -71,11 +71,11 @@
 
     [self addHeader];
     [self addFooter];
-    [self getNearByDataByNet];
+   
     hud = [[MBProgressHUD alloc]initWithView: self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
-    
+     [self getNearByDataByNet];
 }
 
 - (void)getNearByDataByNet
