@@ -101,6 +101,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSLog(@"消息已存在");
         return;
     }
+    
+    [[UserManager singleton]requestUserFromNet:sender];
     [self storeNewMessage:messageContent];
     [self.xmppHelper comeBackDelivered:sender msgId:msgId];
     
