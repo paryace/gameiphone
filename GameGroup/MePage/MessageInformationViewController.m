@@ -38,6 +38,7 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(assa) name:@"testasdasdfasfsSoundOn_wx" object:nil];
     
 }
 
@@ -80,30 +81,29 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [[NSNotificationCenter defaultCenter]postNotificationName:@"testSoundOff_wx" object:nil];
-
 }
 
 -(void)switchAction:(UISwitch*)sender
 {
     if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"testasdasdfasfsSoundOn_wx" object:nil];
-        NSLog(@"12312132↓");
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_sounds_open" object:nil];
     }else{
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"testSousadfasdfasfasfndOff_wx" object:nil];
-         NSLog(@"12312132↑");
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_sounds_off" object:nil];
     }
-
 }
 -(void)switchActionoff:(UISwitch*)sender
 {
     if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"asdfsadfasdfasdfasfsf" object:nil];
-        NSLog(@"asdfasdfasf↓");
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_open" object:nil];
     }else{
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"asdfasfasfdasfdasfasfsadf" object:nil];
-        NSLog(@"asdfasdfasfdas↑");
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_off" object:nil];
     }
+}
 
+
+-(void)assa
+{
+    NSLog(@"sdsfsfsf");
 }
 - (void)didReceiveMemoryWarning
 {

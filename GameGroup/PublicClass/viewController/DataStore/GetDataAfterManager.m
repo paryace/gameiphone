@@ -20,9 +20,34 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeVibrationOff:) name:@"wx_vibration_off" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeVibrationOn:) name:@"wx_vibration_open" object:nil];
+
     }
     return self;
 }
+-(void)changeSoundOpen:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:@"1" forKey:@"wx_sound_tixing_count"];
+    
+}
+-(void)changeSoundOff:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_sound_tixing_count"];
+}
+-(void)changeVibrationOff:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:@"1" forKey:@"wx_Vibration_tixing_count"];
+}
+-(void)changeVibrationOn:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_Vibration_tixing_count"];
+}
+
+
+
 - (void)changeMyActive:(NSNotification*)notification
 {
     if ([notification.userInfo[@"active"] intValue] == 2) {
@@ -46,6 +71,33 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 -(void)storeNewMessage:(NSDictionary *)messageContent
 {
+    BOOL isVibrationopen;
+    BOOL isSoundOpen;
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
+    {
+        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
+            isSoundOpen =YES;
+        }else{
+            isSoundOpen =NO;
+        }
+    }else{
+        isSoundOpen =YES;
+    }
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
+    {
+        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
+            isVibrationopen =YES;
+        }else{
+            isVibrationopen =NO;
+        }
+    }else{
+        isVibrationopen =YES;
+    }
+
+    
+    
+    
     NSLog(@"messageContent==%@",messageContent);
     NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
     type = type?type:@"notype";
@@ -53,17 +105,23 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if([type isEqualToString:@"normalchat"])
     {
         NSLog(@"%@",KISDictionaryHaveKey(messageContent, @"msgId"));
-        [SoundSong soundSong];
+        if (isSoundOpen) {
+             [SoundSong soundSong];
+        }
         [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
     }
     else if([type isEqualToString:@"payloadchat"])
     {
-        [SoundSong soundSong];
+        if (isSoundOpen) {
+            [SoundSong soundSong];
+        }
         [DataStoreManager storeNewMsgs:messageContent senderType:PAYLOADMSG];//动态消息
     }
     else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//关注和取消关注
     {
-        [SoundSong soundSong];;
+        if (isSoundOpen) {
+            [SoundSong soundSong];
+        }
         
         [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//打招呼消息
     }
@@ -78,7 +136,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             NSLog(@"消息已存在");
             return;
         }
-        [SoundSong soundSong];
+        if (isSoundOpen) {
+            [SoundSong soundSong];
+        }
         [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
     }
 }
@@ -188,6 +248,30 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark - 其他消息 头衔、角色等
 -(void)otherMessageReceived:(NSDictionary *)info
 {
+    BOOL isVibrationopen;
+    BOOL isSoundOpen;
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
+    {
+        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
+            isSoundOpen =YES;
+        }else{
+            isSoundOpen =NO;
+        }
+    }else{
+        isSoundOpen =YES;
+    }
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
+    {
+        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
+            isVibrationopen =YES;
+        }else{
+            isVibrationopen =NO;
+        }
+    }else{
+        isVibrationopen =YES;
+    }
+
     if ([DataStoreManager savedOtherMsgWithID:info[@"msgId"]]) {
         return;
     }
@@ -195,7 +279,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
     [DataStoreManager saveOtherMsgsWithData:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
-    [SoundSong soundSong];
+    if (isSoundOpen) {
+        [SoundSong soundSong];
+    }
 }
 
 #pragma mark 收到推荐好友

@@ -32,7 +32,7 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(testfor) name:@"testasdasdfasfsSoundOn_wx" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(testForOff) name:@"testSoundOff_wx" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(assa) name:@"testasdasdfasfsSoundOn_wx" object:nil];
 	// Do any additional setup after loading the view.
 
 //    UILabel * aLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 80, 320, 50)];
@@ -86,7 +86,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
--(void)testfor
+-(void)assa
 {
     NSLog(@"123123131231231231231313");
 }

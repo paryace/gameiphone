@@ -24,6 +24,8 @@
 @property (nonatomic,retain)NSString * characterID;//注册时的角色ID
 @property (nonatomic,retain)NSString * gamerealm;//注册时的服务器名
 @property (nonatomic,retain)NSString * token;
+@property(nonatomic,assign)BOOL isSoundOpen;//是否打开声音
+@property(nonatomic,assign)BOOL isVibration;//是否打开震动
 + (id)sharedInstance;
 -(NSString *)getServer;
 -(NSString *)getDomain;

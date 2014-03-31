@@ -10,4 +10,5 @@
 
 @interface SoundSong : NSObject
 +(void)soundSong;
+-(void)sounddown;
 @end

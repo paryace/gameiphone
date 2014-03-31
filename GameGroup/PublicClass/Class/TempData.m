@@ -32,6 +32,8 @@ static TempData *sharedInstance=nil;
     longitude = 0;
     self.registerNeedMsg = YES;
     self.passBindingRole = NO;
+    self.isSoundOpen =YES;
+    self.isVibration = YES;
     self.token=[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil];
 }
 -(void)SetServer:(NSString *)server TheDomain:(NSString *)idomain

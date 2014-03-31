@@ -37,4 +37,5 @@ static SoundSong *sharedInstance=nil;
     self.sound = YES;
     [sharedInstance.timer invalidate];
 }
+
 @end
