@@ -64,7 +64,7 @@
     [postDict setObject:paramsDic forKey:@"params"];
     [postDict setObject:@"142" forKey:@"method"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide: YES];
         if (![responseObject isKindOfClass:[NSDictionary class]]) {
             return ;

@@ -140,7 +140,7 @@
     
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
         topLabel.numberOfLines = 2;
@@ -241,7 +241,7 @@
     
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
         topLabel.numberOfLines = 2;
@@ -320,7 +320,7 @@
     
     hud.labelText = @"验证中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if ([m_verCodeTimer isValid]) {
             [m_verCodeTimer invalidate];
@@ -435,7 +435,7 @@
     
     hud.labelText = @"修改中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
  
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"修改成功" message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];

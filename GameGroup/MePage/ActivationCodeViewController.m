@@ -145,7 +145,7 @@
     [postDict setObject:@"168" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:dic forKey:@"params"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:KISDictionaryHaveKey(responseObject, @"codeMemo") delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
@@ -202,14 +202,18 @@
 
 -(void)goOnUploadWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId
 {
+    hud.labelText = @"提交中";
+    [hud show:YES];
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"167" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:dic forKey:@"params"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        sleep(1);
+        hud.labelText = @"提交成功";
+        [hud hide:YES afterDelay:2];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

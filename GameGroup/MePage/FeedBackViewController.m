@@ -64,7 +64,7 @@
     [postDict setObject:@"139" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:dic forKey:@"params"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [self showMessageWindowWithContent:@"成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];

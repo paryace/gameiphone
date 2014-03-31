@@ -8,10 +8,6 @@
 
 #import "NetManager.h"
 #import "JSON.h"
-#import "MessagePageViewController.h"
-#import "FriendPageViewController.h"
-#import "FindPageViewController.h"
-#import "MePageViewController.h"
 
 #define CompressionQuality 1  //图片上传时压缩质量
 
@@ -38,13 +34,13 @@ NSString * gen_uuid()
 }
 
 //post请求，需自己设置失败提示
-+(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters TheController:(UIViewController *)controller success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
++(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
     failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
 {
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:urlStr]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     [httpClient postPath:@"" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (controller) {
+
             NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
             NSDictionary * dict = [receiveStr JSONValue];
             NSLog(@"获得数据：%@", dict);
@@ -58,35 +54,18 @@ NSString * gen_uuid()
                 
                 if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"errorcode")] isEqualToString:@"100001"])
                 {//token无效
-                    NSLog(@"nnn");
-                    if (controller != nil) {
-                        if ([controller isKindOfClass:[MessagePageViewController class]]) {
-                            [controller viewDidAppear:NO];
-                        }
-                        if ([controller isKindOfClass:[FriendPageViewController class]]) {
-                            [controller viewWillAppear:NO];
-                        }
-                        if ([controller isKindOfClass:[FindPageViewController class]]) {
-                            [controller viewWillAppear:NO];
-                        }
-                        if ([controller isKindOfClass:[MePageViewController class]]) {
-                            [controller viewWillAppear:NO];
-                        }
-                        else
-                            [controller.navigationController popToRootViewControllerAnimated:NO];
-                    }
+                    NSLog(@"token invalid");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
                    
                     [self getTokenStatusMessage];
                     [GameCommon loginOut];
                 }
-//                else
-                    failure(operation, failDic);
+                failure(operation, failDic);
             }
-        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if (controller) {
+        
             failure(operation,error);
-        }
+        
     }];
 }
 

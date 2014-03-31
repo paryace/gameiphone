@@ -190,7 +190,7 @@
     
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [DataStoreManager reSetMyAction:YES];
         [self showMessageWindowWithContent:@"激活成功" imageType:0];

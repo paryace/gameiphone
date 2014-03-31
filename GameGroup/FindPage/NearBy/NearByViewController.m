@@ -29,11 +29,14 @@
     UIImageView *m_loadImageView;
     BOOL isGetNetSuccess;
     UIButton *menuButton;
+    UIAlertView *alertView;
 }
 @end
 
 @implementation NearByViewController
-
+-(void)dealloc{
+    alertView.delegate = nil;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -72,6 +75,7 @@
     menuButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
     [menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
     [menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
+    menuButton.userInteractionEnabled =NO;
     [self.view addSubview:menuButton];
     
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -126,15 +130,13 @@
 -(void)getLocationForNet
 {
     [m_loadImageView startAnimating];
-    menuButton.userInteractionEnabled = NO;
     
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
-        [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
-        [hud hide:YES];
-        [m_loadImageView stopAnimating];
+        alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+        [alertView show];
         menuButton.userInteractionEnabled = YES;
-        
+        [m_loadImageView stopAnimating];
         return;
     }
     else{
@@ -145,13 +147,20 @@
             [self getNearByDataByNet];
         } Failure:^{
             [hud hide:YES];
-            [m_loadImageView stopAnimating];
             menuButton.userInteractionEnabled = YES;
+
+            [m_loadImageView stopAnimating];
             [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
         }
          ];
     }
 }
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)getNearByDataByNet
 {
     isGetNetSuccess =NO;
@@ -173,14 +182,14 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
-        menuButton.userInteractionEnabled = YES;
         
         [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
-            
+            menuButton.userInteractionEnabled = YES;
+
             [[NSUserDefaults standardUserDefaults]setBool:NO forKey:@"isGetNearByDataByNet"];//保存上一次看到的附近的人
             [m_footer endRefreshing];
             [m_header endRefreshing];
@@ -213,7 +222,7 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loadImageView stopAnimating];
         menuButton.userInteractionEnabled = YES;
-        
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -234,7 +243,11 @@
 #pragma mark 筛选
 - (void)menuButtonClick:(UIButton *)sender
 {
-    
+    if(isGetNetSuccess ==NO)
+    {
+        [self showMessageWithContent:@"正在处理上次请求" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+    }else{
+
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"筛选条件"
                                   delegate:self
@@ -243,6 +256,7 @@
                                   otherButtonTitles:@"只看男", @"只看女", @"看全部", nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
+    }
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -301,11 +315,6 @@
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
     cell.gameImg_one.image = KUIImage(@"wow");
     
-    //    cell.sexImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
-    
-    //    cell.sexBg.backgroundColor = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? kColorWithRGB(33, 193, 250, 1.0) : kColorWithRGB(238, 100, 196, 1.0);
-    
-    //    cell.ageLabel.text = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);

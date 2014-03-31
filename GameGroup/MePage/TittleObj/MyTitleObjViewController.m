@@ -131,7 +131,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"%@", responseObject);
         if ([KISDictionaryHaveKey(responseObject, @"0") isKindOfClass:[NSArray class]]) {//显示的
@@ -256,7 +256,7 @@
     hud.labelText = @"修改中...";
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {

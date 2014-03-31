@@ -10,7 +10,6 @@
 
 @interface AuthViewController ()
 {
-    NSString*   m_authItemKey;
 }
 @end
 
@@ -57,11 +56,10 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"%@", responseObject);
         NSString* authitemStr = @"";
-        m_authItemKey = @"";
         if ([responseObject isKindOfClass:[NSArray class]]) {
             for (int i = 0; i < [responseObject count]; i++) {
                 NSDictionary* dic = [responseObject objectAtIndex:i];
@@ -71,13 +69,6 @@
                     }
                     else
                         authitemStr = [authitemStr stringByAppendingString:[[dic allValues] objectAtIndex:0]];
-                }
-                if ([[dic allKeys] count] == 1) {
-                    if (i != [responseObject count] - 1) {
-                        m_authItemKey = [m_authItemKey stringByAppendingFormat:@"%@,", [[dic allKeys] objectAtIndex:0]];
-                    }
-                    else
-                        m_authItemKey = [m_authItemKey stringByAppendingString:[[dic allKeys] objectAtIndex:0]];
                 }
             }
         }
@@ -190,7 +181,6 @@
     [paramDict setObject:self.gameId forKey:@"gameid"];
     [paramDict setObject:self.realm forKey:@"realm"];
     [paramDict setObject:self.character forKey:@"charactername"];
-    [paramDict setObject:m_authItemKey forKey:@"authitem"];
 
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
@@ -201,7 +191,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"%@", responseObject);
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"认证成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];

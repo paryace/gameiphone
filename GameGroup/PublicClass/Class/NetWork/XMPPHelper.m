@@ -70,10 +70,12 @@
     self.fail=Fail;
     if (![self.xmppStream isDisconnected]) {
         return YES;
+        NSLog(@"连接不成功");
     }
     
     if (theaccount == nil) {
         return NO;
+         NSLog(@"连接不成功");
     }
     
     [self.xmppStream setMyJID:[XMPPJID jidWithString:theaccount]];
@@ -95,14 +97,6 @@
     }
     
     return YES;
-}
-
--(void) reg:(NSString *)theaccount password:(NSString *)thepassword host:(NSString *)host success:(CallBackBlock)thesuccess fail:(CallBackBlockErr)thefail{
-    self.account=[theaccount stringByAppendingString:[[TempData sharedInstance] getDomain]];
-    self.password=thepassword;
-    self.regsuccess=thesuccess;
-    self.regfail=thefail;
-    [self connect:self.account password:thepassword host:host success:thesuccess fail:thefail];
 }
 
 -(void)disconnect{
@@ -157,11 +151,6 @@
     return self.xmppvCardTemp;
 }
 
--(XMPPvCardTemp *)getvcard:(NSString *)Account{
-    [self.xmppvCardTempModule fetchvCardTempForJID:[XMPPJID jidWithString:[Account stringByAppendingString:[[TempData sharedInstance] getDomain]]]];
-    return [self.xmppvCardTempModule vCardTempForJID:[XMPPJID jidWithString:[Account stringByAppendingString:[[TempData sharedInstance] getDomain]]] shouldFetch:YES];
-}
-
 - (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule
         didReceivevCardTemp:(XMPPvCardTemp *)vCardTemp
                      forJID:(XMPPJID *)jid
@@ -174,43 +163,7 @@
     self.success();
 }
 
-- (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule failedToUpdateMyvCard:(NSXMLElement *)error{
-    NSLog(@"%@",error);
-    NSError *err=[[NSError alloc] initWithDomain:[[TempData sharedInstance] getDomain] code:-1000 userInfo:nil];
-    self.fail(err);
-}
 
-//添加好友
--(BOOL)addFriend:(NSString *)user{
-    if (![self ifXMPPConnected]) {
-        return NO;
-    }
-    else
-    {
-        NSString * nickName = [SFHFKeychainUtils getPasswordForUsername:USERNICKNAME andServiceName:LOCALACCOUNT error:nil];
-        [self.xmppRoster addUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]] withNickname:nickName];
-        return YES;
-    }
-    
-}
--(void)addFriend:(NSString *)user WithMsg:(NSString *)msg HeadID:(NSString *)headID{
-    NSString * nickName = [SFHFKeychainUtils getPasswordForUsername:USERNICKNAME andServiceName:LOCALACCOUNT error:nil];
-    [self.xmppRoster addUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]] withNickname:nickName Msg:msg HeadID:headID];
-}
-#pragma mark- 删除好友
--(void)delFriend:(NSString *)user{
-    [self.xmppRoster removeUser:[XMPPJID jidWithString:[user stringByAppendingString:[[TempData sharedInstance] getDomain]]]];
-}
-
-#pragma mark- 处理加好友
--(void)addOrDenyFriend:(Boolean)issubscribe user:(NSString *)user{
-    XMPPJID *jid=[XMPPJID jidWithString:[NSString stringWithFormat:@"%@%@",user,[[TempData sharedInstance] getDomain]]];
-    if(issubscribe){
-        [self.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
-    }else{
-        [self.xmppRoster rejectPresenceSubscriptionRequestFrom:jid];
-    }
-}
 //===========XMPP委托事件============
 
 //此方法在stream开始连接服务器的时候调用
@@ -308,7 +261,7 @@
     
     //生成XML消息文档
     NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    [mes addAttributeWithName:@"id" stringValue:msgId];
+    [mes addAttributeWithName:@"id" stringValue:[[GameCommon shareGameCommon] uuid]];
     [mes addAttributeWithName:@"msgtype" stringValue:@"msgStatus"];
     //消息类型
     [mes addAttributeWithName:@"type" stringValue:@"normal"];
@@ -372,7 +325,8 @@
             }
             
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            
+            [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
+
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
@@ -408,6 +362,8 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             title = KISDictionaryHaveKey([title JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
+            
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
         }
@@ -420,31 +376,11 @@
             if ([arr isKindOfClass:[NSArray class]]) {
                 if ([arr count] != 0) {
                     NSMutableDictionary* dic = [arr objectAtIndex:0];
-//                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"1"]) {
-//                        dis = [NSString stringWithFormat:@"获得通讯录好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"2"]) {
-//                        dis = [NSString stringWithFormat:@"获得明星好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"3"]) {
-//                        dis = [NSString stringWithFormat:@"获得公会好友%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"4"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"同服务器激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"5"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"服务器达人%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
-//                    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")] isEqualToString:@"6"])
-//                    {
-//                        dis = [NSString stringWithFormat:@"激活女性%@", KISDictionaryHaveKey(dic, @"nickname")];
-//                    }
                     dis = [NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(dic, @"recommendMsg") ,KISDictionaryHaveKey(dic, @"nickname")];
                 }
             }
             [dict setObject:dis forKey:@"disStr"];
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
         }
@@ -469,6 +405,7 @@
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
+             [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])

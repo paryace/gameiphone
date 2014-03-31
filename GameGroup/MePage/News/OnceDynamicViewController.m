@@ -201,7 +201,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [bg1 removeFromSuperview];
         [headBtn1 removeFromSuperview];
@@ -335,7 +335,7 @@
     [postDict setObject:@"134" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         zanBtn.userInteractionEnabled = YES;
 
         zanBtn.selected = !zanBtn.selected;
@@ -352,8 +352,8 @@
     
         double allZan = [KISDictionaryHaveKey(responseObject, @"zannum") doubleValue];
         [zanBtn setTitle:[NSString stringWithFormat:@"%.f", allZan] forState:UIControlStateNormal];
-        if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
-            [self.delegate dynamicListJustReload];//上个页面刷新
+       // if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
+          //  [self.delegate dynamicListJustReload];//上个页面刷新
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -723,7 +723,7 @@
             title =[GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")];
         }
         NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-        [body setStringValue:@"[内容]"];
+        [body setStringValue:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]]];
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
         NSDictionary * dic = @{@"thumb":_dataDic[@"thumb"],@"title":title,@"shiptype": @"1",@"messageid":_dataDic[@"id"],@"msg":_dataDic[@"msg"],@"type": @"3"};
         [payload setStringValue:[dic JSONFragment]];
@@ -752,7 +752,7 @@
         if ([((AppDelegate*)[[UIApplication sharedApplication] delegate]).xmppHelper sendMessage:mes]) {
             [self showMessageWindowWithContent:@"发送成功" imageType:0];
             NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-            [dictionary setObject:@"[内容]" forKey:@"msg"];
+            [dictionary setObject:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]] forKey:@"msg"];
             [dictionary setObject:@"you" forKey:@"sender"];
             [dictionary setObject:[GameCommon getCurrentTime] forKey:@"time"];
             [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"userid") forKey:@"receiver"];
@@ -777,7 +777,7 @@
         [self.view bringSubviewToFront:hud];
         hud.labelText = @"发送中...";
         [hud show:YES];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             m_shareViewBg.hidden = YES;
             m_shareView.hidden = YES;
@@ -820,7 +820,7 @@
             [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 [hud hide:YES];
                 [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
             } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -884,7 +884,7 @@
 //    
 //    [hud show:YES];
 //    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        [hud hide:YES];
 //        [self.textView resignFirstResponder];
 //        self.textView.text = @"";

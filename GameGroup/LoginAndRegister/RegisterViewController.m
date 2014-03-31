@@ -9,11 +9,12 @@
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "FindPageViewController.h"
+#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "ShowTextViewController.h"
 #import "AuthViewController.h"
 #import "TempData.h"
+#import "ReconnectMessage.h"
 
 @interface RegisterViewController ()
 {
@@ -257,7 +258,7 @@ BOOL validateMobile(NSString* mobile) {
         
         hud.labelText = @"获取中...";
         [hud show:YES];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             m_step1Scroll.hidden = YES;
             m_step1Scroll_verCode.hidden = YES;
@@ -289,7 +290,7 @@ BOOL validateMobile(NSString* mobile) {
     
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
         
@@ -374,7 +375,7 @@ BOOL validateMobile(NSString* mobile) {
 
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
 
         [self startRefreshTime];
@@ -446,7 +447,7 @@ BOOL validateMobile(NSString* mobile) {
     
     hud.labelText = @"验证中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
 
@@ -670,7 +671,7 @@ BOOL validateMobile(NSString* mobile) {
 
     hud.labelText = @"获取中...";
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSDictionary* dic = responseObject;
         NSLog(@"%@", dic);
@@ -1033,7 +1034,7 @@ BOOL validateMobile(NSString* mobile) {
             
             [hud show:YES];
             
-            [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+            [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1"  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
                 hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
             }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 NSLog(@"%@", responseObject);
@@ -1116,7 +1117,7 @@ BOOL validateMobile(NSString* mobile) {
     
     hud.labelText = @"注册中...";
    [hud show:YES];
-   [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+   [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
     
 //        m_step3Scroll.hidden = YES;
@@ -1164,7 +1165,7 @@ BOOL validateMobile(NSString* mobile) {
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
@@ -1190,6 +1191,7 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
+    [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];

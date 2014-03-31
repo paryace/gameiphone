@@ -32,6 +32,7 @@ static TempData *sharedInstance=nil;
     longitude = 0;
     self.registerNeedMsg = YES;
     self.passBindingRole = NO;
+    self.token=[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil];
 }
 -(void)SetServer:(NSString *)server TheDomain:(NSString *)idomain
 {
@@ -70,5 +71,13 @@ static TempData *sharedInstance=nil;
         self.myUserID = [DataStoreManager getMyUserID];
     }
     return self.myUserID;
+}
+- (BOOL)isHaveLogin
+{
+    //    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] && ![[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] isEqualToString:@""]) {
+        return YES;
+    }
+    return NO;
 }
 @end

@@ -516,15 +516,15 @@ static GameCommon *my_gameCommon = NULL;
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:isFirstOpen];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FansCount];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
-    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
-    
-    [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:PhoneNumKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:NearByKey];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"isGetNearByDataByNet"];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"wx_buttonTitleOfPage"];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"wx_buttonTitleOfPage"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
+    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
+    [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:PhoneNumKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 //    [SFHFKeychainUtils deleteItemForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil];
     [SFHFKeychainUtils deleteItemForUsername:PASSWORD andServiceName:LOCALACCOUNT error:nil];
     [SFHFKeychainUtils deleteItemForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil];

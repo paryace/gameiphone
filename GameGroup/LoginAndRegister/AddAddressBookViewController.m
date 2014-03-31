@@ -153,7 +153,7 @@
     [body setObject:@"162" forKey:@"method"];
     [body setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSMutableArray* array = [NSMutableArray array];
         for (NSDictionary * dic in responseObject) {
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithDictionary:dic];

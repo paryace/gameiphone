@@ -174,7 +174,7 @@
     hud.labelText = @"发表中...";
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
         if (![responseObject isKindOfClass:[NSArray class]]) {
@@ -252,7 +252,7 @@
     self.textView.placeholder = @"";
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
         
@@ -264,7 +264,7 @@
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             dic  = responseObject;
             [dic removeObjectForKey:@"msg"];
-            [dic setObject:self.textView.text forKey:@"msg"];
+            [dic setObject:[NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text] forKey:@"msg"];
             self.textView.text = nil;
 
             [m_dataReply insertObject:dic atIndex:0];

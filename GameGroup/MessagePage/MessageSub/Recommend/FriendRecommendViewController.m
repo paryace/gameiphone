@@ -224,7 +224,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
         [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"username")];
@@ -274,7 +274,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
 
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
 
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");

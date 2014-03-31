@@ -66,7 +66,7 @@
     
     [hud show:YES];
     
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"%@", responseObject);
         if ([KISDictionaryHaveKey(responseObject, @"1") isKindOfClass:[NSArray class]]) {
@@ -246,7 +246,7 @@
         [body setObject:@"119" forKey:@"method"];
         [body setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
         
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];

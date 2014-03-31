@@ -254,8 +254,7 @@
 {
     AppDelegate *app = [[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
-        [self showMessageWindowWithContent:@"请求数据失败，请检查网络" imageType:0];
-        [self showMessageWithContent:@"暂无玩家信息" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        [self showMessageWithContent:@"请求数据失败，请检查网络" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
 }
@@ -272,16 +271,6 @@
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
-}
-
-#pragma mark 是否登陆
-- (BOOL)isHaveLogin
-{
-//    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] && ![[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] isEqualToString:@""]) {
-        return YES;
-    }
-    return NO;
 }
 
 #pragma mark 手势

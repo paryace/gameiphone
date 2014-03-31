@@ -166,7 +166,7 @@
         [postDict setObject:paramDict forKey:@"params"];
         [postDict setObject:@"109" forKey:@"method"];
         [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {

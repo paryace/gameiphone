@@ -10,10 +10,11 @@
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "FindPageViewController.h"
+#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "FindPasswordViewController.h"
+#import "ReconnectMessage.h"
 
 #define kLabelFont (14.0)
 
@@ -165,7 +166,7 @@
     [body setObject:@"101" forKey:@"method"];
 
     [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:body TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
 
         [[NSUserDefaults standardUserDefaults] setValue:phoneTextField.text forKey:PhoneNumKey];
@@ -179,11 +180,10 @@
         [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];
         [DataStoreManager storeMyUserID:[[dic objectForKey:@"token"] objectForKey:@"userid"]];
         
-        [[TempData sharedInstance] SetServer:[[dic objectForKey:@"chatServer"] objectForKey:@"address"] TheDomain:[[dic objectForKey:@"chatServer"] objectForKey:@"name"]];//得到域名
-        
         [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
 
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
+        [[ReconnectMessage singleton] getChatServer];
         [self loginSuccess];
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -219,7 +219,7 @@
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
 
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict TheController:self success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         
