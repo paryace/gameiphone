@@ -103,7 +103,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [self storeNewMessage:messageContent];
     [self.xmppHelper comeBackDelivered:sender msgId:msgId];
-    
+    [[UserManager singleton]requestUserFromNet:sender];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
