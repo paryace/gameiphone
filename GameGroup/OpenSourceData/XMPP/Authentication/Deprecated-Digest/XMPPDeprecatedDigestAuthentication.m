@@ -53,8 +53,7 @@
 	
 	XMPPJID *myJID = xmppStream.myJID;
 	
-	NSString *username = [myJID user]; // 原来的
-//    NSString *username = [[myJID user] stringByAppendingString:[NSString stringWithFormat:@"@%@",[myJID domain]]];
+	NSString *username = [myJID user];
 	NSString *resource = [myJID resource];
 	
 	if ([resource length] == 0)
@@ -67,7 +66,7 @@
 	NSString *rootID = [[[xmppStream rootElement] attributeForName:@"id"] stringValue];
 	NSString *digestStr = [NSString stringWithFormat:@"%@%@", rootID, password];
 	
-	NSString *digest = [[[digestStr dataUsingEncoding:NSUTF8StringEncoding] sha1Digest] hexStringValue];
+	NSString *digest = [[[digestStr dataUsingEncoding:NSUTF8StringEncoding] xmpp_sha1Digest] xmpp_hexStringValue];
 	
 	NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:auth"];
 	[query addChild:[NSXMLElement elementWithName:@"username" stringValue:username]];
@@ -156,7 +155,7 @@
 		block();
 	else
 		dispatch_sync(self.xmppQueue, block);
-	//return NO;
+	
 	return result;
 }
 

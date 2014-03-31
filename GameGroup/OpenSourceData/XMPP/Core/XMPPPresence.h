@@ -19,12 +19,10 @@
 + (XMPPPresence *)presence;
 + (XMPPPresence *)presenceWithType:(NSString *)type;
 + (XMPPPresence *)presenceWithType:(NSString *)type to:(XMPPJID *)to;
-+ (XMPPPresence *)presenceWithType:(NSString *)type to:(XMPPJID *)to FromNickname:(NSString *)nickname Msg:(NSString *)msg HeadID:(NSString *)headID;
 
 - (id)init;
 - (id)initWithType:(NSString *)type;
 - (id)initWithType:(NSString *)type to:(XMPPJID *)to;
-- (id)initWithType:(NSString *)type to:(XMPPJID *)to FromNickname:(NSString *)nickname Msg:(NSString *)msg HeadID:(NSString *)headID;
 
 - (NSString *)type;
 

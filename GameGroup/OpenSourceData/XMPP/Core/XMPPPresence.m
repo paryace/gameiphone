@@ -55,11 +55,6 @@
 	return [[XMPPPresence alloc] initWithType:type to:to];
 }
 
-+ (XMPPPresence *)presenceWithType:(NSString *)type to:(XMPPJID *)to FromNickname:(NSString *)nickname Msg:(NSString *)msg HeadID:(NSString *)headID
-{
-    return [[XMPPPresence alloc] initWithType:type to:to FromNickname:nickname Msg:msg HeadID:headID];
-}
-
 - (id)init
 {
 	self = [super initWithName:@"presence"];
@@ -84,34 +79,18 @@
 	return self;
 }
 
-- (id)initWithType:(NSString *)type to:(XMPPJID *)to FromNickname:(NSString *)nickname Msg:(NSString *)msg HeadID:(NSString *)headID
-{
-    if ((self = [super initWithName:@"presence"]))
-	{
-		if (type)
-			[self addAttributeWithName:@"type" stringValue:type];
-		
-		if (to)
-			[self addAttributeWithName:@"to" stringValue:[to description]];
-        if (nickname) 
-            [self addAttributeWithName:@"fromNickname" stringValue:nickname];
-        if (msg) {
-            [self addAttributeWithName:@"msg" stringValue:msg];
-        }
-        if (headID) {
-            [self addAttributeWithName:@"headID" stringValue:headID];
-        }
-        
-	}
-	return self;
-}
-
 - (id)initWithXMLString:(NSString *)string error:(NSError *__autoreleasing *)error
 {
 	if((self = [super initWithXMLString:string error:error])){
 		self = [XMPPPresence presenceFromElement:self];
-	}
+	}	
 	return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    NSXMLElement *element = [super copyWithZone:zone];
+    return [XMPPPresence presenceFromElement:element];
 }
 
 - (NSString *)type
@@ -158,6 +137,5 @@
 {
 	return [[self type] isEqualToString:@"error"];
 }
-
 
 @end

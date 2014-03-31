@@ -309,7 +309,7 @@ extern const NSTimeInterval XMPPStreamTimeoutNone;
  * The xmppStreamDidDisconnect:withError: delegate method will immediately be dispatched onto the delegate queue.
 **/
 - (void)disconnect;
--(BOOL)getStateOfXMPP;
+
 /**
  * Disconnects from the remote host by sending the terminating </stream:stream> element,
  * and then closing the underlying TCP socket connection.
@@ -375,7 +375,7 @@ extern const NSTimeInterval XMPPStreamTimeoutNone;
  * In Band Registration.
  * Creating a user account on the xmpp server within the xmpp protocol.
  * 
- * The registerWithPassword:error: method is asynchronous.
+ * The registerWithElements:error: method is asynchronous.
  * It will return immediately, and the delegate methods are used to determine success.
  * See the xmppStreamDidRegister: and xmppStream:didNotRegister: methods.
  * 
@@ -384,10 +384,13 @@ extern const NSTimeInterval XMPPStreamTimeoutNone;
  * 
  * The errPtr parameter is optional - you may pass nil.
  * 
+ * registerWithPassword:error: is a convience method for creating an account using the given username and password.
+ *
  * Security Note:
  * The password will be sent in the clear unless the stream has been secured.
 **/
 - (BOOL)supportsInBandRegistration;
+- (BOOL)registerWithElements:(NSArray *)elements error:(NSError **)errPtr;
 - (BOOL)registerWithPassword:(NSString *)password error:(NSError **)errPtr;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -665,27 +668,6 @@ extern const NSTimeInterval XMPPStreamTimeoutNone;
 + (NSString *)generateUUID;
 - (NSString *)generateUUID;
 
-/**
- * The XMPP Framework is designed to be entirely GCD based.
- * However, there are various utility classes provided by Apple that are still dependent upon a thread/runloop model.
- * For example, monitoring a network for changes related to connectivity requires we register a runloop-based delegate.
- * Thus XMPPStream creates a dedicated thread/runloop for any xmpp classes that may need it.
- * This provides multiple benefits:
- * 
- * - Development is simplified for those transitioning from previous thread/runloop versions.
- * - Development is simplified for those who rely on utility classes that don't yet support pure GCD,
- *   as they don't have to setup and maintain a thread/runloop on their own.
- * - It prevents multiple xmpp classes from creating multiple internal threads (which would be resource costly).
- * 
- * Please note:
- * This thread is designed to be used only if absolutely necessary.
- * That is, if you MUST use a class that doesn't yet support pure GCD.
- * If there is a GCD alternative, you should be using it instead.
- * For example, do NOT use NSTimer. Instead setup a GCD timer using a dispatch_source.
-**/
-- (NSThread *)xmppUtilityThread;
-- (NSRunLoop *)xmppUtilityRunLoop;
-
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -919,6 +901,18 @@ extern const NSTimeInterval XMPPStreamTimeoutNone;
 - (void)xmppStream:(XMPPStream *)sender didSendIQ:(XMPPIQ *)iq;
 - (void)xmppStream:(XMPPStream *)sender didSendMessage:(XMPPMessage *)message;
 - (void)xmppStream:(XMPPStream *)sender didSendPresence:(XMPPPresence *)presence;
+
+/**
+ * These methods are called after failing to send the respective XML elements over the stream.
+**/
+- (void)xmppStream:(XMPPStream *)sender didFailToSendIQ:(XMPPIQ *)iq error:(NSError *)error;
+- (void)xmppStream:(XMPPStream *)sender didFailToSendMessage:(XMPPMessage *)message error:(NSError *)error;
+- (void)xmppStream:(XMPPStream *)sender didFailToSendPresence:(XMPPPresence *)presence error:(NSError *)error;
+
+/**
+ * This method is called if the XMPP Stream's jid changes.
+**/
+- (void)xmppStreamDidChangeMyJID:(XMPPStream *)xmppStream;
 
 /**
  * This method is called if the disconnect method is called.

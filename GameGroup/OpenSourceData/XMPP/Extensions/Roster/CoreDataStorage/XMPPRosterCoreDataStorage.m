@@ -32,7 +32,7 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		
-		sharedInstance = [[XMPPRosterCoreDataStorage alloc] initWithDatabaseFilename:nil];
+		sharedInstance = [[XMPPRosterCoreDataStorage alloc] initWithDatabaseFilename:nil storeOptions:nil];
 	});
 	
 	return sharedInstance;
@@ -48,7 +48,9 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 	[super commonInit];
 	
 	// This method is invoked by all public init methods of the superclass
-	
+    autoRemovePreviousDatabaseFile = YES;
+	autoRecreateDatabaseFile = YES;
+    
 	rosterPopulationSet = [[NSMutableSet alloc] init];
 }
 
@@ -118,8 +120,10 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 	
 	for (XMPPResourceCoreDataStorageObject *resource in allResources)
 	{
+        XMPPUserCoreDataStorageObject *user = resource.user;
 		[moc deleteObject:resource];
-		
+        [user recalculatePrimaryResource];
+        
 		if (++unsavedCount >= saveThreshold)
 		{
 			[self save];
@@ -131,24 +135,6 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Overrides
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (void)willCreatePersistentStore:(NSString *)filePath
-{
-	// This method is overriden from the XMPPCoreDataStore superclass.
-	// From the documentation:
-	// 
-	// Override me, if needed, to provide customized behavior.
-	// 
-	// For example, if you are using the database for pure non-persistent data you may want to delete the database
-	// file if it already exists on disk.
-	// 
-	// The default implementation does nothing.
-	
-	if ([[NSFileManager defaultManager] fileExistsAtPath:filePath])
-	{
-		[[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-	}
-}
 
 - (void)didCreateManagedObjectContext
 {
@@ -280,7 +266,7 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 	
 	[self scheduleBlock:^{
 		
-		[rosterPopulationSet addObject:[NSNumber numberWithPtr:(__bridge void *)stream]];
+		[rosterPopulationSet addObject:[NSNumber xmpp_numberWithPtr:(__bridge void *)stream]];
     
 		// Clear anything already in the roster core data store.
 		// 
@@ -322,7 +308,7 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 	
 	[self scheduleBlock:^{
 		
-		[rosterPopulationSet removeObject:[NSNumber numberWithPtr:(__bridge void *)stream]];
+		[rosterPopulationSet removeObject:[NSNumber xmpp_numberWithPtr:(__bridge void *)stream]];
 	}];
 }
 
@@ -338,7 +324,7 @@ static XMPPRosterCoreDataStorage *sharedInstance;
 		
 		NSManagedObjectContext *moc = [self managedObjectContext];
 		
-		if ([rosterPopulationSet containsObject:[NSNumber numberWithPtr:(__bridge void *)stream]])
+		if ([rosterPopulationSet containsObject:[NSNumber xmpp_numberWithPtr:(__bridge void *)stream]])
 		{
 			NSString *streamBareJidStr = [[self myJIDForXMPPStream:stream] bare];
 			

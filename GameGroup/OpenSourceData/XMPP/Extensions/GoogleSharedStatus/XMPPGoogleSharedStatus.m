@@ -205,11 +205,11 @@ NSString *const XMPPGoogleSharedStatusShowIdle = @"away";
 	[self.xmppStream sendElement:iq];
 }
 
-// If we recieved a shared-status IQ and we support it, unpack it into a
+// If we received a shared-status IQ and we support it, unpack it into a
 // dictionary and notify the delegates. If it is the first shared-status
 // subscription IQ, it contains the maximum string length and list count
 // information attributes as well, so save those.
-// If we recieved a discovery IQ, determine shared status support.
+// If we received a discovery IQ, determine shared status support.
 - (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq {
 	XMPPElement *query = (XMPPElement *)[[iq children] objectAtIndex:0];
 	if([query.xmlns isEqualToString:GOOGLE_SHARED_STATUS] && self.sharedStatusSupported) {
@@ -217,7 +217,7 @@ NSString *const XMPPGoogleSharedStatusShowIdle = @"away";
 		_show = [self.sharedStatus objectForKey:XMPPGoogleSharedStatusShow];
 		_status = [self.sharedStatus objectForKey:XMPPGoogleSharedStatusStatus];
 		_invisible = [[self.sharedStatus objectForKey:XMPPGoogleSharedStatusInvisible] boolValue];
-		[multicastDelegate xmppGoogleSharedStatus:self didRecieveUpdatedStatus:self.sharedStatus];
+		[multicastDelegate xmppGoogleSharedStatus:self didReceiveUpdatedStatus:self.sharedStatus];
 		
 		if([query attributeForName:@"status-max"])
 			_statusMessageMaxLength = [[query attributeForName:@"status-max"].stringValue integerValue];

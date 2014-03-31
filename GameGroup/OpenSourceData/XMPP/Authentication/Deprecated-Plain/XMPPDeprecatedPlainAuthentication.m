@@ -52,8 +52,7 @@
 	
 	XMPPJID *myJID = xmppStream.myJID;
 	
-	NSString *username = [myJID user];   //原方法
-  //  NSString * username = [@"hamlet" stringByAppendingString:[NSString stringWithFormat:@"@%@",[myJID domain]]];
+	NSString *username = [myJID user];
 	NSString *resource = [myJID resource];
 	
 	if ([resource length] == 0)
@@ -65,8 +64,8 @@
 	
 	NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:auth"];
 	[query addChild:[NSXMLElement elementWithName:@"username" stringValue:username]];
-	[query addChild:[NSXMLElement elementWithName:@"resource" stringValue:@"Castle"]];
-	[query addChild:[NSXMLElement elementWithName:@"password" stringValue:@"gertrude"]];
+	[query addChild:[NSXMLElement elementWithName:@"resource" stringValue:resource]];
+	[query addChild:[NSXMLElement elementWithName:@"password" stringValue:password]];
 	
 	XMPPIQ *iq = [XMPPIQ iqWithType:@"set"];
 	[iq addChild:query];
@@ -150,7 +149,7 @@
 		block();
 	else
 		dispatch_sync(self.xmppQueue, block);
-//	return YES;
+	
 	return result;
 }
 

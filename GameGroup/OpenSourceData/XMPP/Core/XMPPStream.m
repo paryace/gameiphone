@@ -19,8 +19,7 @@
 
 // Log levels: off, error, warn, info, verbose
 #if DEBUG
-//  static const int xmppLogLevel = XMPP_LOG_LEVEL_INFO | XMPP_LOG_FLAG_SEND_RECV; // | XMPP_LOG_FLAG_TRACE;
-  static const int xmppLogLevel = XMPP_LOG_LEVEL_VERBOSE | XMPP_LOG_FLAG_SEND_RECV; // | XMPP_LOG_FLAG_TRACE;
+  static const int xmppLogLevel = XMPP_LOG_LEVEL_INFO | XMPP_LOG_FLAG_SEND_RECV; // | XMPP_LOG_FLAG_TRACE;
 #else
   static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 #endif
@@ -88,7 +87,7 @@ enum XMPPStreamConfig
 	
 	dispatch_queue_t didReceiveIqQueue;
     
-    dispatch_source_t connectTimer;
+	dispatch_source_t connectTimer;
 	
 	GCDMulticastDelegate <XMPPStreamDelegate> *multicastDelegate;
 	
@@ -108,7 +107,7 @@ enum XMPPStreamConfig
 	NSString *hostName;
 	UInt16 hostPort;
     
-    BOOL autoStartTLS;
+	BOOL autoStartTLS;
 	
 	id <XMPPSASLAuthentication> auth;
 	NSDate *authenticationDate;
@@ -133,9 +132,6 @@ enum XMPPStreamConfig
 	NSUInteger srvResultsIndex;
 	
 	NSMutableArray *receipts;
-	
-	NSThread *xmppUtilityThread;
-	NSRunLoop *xmppUtilityRunLoop;
 	
 	id userTag;
 }
@@ -214,13 +210,6 @@ enum XMPPStreamConfig
 	autoDelegateDict = [[NSMutableDictionary alloc] init];
 	
 	receipts = [[NSMutableArray alloc] init];
-	
-	// Setup and start the utility thread.
-	// We need to be careful to ensure the thread doesn't retain a reference to us longer than necessary.
-	
-	xmppUtilityThread = [[NSThread alloc] initWithTarget:[self class] selector:@selector(xmppThreadMain) object:nil];
-	[[xmppUtilityThread threadDictionary] setObject:self forKey:@"XMPPStream"];
-	[xmppUtilityThread start];
 }
 
 /**
@@ -293,11 +282,6 @@ enum XMPPStreamConfig
 	{
 		[receipt signalFailure];
 	}
-	
-	[[self class] performSelector:@selector(xmppThreadStop)
-	                     onThread:xmppUtilityThread
-	                   withObject:nil
-	                waitUntilDone:NO];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -454,6 +438,7 @@ enum XMPPStreamConfig
 			{
 				[[NSNotificationCenter defaultCenter] postNotificationName:XMPPStreamDidChangeMyJIDNotification
 				                                                    object:self];
+                [multicastDelegate xmppStreamDidChangeMyJID:self];
 			}
 		}
 	};
@@ -484,6 +469,7 @@ enum XMPPStreamConfig
 			{
 				[[NSNotificationCenter defaultCenter] postNotificationName:XMPPStreamDidChangeMyJIDNotification
 				                                                    object:self];
+                [multicastDelegate xmppStreamDidChangeMyJID:self];
 			}
 		}
 	};
@@ -1366,16 +1352,7 @@ enum XMPPStreamConfig
 	else
 		dispatch_sync(xmppQueue, block);
 }
--(BOOL)getStateOfXMPP
-{
-    if (state==STATE_XMPP_DISCONNECTED) {
-        return NO;
-    }
-    else
-    {
-        return YES;
-    }
-}
+
 - (void)disconnectAfterSending
 {
 	XMPPLogTrace();
@@ -1600,14 +1577,14 @@ enum XMPPStreamConfig
 }
 
 /**
- * This method attempts to register a new user on the server using the given username and password.
+ * This method attempts to register a new user on the server using the given elements.
  * The result of this action will be returned via the delegate methods.
- * 
+ *
  * If the XMPPStream is not connected, or the server doesn't support in-band registration, this method does nothing.
 **/
-- (BOOL)registerWithPassword:(NSString *)password error:(NSError **)errPtr
+- (BOOL)registerWithElements:(NSArray *)elements error:(NSError **)errPtr
 {
-	XMPPLogTrace();
+    XMPPLogTrace();
 	
 	__block BOOL result = YES;
 	__block NSError *err = nil;
@@ -1625,17 +1602,6 @@ enum XMPPStreamConfig
 			return_from_block;
 		}
 		
-		if (myJID_setByClient == nil)
-		{
-			NSString *errMsg = @"You must set myJID before calling registerWithPassword:error:.";
-			NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
-			
-			err = [NSError errorWithDomain:XMPPStreamErrorDomain code:XMPPStreamInvalidProperty userInfo:info];
-			
-			result = NO;
-			return_from_block;
-		}
-		
 		if (![self supportsInBandRegistration])
 		{
 			NSString *errMsg = @"The server does not support in band registration.";
@@ -1646,12 +1612,13 @@ enum XMPPStreamConfig
 			result = NO;
 			return_from_block;
 		}
-		
-		NSString *username = [myJID_setByClient user];
-		
+        
 		NSXMLElement *queryElement = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:register"];
-		[queryElement addChild:[NSXMLElement elementWithName:@"username" stringValue:username]];
-		[queryElement addChild:[NSXMLElement elementWithName:@"password" stringValue:password]];
+        
+        for(NSXMLElement *element in elements)
+        {
+            [queryElement addChild:element];
+        }
 		
 		NSXMLElement *iqElement = [NSXMLElement elementWithName:@"iq"];
 		[iqElement addAttributeWithName:@"type" stringValue:@"set"];
@@ -1670,6 +1637,54 @@ enum XMPPStreamConfig
 		// Update state
 		state = STATE_XMPP_REGISTERING;
 		
+	}};
+	
+	if (dispatch_get_specific(xmppQueueTag))
+		block();
+	else
+		dispatch_sync(xmppQueue, block);
+	
+	if (errPtr)
+		*errPtr = err;
+	
+	return result;
+    
+}
+
+/**
+ * This method attempts to register a new user on the server using the given username and password.
+ * The result of this action will be returned via the delegate methods.
+ * 
+ * If the XMPPStream is not connected, or the server doesn't support in-band registration, this method does nothing.
+**/
+- (BOOL)registerWithPassword:(NSString *)password error:(NSError **)errPtr
+{
+	XMPPLogTrace();
+	
+	__block BOOL result = YES;
+	__block NSError *err = nil;
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+		
+		if (myJID_setByClient == nil)
+		{
+			NSString *errMsg = @"You must set myJID before calling registerWithPassword:error:.";
+			NSDictionary *info = [NSDictionary dictionaryWithObject:errMsg forKey:NSLocalizedDescriptionKey];
+			
+			err = [NSError errorWithDomain:XMPPStreamErrorDomain code:XMPPStreamInvalidProperty userInfo:info];
+			
+			result = NO;
+			return_from_block;
+		}
+		
+		NSString *username = [myJID_setByClient user];
+		
+		NSMutableArray *elements = [NSMutableArray array];
+		[elements addObject:[NSXMLElement elementWithName:@"username" stringValue:username]];
+		[elements addObject:[NSXMLElement elementWithName:@"password" stringValue:password]];
+        
+        [self registerWithElements:elements error:errPtr];
+        
 	}};
 	
 	if (dispatch_get_specific(xmppQueueTag))
@@ -1798,7 +1813,6 @@ enum XMPPStreamConfig
 		if ([inAuth start:&err])
 		{
 			auth = inAuth;
-            NSLog(@"wwwwww:%@",auth);
 			result = YES;
 		}
 		else
@@ -1867,15 +1881,11 @@ enum XMPPStreamConfig
 		// 
 		// P.S. - This method is deprecated.
 		
-        //
 		id <XMPPSASLAuthentication> someAuth = nil;
 		
-        //手动故意设置前三种返回不为真，为使用supportsDeprecatedPlainAuthentication，禁用SASL...  这是第一次修改
-        //手动将第四种someAuth以XMPPPlainAuthentication初始化，为使其执行PLAIN验证...  这是第二次修改
 		if ([self supportsDigestMD5Authentication])
 		{
 			someAuth = [[XMPPDigestMD5Authentication alloc] initWithStream:self password:password];
-            NSLog(@"cdcdcd:%@",someAuth);
 			result = [self authenticate:someAuth error:&err];
 		}
 		else if ([self supportsPlainAuthentication])
@@ -1916,10 +1926,8 @@ enum XMPPStreamConfig
 	return result;
 }
 
-- (BOOL)isAuthenticating{
-	
-	XMPPLogTrace();
-	
+- (BOOL)isAuthenticating
+{		
 	__block BOOL result = NO;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
@@ -1971,7 +1979,8 @@ enum XMPPStreamConfig
 		dispatch_async(xmppQueue, block);
 }
 
-- (NSDate *)authenticationDate{
+- (NSDate *)authenticationDate
+{
 	__block NSDate *result = nil;
 	
 	dispatch_block_t block = ^{
@@ -2473,6 +2482,14 @@ enum XMPPStreamConfig
 		{
 			[self sendElement:element withTag:TAG_XMPP_WRITE_STREAM];
 		}
+		else
+		{
+			NSError *error = [NSError errorWithDomain:XMPPStreamErrorDomain
+												 code:XMPPStreamInvalidState
+											 userInfo:nil];
+            
+			[self failToSendElement:element error:error];
+		}
 	}};
 	
 	if (dispatch_get_specific(xmppQueueTag))
@@ -2509,6 +2526,14 @@ enum XMPPStreamConfig
 				
 				[self sendElement:element withTag:TAG_XMPP_WRITE_RECEIPT];
 			}
+            else
+            {
+                NSError *error = [NSError errorWithDomain:XMPPStreamErrorDomain
+                                                     code:XMPPStreamInvalidState
+                                                 userInfo:nil];
+                
+                [self failToSendElement:element error:error];
+            }
 		}};
 		
 		if (dispatch_get_specific(xmppQueueTag))
@@ -2518,6 +2543,62 @@ enum XMPPStreamConfig
 		
 		*receiptPtr = receipt;
 	}
+}
+
+- (void)failToSendElement:(NSXMLElement *)element error:(NSError *)error
+{
+	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
+	
+	if ([element isKindOfClass:[XMPPIQ class]])
+	{
+		[self failToSendIQ:(XMPPIQ *)element error:error];
+	}
+	else if ([element isKindOfClass:[XMPPMessage class]])
+	{
+		[self failToSendMessage:(XMPPMessage *)element error:error];
+	}
+	else if ([element isKindOfClass:[XMPPPresence class]])
+	{
+		[self failToSendPresence:(XMPPPresence *)element error:error];
+	}
+	else
+	{
+		NSString *elementName = [element name];
+		
+		if ([elementName isEqualToString:@"iq"])
+		{
+			[self failToSendIQ:[XMPPIQ iqFromElement:element] error:error];
+		}
+		else if ([elementName isEqualToString:@"message"])
+		{
+			[self failToSendMessage:[XMPPMessage messageFromElement:element] error:error];
+		}
+		else if ([elementName isEqualToString:@"presence"])
+		{
+			[self failToSendPresence:[XMPPPresence presenceFromElement:element] error:error];
+		}
+	}
+}
+
+- (void)failToSendIQ:(XMPPIQ *)iq error:(NSError *)error
+{
+	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
+	
+	[multicastDelegate xmppStream:self didFailToSendIQ:iq error:error];
+}
+
+- (void)failToSendMessage:(XMPPMessage *)message error:(NSError *)error
+{
+	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
+	
+	[multicastDelegate xmppStream:self didFailToSendMessage:message error:error];
+}
+
+- (void)failToSendPresence:(XMPPPresence *)presence error:(NSError *)error
+{
+	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
+	
+	[multicastDelegate xmppStream:self didFailToSendPresence:presence error:error];
 }
 
 /**
@@ -3402,6 +3483,7 @@ enum XMPPStreamConfig
 			
 			NSXMLElement *iq = [NSXMLElement elementWithName:@"iq"];
 			[iq addAttributeWithName:@"type" stringValue:@"set"];
+            [iq addAttributeWithName:@"id" stringValue:[self generateUUID]];
 			[iq addChild:session];
 			
 			NSString *outgoingStr = [iq compactXMLString];
@@ -3621,7 +3703,7 @@ enum XMPPStreamConfig
 	}
 }
 
-- (void)srvResolver:(XMPPSRVResolver *)sender didResolveRecords:(NSArray *)records
+- (void)xmppSRVResolver:(XMPPSRVResolver *)sender didResolveRecords:(NSArray *)records
 {
 	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
 	
@@ -3637,7 +3719,7 @@ enum XMPPStreamConfig
 	[self tryNextSrvResult];
 }
 
-- (void)srvResolver:(XMPPSRVResolver *)sender didNotResolveDueToError:(NSError *)error
+- (void)xmppSRVResolver:(XMPPSRVResolver *)sender didNotResolveDueToError:(NSError *)error
 {
 	NSAssert(dispatch_get_specific(xmppQueueTag), @"Invoked on incorrect queue");
 	
@@ -4404,93 +4486,6 @@ enum XMPPStreamConfig
 - (NSString *)generateUUID
 {
 	return [[self class] generateUUID];
-}
-
-- (NSThread *)xmppUtilityThread
-{
-	// This is a read-only variable, set in the init method and never altered.
-	// Thus we supply direct access to it in this method.
-	
-	return xmppUtilityThread;
-}
-
-- (NSRunLoop *)xmppUtilityRunLoop
-{
-	__block NSRunLoop *result = nil;
-	
-	dispatch_block_t block = ^{
-		result = xmppUtilityRunLoop;
-	};
-	
-	if (dispatch_get_specific(xmppQueueTag))
-		block();
-	else
-		dispatch_sync(xmppQueue, block);
-	
-	return result;
-}
-
-- (void)setXmppUtilityRunLoop:(NSRunLoop *)runLoop
-{
-	dispatch_async(xmppQueue, ^{
-		if (xmppUtilityRunLoop == nil)
-		{
-			xmppUtilityRunLoop = runLoop;
-		}
-	});
-}
-
-+ (void)xmppThreadMain
-{
-	// This is the xmppUtilityThread.
-	// It is designed to be used only if absolutely necessary.
-	// If there is a GCD alternative, it should be used instead.
-	
-	@autoreleasepool {
-	
-		[[NSThread currentThread] setName:@"XMPPUtilityThread"];
-		
-		// Set XMPPStream's xmppUtilityRunLoop variable.
-		// 
-		// And when done, remove the xmppStream reference from the dictionary so it's no longer retained.
-		
-		XMPPStream *creator = [[[NSThread currentThread] threadDictionary] objectForKey:@"XMPPStream"];
-		[creator setXmppUtilityRunLoop:[NSRunLoop currentRunLoop]];
-		[[[NSThread currentThread] threadDictionary] removeObjectForKey:@"XMPPStream"];
-		
-		// We can't iteratively run the run loop unless it has at least one source or timer.
-		// So we'll create a timer that will probably never fire.
-		
-		[NSTimer scheduledTimerWithTimeInterval:[[NSDate distantFuture] timeIntervalSinceNow]
-		                                 target:self
-		                               selector:@selector(xmppThreadIgnore:)
-		                               userInfo:nil
-		                                repeats:YES];
-		
-		BOOL isCancelled = NO;
-		BOOL hasRunLoopSources = YES;
-		
-		while (!isCancelled && hasRunLoopSources)
-		{
-			@autoreleasepool {
-			
-				hasRunLoopSources = [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-				                                             beforeDate:[NSDate distantFuture]];
-				
-				isCancelled = [[NSThread currentThread] isCancelled];
-			}
-		}
-	}
-}
-
-+ (void)xmppThreadStop
-{
-	[[NSThread currentThread] cancel];
-}
-
-+ (void)xmppThreadIgnore:(NSTimer *)aTimer
-{
-	// Ignore
 }
 
 @end

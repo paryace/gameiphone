@@ -12,6 +12,7 @@
 
 @protocol XMPPRosterStorage;
 @class DDList;
+@class XMPPIDTracker;
 
 /**
  * The XMPPRoster provides the scaffolding for a roster solution.
@@ -41,6 +42,8 @@
 	id multicastDelegate;
  */
 	__strong id <XMPPRosterStorage> xmppRosterStorage;
+    
+    XMPPIDTracker *xmppIDTracker;
 	
 	Byte config;
 	Byte flags;
@@ -76,6 +79,16 @@
  * The default value is YES.
 **/
 @property (assign) BOOL autoFetchRoster;
+
+/**
+ * Whether or not to automatically clear all Users and Resources when the stream disconnects.
+ * If you are using XMPPRosterCoreDataStorage you may want to set autoRemovePreviousDatabaseFile to NO.
+ *
+ * All Users and Resources will be cleared when the roster is next populated regardless of this property.
+ *
+ * The default value is YES.
+**/
+@property (assign) BOOL autoClearAllUsersAndResources;
 
 /**
  * In traditional IM applications, the "buddy" system is rather straightforward.
@@ -159,7 +172,7 @@
  * and requests permission to receive presence information from them.
 **/
 - (void)addUser:(XMPPJID *)jid withNickname:(NSString *)optionalName;
-- (void)addUser:(XMPPJID *)jid withNickname:(NSString *)optionalName Msg:(NSString *)msg HeadID:(NSString *)headID;
+
 /**
  * Adds the given user to the roster with an optional nickname, 
  * adds the given user to groups
@@ -173,7 +186,7 @@
  * and optionally requests permission to receive presence information from them.
 **/
 - (void)addUser:(XMPPJID *)jid withNickname:(NSString *)optionalName groups:(NSArray *)groups subscribeToPresence:(BOOL)subscribe;
-- (void)addUser:(XMPPJID *)jid withNickname:(NSString *)optionalName Msg:(NSString *)msg HeadID:(NSString *)headID groups:(NSArray *)groups subscribeToPresence:(BOOL)subscribe;
+
 /**
  * Sets/modifies the nickname for the given user.
 **/
@@ -201,7 +214,7 @@
  * @see addUser:withNickname:
 **/
 - (void)subscribePresenceToUser:(XMPPJID *)jid;
-- (void)subscribePresenceToUser:(XMPPJID *)jid Nickname:(NSString *)nickName Msg:(NSString *)msg HeadID:(NSString *)headID;
+
 /**
  * If we currently have a presence subscription to the given user,
  * this method then removes the subscription.
@@ -351,7 +364,12 @@
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence;
 
 /**
- * Sent when the initial roster is recieved.
+ * Sent when a Roster Push is received as specified in Section 2.1.6 of RFC 6121.
+**/
+- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterPush:(XMPPIQ *)iq;
+
+/**
+ * Sent when the initial roster is received.
 **/
 - (void)xmppRosterDidBeginPopulating:(XMPPRoster *)sender;
 
@@ -361,7 +379,7 @@
 - (void)xmppRosterDidEndPopulating:(XMPPRoster *)sender;
 
 /**
- * Sent when the roster recieves a roster item.
+ * Sent when the roster receives a roster item.
  *
  * Example:
  *
@@ -369,6 +387,6 @@
  *   <group>Friends</group>
  * </item>
 **/
-- (void)xmppRoster:(XMPPRoster *)sender didRecieveRosterItem:(NSXMLElement *)item;
+- (void)xmppRoster:(XMPPRoster *)sender didReceiveRosterItem:(NSXMLElement *)item;
 
 @end

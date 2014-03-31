@@ -105,7 +105,7 @@
 }
 -(BOOL)ifXMPPConnected
 {
-    return [self.xmppStream getStateOfXMPP];
+    return [self.xmppStream isConnected];
 }
 -(BOOL)isDisconnected
 {
