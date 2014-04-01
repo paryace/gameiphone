@@ -105,9 +105,9 @@
             if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
             {
                 if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
-                    soundSwitch.on =YES;
-                }else{
                     soundSwitch.on =NO;
+                }else{
+                    soundSwitch.on =YES;
                 }
             }else{
                 soundSwitch.on =YES;
@@ -169,11 +169,11 @@
 -(void)infomationAccording:(UISwitch*)sender
 {
     if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_userInfo_off" object:nil];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_userInfo_off"];
         [self getPushInfoWithNetWithcode:@"1"];
 
     }else{
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_userInfo_off"];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_userInfo_off" object:nil];
          [self getPushInfoWithNetWithcode:@"0"];
     }
 }
