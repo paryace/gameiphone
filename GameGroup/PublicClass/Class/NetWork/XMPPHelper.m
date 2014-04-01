@@ -197,12 +197,12 @@
 //验证成功后调用
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender{
     
-    self.xmppvCardStorage=[XMPPvCardCoreDataStorage sharedInstance];
-    self.xmppvCardTempModule=[[XMPPvCardTempModule alloc]initWithvCardStorage:self.xmppvCardStorage];
-    self.xmppvCardAvatarModule = [[XMPPvCardAvatarModule alloc]initWithvCardTempModule:self.xmppvCardTempModule];
-    [self.xmppvCardTempModule   activate:self.xmppStream];
-    [self.xmppvCardAvatarModule activate:self.xmppStream];
-    [self getmyvcard];
+//    self.xmppvCardStorage=[XMPPvCardCoreDataStorage sharedInstance];
+//    self.xmppvCardTempModule=[[XMPPvCardTempModule alloc]initWithvCardStorage:self.xmppvCardStorage];
+//    self.xmppvCardAvatarModule = [[XMPPvCardAvatarModule alloc]initWithvCardTempModule:self.xmppvCardTempModule];
+//    [self.xmppvCardTempModule   activate:self.xmppStream];
+//    [self.xmppvCardAvatarModule activate:self.xmppStream];
+//    [self getmyvcard];
     NSLog(@"authenticated");
     [self goOnline];
     self.success();

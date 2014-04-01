@@ -217,7 +217,7 @@
 #pragma mark -重新发送验证码
 - (void)refreshVCButtonClick:(id)sender
 {
-
+    [self DetectNetwork];
     //以下应为获取成功后
    //[self startRefreshTime];
     
@@ -303,6 +303,8 @@
 #pragma mark -获取验证码 下一步
 - (void)vercodeNextButtonClick:(id)sender
 {
+    [self DetectNetwork];
+
     [m_verCodeText resignFirstResponder];
     if (KISEmptyOrEnter(m_verCodeText.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入验证码！" buttonTitle:@"确定"];
@@ -412,6 +414,8 @@
 
 - (void)newPassButtonOKClick:(id)sender
 {
+    [self DetectNetwork];
+
     [m_newPassText_one resignFirstResponder];
     [m_newPassText_two resignFirstResponder];
     if (m_newPassText_one.text.length < 6) {

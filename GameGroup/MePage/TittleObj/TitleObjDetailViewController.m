@@ -46,8 +46,8 @@
     UITableView*    m_sortTableView;
     NSMutableArray* m_sortDataArray;
     
-    PullUpRefreshView      *refreshView;
-    PullDownRefreshView    *pullDownView;
+//    PullUpRefreshView      *refreshView;
+//    PullDownRefreshView    *pullDownView;
     
     BOOL            isGetForData;//获取前面的数据
     

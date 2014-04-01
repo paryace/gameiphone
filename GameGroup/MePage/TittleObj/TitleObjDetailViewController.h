@@ -17,8 +17,8 @@
 UIGestureRecognizerDelegate,
 UIScrollViewDelegate,
 TitleSortCellDelegate,
-PullUpDelegate,
-PullDowmDelegate,
+//PullUpDelegate,
+//PullDowmDelegate,
 UIActionSheetDelegate,
 TableViewDatasourceDidChange
 >
