@@ -56,26 +56,13 @@ static UserManager *userManager = NULL;
             [dict setObject:dUser.headImgID?dUser.headImgID:@"" forKey:@"img"];
         }
         else{
-            [self getDefaultUser:dict];
+            [self requestUserFromNet:userId obj:@"chat"];
         }
-        
+    
+
     return dict;
 }
 
--(NSMutableDictionary *)getDefaultUser:(NSMutableDictionary *)dict
-{
-    [dict setObject:@"备用" forKey:@"username"];
-    [dict setObject:@"备用" forKey:@"userid"];
-    [dict setObject:@"备用" forKey:@"nickname"];
-    [dict setObject:@"0" forKey:@"gender"];
-    [dict setObject:@"备用" forKey:@"signature"];
-    [dict setObject:@"0" forKey:@"latitude"];
-    [dict setObject:@"0" forKey:@"longitude"];
-    [dict setObject:@"备用" forKey:@"birthdate"];
-    [dict setObject:@"备用" forKey:@"img"];
-    return dict;
-
-}
 //- (DSuser*)getDefaultUser:(NSString*) userId{
 //    DSuser* user=[[DSuser alloc] init];
 //    user.userId=userId;
@@ -83,7 +70,7 @@ static UserManager *userManager = NULL;
 //
 //}
 
-- (void)requestUserFromNet:(NSString*)userId{
+- (void)requestUserFromNet:(NSString*)userId obj:(NSString *)obj{
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -106,11 +93,12 @@ static UserManager *userManager = NULL;
             [DataStoreManager deleteAllUserWithUserName:KISDictionaryHaveKey(responseObject, @"userid")];
             [DataStoreManager saveAllUserWithUserManagerList:recDict];
         }
-        
-        NSDictionary* user=[[UserManager singleton] getUser:userId];
-        [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
+        if ([obj isEqualToString:@"chat"]) {
+            NSDictionary* user=[[UserManager singleton] getUser:userId];
+            [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+        }
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:obj userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     
      [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];

@@ -169,18 +169,31 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    NSLog(@"sendera;oidfjasl;kfjas---->(%@)",sender);
     
-    
-    if ([DataStoreManager savedMsgWithID:KISDictionaryHaveKey(messageContent, @"msgId")]) {
-        [self.xmppHelper comeBackDelivered:sender msgId:msgId];
+    if ([DataStoreManager savedMsgWithID:msgId]) {
+        [self.xmppHelper comeBackDelivered:[messageContent objectForKey:@"sender"] msgId:msgId];
         NSLog(@"消息已存在");
         return;
     }
     
-    [[UserManager singleton]requestUserFromNet:sender];
     [self storeNewMessage:messageContent];
-    [self.xmppHelper comeBackDelivered:sender msgId:msgId];
-    [[UserManager singleton]requestUserFromNet:sender];
+    //[self.xmppHelper comeBackDelivered:[messageContent objectForKey:@"sender"] msgId:msgId];
+   
+//    [[UserManager singleton]requestUserFromNet:sender];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+
+    
+    
+    
+    if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
+        [[UserManager singleton]requestUserFromNet:sender obj:@"chat"];
+    }
+    else
+    {
+        NSDictionary* user=[[UserManager singleton] getUser:sender];
+        [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+    }
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 

@@ -18,7 +18,6 @@
     NSMutableArray*       m_tableData;
     NSInteger      m_pageIndex;
     
-    PullUpRefreshView      *refreshView;
 }
 @end
 
@@ -55,21 +54,19 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
-    refreshView = [[PullUpRefreshView alloc] initWithFrame:CGRectMake(0, kScreenHeigth - startX-(KISHighVersion_7?0:20), 320, REFRESH_HEADER_HEIGHT)];//上拉加载
-    [m_myTableView addSubview:refreshView];
-    refreshView.pullUpDelegate = self;
-    refreshView.myScrollView = m_myTableView;
-    [refreshView stopLoading:NO];
     
-    [self getDataByStore];
     
     hud = [[MBProgressHUD alloc] init];
     hud.labelText = @"查询中...";
     [self.view addSubview:hud];
 }
-
+-(void)viewDidAppear:(BOOL)animated
+{
+    [self getDataByStore];
+}
 - (void)getDataByStore
 {
+    [m_tableData removeAllObjects];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSArray * dRecommend = [DSRecommendList MR_findAllInContext:localContext];
         for (DSRecommendList* Recommend in dRecommend) {
@@ -79,7 +76,6 @@
         }
         m_pageIndex = [m_tableData count] > 20?20:[m_tableData count];
         [m_myTableView reloadData];
-        [refreshView setRefreshViewFrame];
     }];
 }
 
@@ -186,7 +182,7 @@
         [self showAlertViewWithTitle:@"提示" message:@"您们已是朋友关系，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
-        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"username")];
+        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"userid")];
         [m_myTableView reloadData];
         return;
     }
@@ -299,43 +295,42 @@
     }];
 }
 
-#pragma mark  scrollView  delegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (m_myTableView.contentSize.height < m_myTableView.frame.size.height) {
-        refreshView.viewMaxY = 0;
-    }
-    else
-        refreshView.viewMaxY = m_myTableView.contentSize.height - m_myTableView.frame.size.height;
-    [refreshView viewdidScroll:scrollView];
-}
-
-#pragma mark pull up refresh
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    if(scrollView == m_myTableView)
-    {
-        [refreshView viewWillBeginDragging:scrollView];
-    }
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    if(scrollView == m_myTableView)
-    {
-        [refreshView didEndDragging:scrollView];
-    }
-}
-
-- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
-{
-    NSLog(@"start");
-  
-    m_pageIndex += ([m_tableData count] - m_pageIndex) < 20 ? ([m_tableData count] - m_pageIndex) : 20;
-    [m_myTableView reloadData];
-    [refreshView setRefreshViewFrame];
-    [refreshView stopLoading:NO];
-}
+//#pragma mark  scrollView  delegate
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//    if (m_myTableView.contentSize.height < m_myTableView.frame.size.height) {
+//        refreshView.viewMaxY = 0;
+//    }
+//    else
+//        refreshView.viewMaxY = m_myTableView.contentSize.height - m_myTableView.frame.size.height;
+//    [refreshView viewdidScroll:scrollView];
+//}
+//
+//#pragma mark pull up refresh
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+//{
+//    if(scrollView == m_myTableView)
+//    {
+//        [refreshView viewWillBeginDragging:scrollView];
+//    }
+//}
+//
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+//{
+//    if(scrollView == m_myTableView)
+//    {
+//        [refreshView didEndDragging:scrollView];
+//    }
+//}
+//
+//- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
+//{
+//  
+//    m_pageIndex += ([m_tableData count] - m_pageIndex) < 20 ? ([m_tableData count] - m_pageIndex) : 20;
+//    [m_myTableView reloadData];
+//    [refreshView setRefreshViewFrame];
+//    [refreshView stopLoading:NO];
+//}
 
 
 - (void)didReceiveMemoryWarning

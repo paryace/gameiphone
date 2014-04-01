@@ -73,6 +73,7 @@
     [super viewDidLoad];
         
     m_currentPage = 0;
+    
     isRefresh = YES;//进来刷新
     
     m_newsArray = [[NSMutableArray alloc] init];
@@ -289,12 +290,12 @@
 //    [m_newsArray removeLastObject];//防止加载重复最后一条
 //    
 //    [m_myTableView reloadData];
-    isRefresh = YES;
+    isRefresh = NO;
 }
-
+#define mark --评论后回调
 -(void)dynamicListJustReload
 {
-    isRefresh = YES;
+    isRefresh = NO;
 }
 #pragma mark - add
 - (void)addButtonClick:(id)sender

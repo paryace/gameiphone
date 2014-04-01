@@ -36,6 +36,7 @@
     
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.bounces = NO;
     [self.view addSubview:m_myTableView];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(assa) name:@"testasdasdfasfsSoundOn_wx" object:nil];
@@ -44,11 +45,11 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return 2;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -58,7 +59,7 @@
     if (cell ==nil) {
         cell =[[UITableViewCell alloc ]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIndef];
         
-        if (indexPath.section ==0) {
+        if (indexPath.row ==0) {
             cell.textLabel.text = @"声音";
             UISwitch *soundSwitch = [[UISwitch alloc]initWithFrame:CGRectMake(320-80, 5, 60, 30)];
             if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
@@ -95,13 +96,29 @@
 
         }
     }
-    
-    
-
     return cell;
 
 }
 
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc]init];
+     view.backgroundColor = [UIColor colorWithRed:220/225.0f green:220/225.0f blue:220/225.0f alpha:1];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 50)];
+    label.backgroundColor = [UIColor colorWithRed:220/225.0f green:220/225.0f blue:220/225.0f alpha:1];
+    label.textColor = [UIColor grayColor];
+    label.text = @"当陌游在运行时,你可以设置是否需要声音或者震动";
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont systemFontOfSize:13];
+    [view addSubview:label];
+    return view;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 50;
+}
 -(void)switchAction:(UISwitch*)sender
 {
     if ([sender isOn]) {

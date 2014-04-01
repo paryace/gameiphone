@@ -9,6 +9,7 @@
 #import "DataStoreManager.h"
 #import "MagicalRecord.h"
 #import "DSuser.h"
+#import "UserManager.h"
 
 @implementation DataStoreManager
 -(void)nothing
@@ -56,7 +57,8 @@
 {
     NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
-    NSString * senderNickname = [msg objectForKey:@"nickname"];
+    NSDictionary* user= [[UserManager singleton] getUser:sender];
+    NSString * senderNickname = [user objectForKey:@"nickname"];
     NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
@@ -2784,10 +2786,10 @@ return @"";
 
 }
 
-+(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userName
++(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
          DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
         if (Recommend)
         {
@@ -2805,8 +2807,12 @@ return @"";
 
 +(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict
 {
+    
+    
     NSLog(@"userinfoDict%@",userInfoDict);
-    NSString* messageuuid = [[GameCommon shareGameCommon] uuid];
+  //  NSString* messageuuid = [[GameCommon shareGameCommon] uuid];
+    NSString* messageuuid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msgId")];
+
     NSString* msgContent = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msg")];
     NSString* msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msgType")];
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"time")] doubleValue]];

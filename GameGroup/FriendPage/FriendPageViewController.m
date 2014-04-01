@@ -463,7 +463,6 @@
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")];
         }
         
-        //        [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_attentionheader endRefreshing];
@@ -480,7 +479,6 @@
             NSArray* keyArr = [attentionList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
-                    //                    [dict setObject:key forKey:@"nameindex"];
                     [DataStoreManager saveUserAttentionInfo:dict];
                 }
             }
@@ -500,7 +498,6 @@
         m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
         [m_attentionsArray sortUsingSelector:@selector(compare:)];
         
-        //        [m_otherSortAttentionArray removeAllObjects];
         if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"2"]) {
             m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"distance" ascend:YES];
         }

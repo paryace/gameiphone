@@ -216,18 +216,19 @@
 {
     if (buttonIndex != alertView.cancelButtonIndex) {
         if (110 == alertView.tag) {
-            [[EGOCache globalCache] clearCache];
             hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:hud];
-            
-            // Set determinate mode
-            hud.mode = MBProgressHUDModeDeterminate;
-            
             hud.delegate = self;
             hud.labelText = @"清理中...";
+            hud.mode = MBProgressHUDModeDeterminate;
+            [hud showWhileExecuting:@selector(myProgressTask) onTarget:self withObject:nil animated:YES];
+
+            [[EGOCache globalCache] clearCache];
+            
+            // Set determinate mode
+            
             
             // myProgressTask uses the HUD instance to update progress
-            [hud showWhileExecuting:@selector(myProgressTask) onTarget:self withObject:nil animated:YES];
             
             NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)objectAtIndex:0];
             NSFileManager *fm = [NSFileManager defaultManager];

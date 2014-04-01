@@ -82,7 +82,6 @@
 }
 -(void)backTolastPage:(id)sender
 {
-    NSLog(@"滑动返回");
     if (self.navigationController.viewControllers.count>=1) {
         [self.navigationController popViewControllerAnimated:YES];
     }

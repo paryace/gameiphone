@@ -38,7 +38,7 @@
     UITextField *tf;//请选择一个角色
     UIImageView *backgroundImageView;//背景图片
     UILabel *sexLabel;//性别
-    
+    UIAlertView *alertView;
     UIView *promptView;
     
     NSString *charaterId;
@@ -82,29 +82,6 @@
     }
     isXuyuanchi =YES;
     isXiaoshuaishen =NO;
-    //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]==NULL) {
-    //        NSLog(@"空走不走");
-    NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
-    [paramDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
-//    AppDelegate *app = [[UIApplication sharedApplication]delegate];
-//    if (app.reach.currentReachabilityStatus ==NotReachable) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
-//        return;
-//    }
-//    else{
-
-    [self getSayHelloForNetWithDictionary:paramDict method:@"125" prompt:@"获取中..." type:3];
-  //  }
-    //}else{
-    //  m_characterArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"];
-    //  }
-
-    
-    
-    
-     getDic = [[NSDictionary alloc]init];
-     m_characterArray = [[NSMutableArray alloc]init];
-    
     [self setTopViewWithTitle:@"许愿池" withBackButton:YES];
     
     backgroundImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height -startX)];
@@ -129,6 +106,30 @@
     sayHelloBtn.hidden =YES;
     promptLabel .hidden = YES;
     promptView.hidden =YES;
+
+    //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]==NULL) {
+    //        NSLog(@"空走不走");
+    NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
+    [paramDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
+        return;
+    }
+    else{
+
+    [self getSayHelloForNetWithDictionary:paramDict method:@"125" prompt:@"获取中..." type:3];
+    }
+    //}else{
+    //  m_characterArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"];
+    //  }
+
+    
+    
+    
+     getDic = [[NSDictionary alloc]init];
+     m_characterArray = [[NSMutableArray alloc]init];
+    
 
 }
 -(void)buildTableView
@@ -528,7 +529,7 @@
 
         }
             else{
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
+                alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
                 alertView.tag = 10001;
                 [alertView show];
 
@@ -744,7 +745,6 @@
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag ==10001) {
         if (buttonIndex ==1) {
             CharacterEditViewController *CVC = [[CharacterEditViewController alloc]init];
             CVC.isFromMeet = YES;
@@ -752,7 +752,10 @@
         }else{
             [self.navigationController popViewControllerAnimated:YES];
         }
-    }
+}
+-(void)dealloc
+{
+    alertView.delegate = nil;
 }
 
 - (void)didReceiveMemoryWarning

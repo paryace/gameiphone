@@ -7,6 +7,7 @@
 //
 
 #import "ActivationCodeViewController.h"
+#import "CharacterEditViewController.h"
 #import "CharaterOfmCell.h"
 @interface ActivationCodeViewController ()
 {
@@ -14,6 +15,7 @@
     UITextField *textField1;
     NSString *charaterId ;
     UITextField *textField;
+    UIAlertView *alertView1;
 }
 @end
 
@@ -36,8 +38,13 @@
     
     charaArray = [NSMutableArray array];
     [charaArray removeAllObjects];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]) {
-        [charaArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]&&[[[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"] isKindOfClass:[NSArray class]]) {
+            [charaArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]];
+    }else{
+        alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色,不能使用兑换码" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
+        alertView1.tag = 10001;
+        [alertView1 show];
+
     }
     
     UITableView *tableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, 300, 200)style:UITableViewStylePlain];
@@ -198,6 +205,16 @@
             return;
         }
     }
+    if (alertView.tag ==10001) {
+        if (buttonIndex ==1) {
+            CharacterEditViewController *CVC = [[CharacterEditViewController alloc]init];
+            CVC.isFromMeet = YES;
+            [self.navigationController pushViewController:CVC animated:YES];
+        }else{
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+
 }
 
 -(void)goOnUploadWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId
@@ -271,6 +288,10 @@
     tbView.backgroundColor =[UIColor grayColor];
     return tbView;
 
+}
+-(void)dealloc
+{
+    alertView1.delegate = nil;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {

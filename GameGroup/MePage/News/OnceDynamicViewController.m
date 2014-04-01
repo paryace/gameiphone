@@ -97,7 +97,6 @@
 
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    hud.labelText = @"查询中...";
     
     [self setUpViewBeforeLoading];
 
@@ -198,7 +197,8 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"136" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    
+    hud.labelText = @"加载中...";
+
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -327,6 +327,8 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
+    hud.labelText = nil;
+    [hud show:YES];
     [paramDict setObject:@"4" forKey:@"type"];
     [paramDict setObject:self.messageid forKey:@"messageid"];
     
@@ -341,11 +343,14 @@
         zanBtn.selected = !zanBtn.selected;
         if(zanBtn.selected)
         {
+            [hud hide:YES];
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_1") forState:UIControlStateHighlighted];
             [self showMessageWindowWithContent:@"已赞" imageType:5];
         }
         else
         {
+            [hud hide:YES];
+
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_2") forState:UIControlStateHighlighted];
             [self showMessageWindowWithContent:@"取消赞" imageType:6];
         }
@@ -356,6 +361,8 @@
           //  [self.delegate dynamicListJustReload];//上个页面刷新
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {

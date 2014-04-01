@@ -49,6 +49,10 @@
         UIScrollView * subSC = [[UIScrollView alloc]initWithFrame:CGRectMake(i*320, 0, 320, _sc.frame.size.height)];
         EGOImageView* imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
         imageV.placeholderImage = _smallImageArray[i];
+        EGOImageView *imgview = [[EGOImageView alloc]init];
+        imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
+        imageV.placeholderImage = imgview.image;
+        
         [subSC addSubview:imageV];
         imageV.userInteractionEnabled = YES;
         UIActivityIndicatorView*act = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((_sc.frame.size.width-10)/2, (_sc.frame.size.height-10)/2, 10, 10)];
@@ -67,8 +71,7 @@
             [self imageViewLoadedImage:imageV];
         }
         else
-            imageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl"%@",self.imgIDArray[i]]];
-//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
+       imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
         
         }
         else{

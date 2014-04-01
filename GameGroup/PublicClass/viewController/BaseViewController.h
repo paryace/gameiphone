@@ -22,7 +22,6 @@
     MBProgressHUD* hud;//提示框
 }
 @property (nonatomic,assign) BOOL canDragBack;
-- (BOOL)isHaveLogin;
 -(void)DetectNetwork;//监测网络是否连接（主要标注没有连接）
 
 - (void)setTopViewWithTitle:(NSString*)titleStr withBackButton:(BOOL)hasBacButton;

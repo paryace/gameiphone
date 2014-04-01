@@ -332,6 +332,9 @@ static GameCommon *my_gameCommon = NULL;
         }
         else
             finalTime = [NSString stringWithFormat:@"%.f天前",(theCurrentT-theMessageT)/86400];
+        if ([finalTime isEqualToString:@"0天前"]) {
+            finalTime = @"1天前";
+        }
     }
     return finalTime;
 

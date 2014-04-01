@@ -10,6 +10,7 @@
 #import "PersonTableCell.h"
 #import "TestViewController.h"
 #import "MJRefresh.h"
+#import "CharacterEditViewController.h"
 @interface SameRealmViewController ()
 {
     UIButton*           m_selectRealmButton;
@@ -24,7 +25,7 @@
     
     NSInteger           m_totalPage;
     NSInteger           m_currentPage;//0开始
-    
+    UIAlertView* alert;
     NSMutableArray *m_imgArray;
     NSInteger       sealmPage;
     
@@ -32,6 +33,7 @@
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     BOOL isGetNetSuccess;
+    UIAlertView *alertView1;
 }
 
 @end
@@ -68,20 +70,6 @@
     m_selectView.selectDelegate = self;
     [self.view addSubview:m_selectView];
     
-//    [self setTopViewWithTitle:@"" withBackButton:YES];
-//    UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
-//    topImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
-//    [self.view addSubview:topImageView];
-//    
-//    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 50, 44)];
-//    [backButton setBackgroundImage:KUIImage(@"back") forState:UIControlStateNormal];
-//    [backButton setBackgroundImage:KUIImage(@"back_click") forState:UIControlStateHighlighted];
-//    backButton.backgroundColor = [UIColor clearColor];
-//    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:backButton];
-    
-    
-//    m_myTableView.frame = CGRectMake(0, 64, kScreenWidth, kScreenHeigth - startX);
 
     
     m_selectRealmButton = [[UIButton alloc] initWithFrame:CGRectMake(60, KISHighVersion_7 ? 20 : 0, 200, 44)];
@@ -180,10 +168,14 @@
                 [self getSameRealmDataByNet];
             }
         }else{
-            [self showAlertViewWithTitle:nil message:@"你还没有角色呢" buttonTitle:@"确定"];
-                         [hud hide: YES];
+            [m_loadImageView stopAnimating];
+
+            alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
+            alertView1.tag = 10001;
+            [alertView1 show];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_loadImageView stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -193,7 +185,7 @@
         }
         else
         {
-            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
+            alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
             alert.tag = 56;
             [alert show];
         }
@@ -206,6 +198,17 @@
     if (alertView.tag == 56) {
         [self.navigationController popViewControllerAnimated:YES];
     }
+    if (alertView.tag == 10001) {
+        if (buttonIndex ==1) {
+            CharacterEditViewController *CVC = [[CharacterEditViewController alloc]init];
+            CVC.isFromMeet = YES;
+            [self.navigationController pushViewController:CVC animated:YES];
+        }else{
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+
+    
 }
 
 - (void)getSameRealmDataByNet
@@ -525,6 +528,11 @@
     m_header = header;
 }
 
+-(void)dealloc
+{
+    alertView1.delegate = nil;
+    alert.delegate = nil;
+}
 
 - (void)didReceiveMemoryWarning
 {

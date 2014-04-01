@@ -12,8 +12,9 @@
 + (ReconnectMessage*)singleton;
 -(void)getChatServer;
 -(void)logInToChatServer;
-- (void)sendDeviceToken;
-- (void)getMyUserInfoFromNet;
+-(void)sendDeviceToken;
+-(void)getMyUserInfoFromNet;
+-(void)getFriendByHttp;
 @property (strong,nonatomic) XMPPHelper * xmpphelper;
 
 @end

@@ -183,7 +183,7 @@
         [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
 
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
-        [[ReconnectMessage singleton] getChatServer];
+        
         [self loginSuccess];
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -201,6 +201,12 @@
 
 - (void)loginSuccess
 {
+    [[ReconnectMessage singleton] getFriendByHttp];
+    [[ReconnectMessage singleton] getMyUserInfoFromNet];
+    [[ReconnectMessage singleton] sendDeviceToken];
+    [[ReconnectMessage singleton] getChatServer];
+
+    
     [self dismissViewControllerAnimated:NO completion:^{
         
     }];

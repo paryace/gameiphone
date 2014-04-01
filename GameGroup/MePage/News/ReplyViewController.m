@@ -133,7 +133,6 @@
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    hud.labelText = @"查询中...";
     
     [self getDataByNet];
 }
@@ -171,7 +170,7 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"137" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    hud.labelText = @"发表中...";
+    hud.labelText = @"获取评论中...";
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -250,6 +249,7 @@
     [postDict setObject:@"134" forKey:@"method"];
     [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
     self.textView.placeholder = @"";
+    hud.labelText = @"评论中...";
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {

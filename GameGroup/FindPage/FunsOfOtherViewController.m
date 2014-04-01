@@ -185,8 +185,22 @@
     }
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
-    cell.distLabel.text = [KISDictionaryHaveKey(tempDict, @"charactername") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"characterid") integerValue]];
+    
+    NSString * titleObj = @"";
+    NSString * titleObjLevel = @"";
+    NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
+    if ([titleDic isKindOfClass:[NSDictionary class]]) {
+        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
+        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
+    }
+    else
+    {
+        titleObj = @"暂无头衔";
+        titleObjLevel = @"6";
+    }
+    
+    cell.distLabel.text = titleObj;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[titleObjLevel intValue]];
     
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
@@ -211,7 +225,7 @@
     
     detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     
-    detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel") ;
+    detailVC.achievementColor =[GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
     
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"gender");
     

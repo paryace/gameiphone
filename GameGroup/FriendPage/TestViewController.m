@@ -28,7 +28,8 @@
     UILabel*        m_relationLabel;//关系
     
     AppDelegate*    m_delegate;
-    
+    NSMutableArray *littleImgArray;
+
     UIView*         m_buttonBgView;
     NSMutableArray *wxSDArray;
     UIButton *        delFriendBtn;
@@ -68,7 +69,7 @@
     [self.view addSubview:hud];
 
     wxSDArray = [NSMutableArray array];
-    
+     littleImgArray = [NSMutableArray array];
     if (self.hostInfo!=NULL) {//有值 查找用户
         [self buildMainView];
         [self setBottomView];
@@ -77,39 +78,42 @@
     else//没有详情 请求
     {
 
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]!=nil) {//有值 查找用户
-//        
-//         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
-//        NSMutableData *data= [NSMutableData data];
-//        NSDictionary *dic = [NSDictionary dictionary];
-//        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-//        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-//       dic = [unarchiver decodeObjectForKey: @"getDatat"];
-//        [unarchiver finishDecoding];
-//        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
-//        
-//        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
-//        [self buildMainView];
-//        [self setBottomView];
-//        
-//        [[UserManager singleton]requestUserFromNet:self.userId];
-//    }
-//    else//没有详情 请求
-//    {
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]) {//有值 查找用户
+        
+         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
+        NSMutableData *data= [NSMutableData data];
+        NSDictionary *dic = [NSDictionary dictionary];
+        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+       dic = [unarchiver decodeObjectForKey: @"getDatat"];
+        [unarchiver finishDecoding];
+        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
+        
+        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
+        [self buildMainView];
+        [self setBottomView];
+        
+        [[UserManager singleton]requestUserFromNet:self.userId obj:@"person"];
+    }
+    else//没有详情 请求
+    {
         [self buildInitialize];
         
-        [[UserManager singleton]requestUserFromNet:self.userId];
-//    }
+        [[UserManager singleton]requestUserFromNet:self.userId obj:@"person"];
+    }
     }
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:@"person"];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:@"person"];
 
     
 }
 
 -(void)getInfoFromUserManager:(NSNotification *)notification
 {
+    
+//    if ([[notification.userInfo objectForKey:@"userid"]isEqualToString:self.userId])
+//    {
     NSDictionary *dictionary = notification.userInfo;
     //将获取到的数据转换成NSData类型保存到nsuserdefaults中
     
@@ -122,7 +126,7 @@
     [archiver finishEncoding];
     
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-    
+    NSLog(@"self.userid%@",self.userId);
     NSArray *views = [self.view subviews];
     
     for(UIView* view in views)
@@ -197,6 +201,7 @@
     
     [self buildMainView];
     [self setBottomView];
+  //  }
 }
 
 
@@ -508,10 +513,15 @@
     [self.view addSubview:m_myScrollView];
     m_myScrollView.backgroundColor = [UIColor clearColor];
 
-    
+    [littleImgArray removeAllObjects];
+    for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
+        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/80"];
+        [littleImgArray addObject:str];
+    }
+
     m_photoWall = [[HGPhotoWall alloc] initWithFrame:CGRectZero];
     m_photoWall.descriptionType = DescriptionTypeImage;
-    [m_photoWall setPhotos:[self imageToURL:self.hostInfo.headImgArray]];
+    [m_photoWall setPhotos:[self imageToURL:littleImgArray]];
     m_photoWall.delegate = self; 
     [m_myScrollView addSubview:m_photoWall];
     m_photoWall.backgroundColor = kColorWithRGB(105, 105, 105, 1.0);
@@ -1213,7 +1223,7 @@
 
                 //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
                 [DataStoreManager deleteFriendWithUserId:self.hostInfo.userId];//从表删除
-                
+                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 
                 if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"3"])
@@ -1278,6 +1288,7 @@
                 delFriendBtn.userInteractionEnabled = YES;
                 attentionBtn.userInteractionEnabled = YES;
                 attentionOffBtn.userInteractionEnabled = YES;
+                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
 
                 //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];
                 
@@ -1481,7 +1492,7 @@
 - (void)photoWallPhotoTaped:(NSUInteger)index WithPhotoWall:(UIView *)photoWall
 {
     //放大
-    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:self.hostInfo.headImgArray indext:index];
+     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:[self imageToURL:littleImgArray] images:self.hostInfo.headImgArray indext:index];
     [self presentViewController:pV animated:NO completion:^{
         
     }];

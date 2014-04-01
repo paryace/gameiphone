@@ -1136,7 +1136,9 @@ BOOL validateMobile(NSString* mobile) {
         [DataStoreManager storeMyUserID:[[dic objectForKey:@"token"] objectForKey:@"userid"]];
         
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
-        
+       
+       
+       
         [self dismissViewControllerAnimated:YES completion:^{
             if (_delegate && [_delegate respondsToSelector:@selector(RegisterViewControllerFinishRegister)]) {
                 [_delegate RegisterViewControllerFinishRegister];
@@ -1191,6 +1193,9 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
+    [[ReconnectMessage singleton] getFriendByHttp];
+    [[ReconnectMessage singleton] getMyUserInfoFromNet];
+    [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{
         

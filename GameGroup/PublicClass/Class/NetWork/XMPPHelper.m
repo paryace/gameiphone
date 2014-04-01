@@ -216,6 +216,7 @@
     else
     {
         [self.xmppStream sendElement:message];
+        
         return YES;
     }
 }
@@ -261,7 +262,9 @@
     
     //生成XML消息文档
     NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    [mes addAttributeWithName:@"id" stringValue:[[GameCommon shareGameCommon] uuid]];
+//    [mes addAttributeWithName:@"id" stringValue:[[GameCommon shareGameCommon] uuid]];
+    [mes addAttributeWithName:@"id" stringValue:msgId];
+
     [mes addAttributeWithName:@"msgtype" stringValue:@"msgStatus"];
     //消息类型
     [mes addAttributeWithName:@"type" stringValue:@"normal"];
@@ -270,7 +273,7 @@
     [mes addAttributeWithName:@"to" stringValue:sender];
     //由谁发送
     [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
-    
+    NSLog(@"to---%@",[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]);
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
     //    NSString* uuid = [[GameCommon shareGameCommon] uuid];
@@ -278,6 +281,7 @@
     //    NSLog(@"消息uuid ~!~~ %@", uuid);
     //组合
     [mes addChild:body];
+    
     if (![self sendMessage:mes]) {
         return;
     }
@@ -339,7 +343,7 @@
             else
                 [dict setObject:@""  forKey:@"shiptype"];
              [self.deletePersonDelegate newAddReq:dict];
-            [self comeBackDelivered:from msgId:msgId];
+          ///  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"deletePerson"])//取消关注
         {
@@ -354,7 +358,7 @@
 
             
             [self.deletePersonDelegate deletePersonReceived:dict];
-            [self comeBackDelivered:from msgId:msgId];
+         //   [self comeBackDelivered:from msgId:msgId];
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
@@ -364,6 +368,7 @@
             [dict setObject:title?title:@"" forKey:@"title"];
             
              [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
+            
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
         }
@@ -382,7 +387,7 @@
             [dict setObject:dis forKey:@"disStr"];
              [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
-            [self comeBackDelivered:from msgId:msgId];
+          //  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
         {
@@ -396,7 +401,7 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
             }
-            [self comeBackDelivered:from msgId:msgId];
+        //    [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
@@ -404,9 +409,10 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-            [self comeBackDelivered:from msgId:msgId];
+           // [self comeBackDelivered:from msgId:msgId];
              [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
+        [self comeBackDelivered:from msgId:msgId];
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])
     {

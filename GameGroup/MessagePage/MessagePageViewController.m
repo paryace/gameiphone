@@ -65,18 +65,6 @@
 {
     [super viewWillAppear:animated];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-    //    if (![self.appDel.xmppHelper ifXMPPConnected]) {
-    //        self.titleLabel.text = @"消息(未连接)";
-    //    }
-    //    self.appDel.xmppHelper.buddyListDelegate = self;
-    //    self.appDel.xmppHelper.chatDelegate = self;
-    //    self.appDel.xmppHelper.processFriendDelegate = self;
-    //    self.appDel.xmppHelper.addReqDelegate = self;
-    //    self.appDel.xmppHelper.commentDelegate = self;
-    //    self.appDel.xmppHelper.deletePersonDelegate = self;
-    //    self.appDel.xmppHelper.otherMsgReceiveDelegate = self;
-    //    self.appDel.xmppHelper.recommendReceiveDelegate = self;
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -96,24 +84,16 @@
       //  [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
         
         [self.view bringSubviewToFront:hud];
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:isFirstOpen])
-        {
             if([self.appDel.xmppHelper ifXMPPConnected]){
                 self.titleLabel.text = @"消息";
             }else{
                 self.titleLabel.text = @"消息(未连接)";
+                AppDelegate *app = [[UIApplication sharedApplication]delegate];
+                if (app.reach.currentReachabilityStatus !=NotReachable) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"xmppReconnect_wx_xx" object:nil];
+                }
             }
-        }
-        else
-        {
-            self.titleLabel.text = @"消息(未连接)";
-            [self getFriendByHttp];
-            [self getSayHiUserIdWithNet];
-            [self sendDeviceToken];
-            [self getMyUserInfoFromNet];//获得“我”信息
-            
-        }
+        
         [self displayMsgsForDefaultView];
         
         //[self getSayHiUserIdWithNet];
@@ -130,7 +110,8 @@
 {
     [super viewDidLoad];
     
-    
+    NSLog(@"-=-=-=-=-=-=-=%hhd",[[TempData sharedInstance]isHaveLogin]);
+
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHelloReceived:) name:kFriendHelloReceived object:nil];
@@ -145,11 +126,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectFail:) name:@"connectFail" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdatedSuccess" object:nil];
-    
-    
-   // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(catchStatus:) name:@"Notification_disconnect" object:nil];
-  //  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logInToChatServer) name:@"Notification_BecomeActive" object:nil];
     //重连
     
     
@@ -983,104 +960,6 @@
     
 }
 
-#pragma mark - 获得好友、关注、粉丝列表
--(void)getFriendByHttp
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    //    [paramDict setObject:@"1" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
-    
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1]) {
-        [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] forKey:@"sorttype_1"];
-    }
-    else
-    {
-        [paramDict setObject:@"1" forKey:@"sorttype_1"];
-    }
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2]) {
-        [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] forKey:@"sorttype_2"];
-    }
-    else
-    {
-        [paramDict setObject:@"1" forKey:@"sorttype_2"];
-    }
-    [paramDict setObject:@"2" forKey:@"sorttype_3"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    hud.labelText = @"正在获取好友列表...";
-    // [hud show:YES];
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        //        [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")];
-        //        [self parseAttentionList:KISDictionaryHaveKey(responseObject, @"2")];
-        //
-        //        [self parseFansList:(KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users"))];
-        
-        
-        [self parseContentListWithData:responseObject];
-        
-
-        
-        //  [self getFriendId:responseObject];
-        
-        [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
-        
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        //不再请求好友列表
-        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        //        [hud hide:YES];
-    }];
-}
-
-
--(void)getFriendId:(id)dic
-{
-    NSMutableArray *friendAllIdArray = [NSMutableArray array];
-    NSArray *friendArray = [NSArray array];
-    NSArray *attentionArray = [NSArray array];
-    friendArray = [KISDictionaryHaveKey(dic, @"1")allKeys];
-    for (int i =0; i<friendArray.count; i++) {
-        NSMutableArray *array2 = [NSMutableArray array ];
-        array2 = [KISDictionaryHaveKey(dic, @"1")objectForKey:friendArray[i]];
-        for (NSDictionary *dic1 in array2) {
-            [friendAllIdArray addObject:KISDictionaryHaveKey(dic1, @"id")];
-        }
-    }
-    attentionArray =[KISDictionaryHaveKey(dic, @"2")allKeys];
-    for (int i =0; i<attentionArray.count; i++) {
-        NSMutableArray *array2 = [NSMutableArray array ];
-        array2 = [KISDictionaryHaveKey(dic, @"1")objectForKey:attentionArray[i]];
-        for (NSDictionary *dic1 in array2) {
-            [friendAllIdArray addObject:KISDictionaryHaveKey(dic1, @"id")];
-        }
-    }
-    NSMutableArray *array = [NSMutableArray array ];
-    [array removeAllObjects];
-    [array addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-    BOOL isAdd;
-    isAdd =NO;
-    for (NSString *idStr in friendAllIdArray) {
-        if (![array containsObject:idStr]) {
-            [self getSayHelloWithUserid:idStr];
-            [array addObject:idStr];
-            isAdd =YES;
-        }
-    }
-    if (isAdd ==YES) {
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
-        [[NSUserDefaults standardUserDefaults]setObject:array forKey:@"sayHello_wx_info_id"];
-        [self displayMsgsForDefaultView];
-    }
-    
-}
 -(void)getSayHelloWithUserid:(NSString*)userId
 {
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
@@ -1101,85 +980,6 @@
 
 
 
-- (void)parseContentListWithData:(NSDictionary*)dataDic
-{
-    [DataStoreManager cleanFriendList];//先清 再存
-    [DataStoreManager cleanAttentionList];
-    [DataStoreManager cleanFansList];
-    
-    id friendsList = KISDictionaryHaveKey(dataDic, @"1");
-    id attentionList = KISDictionaryHaveKey(dataDic, @"2");
-    id fansList = KISDictionaryHaveKey(KISDictionaryHaveKey(dataDic, @"3"), @"users");
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-    dispatch_async(queue, ^{
-        //   [hud show:YES];
-        
-        if ([friendsList isKindOfClass:[NSDictionary class]]) {
-            NSArray* keyArr = [friendsList allKeys];
-            for (NSString* key in keyArr) {
-                for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                    //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveUserInfo:dict];
-                    if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                        [DataStoreManager saveAllUserWithUserManagerList:dict];
-                    }
-
-                }
-            }
-        }
-        else if([friendsList isKindOfClass:[NSArray class]]){
-            for (NSDictionary * dict in friendsList) {
-                [DataStoreManager saveUserInfo:dict];
-                if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict];
-                }
-
-            }
-        }
-        //关注
-        if ([attentionList isKindOfClass:[NSDictionary class]]) {
-            NSArray* keyArr = [attentionList allKeys];
-            for (NSString* key in keyArr) {
-                for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
-                    //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveUserAttentionInfo:dict];
-                    if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                        [DataStoreManager saveAllUserWithUserManagerList:dict];
-                    }
-
-                }
-            }
-        }
-        else if([attentionList isKindOfClass:[NSArray class]])
-        {
-            for (NSDictionary * dict in attentionList) {
-                [DataStoreManager saveUserAttentionInfo:dict];
-            }
-        }
-        //粉丝
-        if ([fansList isKindOfClass:[NSDictionary class]]) {
-            NSArray* keyArr = [fansList allKeys];
-            for (NSString* key in keyArr) {
-                for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
-                    [DataStoreManager saveUserFansInfo:dict];
-                }
-            }
-        }
-        else if ([fansList isKindOfClass:[NSArray class]]) {
-            for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveUserFansInfo:dict];
-            }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [hud hide:YES];
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-            
-        });
-    });
-}
 
 #pragma mark - 好友状态更改(比如昵称啥修改了,收到消息 暂未处理)
 -(void)processFriend:(XMPPPresence *)processFriend{

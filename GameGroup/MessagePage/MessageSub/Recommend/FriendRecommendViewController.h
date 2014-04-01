@@ -8,8 +8,6 @@
 
 #import "BaseViewController.h"
 #import "RecommendCell.h"
-#import "PullUpRefreshView.h"
-
-@interface FriendRecommendViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, RecommendDelegate,PullUpDelegate>
+@interface FriendRecommendViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end

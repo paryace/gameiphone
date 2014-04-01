@@ -12,5 +12,5 @@
 @interface UserManager : NSObject
 + (UserManager*)singleton;
 - (NSMutableDictionary*)getUser:(NSString* )userId;
-- (void)requestUserFromNet:(NSString*)userId;
+- (void)requestUserFromNet:(NSString*)userId obj:(NSString *)obj;
 @end
