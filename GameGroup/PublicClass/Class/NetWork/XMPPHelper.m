@@ -18,9 +18,6 @@
 #import "XMPPAutoPing.h"
 #import "XMPPRoster.h"
 #import "XMPPRosterMemoryStorage.h"
-#import "XMPPvCardTemp.h"
-#import "XMPPvCardTempModule.h"
-#import "XMPPvCardCoreDataStorage.h"
 #import "XMPPRosterMemoryStorage.h"
 #import "XMPPJID.h"
 #import "TempData.h"
@@ -137,32 +134,6 @@
     [iq addChild:query];
     [self.xmppStream sendElement:iq];
 }
-
-- (void)updateVCard:(XMPPvCardTemp *)vcard success:(CallBackBlock)thesuccess fail:(CallBackBlockErr)thefail{
-    self.success=thesuccess;
-    self.fail=thefail;
-    [self.xmppvCardTempModule addDelegate:self delegateQueue:dispatch_get_main_queue()];
-    [self.xmppvCardTempModule updateMyvCardTemp:vcard];
-    
-}
-
--(XMPPvCardTemp *)getmyvcard{
-    self.xmppvCardTemp =[self.xmppvCardTempModule myvCardTemp];
-    return self.xmppvCardTemp;
-}
-
-- (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule
-        didReceivevCardTemp:(XMPPvCardTemp *)vCardTemp
-                     forJID:(XMPPJID *)jid
-{
-    NSLog(@"%@",vCardTemp);
-}
-
-- (void)xmppvCardTempModuleDidUpdateMyvCard:(XMPPvCardTempModule *)vCardTempModule{
-    NSLog(@"%@",vCardTempModule);
-    self.success();
-}
-
 
 //===========XMPP委托事件============
 
