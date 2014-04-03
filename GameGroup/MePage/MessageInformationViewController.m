@@ -104,7 +104,7 @@
             UISwitch *soundSwitch = [[UISwitch alloc]initWithFrame:CGRectMake(320-80, 5, 60, 30)];
             if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
             {
-                if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
+                if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==2) {
                     soundSwitch.on =NO;
                 }else{
                     soundSwitch.on =YES;
@@ -173,8 +173,16 @@
         [self getPushInfoWithNetWithcode:@"1"];
 
     }else{
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_userInfo_off" object:nil];
+        [[NSUserDefaults standardUserDefaults]setValue:@"1" forKey:@"wx_userInfo_off"];
          [self getPushInfoWithNetWithcode:@"0"];
+    }
+}
+-(void)switchActionoff:(UISwitch*)sender
+{
+    if ([sender isOn]) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_off" object:nil];
+    }else{
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_open" object:nil];
     }
 }
 
@@ -226,14 +234,6 @@
 
 
 
--(void)switchActionoff:(UISwitch*)sender
-{
-    if ([sender isOn]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_off" object:nil];
-    }else{
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"wx_vibration_open" object:nil];
-    }
-}
 
 
 -(void)assa
