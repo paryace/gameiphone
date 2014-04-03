@@ -92,7 +92,7 @@
         self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
         [self buildMainView];
         [self setBottomView];
-        
+    
         [[UserManager singleton]requestUserFromNet:self.userId obj:@"person"];
     }
     else//没有详情 请求

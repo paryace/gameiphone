@@ -33,7 +33,7 @@ typedef enum
 @property(nonatomic,copy)NSString *ageStr;//年龄
 @property(nonatomic,copy)NSString *sexStr;//性别
 @property(nonatomic,copy)NSString *achievementStr;//头衔
-@property(nonatomic,copy)UIColor * achievementColor;
+@property(nonatomic,copy)NSString * achievementColor;
 @property(nonatomic,strong)NSString *titleImage;
 @property(nonatomic,copy)NSString *constellationStr;//星座
 @property(nonatomic,copy)NSString *createTimeStr;

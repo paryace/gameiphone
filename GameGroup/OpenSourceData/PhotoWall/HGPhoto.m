@@ -81,8 +81,10 @@
 - (void)setPhotoUrl:(NSString*)photoUrl
 {
 
-    [self.viewPhoto setImageWithURL:[NSURL URLWithString:photoUrl] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//    [self.viewPhoto setImageWithURL:[NSURL URLWithString:photoUrl] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
 
+    self.viewPhoto.imageURL = [NSURL URLWithString:photoUrl];
+    self.viewPhoto.placeholderImage =[UIImage imageNamed:@"placeholder.png"];
 }
 
 -(void)SetPhotoUrlWithCache:(NSString *)url
