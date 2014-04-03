@@ -190,7 +190,7 @@
         [self showAlertViewWithTitle:@"提示" message:@"您已关注过了，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
-        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"username")];
+        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"userid")];
         [m_myTableView reloadData];
         return;
     }
@@ -207,7 +207,6 @@
     else if ([KISDictionaryHaveKey(tempDic, @"type")isEqualToString:@"4"]||[KISDictionaryHaveKey(tempDic, @"type")isEqualToString:@"5"])
     {
         [paramDict setObject:@"7" forKey:@"type"];
-
     }
     else  {
         [paramDict setObject:@"3" forKey:@"type"];
@@ -223,7 +222,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
-        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"username")];
+        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"userid")];
         if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"2"])
         {
             [self requestPeopleInfoWithName:KISDictionaryHaveKey(tempDic, @"username") ForType:2];

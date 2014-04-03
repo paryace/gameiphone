@@ -201,7 +201,6 @@
 
 - (void)loginSuccess
 {
-    [[ReconnectMessage singleton] getFriendByHttp];
     [[ReconnectMessage singleton] getMyUserInfoFromNet];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];

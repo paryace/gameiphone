@@ -618,27 +618,6 @@
 +(NSArray *)qureyAllThumbMessages
 {
     return (NSMutableArray *)[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-//    NSMutableArray * allMsgArray = [NSMutableArray array];
-//    NSArray * thumbCommonMsgsArray = [DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-//    for (int i = 0; i<thumbCommonMsgsArray.count; i++) {
-//        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-////        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderNickname] forKey:@"nickname"];
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-//        NSDate * tt = [[thumbCommonMsgsArray objectAtIndex:i] sendTime];
-//        NSTimeInterval uu = [tt timeIntervalSince1970];
-//        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
-//
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgType] forKey:@"msgType"];
-//        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] status]?[[thumbCommonMsgsArray objectAtIndex:i] status]:@"" forKey:@"status"];
-//        
-//        
-//        
-//        [allMsgArray addObject:thumbMsgsDict];
-//    }
-//    NSLog(@"allMsgArray%@",allMsgArray);
-//    return allMsgArray;  
 }
 
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
@@ -2791,7 +2770,7 @@ return @"";
 +(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
          DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
         if (Recommend)
         {

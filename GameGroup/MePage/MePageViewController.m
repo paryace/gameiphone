@@ -722,10 +722,14 @@
 //头衔设置
 - (void)achievementSetClick:(id)sender
 {
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
     
-    MyTitleObjViewController* VC = [[MyTitleObjViewController alloc] init];
-    [self.navigationController pushViewController:VC animated:YES];
+    if (m_hostInfo.achievementArray && [m_hostInfo.achievementArray count] != 0) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+        MyTitleObjViewController* VC = [[MyTitleObjViewController alloc] init];
+        [self.navigationController pushViewController:VC animated:YES];
+    }else{
+        [self showMessageWithContent:@"暂无头衔" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+    }
 }
 
 - (BOOL)prefersStatusBarHidden

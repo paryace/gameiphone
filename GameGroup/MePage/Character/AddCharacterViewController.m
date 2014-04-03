@@ -13,7 +13,7 @@
     UITextField*  m_gameNameText;
     UITextField*  m_realmText;
     UITextField*  m_roleNameText;
-    
+    UIAlertView* alertView1;
     BOOL          isRefresh;//从认证界面成功后  直接提交
 }
 @end
@@ -269,9 +269,9 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {//已被绑定
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
-                alert.tag = 18;
-                [alert show];
+                alertView1 = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
+                alertView1.tag = 18;
+                [alertView1 show];
             }
             else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -380,7 +380,10 @@
 {
     [m_roleNameText resignFirstResponder];
 }
-
+-(void)dealloc
+{
+    alertView1.delegate = nil;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

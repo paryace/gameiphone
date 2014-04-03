@@ -94,9 +94,13 @@
                 }
             }
         
+        if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+            [[ReconnectMessage singleton] getFriendByHttp];
+            [self getSayHiUserIdWithNet];
+        }
+        
         [self displayMsgsForDefaultView];
         
-        //[self getSayHiUserIdWithNet];
     }
 }
 -(void)RegisterViewControllerFinishRegister
@@ -109,9 +113,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    NSLog(@"-=-=-=-=-=-=-=%hhd",[[TempData sharedInstance]isHaveLogin]);
-
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemindBegin) name:@"StartGetFriendListForNet" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemind) name:@"getFriendListForNet_wx" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHelloReceived:) name:kFriendHelloReceived object:nil];
@@ -182,7 +185,20 @@
     
     hud = [[MBProgressHUD alloc] initWithWindow:window];
     [window addSubview:hud];
-    hud.labelText = @"获取信息中...";
+    hud.labelText = @"获取好友信息中...";
+}
+
+#pragma mark --获取好友列表成功或者失败通知
+-(void)getFriendForHttpToRemindBegin
+{
+    [hud show:YES];
+}
+-(void)getFriendForHttpToRemind
+{
+    [hud hide:YES];
+    
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"StartGetFriendListForNet" object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"getFriendListForNet_wx" object:nil];
 }
 
 #pragma mark ----获取XMPP服务器成功
@@ -329,11 +345,6 @@
     [self readAllnickNameAndImage];
     [m_messageTable reloadData];
 }
-
-
-
-
-#pragma mark --获取打招呼id
 -(void)getSayHiUserIdWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -358,6 +369,8 @@
         NSLog(@"deviceToken fail");
     }];
 }
+
+#pragma mark --获取打招呼id
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

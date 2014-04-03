@@ -57,6 +57,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 #pragma mark - 获得好友、关注、粉丝列表
 -(void)getFriendByHttp
 {
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"StartGetFriendListForNet" object:nil];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     //    [paramDict setObject:@"1" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
@@ -84,18 +85,8 @@ static ReconnectMessage *my_reconectMessage = NULL;
     // [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        //        [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")];
-        //        [self parseAttentionList:KISDictionaryHaveKey(responseObject, @"2")];
-        //
-        //        [self parseFansList:(KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users"))];
-        
-        
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"getFriendListForNet_wx" object:nil];
         [self parseContentListWithData:responseObject];
-        
-        
-        
-        //  [self getFriendId:responseObject];
         
         [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
         
@@ -106,7 +97,8 @@ static ReconnectMessage *my_reconectMessage = NULL;
         [[NSUserDefaults standardUserDefaults] synchronize];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        //        [hud hide:YES];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"getFriendListForNet_wx" object:nil];
+
     }];
 }
 
@@ -142,7 +134,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
                 if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
                     [DataStoreManager saveAllUserWithUserManagerList:dict];
                 }
-                
             }
         }
         //关注
