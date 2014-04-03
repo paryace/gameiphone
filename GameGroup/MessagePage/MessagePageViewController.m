@@ -81,7 +81,7 @@
     else
     {
                 
-      //  [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
+       // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
         
         [self.view bringSubviewToFront:hud];
             if([self.appDel.xmppHelper ifXMPPConnected]){

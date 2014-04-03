@@ -26,7 +26,7 @@
 {
     [MagicalRecord cleanUp];
     [MagicalRecord setDefaultModelNamed:[NSString stringWithFormat:@"%@.momd",modelName]];
-    [MagicalRecord setupCoreDataStackWithStoreNamed:[NSString stringWithFormat:@"%@.sqlite",dataBaseName]];
+    [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:[NSString stringWithFormat:@"%@.sqlite",dataBaseName]];
 }
 + (BOOL)savedMsgWithID:(NSString*)msgId//消息是否已存
 {
@@ -841,13 +841,15 @@ return @"";
     }];
 }
 
-
-
-
-
-
-
-
++(void)deleteAllUser
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * thumbMsgs = [DSThumbMsgs MR_findAllInContext:localContext];
+        for (DSThumbMsgs* msg in thumbMsgs) {
+            [msg MR_deleteInContext:localContext];
+        }
+    }];
+}
 
 #pragma mark - 存储“好友”的关注人列表
 +(void)saveUserAttentionWithFriendList:(NSString*)userid

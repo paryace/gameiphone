@@ -33,12 +33,10 @@
     self.reach = [Reachability reachabilityForInternetConnection];
     [_reach startNotifier];
     
-    
     if ([[TempData sharedInstance] isHaveLogin] ) {
         [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         NSLog(@"getMyUserID: %@", [DataStoreManager getMyUserID]);
-        
-      //  [[ReconnectMessage singleton]getMyUserInfoFromNet];//获取自己的用户信息
+     //  [[ReconnectMessage singleton]getMyUserInfoFromNet];
         GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
         [SendAckListener singleton];
         self.xmppHelper=[[XMPPHelper alloc] init];
@@ -52,7 +50,8 @@
         [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
 
     }
-    
+   
+
 //    [DDLog addLogger:[DDTTYLogger sharedInstance]];//打印xmpp输出
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
