@@ -31,7 +31,4 @@
 #import "XMPPRoster.h"
 #import "XMPPRosterCoreDataStorage.h"
 
-#import "XMPPCapabilities.h"
-#import "XMPPCapabilitiesCoreDataStorage.h"
-
 #import "XMPPStream.h"
