@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ProcessFriendDelegate.h"
 //#import "ReconnectionManager.h"
 
 @class XMPPStream;

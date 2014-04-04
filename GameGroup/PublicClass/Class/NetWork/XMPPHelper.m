@@ -452,46 +452,6 @@
 //接受到好友状态更新
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence{
     
-    //取得好友状态
-    NSString *presenceType = [presence type]; //online/offline
-    
-    NSLog(@"presenceType:%@",presenceType);
- //   NSString *presenceFromUser =[NSString stringWithFormat:@"%@", [[presence from] user]];
-//    [self.addReqDelegate newAddReq:presenceFromUser];
-    
-    
-    // [self.addReq newAddReq:@""];
-//    XMPPJID *jid = [XMPPJID jidWithString:presenceFromUser];
-//    [self.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
-    
-    if ([presenceType isEqualToString:@"subscribed"]) {
-        [self.processFriendDelegate processFriend:presence];
-  //      [self.addReqDelegate newAddReq:presenceFromUser];
-        // [self.addReq newAddReq:@""];
-//        XMPPJID *jid = [XMPPJID jidWithString:presenceFromUser];
-//        [self.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
-    }
-//    else if([presenceType isEqualToString:@"error"]){
-//        NSLog(@"错误");
-//    }
-//    else{
-//        //当前用户
-//        NSString *userId = [[sender myJID] user];
-//        //在线用户
-//        NSString *presenceFromUser = [[presence from] user];
-//        if (![presenceFromUser isEqualToString:userId]) {
-//            //在线状态
-//            if ([presenceType isEqualToString:@"available"]) {
-//                //用户列表委托(后面讲)
-//                [self.buddyListDelegate newBuddyOnline:[NSString stringWithFormat:@"%@", presenceFromUser]];
-//                
-//            }else if ([presenceType isEqualToString:@"unavailable"]) {
-//                //用户列表委托(后面讲)
-//                //[self.buddyListDelegate buddyWentOffline:[NSString stringWithFormat:@"%@", presenceFromUser]];
-//                [self.buddyListDelegate newBuddyOnline:[[NSString stringWithFormat:@"%@", presenceFromUser]stringByAppendingString:@"[不在线]"]];
-//            }
-//        }
-//    }
 }
 
 //fetchRoster后，将结果回调方式传来。
