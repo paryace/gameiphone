@@ -70,7 +70,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if(indexPath.section ==0)
         {
-            cell.textLabel.text =@"通知不显示消息内容";
+            cell.textLabel.text =@"通知显示消息内容";
             UISwitch *soundSwitch = [[UISwitch alloc]initWithFrame:CGRectMake(320-80, 5, 60, 30)];
             if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_userInfo_off"]) {
                 soundSwitch.on = NO;
@@ -135,10 +135,10 @@
     label.numberOfLines =2;
     switch (section) {
           case 0:
-            label.text = @"开启后,当收到陌游通知时,通知提示将不显示发信人和内容摘要。";
+            label.text = @"关闭后,当收到陌游通知时,通知提示将不显示发信人和内容摘要。";
             break;
         case 1:
-            label.text = @"当陌游在运行时,你可以设置是否需要声音或者振动。";
+            label.text = @"当陌游在运行时,你可以设置是否需要声音或者震动。";
             break;
         default:
             break;

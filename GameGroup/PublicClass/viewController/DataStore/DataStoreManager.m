@@ -2770,7 +2770,7 @@ return @"";
 +(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
          DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
         if (Recommend)
         {
