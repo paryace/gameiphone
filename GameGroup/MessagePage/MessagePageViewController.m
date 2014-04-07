@@ -437,6 +437,8 @@
         }
     }
     
+    NSLog(@"----%@", allMsgArray);
+    
     NSArray *sortedArray = [numArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
         if ([obj1 intValue] < [obj2 intValue]){
             return NSOrderedDescending;
@@ -944,7 +946,8 @@
                     [DataStoreManager deleteThumbMsgWithSender:KISDictionaryHaveKey(dic, @"sender")];
                 }
             }
-            [DataStoreManager deleteThumbMsgWithSender:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"]];
+            [DataStoreManager deleteMsgsWithSender:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] Type:COMMONUSER];
+            
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
