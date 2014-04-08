@@ -14,28 +14,6 @@
 #import "MyProfileViewController.h"
 #import "TestViewController.h"
 #import "ReplyViewController.h"
-//alias = " ";
-//commentObj = " ";评论
-//commentnum = 0;
-//createDate = 1388545389000;
-//destMessageId = 0;
-//destMsgobj = " ";赞
-//detailPageId = 3359;
-//hide = 0;
-//icon = " ";
-//id = 51;
-//img = " ";
-//msg = "\U5168\U56fd\U4ec51\U540d\U73a9\U5bb6\U62e5\U6709";
-//nickname = Whoareyou;
-//rarenum = 4;
-//title = "\U83b7\U5f97\U4e86\U670d\U52a1\U5668\U5341\U5927\U6218\U795e\U5934\U8854";
-//titleObj = " ";
-//type = 1;3发表  4赞 5评论
-//urlLink = " ";
-//userid = 00000007;
-//username = 11111111111;
-//zan = 0;
-//zannum = 0;
 @interface NewsViewController ()
 {
     NSInteger   m_currentPage;
