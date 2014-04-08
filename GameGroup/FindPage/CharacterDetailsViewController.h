@@ -23,6 +23,7 @@ typedef enum
 UITableViewDelegate,
 MyCharacterDelegate,
 TableViewDatasourceDidChange,
+UMSocialUIDelegate,
 UIActionSheetDelegate>
 
 @property(nonatomic,strong)NSString *characterId;//角色ID

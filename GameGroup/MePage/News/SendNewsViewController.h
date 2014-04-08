@@ -8,8 +8,8 @@
 
 #import "BaseViewController.h"
 #import "TableViewDatasourceDidChange.h"
-
-@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate>
+#import "EmojiView.h"
+@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 @property (nonatomic, strong)UIImage* titleImage;//分享头衔

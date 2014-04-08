@@ -8,7 +8,7 @@
 
 #import "SendNewsViewController.h"
 #import "Emoji.h"
-
+#import "EmojiView.h"
 @interface SendNewsViewController ()<UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MBProgressHUDDelegate>
 {
     UIButton* PhotoB;
@@ -16,6 +16,8 @@
     NSInteger  m_maxZiShu;//发表字符数量
     UILabel *m_ziNumLabel;//提示文字
     UIAlertView* alert1;
+    UIButton *emojiBtn;
+    EmojiView *theEmojiView;
 }
 @property (nonatomic,strong)UITextView* dynamicTV;
 @property (nonatomic,strong)UILabel* placeholderL;
@@ -50,7 +52,6 @@
     [addButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     [self.view addSubview:addButton];
     [addButton addTarget:self action:@selector(saveMyNews:) forControlEvents:UIControlEventTouchUpInside];
-    
     [self setMainView];
 }
 
@@ -93,6 +94,18 @@
     [imageB setBackgroundImage:[UIImage imageNamed:@"picBtn_click"] forState:UIControlStateHighlighted];
     [tool addSubview:imageB];
     
+    emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [emojiBtn setFrame:CGRectMake(30, 0, 45, 45)];
+    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+    [tool addSubview:emojiBtn];
+    [emojiBtn addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+
+    
+    theEmojiView = [[EmojiView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253) WithSendBtn:YES];
+    theEmojiView.delegate = self;
+    [self.view addSubview:theEmojiView];
+    theEmojiView.hidden = YES;
+
     if (self.isComeFromMe ==YES) {
         imageB.hidden = NO;
         tool.hidden = NO;
@@ -259,6 +272,9 @@
         [self showAlertViewWithTitle:@"提示" message:@"上传图片失败" buttonTitle:@"确定"];
     }];
 }
+
+
+
 
 -(void)publishWithImageString:(NSString*)imageID
 {
@@ -476,6 +492,49 @@
 {
     [_dynamicTV resignFirstResponder];
 }
+//-(void)emojiBtnClicked:(UIButton *)sender
+//{
+//    if (!myActive) {
+//        UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去激活", nil];
+//        [UnActionAlertV show];
+//        return ;
+//    }
+//    if (!ifEmoji) {
+//        [self.textView resignFirstResponder];
+//        ifEmoji = YES;
+//        ifAudio = NO;
+//        [sender setImage:[UIImage imageNamed:@"keyboard.png"] forState:UIControlStateNormal];
+//        [audioBtn setImage:[UIImage imageNamed:@"audioBtn.png"] forState:UIControlStateNormal];
+//        self.textView.hidden = NO;
+//        audioRecordBtn.hidden = YES;
+//        [self showEmojiScrollView];
+//        
+//    }
+//    else
+//    {
+//        [self.textView.internalTextView becomeFirstResponder];
+//        ifEmoji = NO;
+//        theEmojiView.hidden = YES;
+//        [m_EmojiScrollView removeFromSuperview];
+//        [emojiBGV removeFromSuperview];
+//        [m_Emojipc removeFromSuperview];
+//        [sender setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+//    }
+//}
+//-(void)showEmojiScrollView
+//{
+//    [self.textView resignFirstResponder];
+//    [inPutView setFrame:CGRectMake(0, self.view.frame.size.height-227-inPutView.frame.size.height, 320, inPutView.frame.size.height)];
+//    theEmojiView.hidden = NO;
+//    [theEmojiView setFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253)];
+//    [self autoMovekeyBoard:253];
+//    
+//}
+
+
+
+
+
 
 - (void)didReceiveMemoryWarning
 {

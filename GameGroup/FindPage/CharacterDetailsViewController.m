@@ -690,17 +690,64 @@
     bgView.alpha = 0.4;
     [self.view addSubview:bgView];
     
-    UIActionSheet* actionSheet = [[UIActionSheet alloc]
-                                  initWithTitle:@"分享到"
-                                  delegate:self
-                                  cancelButtonTitle:@"取消"
-                                  destructiveButtonTitle:Nil
-                                  otherButtonTitles:@"我的动态", nil];
-    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+//    UIActionSheet* actionSheet = [[UIActionSheet alloc]
+//                                  initWithTitle:@"分享到"
+//                                  delegate:self
+//                                  cancelButtonTitle:@"取消"
+//                                  destructiveButtonTitle:Nil
+//                                  otherButtonTitles:@"我的动态", nil];
+//    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+//    
+//    [actionSheet showInView:self.view];
+    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     
-    [actionSheet showInView:self.view];
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
     
+    [UMSocialSnsService presentSnsIconSheetView:self
+                                         appKey:@"52caacec56240b18e2035237"
+                                      shareText:[NSString stringWithFormat:@"用陌游分享了%@的数据",m_characterName]
+                                     shareImage:viewImage
+                                shareToSnsNames:[NSArray arrayWithObjects:UMShareToSina,UMShareToWechatTimeline,UMShareToWechatSession,UMShareToFacebook,nil]
+                                       delegate:self];
+    
+   
+//    [UMSocialSnsService presentSnsIconSheetView:self appKey:@"52caacec56240b18e2035237" shareText:@"陌游分享" shareImage:viewImage shareToSnsNames:nil delegate:self];
+
+    [UMSocialData defaultData].extConfig.wxMessageType =UMSocialWXMessageTypeImage;
+    UMSocialSnsPlatform *sinaPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:UMShareToFacebook];
+    sinaPlatform.bigImageName = @"动态";
+    sinaPlatform.displayName = @"动态";
+    
+    [[UMSocialControllerService defaultControllerService] setShareText:[NSString stringWithFormat:@"用陌游分享了%@的数据",m_characterName] shareImage:viewImage socialUIDelegate:nil];     //设置分享内容和回调对象
+    [UMSocialSnsPlatformManager getSocialPlatformWithName:UMShareToSina].snsClickHandler(self,[UMSocialControllerService defaultControllerService],YES);
+    
+    
+    
+    sinaPlatform.snsClickHandler = ^(UIViewController *presentingController, UMSocialControllerService * socialControllerService, BOOL isPresentInController){
+        [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
+    };
+    
+    }
+-(BOOL)isDirectShareInIconActionSheet
+{
+    return YES;
 }
+-(void)didFinishShareInShakeView:(UMSocialResponseEntity *)response
+{
+    if (response.responseCode == UMSResponseCodeSuccess) {
+        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"成功" message:@"分享成功" delegate:nil cancelButtonTitle:@"好" otherButtonTitles:nil];
+        [alertView show];
+    } else if(response.responseCode != UMSResponseCodeCancel) {
+        if (response.responseCode == UMSResponseCodeSuccess) {
+            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"失败" message:@"分享失败" delegate:nil cancelButtonTitle:@"好" otherButtonTitles:nil];
+            [alertView show];
+        }
+    }
+}
+
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.cancelButtonIndex) {

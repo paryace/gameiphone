@@ -24,7 +24,7 @@
     #import "GetDataAfterManager.h"
     #import "NSLog.h"
     #import "AppDelegate.h"
-
+    #import "UMSocial.h"//友盟分享
     #define MR_SHORTHAND//避免写MR_前缀
     #import "CoreData+MagicalRecord.h"
     #import "DataStoreManager.h"
