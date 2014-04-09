@@ -28,6 +28,7 @@
 @property (strong,nonatomic) UILabel* timeLabel;
 @property (assign,nonatomic) NSInteger rowIndex;
 
+@property (nonatomic,strong)UIButton *delBtn;
 //@property (assign,nonatomic) BOOL    isShowArticle;
 
 

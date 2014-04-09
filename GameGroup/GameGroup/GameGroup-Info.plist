@@ -28,6 +28,18 @@
 	<string>2.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>moyoushijie</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wb2195106285</string>
+				<string>wx64c8dc2f82a0c8fd</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>2.1.0</string>
 	<key>LSRequiresIPhoneOS</key>

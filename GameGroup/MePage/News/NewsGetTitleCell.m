@@ -85,6 +85,15 @@
         [self.timeLabel setTextColor:kColorWithRGB(153, 153, 153, 1.0)];
         [self addSubview:self.timeLabel];
         
+        self.delBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.delBtn.frame = CGRectMake(130, 70, 40, 15);
+        [self.delBtn setTitle:@"删除" forState:UIControlStateNormal];
+        self.delBtn.titleLabel.font = [UIFont boldSystemFontOfSize:10];
+        
+        [self.delBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+        [self addSubview:self.delBtn];
+        
+        
         self.zanLabel = [[UILabel alloc] initWithFrame:CGRectMake(280, 70, 30, 15)];
         [self.zanLabel setTextAlignment:NSTextAlignmentCenter];
         self.zanLabel.layer.cornerRadius = 5;

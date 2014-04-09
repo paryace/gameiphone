@@ -17,8 +17,11 @@
 #import "ReconnectMessage.h"
 #import "AddAddressBookViewController.h"
 #import "SendAckListener.h"
-@implementation AppDelegate
 
+@implementation AppDelegate
+{
+   
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -59,12 +62,36 @@
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     [MobClick startWithAppkey:@"52caacec56240b18e2035237"];
+    [WeiboSDK enableDebugMode:YES];
+    [WeiboSDK registerApp:@"2195106285"];
+    [WXApi registerApp:@"wx64c8dc2f82a0c8fd" withDescription:nil];
 //    [MobClick startWithAppkey:@"xxxxxxxxxxxxxxx" reportPolicy:BATCH   channelId:@""];
 
     [self.window makeKeyAndVisible];
 
     return YES;
 }
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    if (bSinaWB) {
+        return  [WXApi handleOpenURL:url delegate:self];
+    }
+    else{
+        return [WeiboSDK handleOpenURL:url delegate:self];
+    }
+
+}
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    if (bSinaWB) {
+        return  [WXApi handleOpenURL:url delegate:self];
+    }
+    else{
+        return [WeiboSDK handleOpenURL:url delegate:nil];
+    }
+}
+
 
 #pragma mark 推送
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
@@ -83,6 +110,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+
     //它是类里自带的方法,这个方法得说下，很多人都不知道有什么用，它一般在整个应用程序加载时执行，挂起进入后也会执行，所以很多时候都会使用到，将小红圈清空
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_BecomeActive" object:nil userInfo:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;

@@ -21,7 +21,7 @@ typedef enum
     ONEPERSON_NEWS_TYPE,
 }NewsViewType;
 
-@interface NewsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, PullUpDelegate, SRRefreshDelegate,  TableViewDatasourceDidChange, CellButtonClickDelegate, PullUpDelegate>
+@interface NewsViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, PullUpDelegate, SRRefreshDelegate,  TableViewDatasourceDidChange, CellButtonClickDelegate, PullUpDelegate,UIAlertViewDelegate>
 
 @property(nonatomic, assign)NewsViewType myViewType;
 
