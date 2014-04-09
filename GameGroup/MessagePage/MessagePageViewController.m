@@ -42,8 +42,6 @@
     
     NSMutableArray * allMsgUnreadArray;
     
-    NSMutableArray * allNickNameArray;
-    NSMutableArray * allHeadImgArray;
     NSMutableArray * allSayHelloArray;//id
     NSMutableArray * sayhellocoArray;//内容
     NSMutableArray *sayHelloNickNameArray;
@@ -140,8 +138,6 @@
     allMsgArray = [NSMutableArray array];
     allMsgUnreadArray = [NSMutableArray array];
     newReceivedMsgArray = [NSMutableArray array];
-    allNickNameArray = [NSMutableArray array];
-    allHeadImgArray = [NSMutableArray array];
     searchResultArray = [NSArray array];
     allSayHelloArray = [NSMutableArray array];
     sayhellocoArray = [NSMutableArray array];
@@ -226,7 +222,6 @@
 - (void)newMesgReceived:(NSNotification*)notification
 {
     [self displayMsgsForDefaultView];
-    //[self conversionMsg:notification.userInfo];
 }
 
 #pragma mark 收到验证好友请求
@@ -264,87 +259,6 @@
     [alert show];
 }
 
--(void)conversionMsg:(NSDictionary*)dic
-{
-    NSString *str = KISDictionaryHaveKey(dic, @"sender");
-    NSArray *array = [str componentsSeparatedByString:@"@"];
-    NSString *str2 = [array objectAtIndex:0];
-
-    if ([KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"normalchat"]) {
-        if (![allSayHelloArray containsObject:str2]) {
-            for (NSDictionary *dict in allMsgArray) {
-                if ([KISDictionaryHaveKey(dict, @"sender")isEqualToString:@"1234567wxxxxxxxxx"]) {
-                    [allMsgArray removeObject:dict];
-                }
-            }
-            NSMutableDictionary *dic1 = [NSMutableDictionary dictionary];
-            [dic1 setValue:@"1234567wxxxxxxxxx" forKeyPath:@"sender"];
-            [dic1 setValue:KISDictionaryHaveKey(dic, @"msg") forKey:@"msg"];
-            [dic1 setValue:@"sayHi" forKey:@"msgType"];
-            [dic1 setValue:KISDictionaryHaveKey(dic, @"time") forKeyPath:@"time"];
-            [allMsgArray insertObject:dic1 atIndex:0];
-            [self readAllnickName];
-        }
-        else
-        {
-            NSInteger j ;
-            for (int i =0; i<allMsgArray.count;i++) {
-                NSDictionary *dict = [allMsgArray objectAtIndex:i];
-                if ([KISDictionaryHaveKey(dict, @"sender")intValue ]==[str2 intValue]) {
-                     j = [allMsgArray indexOfObject:dict];
-                    [allMsgArray removeObject:dict];
-                    
-                }
-            }
-            NSInteger s ;
-            s = [[allMsgUnreadArray objectAtIndex:j]intValue];
-            [allMsgUnreadArray removeObjectAtIndex:j];
-            [allMsgUnreadArray insertObject:[NSString stringWithFormat:@"%ld",(long)s+1] atIndex:0];
-            
-            NSMutableDictionary *dic2 = [NSMutableDictionary dictionary];
-            [dic2 setValue:str2 forKeyPath:@"sender"];
-            [dic2 setValue:KISDictionaryHaveKey(dic, @"msg") forKey:@"msg"];
-            [dic2 setValue:@"normalchat" forKey:@"msgType"];
-            [dic2 setValue:KISDictionaryHaveKey(dic, @"time") forKeyPath:@"time"];
-            [allMsgArray insertObject:dic2 atIndex:0];
-            NSLog(@"dict1%@",dic2);
-        }
-    }
-    if ([KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"character"]||[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"title"]||[KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"pveScore"]) {
-        ;
-    }
-    if ([KISDictionaryHaveKey(dic, @"msgType")isEqualToString:@"recommendfriend"]) {
-        if (![allSayHelloArray containsObject:str2]) {
-            
-            NSInteger j ;
-            for (int i =0; i<allMsgArray.count;i++) {
-                NSDictionary *dict = [allMsgArray objectAtIndex:i];
-                if ([KISDictionaryHaveKey(dict, @"sender")intValue ]==12345) {
-                    j = [allMsgArray indexOfObject:dict];
-                    [allMsgArray removeObject:dict];
-                    
-                }
-            }
-//            NSInteger s ;
-//            s = [[allMsgUnreadArray objectAtIndex:j]intValue];
-//            [allMsgUnreadArray removeObjectAtIndex:j];
-//            [allMsgUnreadArray insertObject:[NSString stringWithFormat:@"%ld",(long)s+1] atIndex:0];
-
-            NSMutableDictionary *dic1 = [NSMutableDictionary dictionary];
-            [dic1 setValue:@"12345" forKeyPath:@"sender"];
-            [dic1 setValue:KISDictionaryHaveKey(dic, @"msg") forKey:@"msg"];
-            [dic1 setValue:@"normalchat" forKey:@"msgType"];
-            [dic1 setValue:KISDictionaryHaveKey(dic, @"time") forKeyPath:@"time"];
-            [allMsgArray insertObject:dic1 atIndex:0];
-            [self readAllnickName];
-        }
-
-;
-    }
-
-    [self readAllnickNameAndImage];
-    [m_messageTable reloadData];
-}
 -(void)getSayHiUserIdWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -360,11 +274,6 @@
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         
         [self displayMsgsForDefaultView];
-        // if ([responseObject isKindOfClass:[NSArray class]]) {
-        //            [allSayHelloArray removeAllObjects];
-        //            [allSayHelloArray addObjectsFromArray:responseObject];
-        //            [m_messageTable reloadData];
-        //  }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
     }];
@@ -433,6 +342,8 @@
         [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
         [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
         [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgType] forKey:@"msgType"];
+            [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderimg]?[[thumbCommonMsgsArray objectAtIndex:i] senderimg]:@"" forKey:@"img"];
+            [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderNickname]?[[thumbCommonMsgsArray objectAtIndex:i] senderNickname]:@"" forKey:@"nickname"];
             [allMsgArray addObject:thumbMsgsDict];
         }
     }
@@ -468,12 +379,11 @@
         [dic setValue:@"1234567wxxxxxxxxx" forKeyPath:@"sender"];
         [dic setValue:[[sayhellocoArray objectAtIndex:0] msgContent] forKey:@"msg"];
         [dic setValue:@"sayHi" forKey:@"msgType"];
+        [dic setValue:@"有新的打招呼信息" forKey:@"nickname"];
         NSDate * tt = [[sayhellocoArray objectAtIndex:0] sendTime];
         NSTimeInterval uu = [tt timeIntervalSince1970];
         [dic setValue:[NSString stringWithFormat:@"%.f", uu] forKeyPath:@"time"];
-        
         [allMsgArray addObject:dic];
-        
     }
     
     // 把消息按照时间重新排序
@@ -494,58 +404,12 @@
         [allMsgUnreadArray insertObject:[NSString stringWithFormat:@"%d",unreadCount] atIndex:unreadSayhiCount];
     }
     if (sayhellocoArray.count>0) {
-        [self readAllnickName];
     }
-    [self readAllnickNameAndImage];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }
-
--(void)readAllnickNameAndImage
-{
-    NSMutableArray * nickName = [NSMutableArray array];
-    NSMutableArray * headimg = [NSMutableArray array];
-    NSMutableArray *sayHelloImg = [NSMutableArray array];
-    NSMutableArray *sayHellonickName = [NSMutableArray array];
-    for (int i = 0; i<allMsgArray.count; i++) {
-        NSString * nickName2 = [DataStoreManager queryMsgRemarkNameForUser:[[allMsgArray objectAtIndex:i] objectForKey:@"sender"]];
-        [nickName addObject:nickName2?nickName2 : @""];
-        [headimg addObject:[DataStoreManager queryMsgHeadImageForUser:[[allMsgArray objectAtIndex:i] objectForKey:@"sender"]]];
-    }
-    for (int i = 0; i<sayhellocoArray.count; i++) {
-        NSString * nickName2 = [DataStoreManager queryMsgRemarkNameForUser:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]];
-        [sayHellonickName addObject:nickName2?nickName2 : @""];
-        [sayHelloImg addObject:[DataStoreManager queryMsgHeadImageForUser:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]]];
-    }
-    allNickNameArray = nickName;
-    allHeadImgArray = headimg;
-    allsayHelloImageArray = sayHelloImg;
-    allsayHellonickNameArray = sayHellonickName;
-    
-    
-    
-}
-
--(void)readAllnickName
-{
-    NSMutableArray * nickName = [NSMutableArray array];
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[sayhellocoArray objectAtIndex:0] sender]];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-        NSString * nickName2=nil;
-        if (thumbMsgs) {
-            if (thumbMsgs.senderNickname) {
-                nickName2= thumbMsgs.senderNickname;
-            }
-            [nickName addObject:nickName2?nickName2 : @""];
-        }
-    sayHelloNickNameArray= nickName;
-    NSLog(@"sayHelloNickNameArray%@",sayHelloNickNameArray);
-}
-
-
 -(void)displayTabbarNotification
 {
-    NSLog(@"allunread%d",allMsgUnreadArray.count);
     int allUnread = 0;
     for (int i = 0; i<allMsgUnreadArray.count; i++) {
         allUnread = allUnread+[[allMsgUnreadArray objectAtIndex:i] intValue];
@@ -556,49 +420,6 @@
     else
     {
         [[Custom_tabbar showTabBar] removeNotificatonOfIndex:0];
-    }
-    
-}
-
-#pragma mark - 搜索
--(void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
-{
-    //    if (KISHighVersion_7) {
-    //        [searchBar setFrame:CGRectMake(0, 20, 320, 44)];
-    //        searchBar.backgroundImage = [UIImage imageNamed:@"top.png"];
-    //        [UIView animateWithDuration:0.3 animations:^{
-    //            [m_messageTable setFrame:CGRectMake(0, 20, 320, self.view.frame.size.height- 50 - startX)];
-    ////            m_messageTable.contentOffset = CGPointMake(0, -20);
-    //        } completion:^(BOOL finished) {
-    //
-    //        }];
-    //    }
-}
-
--(void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller
-{
-    if (KISHighVersion_7) {
-        
-    }
-}
-
--(void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller
-{
-    //    if (KISHighVersion_7) {
-    //        [UIView animateWithDuration:0.2 animations:^{
-    //            [searchBar setFrame:CGRectMake(0, 0, 320, 44)];
-    //            [m_messageTable setFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - 50 - startX)];
-    //        } completion:^(BOOL finished) {
-    //            searchBar.backgroundImage = nil;
-    //        }];
-    //    }
-}
--(void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView
-{
-    if (KISHighVersion_7) {
-        //        tableView.backgroundColor = [UIColor grayColor];
-        [tableView setFrame:CGRectMake(0, 64, 320, self.view.frame.size.height - 50 - 64)];
-        //        [tableView setContentOffset:CGPointMake(0, 20)];
     }
 }
 
@@ -611,32 +432,6 @@
 {
     //    [self storeNewMessage:messageContent];
 }
-//
-//-(void)storeNewMessage:(NSDictionary *)messageContent
-//{
-//    NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
-//    type = type?type:@"notype";
-//    if ([type isEqualToString:@"reply"]||[type isEqualToString:@"zanDynamic"]) {
-//        [DataStoreManager storeNewMsgs:messageContent senderType:SYSTEMNOTIFICATION];//系统消息
-//    }
-//    else if([type isEqualToString:@"normalchat"])
-//    {
-//        AudioServicesPlayAlertSound(1007);
-//        [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
-//    }
-//    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//关注和取消关注
-//    {
-//        AudioServicesPlayAlertSound(1007);
-//
-//        [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//打招呼消息
-//    }
-//    else if([type isEqualToString:@"recommendfriend"])
-//    {
-//        [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];
-//    }
-//}
-
-
 #pragma mark 表格
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -645,18 +440,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@",searchBar.text];
-    //    NSLog(@"%@",searchBar.text);
-    //
-    //    searchResultArray = [pyChineseArray filteredArrayUsingPredicate:resultPredicate ]; //注意retain
-    //    NSLog(@"%@",searchResultArray);
-    //    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-    //        return [searchResultArray count];
-    //    }
-    //    else
-    
     return allMsgArray.count;
-    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -676,8 +460,7 @@
         if ([[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"msgType"]isEqualToString:@"sayHi"]) {
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
-        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[sayHelloNickNameArray objectAtIndex:0],KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row], @"msg")];
-           // cell.contentLabel.text = [NSString stringWithFormat:@"%@:%@",[allNickNameArray objectAtIndex:indexPath.row],KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row], @"msg")];
+        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row], @"msg")];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"title"] ||
@@ -705,20 +488,13 @@
         
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
     }
-    //判断是否是打招呼
-    //        else if ()
-    //        {
-    //            cell.headImageV.imageURL =nil;
-    //            cell.headImageV.image = KUIImage(@"mess_guanzhu");
-    //            cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
-    //        }
-    else
+    else if([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"normalchat"])
     {
         NSURL * theUrl;
-        if ([[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[allHeadImgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
+        if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@" "]) {
             theUrl =nil;
         }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[allHeadImgArray objectAtIndex:indexPath.row]]]];
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"img"]]]];
         }
         cell.headImageV.imageURL = theUrl;
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
@@ -757,7 +533,7 @@
         cell.unreadCountLabel.hidden = YES;
         cell.notiBgV.hidden = YES;
     }
-    cell.nameLabel.text = [allNickNameArray objectAtIndex:indexPath.row];
+    cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"time"] substringToIndex:10]];
     
     return cell;
@@ -765,25 +541,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-//    if (tableView.editing) {
-//        NSLog(@"11111");
-//        [deleteDic setObject:indexPath forKey:[allMsgArray objectAtIndex:indexPath.row]];
-//        
-//    }else{
-
     [m_messageTable deselectRowAtIndexPath:indexPath animated:YES];
-    
-    
-    
-    
-    
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-        // if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"normalchat"]&&![allSayHelloArray containsObject:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"]])
     if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHi"]) {
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         friq.personCount = sayhellocoArray.count;
-        friq.nickNameArray = allsayHellonickNameArray;
-        friq.imgArray =allsayHelloImageArray;
         [self.navigationController pushViewController:friq animated:YES];
         [searchDisplay setActive:NO animated:NO];
         [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
@@ -791,7 +553,6 @@
         return;
         
     }
-    
     if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHello"] || [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"deletePerson"]) {//关注
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         [self.navigationController pushViewController:friq animated:YES];
@@ -845,22 +606,13 @@
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.unreadNo = allUnread-no;
     kkchat.chatWithUser = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"];
-    kkchat.nickName = [allNickNameArray objectAtIndex:indexPath.row];
-    kkchat.chatUserImg = [allHeadImgArray objectAtIndex:indexPath.row];
+    kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"nickname"];
+    kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"img"];
     [self.navigationController pushViewController:kkchat animated:YES];
     kkchat.msgDelegate = self;
     [searchDisplay setActive:NO animated:NO];
     //}
 }
-
-//- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
-//    if (tableView.editing) {
-//        NSLog(@"2222222");
-//        [deleteDic removeObjectForKey:[allMsgArray objectAtIndex:indexPath.row]];
-//    }
-//    
-//}
-
 
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
 {
@@ -919,10 +671,6 @@
     return YES;
 }
 
-//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
-//}
 
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {

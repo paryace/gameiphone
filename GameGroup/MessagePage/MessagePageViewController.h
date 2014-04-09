@@ -13,6 +13,6 @@
 
 @interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,StoreMsgDelegate,UISearchDisplayDelegate>
 
-@property (strong,nonatomic) AppDelegate * appDel;
+@property (assign,nonatomic) AppDelegate * appDel;
 @property(nonatomic,strong)UILabel*   titleLabel;;
 @end

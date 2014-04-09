@@ -82,6 +82,9 @@
             [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
             [thumbMsgsDict setObject:[[array objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
             [thumbMsgsDict setObject:[[array objectAtIndex:i] msgType] forKey:@"msgType"];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] senderimg] forKey:@"img"];
+            [thumbMsgsDict setObject:[[array objectAtIndex:i] senderNickname] forKey:@"nickname"];
+
             [self.dataArray addObject:thumbMsgsDict];
             
         }
@@ -141,14 +144,14 @@
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
 
-    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[self.imgArray objectAtIndex:indexPath.row]]]];
-    if ([[self.imgArray objectAtIndex:indexPath.row]isEqualToString:@""]||[[self.imgArray objectAtIndex:indexPath.row]isEqualToString:@" "]) {
+    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]]]];
+    if ([[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{
         cell.headImageV.imageURL = theUrl;
     }
     cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
-    cell.nameLabel.text = [self.nickNameArray objectAtIndex:indexPath.row];
+    cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"time"] substringToIndex:10]];
 
     return cell;
@@ -169,9 +172,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     KKChatController *kkchat = [[KKChatController alloc]init];
-    kkchat.nickName = [self.nickNameArray objectAtIndex:indexPath.row];
+    kkchat.nickName = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
     kkchat.chatWithUser = [[self.dataArray objectAtIndex:indexPath.row]objectForKey:@"sender"];
-    kkchat.chatUserImg = [self.imgArray objectAtIndex:indexPath.row];
+    kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"];
 
     [self.navigationController pushViewController:kkchat animated:YES];
 }

@@ -241,7 +241,7 @@
 //    m_backButton.hidden = YES;
 //    m_shareButton.hidden = YES;
 
-    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+    UIGraphicsBeginImageContext(CGSizeMake(kScreenHeigth, kScreenWidth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
