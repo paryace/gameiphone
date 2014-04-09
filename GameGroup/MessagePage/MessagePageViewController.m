@@ -27,27 +27,15 @@
 {
     UITableView * m_messageTable;
     
-    //搜索
-    UISearchBar * searchBar;
-    UISearchDisplayController * searchDisplay;
-    
-    NSMutableArray *allsayHelloImageArray;
-    NSMutableArray *allsayHellonickNameArray;
     SystemSoundID soundID;
     
-    NSMutableArray * newReceivedMsgArray;//新接收的消息
     NSMutableArray * allMsgArray;
-    
-    NSArray * searchResultArray;
     
     NSMutableArray * allMsgUnreadArray;
     
     NSMutableArray * allSayHelloArray;//id
     NSMutableArray * sayhellocoArray;//内容
-    NSMutableArray *sayHelloNickNameArray;
     
-    NSMutableDictionary *deleteDic;
-    NSMutableArray *dellArray;
     UIButton *deltButton;
 }
 @end
@@ -137,15 +125,8 @@
     
     allMsgArray = [NSMutableArray array];
     allMsgUnreadArray = [NSMutableArray array];
-    newReceivedMsgArray = [NSMutableArray array];
-    searchResultArray = [NSArray array];
     allSayHelloArray = [NSMutableArray array];
     sayhellocoArray = [NSMutableArray array];
-    sayHelloNickNameArray = [NSMutableArray array];
-    deleteDic = [NSMutableDictionary dictionary];
-    dellArray = [NSMutableArray array];
-    allsayHelloImageArray =[NSMutableArray array];
-    allsayHellonickNameArray =[NSMutableArray array];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
@@ -547,7 +528,6 @@
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         friq.personCount = sayhellocoArray.count;
         [self.navigationController pushViewController:friq animated:YES];
-        [searchDisplay setActive:NO animated:NO];
         [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
         
         return;
@@ -556,7 +536,6 @@
     if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHello"] || [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"deletePerson"]) {//关注
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         [self.navigationController pushViewController:friq animated:YES];
-        [searchDisplay setActive:NO animated:NO];
         [self cleanUnReadCountWithType:3 Content:@"" typeStr:@""];
         
         return;
@@ -567,7 +546,6 @@
         
         FriendRecommendViewController* VC = [[FriendRecommendViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
-        [searchDisplay setActive:NO animated:NO];
         
         [self cleanUnReadCountWithType:2 Content:@"" typeStr:@""];
         
@@ -578,7 +556,6 @@
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         EveryDataNewsViewController * newsVC = [[EveryDataNewsViewController alloc]init];
         [self.navigationController pushViewController:newsVC animated:YES];
-        [searchDisplay setActive:NO animated:NO];
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;
     }
@@ -590,8 +567,7 @@
         
         OtherMsgsViewController* VC = [[OtherMsgsViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
-        
-        [searchDisplay setActive:NO animated:NO];
+
         
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
         
@@ -610,7 +586,6 @@
     kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"img"];
     [self.navigationController pushViewController:kkchat animated:YES];
     kkchat.msgDelegate = self;
-    [searchDisplay setActive:NO animated:NO];
     //}
 }
 
