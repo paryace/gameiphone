@@ -10,6 +10,7 @@
 #import "TestViewController.h"
 #import "SendNewsViewController.h"
 #import "MePageViewController.h"
+#import "ShareToOther.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
 #define kSegmentCountry (2)
@@ -615,7 +616,7 @@
                                   delegate:self
                                   cancelButtonTitle:@"取消"
                                   destructiveButtonTitle:Nil
-                                  otherButtonTitles:@"我的动态", nil];
+                                  otherButtonTitles:@"我的动态",@"新浪微博",@"微信好友",@"微信朋友圈", nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     
     [actionSheet showInView:self.view];
@@ -623,9 +624,33 @@
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
+    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    
+    if (buttonIndex ==0) {
         [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
     }
+    else if (buttonIndex ==1)
+    {
+        [[ShareToOther singleton]shareTosina:viewImage];
+    }
+    else if(buttonIndex ==2)
+    {
+        [[ShareToOther singleton]changeScene:WXSceneSession];
+        
+        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+    }
+    else if(buttonIndex ==3)
+    {
+        [[ShareToOther singleton] changeScene:WXSceneTimeline];
+        
+        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+    }
+    
     if (bgView != nil) {
         [bgView removeFromSuperview];
     }

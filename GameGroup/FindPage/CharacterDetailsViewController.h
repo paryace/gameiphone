@@ -23,9 +23,10 @@ typedef enum
 UITableViewDelegate,
 MyCharacterDelegate,
 TableViewDatasourceDidChange,
-UMSocialUIDelegate,
 UIActionSheetDelegate>
-
+{
+    enum WXScene _scene;
+}
 @property(nonatomic,strong)NSString *characterId;//角色ID
 @property(nonatomic,strong)NSString *gameId;//游戏id
 @property(nonatomic,strong)NSArray*  titleObjArray;

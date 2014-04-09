@@ -8,11 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
-#import "WXApi.h"
+#import "WeiboSDK.h"
+#import"WXApi.h"
 @class StartViewController;
 @class XMPPHelper;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate,WXApiDelegate>
+@interface AppDelegate : UIResponder
+<UIApplicationDelegate,
+WeiboSDKDelegate
+,WXApiDelegate
+>
+{
+    NSString* wbtoken;
+     BOOL bSinaWB;
+}
+@property (strong, nonatomic) NSString *wbtoken;
 
 @property (strong, nonatomic) UIWindow *window;
 

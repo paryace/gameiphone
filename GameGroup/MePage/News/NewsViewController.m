@@ -27,6 +27,8 @@
     SRRefreshView   *_slimeView;
     
     BOOL            isRefresh;
+    NSIndexPath *indexPaths;
+    UIAlertView *alertView1;
 }
 @end
 
@@ -324,6 +326,18 @@
     if (cell == nil) {
         cell = [[NewsGetTitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    
+    if (self.myViewType == ME_NEWS_TYPE) {
+        cell.delBtn.hidden = NO;
+    }else{
+        cell.delBtn.hidden = YES;
+    }
+    cell.delBtn.tag = indexPath.row;
+    [cell.delBtn addTarget:self action:@selector(delMyInfo:) forControlEvents:UIControlEventTouchUpInside];
+    indexPaths = indexPath;
+    
+    
+    
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -536,6 +550,50 @@
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
+-(void)delMyInfo:(UIButton *)sender
+{
+    
+    alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"是否确认删除？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    alertView1.tag = sender.tag;
+    [alertView1 show];
+    
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex ==1) {
+        NSDictionary *dic = [m_newsArray objectAtIndex:alertView1.tag];
+        
+        [self getUserInfoByNetWithMsgid:KISDictionaryHaveKey(dic, @"id")];
+        [m_newsArray removeObjectAtIndex:alertView.tag];
+        [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPaths] withRowAnimation:NO];
+        [m_myTableView reloadData];
+    }
+
+}
+
+- (void)getUserInfoByNetWithMsgid:(NSString *)msgId
+{
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
+    [paramDict setObject:msgId forKey:@"messageId"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"177" forKey:@"method"];
+    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                
+            }
+        }
+    }];
+}
+
+
 -(void)CellHeardButtonClick:(int)rowIndex
 {
     NSDictionary* tempDict = [m_newsArray objectAtIndex:rowIndex];
@@ -646,7 +704,10 @@
 
     }];
 }
-
+-(void)dealloc
+{
+    alertView1.delegate = nil;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
