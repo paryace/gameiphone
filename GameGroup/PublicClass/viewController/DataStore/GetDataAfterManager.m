@@ -177,11 +177,21 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
+    }else{
+        [self getSayHiUserId];
+    }
+    NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+    if ([array containsObject:sender]) {
+        [messageContent setValue:@"1" forKey:@"sayHiType"];
+       // [DataStoreManager storeThumbMsgUser:sender type:@"1"];
+    }else{
+       // [DataStoreManager storeThumbMsgUser:sender type:@"2"];
+        [messageContent setValue:@"2" forKey:@"sayHiType"];
+    }
+
+    
     [self storeNewMessage:messageContent];
-    //[self.xmppHelper comeBackDelivered:[messageContent objectForKey:@"sender"] msgId:msgId];
-   
-//    [[UserManager singleton]requestUserFromNet:sender];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 
     
     
@@ -195,16 +205,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
     
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
-//    }else{
-//        [self getSayHiUserId];
-//    }
-//    NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
-//    if ([array containsObject:sender]) {
-//        [DataStoreManager storeThumbMsgUser:sender type:@"1"];
-//    }else{
-//        [DataStoreManager storeThumbMsgUser:sender type:@"2"];
-//    }
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 

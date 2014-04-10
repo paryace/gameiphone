@@ -57,7 +57,6 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-   // [self readAllnickNameAndImage];
     [self getSayHelloUserInfo];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];
     
@@ -65,30 +64,7 @@
 
 -(void)getSayHelloUserInfo
 {
-    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
-    [self.dataArray removeAllObjects];
-    
-    NSMutableArray *unarray = [NSMutableArray array];
-    
-    unarray = [[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
-    
-    for (int i = 0; i <array.count; i++) {
-        if (![unarray containsObject:[[array objectAtIndex:i] sender]]&&[[[array objectAtIndex:i] msgType]isEqualToString:@"normalchat"]) {
-            NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] sender] forKey:@"sender"];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] msgContent] forKey:@"msg"];
-            NSDate * tt = [[array objectAtIndex:i] sendTime];
-            NSTimeInterval uu = [tt timeIntervalSince1970];
-            [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] msgType] forKey:@"msgType"];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] senderimg] forKey:@"img"];
-            [thumbMsgsDict setObject:[[array objectAtIndex:i] senderNickname] forKey:@"nickname"];
-
-            [self.dataArray addObject:thumbMsgsDict];
-            
-        }
-    }
+    self.dataArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
     [m_myTableView reloadData];
 
 }
@@ -144,15 +120,15 @@
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
 
-    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]]]];
-    if ([[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@" "]) {
+    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row]senderimg]]]];
+    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{
         cell.headImageV.imageURL = theUrl;
     }
-    cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
-    cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
-    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"time"] substringToIndex:10]];
+    cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row]msgContent];
+    cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
+    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[self.dataArray objectAtIndex:indexPath.row]sendTimeStr] substringToIndex:10]];
 
     return cell;
 }
@@ -172,9 +148,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     KKChatController *kkchat = [[KKChatController alloc]init];
-    kkchat.nickName = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
-    kkchat.chatWithUser = [[self.dataArray objectAtIndex:indexPath.row]objectForKey:@"sender"];
-    kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"img"];
+    kkchat.nickName = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
+    kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
+    kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row]senderimg];
 
     [self.navigationController pushViewController:kkchat animated:YES];
 }
@@ -189,7 +165,7 @@
     {
         //NSDictionary* tempDic = [self.dataArray objectAtIndex:indexPath.row];
 
-            [DataStoreManager deleteThumbMsgWithSender:[[self.dataArray objectAtIndex:indexPath.row] objectForKey:@"sender"]];
+            [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]]];
         [self.dataArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
     }

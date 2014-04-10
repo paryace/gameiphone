@@ -297,8 +297,10 @@
     [allSayHelloArray removeAllObjects];
     [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
-   allMsgArray = [array mutableCopy];
+    allMsgArray = [array mutableCopy];
     
+    NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
+    sayhellocoArray = [array1 mutableCopy];
     
     [m_messageTable reloadData];
     
@@ -348,7 +350,7 @@
         if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
-        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row], @"msg")];
+        cell.contentLabel.text =[[allMsgArray objectAtIndex:indexPath.row] msgContent];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
@@ -422,7 +424,9 @@
         cell.notiBgV.hidden = YES;
     }
     cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
-    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[allMsgArray objectAtIndex:indexPath.row] sendTimeStr] substringToIndex:10]];
+    NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
+
+    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
     
     return cell;
 }

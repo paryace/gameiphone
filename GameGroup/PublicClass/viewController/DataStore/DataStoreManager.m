@@ -62,9 +62,8 @@
     NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
-
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-    
+    NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType");
 //    NSString * receiver;
 //    if ([msg objectForKey:@"receicer"]) {
 //        NSRange range2 = [[msg objectForKey:@"receicer"] rangeOfString:@"@"];
@@ -87,8 +86,8 @@
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
-            if (!thumbMsgs) 
-                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];    
+            if (!thumbMsgs) {
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
             thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
             thumbMsgs.msgContent = msgContent;
@@ -99,6 +98,23 @@
             thumbMsgs.msgType = msgType;
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
+            thumbMsgs.sayHiType = sayhiType;
+                
+                if ([sayhiType isEqualToString:@"2"]) {
+                    thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+                    thumbMsgs.sender = @"1234567wxxxxxxxxx";
+                    thumbMsgs.senderNickname = @"有新的打招呼信息";
+                    thumbMsgs.msgContent = [NSString stringWithFormat:@"%@:%@",senderNickname?senderNickname:@"",msgContent];
+                    thumbMsgs.sendTime = sendTime;
+                    thumbMsgs.senderType = sendertype;
+                    int unread = [thumbMsgs.unRead intValue];
+                    thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+                    thumbMsgs.msgType = @"sayHi";
+                    thumbMsgs.messageuuid = @"wx123";
+                    thumbMsgs.status = @"1";//已发送
+                    thumbMsgs.sayHiType = @"1";
+                }
+            }
         }];
     }
     else if ([sendertype isEqualToString:PAYLOADMSG]) {//动态聊天消息
@@ -634,11 +650,14 @@
 
 +(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
 {
-//    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-//    NSLog(@"thumb_type%@",[[array objectAtIndex:0 ]sayHiType]);
-//    NSLog(@"thumb_type%@",[[array objectAtIndex:0 ]sayHiType]);
-//    
-    return (NSMutableArray *)[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+    NSMutableArray *allMsgArray = [NSMutableArray array];
+    for (int i = 0; i<array.count; i++) {
+        if ([[[array objectAtIndex:i]sayHiType]isEqualToString:type]) {
+            [allMsgArray addObject:[array objectAtIndex:i]];
+        }
+    }
+    return allMsgArray;
 }
 
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
