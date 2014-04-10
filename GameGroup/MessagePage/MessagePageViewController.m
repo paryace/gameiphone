@@ -31,8 +31,6 @@
     
     NSMutableArray * allMsgArray;
     
-    NSMutableArray * allMsgUnreadArray;
-    
     NSMutableArray * allSayHelloArray;//id
     NSMutableArray * sayhellocoArray;//内容
     
@@ -124,7 +122,6 @@
     
     
     allMsgArray = [NSMutableArray array];
-    allMsgUnreadArray = [NSMutableArray array];
     allSayHelloArray = [NSMutableArray array];
     sayhellocoArray = [NSMutableArray array];
     
@@ -298,102 +295,20 @@
 {
     //获取所有聊过天人的id （你对他）
     [allSayHelloArray removeAllObjects];
-    [allMsgArray removeAllObjects];
-    [sayhellocoArray removeAllObjects];
     [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-    //获取所有消息
-   NSMutableArray *thumbCommonMsgsArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
-    //获取所有未读
-    NSMutableArray *numArray = [NSMutableArray array];
-    
-    for (int i = 0; i<thumbCommonMsgsArray.count; i++) {
-        NSInteger j ;
-
-        if (![allSayHelloArray containsObject:[[thumbCommonMsgsArray objectAtIndex:i] sender]]&&[[[thumbCommonMsgsArray objectAtIndex:i] msgType]isEqualToString:@"normalchat"]) {
-            [sayhellocoArray addObject:[thumbCommonMsgsArray objectAtIndex:i]];
-            j = [thumbCommonMsgsArray indexOfObject:[thumbCommonMsgsArray objectAtIndex:i]];
-            [numArray addObject:[NSString stringWithFormat:@"%ld",(long)j]];
-        }else{
-
-        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-        NSDate * tt = [[thumbCommonMsgsArray objectAtIndex:i] sendTime];
-        NSTimeInterval uu = [tt timeIntervalSince1970];
-        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%.f", uu] forKey:@"time"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] messageuuid] forKey:@"messageuuid"];
-        [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] msgType] forKey:@"msgType"];
-            [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderimg]?[[thumbCommonMsgsArray objectAtIndex:i] senderimg]:@"" forKey:@"img"];
-            [thumbMsgsDict setObject:[[thumbCommonMsgsArray objectAtIndex:i] senderNickname]?[[thumbCommonMsgsArray objectAtIndex:i] senderNickname]:@"" forKey:@"nickname"];
-            [allMsgArray addObject:thumbMsgsDict];
-        }
-    }
-    
-    NSLog(@"----%@", allMsgArray);
-    
-    NSArray *sortedArray = [numArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
-        if ([obj1 intValue] < [obj2 intValue]){
-            return NSOrderedDescending;
-        }
-        if ([obj1 intValue] > [obj2 intValue]){
-            return NSOrderedAscending;
-        }
-        return NSOrderedSame;
-    }];
-    NSMutableArray *unReadsayHiArray = [NSMutableArray array];
-
-    allMsgUnreadArray = (NSMutableArray *)[DataStoreManager queryUnreadCountForCommonMsg];
-    for (int i =0;i <sortedArray.count;i++) {
-        NSString *str = [sortedArray objectAtIndex:i];
-        [unReadsayHiArray addObject:[allMsgUnreadArray objectAtIndex:[str intValue]]];
-        [allMsgUnreadArray removeObjectAtIndex:[str intValue]];
-    }
-    int unreadCount = 0;
-    for (NSString *str in unReadsayHiArray) {
-        unreadCount += [str intValue];
-    }
+   NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
+   allMsgArray = [array mutableCopy];
     
     
-    //把打招呼的人综合 向消息界面放入一个条目
-    if (sayhellocoArray.count!=0) {
-        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        [dic setValue:@"1234567wxxxxxxxxx" forKeyPath:@"sender"];
-        [dic setValue:[[sayhellocoArray objectAtIndex:0] msgContent] forKey:@"msg"];
-        [dic setValue:@"sayHi" forKey:@"msgType"];
-        [dic setValue:@"有新的打招呼信息" forKey:@"nickname"];
-        NSDate * tt = [[sayhellocoArray objectAtIndex:0] sendTime];
-        NSTimeInterval uu = [tt timeIntervalSince1970];
-        [dic setValue:[NSString stringWithFormat:@"%.f", uu] forKeyPath:@"time"];
-        [allMsgArray addObject:dic];
-    }
-    
-    // 把消息按照时间重新排序
-    NSArray *sortDescriptors1 = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"time" ascending:NO]];
-    [allMsgArray sortUsingDescriptors:sortDescriptors1];
-
-    NSInteger unreadSayhiCount=0;//打招呼未读位置
-    for (int i = 0; i<allMsgArray.count; i++) {
-        NSDictionary *dic =[allMsgArray objectAtIndex:i];
-        if ([KISDictionaryHaveKey(dic, @"sender")isEqualToString:@"1234567wxxxxxxxxx" ]) {
-            //获取打招呼cell在消息中的位置
-            unreadSayhiCount  = [allMsgArray indexOfObject:dic];
-        }
-    }
-
-    //把打招呼的未读重新放回未读消息条目中
-    if (sayhellocoArray.count>0) {
-        [allMsgUnreadArray insertObject:[NSString stringWithFormat:@"%d",unreadCount] atIndex:unreadSayhiCount];
-    }
-    if (sayhellocoArray.count>0) {
-    }
     [m_messageTable reloadData];
+    
     [self displayTabbarNotification];
 }
 -(void)displayTabbarNotification
 {
     int allUnread = 0;
-    for (int i = 0; i<allMsgUnreadArray.count; i++) {
-        allUnread = allUnread+[[allMsgUnreadArray objectAtIndex:i] intValue];
+    for (int i = 0; i<allMsgArray.count; i++) {
+        allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
     }
     if (allUnread>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:allUnread OrDot:NO WithButtonIndex:0];
@@ -404,15 +319,7 @@
     }
 }
 
-- (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)tableView
-{
-    
-}
-#pragma mark 数据存储
--(void)makeMsgVStoreMsg:(NSDictionary *)messageContent
-{
-    //    [self storeNewMessage:messageContent];
-}
+
 #pragma mark 表格
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -438,64 +345,64 @@
     }
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-        if ([[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"msgType"]isEqualToString:@"sayHi"]) {
+        if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
         cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row], @"msg")];
     }
-    else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"character"] ||
-             [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"title"] ||
-             [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"pveScore"])
+    else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
+             [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
+             [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
     {
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_titleobj");
-        NSDictionary * dict = [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"] JSONValue];
+        NSDictionary * dict = [[[allMsgArray objectAtIndex:indexPath.row] msg] JSONValue];
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
     }
-    else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"recommendfriend"])
+    else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])
     {
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_tuijian");
         
-        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
+        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] msgContent];
     }
-    else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"dailynews"])
+    else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])
     {
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_news");
         
-        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
+        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
     }
-    else if([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"normalchat"])
+    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"])
     {
         NSURL * theUrl;
-        if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"img"]isEqualToString:@" "]) {
+        if ([[[allMsgArray objectAtIndex:indexPath.row] senderimg]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
             theUrl =nil;
         }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"img"]]]];
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]senderimg]]]];
         }
         cell.headImageV.imageURL = theUrl;
-        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msg"];
+        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         
     }
     
-    if ([[allMsgUnreadArray objectAtIndex:indexPath.row] intValue]>0) {
+    if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
         cell.unreadCountLabel.hidden = NO;
         cell.notiBgV.hidden = NO;
-        if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"recommendfriend"] |
-            [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHello"] ||
-            [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"deletePerson"]) {
+        if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"] |
+            [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] ||
+            [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {
             cell.notiBgV.image = KUIImage(@"redpot");
             cell.unreadCountLabel.hidden = YES;
         }
         else
         {
-            [cell.unreadCountLabel setText:[allMsgUnreadArray objectAtIndex:indexPath.row]];
+            [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
             
-            if ([[allMsgUnreadArray objectAtIndex:indexPath.row] intValue]>99) {
+            if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
                 [cell.unreadCountLabel setText:@"99+"];
                 cell.notiBgV.image = KUIImage(@"redCB_big");
                 cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
@@ -503,7 +410,7 @@
             }
             else{
                 cell.notiBgV.image = KUIImage(@"redCB.png");
-                [cell.unreadCountLabel setText:[allMsgUnreadArray objectAtIndex:indexPath.row]];
+                [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
                 cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
                 cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
             }
@@ -514,8 +421,8 @@
         cell.unreadCountLabel.hidden = YES;
         cell.notiBgV.hidden = YES;
     }
-    cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
-    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"time"] substringToIndex:10]];
+    cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[allMsgArray objectAtIndex:indexPath.row] sendTimeStr] substringToIndex:10]];
     
     return cell;
 }
@@ -524,7 +431,7 @@
 {
     [m_messageTable deselectRowAtIndexPath:indexPath animated:YES];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHi"]) {
+    if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHi"]) {
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         friq.personCount = sayhellocoArray.count;
         [self.navigationController pushViewController:friq animated:YES];
@@ -533,14 +440,14 @@
         return;
         
     }
-    if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"sayHello"] || [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"deletePerson"]) {//关注
+    if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] || [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {//关注
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         [self.navigationController pushViewController:friq animated:YES];
         [self cleanUnReadCountWithType:3 Content:@"" typeStr:@""];
         
         return;
     }
-    if([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
@@ -551,7 +458,7 @@
         
         return;
     }
-    if([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"dailynews"])//新闻
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])//新闻
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         EveryDataNewsViewController * newsVC = [[EveryDataNewsViewController alloc]init];
@@ -559,9 +466,9 @@
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;
     }
-    if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"character"] ||
-        [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"title"] ||
-        [[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"pveScore"])
+    if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
+        [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
+        [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
@@ -574,16 +481,16 @@
         return;
     }
     int allUnread = 0;
-    for (int i = 0; i<allMsgUnreadArray.count; i++) {
-        allUnread = allUnread+[[allMsgUnreadArray objectAtIndex:i] intValue];
+    for (int i = 0; i<allMsgArray.count; i++) {
+        allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
     }
     MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
     NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.unreadNo = allUnread-no;
-    kkchat.chatWithUser = [[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"];
-    kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"nickname"];
-    kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"img"];
+    kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
+    kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]senderNickname];
+    kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]senderimg];
     [self.navigationController pushViewController:kkchat animated:YES];
     kkchat.msgDelegate = self;
     //}
@@ -651,17 +558,17 @@
 {
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
-        if([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] isEqualToString:@"1"])//角色
+        if([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1"])//角色
         {
             //            [DataStoreManager deleteThumbMsgWithUUID:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"messageuuid"]];
             [DataStoreManager cleanOtherMsg];
         }
-        else if ([[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] isEqualToString:@"sys00000011"])
+        else if ([[[allMsgArray objectAtIndex:indexPath.row]sender] isEqual:@"sys00000011"])
         {
             [DataStoreManager deleteAllNewsMsgs];
         }
         else{
-            if ([[[allMsgArray objectAtIndex:indexPath.row]objectForKey:@"sender"]isEqualToString:@"1234567wxxxxxxxxx"])
+            if ([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1234567wxxxxxxxxx"])
             {
                 for (int i =0;i<sayhellocoArray.count;i++) {
                     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
@@ -669,7 +576,7 @@
                     [DataStoreManager deleteThumbMsgWithSender:KISDictionaryHaveKey(dic, @"sender")];
                 }
             }
-            [DataStoreManager deleteMsgsWithSender:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"sender"] Type:COMMONUSER];
+            [DataStoreManager deleteMsgsWithSender:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]] Type:COMMONUSER];
             
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];

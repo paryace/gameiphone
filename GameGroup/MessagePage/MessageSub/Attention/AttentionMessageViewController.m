@@ -65,7 +65,7 @@
 
 -(void)getSayHelloUserInfo
 {
-    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessages];
+    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
     [self.dataArray removeAllObjects];
     
     NSMutableArray *unarray = [NSMutableArray array];

@@ -194,6 +194,17 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSDictionary* user=[[UserManager singleton] getUser:sender];
         [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
+    
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
+//    }else{
+//        [self getSayHiUserId];
+//    }
+//    NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+//    if ([array containsObject:sender]) {
+//        [DataStoreManager storeThumbMsgUser:sender type:@"1"];
+//    }else{
+//        [DataStoreManager storeThumbMsgUser:sender type:@"2"];
+//    }
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
@@ -330,7 +341,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 
 #pragma mark --获取你和谁说过话
--(void)getSayHiUserIdWithNetGetArray:(NSMutableArray *)array
+-(void)getSayHiUserId
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
@@ -346,9 +357,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [array addObjectsFromArray:responseObject];
-        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
         

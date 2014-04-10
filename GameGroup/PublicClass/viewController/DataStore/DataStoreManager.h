@@ -41,6 +41,7 @@
 +(void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
 +(void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
++(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName;//修改别名
 +(NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
 +(NSString *)queryMsgHeadImageForUser:(NSString *)userid;
@@ -56,7 +57,7 @@
 +(void)deleteCommonMsg:(NSString *)content Time:(NSString *)theTime;
 +(void)deleteAllCommonMsg;
 +(void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
-+(NSArray *)qureyAllThumbMessages;
++(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;
 +(NSArray *)qureyAllNewsMessage;
 +(NSArray *)queryAllReceivedHellos;

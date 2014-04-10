@@ -492,8 +492,8 @@
 {
     [_dynamicTV resignFirstResponder];
 }
-//-(void)emojiBtnClicked:(UIButton *)sender
-//{
+-(void)emojiBtnClicked:(UIButton *)sender
+{
 //    if (!myActive) {
 //        UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去激活", nil];
 //        [UnActionAlertV show];
@@ -520,7 +520,7 @@
 //        [m_Emojipc removeFromSuperview];
 //        [sender setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
 //    }
-//}
+}
 //-(void)showEmojiScrollView
 //{
 //    [self.textView resignFirstResponder];

@@ -322,6 +322,23 @@
     }];
 }
 
++(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",userid];
+        
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (thumbMsgs)
+        {
+            thumbMsgs.sayHiType = type;
+            NSLog(@"thumbMsgs.sayHiType%@",thumbMsgs.sayHiType);
+        }
+    }];
+}
+
+
+
+
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -615,8 +632,12 @@
     return array;
 }
 
-+(NSArray *)qureyAllThumbMessages
++(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
 {
+//    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+//    NSLog(@"thumb_type%@",[[array objectAtIndex:0 ]sayHiType]);
+//    NSLog(@"thumb_type%@",[[array objectAtIndex:0 ]sayHiType]);
+//    
     return (NSMutableArray *)[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
 }
 

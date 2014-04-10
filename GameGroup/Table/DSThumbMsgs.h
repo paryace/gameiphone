@@ -12,17 +12,17 @@
 
 @interface DSThumbMsgs : NSManagedObject
 
-@property (nonatomic, retain) NSString * messageuuid;
-@property (nonatomic, retain) NSString * msgContent;
-@property (nonatomic, retain) NSString * msgType;
-@property (nonatomic, retain) NSString * receiver;
-@property (nonatomic, retain) NSString * sender;
-@property (nonatomic, retain) NSString * senderimg;
-@property (nonatomic, retain) NSString * senderNickname;
-@property (nonatomic, retain) NSString * senderType;
+@property (nonatomic, copy) NSString * messageuuid;
+@property (nonatomic, copy) NSString * msgContent;
+@property (nonatomic, copy) NSString * msgType;
+@property (nonatomic, copy) NSString * receiver;
+@property (nonatomic, copy) NSString * sender;
+@property (nonatomic, copy) NSString * senderimg;
+@property (nonatomic, copy) NSString * senderNickname;
+@property (nonatomic, copy) NSString * senderType;
 @property (nonatomic, retain) NSDate * sendTime;
-@property (nonatomic, retain) NSString * sendTimeStr;
-@property (nonatomic, retain) NSString * unRead;
-@property (nonatomic, retain) NSString * status;
-
+@property (nonatomic, copy) NSString * sendTimeStr;
+@property (nonatomic, copy) NSString * unRead;
+@property (nonatomic, copy) NSString * status;
+@property (nonatomic, copy) NSString * sayHiType;
 @end
