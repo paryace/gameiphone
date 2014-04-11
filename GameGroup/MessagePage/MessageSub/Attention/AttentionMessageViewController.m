@@ -143,7 +143,9 @@
     }
     cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row]msgContent];
     cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
-    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[[self.dataArray objectAtIndex:indexPath.row]sendTimeStr] substringToIndex:10]];
+    NSTimeInterval uu = [[[self.dataArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
+
+    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
 
     return cell;
 }

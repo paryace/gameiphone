@@ -235,11 +235,11 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//    sortButton.hidden = YES;
-//    backUpButton.hidden = YES;
-//    pageControl.hidden = YES;
-//    m_backButton.hidden = YES;
-//    m_shareButton.hidden = YES;
+    sortButton.hidden = YES;
+    backUpButton.hidden = YES;
+    pageControl.hidden = YES;
+    m_backButton.hidden = YES;
+    m_shareButton.hidden = YES;
 
     UIGraphicsBeginImageContext(CGSizeMake(kScreenHeigth, kScreenWidth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -254,19 +254,42 @@
     }
     else if (buttonIndex ==1)
     {
-        [[ShareToOther singleton]shareTosina:viewImage];
+        [[ShareToOther singleton]shareTosina:viewImage];    backUpButton.hidden = NO;
+        pageControl.hidden = NO;
+        m_backButton.hidden = NO;
+        m_shareButton.hidden = NO;
+        if (self.isFriendTitle) {
+            pageControl.hidden = YES;
+        }
+
     }
     else if(buttonIndex ==2)
     {
         [[ShareToOther singleton]changeScene:WXSceneSession];
         
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        backUpButton.hidden = NO;
+        pageControl.hidden = NO;
+        m_backButton.hidden = NO;
+        m_shareButton.hidden = NO;
+        if (self.isFriendTitle) {
+            pageControl.hidden = YES;
+        }
+
     }
     else if(buttonIndex ==3)
     {
         [[ShareToOther singleton] changeScene:WXSceneTimeline];
         
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        backUpButton.hidden = NO;
+        pageControl.hidden = NO;
+        m_backButton.hidden = NO;
+        m_shareButton.hidden = NO;
+        if (self.isFriendTitle) {
+            pageControl.hidden = YES;
+        }
+
     }
 
     if (bgView != nil) {

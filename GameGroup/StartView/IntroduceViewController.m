@@ -57,7 +57,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"-=-=-=-=-=-=-=%hhd",[[TempData sharedInstance]isHaveLogin]);
     self.view.backgroundColor = [UIColor blackColor];
     self.navigationController.navigationBar.hidden = YES;
 
