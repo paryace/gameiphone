@@ -160,6 +160,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
+     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
@@ -184,9 +185,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
     if ([array containsObject:sender]) {
         [messageContent setValue:@"1" forKey:@"sayHiType"];
-       // [DataStoreManager storeThumbMsgUser:sender type:@"1"];
     }else{
-       // [DataStoreManager storeThumbMsgUser:sender type:@"2"];
         [messageContent setValue:@"2" forKey:@"sayHiType"];
     }
 
@@ -315,6 +314,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     NSLog(@"info%@",info);
+     [info setValue:@"1" forKey:@"sayHiType"];
     [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
     [DataStoreManager saveOtherMsgsWithData:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
@@ -330,6 +330,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到推荐好友
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
+    [info setValue:@"1" forKey:@"sayHiType"];
+
     [DataStoreManager storeNewMsgs:info senderType:RECOMMENDFRIEND];//其他消息
     NSArray* recommendArr = [KISDictionaryHaveKey(info, @"msg") JSONValue];
     

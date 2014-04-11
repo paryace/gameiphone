@@ -12,9 +12,10 @@
 {
     enum WXScene _scene;
 }
-
+@property(nonatomic,copy)NSString *wbtoken;
 + (ShareToOther*)singleton;
--(void)shareTosina:(UIImage *)imageV;
-- (void) sendImageContentWithImage:(UIImage *)imageV;
+-(void)shareTosina:(UIImage *)imageV;//分享到新浪微博
+- (void) sendImageContentWithImage:(UIImage *)imageV;//分享到微信
 -(void) changeScene:(NSInteger)scene;
+- (void)ssoButtonPressed;//授权
 @end

@@ -302,6 +302,25 @@
     NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
     sayhellocoArray = [array1 mutableCopy];
     
+    for (int i = 0; i <allMsgArray.count;i++) {
+        DSThumbMsgs *thumb = [allMsgArray objectAtIndex:i];
+        if ([thumb.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
+            if (sayhellocoArray.count==0) {
+                [allMsgArray removeObject:thumb];
+            }else{
+            thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
+            thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
+            
+            }
+        }
+    }
+    
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
+    [allMsgArray sortUsingDescriptors:sortDescriptors];
+
+    
+    
     [m_messageTable reloadData];
     
     [self displayTabbarNotification];
@@ -350,7 +369,7 @@
         if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
-        cell.contentLabel.text =[[allMsgArray objectAtIndex:indexPath.row] msgContent];
+        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],[[sayhellocoArray objectAtIndex:0]msgContent]];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
@@ -359,7 +378,7 @@
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_titleobj");
-        NSDictionary * dict = [[[allMsgArray objectAtIndex:indexPath.row] msg] JSONValue];
+        NSDictionary * dict = [[[allMsgArray objectAtIndex:indexPath.row] msgContent] JSONValue];
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])
@@ -440,7 +459,6 @@
         friq.personCount = sayhellocoArray.count;
         [self.navigationController pushViewController:friq animated:YES];
         [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
-        
         return;
         
     }
@@ -478,8 +496,6 @@
         
         OtherMsgsViewController* VC = [[OtherMsgsViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
-
-        
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
         
         return;
@@ -540,15 +556,24 @@
     }
     else if (5 == type)//打招呼
     {
+//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//            for (int i =0;i<sayhellocoArray.count;i++) {
+//                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[sayhellocoArray objectAtIndex:i]sender]];
+//                DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+//                thumbMsgs.unRead = @"0";
+//                if ([thumbMsgs.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
+//                    thumbMsgs.unRead =0;
+//                }
+//                
+//            }
+//        }];//清数字
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            for (int i =0;i<sayhellocoArray.count;i++) {
-                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[sayhellocoArray objectAtIndex:i]sender]];
-                DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-                thumbMsgs.unRead = @"0";
-            }
-            //            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-            //            thumbMsgs.unRead = @"0";
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            thumbMsgs.unRead = @"0";
         }];//清数字
+ 
+        
     }
     
 }
@@ -575,9 +600,7 @@
             if ([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1234567wxxxxxxxxx"])
             {
                 for (int i =0;i<sayhellocoArray.count;i++) {
-                    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-                    [dic setObject:[[sayhellocoArray objectAtIndex:i]sender] forKey:@"sender"];
-                    [DataStoreManager deleteThumbMsgWithSender:KISDictionaryHaveKey(dic, @"sender")];
+                    [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]];
                 }
             }
             [DataStoreManager deleteMsgsWithSender:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]] Type:COMMONUSER];
@@ -607,7 +630,6 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         
     }];
-    
 }
 
 -(void)getSayHelloWithUserid:(NSString*)userId

@@ -58,7 +58,7 @@
 
     [hud show:YES];
     
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:m_contentTextView.text ,@"msg",@"Platform=iphone", @"detail",[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey],@"phoneNum",nil];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:m_contentTextView.text ,@"msg",[NSString stringWithFormat:@"Platform=iphone-%@",[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey] ], @"detail",[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey],@"phoneNum",nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"139" forKey:@"method"];
@@ -79,6 +79,9 @@
         [hud hide:YES];
     }];
 }
+
+
+
 
 - (void)didReceiveMemoryWarning
 {

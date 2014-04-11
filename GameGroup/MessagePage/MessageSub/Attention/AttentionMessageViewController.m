@@ -19,7 +19,7 @@
     
     NSMutableArray * allSayHelloArray;//id
     NSMutableArray * sayhellocoArray;//内容
-
+    UILabel* titleLabel;
 }
 @end
 
@@ -36,35 +36,50 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [m_myTableView reloadData];
 }
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    self.dataArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
+    titleLabel.text =[NSString stringWithFormat:@"打招呼(%d)",self.dataArray.count];
+    [m_myTableView reloadData];
 }
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    [self setTopViewWithTitle:[NSString stringWithFormat:@"打招呼(%d)",self.personCount] withBackButton:YES];
+    [self setTopViewWithTitle:nil withBackButton:YES];
+    
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.text = @"打招呼";
+    titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.view addSubview:titleLabel];
+
+    
+    
+    
+    
+    
+//    [NSString stringWithFormat:@"打招呼(%d)",self.personCount]
     self.dataArray = [NSMutableArray array];
 
     allSayHelloArray = [NSMutableArray array];
     allMsgUnreadArray = [NSMutableArray array];
     
-
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-(KISHighVersion_7?0:20))];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    [self getSayHelloUserInfo];
+   // [self getSayHelloUserInfo];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];
     
 }
 
 -(void)getSayHelloUserInfo
 {
-    self.dataArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
     [m_myTableView reloadData];
 
 }
@@ -153,6 +168,15 @@
     kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row]senderimg];
 
     [self.navigationController pushViewController:kkchat animated:YES];
+    
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        thumbMsgs.unRead = @"0";
+    }];//清数字
+
+    
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -86,7 +86,7 @@
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
-            if (!thumbMsgs) {
+            if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
             thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
@@ -100,12 +100,12 @@
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
                 
-                if ([sayhiType isEqualToString:@"2"]) {
+            if ([sayhiType isEqualToString:@"2"]){
+                    NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
+                   DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];                    if (!thumbMsgs)
                     thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
                     thumbMsgs.sender = @"1234567wxxxxxxxxx";
                     thumbMsgs.senderNickname = @"有新的打招呼信息";
-                    thumbMsgs.msgContent = [NSString stringWithFormat:@"%@:%@",senderNickname?senderNickname:@"",msgContent];
-                    thumbMsgs.sendTime = sendTime;
                     thumbMsgs.senderType = sendertype;
                     int unread = [thumbMsgs.unRead intValue];
                     thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
@@ -114,7 +114,7 @@
                     thumbMsgs.status = @"1";//已发送
                     thumbMsgs.sayHiType = @"1";
                 }
-            }
+            
         }];
     }
     else if ([sendertype isEqualToString:PAYLOADMSG]) {//动态聊天消息
@@ -187,6 +187,7 @@
             thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
+            thumbMsgs.sayHiType = sayhiType;
         }];
     }
     else if([sendertype isEqualToString:RECOMMENDFRIEND])//推荐好友
@@ -206,6 +207,8 @@
             thumbMsgs.unRead = @"1";
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
+            thumbMsgs.sayHiType = @"1";
+
         }];
     }
     else if([sendertype isEqualToString:DAILYNEWS])//新闻
@@ -218,6 +221,7 @@
             newsMsg.msgtype = msgType;
             newsMsg.mytitle = title;
             newsMsg.sendtime = sendTime;
+            
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -232,6 +236,8 @@
             thumbMsgs.unRead = @"1";
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
+            thumbMsgs.sayHiType = @"1";
+
         }];
     }
 }

@@ -45,6 +45,7 @@
     UIButton* inputButton1;
     UIButton* reportButton1;
     UIImageView *imageView1;
+    NSString *m_msg;
 }
 @property(nonatomic, strong)NSDictionary* dataDic;
 @property(nonatomic, strong)NSArray*      headImgArray;
@@ -219,6 +220,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             self.dataDic = responseObject;
             
+            m_msg = KISDictionaryHaveKey(responseObject, @"msg");
             m_shareButton.hidden = [KISDictionaryHaveKey(responseObject, @"type") integerValue] == 3 ? NO : YES;
             self.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"urlLink")];
             
@@ -819,7 +821,7 @@
             
             hud.labelText = @"举报中...";
             [hud show:YES];
-            NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@的文章含不良内容，请尽快处理！", self.messageid];
+            NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 标题为%@的文章含不良内容，请尽快处理！", self.messageid,m_msg];
             NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",self.messageid,@"id",@"dynamic",@"type",nil];
             NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

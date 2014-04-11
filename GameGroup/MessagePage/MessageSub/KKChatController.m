@@ -1237,7 +1237,6 @@
     [dictionary setObject:self.nickName forKey:@"nickname"];
     [dictionary setObject:self.chatUserImg forKey:@"img"];
     [dictionary setObject:@"normalchat" forKey:@"msgType"];
-    
     [dictionary setObject:uuid forKey:@"messageuuid"];
     [dictionary setObject:@"2" forKey:@"status"];
     
@@ -1252,7 +1251,6 @@
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
     self.textView.text = @"";
-    
     [wxSDArray removeAllObjects];
     [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
 
@@ -1274,6 +1272,8 @@
                 [messages insertObject:array[i] atIndex:i];
             }
             [self normalMsgToFinalMsg];
+            
+            
             [self.tView reloadData];
             [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0.00000001];
         }
@@ -1294,7 +1294,7 @@
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
         [wxSDArray addObject:self.chatWithUser];
-        
+        [DataStoreManager storeThumbMsgUser:chatWithUser type:@"1"];
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
         [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
 
