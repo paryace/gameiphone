@@ -74,7 +74,7 @@
     
     [DataStoreManager blankMsgUnreadCountForUser:@"123456789"];
     
-    self.appDel = [[UIApplication sharedApplication] delegate];
+    self.appDel = (AppDelegate *)[UIApplication sharedApplication] .delegate;
     
     
     

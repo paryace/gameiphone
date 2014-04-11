@@ -9,8 +9,11 @@
 #import "ShareToOther.h"
 #import "WXApiObject.h"
 static ShareToOther *userManager = NULL;
-
 @implementation ShareToOther
+{
+    AppDelegate*app;
+}
+
 + (ShareToOther*)singleton
 {
     @synchronized(self)
@@ -21,6 +24,14 @@ static ShareToOther *userManager = NULL;
 		}
 	}
 	return userManager;
+}
+-(id)init
+{
+    self = [super init];
+    if (self) {
+        app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
+    }
+    return self;
 }
 -(void)shareTosina:(UIImage *)imageV
 {
@@ -36,7 +47,7 @@ static ShareToOther *userManager = NULL;
                          @"Other_Info_3": @{@"key1": @"obj1", @"key2": @"obj2"}};
     
     [WeiboSDK sendRequest:request];
-
+        app.bSinaWB = YES;
 }
 
 - (void)ssoButtonPressed
@@ -76,57 +87,7 @@ static ShareToOther *userManager = NULL;
     req.scene = _scene;
     
     [WXApi sendReq:req];
-}
-- (void)didReceiveWeiboResponse:(WBBaseResponse *)response
-{
-    if ([response isKindOfClass:WBSendMessageToWeiboResponse.class])
-    {
-        NSString *str;
-        if ((int)response.statusCode==0) {
-            str = @"授权成功";
-        }else{
-            str = @"授权失败";
-        }
-        //        NSString *message = [NSString stringWithFormat:@"响应状态: %d\nresponse.userId: %@\nresponse.accessToken: %@\n响应UserInfo数据: %@\n原请求UserInfo数据: %@",(int)response.statusCode,[(WBAuthorizeResponse *)response userID], [(WBAuthorizeResponse *)response accessToken], response.userInfo, response.requestUserInfo];
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:str
-                                                        message:nil
-                                                       delegate:nil
-                                              cancelButtonTitle:@"确定"
-                                              otherButtonTitles:nil];
-        self.wbtoken = [(WBAuthorizeResponse *)response accessToken];
-        
-        [alert show];
-        
-        //        NSString *title = @"发送结果";
-        //        NSString *message = [NSString stringWithFormat:@"响应状态: %d\n响应UserInfo数据: %@\n原请求UserInfo数据: %@",(int)response.statusCode, response.userInfo, response.requestUserInfo];
-        //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
-        //                                                        message:message
-        //                                                       delegate:nil
-        //                                              cancelButtonTitle:@"确定"
-        //                                              otherButtonTitles:nil];
-        //        [alert show];
-    }
-    else if ([response isKindOfClass:WBAuthorizeResponse.class])
-    {
-        NSString *str;
-        
-        if ((int)response.statusCode==0) {
-            str = @"授权成功";
-        }else{
-            str = @"授权失败";
-        }
-        NSString *message = [NSString stringWithFormat:@"响应状态: %d\nresponse.userId: %@\nresponse.accessToken: %@\n响应UserInfo数据: %@\n原请求UserInfo数据: %@",(int)response.statusCode,[(WBAuthorizeResponse *)response userID], [(WBAuthorizeResponse *)response accessToken], response.userInfo, response.requestUserInfo];
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:str
-                                                        message:nil
-                                                       delegate:nil
-                                              cancelButtonTitle:@"确定"
-                                              otherButtonTitles:nil];
-        self.wbtoken = [(WBAuthorizeResponse *)response accessToken];
-        
-        [alert show];
-    }
+    app.bSinaWB = NO;
 }
 
 

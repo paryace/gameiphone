@@ -20,8 +20,9 @@ WeiboSDKDelegate
 >
 {
     NSString* wbtoken;
-     BOOL bSinaWB;
+    
 }
+@property(nonatomic,assign)BOOL bSinaWB;
 @property (strong, nonatomic) NSString *wbtoken;
 
 @property (strong, nonatomic) UIWindow *window;

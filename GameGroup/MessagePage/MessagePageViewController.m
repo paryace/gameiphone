@@ -72,7 +72,7 @@
                 self.titleLabel.text = @"消息";
             }else{
                 self.titleLabel.text = @"消息(未连接)";
-                AppDelegate *app = [[UIApplication sharedApplication]delegate];
+                AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
                 if (app.reach.currentReachabilityStatus !=NotReachable) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"xmppReconnect_wx_xx" object:nil];
                 }
@@ -148,7 +148,7 @@
     self.titleLabel.textColor=[UIColor whiteColor];
     [self.view addSubview:self.titleLabel];
     
-    self.appDel = [[UIApplication sharedApplication] delegate];
+    self.appDel = (AppDelegate *)[UIApplication sharedApplication] .delegate;
     
     //    hud = [[MBProgressHUD alloc] initWithView:self.view];
     UIWindow* window = [UIApplication sharedApplication].keyWindow;

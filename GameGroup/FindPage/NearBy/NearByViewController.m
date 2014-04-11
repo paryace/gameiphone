@@ -131,7 +131,7 @@
 {
     [m_loadImageView startAnimating];
     
-    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
         [alertView show];
