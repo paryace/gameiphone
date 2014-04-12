@@ -273,7 +273,11 @@
     
     NSString *type = [[message attributeForName:@"type"] stringValue];
     
-    NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:@"0";
+    NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:[GameCommon getCurrentTime];
+    
+    
+    
+    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];
     [dict setObject:from forKey:@"sender"];
