@@ -295,8 +295,10 @@
 {
     //获取所有聊过天人的id （你对他）
     [allSayHelloArray removeAllObjects];
-    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-   NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
+    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]
+                                           objectForKey:@"sayHello_wx_info_id"]];
+    
+    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
     
     NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
@@ -319,8 +321,6 @@
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
     [allMsgArray sortUsingDescriptors:sortDescriptors];
 
-    
-    
     [m_messageTable reloadData];
     
     [self displayTabbarNotification];
