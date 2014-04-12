@@ -1319,7 +1319,6 @@
     NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender") substringToIndex:range.location];
     if ([sender isEqualToString:self.chatWithUser]) {
         [messages addObject:tempDic];
-        
         [self normalMsgToFinalMsg];
         [self.tView reloadData];
         if (messages.count>0) {
