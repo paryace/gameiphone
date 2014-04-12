@@ -1266,7 +1266,7 @@
     if (scrollView == self.tView) {
         CGPoint offsetofScrollView = self.tView.contentOffset;
         NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-        if (offsetofScrollView.y < - 20) {//向上拉出20个像素高度时加载
+        if (offsetofScrollView.y < 40) {//向上拉出20个像素高度时加载
             NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
             for (int i = 0; i < array.count; i++) {
                 [messages insertObject:array[i] atIndex:i];
@@ -1315,6 +1315,7 @@
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification
 {
+    
     NSDictionary* tempDic = notification.userInfo;
     NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender") rangeOfString:@"@"];
     NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender") substringToIndex:range.location];

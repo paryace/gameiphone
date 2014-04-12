@@ -199,7 +199,29 @@
 #pragma mark 收到聊天消息或其他消息
 - (void)newMesgReceived:(NSNotification*)notification
 {
+    
     [self displayMsgsForDefaultView];
+    
+    
+    
+    
+    
+    
+    
+//    NSDictionary* tempDic = notification.userInfo;
+//    NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender") rangeOfString:@"@"];
+//    NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender") substringToIndex:range.location];
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        
+//        
+//      dispatch_async(dispatch_get_main_queue(), ^{
+//          
+//      })
+//    })
+    
+    
+
 }
 
 #pragma mark 收到验证好友请求
