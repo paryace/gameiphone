@@ -148,7 +148,7 @@
         [viewLayer removeAllAnimations];
         HGPhotoWall * yyy = (HGPhotoWall *)[self superview];
         if (yyy.descriptionType == DescriptionTypeImage) {
-            yyy.labelDescription.text = @"点击“+”添加头像，最多可添加8张";
+            yyy.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
         }
         else
             yyy.labelDescription.text = @"点击图片查看宠物，点击“+”添加宠物";
@@ -212,7 +212,7 @@
         }
         HGPhotoWall * yyy = (HGPhotoWall *)[self superview];
         if (yyy.descriptionType == DescriptionTypeImage) {
-            yyy.labelDescription.text = @"点击“+”添加头像，最多可添加8张";
+            yyy.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
         }
         else
             yyy.labelDescription.text = @"点击图片查看宠物，点击“+”添加宠物";

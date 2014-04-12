@@ -11,6 +11,7 @@
 @interface SetRemarkNameViewController ()
 {
     UITextField*    m_remarkText;
+    UIAlertView* alert1;
 }
 @end
 
@@ -33,9 +34,9 @@
 - (void)backButtonClick:(id)sender
 {
     if (!KISEmptyOrEnter(m_remarkText.text)) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您这样返回是没有保存的喔！" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
-        alert.tag = 100;
-        [alert show];
+       alert1 = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的个人标签还未保存，确认要退出吗" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
+        alert1.tag = 100;
+        [alert1 show];
     }
     else
     {
@@ -51,7 +52,9 @@
         }
     }
 }
-
+-(void)dealloc{
+    alert1.delegate = nil;
+}
 - (void)setMainView
 {
     UILabel *titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, startX + 10, 300, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:15.0] text:[NSString stringWithFormat:@"原名：%@", self.nickName] textAlignment:NSTextAlignmentLeft];

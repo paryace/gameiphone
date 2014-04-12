@@ -100,7 +100,7 @@
     remarkLabel.text = self.remark;
     [self addSubview:remarkLabel];
     
-    UIButton* infoButton = [CommonControlOrView setButtonWithFrame:CGRectMake(10, 190 + remarkSize.height, 60, 40) title:@"了解详情" fontSize:[UIFont boldSystemFontOfSize:13.0] textColor:kColorWithRGB(35, 193, 238, 1.0) bgImage:nil HighImage:nil selectImage:nil];
+    UIButton* infoButton = [CommonControlOrView setButtonWithFrame:CGRectMake(10, 190 + remarkSize.height, 120, 40) title:@"如何获得此头衔" fontSize:[UIFont boldSystemFontOfSize:13.0] textColor:kColorWithRGB(35, 193, 238, 1.0) bgImage:nil HighImage:nil selectImage:nil];
     [infoButton addTarget:self action:@selector(infoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:infoButton];
     

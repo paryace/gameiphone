@@ -139,12 +139,14 @@
     m_messageTable = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - ( 50 + startX)) style:UITableViewStylePlain];
     [self.view addSubview:m_messageTable];
     m_messageTable.dataSource = self;
+    m_messageTable.rowHeight = 70;
     m_messageTable.delegate = self;
     
     self.titleLabel=[[UILabel alloc] initWithFrame:CGRectMake(0, startX - 44, 320, 44)];
     self.titleLabel.backgroundColor=[UIColor clearColor];
     [self.titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
+
     self.titleLabel.textColor=[UIColor whiteColor];
     [self.view addSubview:self.titleLabel];
     

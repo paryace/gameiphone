@@ -63,7 +63,7 @@
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-    NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType");
+    NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
 //    NSString * receiver;
 //    if ([msg objectForKey:@"receicer"]) {
 //        NSRange range2 = [[msg objectForKey:@"receicer"] rangeOfString:@"@"];

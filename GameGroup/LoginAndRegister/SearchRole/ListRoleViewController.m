@@ -7,7 +7,7 @@
 //
 
 #import "ListRoleViewController.h"
-
+#import "HelpViewController.h"
 @interface ListRoleViewController ()
 {
     UITableView*    m_myTableView;
@@ -31,10 +31,30 @@
         //        m_realmsIndexArray = [m_realmsDic allKeys];
     }
     
-    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
+    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20)-30)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
+    
+    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0, m_myTableView.bounds.size.height+startX+(KISHighVersion_7?0:20), 320, 30)];
+    helpLbel.text = @"角色为何查不到？";
+    helpLbel.font = [UIFont systemFontOfSize:12];
+    helpLbel.textColor = [UIColor blueColor];
+    helpLbel.userInteractionEnabled = YES;
+    helpLbel.textAlignment = NSTextAlignmentCenter;
+    [self.view addSubview:helpLbel];
+    [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
+    
+    
+    
+}
+
+-(void)enterToHelpPage:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"characterCannotFindinGuild.html";
+    [self.navigationController pushViewController:helpVC animated:YES];
+
 }
 
 #pragma mark 表格

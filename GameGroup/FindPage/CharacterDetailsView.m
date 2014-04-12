@@ -67,6 +67,15 @@
         self.unlessLabel.hidden =NO;
         [self addSubview:self.unlessLabel];
 
+        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 515, 300, 20)];
+        self.helpLabel.text = @"如何获得PVP/PVE战斗力";
+        self.helpLabel.userInteractionEnabled = YES;
+        self.helpLabel.font = [UIFont systemFontOfSize:12];
+        self.helpLabel.textColor = [UIColor blueColor];
+        self.helpLabel.textAlignment=  NSTextAlignmentCenter;
+        [self addSubview:self.helpLabel];
+        
+        
         self.reloadingBtn = [[UIButton alloc]init];
         self.reloadingBtn.frame = CGRectMake(10, 545, 300, 44);
         [self.reloadingBtn setBackgroundImage:KUIImage(@"btn_updata_normol") forState:UIControlStateNormal];
@@ -493,5 +502,7 @@
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     return [messageDateStr substringFromIndex:5];
 }
+
+
 
 @end

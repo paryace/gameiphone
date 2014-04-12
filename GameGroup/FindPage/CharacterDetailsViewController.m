@@ -14,6 +14,8 @@
 #import "SendNewsViewController.h"
 #import "WXApiObject.h"
 #import "ShareToOther.h"
+#import "HelpViewController.h"
+
 @interface CharacterDetailsViewController ()
 @end
 
@@ -79,6 +81,8 @@
     m_charaDetailsView.listScrollView.backgroundColor = [UIColor clearColor];
     
     m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX)];
+
+    [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
 
     m_charaDetailsView.contentSize = CGSizeMake(320, 610);
     //m_charaDetailsView.bounces = NO;
@@ -772,6 +776,12 @@
    // VC.defaultContent = [NSString stringWithFormat:@"分享了%@的角色详情",self.characterName];
     VC.defaultContent = [NSString stringWithFormat:@"分享了%@的数据",m_characterName];
     [self.navigationController pushViewController:VC animated:NO];
+}
+-(void)enterTohelpPage:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"pvepvpScore.html";
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 
 

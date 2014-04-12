@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "CharacterDetailsViewController.h"
 #import "UserManager.h"
+#import "HelpViewController.h"
 @interface TestViewController ()
 {
     UILabel*        m_titleLabel;
@@ -665,6 +666,12 @@
         vAuthImg.image = KUIImage(@"v_auth");
         [m_myScrollView addSubview:vAuthImg];
         
+        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(280, m_currentStartY+10, 20, 20)];
+        [button setBackgroundImage:KUIImage(@"me_set_info") forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(testEnterToHelpPage:) forControlEvents:UIControlEventTouchUpInside];
+        [m_myScrollView addSubview:button];
+        
+        
         m_currentStartY += currentHeigth;
         [self setOneLineWithY:m_currentStartY];
     }
@@ -1171,6 +1178,8 @@
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [wxSDArray addObject:self.hostInfo.userId];
+        [DataStoreManager storeThumbMsgUser:self.hostInfo.userId type:@"1"];
+
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
         [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
         
@@ -1498,7 +1507,13 @@
     }];
 }
 
+-(void)testEnterToHelpPage:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"V_Sign.html";
+    [self.navigationController pushViewController:helpVC animated:YES];
 
+}
 
 
 - (void)photoWallMovePhotoFromIndex:(NSInteger)index toIndex:(NSInteger)newIndex

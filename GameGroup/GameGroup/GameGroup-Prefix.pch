@@ -42,6 +42,7 @@
 #define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
 #define monvbangURL @"http://58.83.193.120/h5/index.html"
 #define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
+#define BaseHelpUrl @"http://58.83.193.120/h5/help/"
 
 //#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
 //#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
@@ -49,7 +50,7 @@
 //#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
 //#define monvbangURL @"http://221.122.66.243/h5/index.html"
 //#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
-
+//#define BaseHelpUrl @"http://211.122.66.243/h5/help/"
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

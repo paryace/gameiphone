@@ -1234,8 +1234,8 @@
     [dictionary setObject:@"you" forKey:@"sender"];
     [dictionary setObject:nowTime forKey:@"time"];
     [dictionary setObject:self.chatWithUser forKey:@"receiver"];
-    [dictionary setObject:self.nickName forKey:@"nickname"];
-    [dictionary setObject:self.chatUserImg forKey:@"img"];
+    [dictionary setObject:self.nickName?self.nickName:@"" forKey:@"nickname"];
+    [dictionary setObject:self.chatUserImg?self.chatUserImg:@"" forKey:@"img"];
     [dictionary setObject:@"normalchat" forKey:@"msgType"];
     [dictionary setObject:uuid forKey:@"messageuuid"];
     [dictionary setObject:@"2" forKey:@"status"];
@@ -1266,14 +1266,15 @@
     if (scrollView == self.tView) {
         CGPoint offsetofScrollView = self.tView.contentOffset;
         NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
+        if (offsetofScrollView.y < 150) {//向上拉出20个像素高度时加载
             NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
             for (int i = 0; i < array.count; i++) {
                 [messages insertObject:array[i] atIndex:i];
             }
             [self normalMsgToFinalMsg];
+            
             [self.tView reloadData];
-            [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0.00000001];
+            [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
         }
     }
 }
@@ -1298,17 +1299,16 @@
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
-    
 }
-
-
-
 - (void)scrollToOldMassageRang:(NSArray *)array
 {
     if (array.count==0) {
         return;
     }
-    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[messages count] > [array count]?[array count]:([array count] - 1) inSection:0];
+    
+    [self.tView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification

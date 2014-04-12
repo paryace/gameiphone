@@ -1193,7 +1193,7 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
-    [[ReconnectMessage singleton] getFriendByHttp];
+   // [[ReconnectMessage singleton] getFriendByHttp];
     [[ReconnectMessage singleton] getMyUserInfoFromNet];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];

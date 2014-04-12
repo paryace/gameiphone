@@ -94,7 +94,7 @@
         self.labelDescription.text = @"点击图片查看宠物，点击“+”添加宠物";
     }
     else
-        self.labelDescription.text = @"点击“+”添加头像，最多可添加8张";
+        self.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
     [self.arrayPhotos removeAllObjects];
     for (HGPhoto * tempPhoto in self.subviews) {
         if ([tempPhoto isKindOfClass:[HGPhoto class]]) {
@@ -356,7 +356,7 @@
 
     }
     if (self.descriptionType == DescriptionTypeImage) {
-        self.labelDescription.text = self.labelDescription.text = @"点击“+”添加头像，最多可添加8张";
+        self.labelDescription.text = self.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
     }
     else
         self.labelDescription.text = self.labelDescription.text = @"点击图片查看宠物，点击“+”添加宠物";

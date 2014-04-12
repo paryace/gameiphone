@@ -32,9 +32,10 @@
 @property(nonatomic,strong)UIImageView  *  underListImageView;//下划线img
 @property(nonatomic,strong)UIScrollView *  listScrollView;
 @property(nonatomic,strong)UIImageView  *  certificationImage;//认证button
-@property(nonatomic,strong)UIButton     *   reloadingBtn;//刷新button
-@property(nonatomic,strong)UILabel      *unlessLabel;
-@property(nonatomic,assign)BOOL  isComeTo;
+@property(nonatomic,strong)UIButton     *  reloadingBtn;//刷新button
+@property(nonatomic,strong)UILabel      *  unlessLabel;
+@property(nonatomic,assign)BOOL            isComeTo;
+@property(nonatomic,strong)UILabel      *  helpLabel;
 -(void)comeFromMy;
 -(void)comeFromPerson;
 
