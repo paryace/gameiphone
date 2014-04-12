@@ -72,6 +72,7 @@
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-(KISHighVersion_7?0:20))];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.rowHeight = 70;
     [self.view addSubview:m_myTableView];
    // [self getSayHelloUserInfo];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];

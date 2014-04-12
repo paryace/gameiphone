@@ -130,7 +130,6 @@
             commonMsg.status = @"1";//已发送
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
-            
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -144,6 +143,7 @@
             thumbMsgs.msgType = msgType;
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
+            thumbMsgs.sayHiType = sayhiType;
         }];
     }
     else if([sendertype isEqualToString:SAYHELLOS])//关注 或取消关注
@@ -277,7 +277,7 @@
         thumbMsgs.senderType = PAYLOADMSG;
         thumbMsgs.msgType = msgType;
         thumbMsgs.senderimg = heardimg;
-        
+        thumbMsgs.sayHiType = @"1";
         int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
@@ -322,7 +322,7 @@
         thumbMsgs.senderType = COMMONUSER;
         thumbMsgs.msgType = msgType;
         thumbMsgs.senderimg = heardimg;
-        
+        thumbMsgs.sayHiType = @"1";
         int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;

@@ -397,7 +397,7 @@
         
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
     }
-    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"])
+    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
     {
         NSURL * theUrl;
         if ([[[allMsgArray objectAtIndex:indexPath.row] senderimg]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {

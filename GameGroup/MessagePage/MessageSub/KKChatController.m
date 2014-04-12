@@ -1307,6 +1307,9 @@
 
 - (void)scrollToOldMassageRang:(NSArray *)array
 {
+    if (array.count==0) {
+        return;
+    }
     [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
 #pragma mark KKMessageDelegate

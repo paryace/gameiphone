@@ -327,14 +327,6 @@
         cell = [[NewsGetTitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    if (self.myViewType == ME_NEWS_TYPE) {
-        cell.delBtn.hidden = NO;
-    }else{
-        cell.delBtn.hidden = YES;
-    }
-    cell.delBtn.tag = indexPath.row;
-    [cell.delBtn addTarget:self action:@selector(delMyInfo:) forControlEvents:UIControlEventTouchUpInside];
-    indexPaths = indexPath;
     
     
     
@@ -343,6 +335,15 @@
     
     NSDictionary* tempDic = [m_newsArray objectAtIndex:indexPath.row];
     
+    if (self.myViewType == ME_NEWS_TYPE&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"type")] isEqualToString:@"3"]) {
+        cell.delBtn.hidden = NO;
+    }else{
+        cell.delBtn.hidden = YES;
+    }
+    cell.delBtn.tag = indexPath.row;
+    [cell.delBtn addTarget:self action:@selector(delMyInfo:) forControlEvents:UIControlEventTouchUpInside];
+    indexPaths = indexPath;
+
     if ([KISDictionaryHaveKey(tempDic, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
         NSDictionary* destDic = KISDictionaryHaveKey(tempDic, @"destUser");
         NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(destDic, @"userimg")];

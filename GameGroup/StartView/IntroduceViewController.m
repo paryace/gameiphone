@@ -70,7 +70,7 @@
     m_myScrollView.backgroundColor = [UIColor clearColor];
     for (int i = 0; i < 4; i++) {
         UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, m_myScrollView.bounds.size.height)];
-        UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 8)];
+        UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
         
         
         if (iPhone5) {
