@@ -19,7 +19,6 @@
 #import "ActivateViewController.h"
 #import "EGOImageButton.h"
 
-#import "DSFriends.h"
 #import "HostInfo.h"
 #import "FindSubView.h"
 #import "FinderView.h"
@@ -39,7 +38,7 @@
     HostInfo    *hostInfo;
     UIImageView *m_notibgInfoImageView;
     UILabel *lb;
-    DSFriends   * m_userInfo;
+    DSuser   * m_userInfo;
    // NSMutableDictionary *friendImgDic;
     NSInteger    friendDunamicmsgCount;
 }
@@ -74,7 +73,7 @@
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
-        m_userInfo = [DSFriends MR_findFirstWithPredicate:predicate];
+        m_userInfo = [DSuser MR_findFirstWithPredicate:predicate];
     }];
 
     

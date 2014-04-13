@@ -220,28 +220,29 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     
     [self storeNewMessage:userInfo];
     NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
-    
-    if ([shiptype isEqualToString:@"1"]) {//成为好友
+    [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
 
-            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithAttention:fromUser]];
-            [tempDic setObject:fromUser forKey:@"fromUser"];
-            [tempDic setObject:msg forKey:@"addtionMsg"];
-            [DataStoreManager addPersonToReceivedHellos:tempDic];
-            [DataStoreManager saveUserFriendWithAttentionList:fromUser];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-
-            [DataStoreManager deleteAttentionWithUserName:fromUser];//从关注表删除
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-
-    }
-    else if([shiptype isEqualToString:@"3"])//粉丝
-    {
-        
-    }
-    else
-    {
-        
-    }
+//    if ([shiptype isEqualToString:@"1"]) {//成为好友
+//
+//            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithAttention:fromUser]];
+//            [tempDic setObject:fromUser forKey:@"fromUser"];
+//            [tempDic setObject:msg forKey:@"addtionMsg"];
+//            [DataStoreManager addPersonToReceivedHellos:tempDic];
+//            [DataStoreManager saveUserFriendWithAttentionList:fromUser];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+//
+//            [DataStoreManager deleteAttentionWithUserName:fromUser];//从关注表删除
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+//
+//    }
+//    else if([shiptype isEqualToString:@"3"])//粉丝
+//    {
+//        
+//    }
+//    else
+//    {
+//        
+//    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];
 }
 
@@ -256,29 +257,31 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     
     [self storeNewMessage:userInfo];
     NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
-    if ([shiptype isEqualToString:@"2"]) {//移到关注表
-            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithFriend:fromUser]];
-            [tempDic setObject:fromUser forKey:@"fromUser"];
-            [tempDic setObject:msg forKey:@"addtionMsg"];
-            [DataStoreManager addPersonToReceivedHellos:tempDic];
-            [DataStoreManager saveUserAttentionWithFriendList:fromUser];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-            [DataStoreManager deleteFriendWithUserId:fromUser];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-    }
-    else if ([shiptype isEqualToString:@"unkown"])
-    {
+    [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
 
-            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithFans:fromUser]];
-            [tempDic setObject:fromUser forKey:@"fromUser"];
-            [tempDic setObject:msg forKey:@"addtionMsg"];
-            [DataStoreManager addPersonToReceivedHellos:tempDic];
-            
-            [[GameCommon shareGameCommon] fansCountChanged:NO];
-            [DataStoreManager deleteFansWithUserid:fromUser];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-//            [self displayMsgsForDefaultView];
-    }
+//    if ([shiptype isEqualToString:@"2"]) {//移到关注表
+//            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithFriend:fromUser]];
+//            [tempDic setObject:fromUser forKey:@"fromUser"];
+//            [tempDic setObject:msg forKey:@"addtionMsg"];
+//            [DataStoreManager addPersonToReceivedHellos:tempDic];
+//            [DataStoreManager saveUserAttentionWithFriendList:fromUser];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+//            [DataStoreManager deleteFriendWithUserId:fromUser];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+//    }
+//    else if ([shiptype isEqualToString:@"unkown"])
+//    {
+//
+//            [tempDic addEntriesFromDictionary:[DataStoreManager addPersonToReceivedHellosWithFans:fromUser]];
+//            [tempDic setObject:fromUser forKey:@"fromUser"];
+//            [tempDic setObject:msg forKey:@"addtionMsg"];
+//            [DataStoreManager addPersonToReceivedHellos:tempDic];
+//            
+//            [[GameCommon shareGameCommon] fansCountChanged:NO];
+//            [DataStoreManager deleteFansWithUserid:fromUser];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+////            [self displayMsgsForDefaultView];
+  //  }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }

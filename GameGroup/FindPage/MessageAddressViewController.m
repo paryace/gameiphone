@@ -200,21 +200,21 @@
             cell.headerImage.imageURL = nil;
         }
         }
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
             [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = NO;
             [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateHighlighted];
         }
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2) {
             [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = NO;
             [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
         }
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] isEqualToString:@"unkown"]) {
             if ([[_addressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
                 [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
                 cell.addFriendB.userInteractionEnabled = YES;
@@ -257,12 +257,12 @@
         testVC.userId = [_addressArray[indexPath.row] objectForKey:@"userid"];
         testVC.titleImage = [_addressArray[indexPath.row] objectForKey:@"userid"];
         testVC.nickName = [_addressArray[indexPath.row] objectForKey:@"nickname"];
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
             testVC.viewType = VIEW_TYPE_FriendPage1;
-        }else if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2)
+        }else if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2)
         {
             testVC.viewType = VIEW_TYPE_AttentionPage1;
-        }else if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 3){
+        }else if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 3){
             testVC.viewType = VIEW_TYPE_FansPage1;
         }else{
             testVC.viewType = VIEW_TYPE_STRANGER1;
@@ -279,12 +279,12 @@
 {
     if ([valueStr isEqualToString:@"off"]) {
         NSMutableDictionary * dic = _addressArray[i];
-        [dic setObject:@"unkown" forKey:@"friendShipType"];
+        [dic setObject:@"unkown" forKey:@"friendshiptype"];
         [dic setObject:@"0" forKey:@"iCare"];
         [_tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     }else{
         NSMutableDictionary * dic = _addressArray[i];
-        [dic setObject:@"unkown" forKey:@"friendShipType"];
+        [dic setObject:@"unkown" forKey:@"friendshiptype"];
         [dic setObject:@"1" forKey:@"iCare"];
         [_tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     }

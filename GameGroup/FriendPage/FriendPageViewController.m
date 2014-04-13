@@ -369,7 +369,7 @@
         [m_sortTypeDic setObject:sort forKey:sorttype_1];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")];
+            [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
         
         //        [hud hide:YES];
@@ -382,7 +382,7 @@
     }];
 }
 
--(void)parseFriendsList:(id)friendsList
+-(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
     [DataStoreManager cleanFriendList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
@@ -392,14 +392,14 @@
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
                     //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveUserInfo:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
         else if([friendsList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in friendsList) {
-                [DataStoreManager saveUserInfo:dict];
-            }
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+            };
         }
         //先存后取
         m_friendDict = [DataStoreManager queryAllFriends];//所有朋友
@@ -460,7 +460,7 @@
         [m_sortTypeDic setObject:sort forKey:sorttype_2];
         NSLog(@"m_sortTypeDic%@",m_sortTypeDic);
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")];
+            [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -470,22 +470,22 @@
     }];
 }
 
--(void)parseAttentionsList:(id)attentionList
+-(void)parseAttentionsList:(id)attentionList withshiptype:(NSString *)shiptype
 {
-    [DataStoreManager cleanAttentionList];//先清 再存
+    [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([attentionList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [attentionList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
-                    [DataStoreManager saveUserAttentionInfo:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
         else if([attentionList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in attentionList) {
-                [DataStoreManager saveUserAttentionInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
         //先存后取
@@ -498,15 +498,6 @@
         m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
         [m_attentionsArray sortUsingSelector:@selector(compare:)];
         
-        if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"2"]) {
-            m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"distance" ascend:YES];
-        }
-        if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"3"]) {
-            m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"achievementLevel" ascend:YES];
-        }
-        if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"4"]) {
-            m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"refreshTime" ascend:NO];
-        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
             [m_attentionheader endRefreshing];
@@ -555,13 +546,13 @@
                 [m_myFansTableView reloadData];
                 
                 [DataStoreManager cleanFansList];
-                [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]];
+                [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"shiptype"]];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             else
-                [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")];
+                [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"shiptype"]];
             
             m_currentPage ++;//从0开始
             
@@ -572,7 +563,7 @@
         [m_fansfooter endRefreshing];
     }];
 }
--(void)parseFansList:(id)fansList
+-(void)parseFansList:(id)fansList Withshiptype:(NSString *)shiptype
 {
     //    [DataStoreManager cleanFansList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
@@ -589,11 +580,11 @@
         //        else
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveUserFansInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];;
                 
                 
                 if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];
                 }
             }
         }

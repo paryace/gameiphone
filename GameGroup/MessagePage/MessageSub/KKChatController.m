@@ -94,7 +94,7 @@
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
-    DSFriends *friend = [DSFriends MR_findFirstWithPredicate:predicate];
+    DSuser *friend = [DSuser MR_findFirstWithPredicate:predicate];
     myActive = [friend.action boolValue];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
@@ -104,7 +104,7 @@
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
     
-    self.appDel = [[UIApplication sharedApplication] delegate];
+    self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height)];
     bgV.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);

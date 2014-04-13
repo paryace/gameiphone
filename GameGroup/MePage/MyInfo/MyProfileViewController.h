@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "HGPhotoWall.h"
 #import "HostInfo.h"
-#import "DSFriends.h"
+#import "DSuser.h"
 #import "TextLabelTableCell.h"
 
 typedef  enum
@@ -32,7 +32,7 @@ BirthDayDelegate
 
 @property(nonatomic,strong)NSString*  nickName;
 @property(nonatomic,strong)NSString*  userName;
-@property(nonatomic,strong)DSFriends*  hostInfo;
+@property(nonatomic,strong)DSuser*  hostInfo;
 
 @property(nonatomic,strong)NSArray*    headImgArray;
 

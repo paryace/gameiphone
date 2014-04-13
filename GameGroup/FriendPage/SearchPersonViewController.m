@@ -362,42 +362,21 @@
         VC.nickName = KISDictionaryHaveKey(recDict, @"nickname");
         HostInfo* hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
         VC.hostInfo = hostInfo;
+        NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
+        [dic addEntriesFromDictionary:hostInfo.infoDic];
+        [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+
+        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+
+        
         if ([hostInfo.relation isEqualToString:@"1"]) {
             VC.viewType = VIEW_TYPE_FriendPage1;//好友
-            
-            if (hostInfo.achievementArray && [hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:hostInfo.infoDic];
-                [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserInfo:hostInfo.infoDic];
         }
         else if([hostInfo.relation isEqualToString:@"2"]) {
             VC.viewType = VIEW_TYPE_AttentionPage1;
-            if (hostInfo.achievementArray && [hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:hostInfo.infoDic];
-                [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserAttentionInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserAttentionInfo:hostInfo.infoDic];
         }
         else if([hostInfo.relation isEqualToString:@"3"]) {
             VC.viewType = VIEW_TYPE_FansPage1;
-            if (hostInfo.achievementArray && [hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:hostInfo.infoDic];
-                [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserFansInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserFansInfo:hostInfo.infoDic];
         }
         else  {
             VC.viewType = VIEW_TYPE_STRANGER1;

@@ -94,7 +94,7 @@
 
                 [m_otherSortFansArray removeAllObjects];
                 [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
-                
+                [self parseFansList:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users") withShipType:@"3"];
             }
             else{
                 [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"3")];
@@ -115,14 +115,14 @@
 
     }];
 }
--(void)parseFansList:(id)fansList
+-(void)parseFansList:(id)fansList withShipType:(NSString *)type
 {
     //    [DataStoreManager cleanFansList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveUserFansInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:type];
             }
         }
         m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];

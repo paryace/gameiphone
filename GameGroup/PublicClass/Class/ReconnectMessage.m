@@ -69,7 +69,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSNotificationCenter defaultCenter]postNotificationName:@"getFriendListForNet_wx" object:nil];
-        [self parseContentListWithData:responseObject];
+        [self parseContentListWithData:responseObject ];
         
         [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
         
@@ -102,10 +102,9 @@ static ReconnectMessage *my_reconectMessage = NULL;
             NSArray* keyArr = [friendsList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                    //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveUserInfo:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"1"];
                     if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                        [DataStoreManager saveAllUserWithUserManagerList:dict];
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"1"];
                     }
                     
                 }
@@ -113,9 +112,9 @@ static ReconnectMessage *my_reconectMessage = NULL;
         }
         else if([friendsList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in friendsList) {
-                [DataStoreManager saveUserInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"1"];
                 if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"1"];
                 }
             }
         }
@@ -125,9 +124,9 @@ static ReconnectMessage *my_reconectMessage = NULL;
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
                     //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveUserAttentionInfo:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
                     if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                        [DataStoreManager saveAllUserWithUserManagerList:dict];
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
                     }
                     
                 }
@@ -136,7 +135,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
         else if([attentionList isKindOfClass:[NSArray class]])
         {
             for (NSDictionary * dict in attentionList) {
-                [DataStoreManager saveUserAttentionInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
             }
         }
         //粉丝
@@ -144,13 +143,13 @@ static ReconnectMessage *my_reconectMessage = NULL;
             NSArray* keyArr = [fansList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
-                    [DataStoreManager saveUserFansInfo:dict];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
                 }
             }
         }
         else if ([fansList isKindOfClass:[NSArray class]]) {
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveUserFansInfo:dict];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{

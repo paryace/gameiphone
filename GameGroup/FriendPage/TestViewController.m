@@ -145,54 +145,15 @@
     if ([self.hostInfo.relation isEqualToString:@"1"]) {
         
         self.viewType = VIEW_TYPE_FriendPage1;
-        
-        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-            
-            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-            
-            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-            
-            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-            
-            [DataStoreManager saveUserInfo:dic];
-        }
-        
-        else
-            [DataStoreManager saveUserInfo:self.hostInfo.infoDic];
     }
     
     else if([self.hostInfo.relation isEqualToString:@"2"]) {
         
         self.viewType = VIEW_TYPE_AttentionPage1;
-        
-        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-            
-            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-            
-            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-            
-            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-            [DataStoreManager saveUserAttentionInfo:dic];
-        }
-        else
-            [DataStoreManager saveUserAttentionInfo:self.hostInfo.infoDic];
     }
-    
     else if([self.hostInfo.relation isEqualToString:@"3"]) {
         
         self.viewType = VIEW_TYPE_FansPage1;
-        
-        if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-            
-            NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-            
-            [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-            
-            [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-            [DataStoreManager saveUserFansInfo:dic];
-        }
-        else
-            [DataStoreManager saveUserFansInfo:self.hostInfo.infoDic];
     }
     else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]])
     {
@@ -201,6 +162,23 @@
     else  {
         self.viewType = VIEW_TYPE_STRANGER1;
     }
+    
+    if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
+        
+        NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
+        
+        [dic addEntriesFromDictionary:self.hostInfo.infoDic];
+        
+        [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+        
+        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:self.hostInfo.relation];
+    }
+    
+    else
+        [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:self.hostInfo.relation];
+
+    
+    
     
     [self buildMainView];
     [self setBottomView];
@@ -1107,35 +1085,22 @@
         
         [[GameCommon shareGameCommon] fansCountChanged:NO];
         
-        if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])
+        if ([responseObject isKindOfClass:[NSDictionary class]])
         {
             if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
                 NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
                 [dic addEntriesFromDictionary:self.hostInfo.infoDic];
                 [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
                 
-                [DataStoreManager saveUserInfo:dic];
+                [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
             }
             else
-                [DataStoreManager saveUserInfo:self.hostInfo.infoDic];
-            //            [GameCommon shareGameCommon].friendTableChanged = YES;
+                [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
-        else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"2"])//关注
-        {
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserAttentionInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserAttentionInfo:self.hostInfo.infoDic];
-            //            [GameCommon shareGameCommon].attentionTableChanged = YES;//有更新
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-            
-        }
+        
+        
+        
         [wxSDArray removeAllObjects];
         [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
         
@@ -1244,10 +1209,10 @@
                         [dic addEntriesFromDictionary:self.hostInfo.infoDic];
                         [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
                         
-                        [DataStoreManager saveUserFansInfo:dic];
+                        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                     }
                     else
-                        [DataStoreManager saveUserFansInfo:self.hostInfo.infoDic];//加到粉丝里
+                        [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];//加到粉丝里
                     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
                     
                     [[GameCommon shareGameCommon] fansCountChanged:YES];
@@ -1416,33 +1381,9 @@
         attentionBtn.userInteractionEnabled = YES;
         attentionOffBtn.userInteractionEnabled = YES;
 
-        if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"2"])
+        if ([responseObject isKindOfClass:[NSDictionary class]])
         {
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                [DataStoreManager saveUserAttentionInfo:dic];
-                NSLog(@"dicdic%@",dic);
-            }
-            else
-                [DataStoreManager saveUserAttentionInfo:self.hostInfo.infoDic];
-            //            [GameCommon shareGameCommon].attentionTableChanged = YES;
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-        }
-        else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])//为好友
-        {
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveUserInfo:dic];
-            }
-            else
-                [DataStoreManager saveUserInfo:self.hostInfo.infoDic];
-            //            [GameCommon shareGameCommon].friendTableChanged = YES;
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+            [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
         
         if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {

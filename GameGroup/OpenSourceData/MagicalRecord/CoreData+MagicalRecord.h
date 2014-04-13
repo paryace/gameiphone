@@ -22,10 +22,9 @@
     #import "MagicalRecord+ShorthandSupport.h"
     #import "MagicalRecord+Setup.h"
     #import "MagicalRecord+iCloud.h"
-
+    #import "NSManagedObject+MagicalUserManager.h"
     #import "NSManagedObject+MagicalRecord.h"
     #import "NSManagedObject+MagicalRequests.h"
-    #import "NSManagedObject+MagicalFinders.h"
     #import "NSManagedObject+MagicalAggregation.h"
     #import "NSManagedObjectContext+MagicalRecord.h"
     #import "NSManagedObjectContext+MagicalObserving.h"

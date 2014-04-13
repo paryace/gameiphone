@@ -39,7 +39,7 @@
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
-        self.hostInfo = [DSFriends MR_findFirstWithPredicate:predicate];
+        self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
     }];
     m_titleLabel.text = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     
@@ -917,7 +917,7 @@
 
         NSLog(@"%@", responseObject);
         
-        [DataStoreManager saveUserInfo:responseObject];
+        [DataStoreManager saveAllUserWithUserManagerList:responseObject withshiptype:@"5"];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

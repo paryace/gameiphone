@@ -14,7 +14,7 @@ extern NSString * const kMagicalRecordImportAttributeValueClassNameKey;
 
 extern NSString * const kMagicalRecordImportRelationshipMapKey;
 extern NSString * const kMagicalRecordImportRelationshipLinkedByKey;
-extern NSString * const kMagicalRecordImportRelationshipTypeKey;
+extern NSString * const kMagicalRecordImportRelationshiptypeKey;
 
 @interface NSManagedObject (MagicalRecord_DataImport)
 

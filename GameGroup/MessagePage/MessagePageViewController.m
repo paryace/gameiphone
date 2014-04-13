@@ -643,7 +643,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        [DataStoreManager saveUserInfo:KISDictionaryHaveKey(responseObject, @"user")];
+        [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         

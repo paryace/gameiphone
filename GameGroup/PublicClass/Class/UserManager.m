@@ -88,10 +88,10 @@ static UserManager *userManager = NULL;
         }
         //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
         if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
-            [DataStoreManager saveAllUserWithUserManagerList:recDict];
+            [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }else{
             [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
-            [DataStoreManager saveAllUserWithUserManagerList:recDict];
+            [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
 
             [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(recDict, @"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];

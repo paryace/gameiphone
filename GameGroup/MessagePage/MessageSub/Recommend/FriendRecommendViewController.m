@@ -230,7 +230,7 @@
         else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])
         {
             if ([DataStoreManager ifIsFansWithUserId:KISDictionaryHaveKey(tempDic, @"userid")]) {
-                [DataStoreManager saveUserFriendWithFansList:KISDictionaryHaveKey(tempDic, @"username")];
+                [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(tempDic, @"username") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 
@@ -279,12 +279,12 @@
         
         if ([recDict isKindOfClass:[NSDictionary class]]) {
             if (type == 2) {//关注
-                [DataStoreManager saveUserAttentionInfo:recDict];
+                [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
             }
             else if (type == 1)
             {
-                [DataStoreManager saveUserInfo:recDict];
+                [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
             }
         }

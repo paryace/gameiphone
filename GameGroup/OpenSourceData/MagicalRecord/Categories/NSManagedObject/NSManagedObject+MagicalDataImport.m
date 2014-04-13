@@ -19,7 +19,7 @@ NSString * const kMagicalRecordImportAttributeValueClassNameKey     = @"attribut
 
 NSString * const kMagicalRecordImportRelationshipMapKey             = @"mappedKeyName";
 NSString * const kMagicalRecordImportRelationshipLinkedByKey        = @"relatedByAttribute";
-NSString * const kMagicalRecordImportRelationshipTypeKey            = @"type";  //this needs to be revisited
+NSString * const kMagicalRecordImportRelationshiptypeKey            = @"type";  //this needs to be revisited
 
 NSString * const kMagicalRecordImportAttributeUseDefaultValueWhenNotPresent = @"useDefaultValueWhenNotPresent";
 

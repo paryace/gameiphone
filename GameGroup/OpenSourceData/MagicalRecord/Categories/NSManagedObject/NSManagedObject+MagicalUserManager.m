@@ -13,20 +13,19 @@
 
 @implementation NSManagedObject (MagicalUserManager)
 
+#pragma mark - Finding Data
 
-//查找所有
+
 + (NSArray *) MR_findAllInContext:(NSManagedObjectContext *)context
 {
 	return [self MR_executeFetchRequest:[self MR_requestAllInContext:context] inContext:context];
 }
 
-//查找
 + (NSArray *) MR_findAll
 {
 	return [self MR_findAllInContext:[NSManagedObjectContext MR_contextForCurrentThread]];
 }
 
-//查找并且排序
 + (NSArray *) MR_findAllSortedBy:(NSString *)sortTerm ascending:(BOOL)ascending inContext:(NSManagedObjectContext *)context
 {
 	NSFetchRequest *request = [self MR_requestAllSortedBy:sortTerm ascending:ascending inContext:context];
@@ -40,7 +39,6 @@
                           ascending:ascending
                           inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
 }
-
 
 + (NSArray *) MR_findAllSortedBy:(NSString *)sortTerm ascending:(BOOL)ascending withPredicate:(NSPredicate *)searchTerm inContext:(NSManagedObjectContext *)context
 {

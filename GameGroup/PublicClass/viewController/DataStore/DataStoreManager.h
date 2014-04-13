@@ -12,7 +12,6 @@
 #import "DSCommonMsgs.h"
 
 #import "DSReceivedHellos.h"
-#import "DSFriends.h"
 #import "DSUnreadCount.h"
 #import "DSNameIndex.h"
 
@@ -64,18 +63,19 @@
 +(NSDictionary *)qureyLastReceivedHello;
 
 //储存所有看到过的用户信息
-+(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo;
++(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(DSuser *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
 +(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
++(NSMutableArray*)queryAllUserManagerWithshipType:(NSString *)shiptype;//取出好友或者关注或者粉丝
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
 +(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
 +(void)deleteAllUserWithUserId:(NSString*)userid;//删除userid是这个的
-
-
++(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type;//更改关系
++(void)deleteAllUserWithShipType:(NSString*)shiptype;
 
 //存储“好友”的关注人列表
-+(void)saveUserAttentionWithFriendList:(NSString*)userid;//从好友表到关注表
-+(void)saveUserAttentionInfo:(NSDictionary *)myInfo;
+//+(void)saveUserAttentionWithFriendList:(NSString*)userid;//从好友表到关注表
+//+(void)saveUserAttentionInfo:(NSDictionary *)myInfo;
 +(NSMutableArray *)queryAttentionSections;
 +(NSMutableArray*)queryAllAttentionWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
 +(NSMutableDictionary *)queryAllAttention;
@@ -86,7 +86,7 @@
 +(void)cleanAttentionList;//清空
 
 //存储“好友”的粉丝列表
-+(void)saveUserFansInfo:(NSDictionary *)myInfo;
+//+(void)saveUserFansInfo:(NSDictionary *)myInfo;
 +(NSMutableArray *)queryFansSections;
 +(NSMutableArray*)queryAllFansWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
 +(NSMutableDictionary *)queryAllFans;
@@ -117,10 +117,10 @@
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName
 +(NSString *)queryRemarkNameForUser:(NSString *)userid;//获得别名
 
-+(void)saveUserFriendWithAttentionList:(NSString*)userName;
-+(void)saveUserFriendWithFansList:(NSString*)userName;
-+(void)saveUserInfo:(NSDictionary *)myInfo;
-+(void)saveMyBackgroungImg:(NSString*)backgroundImg;
+//+(void)saveUserFriendWithAttentionList:(NSString*)userName;
+//+(void)saveUserFriendWithFansList:(NSString*)userName;
+//+(void)saveUserInfo:(NSDictionary *)myInfo;
+//+(void)saveMyBackgroungImg:(NSString*)backgroundImg;
 //+(void)storeOnePetInfo:(NSDictionary *)petInfo;
 //+(void)deleteOnePetForPetID:(NSString *)petID;
 +(NSDictionary *)queryMyInfo;
@@ -128,16 +128,16 @@
 +(NSString *)qureyUnreadForReceivedHellos;
 +(void)blankReceivedHellosUnreadCount;
 
-+(void)deleteAllHello;//清除关注表
-+(void)deleteReceivedHelloWithUserId:(NSString *)userid withTime:(NSString *)times;
-+(void)deleteReceivedHelloWithUserId:(NSString *)userid;
-+(NSDictionary*)addPersonToReceivedHellosWithFriend:(NSString*)userId;//从好友表取内容
-+(NSDictionary*)addPersonToReceivedHellosWithAttention:(NSString*)userId;//从关注表取内容
-+(NSDictionary*)addPersonToReceivedHellosWithFans:(NSString*)userId;//从粉丝表取内容
-+(void)addPersonToReceivedHellos:(NSDictionary *)userInfoDict;
-+(void)blankUnreadCountReceivedHellosForUser:(NSString *)userid;
-+(void)updateReceivedHellosStatus:(NSString *)theStatus ForPerson:(NSString *)userid;
-+(NSMutableArray *)queryAllFriendsNickname;
++(void)deleteAllHello;//清除打招呼列表
+//+(void)deleteReceivedHelloWithUserId:(NSString *)userid withTime:(NSString *)times;
+//+(void)deleteReceivedHelloWithUserId:(NSString *)userid;
+//+(NSDictionary*)addPersonToReceivedHellosWithFriend:(NSString*)userId;//从好友表取内容
+//+(NSDictionary*)addPersonToReceivedHellosWithAttention:(NSString*)userId;//从关注表取内容
+//+(NSDictionary*)addPersonToReceivedHellosWithFans:(NSString*)userId;//从粉丝表取内容
+//+(void)addPersonToReceivedHellos:(NSDictionary *)userInfoDict;
+//+(void)blankUnreadCountReceivedHellosForUser:(NSString *)userid;
+//+(void)updateReceivedHellosStatus:(NSString *)theStatus ForPerson:(NSString *)userid;
+//+(NSMutableArray *)queryAllFriendsNickname;
 
 //动态
 +(void)saveMyNewsWithData:(NSDictionary*)dataDic;
