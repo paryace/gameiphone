@@ -197,7 +197,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"136" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     hud.labelText = @"加载中...";
 
     [hud show:YES];
@@ -337,7 +337,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"134" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         zanBtn.userInteractionEnabled = YES;
@@ -782,7 +782,7 @@
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [postDict setObject:@"145" forKey:@"method"];
         [postDict setObject:paramDict forKey:@"params"];
-        [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+        [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
         [self.view bringSubviewToFront:hud];
         hud.labelText = @"发送中...";
         [hud show:YES];
@@ -826,7 +826,7 @@
             NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:@"155" forKey:@"method"];
-            [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
             [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {

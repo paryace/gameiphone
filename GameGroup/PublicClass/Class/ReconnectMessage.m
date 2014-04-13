@@ -64,7 +64,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     // [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -173,7 +173,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
     [postDict setObject:@"140" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -203,7 +203,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
     [postDict setObject:@"116" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"服务器数据 %@", responseObject);
 
@@ -219,7 +219,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 {
     NSLog(@"尝试登陆xmpp");
     NSLog(@"%@",[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
-    [self.xmpphelper connect:[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] host:[[TempData sharedInstance] getServer] success:^(void){
+    [self.xmpphelper connect:[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
         
         NSLog(@"登陆成功xmpp");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil];

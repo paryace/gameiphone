@@ -1129,11 +1129,16 @@ BOOL validateMobile(NSString* mobile) {
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         NSDictionary* dic = responseObject;
-        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:m_phoneNumText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:m_passwordText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-        
-        [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];
+       
+       [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"userid"] forKey:@"MyUserId"];
+       [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:@"MyToken"];
+       [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
+
+//        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
+//        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:m_phoneNumText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
+//        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:m_passwordText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
+//        
+//        [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];
         [DataStoreManager storeMyUserID:[[dic objectForKey:@"token"] objectForKey:@"userid"]];
         
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
@@ -1165,7 +1170,7 @@ BOOL validateMobile(NSString* mobile) {
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
     [postDict setObject:@"108" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -1194,9 +1199,6 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
-   // [[ReconnectMessage singleton] getFriendByHttp];
-     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
-    [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{
         

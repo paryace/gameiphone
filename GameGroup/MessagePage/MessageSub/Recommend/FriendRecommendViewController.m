@@ -186,7 +186,7 @@
         [m_myTableView reloadData];
         return;
     }
-    if ([DataStoreManager ifIsAttentionWithUserName:KISDictionaryHaveKey(tempDic, @"username")]) {
+    if ([DataStoreManager ifIsAttentionWithUserId:KISDictionaryHaveKey(tempDic, @"userid")]) {
         [self showAlertViewWithTitle:@"提示" message:@"您已关注过了，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
@@ -215,7 +215,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     
     [hud show:YES];
     
@@ -229,7 +229,7 @@
         }
         else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])
         {
-            if ([DataStoreManager ifIsFansWithUserName:KISDictionaryHaveKey(tempDic, @"username")]) {
+            if ([DataStoreManager ifIsFansWithUserId:KISDictionaryHaveKey(tempDic, @"userid")]) {
                 [DataStoreManager saveUserFriendWithFansList:KISDictionaryHaveKey(tempDic, @"username")];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
@@ -266,7 +266,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
 
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {

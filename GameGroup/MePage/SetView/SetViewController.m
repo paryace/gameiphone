@@ -272,7 +272,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     //    [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"102" forKey:@"method"];//退出登陆
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"layoutresponseObject%@", responseObject);
         // [GameCommon loginOut];//注销

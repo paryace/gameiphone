@@ -93,7 +93,7 @@
     
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     DSFriends *friend = [DSFriends MR_findFirstWithPredicate:predicate];
     myActive = [friend.action boolValue];
     postDict = [NSMutableDictionary dictionary];
@@ -125,7 +125,7 @@
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
-    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
+    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     
     self.tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
     [self.view addSubview:self.tView];
@@ -1274,7 +1274,7 @@
             [self normalMsgToFinalMsg];
             
             [self.tView reloadData];
-            [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
+          [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0.00000001];
         }
     }
 }
@@ -1288,7 +1288,7 @@
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
     
-    [postDict1 setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -1306,9 +1306,7 @@
         return;
     }
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[messages count] > [array count]?[array count]:([array count] - 1) inSection:0];
-    
-    [self.tView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification

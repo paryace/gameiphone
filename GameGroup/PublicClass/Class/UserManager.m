@@ -78,7 +78,7 @@ static UserManager *userManager = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -90,7 +90,7 @@ static UserManager *userManager = NULL;
         if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
             [DataStoreManager saveAllUserWithUserManagerList:recDict];
         }else{
-            [DataStoreManager deleteAllUserWithUserName:KISDictionaryHaveKey(responseObject, @"userid")];
+            [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
             [DataStoreManager saveAllUserWithUserManagerList:recDict];
         }
 

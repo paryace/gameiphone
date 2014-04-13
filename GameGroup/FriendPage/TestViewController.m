@@ -57,7 +57,7 @@
     
     m_titleLabel.text = [DataStoreManager queryRemarkNameForUser:self.userId];//别名或昵称
     if ([m_titleLabel.text isEqualToString:@""]) {//不是好友或关注
-        m_titleLabel.text = self.nickName;
+        m_titleLabel.text = self.nickName?self.nickName:self.hostInfo.nickName;
         NSLog(@"self.userid%@",self.nickName);
     }
     NSLog(@"m_titlelabel%@",m_titleLabel.text);
@@ -104,8 +104,8 @@
     }
     }
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:@"person"];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:@"person"];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
 
     
 }
@@ -113,8 +113,10 @@
 -(void)getInfoFromUserManager:(NSNotification *)notification
 {
     
-//    if ([[notification.userInfo objectForKey:@"userid"]isEqualToString:self.userId])
-//    {
+    if (![[[notification.userInfo objectForKey:@"user"] objectForKey:@"id"]isEqualToString:self.userId])
+    {
+        return;
+    }
     NSDictionary *dictionary = notification.userInfo;
     //将获取到的数据转换成NSData类型保存到nsuserdefaults中
     
@@ -1084,7 +1086,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     
     MBProgressHUD *hud1 =[[ MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud1];
@@ -1173,7 +1175,7 @@
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
     
-    [postDict1 setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -1219,7 +1221,7 @@
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:paramDict forKey:@"params"];
             [postDict setObject:@"110" forKey:@"method"];
-            [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
             
             [hud show:YES];
             
@@ -1287,7 +1289,7 @@
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:paramDict forKey:@"params"];
             [postDict setObject:@"110" forKey:@"method"];
-            [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
             
             [hud show:YES];
             
@@ -1338,7 +1340,7 @@
             NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:@"155" forKey:@"method"];
-            [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
             [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -1402,7 +1404,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     
     
     

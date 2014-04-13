@@ -71,7 +71,7 @@ NSString * gen_uuid()
 
 + (void)getTokenStatusMessage
 {
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] ? [SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] : @"",@"token", nil];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] ? [[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] : @"",@"token", nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"141" forKey:@"method"];

@@ -342,7 +342,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
  
     [hud show:YES];
 
@@ -351,7 +351,7 @@
   
         NSLog(@"%@", responseObject);
         NSDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        if ([KISDictionaryHaveKey(recDict, @"username") isEqualToString:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]]) {
+        if ([KISDictionaryHaveKey(recDict, @"userId") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
             [self showAlertViewWithTitle:@"提示" message:@"您不能对自己进行搜索！" buttonTitle:@"确定"];
             return;
         }

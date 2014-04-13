@@ -16,7 +16,6 @@
     #import "AFNetworking.h"
     #import "XMPPFramework.h"
     #import "XMPPHelper.h"
-    #import "SFHFKeychainUtils.h"
     #import "NetManager.h"
     #import "BaseViewController.h"
     #import "TempData.h"

@@ -352,7 +352,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [postDict setObject:@"154" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         

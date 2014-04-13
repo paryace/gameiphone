@@ -69,7 +69,7 @@
 +(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
 +(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
-+(void)deleteAllUserWithUserName:(NSString*)userid;//删除userid是这个的
++(void)deleteAllUserWithUserId:(NSString*)userid;//删除userid是这个的
 
 
 
@@ -81,7 +81,7 @@
 +(NSMutableDictionary *)queryAllAttention;
 +(NSString *)queryFirstHeadImageForUser_attention:(NSString *)userName;
 +(void)deleteAttentionWithUserName:(NSString*)username;
-+(BOOL)ifIsAttentionWithUserName:(NSString*)userName;
++(BOOL)ifIsAttentionWithUserId:(NSString*)userid;
 +(void)saveAttentionRemarkName:(NSString*)remarkName userid:(NSString*)userid;//存备注名
 +(void)cleanAttentionList;//清空
 
@@ -90,9 +90,9 @@
 +(NSMutableArray *)queryFansSections;
 +(NSMutableArray*)queryAllFansWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
 +(NSMutableDictionary *)queryAllFans;
-+(NSString *)queryFirstHeadImageForUser_fans:(NSString *)userName;
++(NSString *)queryFirstHeadImageForUser_fans:(NSString *)userId;
 +(void)deleteFansWithUserid:(NSString*)userid;
-+(BOOL)ifIsFansWithUserName:(NSString*)userName;
++(BOOL)ifIsFansWithUserId:(NSString*)userId;
 + (void)cleanFansList;//清空
 
 //好友
@@ -111,7 +111,7 @@
 
 +(NSString *)queryNickNameForUser:(NSString *)userName;
 +(NSString *)querySelfUserName;
-+(NSString *)queryFirstHeadImageForUser:(NSString *)userName;
++(NSString *)queryFirstHeadImageForUser:(NSString *)userId;
 +(NSString *)queryFirstHeadImageForUserId:(NSString *)userId;
 +(void)updateFriendInfo:(NSDictionary *)userInfoDict ForUser:(NSString *)username;
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName
