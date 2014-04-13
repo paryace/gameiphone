@@ -531,8 +531,7 @@
     kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]senderNickname];
     kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]senderimg];
     [self.navigationController pushViewController:kkchat animated:YES];
-    kkchat.msgDelegate = self;
-    //}
+
 }
 
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
