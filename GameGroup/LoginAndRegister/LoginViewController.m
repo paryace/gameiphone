@@ -15,6 +15,7 @@
 #import "Custom_tabbar.h"
 #import "FindPasswordViewController.h"
 #import "ReconnectMessage.h"
+#import "UserManager.h"
 
 #define kLabelFont (14.0)
 
@@ -201,7 +202,7 @@
 
 - (void)loginSuccess
 {
-    [[ReconnectMessage singleton] getMyUserInfoFromNet];
+     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]  obj:nil];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
 

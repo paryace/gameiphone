@@ -13,7 +13,6 @@
 -(void)getChatServer;
 -(void)logInToChatServer;
 -(void)sendDeviceToken;
--(void)getMyUserInfoFromNet;
 -(void)getFriendByHttp;
 @property (strong,nonatomic) XMPPHelper * xmpphelper;
 

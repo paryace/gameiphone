@@ -8,6 +8,7 @@
 
 #import "ReconnectMessage.h"
 #import "AppDelegate.h"
+#import "UserManager.h"
 static ReconnectMessage *my_reconectMessage = NULL;
 @implementation ReconnectMessage
 {
@@ -34,24 +35,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 	}
 	return my_reconectMessage;
 }
-- (void)getMyUserInfoFromNet
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
-    [paramDict setObject:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] forKey:@"username"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [DataStoreManager saveUserInfo:KISDictionaryHaveKey(responseObject, @"user")];
-        [self getChatServer];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-    }];
-}
+
 
 #pragma mark - 获得好友、关注、粉丝列表
 -(void)getFriendByHttp

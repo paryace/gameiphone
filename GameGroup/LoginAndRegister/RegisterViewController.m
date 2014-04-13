@@ -15,6 +15,7 @@
 #import "AuthViewController.h"
 #import "TempData.h"
 #import "ReconnectMessage.h"
+#import "UserManager.h"
 
 @interface RegisterViewController ()
 {
@@ -1194,7 +1195,7 @@ BOOL validateMobile(NSString* mobile) {
 - (void)step4ButtonOK:(id)sender
 {
    // [[ReconnectMessage singleton] getFriendByHttp];
-    [[ReconnectMessage singleton] getMyUserInfoFromNet];
+     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]  obj:nil];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{

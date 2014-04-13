@@ -70,7 +70,7 @@ static UserManager *userManager = NULL;
 //
 //}
 
-- (void)requestUserFromNet:(NSString*)userId obj:(NSString *)obj{
+- (void)requestUserFromNet:(NSString*)userId {
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -93,12 +93,11 @@ static UserManager *userManager = NULL;
             [DataStoreManager deleteAllUserWithUserName:KISDictionaryHaveKey(responseObject, @"userid")];
             [DataStoreManager saveAllUserWithUserManagerList:recDict];
         }
-        if ([obj isEqualToString:@"chat"]) {
-            NSDictionary* user=[[UserManager singleton] getUser:userId];
-            [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
-        }
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:obj userInfo:responseObject];
+            [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(recDict, @"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
+
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     
      [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
