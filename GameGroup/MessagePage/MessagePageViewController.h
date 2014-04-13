@@ -7,7 +7,6 @@
 //
 
 #import "BaseViewController.h"
-#import "StoreMsgDelegate.h"
 #import "NotConnectDelegate.h"
 #import "AppDelegate.h"
 

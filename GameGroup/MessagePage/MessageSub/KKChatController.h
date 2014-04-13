@@ -13,7 +13,6 @@
 #import "XMPPFramework.h"
 #import "HPGrowingTextView.h"
 #import "TempData.h"
-#import "StoreMsgDelegate.h"
 #import "TestViewController.h"
 #import "MyProfileViewController.h"
 #import "selectContactPage.h"
