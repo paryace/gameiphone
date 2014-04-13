@@ -16,9 +16,6 @@
 #import "OtherMessageReceive.h"
 #import "RecommendFriendDelegate.h"
 #import "XMPPAutoPing.h"
-#import "XMPPRoster.h"
-#import "XMPPRosterMemoryStorage.h"
-#import "XMPPRosterMemoryStorage.h"
 #import "XMPPJID.h"
 #import "TempData.h"
 #import "XMPPReconnect.h"
@@ -30,17 +27,11 @@
 {
     self.xmppStream = [[XMPPStream alloc] init];
     [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
-    self.xmppRosterMemoryStorage = [[XMPPRosterMemoryStorage alloc] init];
-    self.xmppRoster = [[XMPPRoster alloc] initWithRosterStorage:self.xmppRosterMemoryStorage];
-    [self.xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
-    [self.xmppRoster activate:self.xmppStream];
     self.xmppStream.enableBackgroundingOnSocket = YES;
-//    self.xmppReconnect = [[XMPPReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
-//    [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
-//    [self.xmppReconnect activate:self.xmppStream];
-//    self.xmppAutoPing = [[XMPPAutoPing alloc] initWithDispatchQueue:dispatch_get_main_queue()];
-//    self.xmppAutoPing.pingInterval = 10;
-//    [_xmppAutoPing activate:self.xmppStream];
+    self.xmppReconnect = [[XMPPReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
+    [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
+    [self.xmppReconnect activate:self.xmppStream];
+    
 }
 - (void)goOnline {
 	XMPPPresence *presence = [XMPPPresence presence];
@@ -111,24 +102,6 @@
 -(BOOL)isConnected
 {
     return [self.xmppStream isConnected];
-}
-//获取所有联系人
--(void)getCompleteRoster:(XMPPRosterMemoryStorageCallBack)callback{
-    self.xmppRosterscallback=callback;
-    [self.xmppRoster fetchRoster];
-}
--(void)getIt
-{
-    NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:roster"];
-    
-    NSXMLElement *iq = [NSXMLElement elementWithName:@"iq"];
-    XMPPJID *myJID = self.xmppStream.myJID;
-    [iq addAttributeWithName:@"from" stringValue:myJID.description];
-    [iq addAttributeWithName:@"to" stringValue:myJID.domain];
-//    [iq addAttributeWithName:@"id" stringValue:[self generateID]];
-    [iq addAttributeWithName:@"type" stringValue:@"get"];
-    [iq addChild:query];
-    [self.xmppStream sendElement:iq];
 }
 
 //===========XMPP委托事件============
@@ -254,12 +227,13 @@
     }
 }
 
-
-#pragma mark 收到消息后调用
-
 - (void)xmppStreamWillConnect:(XMPPStream *)sender{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
 }
+
+#pragma mark 收到消息后调用
+
+
 
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
@@ -462,13 +436,6 @@
     
 }
 
-//fetchRoster后，将结果回调方式传来。
-- (void)xmppRosterDidPopulate:(XMPPRosterMemoryStorage *)sender{
-    if(self.xmppRosterscallback){
-        self.xmppRosterscallback(sender);
-    }
-    NSLog(@"%@",sender);
-}
 - (void)xmppStream:(XMPPStream *)sender didReceiveError:(id)error
 {
     NSLog(@"didReceiveError:%@",error);
