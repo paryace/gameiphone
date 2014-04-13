@@ -10,7 +10,7 @@
 #import "NotConnectDelegate.h"
 #import "AppDelegate.h"
 
-@interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,StoreMsgDelegate,UISearchDisplayDelegate>
+@interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
 
 @property (assign,nonatomic) AppDelegate * appDel;
 @property(nonatomic,strong)UILabel*   titleLabel;;

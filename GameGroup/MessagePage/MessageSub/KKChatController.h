@@ -101,7 +101,6 @@ EmojiViewDelegate>
 @property(nonatomic, retain) NSString *chatUserImg;
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;
-@property (assign,nonatomic) id<StoreMsgDelegate> msgDelegate;
 @property (nonatomic,retain) AVAudioSession *session;
 @property (nonatomic,retain) AVAudioRecorder *recorder;
 - (void)sendButton:(id)sender;
