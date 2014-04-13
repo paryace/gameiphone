@@ -19,7 +19,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
     if (self) {
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getChatServer) name:@"xmppReconnect_wx_xx" object:nil];
     }
     return self;
 }
@@ -207,7 +206,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 {
     reach = notification.object;
     if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
-        if (![self.xmpphelper ifXMPPConnected]) {
+        if (![self.xmpphelper isConnected]) {
             [self getChatServer];
         }
     }

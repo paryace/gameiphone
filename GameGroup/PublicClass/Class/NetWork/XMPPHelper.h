@@ -65,7 +65,6 @@ typedef void (^CallBackBlockErr) (NSError *result);
 - (void) setupStream;
 - (void) goOnline;
 - (void) goOffline;
--(BOOL)ifXMPPConnected;
 -(BOOL)isConnecting;
 -(BOOL)isDisconnected;
 -(BOOL)isConnected;

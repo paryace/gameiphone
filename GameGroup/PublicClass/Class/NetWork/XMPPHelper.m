@@ -100,10 +100,6 @@
     [self goOffline];
     [self.xmppStream disconnect];
 }
--(BOOL)ifXMPPConnected
-{
-    return [self.xmppStream isConnected];
-}
 -(BOOL)isDisconnected
 {
     return [self.xmppStream isDisconnected];
@@ -181,7 +177,7 @@
 
 -(BOOL)sendMessage:(NSXMLElement *)message
 {
-    if (![self ifXMPPConnected]) {
+    if (![self isConnected]) {
         return NO;
     }
     else
@@ -257,7 +253,15 @@
         return;
     }
 }
+
+
 #pragma mark 收到消息后调用
+
+- (void)xmppStreamWillConnect:(XMPPStream *)sender{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
+}
+
+
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
     NSLog(@"message =====%@",message);

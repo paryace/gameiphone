@@ -64,18 +64,14 @@
     }
     else
     {
-                
-       // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
         
         [self.view bringSubviewToFront:hud];
-            if([self.appDel.xmppHelper ifXMPPConnected]){
+            if([self.appDel.xmppHelper isConnected]){
                 self.titleLabel.text = @"消息";
-            }else{
+            }else if([self.appDel.xmppHelper isConnecting]){
+                self.titleLabel.text = @"消息(连接中)";
+            }else if([self.appDel.xmppHelper isDisconnected]){
                 self.titleLabel.text = @"消息(未连接)";
-                AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
-                if (app.reach.currentReachabilityStatus !=NotReachable) {
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"xmppReconnect_wx_xx" object:nil];
-                }
             }
         
         if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {

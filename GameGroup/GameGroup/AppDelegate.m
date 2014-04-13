@@ -35,23 +35,23 @@
     //网络变化
     self.reach = [Reachability reachabilityForInternetConnection];
     [_reach startNotifier];
+    GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
+    [SendAckListener singleton];
+    self.xmppHelper=[[XMPPHelper alloc] init];
+    [self.xmppHelper setupStream];
+    self.xmppHelper.chatDelegate = getDataAfterManager;
+    self.xmppHelper.addReqDelegate = getDataAfterManager;
+    self.xmppHelper.commentDelegate = getDataAfterManager;
+    self.xmppHelper.deletePersonDelegate = getDataAfterManager;
+    self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
+    self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
+    getDataAfterManager.xmppHelper=self.xmppHelper;
+    [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
         [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         NSLog(@"getMyUserID: %@", [DataStoreManager getMyUserID]);
-     //  [[ReconnectMessage singleton]getMyUserInfoFromNet];
-        GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
-        [SendAckListener singleton];
-        self.xmppHelper=[[XMPPHelper alloc] init];
-        self.xmppHelper.chatDelegate = getDataAfterManager;
-        self.xmppHelper.addReqDelegate = getDataAfterManager;
-        self.xmppHelper.commentDelegate = getDataAfterManager;
-        self.xmppHelper.deletePersonDelegate = getDataAfterManager;
-        self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
-        self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
-        getDataAfterManager.xmppHelper=self.xmppHelper;
-        [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
-
+        [[ReconnectMessage singleton]getChatServer];
     }
    
 
@@ -114,9 +114,6 @@
     //它是类里自带的方法,这个方法得说下，很多人都不知道有什么用，它一般在整个应用程序加载时执行，挂起进入后也会执行，所以很多时候都会使用到，将小红圈清空
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_BecomeActive" object:nil userInfo:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-    if(![self.xmppHelper ifXMPPConnected]){
-        [[ReconnectMessage singleton]getChatServer];
-    }
 }
 
 
