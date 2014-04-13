@@ -215,9 +215,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
 #pragma mark 登陆xmpp
 - (void)getChatServer//自动登陆情况下获得服务器
 {
-    if (![[TempData sharedInstance] isHaveLogin]){
-        return;
-    }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
