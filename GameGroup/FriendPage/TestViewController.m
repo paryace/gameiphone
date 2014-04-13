@@ -94,13 +94,13 @@
         [self buildMainView];
         [self setBottomView];
     
-        [[UserManager singleton]requestUserFromNet:self.userId obj:@"person"];
+        [[UserManager singleton]requestUserFromNet:self.userId];
     }
     else//没有详情 请求
     {
         [self buildInitialize];
         
-        [[UserManager singleton]requestUserFromNet:self.userId obj:@"person"];
+        [[UserManager singleton]requestUserFromNet:self.userId];
     }
     }
     

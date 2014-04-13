@@ -202,7 +202,7 @@
 
 - (void)loginSuccess
 {
-     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]  obj:nil];
+     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
 

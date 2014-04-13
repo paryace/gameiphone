@@ -56,7 +56,7 @@ static UserManager *userManager = NULL;
             [dict setObject:dUser.headImgID?dUser.headImgID:@"" forKey:@"img"];
         }
         else{
-            [self requestUserFromNet:userId obj:@"chat"];
+            [self requestUserFromNet:userId];
         }
     
 

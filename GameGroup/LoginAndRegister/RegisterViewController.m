@@ -1195,7 +1195,7 @@ BOOL validateMobile(NSString* mobile) {
 - (void)step4ButtonOK:(id)sender
 {
    // [[ReconnectMessage singleton] getFriendByHttp];
-     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]  obj:nil];
+     [[UserManager singleton] requestUserFromNet:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil]];
     [[ReconnectMessage singleton] sendDeviceToken];
     [[ReconnectMessage singleton] getChatServer];
     [self dismissViewControllerAnimated:YES completion:^{

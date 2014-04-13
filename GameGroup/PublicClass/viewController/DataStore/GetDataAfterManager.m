@@ -196,7 +196,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
-        [[UserManager singleton]requestUserFromNet:sender obj:@"chat"];
+        [[UserManager singleton]requestUserFromNet:sender];
     }
     else
     {
