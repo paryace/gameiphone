@@ -46,11 +46,11 @@
     self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
     self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
     getDataAfterManager.xmppHelper=self.xmppHelper;
-    [ReconnectMessage singleton].xmpphelper=self.xmppHelper;
+
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
-        [[ReconnectMessage singleton]getChatServer];
+        [self.xmppHelper connect];
     }
    
 

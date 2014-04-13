@@ -77,7 +77,7 @@ static TempData *sharedInstance=nil;
 - (BOOL)isHaveLogin
 {
     //    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] && ![[[NSUserDefaults standardUserDefaults] objectForKey:PhoneNumKey] isEqualToString:@""]) {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] && [[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"]) {
         return YES;
     }
     return NO;

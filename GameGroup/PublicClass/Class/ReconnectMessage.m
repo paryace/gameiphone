@@ -218,16 +218,16 @@ static ReconnectMessage *my_reconectMessage = NULL;
 {
     NSLog(@"尝试登陆xmpp");
     NSLog(@"%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
-    [self.xmpphelper connect:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
-        
-        NSLog(@"登陆成功xmpp");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil];
-        
-        
-    }fail:^(NSError *result){
-        NSLog(@" localizedDescription %@", result.localizedDescription);
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectFail" object:nil];
-    }];
+//    [self.xmpphelper connect:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
+//        
+//        NSLog(@"登陆成功xmpp");
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil];
+//        
+//        
+//    }fail:^(NSError *result){
+//        NSLog(@" localizedDescription %@", result.localizedDescription);
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectFail" object:nil];
+//    }];
 }
 
 @end

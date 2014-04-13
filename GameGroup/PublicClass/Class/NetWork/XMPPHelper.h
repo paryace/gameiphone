@@ -33,10 +33,6 @@ typedef void (^CallBackBlockErr) (NSError *result);
 @property (nonatomic,assign) id otherMsgReceiveDelegate;
 @property (nonatomic,assign) id recommendReceiveDelegate;
 
-@property (strong,nonatomic) CallBackBlock success;
-@property (strong,nonatomic) CallBackBlockErr fail;
-@property (strong,nonatomic) CallBackBlock regsuccess;
-@property (strong,nonatomic) CallBackBlockErr regfail;
 @property (strong,nonatomic) XMPPReconnect* xmppReconnect;
 @property (strong,nonatomic) NSMutableArray * rosters;
 
@@ -50,7 +46,7 @@ typedef void (^CallBackBlockErr) (NSError *result);
 -(BOOL)isConnecting;
 -(BOOL)isDisconnected;
 -(BOOL)isConnected;
--(BOOL)connect:(NSString *)account password:(NSString *)password host:(NSString *)host success:(CallBackBlock)Success fail:(CallBackBlockErr)Fail;
+-(BOOL)connect;
 
 -(void)disconnect;
 -(BOOL)sendMessage:(NSXMLElement *)message;

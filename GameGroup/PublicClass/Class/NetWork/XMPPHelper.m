@@ -20,13 +20,15 @@
 #import "TempData.h"
 #import "XMPPReconnect.h"
 #import "JSON.h"
+#import "GameXmppStream.h"
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 
 -(void)setupStream
 {
-    self.xmppStream = [[XMPPStream alloc] init];
+    self.xmppStream = [[GameXmppStream alloc] init];
     [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
+
     self.xmppStream.enableBackgroundingOnSocket = YES;
     self.xmppReconnect = [[XMPPReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
     [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -42,45 +44,26 @@
 	XMPPPresence *presence = [XMPPPresence presenceWithType:@"unavailable"];
 	[[self xmppStream] sendElement:presence];
 }
--(BOOL)connect:(NSString *)theaccount password:(NSString *)thepassword host:(NSString *)host success:(CallBackBlock)Success fail:(CallBackBlockErr)Fail{
+-(BOOL)connect{
 
-    NSArray* hostArray = [host componentsSeparatedByString:@":"];
-    host = [hostArray objectAtIndex:0];
 //    host = @"192.168.0.133";
     
  //   host = @"221.122.114.216";
 //    theaccount = @"15100000000@52pet.net";
 //    thepassword = @"0AB89AC5C55D40198EF10B39257DA1C4";
     [self setupStream];
-    self.password=thepassword;
-    self.success=Success;
-    
-    self.fail=Fail;
+
     if (![self.xmppStream isDisconnected]) {
         return YES;
         NSLog(@"连接不成功");
     }
     
-    if (theaccount == nil) {
-        return NO;
-         NSLog(@"连接不成功");
-    }
     
-    [self.xmppStream setMyJID:[XMPPJID jidWithString:theaccount]];
-    [self.xmppStream setHostName:host];
-    
-    if ([hostArray count] > 1) {
-        UInt16 b = (UInt16)([[hostArray objectAtIndex:1] integerValue] & 0xffff);
-        [self.xmppStream setHostPort:b];//端口号
-    }
-
-    NSLog(@"connecting 帐号%@ 密码%@ 地址%@",theaccount, thepassword, host);
 
     //连接服务器
     NSError *err = nil;
     if (![self.xmppStream connectWithTimeout:30 error:&err]) {
-        NSLog(@"cant connect 帐号%@ 密码%@ 地址%@",theaccount, thepassword, host);
-        Fail(err);
+        NSLog(@"cant connect ");
         return NO;
     }
     
@@ -112,10 +95,10 @@
     NSError *error = nil;
     
     //验证密码
-    [[self xmppStream] authenticateWithPassword:self.password error:&error];
+    [[self xmppStream] authenticateWithPassword:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] error:&error];
     if(error!=nil)
     {
-        self.fail(error);
+//        self.fail(error);
     }
 }
 
@@ -129,7 +112,7 @@
 - (void)xmppStream:(XMPPStream *)sender didNotAuthenticate:(NSXMLElement *)error{
     NSLog(@"not authenticated %@",error);
     NSError *err=[[NSError alloc] initWithDomain:@"WeShare" code:-100 userInfo:@{@"detail": @"ot-authorized"}];
-    self.fail(err);
+//    self.fail(err);
  //   [self.notConnect notConnectted];
 }
 
@@ -145,7 +128,7 @@
 //    [self getmyvcard];
     NSLog(@"authenticated");
     [self goOnline];
-    self.success();
+    
 }
 
 -(BOOL)sendMessage:(NSXMLElement *)message
@@ -161,38 +144,7 @@
     }
 }
 
-- (void)xmppRosterDidChange:(XMPPRosterMemoryStorage *)sender
-{
-//	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
-//	
-//	roster = [sender sortedUsersByAvailabilityName];
-}
-- (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq {
-    if (!self.rosters) {
-        self.rosters = [NSMutableArray array];
-    }
-    [self.rosters removeAllObjects];
-    if ([@"result" isEqualToString:iq.type]) {
-        NSXMLElement *query = iq.childElement;
-        if ([@"query" isEqualToString:query.name]) {
-            NSArray *items = [query children];
-            for (NSXMLElement *item in items) {
-                NSString *jid = [item attributeStringValueForName:@"jid"];
-                NSRange range = [jid rangeOfString:@"@"];
-                if (range.length == 0) {
-                    return NO;
-                }
-                NSString * sender = [jid substringToIndex:range.location];
-               // XMPPJID *xmppJID = [XMPPJID jidWithString:jid];
-                if ([[item attributeStringValueForName:@"subscription"] isEqualToString:@"both"]||[[item attributeStringValueForName:@"subscription"] isEqualToString:@"to"]) {
-                    [self.rosters addObject:sender];
-                }
-            }
-        }
-        
-    }
-    return YES;
-}
+
 // 3.关于通信的
 - (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
 {
@@ -399,16 +351,6 @@
     
 }
 
-//注册成功
-- (void)xmppStreamDidRegister:(XMPPStream *)sender{
-    self.regsuccess();
-}
-
-//注册失败
-- (void)xmppStream:(XMPPStream *)sender didNotRegister:(NSXMLElement *)error{
-    NSError *err=[[NSError alloc] initWithDomain:@"WeShare" code:-100 userInfo:@{@"detail": @"reg fail"}];
-    self.regfail(err);
-}
 
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence
 {
