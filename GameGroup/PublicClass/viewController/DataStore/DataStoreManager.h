@@ -117,7 +117,6 @@
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName
 +(NSString *)queryRemarkNameForUser:(NSString *)userid;//获得别名
 
-+(NSString *)getMyUserID;
 +(void)saveUserFriendWithAttentionList:(NSString*)userName;
 +(void)saveUserFriendWithFansList:(NSString*)userName;
 +(void)saveUserInfo:(NSDictionary *)myInfo;
@@ -139,7 +138,6 @@
 +(void)blankUnreadCountReceivedHellosForUser:(NSString *)userid;
 +(void)updateReceivedHellosStatus:(NSString *)theStatus ForPerson:(NSString *)userid;
 +(NSMutableArray *)queryAllFriendsNickname;
-+(void)storeMyUserID:(NSString *)theID;
 
 //动态
 +(void)saveMyNewsWithData:(NSDictionary*)dataDic;

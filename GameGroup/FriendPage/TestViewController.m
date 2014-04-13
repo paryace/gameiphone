@@ -194,7 +194,7 @@
         else
             [DataStoreManager saveUserFansInfo:self.hostInfo.infoDic];
     }
-    else if([self.hostInfo.userId isEqualToString:[DataStoreManager getMyUserID]])
+    else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]])
     {
         self.viewType = VIEW_TYPE_Self1;
     }

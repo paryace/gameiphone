@@ -51,7 +51,7 @@ static SendAckListener *my_SendAckListener = NULL;
 //    [mes addAttributeWithName:@"to" stringValue:[sender stringByAppendingString:[[TempData sharedInstance] getDomain]]];
 //    NSLog(@"[messageContent objectForKey:%@",[messageContent objectForKey:@"sender"]);
 //    //由谁发送
-//    [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+//    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
 //    
 //    //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
 //    [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];

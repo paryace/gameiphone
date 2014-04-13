@@ -297,7 +297,7 @@
     [locationDict setObject:appType forKey:@"appType"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict setObject:@"140" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];

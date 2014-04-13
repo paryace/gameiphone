@@ -363,7 +363,7 @@
                 }
                 
                 }
-                if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[DataStoreManager getMyUserID]])
+                if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]])
                 {
                     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
                         cell.titleLabel.text = @"我发表了该内容";
@@ -598,12 +598,12 @@
 //
 //    switch (typeInt) {
 //        case 3://发表
-//            if ([userid isEqualToString:[DataStoreManager getMyUserID]]) {
+//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //                titleStr = [titleStr stringByAppendingString:@"我发表了该内容"];
 //            }
 //            break;
 //        case 4://赞
-//            if ([userid isEqualToString:[DataStoreManager getMyUserID]]) {
+//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //                titleStr = [titleStr stringByAppendingString:@"我赞了该内容"];
 //            }
 //            else
@@ -612,7 +612,7 @@
 //            }
 //            break;
 //        case 5://评论
-//            if ([userid isEqualToString:[DataStoreManager getMyUserID]]) {
+//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //                titleStr = [titleStr stringByAppendingString:@"我评论了该内容"];
 //            }
 //            else
@@ -630,7 +630,7 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     NewsViewController* VC = [[NewsViewController alloc] init];
-    VC.userId = [DataStoreManager getMyUserID];
+    VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];
     VC.myViewType = ME_NEWS_TYPE;
     [self.navigationController pushViewController:VC animated:YES];
     
@@ -655,7 +655,7 @@
     {
 //        [[Custom_tabbar showTabBar] hideTabBar:YES];
 //        NewsViewController* VC = [[NewsViewController alloc] init];
-//        VC.userId = [DataStoreManager getMyUserID];
+//        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];
 //        VC.myViewType = ME_NEWS_TYPE;
 //        [self.navigationController pushViewController:VC animated:YES];
 //        

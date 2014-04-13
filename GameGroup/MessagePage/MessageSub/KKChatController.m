@@ -997,8 +997,8 @@
 {
     TestViewController * detailV = [[TestViewController alloc] init];
     
-    detailV.userId = [DataStoreManager getMyUserID];
-    detailV.nickName = [DataStoreManager queryRemarkNameForUser:[DataStoreManager getMyUserID]];
+    detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];
+    detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     detailV.isChatPage = YES;
     [self.navigationController pushViewController:detailV animated:YES];
 }
@@ -1060,7 +1060,7 @@
         NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
         [mes addAttributeWithName:@"type" stringValue:@"chat"];
         [mes addAttributeWithName:@"to" stringValue:[self.chatWithUser stringByAppendingString:[[TempData sharedInstance] getDomain]]];
-        [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
         [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
         [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
         [mes addAttributeWithName:@"msgTime" stringValue:sendtime];
@@ -1214,7 +1214,7 @@
     //        //由谁发送
     //        [mes addAttributeWithName:@"from" stringValue:[[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     
     [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
@@ -1352,7 +1352,7 @@
     //发送给谁
     [mes addAttributeWithName:@"to" stringValue:[sender stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];

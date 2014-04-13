@@ -369,7 +369,7 @@
         if ([nickName isEqualToString:@""]) {
             nickName = KISDictionaryHaveKey(destDic, @"nickname");
         }
-        cell.nickNameLabel.text = [KISDictionaryHaveKey(destDic, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" : nickName;
+        cell.nickNameLabel.text = [KISDictionaryHaveKey(destDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]] ? @"我" : nickName;
         if ([KISDictionaryHaveKey(destDic, @"userid") isEqualToString:@"10000"]) {
             cell.authImage.hidden = NO;
             cell.authImage.image = KUIImage(@"red_auth");
@@ -418,7 +418,7 @@
         if ([nickName isEqualToString:@""]) {
             nickName = KISDictionaryHaveKey(tempDic, @"nickname");
         }
-        cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" :nickName;
+        cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]] ? @"我" :nickName;
         
         if ([KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:@"10000"]) {
             cell.authImage.hidden = NO;
@@ -540,7 +540,7 @@
     NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"userimg")];
 
     detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-    detailVC.nickNameStr = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
+    detailVC.nickNameStr = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
 
     
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"createDate")];
@@ -600,7 +600,7 @@
     NSDictionary* tempDict = [m_newsArray objectAtIndex:rowIndex];
     if ([KISDictionaryHaveKey(tempDict, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
         NSDictionary* destDic = KISDictionaryHaveKey(tempDict, @"destUser");
-//        if ([KISDictionaryHaveKey(destDic, @"userid") isEqualToString:[DataStoreManager getMyUserID]]) {
+//        if ([KISDictionaryHaveKey(destDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //            MyProfileViewController * myP = [[MyProfileViewController alloc] init];
 //            [self.navigationController pushViewController:myP animated:YES];
 //        }
@@ -618,7 +618,7 @@
     }
     else
     {
-//        if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[DataStoreManager getMyUserID]]) {
+//        if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //            MyProfileViewController * myP = [[MyProfileViewController alloc] init];
 //            [self.navigationController pushViewController:myP animated:YES];
 //        }

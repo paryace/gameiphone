@@ -295,7 +295,7 @@
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         NewsViewController* VC = [[NewsViewController alloc] init];
         VC.myViewType = FRIEND_NEWS_TYPE;
-        VC.userId = [DataStoreManager getMyUserID];//好友动态
+        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];//好友动态
         [self.navigationController pushViewController:VC animated:YES];
 
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];

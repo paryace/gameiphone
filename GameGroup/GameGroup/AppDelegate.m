@@ -50,7 +50,6 @@
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
-        NSLog(@"getMyUserID: %@", [DataStoreManager getMyUserID]);
         [[ReconnectMessage singleton]getChatServer];
     }
    

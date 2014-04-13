@@ -486,7 +486,7 @@
         dic = [m_countryArray objectAtIndex:indexPath.row];
     }
     
-//    if ([KISDictionaryHaveKey(dic, @"userid") isEqualToString:[DataStoreManager getMyUserID]]) {
+//    if ([KISDictionaryHaveKey(dic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
 //        [self.navigationController popToRootViewControllerAnimated:YES];
 //        return;
 //    }

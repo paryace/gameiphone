@@ -1801,27 +1801,6 @@ return @"";
     }];
 }
 
-+(NSString *)getMyUserID
-{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
-    DSFriends * dFriend = [DSFriends MR_findFirstWithPredicate:predicate];
-    if (dFriend) {
-        return dFriend.userId;
-    }
-    else
-        return @"";
-}
-+(void)storeMyUserID:(NSString *)theID
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];//［c］忽略大小写
-        DSFriends * dFriend = [DSFriends MR_findFirstWithPredicate:predicate];
-        if (!dFriend)
-            dFriend = [DSFriends MR_createInContext:localContext];
-        //dFriend.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];
-        dFriend.userId = theID;
-    }];
-}
 +(NSString *)queryNickNameForUser:(NSString *)userName
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
@@ -1908,7 +1887,7 @@ return @"";
 
 +(NSString *)querySelfUserName
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[DataStoreManager getMyUserID]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     DSFriends * dFriend = [DSFriends MR_findFirstWithPredicate:predicate];
     if (dFriend) {//自己
         return  dFriend.userName;
@@ -2280,7 +2259,7 @@ return @"";
 #pragma mark -清理索引
 + (NSString*)getMyNameIndex
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[DataStoreManager getMyUserID]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     NSArray * dFriend = [DSFriends MR_findAllWithPredicate:predicate];
     if ([dFriend count] != 0) {
         return [[dFriend objectAtIndex:0] nameIndex];

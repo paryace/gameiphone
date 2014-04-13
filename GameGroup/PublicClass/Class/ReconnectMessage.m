@@ -171,7 +171,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [locationDict setObject:appType forKey:@"appType"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict setObject:@"140" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
@@ -201,7 +201,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict setObject:@"116" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -218,8 +218,8 @@ static ReconnectMessage *my_reconectMessage = NULL;
 -(void)logInToChatServer
 {
     NSLog(@"尝试登陆xmpp");
-    NSLog(@"%@",[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
-    [self.xmpphelper connect:[[DataStoreManager getMyUserID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
+    NSLog(@"%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
+    [self.xmpphelper connect:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
         
         NSLog(@"登陆成功xmpp");
         [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil];

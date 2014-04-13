@@ -58,7 +58,7 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"125" forKey:@"method"];

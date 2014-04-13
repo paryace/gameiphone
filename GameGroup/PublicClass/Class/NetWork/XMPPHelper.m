@@ -239,8 +239,8 @@
     //发送给谁
     [mes addAttributeWithName:@"to" stringValue:sender];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
-    NSLog(@"to---%@",[[DataStoreManager getMyUserID] stringByAppendingString:[[TempData sharedInstance] getDomain]]);
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+    NSLog(@"to---%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]);
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
     //    NSString* uuid = [[GameCommon shareGameCommon] uuid];

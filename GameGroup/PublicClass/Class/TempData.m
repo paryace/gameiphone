@@ -70,7 +70,7 @@ static TempData *sharedInstance=nil;
 -(NSString*)getMyUserID
 {
     if (!self.myUserID) {
-        self.myUserID = [DataStoreManager getMyUserID];
+        self.myUserID = [[NSUserDefaults standardUserDefaults]objectForKey:@"MyUserId"];
     }
     return self.myUserID;
 }

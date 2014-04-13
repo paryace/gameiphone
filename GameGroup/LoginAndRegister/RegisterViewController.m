@@ -1139,8 +1139,7 @@ BOOL validateMobile(NSString* mobile) {
 //        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:m_passwordText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];
-        [DataStoreManager storeMyUserID:[[dic objectForKey:@"token"] objectForKey:@"userid"]];
-        
+       
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
        
        
@@ -1168,7 +1167,7 @@ BOOL validateMobile(NSString* mobile) {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSDictionary * locationDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f",userLongitude],@"longitude",[NSString stringWithFormat:@"%f",userLatitude],@"latitude", nil];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict setObject:@"108" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];

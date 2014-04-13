@@ -110,8 +110,8 @@
     //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]==NULL) {
     //        NSLog(@"空走不走");
     NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
-    [paramDict setObject:[DataStoreManager getMyUserID] forKey:@"userid"];
-    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
+    AppDelegate *app = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showAlertViewWithTitle:@"提示" message:@"请求数据失败，请检查网络" buttonTitle:@"确定"];
         return;
