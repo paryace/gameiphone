@@ -369,7 +369,7 @@
         [m_sortTypeDic setObject:sort forKey:sorttype_1];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
         
         //        [hud hide:YES];
@@ -466,7 +466,7 @@
 
             [m_attentionheader endRefreshing];
 
-            [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:@"2"];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -517,34 +517,41 @@
     
     //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+     
+        [m_fansheader endRefreshing];
+        [m_fansfooter endRefreshing];
+
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
-                //  [refreshView stopLoading:YES];
-                // [slimeView_fans endRefresh];
                 return;
             }
             if (m_currentPage == 0) {//默认展示存储的
-                //                [m_fansArray removeAllObjects];
-                //                [m_fansDict removeAllObjects];
-                
                 [m_otherSortFansArray removeAllObjects];
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
                 
-                [m_myFansTableView reloadData];
-                
-                [DataStoreManager cleanFansList];
-                [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"shiptype"]];
+                [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             else
-                [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"shiptype"]];
+            {
+                [m_otherSortAttentionArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+           
+
             
-            m_currentPage ++;//从0开始
             
+                [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:@"3"];
+            
+           
+            
+            }
+             m_currentPage ++;//从0开始
+            [m_fansheader endRefreshing];
+            [m_fansfooter endRefreshing];
+            [m_myFansTableView reloadData];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -557,16 +564,6 @@
     //    [DataStoreManager cleanFansList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
-        //        if ([fansList isKindOfClass:[NSDictionary class]]) {
-        //            NSArray* keyArr = [fansList allKeys];
-        //            for (NSString* key in keyArr) {
-        //                for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
-        ////                    [dict setObject:key forKey:@"nameindex"];
-        //                    [DataStoreManager saveUserFansInfo:dict];
-        //                }
-        //            }
-        //        }
-        //        else
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];;
@@ -577,16 +574,11 @@
                 }
             }
         }
-        //先存后取
-        //        m_fansDict = [DataStoreManager queryAllFans];
-        //        m_fansArray = [NSMutableArray arrayWithArray:[m_fansDict allKeys]];
-        //        [m_fansArray sortUsingSelector:@selector(compare:)];
         m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];
 
-            [m_myFansTableView reloadData];
             [self refreshTopLabel];
         });
     });
@@ -701,16 +693,6 @@
 #pragma mark - 搜索
 -(void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
 {
-    //    if (KISHighVersion_7) {
-    //        [searchBar setFrame:CGRectMake(0, 20, 320, 44)];
-    //        searchBar.backgroundImage = [UIImage imageNamed:@"top.png"];
-    //        [UIView animateWithDuration:0.3 animations:^{
-    ////            [m_messageTable setFrame:CGRectMake(0, 20, 320, self.view.frame.size.height- 50 - startX)];
-    ////            m_messageTable.contentOffset = CGPointMake(0, -20);
-    //        } completion:^(BOOL finished) {
-    //
-    //        }];
-    //    }
 }
 
 -(void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller
@@ -720,22 +702,9 @@
 
 -(void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller
 {
-    //    if (KISHighVersion_7) {
-    //        [UIView animateWithDuration:0.2 animations:^{
-    //            [searchBar setFrame:CGRectMake(0, 0, 320, 44)];
-    //            //            [m_messageTable setFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - 50 - startX)];
-    //        } completion:^(BOOL finished) {
-    //            searchBar.backgroundImage = nil;
-    //        }];
-    //    }
 }
 -(void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView
 {
-    //    if (KISHighVersion_7) {
-    //        //        tableView.backgroundColor = [UIColor grayColor];
-    //        [tableView setFrame:CGRectMake(0, 64, 320, self.view.frame.size.height - 50 - 64)];
-    //        //        [tableView setContentOffset:CGPointMake(0, 20)];
-    //    }
 }
 
 - (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)tableView
@@ -766,24 +735,6 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@",searchBar.text];
-    //    NSLog(@"%@",searchBar.text);
-    //    switch (m_segmentClickIndex) {
-    //        case kSegmentFrinds:
-    //            searchResultArray = [m_friendsArray filteredArrayUsingPredicate:resultPredicate];
-    //            break;
-    //        case kSegmentAttention:
-    //            searchResultArray = [m_attentionsArray filteredArrayUsingPredicate:resultPredicate];
-    //            break;
-    //        case kSegmentFans:
-    //            searchResultArray = [m_fansArray filteredArrayUsingPredicate:resultPredicate];
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-    //        return [searchResultArray count];
-    //    }
     if (tableView == m_myTableView) {
         if(![[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"])
         {
@@ -822,25 +773,6 @@
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary * tempDict;
-    /*
-     //    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-     //        switch (m_segmentClickIndex) {
-     //            case kSegmentFrinds:
-     //                tempDict = [m_friendDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
-     //                break;
-     //            case kSegmentAttention:
-     //                tempDict = [m_attentionDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
-     //                break;
-     //            case kSegmentFans:
-     //                tempDict = [m_fansDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
-     //                break;
-     //            default:
-     //                break;
-     //        }
-     //    }
-     //    else
-     //    {
-     */
     if (tableView == m_myTableView) {
         if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"]) {//按字母排
             tempDict = [m_friendDict objectForKey:[[[m_sectionArray_friend objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
@@ -861,7 +793,6 @@
     {
         tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
     }
-    //    }
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];

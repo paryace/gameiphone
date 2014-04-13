@@ -177,7 +177,8 @@
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:@"MyToken"];
         [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
         
-        
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"address") forKey:@"host"];
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name") forKey:@"domain"];
         
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
@@ -212,6 +213,9 @@
 
 - (void)loginSuccess
 {
+    
+    
+    
     [self dismissViewControllerAnimated:NO completion:^{
         
     }];

@@ -970,7 +970,7 @@ return @"";
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shiptype];
-        DSuser * dUserManager = [DSAttentions MR_findFirstWithPredicate:predicate];
+        DSuser * dUserManager = [DSuser MR_findFirstWithPredicate:predicate];
         if (dUserManager) {
             [dUserManager MR_deleteInContext:localContext];
         }
