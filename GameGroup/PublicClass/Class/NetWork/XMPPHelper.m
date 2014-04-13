@@ -31,8 +31,11 @@
 
     self.xmppStream.enableBackgroundingOnSocket = YES;
     self.xmppReconnect = [[XMPPReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
+    [self.xmppReconnect setAutoReconnect:YES];
     [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
     [self.xmppReconnect activate:self.xmppStream];
+    
+
     
 }
 - (void)goOnline {
@@ -58,7 +61,13 @@
         NSLog(@"连接不成功");
     }
     
+    [self.xmppStream setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]]] ;
+    NSString* host=[[NSUserDefaults standardUserDefaults] objectForKey:@"host"];
     
+    NSArray* hostArray = [host componentsSeparatedByString:@":"];
+    host = [hostArray objectAtIndex:0];
+    
+    [self.xmppStream setHostName:host];
 
     //连接服务器
     NSError *err = nil;
@@ -164,8 +173,8 @@
     //发送给谁
     [mes addAttributeWithName:@"to" stringValue:sender];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
-    NSLog(@"to---%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[TempData sharedInstance] getDomain]]);
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    NSLog(@"to---%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]);
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
     //    NSString* uuid = [[GameCommon shareGameCommon] uuid];

@@ -13,7 +13,6 @@
 
 - (BOOL)connectWithTimeout:(NSTimeInterval)timeout error:(NSError **)errPtr{
     
-    __block BOOL result = NO;
 
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -23,13 +22,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"服务器数据 %@", responseObject);
         
-        [self setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]]] ;
-        
-        
-        
-        [self setHostName:KISDictionaryHaveKey(responseObject, @"address")];
-
-        result=YES;
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"address") forKey:@"host"];
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"name") forKey:@"domain"];
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
 
@@ -37,7 +31,9 @@
 
     }];
     
-    return result;
+    return [super connectWithTimeout:timeout error:errPtr];
+    
+
 
 }
 @end

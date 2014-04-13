@@ -206,8 +206,8 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"服务器数据 %@", responseObject);
 
-        [[TempData sharedInstance] SetServer:KISDictionaryHaveKey(responseObject, @"address") TheDomain:KISDictionaryHaveKey(responseObject, @"name")];//得到域名
-        [self logInToChatServer];
+//        [[TempData sharedInstance] SetServer:KISDictionaryHaveKey(responseObject, @"address") TheDomain:KISDictionaryHaveKey(responseObject, @"name")];//得到域名
+//        [self logInToChatServer];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"connectFail" object:nil];
@@ -217,7 +217,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
 -(void)logInToChatServer
 {
     NSLog(@"尝试登陆xmpp");
-    NSLog(@"%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
+//    NSLog(@"%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
 //    [self.xmpphelper connect:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] host:[[TempData sharedInstance] getServer] success:^(void){
 //        
 //        NSLog(@"登陆成功xmpp");

@@ -10,8 +10,6 @@
 
 @interface TempData : NSObject
 {
-    NSString * serverAddress;
-    NSString * serverDomain;
 
     double latitude;
     double longitude;
@@ -27,9 +25,6 @@
 @property(nonatomic,assign)BOOL isSoundOpen;//是否打开声音
 @property(nonatomic,assign)BOOL isVibration;//是否打开震动
 + (id)sharedInstance;
--(NSString *)getServer;
--(NSString *)getDomain;
--(void)SetServer:(NSString *)server TheDomain:(NSString *)domain;
 -(void)setLat:(double)lat Lon:(double)lon;
 -(double)returnLat;//经度
 -(double)returnLon;//纬度

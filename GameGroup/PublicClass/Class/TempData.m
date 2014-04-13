@@ -26,8 +26,6 @@ static TempData *sharedInstance=nil;
 -(void)initThis
 {
     self.wxAlreadydidClickniehe = YES;
-    serverAddress = @"";
-    serverDomain = @"";
     latitude = 0;
     longitude = 0;
     self.registerNeedMsg = YES;
@@ -35,23 +33,6 @@ static TempData *sharedInstance=nil;
     self.isSoundOpen =YES;
     self.isVibration = YES;
     self.token=[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"];
-}
--(void)SetServer:(NSString *)server TheDomain:(NSString *)idomain
-{
-    serverAddress = server;
-    serverDomain = idomain;
-}
--(NSString *)getServer
-{
-    NSLog(@"地址：%@", serverAddress);
-//    return @"192.168.0.133:5222";
-    return serverAddress;
-}
-
--(NSString *)getDomain
-{
-    NSLog(@"域名 %@", serverDomain);
-    return [NSString stringWithFormat:@"%@",serverDomain];
 }
 
 -(void)setLat:(double)lat Lon:(double)lon
