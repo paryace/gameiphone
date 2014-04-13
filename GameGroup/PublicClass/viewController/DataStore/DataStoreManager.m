@@ -986,8 +986,6 @@ return @"";
         }
 }
 
-
-
 +(void)deleteAllUser
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -998,43 +996,6 @@ return @"";
     }];
 }
 
-#pragma mark - 存储“好友”的关注人列表
-//+(void)saveUserAttentionWithFriendList:(NSString*)userid
-//{
-//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
-//    DSFriends * dUser = [DSFriends MR_findFirstWithPredicate:predicate];
-//    if (!dUser) {
-//        return;
-//    }
-//    NSString * myUserName = [GameCommon getNewStringWithId:dUser.userName];
-//    NSString * nickName = [GameCommon getNewStringWithId:dUser.nickName];
-//    NSString * gender = [GameCommon getNewStringWithId:dUser.gender];
-//    NSString * headImgID = [GameCommon getNewStringWithId:dUser.headImgID];
-//    NSString * age = [GameCommon getNewStringWithId:dUser.age];
-//    NSString * userId = [GameCommon getNewStringWithId:dUser.userId];
-//    NSString * alias = [GameCommon getNewStringWithId:dUser.remarkName];//别名
-//    NSString * refreshTime = [GameCommon getNewStringWithId:dUser.refreshTime];
-//    NSString * distance = [GameCommon getNewStringWithId:dUser.distance];
-//    NSString * title = [GameCommon getNewStringWithId:dUser.achievement];
-//    NSString * titleLevel = [GameCommon getNewStringWithId:dUser.achievementLevel];
-//    
-//    NSDictionary* titleData = [NSDictionary dictionaryWithObjectsAndKeys:title,@"title",titleLevel,@"rarenum", nil];
-//    NSDictionary* titleObjDic = [NSDictionary dictionaryWithObject:titleData forKey:@"titleObj"];
-//
-//    NSMutableDictionary* myDic = [NSMutableDictionary dictionaryWithCapacity:1];
-//    [myDic setObject:myUserName forKey:@"username"];
-//    [myDic setObject:nickName forKey:@"nickname"];
-//    [myDic setObject:gender forKey:@"gender"];
-//    [myDic setObject:headImgID forKey:@"img"];
-//    [myDic setObject:age forKey:@"age"];
-//    [myDic setObject:userId forKey:@"id"];
-//    [myDic setObject:alias forKey:@"alias"];
-//    [myDic setObject:refreshTime forKey:@"updateUserLocationDate"];
-//    [myDic setObject:distance forKey:@"distance"];
-//    [myDic setObject:titleObjDic forKey:@"title"];
-//
-//    [DataStoreManager saveUserAttentionInfo:myDic];
-//}
 
 +(void)saveUserAttentionInfo:(NSDictionary *)myInfo
 {
@@ -1143,106 +1104,6 @@ return @"";
     
 }
 
-
-+(NSMutableDictionary *)queryAllAttention
-{
-    NSArray * fri = [DSuser MR_findAll];
-    NSMutableArray * nameKeyArray = [NSMutableArray array];
-    NSMutableDictionary * theDict = [NSMutableDictionary dictionary];
-    for (int i = 0; i<fri.count; i++) {
-        NSString * nameK = [[fri objectAtIndex:i]nameKey];
-        if (nameK)
-            [nameKeyArray addObject:nameK];
-        NSString * userName = [[fri objectAtIndex:i] userName];
-        NSString * userid = [[fri objectAtIndex:i] userId];
-        NSString * nickName = [[fri objectAtIndex:i] nickName];
-        NSString * remarkName = [[fri objectAtIndex:i] remarkName];
-        NSString * headImg = [DataStoreManager queryFirstHeadImageForUser_attention:userid];
-        NSString * age = [[fri objectAtIndex:i] age];
-        NSString * sex = [[fri objectAtIndex:i] sex];//性别
-        NSString * achievement = [[fri objectAtIndex:i] achievement];//头衔
-        NSString * achievementLevel = [[fri objectAtIndex:i] achievementLevel];//头衔
-        NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
-        double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]&&nameK) {
-            NSMutableDictionary * friendDict = [NSMutableDictionary dictionary];
-            [friendDict setObject:userName forKey:@"username"];
-            [friendDict setObject:userid forKey:@"userid"];
-            [friendDict setObject:nickName?nickName:@"" forKey:@"nickname"];
-            if (![remarkName isEqualToString:@""]) {
-                [friendDict setObject:remarkName forKey:@"displayName"];
-            }
-            else if(![nickName isEqualToString:@""]){
-                [friendDict setObject:nickName forKey:@"displayName"];
-            }
-            else
-            {
-                [friendDict setObject:userName forKey:@"displayName"];
-            }
-            [friendDict setObject:headImg?headImg:@"" forKey:@"img"];
-            [friendDict setObject:age ? age:@"" forKey:@"age"];
-            [friendDict setObject:sex ? sex:@"" forKey:@"sex"];
-            [friendDict setObject:achievement ? achievement:@"" forKey:@"achievement"];
-            [friendDict setObject:achievementLevel ? achievementLevel:@"" forKey:@"achievementLevel"];
-            [friendDict setObject:modTime ? modTime:@"" forKey:@"updateUserLocationDate"];
-            [friendDict setObject:[NSString stringWithFormat:@"%.f", distance] forKey:@"distance"];
-
-            [theDict setObject:friendDict forKey:nameK];
-        }
-    }
-    return theDict;
-}
-
-+(NSMutableArray*)queryAllAttentionWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend
-{
-    NSArray * fri = [DSAttentions MR_findAllSortedBy:sorttype ascending:ascend];
-    NSMutableArray * nameKeyArray = [NSMutableArray array];
-    NSMutableArray * theArr = [NSMutableArray array];
-    for (int i = 0; i<fri.count; i++) {
-        NSString * nameK = [[fri objectAtIndex:i]nameKey];
-        if (nameK)
-            [nameKeyArray addObject:nameK];
-        NSString * userName = [[fri objectAtIndex:i] userName];
-        NSString * userid = [[fri objectAtIndex:i] userId];
-        NSString * nickName = [[fri objectAtIndex:i] nickName];
-        NSString * remarkName = [[fri objectAtIndex:i] remarkName];
-        NSString * headImg = [DataStoreManager queryFirstHeadImageForUser_attention:userid];
-        NSString * age = [[fri objectAtIndex:i] age];
-        NSString * sex = [[fri objectAtIndex:i] sex];//性别
-        NSString * achievement = [[fri objectAtIndex:i] achievement];//头衔
-        NSString * achievementLevel = [[fri objectAtIndex:i] achievementLevel];//头衔
-        NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
-        double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
-
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
-            NSMutableDictionary * theDict = [NSMutableDictionary dictionary];
-            [theDict setObject:userName forKey:@"username"];
-            [theDict setObject:userid forKey:@"userid"];
-            [theDict setObject:nickName?nickName:@"" forKey:@"nickname"];
-            if (![remarkName isEqualToString:@""]) {
-                [theDict setObject:remarkName forKey:@"displayName"];
-            }
-            else if(![nickName isEqualToString:@""]){
-                [theDict setObject:nickName forKey:@"displayName"];
-            }
-            else
-            {
-                [theDict setObject:userName forKey:@"displayName"];
-            }
-            [theDict setObject:headImg?headImg:@"" forKey:@"img"];
-            [theDict setObject:age ? age:@"" forKey:@"age"];
-            [theDict setObject:sex ? sex:@"" forKey:@"sex"];
-            [theDict setObject:achievement ? achievement:@"" forKey:@"achievement"];
-            [theDict setObject:achievementLevel ? achievementLevel:@"" forKey:@"achievementLevel"];
-            [theDict setObject:modTime ? modTime:@"" forKey:@"updateUserLocationDate"];
-            [theDict setObject:[NSString stringWithFormat:@"%.f", distance] forKey:@"distance"];
-
-            [theArr addObject:theDict];
-        }
-    }
-    return theArr;
-}
-
 +(NSString *)queryFirstHeadImageForUser_attention:(NSString *)userId
 {
     if ([userId isEqualToString:@"123456789"]) {
@@ -1258,20 +1119,10 @@ return @"";
         if (range.location!=NSNotFound) {
             NSArray *imageArray = [dUser.headImgID componentsSeparatedByString:@","];
             
-//            NSArray *arr = [[imageArray objectAtIndex:0] componentsSeparatedByString:@"_"];
-//            if (arr.count>1) {
-//                return [arr objectAtIndex:0];
-//            }
-//            else
                 return [imageArray objectAtIndex:0];
         }
         else
         {
-//            NSArray *arr = [dUser.headImgID componentsSeparatedByString:@"_"];
-//            if (arr.count>1) {
-//                return [arr objectAtIndex:0];
-//            }
-//            else
                 return dUser.headImgID;
         }
     }

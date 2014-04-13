@@ -458,8 +458,14 @@
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
         [m_sortTypeDic setObject:sort forKey:sorttype_2];
-        NSLog(@"m_sortTypeDic%@",m_sortTypeDic);
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
+            [m_attentionsArray sortUsingSelector:@selector(compare:)];
+            [m_myAttentionsTableView reloadData];
+
+            [m_attentionheader endRefreshing];
+
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
         
@@ -488,23 +494,6 @@
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
-        //先存后取
-        m_attentionDict = [DataStoreManager queryAllAttention];
-        m_sectionArray_attention = [DataStoreManager queryAttentionSections];
-        [m_sectionIndexArray_attention removeAllObjects];
-        for (int i = 0; i < m_sectionArray_attention.count; i++) {
-            [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
-        }
-        m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-        [m_attentionsArray sortUsingSelector:@selector(compare:)];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [hud hide:YES];
-            [m_attentionheader endRefreshing];
-
-            [m_myAttentionsTableView reloadData];
-            [self refreshTopLabel];
-        });
     });
 }
 
@@ -635,14 +624,14 @@
     else if(kSegmentAttention == tabIndex)
     {
         if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"]) {
-            m_attentionDict = [DataStoreManager queryAllAttention];
-            m_sectionArray_attention = [DataStoreManager queryAttentionSections];
+          //  m_attentionDict = [DataStoreManager queryAllAttention];
+          //  m_sectionArray_attention = [DataStoreManager queryAttentionSections];
             [m_sectionIndexArray_attention removeAllObjects];
             for (int i = 0; i < m_sectionArray_attention.count; i++) {
                 [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
             }
-            m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-            [m_attentionsArray sortUsingSelector:@selector(compare:)];
+         //   m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
+         //   [m_attentionsArray sortUsingSelector:@selector(compare:)];
         }
         else
         {
