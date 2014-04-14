@@ -177,7 +177,7 @@
     NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [tempDic addEntriesFromDictionary:[m_tableData objectAtIndex:row]];
     
-    if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(tempDic, @"userid")]) {
+    if ([DataStoreManager ifIsShipTypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:@"1"]) {
         [self showAlertViewWithTitle:@"提示" message:@"您们已是朋友关系，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
@@ -185,7 +185,7 @@
         [m_myTableView reloadData];
         return;
     }
-    if ([DataStoreManager ifIsAttentionWithUserId:KISDictionaryHaveKey(tempDic, @"userid")]) {
+    if ([DataStoreManager ifIsShipTypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:@"2"]) {
         [self showAlertViewWithTitle:@"提示" message:@"您已关注过了，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];

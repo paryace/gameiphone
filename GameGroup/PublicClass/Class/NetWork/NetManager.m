@@ -165,7 +165,7 @@ NSString * gen_uuid()
     UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
     NSData *imageData = UIImageJPEGRepresentation(upImage, 1);
 //    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"N",@"compressImage",@"N",@"addTopImage", nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"], @"userid",@"album",@"type",@"Y",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
+    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"album",@"type",@"Y",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
 
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
@@ -291,7 +291,7 @@ NSString * gen_uuid()
     UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
     NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
 //    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"OK",@"compressImage",@"N",@"addTopImage", nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"], @"userid",@"album",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
+    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"album",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
 
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
@@ -327,7 +327,7 @@ NSString * gen_uuid()
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
     NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"], @"userid",@"girl",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
+    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"girl",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
     
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];

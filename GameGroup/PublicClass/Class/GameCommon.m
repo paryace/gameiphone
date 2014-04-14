@@ -531,7 +531,7 @@ static GameCommon *my_gameCommon = NULL;
 //    [SFHFKeychainUtils deleteItemForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil];
    // [SFHFKeychainUtils deleteItemForUsername:PASSWORD andServiceName:LOCALACCOUNT error:nil];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMyToken];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MyUserId"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMYUSERID];
     AppDelegate* app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     TempData * tempData = [TempData sharedInstance];
     tempData.myUserID = nil;

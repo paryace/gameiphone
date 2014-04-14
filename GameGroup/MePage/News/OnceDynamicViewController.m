@@ -300,7 +300,7 @@
 
 - (void)heardImgClick:(id)sender
 {
-//    if ([KISDictionaryHaveKey(self.dataDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
+//    if ([KISDictionaryHaveKey(self.dataDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
 //        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
 //        [self.navigationController pushViewController:myP animated:YES];
 //    }
@@ -318,7 +318,7 @@
 - (void)zanButtonClick:(id)sender
 {
     NSLog(@"我要赞啦～～～～");
-    if ([KISDictionaryHaveKey(self.dataDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
+    if ([KISDictionaryHaveKey(self.dataDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
         [self showAlertViewWithTitle:@"提示" message:@"您不能对自己进行赞" buttonTitle:@"确定"];
         return;
     }
@@ -745,7 +745,7 @@
         //发送给谁
         [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
         //由谁发送
-        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
         
         [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
         [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里

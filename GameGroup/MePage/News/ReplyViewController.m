@@ -401,7 +401,7 @@
         }
     }
     
-    cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
+    cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
     cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
     cell.commentStr = KISDictionaryHaveKey(tempDic, @"msg");
@@ -417,7 +417,7 @@
     [m_replyTabel deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary* tempDict = [m_dataReply objectAtIndex:indexPath.row];
-    //    NSString* nickName = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
+    //    NSString* nickName = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
     NSString* nickName = KISDictionaryHaveKey(tempDict, @"nickname");
     
     self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
@@ -429,7 +429,7 @@
 -(void)CellHeardButtonClick:(int)rowIndex
 {
     NSDictionary* tempDict = [m_dataReply objectAtIndex:rowIndex];
-    //    if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
+    //    if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
     //        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
     //        [self.navigationController pushViewController:myP animated:YES];
     //    }

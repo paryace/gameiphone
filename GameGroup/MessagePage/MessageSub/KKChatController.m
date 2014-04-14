@@ -93,7 +93,7 @@
     
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     DSuser *friend = [DSuser MR_findFirstWithPredicate:predicate];
     myActive = [friend.action boolValue];
     postDict = [NSMutableDictionary dictionary];
@@ -125,7 +125,7 @@
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
-    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     
     self.tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
     [self.view addSubview:self.tView];
@@ -997,8 +997,8 @@
 {
     TestViewController * detailV = [[TestViewController alloc] init];
     
-    detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];
-    detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     detailV.isChatPage = YES;
     [self.navigationController pushViewController:detailV animated:YES];
 }
@@ -1060,7 +1060,7 @@
         NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
         [mes addAttributeWithName:@"type" stringValue:@"chat"];
         [mes addAttributeWithName:@"to" stringValue:[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
-        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
         [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
         [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
         [mes addAttributeWithName:@"msgTime" stringValue:sendtime];
@@ -1214,7 +1214,7 @@
     //        //由谁发送
     //        [mes addAttributeWithName:@"from" stringValue:[[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
     
     [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
@@ -1352,7 +1352,7 @@
     //发送给谁
     [mes addAttributeWithName:@"to" stringValue:[sender stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
     
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];

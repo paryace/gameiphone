@@ -16,7 +16,7 @@
 {}
 + (void)reSetMyAction:(BOOL)action
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     DSuser *dUser = [DSuser MR_findFirstWithPredicate:predicate];
     dUser.action = [NSNumber numberWithBool:action];
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
@@ -689,7 +689,7 @@
         NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];
         NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];
         NSString * gender = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gender"]];
-        BOOL action =YES;
+        BOOL action;
         if ([[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]]intValue] == 2) {
             action =YES;
         }else{
@@ -770,7 +770,7 @@
                     nameIndex = [[nameKey substringToIndex:1] uppercaseString];
                     dUser.nameIndex = nameIndex;
                 }
-                if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]&&nickName.length>=1) {
+                if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&nickName.length>=1) {
                     
                         if ([dUser.shiptype isEqualToString:@"1"]) {
                             NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
@@ -862,7 +862,7 @@
         NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
         double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
         
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
+        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             NSMutableDictionary * theDict = [NSMutableDictionary dictionary];
             [theDict setObject:userName forKey:@"username"];
             [theDict setObject:userid forKey:@"userid"];
@@ -923,7 +923,7 @@
             NSString * achievementLevel = [[fri objectAtIndex:i] achievementLevel];//头衔
             NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
             double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
-            if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]&&nameK) {
+            if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&nameK) {
                 NSMutableDictionary * friendDict = [NSMutableDictionary dictionary];
                 [friendDict setObject:userName forKey:@"username"];
                 [friendDict setObject:userid forKey:@"userid"];
@@ -1062,7 +1062,7 @@ return @"";
             NSString *shiptype =[[fri objectAtIndex:i]shiptype];
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]&&[shiptype isEqualToString:@"2"]) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&[shiptype isEqualToString:@"2"]) {
                 [nameKeyArray addObject:nameK];
             }
             
@@ -1152,7 +1152,7 @@ return @"";
         NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
         double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
         NSLog(@"昵称：%@ 距离：%.f",nickName, distance);
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyuserId"]]) {
+        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             NSMutableDictionary * theDict = [NSMutableDictionary dictionary];
             [theDict setObject:userName forKey:@"username"];
             [theDict setObject:userid forKey:@"userid"];
@@ -1181,7 +1181,12 @@ return @"";
     return theArr;
 }
 
-#pragma mark - 存储“好友”的粉丝人列表
++(DSuser *)getInfoWithUserId:(NSString *)userId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+   return [DSuser MR_findFirstWithPredicate:predicate];
+}
+
 
 +(NSMutableArray *)queryFansSections
 {
@@ -1202,7 +1207,7 @@ return @"";
         for (int i = 0; i<fri.count; i++) {
             NSString * thename = [[fri objectAtIndex:i]userName];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
                 [nameKeyArray addObject:nameK];
             }
             
@@ -1271,7 +1276,7 @@ return @"";
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
             
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]]&&[shipType isEqualToString:@"1"]) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&[shipType isEqualToString:@"1"]) {
                 [nameKeyArray addObject:nameK];//
             }
         
@@ -1347,7 +1352,7 @@ return @"";
         NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
         double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
 
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]])
+        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
         {
             NSMutableDictionary* theDict = [NSMutableDictionary dictionary];
 
@@ -1378,7 +1383,16 @@ return @"";
     return theArr;
 }
 
-
++(BOOL)ifIsShipTypeWithUserId:(NSString*)userId type:(NSString*)shiptype
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+    DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
+    if ([dUser.shiptype isEqualToString:shiptype]) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
 
 #pragma mark -
 +(NSString *)convertChineseToPinYin:(NSString *)chineseName
@@ -1472,7 +1486,7 @@ return @"";
 
 +(NSString *)querySelfUserName
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {//自己
         return  dUser.userName;
@@ -1485,7 +1499,7 @@ return @"";
 +(void)saveMyBackgroungImg:(NSString*)backgroundImg
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
         if (!dUser)
             dUser = [DSuser MR_createInContext:localContext];
@@ -1517,7 +1531,7 @@ return @"";
 +(NSDictionary *)queryMyInfo
 {
     NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {
         [dict setObject:dUser.userName forKey:@"username"];
@@ -1534,20 +1548,6 @@ return @"";
     }
     return dict;
 }
-
-//- (NSString*)getAgeWithBirthday:(NSString*)birthDay
-//{
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"]];//location设置为中国
-//    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-//    
-//    
-//    NSTimeInterval dateDiff = [birthDate timeIntervalSinceNow];
-//    int age=trunc(dateDiff/(60*60*24))/365;
-//    
-//
-//}
-
 +(NSString *)toString:(id)object
 {
     return [NSString stringWithFormat:@"%@",object?object:@""];
@@ -1556,7 +1556,7 @@ return @"";
 #pragma mark -清理索引
 + (NSString*)getMyNameIndex
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     NSArray * dUser = [DSuser MR_findAllWithPredicate:predicate];
     if ([dUser count] != 0) {
         return [[dUser objectAtIndex:0] nameIndex];

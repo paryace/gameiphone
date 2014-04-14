@@ -553,7 +553,6 @@
                 }
             }
         }
-      //  m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];

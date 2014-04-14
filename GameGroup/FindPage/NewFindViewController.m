@@ -69,16 +69,9 @@
         return;
     }
     
-    
-    
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
-        m_userInfo = [DSuser MR_findFirstWithPredicate:predicate];
-    }];
-
-    
+  DSuser *dUser = [DataStoreManager getInfoWithUserId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     NSLog(@"%@",m_userInfo.action );
-    if ([m_userInfo.action boolValue]) {
+    if (dUser.action) {
         NSLog(@"已激活");
         m_activateBtn.hidden = YES;
     }else
@@ -294,7 +287,7 @@
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         NewsViewController* VC = [[NewsViewController alloc] init];
         VC.myViewType = FRIEND_NEWS_TYPE;
-        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"];//好友动态
+        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];//好友动态
         [self.navigationController pushViewController:VC animated:YES];
 
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];

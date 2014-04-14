@@ -155,7 +155,7 @@
         
         self.viewType = VIEW_TYPE_FansPage1;
     }
-    else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]])
+    else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
     {
         self.viewType = VIEW_TYPE_Self1;
     }

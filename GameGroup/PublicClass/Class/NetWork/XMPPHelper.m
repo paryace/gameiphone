@@ -61,7 +61,7 @@
         NSLog(@"连接不成功");
     }
     
-    [self.xmppStream setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]]] ;
+    [self.xmppStream setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]]] ;
     NSString* host=[[NSUserDefaults standardUserDefaults] objectForKey:@"host"];
     
     NSArray* hostArray = [host componentsSeparatedByString:@":"];
@@ -173,8 +173,8 @@
     //发送给谁
     [mes addAttributeWithName:@"to" stringValue:sender];
     //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
-    NSLog(@"to---%@",[[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]);
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    NSLog(@"to---%@",[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]);
     //    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
     [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
     //    NSString* uuid = [[GameCommon shareGameCommon] uuid];

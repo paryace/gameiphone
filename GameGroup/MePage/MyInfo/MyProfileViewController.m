@@ -38,10 +38,10 @@
     [super viewWillAppear:animated];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
     }];
-    m_titleLabel.text = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    m_titleLabel.text = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     
     if ([self.headImgArray count] == 0) {
         [self getHead:self.hostInfo.headImgID];//相册 小图_大图,

@@ -8,6 +8,6 @@
 
 #import "BaseViewController.h"
 #import "RecommendCell.h"
-@interface FriendRecommendViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+@interface FriendRecommendViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate,RecommendDelegate>
 
 @end

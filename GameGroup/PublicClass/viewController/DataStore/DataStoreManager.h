@@ -33,32 +33,32 @@
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
 + (BOOL)savedMsgWithID:(NSString*)msgId;//消息是否已存
 + (BOOL)savedNewsMsgWithID:(NSString*)msgId;//消息是否已存
-+(void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
-+(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
-+(void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
-+(void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
-+(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
-+(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
-+(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName;//修改别名
-+(NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
-+(NSString *)queryMsgHeadImageForUser:(NSString *)userid;
-+(void)blankMsgUnreadCountForUser:(NSString *)userid;
-+(NSArray *)queryUnreadCountForCommonMsg;
-+(void)deleteAllNewsMsgs;
-+(void)deleteAllThumbMsg;
-+(void)deleteThumbMsgWithSender:(NSString *)sender;
-+(void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;
++ (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
++ (void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
++ (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
++ (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
++ (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
++ (void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
++ (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName;//修改别名
++ (NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
++ (NSString *)queryMsgHeadImageForUser:(NSString *)userid;
++ (void)blankMsgUnreadCountForUser:(NSString *)userid;
++ (NSArray *)queryUnreadCountForCommonMsg;
++ (void)deleteAllNewsMsgs;
++ (void)deleteAllThumbMsg;
++ (void)deleteThumbMsgWithSender:(NSString *)sender;
++ (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;
 + (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer;//根据userid分页查询
-+(NSMutableArray *)qureyAllCommonMessages:(NSString *)userid;
-+(NSString*)queryMessageStatusWithId:(NSString*)msgUUID;
-+(void)deleteCommonMsg:(NSString *)content Time:(NSString *)theTime;
-+(void)deleteAllCommonMsg;
-+(void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
-+(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
-+(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;
-+(NSArray *)qureyAllNewsMessage;
-+(NSArray *)queryAllReceivedHellos;
-+(NSDictionary *)qureyLastReceivedHello;
++ (NSMutableArray *)qureyAllCommonMessages:(NSString *)userid;
++ (NSString*)queryMessageStatusWithId:(NSString*)msgUUID;
++ (void)deleteCommonMsg:(NSString *)content Time:(NSString *)theTime;
++ (void)deleteAllCommonMsg;
++ (void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
++ (NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
++ (void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;
++ (NSArray *)qureyAllNewsMessage;
++ (NSArray *)queryAllReceivedHellos;
++ (NSDictionary *)qureyLastReceivedHello;
 
 //储存所有看到过的用户信息
 +(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
@@ -68,13 +68,14 @@
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
 +(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
 +(void)deleteAllUserWithUserId:(NSString*)userid;//删除userid是这个的
-+(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type;//更改关系
++(NSMutableArray*)queryAllFansWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;//取出粉丝
++(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type;//好友关系改变的时候改变他的shiptype值
 +(void)deleteAllUserWithShipType:(NSString*)shiptype;
++(BOOL)ifIsShipTypeWithUserId:(NSString*)userId type:(NSString*)shiptype;//判断关系（好友 关注 粉丝 自己 陌生人）
++(DSuser *)getInfoWithUserId:(NSString *)userId;//用ID获得表中的某个人的信息
 
 //存储“好友”的关注人列表
 +(NSMutableArray *)queryAttentionSections;
-+(BOOL)ifIsAttentionWithUserId:(NSString*)userid;
-+(void)cleanAttentionList;//清空
 
 
 //好友
@@ -91,7 +92,6 @@
 +(void)updateFriendInfo:(NSDictionary *)userInfoDict ForUser:(NSString *)username;
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName
 +(NSString *)queryRemarkNameForUser:(NSString *)userid;//获得别名
-
 +(NSDictionary *)queryMyInfo;
 +(NSMutableDictionary *)queryOneFriendInfoWithUserName:(NSString *)userName;
 +(NSString *)qureyUnreadForReceivedHellos;

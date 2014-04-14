@@ -51,14 +51,14 @@ static TempData *sharedInstance=nil;
 -(NSString*)getMyUserID
 {
     if (!self.myUserID) {
-        self.myUserID = [[NSUserDefaults standardUserDefaults]objectForKey:@"MyUserId"];
+        self.myUserID = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     }
     return self.myUserID;
 }
 - (BOOL)isHaveLogin
 {
     //    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] && [[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] && [[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {
         return YES;
     }
     return NO;
