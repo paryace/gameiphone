@@ -106,6 +106,7 @@
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startConnect:) name:@"startConnect" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectFail:) name:@"connectFail" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdatedSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(catchStatus:) name:@"Notification_disconnect" object:nil];
@@ -177,6 +178,14 @@
 {
     self.titleLabel.text = @"消息";
     [m_messageTable reloadData];
+}
+
+#pragma mark ----开始连接xmpp服务器
+-(void)startConnect:(NSNotification*)notification
+{
+    self.titleLabel.text = @"连接中";
+    [m_messageTable reloadData];
+    
 }
 
 #pragma mark ----获取XMPP服务器失败
