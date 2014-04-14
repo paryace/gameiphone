@@ -1201,7 +1201,9 @@
                 [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-                
+                [self showMessageWindowWithContent:@"删除成功" imageType:0];
+                [self.navigationController popViewControllerAnimated:YES];
+
                 
             } failure:^(AFHTTPRequestOperation *operation, id error) {
                 addFriendBtn.userInteractionEnabled = YES;

@@ -305,21 +305,13 @@
     switch (m_segmentClickIndex) {
         case kSegmentFrinds:
         {
-            if(![[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"])
-                rowNum = [m_otherSortFriendArray count];
-            else
                 rowNum = [m_friendsArray count];
             titleLabel.text = [NSString stringWithFormat:@"好友(%d)", rowNum];
         }   break;
         case kSegmentAttention:
         {
-            if(![[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"])
-                rowNum = [m_otherSortAttentionArray count];
-            
-            else
-            {
                 rowNum = [m_attentionsArray count];
-            }
+            
             titleLabel.text = [NSString stringWithFormat:@"关注(%d)", rowNum];
         } break;
         case kSegmentFans:
@@ -472,6 +464,8 @@
         for (int i = 0; i < m_sectionArray_attention.count; i++) {
             [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
         }
+        m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
+        [m_attentionsArray sortUsingSelector:@selector(compare:)];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_attentionheader endRefreshing];
@@ -502,18 +496,18 @@
     
     //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-     
-        [m_fansheader endRefreshing];
-        [m_fansfooter endRefreshing];
-
+    
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
+                [m_fansheader endRefreshing];
+                [m_fansfooter endRefreshing];
+
                 return;
             }
             if (m_currentPage == 0) {//默认展示存储的
-                [m_otherSortFansArray removeAllObjects];
+                //[m_otherSortFansArray removeAllObjects];
                 //[m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
                 [DataStoreManager deleteAllUserWithShipType:@"3"];
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
@@ -545,7 +539,7 @@
                 
                 
                 if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
@@ -553,9 +547,9 @@
 
         dispatch_async(dispatch_get_main_queue(), ^{
             
+            [m_myFansTableView reloadData];
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];
-            [m_myFansTableView reloadData];
 
             [self refreshTopLabel];
         });

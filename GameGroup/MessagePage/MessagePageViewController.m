@@ -583,17 +583,6 @@
     }
     else if (5 == type)//打招呼
     {
-//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//            for (int i =0;i<sayhellocoArray.count;i++) {
-//                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[sayhellocoArray objectAtIndex:i]sender]];
-//                DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-//                thumbMsgs.unRead = @"0";
-//                if ([thumbMsgs.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
-//                    thumbMsgs.unRead =0;
-//                }
-//                
-//            }
-//        }];//清数字
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];

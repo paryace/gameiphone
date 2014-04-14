@@ -1133,13 +1133,16 @@ return @"";
 }
 +(NSMutableArray*)queryAllFansWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend
 {
-    NSArray * fri = [DSuser MR_findAllSortedBy:sorttype ascending:ascend];
-    NSMutableArray * nameKeyArray = [NSMutableArray array];
+    NSArray * array = [DSuser MR_findAll];
+    NSMutableArray *fri = [NSMutableArray array];
+    for (int i = 0; i <array.count; i++) {
+        DSuser *dUser = [array objectAtIndex:i];
+        if ([dUser.shiptype isEqualToString:@"3"]) {
+            [fri addObject:dUser];
+        }
+    }
     NSMutableArray * theArr = [NSMutableArray array];
     for (int i = 0; i<fri.count; i++) {
-        NSString * nameK = [[fri objectAtIndex:i]nameKey];
-        if (nameK)
-            [nameKeyArray addObject:nameK];
         NSString * userName = [[fri objectAtIndex:i] userName];
         NSString * userid = [[fri objectAtIndex:i] userId];
         NSString * nickName = [[fri objectAtIndex:i] nickName];
