@@ -125,7 +125,7 @@
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
-    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
+    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"]];
     
     self.tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
     [self.view addSubview:self.tView];

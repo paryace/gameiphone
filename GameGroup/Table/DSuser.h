@@ -28,7 +28,7 @@
 @property (nonatomic, retain) NSString * headImgID;//头像
 @property (nonatomic, retain) NSString * hobby;//--
 @property (nonatomic, retain) NSString * nameIndex;//
-@property (nonatomic, retain) NSString * nameKey;//
+@property (nonatomic, retain) NSString * nameKey;//昵称索引
 @property (nonatomic, retain) NSString * phoneNumber;//手机号
 @property (nonatomic, retain) NSString * refreshTime;//刷新时间
 @property (nonatomic, retain) NSString * remarkName;//备注名

@@ -119,7 +119,7 @@
         }
         else
         {
-            [DataStoreManager saveAttentionRemarkName:m_remarkText.text userid:self.userId];
+            [DataStoreManager saveFriendRemarkName:m_remarkText.text userid:self.userId];
         }
         if ([m_remarkText.text isEqualToString:@""]) {
             [DataStoreManager storeThumbMsgUser:self.userId nickName:self.nickName];

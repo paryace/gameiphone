@@ -119,13 +119,6 @@
     titleLabel.text = @"好友";
     [self.view addSubview:titleLabel];
     
-//    m_menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    m_menuButton.frame=CGRectMake(5, KISHighVersion_7 ? 27 : 7, 37, 30);
-//    [m_menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
-//    [m_menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
-//    [self.view addSubview:m_menuButton];
-//    [m_menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    
     m_sortTypeDic = [NSMutableDictionary dictionary];
     
     m_friendsArray = [NSMutableArray array];//搜索用
@@ -134,8 +127,6 @@
     m_attentionsArray = [NSMutableArray array];
     m_attentionDict = [NSMutableDictionary dictionary];
     
-    //    m_fansArray = [NSMutableArray array];
-    //    m_fansDict = [NSMutableDictionary dictionary];
     m_otherSortFansArray = [NSMutableArray array];
     
     m_sectionArray_friend = [NSMutableArray array];
@@ -143,9 +134,6 @@
     
     m_sectionArray_attention = [NSMutableArray array];
     m_sectionIndexArray_attention = [NSMutableArray array];
-    
-    //    m_sectionArray_fans = [NSMutableArray array];
-    //    m_sectionIndexArray_fans = [NSMutableArray array];
     
     searchResultArray = [NSMutableArray array];
     
@@ -170,6 +158,7 @@
     m_myAttentionsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX + 40, 320, self.view.frame.size.height - (40 + 50 + startX)) style:UITableViewStylePlain];
     m_myAttentionsTableView.dataSource = self;
     m_myAttentionsTableView.delegate = self;
+
     //    [self.view addSubview:m_myAttentionsTableView];//提前add会导致好友的索引无法点击
     m_myAttentionsTableView.hidden = YES;
     
@@ -177,6 +166,7 @@
     m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX + 40, 320, self.view.frame.size.height - (40 + 50 + startX)) style:UITableViewStylePlain];
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
+
     [self.view addSubview:m_myFansTableView];
     m_myFansTableView.hidden = YES;
     
@@ -372,8 +362,6 @@
             [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
         
-        //        [hud hide:YES];
-        // [slimeView_friend endRefresh];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
@@ -384,18 +372,14 @@
 
 -(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
+    [DataStoreManager deleteAllUserWithShipType:@"1"];
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([friendsList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [friendsList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                    if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"id")]) {
-                        [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(dict, @"id")];
-                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                    }else{
-                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                    }
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
@@ -407,6 +391,8 @@
         //先存后取
         m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
         m_sectionArray_friend = [DataStoreManager querySections];
+        NSLog(@"m_attentionDict___%@___%d___%d",m_friendDict,[m_friendDict allKeys].count,m_sectionArray_friend.count);
+
         [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
         for (int i = 0; i < m_sectionArray_friend.count; i++) {
             NSLog(@"qq %@ #### %@",[m_sectionArray_friend objectAtIndex:i], [[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0]);
@@ -451,13 +437,6 @@
         
         [m_sortTypeDic setObject:sort forKey:sorttype_2];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
-            m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-            [m_attentionsArray sortUsingSelector:@selector(compare:)];
-            [m_myAttentionsTableView reloadData];
-
-            [m_attentionheader endRefreshing];
-
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:@"2"];
         }
         
@@ -477,15 +456,30 @@
             NSArray* keyArr = [attentionList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
                 }
             }
         }
         else if([attentionList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in attentionList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
             }
         }
+        //先存后取
+        m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
+        NSLog(@"m_attentionDict___%@___%d",m_attentionDict,[m_attentionDict allKeys].count);
+        m_sectionArray_attention = [DataStoreManager queryAttentionSections];
+        [m_sectionIndexArray_attention removeAllObjects];
+        for (int i = 0; i < m_sectionArray_attention.count; i++) {
+            [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_attentionheader endRefreshing];
+            
+            [m_myAttentionsTableView reloadData];
+            [self refreshTopLabel];
+        });
     });
 }
 
@@ -589,8 +583,8 @@
     else if(kSegmentAttention == tabIndex)
     {
         if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"]) {
-          //  m_attentionDict = [DataStoreManager queryAllAttention];
-          //  m_sectionArray_attention = [DataStoreManager queryAttentionSections];
+            m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
+            m_sectionArray_attention = [DataStoreManager queryAttentionSections];
             [m_sectionIndexArray_attention removeAllObjects];
             for (int i = 0; i < m_sectionArray_attention.count; i++) {
                 [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
@@ -684,22 +678,11 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == m_myTableView) {
-        if(![[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"])
-        {
-            return [m_otherSortFriendArray count];
-        }
-        else
-            return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
+        return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
     }
     else if(tableView == m_myAttentionsTableView)
     {
-        //        if ([m_sectionArray_attention count] == 0) {//首次进入无数据
-        //            return 0;
-        //        }
-        if(![[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"])
-            return [m_otherSortAttentionArray count];
-        else
-            return [[[m_sectionArray_attention objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
+        return [[[m_sectionArray_attention objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
     }
     else
     {
@@ -742,7 +725,10 @@
         tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
     }
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+    NSLog(@"tempDict___%@",tempDict);
+    
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
@@ -762,7 +748,7 @@
             cell.headImageV.imageURL = nil;
         }
     }
-    cell.nameLabel.text = [tempDict objectForKey:@"remark"?@"remark":@"nickname"];
+    cell.nameLabel.text = [tempDict objectForKey:@"displayName"];
     cell.gameImg_one.image = KUIImage(@"wow");
     cell.distLabel.text = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
@@ -773,66 +759,7 @@
     [cell refreshCell];
     return cell;
 }
-/*
- - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
- {
- [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
- NSDictionary * tempDict;
- [[Custom_tabbar showTabBar] hideTabBar:YES];
- PersonDetailViewController* detailVC = [[PersonDetailViewController alloc] init];
- 
- //    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
- //        switch (m_segmentClickIndex) {
- //            case kSegmentFrinds:
- //                tempDict = [m_friendDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
- //                break;
- //            case kSegmentAttention:
- //                tempDict = [m_attentionDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
- //                break;
- //            case kSegmentFans:
- //                tempDict = [m_fansDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
- //                break;
- //            default:
- //                break;
- //        }
- //    }
- //    else
- //    {
- switch (m_segmentClickIndex) {
- case kSegmentFrinds:
- {
- if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"]) {//按字母排
- tempDict = [m_friendDict objectForKey:[[[m_sectionArray_friend objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
- }
- else
- tempDict = [m_otherSortFriendArray objectAtIndex:indexPath.row];
- detailVC.viewType = VIEW_TYPE_FriendPage;
- }  break;
- case kSegmentAttention:
- {
- if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"]) {//按字母排
- tempDict = [m_attentionDict objectForKey:[[[m_sectionArray_attention objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
- }
- else
- tempDict = [m_otherSortAttentionArray objectAtIndex:indexPath.row];
- detailVC.viewType = VIEW_TYPE_AttentionPage;
- }  break;
- case kSegmentFans:
- {
- tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
- 
- detailVC.viewType = VIEW_TYPE_FansPage;
- } break;
- default:
- break;
- }
- //    }
- detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
- detailVC.nickName = KISDictionaryHaveKey(tempDict, @"displayName");
- detailVC.isChatPage = NO;
- [self.navigationController pushViewController:detailVC animated:YES];
- }
- */
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {

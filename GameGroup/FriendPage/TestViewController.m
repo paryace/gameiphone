@@ -1258,7 +1258,7 @@
                     [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
                 }
                 
-                [DataStoreManager deleteAttentionWithUserName:self.hostInfo.userName];
+                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
                 
