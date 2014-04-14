@@ -159,7 +159,6 @@
     m_myAttentionsTableView.dataSource = self;
     m_myAttentionsTableView.delegate = self;
 
-    //    [self.view addSubview:m_myAttentionsTableView];//提前add会导致好友的索引无法点击
     m_myAttentionsTableView.hidden = YES;
     
     
