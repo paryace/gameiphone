@@ -1081,8 +1081,8 @@
 
         [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:@"1"];
         //        [GameCommon shareGameCommon].fansTableChanged = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-        
         [[GameCommon shareGameCommon] fansCountChanged:NO];
         
         if ([responseObject isKindOfClass:[NSDictionary class]])
