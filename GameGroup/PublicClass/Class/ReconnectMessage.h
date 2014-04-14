@@ -10,8 +10,6 @@
 
 @interface ReconnectMessage : NSObject
 + (ReconnectMessage*)singleton;
--(void)getChatServer;
--(void)logInToChatServer;
 -(void)sendDeviceToken;
 -(void)getFriendByHttp;
 @property (strong,nonatomic) XMPPHelper * xmpphelper;

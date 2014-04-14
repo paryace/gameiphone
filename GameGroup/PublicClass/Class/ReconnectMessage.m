@@ -195,39 +195,4 @@ static ReconnectMessage *my_reconectMessage = NULL;
     }
 }
 
-#pragma mark 登陆xmpp
-- (void)getChatServer//自动登陆情况下获得服务器
-{
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
-    [postDict setObject:@"116" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"服务器数据 %@", responseObject);
-
-//        [[TempData sharedInstance] SetServer:KISDictionaryHaveKey(responseObject, @"address") TheDomain:KISDictionaryHaveKey(responseObject, @"name")];//得到域名
-//        [self logInToChatServer];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectFail" object:nil];
-    }];
-    
-}
--(void)logInToChatServer
-{
-    NSLog(@"尝试登陆xmpp");
-//    NSLog(@"%@",[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]]);
-//    [self.xmpphelper connect:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingFormat:@"%@",[[TempData sharedInstance] getDomain]] password:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] host:[[TempData sharedInstance] getServer] success:^(void){
-//        
-//        NSLog(@"登陆成功xmpp");
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil];
-//        
-//        
-//    }fail:^(NSError *result){
-//        NSLog(@" localizedDescription %@", result.localizedDescription);
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectFail" object:nil];
-//    }];
-}
-
 @end

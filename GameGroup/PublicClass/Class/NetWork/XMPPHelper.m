@@ -71,10 +71,8 @@
 
     //连接服务器
     NSError *err = nil;
-    if (![self.xmppStream connectWithTimeout:30 error:&err]) {
-        NSLog(@"cant connect ");
-        return NO;
-    }
+    
+    [self.xmppReconnect manualStart];
     
     return YES;
 }

@@ -183,7 +183,9 @@
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         
-        [[ReconnectMessage singleton] getChatServer];
+        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication];
+        
+        [app.xmppHelper connect];
         
 
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];

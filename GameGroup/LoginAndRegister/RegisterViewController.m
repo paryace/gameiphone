@@ -1198,7 +1198,8 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
-    [[ReconnectMessage singleton] getChatServer];
+    AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication];
+    [app.xmppHelper connect];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
