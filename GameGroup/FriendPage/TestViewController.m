@@ -1064,7 +1064,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     MBProgressHUD *hud1 =[[ MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud1];
@@ -1079,7 +1079,7 @@
         attentionBtn.userInteractionEnabled = YES;
         attentionOffBtn.userInteractionEnabled = YES;
 
-        [DataStoreManager deleteFansWithUserid:self.userId];
+        [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:@"1"];
         //        [GameCommon shareGameCommon].fansTableChanged = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
         
@@ -1140,7 +1140,7 @@
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
     
-    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -1186,7 +1186,7 @@
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:paramDict forKey:@"params"];
             [postDict setObject:@"110" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
             
             [hud show:YES];
             
@@ -1198,26 +1198,10 @@
                 attentionOffBtn.userInteractionEnabled = YES;
 
                 //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
-                [DataStoreManager deleteFriendWithUserId:self.hostInfo.userId];//从表删除
+                [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 
-                if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"3"])
-                {
-                    if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                        NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                        [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                        [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                        
-                        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-                    }
-                    else
-                        [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];//加到粉丝里
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-                    
-                    [[GameCommon shareGameCommon] fansCountChanged:YES];
-                }
-                [self.navigationController popViewControllerAnimated:YES];
                 
             } failure:^(AFHTTPRequestOperation *operation, id error) {
                 addFriendBtn.userInteractionEnabled = YES;
@@ -1254,7 +1238,7 @@
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:paramDict forKey:@"params"];
             [postDict setObject:@"110" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
             
             [hud show:YES];
             
@@ -1305,7 +1289,7 @@
             NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:@"155" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
             [postDict setObject:dic forKey:@"params"];
             
             [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -1369,7 +1353,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     
     

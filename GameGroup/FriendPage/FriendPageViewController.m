@@ -360,7 +360,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken" ] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_1];
@@ -384,15 +384,18 @@
 
 -(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
-    [DataStoreManager cleanFriendList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([friendsList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [friendsList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                    //                    [dict setObject:key forKey:@"nameindex"];
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"id")]) {
+                        [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(dict, @"id")];
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    }else{
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    }
                 }
             }
         }
@@ -402,7 +405,7 @@
             };
         }
         //先存后取
-        m_friendDict = [DataStoreManager queryAllFriends];//所有朋友
+        m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
         m_sectionArray_friend = [DataStoreManager querySections];
         [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
         for (int i = 0; i < m_sectionArray_friend.count; i++) {
@@ -411,17 +414,6 @@
         }
         m_friendsArray = [NSMutableArray arrayWithArray:[m_friendDict allKeys]];
         [m_friendsArray sortUsingSelector:@selector(compare:)];
-        
-        //        [m_otherSortFriendArray removeAllObjects];
-        if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"2"]) {
-            m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"distance" ascend:YES];
-        }
-        if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"3"]) {
-            m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"achievementLevel" ascend:YES];
-        }
-        if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"4"]) {
-            m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"refreshTime" ascend:NO];
-        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
@@ -448,7 +440,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken" ] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     [paramDict setObject:sort forKey:@"sorttype_2"];
     
     [self.view bringSubviewToFront:hud];
@@ -512,7 +504,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken" ] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     [paramDict setObject:sort forKey:@"sorttype_3"];
     
     //[hud show:YES];
@@ -539,14 +531,7 @@
             else
             {
                 [m_otherSortAttentionArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
-           
-
-            
-            
                 [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:@"3"];
-            
-           
-            
             }
              m_currentPage ++;//从0开始
             [m_fansheader endRefreshing];
@@ -574,7 +559,7 @@
                 }
             }
         }
-        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
+      //  m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];
@@ -590,7 +575,7 @@
 {
     if (tabIndex == kSegmentFrinds) {
         if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"]) {
-            m_friendDict = [DataStoreManager queryAllFriends];//所有朋友
+            m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
             m_sectionArray_friend = [DataStoreManager querySections];
             [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
             for (int i = 0; i < m_sectionArray_friend.count; i++) {
@@ -598,18 +583,6 @@
             }
             m_friendsArray = [NSMutableArray arrayWithArray:[m_friendDict allKeys]];
             [m_friendsArray sortUsingSelector:@selector(compare:)];
-        }
-        else
-        {
-            if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"2"]) {
-                m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"distance" ascend:YES];
-            }
-            if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"3"]) {
-                m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"achievementLevel" ascend:YES];
-            }
-            if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"4"]) {
-                m_otherSortFriendArray = [DataStoreManager queryAllFriendsWithOtherSortType:@"refreshTime" ascend:NO];
-            }
         }
         [m_myTableView reloadData];
     }
@@ -622,33 +595,8 @@
             for (int i = 0; i < m_sectionArray_attention.count; i++) {
                 [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
             }
-         //   m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-         //   [m_attentionsArray sortUsingSelector:@selector(compare:)];
-        }
-        else
-        {
-            if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"2"]) {
-                m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"distance" ascend:YES];
-            }
-            if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"3"]) {
-                m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"achievementLevel" ascend:YES];
-            }
-            if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"4"]) {
-                m_otherSortAttentionArray = [DataStoreManager queryAllAttentionWithOtherSortType:@"refreshTime" ascend:NO];
-            }
         }
         [m_myAttentionsTableView reloadData];
-    }
-    else if(kSegmentFans == tabIndex)
-    {
-        //        m_fansDict = [DataStoreManager queryAllFans];
-        //        m_fansArray = [NSMutableArray arrayWithArray:[m_fansDict allKeys]];
-        //        [m_fansArray sortUsingSelector:@selector(compare:)];
-        
-        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
-        
-        [m_myFansTableView reloadData];
-        // [refreshView setRefreshViewFrame];
     }
     
     [self refreshTopLabel];
@@ -794,7 +742,7 @@
         tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
     }
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
@@ -814,7 +762,7 @@
             cell.headImageV.imageURL = nil;
         }
     }
-    cell.nameLabel.text = [tempDict objectForKey:@"displayName"];
+    cell.nameLabel.text = [tempDict objectForKey:@"remark"?@"remark":@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
     cell.distLabel.text = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];

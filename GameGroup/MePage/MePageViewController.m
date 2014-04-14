@@ -99,7 +99,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     if (!m_hostInfo) {
         [hud show:YES];
@@ -557,7 +557,7 @@
                 [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
                 [postDict setObject:paramDict forKey:@"params"];
                 [postDict setObject:@"123" forKey:@"method"];
-                [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+                [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
                 
                 [hud show:YES];
                 

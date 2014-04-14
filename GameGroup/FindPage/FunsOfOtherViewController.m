@@ -76,7 +76,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
    // [paramDict setObject:sort forKey:@"sorttype_3"];
     
     //[hud show:YES];
@@ -125,7 +125,7 @@
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:type];
             }
         }
-        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:YES];
+        m_otherSortFansArray = [DataStoreManager queryAllUserManagerWithshipType:@"3"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myFansTableView reloadData];
         });

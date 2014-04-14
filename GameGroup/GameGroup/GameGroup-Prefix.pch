@@ -75,7 +75,7 @@
 #define RECOMMENDFRIEND @"recommendfriend"
 #define DAILYNEWS @"dailynews"
 #define ZhaoHuLan  @"新朋友"
-
+#define kMyToken  @"MyToken"
 #define PhoneNumKey @"phoneKey"//用于判断是否自动登陆
 
 #define NewComment @"newCommentOfMyDynamic"

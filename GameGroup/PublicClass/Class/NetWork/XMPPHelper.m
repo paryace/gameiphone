@@ -104,7 +104,7 @@
     NSError *error = nil;
     
     //验证密码
-    [[self xmppStream] authenticateWithPassword:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] error:&error];
+    [[self xmppStream] authenticateWithPassword:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] error:&error];
     if(error!=nil)
     {
 //        self.fail(error);

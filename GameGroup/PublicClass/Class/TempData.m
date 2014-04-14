@@ -32,7 +32,7 @@ static TempData *sharedInstance=nil;
     self.passBindingRole = NO;
     self.isSoundOpen =YES;
     self.isVibration = YES;
-    self.token=[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"];
+    self.token=[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken];
 }
 
 -(void)setLat:(double)lat Lon:(double)lon
@@ -58,7 +58,7 @@ static TempData *sharedInstance=nil;
 - (BOOL)isHaveLogin
 {
     //    if ([SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil]) {//登录
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] && [[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"]) {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] && [[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {
         return YES;
     }
     return NO;

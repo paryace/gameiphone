@@ -71,7 +71,6 @@
         NSArray * dRecommend = [DSRecommendList MR_findAllInContext:localContext];
         for (DSRecommendList* Recommend in dRecommend) {
             NSDictionary* tempDic = [NSDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",nil];
-//            [m_tableData addObject:tempDic];
             [m_tableData insertObject:tempDic atIndex:0];
         }
         m_pageIndex = [m_tableData count] > 20?20:[m_tableData count];
@@ -178,7 +177,7 @@
     NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [tempDic addEntriesFromDictionary:[m_tableData objectAtIndex:row]];
     
-    if ([DataStoreManager ifHaveThisFriend:KISDictionaryHaveKey(tempDic, @"username")]) {
+    if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(tempDic, @"userid")]) {
         [self showAlertViewWithTitle:@"提示" message:@"您们已是朋友关系，不能重复添加！" buttonTitle:@"确定"];
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
@@ -215,7 +214,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [hud show:YES];
     
@@ -229,13 +228,10 @@
         }
         else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])
         {
-            if ([DataStoreManager ifIsFansWithUserId:KISDictionaryHaveKey(tempDic, @"userid")]) {
-                [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(tempDic, @"username") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(tempDic, @"userid")]) {
+                [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:@"1"];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-                
-                [DataStoreManager deleteFansWithUserid:KISDictionaryHaveKey(tempDic, @"userid")];
-                
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
             }
             else
@@ -266,7 +262,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
 
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {

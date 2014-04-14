@@ -212,7 +212,7 @@
 {
     [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
         [[TempData sharedInstance] setLat:lat Lon:lon];
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"]) {//自动登录
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {//自动登录
             [self upLoadUserLocationWithLat:lat Lon:lon];
         }
     } Failure:^{
@@ -227,7 +227,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
 //    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyUserId"] forKey:@"userid"];
     [postDict setObject:@"108" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {

@@ -954,11 +954,11 @@ NSTimeInterval const kAFUploadStream3GSuggestedDelay = 0.2;
     NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionary];
     [mutableHeaders setValue:[NSString stringWithFormat:@"form-data; name=\"%@\"; filename=\"%@\"", name, fileName] forKey:@"Content-Disposition"];
     [mutableHeaders setValue:mimeType forKey:@"Content-Type"];
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"]) {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {
         
-        NSParameterAssert([[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"]);
+        NSParameterAssert([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]);
         
-        [mutableHeaders setValue:[[NSUserDefaults standardUserDefaults] objectForKey:@"MyToken"] forKey:@"Content-Type"];
+        [mutableHeaders setValue:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"Content-Type"];
     }
 //    [mutableHeaders setValue:@"OK" forKey:@"compressImage"];
 

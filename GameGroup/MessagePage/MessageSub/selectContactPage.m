@@ -141,7 +141,7 @@
 
 -(void)refreshFriendList
 {
-    friendDict = [DataStoreManager queryAllFriends];
+    friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];
     sectionArray = [DataStoreManager querySections];
     [sectionIndexArray removeAllObjects];
     for (int i = 0; i<sectionArray.count; i++) {
