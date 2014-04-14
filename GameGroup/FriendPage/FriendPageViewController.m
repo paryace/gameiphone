@@ -514,8 +514,8 @@
             }
             if (m_currentPage == 0) {//默认展示存储的
                 [m_otherSortFansArray removeAllObjects];
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
-                
+                //[m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
+                [DataStoreManager deleteAllUserWithShipType:@"3"];
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
@@ -523,13 +523,10 @@
             }
             else
             {
-                [m_otherSortAttentionArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+               // [m_otherSortAttentionArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
                 [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:@"3"];
             }
              m_currentPage ++;//从0开始
-            [m_fansheader endRefreshing];
-            [m_fansfooter endRefreshing];
-            [m_myFansTableView reloadData];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -552,9 +549,13 @@
                 }
             }
         }
+        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:NO];
+
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];
+            [m_myFansTableView reloadData];
 
             [self refreshTopLabel];
         });
