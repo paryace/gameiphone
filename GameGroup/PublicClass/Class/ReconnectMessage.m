@@ -188,9 +188,14 @@ static ReconnectMessage *my_reconectMessage = NULL;
 - (void)appBecomeActiveWithNet:(NSNotification*)notification
 {
     reach = notification.object;
+    if ([reach currentReachabilityStatus] == NotReachable ) {//有网
+        if ([self.xmpphelper isConnected]) {
+            [self.xmpphelper disconnect];
+        }
+    }
     if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
         if (![self.xmpphelper isConnected]) {
-            [self getChatServer];
+            [self.xmpphelper connect];
         }
     }
 }
