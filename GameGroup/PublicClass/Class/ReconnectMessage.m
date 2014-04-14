@@ -19,7 +19,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     self = [super init];
     if (self) {
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
+
     }
     return self;
 }
@@ -184,20 +184,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
 
 
 
-#pragma mark 进入程序网络变化
-- (void)appBecomeActiveWithNet:(NSNotification*)notification
-{
-    reach = notification.object;
-    if ([reach currentReachabilityStatus] == NotReachable ) {//有网
-        if ([self.xmpphelper isConnected]) {
-            [self.xmpphelper disconnect];
-        }
-    }
-    if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
-        if (![self.xmpphelper isConnected]) {
-            [self.xmpphelper connect];
-        }
-    }
-}
+
 
 @end

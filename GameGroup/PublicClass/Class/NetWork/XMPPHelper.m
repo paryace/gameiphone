@@ -24,6 +24,16 @@
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 
+-(id)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
+    }
+    return self;
+}
+
+
 -(void)setupStream
 {
     self.xmppStream = [[GameXmppStream alloc] init];
@@ -94,6 +104,22 @@
     return [self.xmppStream isConnected];
 }
 
+#pragma mark 进入程序网络变化
+- (void)appBecomeActiveWithNet:(NSNotification*)notification
+{
+    Reachability* reach = notification.object;
+    if ([reach currentReachabilityStatus] == NotReachable ) {//有网
+        if ([self isConnected]) {
+            [self disconnect];
+        }
+    }
+    if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
+        if (![self isConnected]) {
+            [self connect];
+        }
+    }
+}
+
 //===========XMPP委托事件============
 
 //此方法在stream开始连接服务器的时候调用
@@ -133,6 +159,7 @@
 //    [self.xmppvCardTempModule   activate:self.xmppStream];
 //    [self.xmppvCardAvatarModule activate:self.xmppStream];
 //    [self getmyvcard];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
     NSLog(@"authenticated");
     [self goOnline];
     
