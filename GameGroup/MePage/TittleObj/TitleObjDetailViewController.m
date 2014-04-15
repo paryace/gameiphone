@@ -234,6 +234,10 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (bgView != nil) {
+        [bgView removeFromSuperview];
+    }
+
 
     UIGraphicsBeginImageContext(CGSizeMake(kScreenHeigth, kScreenWidth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -268,9 +272,6 @@
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
     }
 
-    if (bgView != nil) {
-        [bgView removeFromSuperview];
-    }
 }
 
 - (void)pushSendNews

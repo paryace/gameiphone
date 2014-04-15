@@ -689,8 +689,7 @@ BOOL validateMobile(NSString* mobile) {
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
-                alert.tag = 18;
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"您的角色已被绑定,请先跳过绑定完成注册后,在“我”界面再次添加并认证您的角色"] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
             }
             else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -723,18 +722,18 @@ BOOL validateMobile(NSString* mobile) {
 #pragma mark alertView
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == 18) {
-        if (buttonIndex != alertView.cancelButtonIndex) {
-            AuthViewController* authVC = [[AuthViewController alloc] init];
-            
-            authVC.gameId = @"1";
-            authVC.realm = m_serverNameText.text;
-            authVC.character = m_roleNameText.text;
-            
-            [self.navigationController pushViewController:authVC animated:YES];
-        }
-    }
-    else if(alertView.tag == 67)
+//    if (alertView.tag == 18) {
+//        if (buttonIndex != alertView.cancelButtonIndex) {
+//            AuthViewController* authVC = [[AuthViewController alloc] init];
+//            
+//            authVC.gameId = @"1";
+//            authVC.realm = m_serverNameText.text;
+//            authVC.character = m_roleNameText.text;
+//            
+//            [self.navigationController pushViewController:authVC animated:YES];
+//        }
+//    }
+     if(alertView.tag == 67)
     {
         if (buttonIndex != alertView.cancelButtonIndex)
             [self continueStep3Net:@""];
@@ -1107,7 +1106,7 @@ BOOL validateMobile(NSString* mobile) {
     [params setObject:m_sexManButton.selected ? @"0" : @"1" forKey:@"gender"];
     [params setObject:m_birthdayText.text forKey:@"birthdate"];
     [params setObject:m_emailText.text forKey:@"email"];
-    [params setObject:m_verCodeTextField.text forKey:@"xcode"];
+   // [params setObject:m_verCodeTextField.text forKey:@"xcode"];
     [params setObject:[GameCommon shareGameCommon].deviceToken forKey:@"deviceToken"];
     [params setObject:appType forKey:@"appType"];
 

@@ -248,7 +248,6 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"134" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    self.textView.placeholder = @"";
     hud.labelText = @"评论中...";
     [hud show:YES];
     
@@ -283,6 +282,9 @@
         }
         [hud hide:YES];
     }];
+    
+    self.textView.placeholder = @"";
+
 }
 
 #pragma mark 输入
