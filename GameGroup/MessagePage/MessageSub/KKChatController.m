@@ -16,6 +16,9 @@
 #import "OnceDynamicViewController.h"
 #import "ActivateViewController.h"
 #import "TestViewController.h"
+#import "MJRefresh.h"
+
+
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
 #endif
@@ -33,7 +36,10 @@
     
     UILabel* unReadL;
     NSMutableArray *wxSDArray;
+
 }
+
+@property (nonatomic, strong) MJRefreshHeaderView *kkChatControllerRefreshHeadView;
 
 @end
 
@@ -89,6 +95,7 @@
 {
     [super viewDidLoad];
     
+
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -109,28 +116,16 @@
     [self.view addSubview:bgV];
     messages = [[NSMutableArray alloc] initWithArray:[ DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
     NSLog(@"messages%@",messages);
-    //    currentPage = 1;
-    //    historyMsg = [[NSArray alloc] initWithArray:[DataStoreManager qureyAllCommonMessages:self.chatWithUser]];
-    //    if ([historyMsg count] > 0) {//有记录
-    //        messages = [[NSMutableArray alloc] initWithArray:[historyMsg objectAtIndex:0]];
-    //    }
-    //    else
-    //    {
-    //        messages = [[NSMutableArray alloc] initWithCapacity:1];
-    //    }
-    
-    //    messages = [[DataStoreManager qureyAllCommonMessages:self.chatWithUser] retain];
+
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
     self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     
-    self.tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
+
     [self.view addSubview:self.tView];
-    [self.tView setBackgroundColor:[UIColor clearColor]];
-    self.tView.delegate = self;
-    self.tView.dataSource = self;
-    self.tView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self kkChatAddRefreshHeadView];
+    
     
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
@@ -178,7 +173,6 @@
     
     // view hierachy
     [inPutView addSubview:imageView];
-    
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
     
@@ -245,6 +239,19 @@
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
 }
+
+
+- (UITableView *)tView{
+    if (!tView) {
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
+        [tView setBackgroundColor:[UIColor clearColor]];
+        tView.delegate = self;
+        tView.dataSource = self;
+        tView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return tView;
+}
+
 - (void)changeMyActive:(NSNotification*)notification
 {
     if ([notification.userInfo[@"active"] intValue] == 2) {
@@ -269,6 +276,74 @@
 }
 
 #pragma mark 计算每条消息高度
+- (float)kkChatLoadMsgHeigh:(NSArray *)loadMsgArr{
+    if (loadMsgArr.count==0) {
+        return 0;
+    }
+    
+    NSMutableArray* formattedEntries = [NSMutableArray arrayWithCapacity:loadMsgArr.count];
+    NSMutableArray* heightArray = [NSMutableArray array];
+    for(NSDictionary* plainEntry in loadMsgArr)
+    {
+        NSString *message = [plainEntry objectForKey:@"msg"];
+        NSString *msgType = KISDictionaryHaveKey(plainEntry, @"msgType");
+        if ([msgType isEqualToString:@"payloadchat"]) {
+            NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
+            
+            CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"title")]];
+            CGSize contentSize = CGSizeZero;
+            //            float withF = 0;
+            float higF = 0;
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")] withThumb:YES];
+            //                withF = contentSize.width;
+            higF = contentSize.height;
+            //            NSNumber * width = [NSNumber numberWithFloat:MAX(titleSize.width, withF)];
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)];
+            
+            NSArray * hh = [NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
+            [heightArray addObject:hh];
+            
+            [formattedEntries addObject:KISDictionaryHaveKey(plainEntry, @"payload")];
+        }
+        else
+        {
+            NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:message];
+            
+            OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+            paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+            paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+            paragraphStyle.firstLineHeadIndent = 0.f; // indentation for first line
+            paragraphStyle.lineSpacing = 5.f; // increase space between lines by 3 points
+            [mas setParagraphStyle:paragraphStyle];
+            [mas setFont:[UIFont systemFontOfSize:15]];
+            //            [mas setTextColor:[randomColors objectAtIndex:(idx%5)]];
+            [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
+            CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
+            NSNumber * width = [NSNumber numberWithFloat:size.width];
+            NSNumber * height = [NSNumber numberWithFloat:size.height];
+            [formattedEntries addObject:mas];
+            NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
+            [heightArray addObject:hh];
+        }
+    }
+
+//     = heightArray;
+    float kkChatLoadMsgArrHeigh = 0;
+    
+    for (int i = 0; i < heightArray.count; i++) {
+        CGFloat theH = [[[heightArray objectAtIndex:i] objectAtIndex:1] floatValue];
+        theH += padding*2 + 10;
+        
+        CGFloat height = theH < 65 ? 65 : theH;
+        
+        
+        kkChatLoadMsgArrHeigh += height;
+    }
+    
+    return kkChatLoadMsgArrHeigh;
+}
+
+
 -(void)normalMsgToFinalMsg
 {
     NSMutableArray* formattedEntries = [NSMutableArray arrayWithCapacity:messages.count];
@@ -319,6 +394,8 @@
     self.finalMessageArray = formattedEntries;
     self.HeightArray = heightArray;
 }
+
+
 
 - (CGSize)getPayloadMsgTitleSize:(NSString*)theTitle
 {
@@ -1269,28 +1346,29 @@
 #pragma mark 历史聊天记录展示
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
-    if (scrollView == self.tView) {
-        
-        CGPoint offsetofScrollView = self.tView.contentOffset;
-        NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
-            
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                
-                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-                for (int i = 0; i < array.count; i++) {
-                    [messages insertObject:array[i] atIndex:i];
-                }
-                [self normalMsgToFinalMsg];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tView reloadData];
-                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
-                });
-            });
-
-        }
-    }
+//    if (scrollView == self.tView) {
+//        
+//        CGPoint offsetofScrollView = self.tView.contentOffset;
+//        NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
+//        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
+//            
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                
+//                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+//                for (int i = 0; i < array.count; i++) {
+//                    [messages insertObject:array[i] atIndex:i];
+//                }
+//                [self normalMsgToFinalMsg];
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self.tView reloadData];
+//                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
+//                });
+//            });
+//
+//        }
+//    }
 }
+
 //是否是打招呼  如果改变打招呼则运行
 -(void)getSayHello
 {
@@ -1313,15 +1391,62 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
-- (void)scrollToOldMassageRang:(NSArray *)array
-{
-    if (array.count==0) {
-        return;
-    }
-//加修正 (iPhone5?3:2) 修正加载历史纪录时的错位
-    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count+(iPhone5?3:2) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-}
+//- (void)scrollToOldMassageRang:(NSArray *)array
+//{
+//    if (array.count==0) {
+//        return;
+//    }
+//
+//    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+//}
 
+- (void)kkChatAddRefreshHeadView{
+    
+    __block NSArray *array;
+    __block int loadHistoryArrayCount;
+    __block KKChatController *chat = self;
+    __block float loadMoreMsgHeight = 0;
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    header.scrollView = self.tView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+        for (int i = 0; i < array.count; i++) {
+            [messages insertObject:array[i] atIndex:i];
+        }
+        [self normalMsgToFinalMsg];
+        loadHistoryArrayCount = array.count;
+        
+        loadMoreMsgHeight = [self kkChatLoadMsgHeigh:array];
+        
+        
+        [header endRefreshing];
+    };
+    
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+        [chat.tView reloadData];
+
+        if (loadHistoryArrayCount==0) {
+            return;
+        }
+        
+        
+        [chat.tView scrollRectToVisible:CGRectMake(0,
+                                                   loadMoreMsgHeight,
+                                                   chat.tView.frame.size.width,
+                                                   self.tView.frame.size.height) animated:NO];
+        
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    
+    };
+    self.kkChatControllerRefreshHeadView = header;
+    
+    
+}
+- (void)kkChatLoadHistory{
+    
+}
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification
 {
