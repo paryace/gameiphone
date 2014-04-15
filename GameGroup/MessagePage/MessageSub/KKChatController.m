@@ -69,8 +69,14 @@
 {
     [super viewWillAppear:animated];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kNewMessageReceived object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:) name:kMessageAck object:nil];//消息是否发送成功
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newMesgReceived:)
+                                                 name:kNewMessageReceived
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(messageAck:)
+                                                 name:kMessageAck
+                                               object:nil];//消息是否发送成功
     
     if (![[DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser] isEqualToString:@""]) {
         self.nickName = [DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser];//刷新别名
@@ -78,15 +84,7 @@
         [self.tView reloadData];
     }
 }
-- (void)changeMyActive:(NSNotification*)notification
-{
-    if ([notification.userInfo[@"active"] intValue] == 2) {
-        myActive = YES;
-    }else
-    {
-        myActive = NO;
-    }
-}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -247,7 +245,15 @@
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
 }
-
+- (void)changeMyActive:(NSNotification*)notification
+{
+    if ([notification.userInfo[@"active"] intValue] == 2) {
+        myActive = YES;
+    }else
+    {
+        myActive = NO;
+    }
+}
 - (void)sendReadedMesg//发送已读消息
 {
     for(NSDictionary* plainEntry in messages)
