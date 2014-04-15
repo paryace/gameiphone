@@ -1198,7 +1198,7 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
-    AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication];
+    AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
     [app.xmppHelper connect];
     [self dismissViewControllerAnimated:YES completion:^{
         

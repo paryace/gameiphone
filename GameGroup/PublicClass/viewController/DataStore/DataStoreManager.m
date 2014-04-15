@@ -98,7 +98,7 @@
             thumbMsgs.msgType = msgType;
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
-           // thumbMsgs.sayHiType = sayhiType;
+            thumbMsgs.sayHiType = sayhiType;
                 
             if ([sayhiType isEqualToString:@"2"]){
                     NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
@@ -1426,9 +1426,9 @@ return @"";
     }];
 }
 
-+(NSString *)queryNickNameForUser:(NSString *)userName
++(NSString *)queryNickNameForUser:(NSString *)userId
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {//不是好友 就去粉丝列表查
         if (dUser.nickName.length>1) {
@@ -1447,7 +1447,7 @@ return @"";
             return dFans.userName;
     }
     else
-        return userName;
+        return userId;
 }
 
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type

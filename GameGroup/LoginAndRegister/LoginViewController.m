@@ -183,7 +183,7 @@
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         
-        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication];
+        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
         
         [app.xmppHelper connect];
         

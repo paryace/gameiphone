@@ -90,7 +90,7 @@
         [self.delBtn setTitle:@"删除" forState:UIControlStateNormal];
         self.delBtn.titleLabel.font = [UIFont boldSystemFontOfSize:10];
         
-        [self.delBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+        [self.delBtn setTitleColor:kColorWithRGB(51, 51, 200, 1.0) forState:UIControlStateNormal];
         [self addSubview:self.delBtn];
         
         

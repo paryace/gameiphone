@@ -73,10 +73,6 @@
                 self.titleLabel.text = @"消息(未连接)";
             }
         
-        if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-            [[ReconnectMessage singleton] getFriendByHttp];
-            [self getSayHiUserIdWithNet];
-        }
         
         [self displayMsgsForDefaultView];
         

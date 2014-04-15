@@ -68,7 +68,7 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    
+    m_activateBtn.hidden =YES;
   DSuser *dUser = [DataStoreManager getInfoWithUserId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     NSLog(@"%@",m_userInfo.action );
     if (dUser.action) {

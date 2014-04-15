@@ -87,7 +87,7 @@
 //+ (void)cleanFriendList;//清空
 +(NSString*)getMyNameIndex;
 
-+(NSString *)queryNickNameForUser:(NSString *)userName;
++(NSString *)queryNickNameForUser:(NSString *)userId;
 +(NSString *)querySelfUserName;
 +(void)updateFriendInfo:(NSDictionary *)userInfoDict ForUser:(NSString *)username;
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName

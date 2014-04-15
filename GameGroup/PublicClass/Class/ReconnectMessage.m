@@ -13,13 +13,12 @@ static ReconnectMessage *my_reconectMessage = NULL;
 @implementation ReconnectMessage
 {
     Reachability* reach;
+    MBProgressHUD *hud;
 }
 - (id)init
 {
     self = [super init];
     if (self) {
-        
-
     }
     return self;
 }
@@ -65,7 +64,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    // [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSNotificationCenter defaultCenter]postNotificationName:@"getFriendListForNet_wx" object:nil];

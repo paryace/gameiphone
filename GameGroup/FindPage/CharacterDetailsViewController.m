@@ -155,7 +155,7 @@
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
-        m_contentTableView.rowHeight = 60;
+        m_contentTableView.rowHeight = 55;
         m_contentTableView.hidden =YES;
         
         
@@ -164,7 +164,7 @@
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
-        m_countryTableView.rowHeight = 60;
+        m_countryTableView.rowHeight = 55;
         
         
         m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
@@ -172,7 +172,7 @@
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
         m_reamlTableView.bounces = NO;
-        m_reamlTableView.rowHeight = 60;
+        m_reamlTableView.rowHeight = 55;
      
         
         

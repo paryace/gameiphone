@@ -180,6 +180,14 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
+    
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+        [m_Friendheader beginRefreshing];
+        [m_attentionheader beginRefreshing];
+        [m_fansheader beginRefreshing];
+    }
+
+    
 }
 
 - (void)addTopView

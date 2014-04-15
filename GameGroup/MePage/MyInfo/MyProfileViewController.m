@@ -497,7 +497,7 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"userId"] forKey:@"username"];
+    [paramDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [paramDict setObject:headImgStr forKey:@"img"];
    
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
