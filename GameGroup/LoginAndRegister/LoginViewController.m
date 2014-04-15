@@ -16,7 +16,7 @@
 #import "FindPasswordViewController.h"
 #import "ReconnectMessage.h"
 #import "UserManager.h"
-
+#import "HelpViewController.h"
 #define kLabelFont (14.0)
 
 @interface LoginViewController ()
@@ -126,7 +126,7 @@
     [self.view addSubview:findPasButton];
     
     UIButton* registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 210 + startX, 100, 40)];
-    [registerButton setTitle:@"|    新用户注册" forState:UIControlStateNormal];
+    [registerButton setTitle:@"|     遇到问题" forState:UIControlStateNormal];
     [registerButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     registerButton.backgroundColor = [UIColor clearColor];
     registerButton.titleLabel.font = [UIFont boldSystemFontOfSize:kLabelFont];
@@ -248,9 +248,9 @@
 {
     [self hideKeyBoard];
     
-    RegisterViewController *viewController = [[RegisterViewController alloc]init];
-    viewController.hidesBottomBarWhenPushed = YES;
-	[self.navigationController pushViewController:viewController animated:YES];
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"content.html?4";
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 
 #pragma mark 找回密码

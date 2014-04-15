@@ -68,8 +68,8 @@
 
 -(void)backToHomePage:(id)sender
 {
-    self.myUrl  =@"index.html";
-    [contentWebView reload];
+    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[BaseHelpUrl stringByAppendingString:@"help.html"]]]];
+    //[contentWebView reload];
 }
 
 - (void)didReceiveMemoryWarning

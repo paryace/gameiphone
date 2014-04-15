@@ -16,7 +16,7 @@
 #import "TempData.h"
 #import "ReconnectMessage.h"
 #import "UserManager.h"
-
+#import "HelpViewController.h"
 @interface RegisterViewController ()
 {
     UILabel*     m_titleLabel;
@@ -195,13 +195,38 @@
     }else{
         [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
     }
-    
     [step1Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     step1Button.backgroundColor = [UIColor clearColor];
     [step1Button addTarget:self action:@selector(getVerCodeButton:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:step1Button];
+
+    UILabel *tishiLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, CGRectGetMidY(step1Button.frame)+15, 300, 50)];
+    tishiLabel.text = @"输入您的手机号码,免费注册陌游,陌游不会在任何地方泄露您的手机号码";
+    tishiLabel.textColor = [UIColor grayColor];
+    tishiLabel.font = [UIFont systemFontOfSize:12];
+    tishiLabel.numberOfLines= 2;
+    [m_step1Scroll addSubview:tishiLabel];
+    
+    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMidY(tishiLabel.frame)+15,300,40)];
+    helpLbel.text = @"注册遇到问题？";
+    helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    helpLbel.font = [UIFont systemFontOfSize:12];
+    helpLbel.textColor = kColorWithRGB(41, 164, 246, 1.0);
+    helpLbel.userInteractionEnabled = YES;
+    helpLbel.textAlignment = NSTextAlignmentLeft;
+    [m_step1Scroll addSubview:helpLbel];
+    [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
+
+    
 }
 
+-(void)enterToHelpPage:(id)sender
+{
+        HelpViewController *helpVC = [[HelpViewController alloc]init];
+        helpVC.myUrl = @"content.html?4";
+        [self.navigationController pushViewController:helpVC animated:YES];
+        
+}
 - (void)agreeButtonClick:(id)sender
 {
     m_agreeButton.selected = !m_agreeButton.selected;

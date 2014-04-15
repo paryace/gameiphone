@@ -36,10 +36,15 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
-    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0, m_myTableView.bounds.size.height+startX+(KISHighVersion_7?0:20), 320, 30)];
-    helpLbel.text = @"角色为何查不到？";
+    
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, m_myTableView.bounds.size.height+startX+(KISHighVersion_7?0:20), 320, 1)];
+    view.backgroundColor = UIColorFromRGBA(0xd3d3d3, 1);
+    [self.view addSubview:view];
+    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0, m_myTableView.bounds.size.height+startX+(KISHighVersion_7?0:20)+1, 320, 30)];
+    helpLbel.text = @"角色为何在公会里查不到？";
+    helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     helpLbel.font = [UIFont systemFontOfSize:12];
-    helpLbel.textColor = [UIColor blueColor];
+    helpLbel.textColor = kColorWithRGB(41, 164, 246, 1.0);
     helpLbel.userInteractionEnabled = YES;
     helpLbel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:helpLbel];
@@ -52,7 +57,7 @@
 -(void)enterToHelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    helpVC.myUrl = @"characterCannotFindinGuild.html";
+    helpVC.myUrl = @"content.html?3";
     [self.navigationController pushViewController:helpVC animated:YES];
 
 }

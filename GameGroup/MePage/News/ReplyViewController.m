@@ -242,12 +242,15 @@
     }else{
         [paramDict setObject:[NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text] forKey:@"msg"];
     }
+    
+    NSString *msgStr = [paramDict objectForKey:@"msg"];
     [paramDict setObject:self.messageid forKey:@"messageid"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"134" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    self.textView.placeholder = @"";
     hud.labelText = @"评论中...";
     [hud show:YES];
     
@@ -263,12 +266,11 @@
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             dic  = responseObject;
             [dic removeObjectForKey:@"msg"];
-            [dic setObject:[NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text] forKey:@"msg"];
+            [dic setObject:msgStr forKey:@"msg"];
             self.textView.text = nil;
 
             [m_dataReply insertObject:dic atIndex:0];
             [m_replyTabel reloadData];
-            //            [self showMessageWithContent:@"评论成功" point:CGPointMake(kScreenWidth/2, kScreenHeigth-100)];
             [self showMessageWindowWithContent:@"评论成功" imageType:0];
         }
         
@@ -283,7 +285,7 @@
         [hud hide:YES];
     }];
     
-    self.textView.placeholder = @"";
+    
 
 }
 

@@ -778,7 +778,7 @@
 -(void)enterTohelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    helpVC.myUrl = @"pvepvpScore.html";
+    helpVC.myUrl = @"content.html?1";
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 

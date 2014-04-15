@@ -71,7 +71,7 @@
         self.helpLabel.text = @"如何获得PVP/PVE战斗力";
         self.helpLabel.userInteractionEnabled = YES;
         self.helpLabel.font = [UIFont systemFontOfSize:12];
-        self.helpLabel.textColor = [UIColor blueColor];
+        self.helpLabel.textColor = kColorWithRGB(41, 164, 246, 1.0);
         self.helpLabel.textAlignment=  NSTextAlignmentCenter;
         [self addSubview:self.helpLabel];
         

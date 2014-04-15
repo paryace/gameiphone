@@ -1439,7 +1439,7 @@
 -(void)testEnterToHelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    helpVC.myUrl = @"V_Sign.html";
+    helpVC.myUrl = @"content.html?2";
     [self.navigationController pushViewController:helpVC animated:YES];
 
 }
