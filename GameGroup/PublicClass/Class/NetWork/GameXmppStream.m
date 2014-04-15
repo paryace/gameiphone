@@ -7,12 +7,17 @@
 //
 
 #import "GameXmppStream.h"
+#import "TempData.h"
 
 @implementation GameXmppStream
 
 
 - (BOOL)connectWithTimeout:(NSTimeInterval)timeout error:(NSError **)errPtr{
     
+    if (![[TempData sharedInstance] isHaveLogin] ) {
+
+        return false;
+    }
 
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
