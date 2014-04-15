@@ -71,23 +71,29 @@ static ShareToOther *userManager = NULL;
 
 - (void) sendImageContentWithImage:(UIImage *)imageV
 {
-    WXMediaMessage *message = [WXMediaMessage message];
-    [message setThumbImage:[UIImage imageNamed:@"res5thumb.png"]];
-    
-    WXImageObject *ext = [WXImageObject object];
-    
-    
-    UIImage* image = imageV;
-    ext.imageData = UIImagePNGRepresentation(image);
-    message.mediaObject = ext;
-    
-    SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
-    req.bText = NO;
-    req.message = message;
-    req.scene = _scene;
-    
-    [WXApi sendReq:req];
-    app.bSinaWB = NO;
+    if ([WXApi isWXAppInstalled]) {
+        WXMediaMessage *message = [WXMediaMessage message];
+        [message setThumbImage:[UIImage imageNamed:@"res5thumb.png"]];
+        
+        WXImageObject *ext = [WXImageObject object];
+        
+        
+        UIImage* image = imageV;
+        ext.imageData = UIImagePNGRepresentation(image);
+        message.mediaObject = ext;
+        
+        SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
+        req.bText = NO;
+        req.message = message;
+        req.scene = _scene;
+        
+        [WXApi sendReq:req];
+        app.bSinaWB = NO;
+
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有安装微信" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+    }
 }
 
 

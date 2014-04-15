@@ -148,7 +148,7 @@
     }else{
         msg = @"保存图片成功" ;
     }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
     [alert show];
 }
 #pragma mark - scrollView delegate

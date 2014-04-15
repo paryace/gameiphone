@@ -241,7 +241,6 @@
                        8,
                        m_charaDetailsView.levelLabel.text.length*9,
                        25);
-            NSLog(@"长度%u",m_charaDetailsView.levelLabel.text.length*12);
             
             
             m_charaDetailsView.itemlevelView.text = [NSString stringWithFormat:@"%@/%@",m_charaInfo.itemlevelequipped,m_charaInfo.itemlevel] ;//
@@ -250,7 +249,6 @@
                        33,
                        m_charaDetailsView.itemlevelView.text.length*13,
                        25);
-            NSLog(@"长度%u",m_charaDetailsView.itemlevelView.text.length*12);
 
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];

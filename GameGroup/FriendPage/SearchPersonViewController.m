@@ -351,7 +351,7 @@
   
         NSLog(@"%@", responseObject);
         NSDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        if ([KISDictionaryHaveKey(recDict, @"userId") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        if ([KISDictionaryHaveKey(recDict, @"id") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             [self showAlertViewWithTitle:@"提示" message:@"您不能对自己进行搜索！" buttonTitle:@"确定"];
             return;
         }

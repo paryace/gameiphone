@@ -36,6 +36,7 @@
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, 270, 50)];
         self.titleLabel.textAlignment = NSTextAlignmentLeft;
         self.titleLabel.numberOfLines = 2;
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.textColor = [UIColor blackColor];
         self.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
         [self.contentView addSubview:self.titleLabel];
@@ -49,6 +50,7 @@
         self.contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, 270, 200)];
         self.contentLabel.textAlignment = NSTextAlignmentLeft;
         self.contentLabel.numberOfLines = 0;
+        self.contentLabel.backgroundColor = [UIColor clearColor];
         self.contentLabel.textColor = [UIColor grayColor];
         self.contentLabel.font = [UIFont boldSystemFontOfSize:13.0];
         [self.contentView addSubview:self.contentLabel];

@@ -241,9 +241,9 @@
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    
+    sortButton.hidden = YES;
+
     if (buttonIndex ==0) {
-        sortButton.hidden = YES;
         pageControl.hidden = YES;
         m_backButton.hidden = YES;
         m_shareButton.hidden = YES;
@@ -252,6 +252,7 @@
     }
     else if (buttonIndex ==1)
     {
+        
         [[ShareToOther singleton]shareTosina:viewImage];
     }
     else if(buttonIndex ==2)

@@ -200,23 +200,22 @@
             cell.headerImage.imageURL = nil;
         }
         }
-        NSLog(@"a------------->%@",[_addressArray[indexPath.row] objectForKey:@"friendshiptype"]);
         
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
             [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = NO;
             [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateHighlighted];
         }
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2) {
             [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = NO;
             [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
             [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
         }
-        if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] isEqualToString:@"unkown"]) {
+        if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
             if ([[_addressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
                 [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
                 cell.addFriendB.userInteractionEnabled = YES;

@@ -316,8 +316,8 @@
 //        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
         
         KKChatController * kkchat = [[KKChatController alloc] init];
-        kkchat.chatWithUser = KISDictionaryHaveKey(getDic, @"touserid");
-        kkchat.nickName =KISDictionaryHaveKey(getDic, @"nickname");
+        kkchat.chatWithUser =KISDictionaryHaveKey(getDic, @"userid");
+        kkchat.nickName = KISDictionaryHaveKey(getDic, @"nickname");
         kkchat.chatUserImg = [GameCommon getHeardImgId:KISDictionaryHaveKey(getDic, @"img")];
         [self.navigationController pushViewController:kkchat animated:YES];
 

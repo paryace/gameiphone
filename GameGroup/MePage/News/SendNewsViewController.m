@@ -94,11 +94,11 @@
     [imageB setBackgroundImage:[UIImage imageNamed:@"picBtn_click"] forState:UIControlStateHighlighted];
     [tool addSubview:imageB];
     
-    emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [emojiBtn setFrame:CGRectMake(30, 0, 45, 45)];
-    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-    [tool addSubview:emojiBtn];
-    [emojiBtn addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+//    emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [emojiBtn setFrame:CGRectMake(30, 0, 45, 45)];
+//    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+//    [tool addSubview:emojiBtn];
+//    [emojiBtn addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
 
     
     theEmojiView = [[EmojiView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253) WithSendBtn:YES];

@@ -523,8 +523,6 @@
                 return;
             }
             if (m_currentPage == 0) {//默认展示存储的
-                //[m_otherSortFansArray removeAllObjects];
-                //[m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
                 [DataStoreManager deleteAllUserWithShipType:@"3"];
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
                 
@@ -533,7 +531,6 @@
             }
             else
             {
-               // [m_otherSortAttentionArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
                 [self parseFansList:KISDictionaryHaveKey(responseObject, @"3")Withshiptype:@"3"];
             }
              m_currentPage ++;//从0开始
@@ -887,8 +884,12 @@
     footer.scrollView = m_myFansTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
        
-        [self getFansBySort:@""];
-
+        if (m_otherSortFansArray.count<[[[NSUserDefaults standardUserDefaults]objectForKey:FansCount]intValue]) {
+            [self getFansBySort:@""];
+        }
+        else{
+            [m_fansfooter endRefreshing];
+        }
     };
     m_fansfooter = footer;
 }
