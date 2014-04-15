@@ -437,7 +437,7 @@
     if (_pictureArray.count == 9) {
         PhotoB.hidden = YES;
     }
-    UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
+    UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
 //    [self.dynamicTV becomeFirstResponder];
 }

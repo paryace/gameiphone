@@ -898,7 +898,10 @@
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
 
-
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
     header.scrollView = m_myTableView;
         header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
                     [self getFriendBySort:[m_sortTypeDic objectForKey:sorttype_1]];

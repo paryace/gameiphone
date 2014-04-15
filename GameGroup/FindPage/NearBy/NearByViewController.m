@@ -101,7 +101,7 @@
     
     m_loadImageView.animationImages = imageArray;
     m_loadImageView.animationDuration = 1;
-     [m_loadImageView startAnimating];
+    [m_loadImageView startAnimating];
     [self.view addSubview:m_loadImageView];
     
     

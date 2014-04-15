@@ -76,8 +76,10 @@
         [self addSubview:_statusLabel = [self labelWithFontSize:13]];
         
         // 4.箭头图片
-        UIImageView *arrowImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:kSrcName(@"arrow.png")]];
+        UIImageView *arrowImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"12_04.png"]];
+//        UIImageView *arrowImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"1_03"]];
         arrowImage.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+
         [self addSubview:_arrowImage = arrowImage];
         
         // 5.指示器
@@ -229,7 +231,7 @@
                     _endStateChangeBlock(self);
                 }
             }
-            
+
 			break;
             
         case MJRefreshStatePulling:

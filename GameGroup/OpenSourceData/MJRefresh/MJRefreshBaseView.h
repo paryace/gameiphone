@@ -75,9 +75,11 @@ typedef void (^RefreshStateChangeBlock)(MJRefreshBaseView *refreshView, MJRefres
 @property (nonatomic, weak) UIScrollView *scrollView;
 
 // 内部的控件
-@property (nonatomic, weak, readonly) UILabel *lastUpdateTimeLabel;
-@property (nonatomic, weak, readonly) UILabel *statusLabel;
-@property (nonatomic, weak, readonly) UIImageView *arrowImage;
+@property (nonatomic, weak, readwrite) UIActivityIndicatorView *activityView;
+
+@property (nonatomic, weak, readwrite) UILabel *lastUpdateTimeLabel;
+@property (nonatomic, weak, readwrite) UILabel *statusLabel;
+@property (nonatomic, weak, readwrite) UIImageView *arrowImage;
 
 // Block回调
 @property (nonatomic, copy) BeginRefreshingBlock beginRefreshingBlock;

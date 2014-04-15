@@ -36,7 +36,7 @@
     
     UILabel* unReadL;
     NSMutableArray *wxSDArray;
-
+    
 }
 
 @property (nonatomic, strong) MJRefreshHeaderView *kkChatControllerRefreshHeadView;
@@ -95,7 +95,7 @@
 {
     [super viewDidLoad];
     
-
+    
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -116,13 +116,13 @@
     [self.view addSubview:bgV];
     messages = [[NSMutableArray alloc] initWithArray:[ DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
     NSLog(@"messages%@",messages);
-
+    
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
     self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     
-
+    
     [self.view addSubview:self.tView];
     [self kkChatAddRefreshHeadView];
     
@@ -326,8 +326,8 @@
             [heightArray addObject:hh];
         }
     }
-
-//     = heightArray;
+    
+    //     = heightArray;
     float kkChatLoadMsgArrHeigh = 0;
     
     for (int i = 0; i < heightArray.count; i++) {
@@ -1346,27 +1346,27 @@
 #pragma mark 历史聊天记录展示
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
-//    if (scrollView == self.tView) {
-//        
-//        CGPoint offsetofScrollView = self.tView.contentOffset;
-//        NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-//        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
-//            
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//                
-//                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-//                for (int i = 0; i < array.count; i++) {
-//                    [messages insertObject:array[i] atIndex:i];
-//                }
-//                [self normalMsgToFinalMsg];
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self.tView reloadData];
-//                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
-//                });
-//            });
-//
-//        }
-//    }
+    //    if (scrollView == self.tView) {
+    //
+    //        CGPoint offsetofScrollView = self.tView.contentOffset;
+    //        NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
+    //        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
+    //
+    //            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    //
+    //                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+    //                for (int i = 0; i < array.count; i++) {
+    //                    [messages insertObject:array[i] atIndex:i];
+    //                }
+    //                [self normalMsgToFinalMsg];
+    //                dispatch_async(dispatch_get_main_queue(), ^{
+    //                    [self.tView reloadData];
+    //                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
+    //                });
+    //            });
+    //
+    //        }
+    //    }
 }
 
 //是否是打招呼  如果改变打招呼则运行
@@ -1408,7 +1408,17 @@
     __block float loadMoreMsgHeight = 0;
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
     header.scrollView = self.tView;
+    [header.statusLabel setHidden:YES];
+    [header.lastUpdateTimeLabel setHidden:YES];
+    
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.arrowImage.center = CGPointMake(160, header.arrowImage.center.y+15);
+    header.activityView.center = header.arrowImage.center;
+    
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        
         array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
@@ -1418,27 +1428,41 @@
         
         loadMoreMsgHeight = [self kkChatLoadMsgHeigh:array];
         
-        
         [header endRefreshing];
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
         [chat.tView reloadData];
-
+        
         if (loadHistoryArrayCount==0) {
             return;
         }
         
-        
         [chat.tView scrollRectToVisible:CGRectMake(0,
                                                    loadMoreMsgHeight,
                                                    chat.tView.frame.size.width,
-                                                   self.tView.frame.size.height) animated:NO];
+                                                   chat.tView.frame.size.height) animated:NO];
         
     };
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
-    
+        switch (state) {
+            case MJRefreshStateNormal:
+                break;
+            case MJRefreshStatePulling:
+
+                break;
+            case MJRefreshStateRefreshing:
+
+                break;
+            case MJRefreshStateWillRefreshing:
+
+                break;
+                
+            default:
+                break;
+        }
+        
     };
     self.kkChatControllerRefreshHeadView = header;
     
@@ -1596,7 +1620,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
 }
 //-(KKAppDelegate *)appDelegate{
-//    
+//
 //    return (KKAppDelegate *)[[UIApplication sharedApplication] delegate];
 //}
 //
