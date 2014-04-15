@@ -14,12 +14,14 @@
 @class XMPPPresence;
 @class XMPPReconnect;
 @class XMPPAutoPing;
+@class XMPPPing;
 @interface XMPPHelper : NSObject
 
 typedef void (^CallBackBlock) (void);
 typedef void (^CallBackBlockErr) (NSError *result);
 
 @property (nonatomic,strong) XMPPStream *xmppStream;
+@property (nonatomic,strong) XMPPPing *xmppPing;
 
 @property (nonatomic,strong) NSString *account;
 @property (nonatomic,strong) NSString *password;

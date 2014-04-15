@@ -44,7 +44,13 @@
     [self.xmppReconnect setAutoReconnect:YES];
     [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
     [self.xmppReconnect activate:self.xmppStream];
-    
+    XMPPAutoPing* ping=[[XMPPAutoPing alloc] init];
+    [ping activate:self.xmppStream];
+    ping.pingTimeout=2;
+    [ping addDelegate:self delegateQueue:  dispatch_get_main_queue()];
+    self.xmppPing=[[XMPPPing alloc] initWithDispatchQueue:dispatch_get_main_queue()];
+    [self.xmppPing activate:self.xmppStream];
+    [self.xmppPing addDelegate:self delegateQueue:dispatch_get_main_queue()];
 
     
 }
@@ -431,6 +437,24 @@
             [alert show];
         }
     }
+}
+
+- (void)xmppAutoPingDidReceivePong:(XMPPAutoPing *)sender{
+    NSLog(@"ping did received");
+}
+
+- (void)xmppAutoPingDidTimeout:(XMPPAutoPing *)sender{
+    [self disconnect];
+    [self connect];
+}
+
+- (void)xmppPing:(XMPPPing *)sender didNotReceivePong:(NSString *)pingID dueToTimeout:(NSTimeInterval)timeout{
+    [self disconnect];
+    [self connect];
+}
+
+- (void)xmppPing:(XMPPPing *)sender didReceivePong:(XMPPIQ *)pong withRTT:(NSTimeInterval)rtt{
+    NSLog(@"ping did received");
 }
 
 @end
