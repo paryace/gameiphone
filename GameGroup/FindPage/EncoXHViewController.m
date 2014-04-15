@@ -17,6 +17,7 @@
 #import "CharacterDetailsViewController.h"
 #import "CharacterEditViewController.h"
 #import "AppDelegate.h"
+#import "KKChatController.h"
 @interface EncoXHViewController ()
 
 @end
@@ -306,13 +307,22 @@
        promptLabel.text  =@"很遗憾，无法和小衰神打招呼，点击“换一个”远离小衰神" ;
         sayHelloBtn.enabled = NO;
     }else{
-        NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
-        [paramDict setObject:@"1" forKey:@"gameid"];
-        [paramDict setObject:self.characterId forKey:@"characterid"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic, @"index") forKey:@"index"];
-        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
+//        NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
+//        [paramDict setObject:@"1" forKey:@"gameid"];
+//        [paramDict setObject:self.characterId forKey:@"characterid"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic, @"index") forKey:@"index"];
+//        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
+        
+        KKChatController * kkchat = [[KKChatController alloc] init];
+        kkchat.chatWithUser = KISDictionaryHaveKey(getDic, @"touserid");
+        kkchat.nickName =KISDictionaryHaveKey(getDic, @"nickname");
+        kkchat.chatUserImg = [GameCommon getHeardImgId:KISDictionaryHaveKey(getDic, @"img")];
+        [self.navigationController pushViewController:kkchat animated:YES];
+
+        
+        
     }
 }
 #pragma mark ---网络请求
@@ -479,16 +489,6 @@
                 i= promptLabel.text.length/20;
                 promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
                 promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
-            }
-        }
-        if (COME_TYPE ==2) {
-            
-            if (isWXCeiling ==YES) {
-                NSLog(@"打招呼成功");
-                [self showMessageWindowWithContent:@"打招呼成功" imageType:0];
-
-            }else{
-                [self showAlertViewWithTitle:nil message:@"打招呼失败,邂逅数量已达上限" buttonTitle:@"确定"];
             }
         }
         if (COME_TYPE ==3) {

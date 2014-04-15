@@ -200,6 +200,8 @@
             cell.headerImage.imageURL = nil;
         }
         }
+        NSLog(@"a------------->%@",[_addressArray[indexPath.row] objectForKey:@"friendshiptype"]);
+        
         if ([[_addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
             [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = NO;

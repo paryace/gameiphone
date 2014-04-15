@@ -100,7 +100,18 @@
     
     [self refreshFriendList:tabIndex];
 }
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+        [m_Friendheader beginRefreshing];
+        [m_attentionheader beginRefreshing];
+        [m_fansheader beginRefreshing];
+    }
+    NSLog(@"[[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]%@",[[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]);
+    
 
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -180,13 +191,6 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-    
-    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-        [m_Friendheader beginRefreshing];
-        [m_attentionheader beginRefreshing];
-        [m_fansheader beginRefreshing];
-    }
-
     
 }
 
@@ -361,7 +365,9 @@
             [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
         
-        
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_Friendheader endRefreshing];
@@ -438,7 +444,9 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:@"2"];
         }
-        
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_attentionheader endRefreshing];
@@ -530,7 +538,9 @@
             }
              m_currentPage ++;//从0开始
         }
-        
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_fansheader endRefreshing];
         [m_fansfooter endRefreshing];

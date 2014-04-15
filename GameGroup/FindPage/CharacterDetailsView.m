@@ -150,7 +150,7 @@
     //公会
     self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(70, 30, 160, 25)];
   //  self.guildLabel.text = @"<众神之巅>";
-    self.backgroundColor = [UIColor clearColor];
+    self.guildLabel.backgroundColor = [UIColor clearColor];
     self.guildLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.guildLabel.font = [UIFont boldSystemFontOfSize:14];
     [self.titleView addSubview:self.guildLabel];
@@ -165,7 +165,7 @@
     //等级
     self.levelLabel = [[UILabel alloc]initWithFrame:CGRectMake(247, 8, 73, 25)];
   //  self.levelLabel.text = @"90级";
-    self.backgroundColor = [UIColor clearColor];
+    self.levelLabel.backgroundColor = [UIColor clearColor];
     self.levelLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.levelLabel.font = [UIFont boldSystemFontOfSize:12];
     [self.titleView addSubview:self.levelLabel];
@@ -173,7 +173,7 @@
     //装等
     self.itemlevelView = [[UILabel alloc]initWithFrame:CGRectMake(230, 28, 90, 30)];
   //  self.itemlevelView.text = @"576/576";
-    self.backgroundColor = [UIColor clearColor];
+    self.itemlevelView.backgroundColor = [UIColor clearColor];
     self.itemlevelView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.itemlevelView.font = [UIFont fontWithName:@"DigifaceWide" size:16];
     [self.titleView addSubview:self.itemlevelView];

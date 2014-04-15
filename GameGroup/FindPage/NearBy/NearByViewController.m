@@ -92,7 +92,7 @@
     m_totalPage = 0;
     m_currentPage = 0;
     
-    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 0, 20, 20)];
+    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 12, 20, 20)];
     NSMutableArray *imageArray = [NSMutableArray array];
     for (int i = 0; i<12; i++) {
         NSString *str =[NSString stringWithFormat:@"%d_03",i+1];

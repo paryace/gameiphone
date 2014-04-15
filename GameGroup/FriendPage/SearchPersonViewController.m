@@ -364,7 +364,10 @@
         VC.hostInfo = hostInfo;
         NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
         [dic addEntriesFromDictionary:hostInfo.infoDic];
-        [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+//        if (hostInfo.achievementArray&&hostInfo.achievementArray.count !=0) {
+//            [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
+//        }else{
+//        }
 
         [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
