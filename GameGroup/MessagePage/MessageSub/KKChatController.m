@@ -1270,17 +1270,24 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     
     if (scrollView == self.tView) {
+        
         CGPoint offsetofScrollView = self.tView.contentOffset;
         NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
         if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
-            NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-            for (int i = 0; i < array.count; i++) {
-                [messages insertObject:array[i] atIndex:i];
-            }
-            [self normalMsgToFinalMsg];
             
-            [self.tView reloadData];
-          [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0.00000001];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+                for (int i = 0; i < array.count; i++) {
+                    [messages insertObject:array[i] atIndex:i];
+                }
+                [self normalMsgToFinalMsg];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tView reloadData];
+                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
+                });
+            });
+
         }
     }
 }
