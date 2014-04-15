@@ -1272,7 +1272,7 @@
     if (scrollView == self.tView) {
         CGPoint offsetofScrollView = self.tView.contentOffset;
         NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-        if (offsetofScrollView.y < 150) {//向上拉出20个像素高度时加载
+        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
             NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
             for (int i = 0; i < array.count; i++) {
                 [messages insertObject:array[i] atIndex:i];
@@ -1311,9 +1311,10 @@
     if (array.count==0) {
         return;
     }
-    
-    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+//加修正 (iPhone5?3:2) 修正加载历史纪录时的错位
+    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count+(iPhone5?3:2) inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
+
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification
 {
