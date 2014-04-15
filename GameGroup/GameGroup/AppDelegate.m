@@ -16,7 +16,6 @@
 #import "BaseViewController.h"
 #import "ReconnectMessage.h"
 #import "AddAddressBookViewController.h"
-#import "SendAckListener.h"
 
 @implementation AppDelegate
 {
@@ -36,7 +35,6 @@
     self.reach = [Reachability reachabilityForInternetConnection];
     [_reach startNotifier];
     GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
-    [SendAckListener singleton];
     self.xmppHelper=[[XMPPHelper alloc] init];
     [self.xmppHelper setupStream];
     self.xmppHelper.chatDelegate = getDataAfterManager;
