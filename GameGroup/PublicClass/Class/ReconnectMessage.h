@@ -11,7 +11,6 @@
 @interface ReconnectMessage : NSObject
 + (ReconnectMessage*)singleton;
 -(void)sendDeviceToken;
--(void)getFriendByHttp;
 @property (strong,nonatomic) XMPPHelper * xmpphelper;
 
 @end

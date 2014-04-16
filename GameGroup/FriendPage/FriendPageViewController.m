@@ -333,10 +333,12 @@
         case kSegmentFans:
         {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:FansCount]) {
+                rowNum =m_otherSortFansArray.count;
                 rowNum = [[[NSUserDefaults standardUserDefaults] objectForKey:FansCount] integerValue];
             }
             else
-                rowNum = 0;
+              rowNum =m_otherSortFansArray.count;
+
             titleLabel.text = [NSString stringWithFormat:@"粉丝(%d)", rowNum];
         }break;
         default:
@@ -364,7 +366,6 @@
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
         [m_sortTypeDic setObject:sort forKey:sorttype_1];
-        [m_otherSortFriendArray removeAllObjects];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
@@ -400,7 +401,6 @@
         //先存后取
         m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
         m_sectionArray_friend = [DataStoreManager querySections];
-        NSLog(@"m_attentionDict___%@___%d___%d",m_friendDict,[m_friendDict allKeys].count,m_sectionArray_friend.count);
 
         [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
         for (int i = 0; i < m_sectionArray_friend.count; i++) {
@@ -439,14 +439,12 @@
     [paramDict setObject:sort forKey:@"sorttype_2"];
     
     [self.view bringSubviewToFront:hud];
-    //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_2];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
         [m_sortTypeDic setObject:sort forKey:sorttype_2];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [m_otherSortAttentionArray removeAllObjects];
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:@"2"];
         }
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
@@ -479,7 +477,6 @@
         }
         //先存后取
         m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
-        NSLog(@"m_attentionDict___%@___%d",m_attentionDict,[m_attentionDict allKeys].count);
         m_sectionArray_attention = [DataStoreManager queryAttentionSections];
         [m_sectionIndexArray_attention removeAllObjects];
         for (int i = 0; i < m_sectionArray_attention.count; i++) {
@@ -529,7 +526,6 @@
             }
             if (m_currentPage == 0) {//默认展示存储的
                 [DataStoreManager deleteAllUserWithShipType:@"3"];
-                [m_otherSortFansArray removeAllObjects];
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
@@ -556,15 +552,19 @@
     dispatch_async(queue, ^{
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];;
-                
-                
-                if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                }
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
-        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:NO];
+        
+            else if ([fansList isKindOfClass:[NSDictionary class]]) {
+                NSArray* keyArr = [fansList allKeys];
+                for (NSString* key in keyArr) {
+                    for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
+                    }
+                }
+            }
+        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:nil ascend:NO];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             

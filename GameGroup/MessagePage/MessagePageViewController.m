@@ -156,18 +156,6 @@
     hud.labelText = @"获取好友信息中...";
 }
 
-#pragma mark --获取好友列表成功或者失败通知
--(void)getFriendForHttpToRemindBegin
-{
-    [hud show:YES];
-}
--(void)getFriendForHttpToRemind
-{
-    [hud hide:YES];
-    
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"StartGetFriendListForNet" object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"getFriendListForNet_wx" object:nil];
-}
 
 #pragma mark ----获取XMPP服务器成功
 -(void)getConnectSuccess:(NSNotification*)notification
@@ -203,27 +191,6 @@
 {
     
     [self displayMsgsForDefaultView];
-    
-    
-    
-    
-    
-    
-    
-//    NSDictionary* tempDic = notification.userInfo;
-//    NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender") rangeOfString:@"@"];
-//    NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender") substringToIndex:range.location];
-    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        
-//        
-//      dispatch_async(dispatch_get_main_queue(), ^{
-//          
-//      })
-//    })
-    
-    
-
 }
 
 #pragma mark 收到验证好友请求
@@ -281,7 +248,6 @@
     }];
 }
 
-#pragma mark --获取打招呼id
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -293,26 +259,6 @@
     }
 }
 
-#pragma mark发送token
-- (void)sendDeviceToken
-{
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary* locationDict = [NSMutableDictionary dictionaryWithCapacity:1];
-    [locationDict setObject:[GameCommon shareGameCommon].deviceToken forKey:@"deviceToken"];
-    [locationDict setObject:appType forKey:@"appType"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
-    [postDict setObject:@"140" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    [postDict setObject:locationDict forKey:@"params"];
-    
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"deviceToken fail");
-    }];
-}
 
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
