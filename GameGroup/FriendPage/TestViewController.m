@@ -1079,25 +1079,13 @@
         attentionBtn.userInteractionEnabled = YES;
         attentionOffBtn.userInteractionEnabled = YES;
 
-        [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:@"1"];
+        [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:@"1"];
         //        [GameCommon shareGameCommon].fansTableChanged = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
         [[GameCommon shareGameCommon] fansCountChanged:NO];
         
-        if ([responseObject isKindOfClass:[NSDictionary class]])
-        {
-            if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-                NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-                [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-                [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-                
-                [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-            }
-            else
-                [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         
         
         

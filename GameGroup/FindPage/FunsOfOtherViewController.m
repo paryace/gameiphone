@@ -67,7 +67,7 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
-    [paramDict setObject:@"3" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
+    [paramDict setObject:@"4" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -85,18 +85,18 @@
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
+            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"4") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"4") isKindOfClass:[NSDictionary class]] )) {
                 return;
             }
 
             if (m_currentPage == 0) {//默认展示存储的
-                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue];
+                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"4"), @"totalResults") intValue];
 
                 [m_otherSortFansArray removeAllObjects];
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"4"), @"users")];
             }
             else{
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"3")];
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"4")];
             }
             
             m_currentPage ++;//从0开始

@@ -12,5 +12,4 @@
 @implementation DSNameIndex
 
 @dynamic index;
-
 @end

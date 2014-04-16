@@ -152,8 +152,7 @@
                 }
             }
             if ([m_realmsArray count] > 0) {
-             
-                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]!=nil) {
+                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]!=nil&&[[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]intValue]<m_realmsArray.count) {
                     [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:[[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]intValue]] forState:UIControlStateNormal];
                 }else{
              [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:0] forState:UIControlStateNormal];
@@ -213,6 +212,8 @@
 
 - (void)getSameRealmDataByNet
 {
+    isGetNetSuccess = NO;
+
     [m_loadImageView startAnimating];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -244,7 +245,7 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        isGetNetSuccess =YES;
         [m_loadImageView stopAnimating];
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
             [m_header endRefreshing];
@@ -330,6 +331,12 @@
 #pragma mark 筛选
 - (void)menuButtonClick:(id)sender
 {
+    if (isGetNetSuccess ==NO) {
+        [self showMessageWithContent:@"正在处理上次请求" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+
+    }else{
+    
+    
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"筛选条件"
                                   delegate:self
@@ -338,6 +345,7 @@
                                   otherButtonTitles:@"只看男", @"只看女", @"看全部", nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
+    }
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

@@ -93,8 +93,14 @@
     if (self.descriptionType==DescriptionTypePet) {
         self.labelDescription.text = @"点击图片查看宠物，点击“+”添加宠物";
     }
-    else
-        self.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
+    else{
+        if (photos.count>=8) {
+            self.labelDescription.text = @"最多只可添加8张头像, 长按可拖拽排序及删除";
+        }else{
+         self.labelDescription.text = @"点击”+”添加头像, 长按可拖拽排序及删除";
+        }
+    }
+    
     [self.arrayPhotos removeAllObjects];
     for (HGPhoto * tempPhoto in self.subviews) {
         if ([tempPhoto isKindOfClass:[HGPhoto class]]) {

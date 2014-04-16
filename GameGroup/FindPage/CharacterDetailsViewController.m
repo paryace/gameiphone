@@ -233,24 +233,23 @@
             m_characterName =m_charaInfo.roleNickName;
             m_charaDetailsView.realmView.text = [NSString stringWithFormat:@"%@ %@", m_charaInfo.realm,m_charaInfo.sidename];
             
-            // m_charaDetailsView.realmView.text = m_charaInfo.realm;
             m_charaDetailsView.levelLabel.text =[NSString stringWithFormat:@"Lv.%@ %@", m_charaInfo.level,m_charaInfo.professionalName];
             
-            m_charaDetailsView.levelLabel.frame =
-            CGRectMake(323-m_charaDetailsView.levelLabel.text.length*9,
-                       8,
-                       m_charaDetailsView.levelLabel.text.length*9,
-                       25);
+            CGSize size = [str sizeWithFont:m_charaDetailsView.levelLabel.font constrainedToSize:CGSizeMake(200, 25)];
+            
+            m_charaDetailsView.levelLabel.frame =CGRectMake(323-size.width,8,size.width,25);
+            
+
+            
             
             
             m_charaDetailsView.itemlevelView.text = [NSString stringWithFormat:@"%@/%@",m_charaInfo.itemlevelequipped,m_charaInfo.itemlevel] ;//
-            m_charaDetailsView.itemlevelView.frame =
-            CGRectMake(323-m_charaDetailsView.itemlevelView.text.length*13,
-                       33,
-                       m_charaDetailsView.itemlevelView.text.length*13,
-                       25);
+            CGSize size1 = [str sizeWithFont:m_charaDetailsView.itemlevelView.font constrainedToSize:CGSizeMake(200, 25)];
+            m_charaDetailsView.itemlevelView.frame =CGRectMake(323-size1.width, 33,size1.width,25);
 
+            
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
+            
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             if (m_charaInfo.thumbnail) {
                 m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",m_charaInfo.thumbnail]];

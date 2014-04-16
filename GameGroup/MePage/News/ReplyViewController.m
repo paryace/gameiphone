@@ -259,8 +259,8 @@
         
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
-                [self.delegate dynamicListJustReload];
+          //  if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
+            //    [self.delegate dynamicListJustReload];
             
             
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
