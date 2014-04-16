@@ -1080,12 +1080,14 @@
         attentionOffBtn.userInteractionEnabled = YES;
 
         [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:@"1"];
+        
+        
         //        [GameCommon shareGameCommon].fansTableChanged = YES;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
         [[GameCommon shareGameCommon] fansCountChanged:NO];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         
         
         
@@ -1187,6 +1189,11 @@
 
                 //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
                 [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
+
+                
+                
                 [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 [self showMessageWindowWithContent:@"删除成功" imageType:0];
@@ -1249,7 +1256,9 @@
                 }
                 
                 [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
-                
+                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
+
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
                 
                 [self.navigationController popViewControllerAnimated:YES];

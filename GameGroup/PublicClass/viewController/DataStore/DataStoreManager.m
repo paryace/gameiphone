@@ -1028,6 +1028,7 @@ return @"";
     if (dUser) {
         dUser.shiptype = type;
         }
+    //[self cleanIndexWithNameIndex:dUser.nameIndex withType:type];
 }
 
 +(void)deleteAllUser
@@ -1074,7 +1075,12 @@ return @"";
     return sectionArray;
     
 }
-
++(DSuser *)queryUserWithUserId:(NSString *)userId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+    DSuser * dUsers = [DSuser MR_findFirstWithPredicate:predicate];
+    return dUsers;
+}
 + (BOOL)ifIsAttentionWithUserId:(NSString*)userId
 {
     if (userId) {
@@ -1101,23 +1107,21 @@ return @"";
             [array addObject:user];
         }
     }
-    
-    
-        if ([array count] == 0 || ([array count] == 1 && [nameIndex isEqualToString:[DataStoreManager getMyNameIndex]])) {
+    if ([array count] == 0 || ([array count] == 1 && [nameIndex isEqualToString:[DataStoreManager getMyNameIndex]])) {
             
-            [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-                if ([type isEqualToString:@"1"]) {
-                    NSPredicate* predicateIndex = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            if ([type isEqualToString:@"1"]) {
+                NSPredicate* predicateIndex = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                     DSNameIndex* name = [DSNameIndex MR_findFirstWithPredicate:predicateIndex];
                     [name MR_deleteInContext:localContext];
                 }
-                if ([type isEqualToString:@"2"]) {
+              else  if ([type isEqualToString:@"2"]) {
                     NSPredicate* predicateIndex = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                     DSAttentionNameIndex* name = [DSAttentionNameIndex MR_findFirstWithPredicate:predicateIndex];
                     [name MR_deleteInContext:localContext];
                 }
 
-                if ([type isEqualToString:@"3"]) {
+               else if ([type isEqualToString:@"3"]) {
                     NSPredicate* predicateIndex = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                     DSFansNameIndex* name = [DSFansNameIndex MR_findFirstWithPredicate:predicateIndex];
                     [name MR_deleteInContext:localContext];
@@ -1126,6 +1130,9 @@ return @"";
             }];
         }
 }
+
+
+
 
 + (void)cleanAttentionList//清空
 {

@@ -112,18 +112,23 @@
     table_label_one.text = @"选择游戏";
     table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
+    table_label_one.backgroundColor = [UIColor clearColor];
     [self.view addSubview:table_label_one];
     
     UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+40, 80, 40)];
     table_label_two.text = @"所在服务器";
     table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
+    table_label_two.backgroundColor = [UIColor clearColor];
+
     [self.view addSubview:table_label_two];
     
     UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+80, 80, 40)];
     table_label_three.text = @"角色名";
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
+    table_label_three.backgroundColor = [UIColor clearColor];
+
     [self.view addSubview:table_label_three];
 
     UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(120, startX+11, 18, 18)];
@@ -158,6 +163,7 @@
     UILabel*  bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+130, 300, 100)];
     bottomLabel.text = @"为验证角色为您所有，请登录游戏取下角色的\n\n\n这两个部位的装备并下线，等待英雄榜更新后点击“认证”按钮。";
     bottomLabel.numberOfLines = 0;
+    bottomLabel.backgroundColor = [UIColor clearColor];
     bottomLabel.textColor = kColorWithRGB(51, 51, 51, 1.0);
     bottomLabel.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:bottomLabel];

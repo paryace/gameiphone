@@ -445,6 +445,9 @@
         
         [m_sortTypeDic setObject:sort forKey:sorttype_2];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [m_otherSortAttentionArray removeAllObjects];
+            [m_myAttentionsTableView reloadData];
+
             [self parseAttentionsList:KISDictionaryHaveKey(responseObject, @"2")withshiptype:@"2"];
         }
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
@@ -526,7 +529,13 @@
             }
             if (m_currentPage == 0) {//默认展示存储的
                 [DataStoreManager deleteAllUserWithShipType:@"3"];
+                
+                [m_otherSortFansArray removeAllObjects];
+                [m_myFansTableView reloadData];
+                
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
+                
+                
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
                 [[NSUserDefaults standardUserDefaults] synchronize];

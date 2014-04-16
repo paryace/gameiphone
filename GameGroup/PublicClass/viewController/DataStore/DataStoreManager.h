@@ -73,10 +73,9 @@
 +(void)deleteAllUserWithShipType:(NSString*)shiptype;
 +(BOOL)ifIsShipTypeWithUserId:(NSString*)userId type:(NSString*)shiptype;//判断关系（好友 关注 粉丝 自己 陌生人）
 +(DSuser *)getInfoWithUserId:(NSString *)userId;//用ID获得表中的某个人的信息
-
 //存储“好友”的关注人列表
 +(NSMutableArray *)queryAttentionSections;
-
++(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
 
 //好友
 //是否存在这个联系人

@@ -243,11 +243,16 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSRange range = [fromUser rangeOfString:@"@"];
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
-    NSString * msg = KISDictionaryHaveKey(userInfo, @"msg");
+  //  NSString * msg = KISDictionaryHaveKey(userInfo, @"msg");
     
     [self storeNewMessage:userInfo];
-    NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
+   // NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
+    
+    
+    DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
+    [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
+
 
     if ([shiptype isEqualToString:@"2"]) {//移到关注表
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
