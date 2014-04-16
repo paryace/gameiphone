@@ -70,7 +70,7 @@
  //   host = @"221.122.114.216";
 //    theaccount = @"15100000000@52pet.net";
 //    thepassword = @"0AB89AC5C55D40198EF10B39257DA1C4";
-    [self setupStream];
+
 
     if (![self.xmppStream isDisconnected]) {
         return YES;
@@ -132,7 +132,7 @@
 - (void)xmppStreamDidConnect:(XMPPStream *)sender{
     NSLog(@"connected");
     NSError *error = nil;
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
     //验证密码
     [[self xmppStream] authenticateWithPassword:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] error:&error];
     if(error!=nil)
