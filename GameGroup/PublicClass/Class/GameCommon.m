@@ -528,6 +528,7 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
     [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:PhoneNumKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"active_wx"];
 //    [SFHFKeychainUtils deleteItemForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil];
    // [SFHFKeychainUtils deleteItemForUsername:PASSWORD andServiceName:LOCALACCOUNT error:nil];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMyToken];

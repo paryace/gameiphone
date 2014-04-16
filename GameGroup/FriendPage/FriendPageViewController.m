@@ -881,6 +881,11 @@
 - (void)addFooter
 {
     MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+
     footer.scrollView = m_myFansTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
        
@@ -919,6 +924,11 @@
 - (void)addHeader1
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+
     header.scrollView = m_myAttentionsTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self getAttentionBySort:[m_sortTypeDic objectForKey:sorttype_2]];
@@ -935,6 +945,11 @@
 - (void)addHeader2
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+
     header.scrollView = m_myFansTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currentPage = 0;

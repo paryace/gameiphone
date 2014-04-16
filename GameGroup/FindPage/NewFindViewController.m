@@ -68,10 +68,8 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    m_activateBtn.hidden =YES;
-  DSuser *dUser = [DataStoreManager getInfoWithUserId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    NSLog(@"%@",m_userInfo.action );
-    if (dUser.action) {
+    NSString *activeStr  =[[NSUserDefaults standardUserDefaults]objectForKey:@"active_wx"];
+    if ([activeStr intValue]==2) {
         NSLog(@"已激活");
         m_activateBtn.hidden = YES;
     }else

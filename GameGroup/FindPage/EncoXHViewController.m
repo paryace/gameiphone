@@ -291,7 +291,6 @@
 
 -(void)sayHiToYou:(UIButton *)sender
 {
-    sayHelloBtn.enabled = NO;
     
     if (isXuyuanchi ==YES) {
         promptLabel.text  =@"你和许愿池打了个招呼, 但是许愿池完全没有鸟你， 点击”换一个”来遇到有缘人吧。" ;

@@ -90,11 +90,10 @@
             }
 
             if (m_currentPage == 0) {//默认展示存储的
-                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue]/20;
+                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue];
 
                 [m_otherSortFansArray removeAllObjects];
                 [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users")];
-                [self parseFansList:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users") withShipType:@"3"];
             }
             else{
                 [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"3")];
@@ -114,23 +113,6 @@
         [m_fansfooter endRefreshing];
 
     }];
-}
--(void)parseFansList:(id)fansList withShipType:(NSString *)type
-{
-    //    [DataStoreManager cleanFansList];//先清 再存
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-    dispatch_async(queue, ^{
-        if([fansList isKindOfClass:[NSArray class]]){
-            for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:type];
-            }
-        }
-        m_otherSortFansArray = [DataStoreManager queryAllUserManagerWithshipType:@"3"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myFansTableView reloadData];
-        });
-    });
-    //上拉加载
 }
 
 #pragma mark 表格
@@ -225,7 +207,7 @@
     
     detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     
-    detailVC.achievementColor =[GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
+    detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel");
     
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"gender");
     
@@ -254,11 +236,18 @@
 - (void)addFooter
 {
     MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+
     footer.scrollView = m_myFansTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        if (m_currentPage<m_allcurrentPage) {
+        if (m_otherSortFansArray.count<m_allcurrentPage) {
             NSLog(@"加载更多");
             [self getFansBySort];
+        }else{
+            [m_fansfooter endRefreshing];
         }
     };
     m_fansfooter = footer;
@@ -267,6 +256,11 @@
 - (void)addHeader
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+
     header.scrollView = m_myFansTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currentPage = 0;
