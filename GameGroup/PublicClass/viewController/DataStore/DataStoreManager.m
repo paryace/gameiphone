@@ -1094,7 +1094,16 @@ return @"";
 {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",nameIndex];
         NSArray * dUser = [DSuser MR_findAllWithPredicate:predicate];
-        if ([dUser count] == 0 || ([dUser count] == 1 && [nameIndex isEqualToString:[DataStoreManager getMyNameIndex]])) {
+    NSMutableArray *array = [NSMutableArray array];
+    for (int i = 0; i<dUser.count; i++) {
+        DSuser *user = [dUser objectAtIndex:i];
+        if ([user.shiptype isEqualToString:type]) {
+            [array addObject:user];
+        }
+    }
+    
+    
+        if ([array count] == 0 || ([array count] == 1 && [nameIndex isEqualToString:[DataStoreManager getMyNameIndex]])) {
             
             [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
                 if ([type isEqualToString:@"1"]) {

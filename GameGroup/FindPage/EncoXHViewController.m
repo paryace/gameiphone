@@ -175,6 +175,7 @@
     [clazzImageView addGestureRecognizer:tapG];
     
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(showGameList:)];
+    longPress.minimumPressDuration =1;
     [clazzImageView addGestureRecognizer:longPress];
     
     clazzLabel = [[UILabel alloc]initWithFrame:CGRectMake(260-clazzLabel.text.length/2, 53, 50+clazzLabel.text.length *12, 20)];
@@ -250,7 +251,9 @@
     [inABtn setBackgroundImage:KUIImage(@"white") forState:UIControlStateNormal];
     [inABtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateHighlighted];
     [inABtn setTitle:@"换一个" forState:UIControlStateNormal];
-    inABtn.titleLabel.textColor = [UIColor blackColor];
+    [inABtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [inABtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [inABtn setTitleColor:[UIColor blackColor] forState:UIControlStateSelected];
     [inABtn addTarget:self action:@selector(changeOtherOne) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:inABtn];
     
@@ -724,23 +727,32 @@
 
 -(void)showGameList:(UIGestureRecognizer *)sender
 {
-    if (m_characterArray.count >1) {
-        m_tableView.hidden = NO;
-        tf.hidden = NO;
-        headImageView.hidden = YES;
-        clazzImageView.hidden = YES;
-        clazzLabel.hidden =YES;
-        NickNameLabel.hidden = YES;
-        customLabel.hidden = YES;
-        inABtn.hidden = YES;
-        sexLabel.hidden = YES;
-        sayHelloBtn.hidden =YES;
-        promptLabel .hidden = YES;
-        promptView.hidden = YES;
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        return;
+        
+    } else if (sender.state == UIGestureRecognizerStateBegan) {
+        
+        if (m_characterArray.count >1) {
+            m_tableView.hidden = NO;
+            tf.hidden = NO;
+            headImageView.hidden = YES;
+            clazzImageView.hidden = YES;
+            clazzLabel.hidden =YES;
+            NickNameLabel.hidden = YES;
+            customLabel.hidden = YES;
+            inABtn.hidden = YES;
+            sexLabel.hidden = YES;
+            sayHelloBtn.hidden =YES;
+            promptLabel .hidden = YES;
+            promptView.hidden = YES;
+        }
+        else{
+            [self showAlertViewWithTitle:@"提示" message:@"你只有一个角色" buttonTitle:@"确定"];
+        }
+
     }
-    else{
-        [self showAlertViewWithTitle:@"提示" message:@"你只有一个角色" buttonTitle:@"确定"];
-    }
+    
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

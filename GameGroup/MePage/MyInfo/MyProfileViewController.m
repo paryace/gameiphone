@@ -898,7 +898,7 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:@"userId"] forKey:@"userId"];
+    [paramDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userId"];
     [paramDict setObject:birthday forKey:@"birthdate"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

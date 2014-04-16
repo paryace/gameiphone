@@ -41,6 +41,7 @@
     DSuser   * m_userInfo;
    // NSMutableDictionary *friendImgDic;
     NSInteger    friendDunamicmsgCount;
+    BOOL myActive;
 }
 @property(nonatomic,retain)NSString * friendImgStr;
 @end
@@ -68,8 +69,10 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    NSString *activeStr  =[[NSUserDefaults standardUserDefaults]objectForKey:@"active_wx"];
-    if ([activeStr intValue]==2) {
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    DSuser *user = [DSuser MR_findFirstWithPredicate:predicate];
+
+    if ([user.action boolValue]) {
         NSLog(@"已激活");
         m_activateBtn.hidden = YES;
     }else

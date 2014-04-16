@@ -95,8 +95,12 @@
 {
     NSString* sort_1 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] : @"1";
     NSString* sort_2 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] : @"1";
+    NSString* sort_3 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] : @"1";
+
     [m_sortTypeDic setObject:sort_1 forKey:sorttype_1];
     [m_sortTypeDic setObject:sort_2 forKey:sorttype_2];
+    [m_sortTypeDic setObject:sort_3 forKey:sorttype_3];
+
     
     [self refreshFriendList:tabIndex];
 }
@@ -329,10 +333,12 @@
         case kSegmentFans:
         {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:FansCount]) {
+                rowNum =m_otherSortFansArray.count;
                 rowNum = [[[NSUserDefaults standardUserDefaults] objectForKey:FansCount] integerValue];
             }
             else
-                rowNum = 0;
+              rowNum =m_otherSortFansArray.count;
+
             titleLabel.text = [NSString stringWithFormat:@"粉丝(%d)", rowNum];
         }break;
         default:
@@ -360,7 +366,6 @@
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
         
         [m_sortTypeDic setObject:sort forKey:sorttype_1];
-        
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
@@ -396,7 +401,6 @@
         //先存后取
         m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
         m_sectionArray_friend = [DataStoreManager querySections];
-        NSLog(@"m_attentionDict___%@___%d___%d",m_friendDict,[m_friendDict allKeys].count,m_sectionArray_friend.count);
 
         [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
         for (int i = 0; i < m_sectionArray_friend.count; i++) {
@@ -435,7 +439,6 @@
     [paramDict setObject:sort forKey:@"sorttype_2"];
     
     [self.view bringSubviewToFront:hud];
-    //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_2];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
@@ -474,7 +477,6 @@
         }
         //先存后取
         m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
-        NSLog(@"m_attentionDict___%@___%d",m_attentionDict,[m_attentionDict allKeys].count);
         m_sectionArray_attention = [DataStoreManager queryAttentionSections];
         [m_sectionIndexArray_attention removeAllObjects];
         for (int i = 0; i < m_sectionArray_attention.count; i++) {
@@ -550,15 +552,19 @@
     dispatch_async(queue, ^{
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:KISDictionaryHaveKey(dict, @"shiptype")];;
-                
-                
-                if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(dict, @"userid")]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                }
+                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
-        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:@"distance" ascend:NO];
+        
+            else if ([fansList isKindOfClass:[NSDictionary class]]) {
+                NSArray* keyArr = [fansList allKeys];
+                for (NSString* key in keyArr) {
+                    for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
+                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
+                    }
+                }
+            }
+        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:nil ascend:NO];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -600,7 +606,18 @@
         }
         [m_myAttentionsTableView reloadData];
     }
-    
+    else if(kSegmentFans == tabIndex)
+    {
+        //        m_fansDict = [DataStoreManager queryAllFans];
+        //        m_fansArray = [NSMutableArray arrayWithArray:[m_fansDict allKeys]];
+        //        [m_fansArray sortUsingSelector:@selector(compare:)];
+        
+        m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:nil ascend:YES];
+        
+        [m_myFansTableView reloadData];
+        // [refreshView setRefreshViewFrame];
+    }
+
     [self refreshTopLabel];
 }
 
