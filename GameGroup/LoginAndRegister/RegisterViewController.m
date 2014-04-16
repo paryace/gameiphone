@@ -1158,12 +1158,8 @@ BOOL validateMobile(NSString* mobile) {
        [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"userid"] forKey:kMYUSERID];
        [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:kMyToken];
        [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
-
-//        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-//        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:m_phoneNumText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-//        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:m_passwordText.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-//        
-//        [DataStoreManager setDefaultDataBase:[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] AndDefaultModel:@"LocalStore"];
+       AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
+       [app.xmppHelper connect];
        
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
        
@@ -1223,8 +1219,7 @@ BOOL validateMobile(NSString* mobile) {
 
 - (void)step4ButtonOK:(id)sender
 {
-    AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
-    [app.xmppHelper connect];
+
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
