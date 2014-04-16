@@ -35,7 +35,7 @@
     NSString           *m_zhiyeId;
     NSString           *m_characterName;
     BOOL            isInTheQueue;//获取刷新数据队列中
-    
+    UIAlertView* alertView1;
     BOOL            isGoToNextPage;
     UIView              *bgView;
     UIActivityIndicatorView   *loginActivity;
@@ -246,7 +246,7 @@
             CGSize size1 = [str sizeWithFont:m_charaDetailsView.itemlevelView.font constrainedToSize:CGSizeMake(200, 25)];
             m_charaDetailsView.itemlevelView.frame =CGRectMake(323-size1.width-10, 33,size1.width+10,25);
 
-            m_charaDetailsView.levelLabel.center = m_charaDetailsView.itemlevelView.center;
+            m_charaDetailsView.levelLabel.center = CGPointMake(m_charaDetailsView.itemlevelView.center.x, m_charaDetailsView.levelLabel.center.y);
             
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
             
@@ -440,9 +440,9 @@
         }
         else
         {
-            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
-            alert.tag = 56;
-            [alert show];
+            alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+            alertView1.tag = 56;
+            [alertView1 show];
         }
 
     }];
@@ -780,7 +780,6 @@
     helpVC.myUrl = @"content.html?1";
     [self.navigationController pushViewController:helpVC animated:YES];
 }
-
 
 
 @end
