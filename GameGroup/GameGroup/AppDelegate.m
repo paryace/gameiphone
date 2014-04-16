@@ -115,7 +115,12 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_BecomeActive" object:nil userInfo:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
-    [self.xmppHelper.xmppPing sendPingToServerWithTimeout:2];
+    if([self.xmppHelper isConnected]){
+        [self.xmppHelper.xmppPing sendPingToServerWithTimeout:2];
+    }
+    if([self.xmppHelper isDisconnected]){
+        [self.xmppHelper connect];
+    }
     
 }
 
