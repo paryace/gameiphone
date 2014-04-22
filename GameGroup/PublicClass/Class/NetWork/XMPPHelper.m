@@ -21,6 +21,7 @@
 #import "XMPPReconnect.h"
 #import "JSON.h"
 #import "GameXmppStream.h"
+#import "GameXmppReconnect.h"
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 
@@ -40,7 +41,7 @@
     [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
 
     self.xmppStream.enableBackgroundingOnSocket = YES;
-    self.xmppReconnect = [[XMPPReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
+    self.xmppReconnect = [[GameXmppReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
     [self.xmppReconnect setAutoReconnect:YES];
     [self.xmppReconnect addDelegate:self delegateQueue:dispatch_get_main_queue()];
     [self.xmppReconnect activate:self.xmppStream];
@@ -445,12 +446,10 @@
 
 - (void)xmppAutoPingDidTimeout:(XMPPAutoPing *)sender{
     [self disconnect];
-    [self connect];
 }
 
 - (void)xmppPing:(XMPPPing *)sender didNotReceivePong:(NSString *)pingID dueToTimeout:(NSTimeInterval)timeout{
     [self disconnect];
-    [self connect];
 }
 
 - (void)xmppPing:(XMPPPing *)sender didReceivePong:(XMPPIQ *)pong withRTT:(NSTimeInterval)rtt{
