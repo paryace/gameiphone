@@ -66,15 +66,6 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
     
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(testPersonPage:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
-
-    
-    
     
     
     
@@ -89,14 +80,6 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-}
-
--(void)testPersonPage:(UIButton *)sender
-{
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-
-    MyCircleViewController *mycircle = [[MyCircleViewController alloc]init];
-    [self.navigationController pushViewController:mycircle animated:YES];
 }
 
 

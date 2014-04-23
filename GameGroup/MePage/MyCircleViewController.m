@@ -53,15 +53,8 @@
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
     
-    
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImage_wx"]) {
-        topImgaeView.image =[UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImage_wx"]];
-    }else{
     topImgaeView.image = KUIImage(@"ceshibg.jpg");
-    }
     
-    topImgaeView.userInteractionEnabled =YES;
-    [topImgaeView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [topVIew addSubview:topImgaeView];
     
     nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(138, 210, 85, 30)];
@@ -204,67 +197,6 @@
     }else{
         return 100;
     }
-}
-
--(void)changeTopImage:(UIGestureRecognizer*)sender
-{
-    UIActionSheet *acs = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"相册" otherButtonTitles:@"相机", nil];
-    [acs showInView:self.view];
-
-}
-
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-        UIImagePickerController * imagePicker;
-        if (buttonIndex==1)
-            //这里捕捉“毁灭键”,其实该键的index是0，从上到下从0开始，称之为毁灭是因为是红的
-        {
-            if (imagePicker==nil) {
-                imagePicker=[[UIImagePickerController alloc]init];
-                imagePicker.delegate=self;
-                imagePicker.allowsEditing = YES;
-            }
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-                [self presentViewController:imagePicker animated:YES completion:^{
-                    
-                }];
-            }
-            else {
-                UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
-                [cameraAlert show];
-            }
-        }
-        else if (buttonIndex==0) {
-            if (imagePicker==nil) {
-                imagePicker=[[UIImagePickerController alloc]init];
-                imagePicker.delegate=self;
-                imagePicker.allowsEditing = YES;
-            }
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                //                [self presentModalViewController:imagePicker animated:YES];
-                [self presentViewController:imagePicker animated:YES completion:^{
-                    
-                }];
-            }
-            else {
-                UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
-                [libraryAlert show];
-            }
-        }
-}
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    NSLog(@"%@",info);
-    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-    NSData *data =UIImageJPEGRepresentation(upImage, 1);
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"topImage_wx"];
-    topImgaeView.image = upImage;
-    [self dismissViewControllerAnimated:YES completion:^{
-        
-    }];
-    
 }
 
 

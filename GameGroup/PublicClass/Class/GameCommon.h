@@ -21,7 +21,7 @@
 
 + (GameCommon*)shareGameCommon;
 + (float)diffHeight:(UIViewController *)controller;
-
++(NSString *)isNewOrOldWithImage:(NSString *)imgStr;
 -(NSString *)convertChineseToPinYin:(NSString *)chineseName;
 -(NSUInteger) unicodeLengthOfString: (NSString *) text;
 -(NSUInteger) asciiLengthOfString: (NSString *) text;

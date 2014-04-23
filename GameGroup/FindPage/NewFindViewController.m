@@ -25,7 +25,7 @@
 
 #import "MessageAddressViewController.h"
 #import "EveryDataNewsViewController.h"
-
+#import "CircleHeadViewController.h"
 @interface NewFindViewController ()
 {
     EGOImageButton    *m_dynamicBtn;//动态
@@ -286,10 +286,14 @@
     }
     if (sender ==m_dynamicBtn) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        NewsViewController* VC = [[NewsViewController alloc] init];
-        VC.myViewType = FRIEND_NEWS_TYPE;
-        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];//好友动态
-        [self.navigationController pushViewController:VC animated:YES];
+        CircleHeadViewController *circleVC  = [[CircleHeadViewController alloc]init];
+        circleVC.imageStr = nil;
+        circleVC.userId =[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        [self.navigationController pushViewController:circleVC animated:YES];
+//        NewsViewController* VC = [[NewsViewController alloc] init];
+//        VC.myViewType = FRIEND_NEWS_TYPE;
+//        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];//好友动态
+//        [self.navigationController pushViewController:VC animated:YES];
 
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
 //        [[NSUserDefaults standardUserDefaults] synchronize];
