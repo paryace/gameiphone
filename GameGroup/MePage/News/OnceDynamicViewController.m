@@ -1030,8 +1030,8 @@
 //    webViewHeight = [htmlHeight doubleValue];
 //    NSLog(@"%@", htmlHeight);
     
-    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
-    NSLog(@"------finish=%@",str);
+//    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
+//    NSLog(@"------finish=%@",str);
 
     
     

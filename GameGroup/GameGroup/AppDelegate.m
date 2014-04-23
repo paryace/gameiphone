@@ -27,6 +27,22 @@
     
     NSLog(@"%@",NSHomeDirectory());
     
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:@"firstStart"]){
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSArray *contents = [fileManager contentsOfDirectoryAtPath:documentsDirectory error:NULL];
+                for (int i = 0; i <contents.count; i++) {
+                    NSError *error;
+                    NSLog(@"%@",error);
+                    [fileManager removeItemAtPath:[documentsDirectory stringByAppendingPathComponent:[contents objectAtIndex:i]] error:&error];
+                }
+       [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstStart"];
+    }else{
+    }
+    
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
     // Override point for customization after application launch.

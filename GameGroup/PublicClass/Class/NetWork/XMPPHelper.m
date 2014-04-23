@@ -225,10 +225,6 @@
 }
 
 #pragma mark 收到消息后调用
-
-
-
-
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
     NSLog(@"message =====%@",message);

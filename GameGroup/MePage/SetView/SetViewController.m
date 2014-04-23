@@ -237,9 +237,7 @@
             while (fileName = [e nextObject]) {
                 NSError *error = nil;
                 NSString *filePath = [cache stringByAppendingPathComponent:fileName];
-                BOOL flag =[fm removeItemAtPath:filePath error:&error];
-                NSLog(@"%d %@",flag,[error localizedDescription]);
-                
+                [fm removeItemAtPath:filePath error:&error];
             }
         }
         else if(112 == alertView.tag)

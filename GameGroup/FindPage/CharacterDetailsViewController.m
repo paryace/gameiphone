@@ -235,18 +235,18 @@
             
             m_charaDetailsView.levelLabel.text =[NSString stringWithFormat:@"Lv.%@ %@", m_charaInfo.level,m_charaInfo.professionalName];
             
-            CGSize size = [str sizeWithFont:m_charaDetailsView.levelLabel.font constrainedToSize:CGSizeMake(200, 25)];
+//            CGSize size = [str sizeWithFont:m_charaDetailsView.levelLabel.font constrainedToSize:CGSizeMake(300, 25)];
             
-            m_charaDetailsView.levelLabel.frame =CGRectMake(323-size.width-10,8,size.width+10,25);
+            m_charaDetailsView.levelLabel.frame =CGRectMake(200,8,110,25);
 
             
             
             
             m_charaDetailsView.itemlevelView.text = [NSString stringWithFormat:@"%@/%@",m_charaInfo.itemlevelequipped,m_charaInfo.itemlevel] ;//
-            CGSize size1 = [str sizeWithFont:m_charaDetailsView.itemlevelView.font constrainedToSize:CGSizeMake(200, 25)];
-            m_charaDetailsView.itemlevelView.frame =CGRectMake(323-size1.width-10, 33,size1.width+10,25);
+//            CGSize size1 = [str sizeWithFont:m_charaDetailsView.itemlevelView.font constrainedToSize:CGSizeMake(300, 25)];
+            m_charaDetailsView.itemlevelView.frame =CGRectMake(200, 33,110,25);
 
-            m_charaDetailsView.levelLabel.center = CGPointMake(m_charaDetailsView.itemlevelView.center.x, m_charaDetailsView.levelLabel.center.y);
+            //m_charaDetailsView.levelLabel.center = CGPointMake(m_charaDetailsView.itemlevelView.center.x, m_charaDetailsView.levelLabel.center.y);
             
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
             

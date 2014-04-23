@@ -188,6 +188,9 @@
         [app.xmppHelper connect];
         
         [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
+        
+        
+        [[UserManager singleton]getSayHiUserId];//获取打招呼id
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:phoneTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
