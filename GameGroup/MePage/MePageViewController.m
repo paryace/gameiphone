@@ -13,7 +13,7 @@
 #import "FeedBackViewController.h"
 #import "CharacterEditViewController.h"
 #import "CharacterDetailsViewController.h"//角色详情界面
-
+#import "CircleWithMeViewController.h"
 #import "HostInfo.h"
 //#import "ContactsCell.h"
 #import "PersonTableCell.h"
@@ -25,7 +25,7 @@
 #import "NewsViewController.h"
 
 #import "FunsOfOtherViewController.h"
-
+#import "MyCircleViewController.h"
 
 @interface MePageViewController ()
 {
@@ -60,21 +60,12 @@
     [self getUserInfoByNet];
 }
 
-//#pragma mark 进入程序网络变化
-//- (void)appBecomeActiveWithNet:(NSNotification*)notification
-//{
-//    Reachability* reach = notification.object;
-//    if ([reach currentReachabilityStatus] != NotReachable  && [self isHaveLogin]) {//有网
-//        if (m_hostInfo == nil) {
-//            [self getUserInfoByNet];
-//        }
-//    }
-//}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
+    
     
     
     
@@ -90,6 +81,8 @@
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
 }
+
+
 - (void)getUserInfoByNet
 {
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
@@ -629,10 +622,15 @@
 - (void)myStateClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    NewsViewController* VC = [[NewsViewController alloc] init];
-    VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    VC.myViewType = ME_NEWS_TYPE;
-    [self.navigationController pushViewController:VC animated:YES];
+    CircleWithMeViewController *cirMe = [[CircleWithMeViewController alloc]init];
+    cirMe.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+
+    [self.navigationController pushViewController:cirMe animated:YES];
+
+//    NewsViewController* VC = [[NewsViewController alloc] init];
+//    VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+//    VC.myViewType = ME_NEWS_TYPE;
+//    [self.navigationController pushViewController:VC animated:YES];
     
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -662,6 +660,11 @@
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
 //        [[NSUserDefaults standardUserDefaults] synchronize];
 //        [[GameCommon shareGameCommon] displayTabbarNotification];
+        
+
+        
+        
+        
     }
     else if(indexPath.section == 2)
     {

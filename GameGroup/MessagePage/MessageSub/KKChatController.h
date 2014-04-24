@@ -35,12 +35,12 @@ AVAudioPlayerDelegate,
 HPGrowingTextViewDelegate,
 EmojiViewDelegate>
 {
-    UILabel    *titleLabel;
+    //    UILabel    *titleLabel;
     NSString * userName;
-   // NSMutableDictionary * userDefaults;
+    // NSMutableDictionary * userDefaults;
     NSUserDefaults * uDefault;
     NSMutableDictionary * peopleDict;
-    UIView * inPutView;
+    //    UIView * inPutView;
     UILongPressGestureRecognizer *btnLongTap;
     UIButton * tempBtn;
     UIView * popLittleView;
@@ -65,7 +65,7 @@ EmojiViewDelegate>
     BOOL ifEmoji;
     
     UIButton * audioBtn;
-    UIButton * emojiBtn;
+    //    UIButton * emojiBtn;
     UIButton * picBtn;
     UIButton * audioRecordBtn;
     
@@ -77,16 +77,18 @@ EmojiViewDelegate>
     UIPageControl *m_Emojipc;
     UIView * emojiBGV;
     
-    EmojiView * theEmojiView;
+    //    EmojiView * theEmojiView;
     
     NSMutableDictionary *recordSetting;
     AVAudioPlayer * audioPlayer;
     NSString * rootRecordPath;
     NSMutableArray * animationOne;
     NSMutableArray * animationTwo;
-        
+    
     UIMenuController * menu;
 }
+@property (nonatomic, strong) UIButton *emojiBtn;
+@property (nonatomic, strong) UILabel *titleLabel;
 @property (assign, nonatomic)  NSInteger unreadNo;
 @property (strong, nonatomic)  NSString* myHeadImg;
 @property (strong, nonatomic)  UITableView *tView;

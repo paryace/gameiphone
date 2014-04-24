@@ -1160,7 +1160,8 @@ BOOL validateMobile(NSString* mobile) {
        [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
        [app.xmppHelper connect];
-       
+       [[UserManager singleton]getSayHiUserId];//获取打招呼id
+
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
        
        

@@ -70,6 +70,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 	return my_getDataAfterManager;
 }
 
+
 -(void)storeNewMessage:(NSDictionary *)messageContent
 {
     BOOL isVibrationopen;
@@ -103,6 +104,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
     type = type?type:@"notype";
     NSLog(@"%@",type);
+    
     if([type isEqualToString:@"normalchat"])
     {
         NSLog(@"%@",KISDictionaryHaveKey(messageContent, @"msgId"));
@@ -179,15 +181,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
+        
+        NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+        if ([array containsObject:sender]) {
+            [messageContent setValue:@"1" forKey:@"sayHiType"];
+        }else{
+            [messageContent setValue:@"2" forKey:@"sayHiType"];
+        }
+
     }else{
-        [self getSayHiUserId];
+        [self getSayHiUserIdWithInfo:messageContent];
     }
-    NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
-    if ([array containsObject:sender]) {
-        [messageContent setValue:@"1" forKey:@"sayHiType"];
-    }else{
-        [messageContent setValue:@"2" forKey:@"sayHiType"];
-    }
+    
 
     
     [self storeNewMessage:messageContent];
@@ -327,7 +332,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 
 #pragma mark --获取你和谁说过话
--(void)getSayHiUserId
+-(void)getSayHiUserIdWithInfo:(NSDictionary *)info
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
@@ -342,7 +347,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         
         
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
-        
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            NSRange range = [[responseObject objectForKey:@"sender"] rangeOfString:@"@"];
+            NSString * sender = [[responseObject objectForKey:@"sender"] substringToIndex:range.location];
+
+        if ([responseObject containsObject:sender]) {
+            
+            [info setValue:@"1" forKey:@"sayHiType"];
+        }else{
+            [info setValue:@"2" forKey:@"sayHiType"];
+        }
+        }
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
         

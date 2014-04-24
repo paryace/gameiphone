@@ -17,6 +17,7 @@
 #import "CharacterDetailsViewController.h"
 #import "UserManager.h"
 #import "HelpViewController.h"
+#import "MyCircleViewController.h"
 @interface TestViewController ()
 {
     UILabel*        m_titleLabel;
@@ -740,9 +741,12 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     
-    NewsViewController* VC = [[NewsViewController alloc] init];
+   // NewsViewController* VC = [[NewsViewController alloc] init];
+    MyCircleViewController *VC = [[MyCircleViewController alloc]init];
     VC.userId = self.hostInfo.userId;
-    VC.myViewType = ONEPERSON_NEWS_TYPE;
+    VC.nickNmaeStr = self.hostInfo.nickName;
+    VC.imageStr = [GameCommon getNewStringWithId:[self.hostInfo.headImgArray objectAtIndex:0]];
+  //  VC.myViewType = ONEPERSON_NEWS_TYPE;
     [self.navigationController pushViewController:VC animated:YES];
 }
 
@@ -835,9 +839,11 @@
         
         for (int i = 0; i < [self.hostInfo.achievementArray count]; i++) {
             NSDictionary* smallTitleDic = KISDictionaryHaveKey([self.hostInfo.achievementArray objectAtIndex:i], @"titleObj");
-            
-            NSString* rarenum = [NSString stringWithFormat:@"rarenum_small_%@", [GameCommon getNewStringWithId:KISDictionaryHaveKey(smallTitleDic , @"rarenum")]];
-            
+            NSString* rarenum;
+            if ([smallTitleDic isKindOfClass:[NSDictionary class]]) {
+                rarenum = [NSString stringWithFormat:@"rarenum_small_%@", [GameCommon getNewStringWithId:KISDictionaryHaveKey(smallTitleDic , @"rarenum")]];
+
+            }
             UIView* titleObjView = [CommonControlOrView setMyTitleObjWithImage:rarenum titleName:KISDictionaryHaveKey(smallTitleDic, @"title") rarenum:KISDictionaryHaveKey(smallTitleDic, @"rarenum") showCurrent:i == 0 ? NO : YES];
             titleObjView.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 40);
             [m_myScrollView addSubview:titleObjView];

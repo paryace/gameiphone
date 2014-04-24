@@ -319,6 +319,47 @@ NSString * gen_uuid()
     }];
     [httpClient enqueueHTTPRequestOperation:operation];
 }
+
++(void)uploadkkChatImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure{
+    
+    NSURL *url = [NSURL URLWithString:urlStr];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
+    
+    NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
+    
+    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"chat_img",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
+    
+    NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
+        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
+    }];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setUploadProgressBlock:block];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (controller) {
+            NSString *receiveStr = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+            NSDictionary * dict = [receiveStr JSONValue];
+            int status = [[dict objectForKey:@"errorcode"] intValue];
+            if (status==0) {
+                success(operation,[dict objectForKey:@"entity"]);
+            }
+            else
+            {
+                failure(operation,nil);
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (controller) {
+            failure(operation,error);
+        }
+    }];
+    [httpClient enqueueHTTPRequestOperation:operation];
+    
+}
+
+
 #pragma mark 上传单张妹子图片
 +(void)uploadGrilImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure

@@ -6,6 +6,7 @@
 //  Copyright (c) 2012年 无锡恩梯梯数据有限公司. All rights reserved.
 //
 
+
 #import "KKChatController.h"
 #import "MLNavigationController.h"
 #import "AppDelegate.h"
@@ -17,30 +18,52 @@
 #import "ActivateViewController.h"
 #import "TestViewController.h"
 #import "MJRefresh.h"
-
+#import "PhotoViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
 #endif
 
+#define kChatImageSizeWidth @"100"
+#define kChatImageSizeHigh @"100"
+
 #define padding 20
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
-@interface KKChatController ()<UIAlertViewDelegate>
+
+typedef enum : NSUInteger {
+    KKChatInputTypeNone,
+    KKChatInputTypeKeyboard,
+    KKChatInputTypeEmoji,
+    KKChatInputTypeAdd
+} KKChatInputType;
+
+typedef void(^ChangMessageProgressBlock)(double progress,NSString *uuid);
+typedef void(^SendImageMessageSuccessBlock)(BOOL isSucces);
+
+@interface KKChatController ()<UIAlertViewDelegate,
+UIImagePickerControllerDelegate,
+UINavigationControllerDelegate>
 {
-    
     NSMutableArray *messages;
     UIMenuItem *copyItem;
     UIMenuItem *copyItem3;
     BOOL myActive;
-    
-    UILabel* unReadL;
     NSMutableArray *wxSDArray;
     
 }
 
+@property (nonatomic, assign) KKChatInputType kkchatInputType;
+@property (nonatomic, strong) UILabel *unReadL;
 @property (nonatomic, strong) MJRefreshHeaderView *kkChatControllerRefreshHeadView;
-
+@property (nonatomic, strong) UIButton *kkChatAddButton;
+@property (nonatomic, strong) UIView *inPutView;
+@property (nonatomic, strong) UIView *kkChatAddView;
+@property (nonatomic, strong) EmojiView *theEmojiView;
+@property (nonatomic, copy) ChangMessageProgressBlock changeMessageBlock;
+@property (nonatomic, copy) SendImageMessageSuccessBlock sendImageMessageSuccessBlock;
+@property (nonatomic, strong) KKMessageCell *currentCell;
+@property (nonatomic, strong) NSMutableArray *messages;
 @end
 
 @implementation KKChatController
@@ -52,6 +75,7 @@
 @synthesize nickName;
 @synthesize session;
 @synthesize recorder;
+@synthesize messages;
 
 - (id)init
 {
@@ -86,19 +110,25 @@
     
     if (![[DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser] isEqualToString:@""]) {
         self.nickName = [DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser];//刷新别名
-        titleLabel.text=self.nickName;
+        self.titleLabel.text = self.nickName;
         [self.tView reloadData];
     }
+    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    
     wxSDArray = [[NSMutableArray alloc]init];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(changeMyActive:)
+                                                 name:@"wxr_myActiveBeChanged"
+                                               object:nil];
+    
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",
+                               [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    
     DSuser *friend = [DSuser MR_findFirstWithPredicate:predicate];
     myActive = [friend.action boolValue];
     postDict = [NSMutableDictionary dictionary];
@@ -111,124 +141,84 @@
     
     self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height)];
+    UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0,
+                                                                      0,
+                                                                      320,
+                                                                      self.view.frame.size.height)];
     bgV.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
     [self.view addSubview:bgV];
-    messages = [[NSMutableArray alloc] initWithArray:[ DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
+    
+    messages = [[NSMutableArray alloc]
+                initWithArray:[DataStoreManager
+                               qureyCommonMessagesWithUserID:self.chatWithUser
+                               FetchOffset:0]];
+    
+    
     NSLog(@"messages%@",messages);
     
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
-    self.myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    
+    self.myHeadImg = [DataStoreManager
+                      queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults]
+                                                              objectForKey:kMYUSERID]];
     
     [self.view addSubview:self.tView];
     [self kkChatAddRefreshHeadView];
     
-    
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
-    
     
     ifAudio = NO;
     ifEmoji = NO;
     
-    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
-    
-	self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 270, 35)];
-    self.textView.isScrollable = NO;
-    self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
-    
-	self.textView.minNumberOfLines = 1;
-	self.textView.maxNumberOfLines = 6;
-    // you can also set the maximum height in points with maxHeight
-    // textView.maxHeight = 200.0f;
-	self.textView.returnKeyType = UIReturnKeySend; //just as an example
-	self.textView.font = [UIFont systemFontOfSize:15.0f];
-	self.textView.delegate = self;
-    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
-    self.textView.backgroundColor = [UIColor clearColor];
-    //    self.inputTF.placeholder = @"Type to see the textView grow!";
-    
-    // textView.text = @"test\n\ntest";
-	// textView.animateHeightChange = NO; //turns off animation
-    
-    [self.view addSubview:inPutView];
+    [self.view addSubview:self.inPutView];
 	
-    UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
-    UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-    UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-    entryImageView.frame = CGRectMake(10, 7, 270, 35);
-    entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
-    UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-    imageView.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
-    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    // view hierachy
-    [inPutView addSubview:imageView];
-    [inPutView addSubview:entryImageView];
-    [inPutView addSubview:self.textView];
-    
-    emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [emojiBtn setFrame:CGRectMake(277, inPutView.frame.size.height-12-36, 45, 45)];
-    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-    [inPutView addSubview:emojiBtn];
-    [emojiBtn addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
     [self setTopViewWithTitle:@"" withBackButton:YES];
     
-    titleLabel=[[UILabel alloc] initWithFrame:CGRectMake(100, startX - 44, 120, 44)];
-    titleLabel.backgroundColor=[UIColor clearColor];
-    titleLabel.text=self.nickName;
-    [titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
-    titleLabel.textAlignment=NSTextAlignmentCenter;
-    titleLabel.textColor=[UIColor whiteColor];
-    [self.view addSubview:titleLabel];
+    [self.view addSubview:self.titleLabel];
     
-    [unReadL = [UILabel alloc]initWithFrame:CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20)];
-    if (_unreadNo>0) {
-        unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-    }
-    unReadL.backgroundColor = [UIColor redColor];
-    unReadL.layer.cornerRadius = 10;
-    unReadL.layer.masksToBounds=YES;
-    unReadL.textColor = [UIColor whiteColor];
-    unReadL.textAlignment = NSTextAlignmentCenter;
-    unReadL.font = [UIFont systemFontOfSize:14];
-    unReadL.hidden = YES;
-    [self.view addSubview:unReadL];
+    [self.view addSubview:self.unReadL];
     
     
     float version = [[[UIDevice currentDevice] systemVersion] floatValue];
     if (version >= 5.0) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillChangeFrameNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillChangeFrameNotification
+                                                   object:nil];
     }
     else{
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillShowNotification
+                                                   object:nil];
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
     
-    btnLongTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(btnLongTapAction:)];
+    btnLongTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                               action:@selector(btnLongTapAction:)];
     btnLongTap.minimumPressDuration = 1;
     
     [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
     
-    theEmojiView = [[EmojiView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253) WithSendBtn:YES];
-    theEmojiView.delegate = self;
-    [self.view addSubview:theEmojiView];
-    theEmojiView.hidden = YES;
+    
+    [self.view addSubview:self.theEmojiView];
+    self.theEmojiView.hidden = YES;
+    [self.view addSubview:self.kkChatAddView];
+    self.kkChatAddView.hidden = YES;
+    
     
     copyItem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyMsg)];
     //    UIMenuItem *copyItem2 = [[UIMenuItem alloc] initWithTitle:@"转发"action:@selector(transferMsg)];
     copyItem3 = [[UIMenuItem alloc] initWithTitle:@"删除"action:@selector(deleteMsg)];
     menu = [UIMenuController sharedMenuController];
+    
     UIButton *profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
     profileButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
     [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
@@ -239,11 +229,170 @@
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
 }
+- (EmojiView *)theEmojiView{
+    if (!_theEmojiView) {
+        _theEmojiView = [[EmojiView alloc]
+                         initWithFrame:CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253)
+                         WithSendBtn:YES];
+        _theEmojiView.delegate = self;
+    }
+    return _theEmojiView;
+}
+- (UIView *)kkChatAddView{
+    
+    if (!_kkChatAddView) {
+        _kkChatAddView = [[UIView alloc] init];
+        _kkChatAddView.frame = CGRectMake(0,
+                                          self.view.frame.size.height-253,
+                                          320,
+                                          253);
+        _kkChatAddView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
+        NSArray *kkChatButtonsTitle = @[@"相机",@"相册"];
+        
+        for (int i = 0; i < 2; i++) {
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.tag = i;
+            button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 60, 100);
+            //            button.backgroundColor = [UIColor greenColor];
+            [button addTarget:self
+                       action:@selector(kkChatAddViewButtonsClick:)
+             forControlEvents:UIControlEventTouchUpInside];
+            
+            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"kkChatAddViewButtonsNomal_%d",i]]
+                    forState:UIControlStateNormal];
+            
+            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"kkChatAddViewButtonsHighlight_%d",i]]
+                    forState:UIControlStateHighlighted];
+            
+            [button setTitleColor:UIColorFromRGBA(0x4c4c4c, 1)
+                         forState:UIControlStateNormal];
+            
+            [button setImageEdgeInsets:UIEdgeInsetsMake(15, 10, 40, 10)];
+            [button setTitle:[kkChatButtonsTitle objectAtIndex:i]
+                    forState:UIControlStateNormal];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(70, -97, 10, 10)];
+            [_kkChatAddView addSubview:button];
+            
+        }
+    }
+    return _kkChatAddView;
+}
+- (UIView *)inPutView{
+    if (!_inPutView) {
+        _inPutView = [[UIView alloc] init];
+        _inPutView.frame = CGRectMake(0,
+                                      self.view.frame.size.height-50,
+                                      320,
+                                      50);
+        
+        UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
+        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
+                                                                           topCapHeight:22];
+        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+        entryImageView.frame = CGRectMake(10, 7, 235, 35);
+        entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
+        UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13
+                                                                 topCapHeight:22];
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+        imageView.frame = CGRectMake(0,
+                                     0,
+                                     self.inPutView.frame.size.width,
+                                     self.inPutView.frame.size.height);
+        imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        
+        //    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        // view hierachy
+        [_inPutView addSubview:imageView];
+        [_inPutView addSubview:entryImageView];
+        [_inPutView addSubview:self.textView];
+        [_inPutView addSubview:self.kkChatAddButton];
+        [_inPutView addSubview:self.emojiBtn];
+        
+    }
+    return _inPutView;
+}
 
+- (UILabel *)unReadL{
+    if (!_unReadL) {
+        
+        _unReadL = [[UILabel alloc] init];
+        _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
+        if (_unreadNo>0) {
+            _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+        }
+        _unReadL.backgroundColor = [UIColor redColor];
+        _unReadL.layer.cornerRadius = 10;
+        _unReadL.layer.masksToBounds=YES;
+        _unReadL.textColor = [UIColor whiteColor];
+        _unReadL.textAlignment = NSTextAlignmentCenter;
+        _unReadL.font = [UIFont systemFontOfSize:14];
+        _unReadL.hidden = YES;
+        
+    }
+    return _unReadL;
+}
+
+- (UIButton *)kkChatAddButton{
+    if (!_kkChatAddButton) {
+        _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _kkChatAddButton.frame = CGRectMake(242,
+                                            self.inPutView.frame.size.height-12-36,
+                                            45,
+                                            45);
+        [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                          forState:UIControlStateNormal];
+        
+        [_kkChatAddButton addTarget:self
+                             action:@selector(kkChatAddButtonClick:)
+                   forControlEvents:UIControlEventTouchUpInside];
+        
+    }
+    return _kkChatAddButton;
+}
+
+- (UIButton *)emojiBtn{
+    if (!_emojiBtn) {
+        _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _emojiBtn.frame = CGRectMake(277,
+                                     self.inPutView.frame.size.height-12-36,
+                                     45,
+                                     45);
+        [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
+                   forState:UIControlStateNormal];
+        [_emojiBtn addTarget:self
+                      action:@selector(kkChatEmojiBtnClicked:)
+            forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _emojiBtn;
+}
+- (UILabel *)titleLabel{
+    if(!_titleLabel){
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100,
+                                                                startX - 44,
+                                                                120,
+                                                                44)];
+        _titleLabel.backgroundColor = [UIColor clearColor];
+        _titleLabel.text = self.nickName;
+        _titleLabel.textAlignment = NSTextAlignmentCenter;
+        _titleLabel.textColor = [UIColor whiteColor];
+        [_titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
+        
+    }
+    return _titleLabel;
+}
 
 - (UITableView *)tView{
-    if (!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-55) style:UITableViewStylePlain];
+    if(!tView) {
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                              startX,
+                                                              320,
+                                                              self.view.frame.size.height-startX-55)
+                                             style:UITableViewStylePlain];
         [tView setBackgroundColor:[UIColor clearColor]];
         tView.delegate = self;
         tView.dataSource = self;
@@ -251,6 +400,28 @@
     }
     return tView;
 }
+
+- (HPGrowingTextView *)textView{
+    if(!_textView){
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 235, 35)];
+        _textView.isScrollable = NO;
+        _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+        _textView.minNumberOfLines = 1;
+        _textView.maxNumberOfLines = 6;
+        // you can also set the maximum height in points with maxHeight
+        // textView.maxHeight = 200.0f;
+        _textView.returnKeyType = UIReturnKeySend; //just as an example
+        _textView.font = [UIFont systemFontOfSize:15.0f];
+        _textView.delegate = self;
+        _textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
+        _textView.backgroundColor = [UIColor clearColor];
+        _textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    }
+    return _textView;
+}
+
+
+
 
 - (void)changeMyActive:(NSNotification*)notification
 {
@@ -281,8 +452,8 @@
         return 0;
     }
     
-    NSMutableArray* formattedEntries = [NSMutableArray arrayWithCapacity:loadMsgArr.count];
-    NSMutableArray* heightArray = [NSMutableArray array];
+    NSMutableArray *formattedEntries = [NSMutableArray arrayWithCapacity:loadMsgArr.count];
+    NSMutableArray *heightArray = [NSMutableArray array];
     for(NSDictionary* plainEntry in loadMsgArr)
     {
         NSString *message = [plainEntry objectForKey:@"msg"];
@@ -302,29 +473,43 @@
             
             NSArray * hh = [NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
             [heightArray addObject:hh];
-            
             [formattedEntries addObject:KISDictionaryHaveKey(plainEntry, @"payload")];
         }
         else
         {
-            NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:message];
-            
-            OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-            paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-            paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-            paragraphStyle.firstLineHeadIndent = 0.f; // indentation for first line
-            paragraphStyle.lineSpacing = 5.f; // increase space between lines by 3 points
-            [mas setParagraphStyle:paragraphStyle];
-            [mas setFont:[UIFont systemFontOfSize:15]];
-            //            [mas setTextColor:[randomColors objectAtIndex:(idx%5)]];
-            [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
-            CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
-            NSNumber * width = [NSNumber numberWithFloat:size.width];
-            NSNumber * height = [NSNumber numberWithFloat:size.height];
-            [formattedEntries addObject:mas];
-            NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
-            [heightArray addObject:hh];
+            if ([[[KISDictionaryHaveKey(plainEntry, @"payload") JSONValue] objectForKey:@"type"] isEqualToString:@"img"]) {
+                CGSize size =  CGSizeMake(100, 100);
+                NSNumber * width = [NSNumber numberWithFloat:size.width];
+                NSNumber * height = [NSNumber numberWithFloat:size.height];
+                
+                
+                [formattedEntries addObject:[[NSAttributedString alloc] init]];
+                NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
+                [heightArray addObject:hh];
+                
+            }else{
+                
+                NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:message];
+                
+                OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+                paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+                paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+                paragraphStyle.firstLineHeadIndent = 0.f; // indentation for first line
+                paragraphStyle.lineSpacing = 5.f; // increase space between lines by 3 points
+                [mas setParagraphStyle:paragraphStyle];
+                [mas setFont:[UIFont systemFontOfSize:15]];
+                //            [mas setTextColor:[randomColors objectAtIndex:(idx%5)]];
+                [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
+                CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
+                NSNumber * width = [NSNumber numberWithFloat:size.width];
+                NSNumber * height = [NSNumber numberWithFloat:size.height];
+                [formattedEntries addObject:mas];
+                NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
+                [heightArray addObject:hh];
+                
+            }
         }
+        
     }
     
     //     = heightArray;
@@ -372,25 +557,41 @@
         }
         else
         {
-            NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:message];
             
-            OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-            paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-            paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-            paragraphStyle.firstLineHeadIndent = 0.f; // indentation for first line
-            paragraphStyle.lineSpacing = 5.f; // increase space between lines by 3 points
-            [mas setParagraphStyle:paragraphStyle];
-            [mas setFont:[UIFont systemFontOfSize:15]];
-            //            [mas setTextColor:[randomColors objectAtIndex:(idx%5)]];
-            [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
-            CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
-            NSNumber * width = [NSNumber numberWithFloat:size.width];
-            NSNumber * height = [NSNumber numberWithFloat:size.height];
-            [formattedEntries addObject:mas];
-            NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
-            [heightArray addObject:hh];
+            if ([[[KISDictionaryHaveKey(plainEntry, @"payload") JSONValue] objectForKey:@"type"] isEqualToString:@"img"]) {
+                CGSize size =  CGSizeMake(100, 100);
+                NSNumber * width = [NSNumber numberWithFloat:size.width];
+                NSNumber * height = [NSNumber numberWithFloat:size.height];
+                
+                [formattedEntries addObject:[[NSAttributedString alloc] init]];
+                NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
+                [heightArray addObject:hh];
+                
+            }else{
+                
+                NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:message];
+                
+                OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+                paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+                paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+                paragraphStyle.firstLineHeadIndent = 0.f; // indentation for first line
+                paragraphStyle.lineSpacing = 5.f; // increase space between lines by 3 points
+                [mas setParagraphStyle:paragraphStyle];
+                [mas setFont:[UIFont systemFontOfSize:15]];
+                //            [mas setTextColor:[randomColors objectAtIndex:(idx%5)]];
+                [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
+                CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
+                NSNumber * width = [NSNumber numberWithFloat:size.width];
+                NSNumber * height = [NSNumber numberWithFloat:size.height];
+                [formattedEntries addObject:mas];
+                NSArray * hh = [NSArray arrayWithObjects:width,height, nil];
+                [heightArray addObject:hh];
+                
+            }
         }
     }
+    
+    
     self.finalMessageArray = formattedEntries;
     self.HeightArray = heightArray;
 }
@@ -405,20 +606,157 @@
 {
     return (theContent.length > 0)?[theContent sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(haveThumb ? 150 : 180, 80)] : CGSizeZero;
 }
+//
+- (void)kkChatAddViewButtonsClick:(UIButton *)sender{
+    NSLog(@"%d",sender.tag);
+    UIImagePickerController *imagePicker = nil;
+    switch (sender.tag) {
+        case 0:
+        {
+            if (imagePicker==nil) {
+                imagePicker=[[UIImagePickerController alloc]init];
+                imagePicker.delegate = self;
+                imagePicker.allowsEditing = YES;
+            }
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                [self presentViewController:imagePicker animated:YES completion:^{
+                    
+                }];
+            }
+            else {
+                UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
+                [cameraAlert show];
+            }
+        }
+            break;
+        case 1:
+        {
+            if (imagePicker==nil) {
+                imagePicker=[[UIImagePickerController alloc]init];
+                imagePicker.delegate=self;
+                imagePicker.allowsEditing = YES;
+            }
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+                //                [self presentModalViewController:imagePicker animated:YES];
+                [self presentViewController:imagePicker animated:YES completion:^{
+                    
+                }];
+            }
+            else {
+                UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
+                [libraryAlert show];
+            }
+            
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+#pragma mark - 从相机或相册获取到图片
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
+    
+    
+    
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    
+    NSLog(@"%@",info);
+    
+    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+    //    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:image targetSizeX:100 targetSizeY:100];
+    //    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
+    
+    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
+        NSLog(@"success///");
+        
+        [self sendImageMsgD:openImgPath UUID:uuid];
+        
+        
+        KKMessageCell *cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self getMsgRowWithId:uuid] inSection:0]];
+        
+        [hud show:YES];
+        [NetManager uploadkkChatImage:upImage
+                           WithURLStr:BaseUploadImageUrl
+                            ImageName:@"1"
+                        TheController:self
+                             Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+                                 double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+                                 
+                                 //                                 cell.progressView.hidden = NO;
+                                 //                                 cell.progressView.progress = progress;
+                                 
+                                 
+                             }
+                              Success:^(AFHTTPRequestOperation *operation, id responseObject)
+         {
+             NSLog(@"j2ifjwoifjwoeijfwoeijf------%@",responseObject);
+             
+             NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
+             //             [cell.progressView setHidden:YES];
+             [self sendImageMsg:imageMsg UUID:uuid];
+             
+             
+         }
+                              failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"发送图片失败请重新发送"
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"知道啦"
+                                                   otherButtonTitles:nil];
+             [alert show];
+         }];
+        
+        
+    }
+    else
+    {
+        NSLog(@"fail");
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+}
 
--(void)emojiBtnClicked:(UIButton *)sender
+-(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     if (!myActive) {
-        UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去激活", nil];
+        UIAlertView * UnActionAlertV = [[UIAlertView alloc] initWithTitle:@"您尚未激活"
+                                                                  message:@"未激活用户不能发送聊天消息"
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"取消"
+                                                        otherButtonTitles:@"去激活", nil];
         [UnActionAlertV show];
         return ;
     }
-    if (!ifEmoji) {
+    //    if (!ifEmoji||self.kkchatInputType != KKChatInputTypeEmoji) {
+    if (self.kkchatInputType != KKChatInputTypeEmoji) {
+        
         [self.textView resignFirstResponder];
+        
         ifEmoji = YES;
+        self.kkchatInputType = KKChatInputTypeEmoji;
+        
         ifAudio = NO;
-        [sender setImage:[UIImage imageNamed:@"keyboard.png"] forState:UIControlStateNormal];
-        [audioBtn setImage:[UIImage imageNamed:@"audioBtn.png"] forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"keyboard.png"]
+                forState:UIControlStateNormal];
+        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                              forState:UIControlStateNormal];
+        
         self.textView.hidden = NO;
         audioRecordBtn.hidden = YES;
         [self showEmojiScrollView];
@@ -428,23 +766,107 @@
     {
         [self.textView.internalTextView becomeFirstResponder];
         ifEmoji = NO;
-        theEmojiView.hidden = YES;
+        self.kkchatInputType = KKChatInputTypeKeyboard;
+        
+        self.theEmojiView.hidden = YES;
         [m_EmojiScrollView removeFromSuperview];
         [emojiBGV removeFromSuperview];
         [m_Emojipc removeFromSuperview];
-        [sender setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"emoji.png"]
+                forState:UIControlStateNormal];
+        
     }
 }
 
+- (void)kkChatAddButtonClick:(UIButton *)sender{
+    
+    
+    if (!myActive) {
+        UIAlertView * UnActionAlertV = [[UIAlertView alloc] initWithTitle:@"您尚未激活"
+                                                                  message:@"未激活用户不能发送聊天消息"
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"取消"
+                                                        otherButtonTitles:@"去激活", nil];
+        [UnActionAlertV show];
+        return ;
+    }
+    
+    if (self.kkchatInputType != KKChatInputTypeAdd) {
+        [self.textView resignFirstResponder];
+        self.kkchatInputType = KKChatInputTypeAdd;
+        
+        [sender setImage:[UIImage imageNamed:@"keyboard.png"]
+                forState:UIControlStateNormal];
+        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
+                       forState:UIControlStateNormal];
+        [self showEmojiScrollView];
+        
+    }else{
+        
+        [self.textView.internalTextView becomeFirstResponder];
+        ifEmoji = NO;
+        self.kkchatInputType = KKChatInputTypeKeyboard;
+        self.theEmojiView.hidden = YES;
+        [m_EmojiScrollView removeFromSuperview];
+        [emojiBGV removeFromSuperview];
+        [m_Emojipc removeFromSuperview];
+        [sender setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                forState:UIControlStateNormal];
+        
+    }
+    return;
+}
+
+
 -(void)showEmojiScrollView
 {
-    [self.textView resignFirstResponder];
-    [inPutView setFrame:CGRectMake(0, self.view.frame.size.height-227-inPutView.frame.size.height, 320, inPutView.frame.size.height)];
-    theEmojiView.hidden = NO;
-    [theEmojiView setFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253)];
-    [self autoMovekeyBoard:253];
+    
+    switch (self.kkchatInputType) {
+        case KKChatInputTypeEmoji:
+        {
+            [self.textView resignFirstResponder];
+            
+            self.inPutView.frame = CGRectMake(0,
+                                              self.view.frame.size.height-227-self.inPutView.frame.size.height,
+                                              320,
+                                              self.inPutView.frame.size.height);
+            
+            self.theEmojiView.hidden = NO;
+            self.kkChatAddView.hidden = YES;
+            self.theEmojiView.frame = CGRectMake(0,
+                                                 self.view.frame.size.height-253,
+                                                 320,
+                                                 253);
+            [self autoMovekeyBoard:253];
+            
+        }
+            break;
+        case KKChatInputTypeAdd:
+        {
+            [self.textView resignFirstResponder];
+            self.inPutView.frame = CGRectMake(0,
+                                              self.view.frame.size.height-227-self.inPutView.frame.size.height,
+                                              320,
+                                              self.inPutView.frame.size.height);
+            self.theEmojiView.hidden = YES;
+            self.kkChatAddView.hidden = NO;
+            self.kkChatAddView.frame = CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253);
+            [self autoMovekeyBoard:253];
+            
+            
+        }
+            break;
+            
+        default:
+            break;
+    }
     
 }
+
+
 -(void)backBtnDo
 {
     if (self.textView.text.length>=1) {
@@ -459,7 +881,10 @@
 -(void)loadPageControl
 {
 	//创建并初始化uipagecontrol
-	m_Emojipc=[[UIPageControl alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-70, 280, 20)];
+	m_Emojipc=[[UIPageControl alloc] initWithFrame:CGRectMake(20,
+                                                              self.view.frame.size.height-70,
+                                                              280,
+                                                              20)];
 	//设置背景颜色
 	m_Emojipc.backgroundColor=[UIColor clearColor];
 	//设置pc页数（此时不会同步跟随显示）
@@ -467,7 +892,9 @@
 	//设置当前页,为第一张，索引为零
 	m_Emojipc.currentPage=0;
 	//添加事件处理，btn点击
-	[m_Emojipc addTarget:self action:@selector(pagePressed:) forControlEvents:UIControlEventTouchUpInside];
+	[m_Emojipc addTarget:self
+                  action:@selector(pagePressed:)
+        forControlEvents:UIControlEventTouchUpInside];
 	//将pc添加到视图上
 	[self.view addSubview:m_Emojipc];
     NSLog(@"load page control");
@@ -492,6 +919,7 @@
         [m_EmojiScrollView addSubview:btn];
     }
 }
+
 -(void)emojiButtonPress:(id)sender
 {
 	//获取对应的button
@@ -511,6 +939,7 @@
 	}
     [self autoMovekeyBoard:253];
 }
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
 	float a=m_EmojiScrollView.contentOffset.x;
@@ -534,11 +963,12 @@
 {
     //    PersonDetailViewController* detailV = [[PersonDetailViewController alloc] init];
     TestViewController *detailV = [[TestViewController alloc]init];
-    
     detailV.userId = self.chatWithUser;
     detailV.nickName = self.nickName;
     detailV.isChatPage = YES;
-    [self.navigationController pushViewController:detailV animated:YES];
+    
+    [self.navigationController pushViewController:detailV
+                                         animated:YES];
 }
 
 -(void)toContactProfile
@@ -547,7 +977,8 @@
     detailV.userId = self.chatWithUser;
     detailV.nickName = self.nickName;
     detailV.isChatPage = YES;
-    [self.navigationController pushViewController:detailV animated:YES];
+    [self.navigationController pushViewController:detailV
+                                         animated:YES];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -560,23 +991,52 @@
     UITouch * touch = [touches anyObject];
     if ([touch view]==clearView) {
         [self.textView resignFirstResponder];
-        if (ifEmoji) {
+        //        if (ifEmoji) {
+        if (self.kkchatInputType != KKChatInputTypeNone) {
+            
+            
             [self autoMovekeyBoard:0];
-            ifEmoji = NO;
+            //            ifEmoji = NO;
+            
+            self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
-                [theEmojiView setFrame:CGRectMake(0, theEmojiView.frame.origin.y+260+startX - 44, 320, 253)];
                 
-                [m_EmojiScrollView setFrame:CGRectMake(0, m_EmojiScrollView.frame.origin.y+260, 320, 253)];
-                [emojiBGV setFrame:CGRectMake(0, emojiBGV.frame.origin.y+260+startX - 44, 320, emojiBGV.frame.size.height)];
-                [m_Emojipc setFrame:CGRectMake(0, m_Emojipc.frame.origin.y+260+startX - 44, 320, m_Emojipc.frame.size.height)];
+                self.theEmojiView.frame = CGRectMake(0,
+                                                     self.theEmojiView.frame.origin.y+260+startX-44,
+                                                     320,
+                                                     253);
+                
+                self.kkChatAddView.frame = CGRectMake(0,
+                                                      self.theEmojiView.frame.origin.y+260+startX-44,
+                                                      320,
+                                                      253);
+                m_EmojiScrollView.frame = CGRectMake(0,
+                                                     m_EmojiScrollView.frame.origin.y+260,
+                                                     320,
+                                                     253);
+                emojiBGV.frame = CGRectMake(0,
+                                            emojiBGV.frame.origin.y+260+startX-44,
+                                            320,
+                                            emojiBGV.frame.size.height);
+                m_Emojipc.frame = CGRectMake(0,
+                                             m_Emojipc.frame.origin.y+260+startX-44,
+                                             320,
+                                             m_Emojipc.frame.size.height);
+                
+                
             } completion:^(BOOL finished) {
-                theEmojiView.hidden = YES;
+                self.theEmojiView.hidden = YES;
+                self.kkChatAddView.hidden = YES;
                 [m_EmojiScrollView removeFromSuperview];
                 [emojiBGV removeFromSuperview];
                 [m_Emojipc removeFromSuperview];
             }];
             
-            [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
+                           forState:UIControlStateNormal];
+            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                                  forState:UIControlStateNormal];
+            
         }
         
         [clearView removeFromSuperview];
@@ -617,15 +1077,17 @@
     [UIView setAnimationDuration:0.3];
 	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
     
-    
-    CGRect containerFrame = inPutView.frame;
+    CGRect containerFrame = self.inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	// animations settings
     
 	
 	// set views with new info
-	inPutView.frame = containerFrame;
-    self.tView.frame = CGRectMake(0.0f, startX, 320.0f, self.view.frame.size.height-startX-inPutView.frame.size.height-h-10);
+	self.inPutView.frame = containerFrame;
+    self.tView.frame = CGRectMake(0.0f,
+                                  startX,
+                                  320.0f,
+                                  self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-10);
     
 	
 	// commit animations
@@ -635,20 +1097,26 @@
     //	tableView.frame = CGRectMake(0.0f, 0.0f, 320.0f,(float)(480.0-h-108.0));
     [UIView commitAnimations];
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom
+                                  animated:NO];
     }
     
     if (h>0&&canAdd) {
         canAdd = NO;
-        clearView = [[UIView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-inPutView.frame.size.height-h)];
+        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,
+                                                             startX,
+                                                             320,
+                                                             self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
         [clearView setBackgroundColor:[UIColor clearColor]];
         [self.view addSubview:clearView];
     }
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX-inPutView.frame.size.height-h)];
+        [clearView setFrame:CGRectMake(0,
+                                       startX,
+                                       320,
+                                       self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
     }
-    
-    
 }
 #pragma mark -
 #pragma mark HPExpandingTextView delegate
@@ -658,7 +1126,11 @@
         [menu setMenuItems:@[]];
         return YES;
     }
-    UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去激活", nil];
+    UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活"
+                                                             message:@"未激活用户不能发送聊天消息"
+                                                            delegate:self
+                                                   cancelButtonTitle:@"取消"
+                                                   otherButtonTitles:@"去激活", nil];
     [UnActionAlertV show];
     return NO;
 }
@@ -667,22 +1139,43 @@
 {
     float diff = (growingTextView.frame.size.height - height);
     
-	CGRect r = inPutView.frame;
+	CGRect r = self.inPutView.frame;
     r.size.height -= diff;
     r.origin.y += diff;
-	inPutView.frame = r;
+	self.inPutView.frame = r;
     
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0, startX, 320, clearView.frame.size.height+diff)];
+        [clearView setFrame:CGRectMake(0,
+                                       startX,
+                                       320,
+                                       clearView.frame.size.height+diff)];
     }
-    self.tView.frame = CGRectMake(0.0f, startX, 320.0f, self.tView.frame.size.height+diff);
+    self.tView.frame = CGRectMake(0.0f,
+                                  startX,
+                                  320.0f,
+                                  self.tView.frame.size.height+diff);
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom
+                                  animated:YES];
     }
     //    [senBtn setFrame:CGRectMake(282, inPutView.frame.size.height-37.5, 28, 27.5)];
-    [picBtn setFrame:CGRectMake(285, inPutView.frame.size.height-12-27, 25, 27)];
-    [emojiBtn setFrame:CGRectMake(277, inPutView.frame.size.height-12-36, 45, 45)];
-    [audioBtn setFrame:CGRectMake(8, inPutView.frame.size.height-12-27, 25, 27)];
+    [picBtn setFrame:CGRectMake(285,
+                                self.inPutView.frame.size.height-12-27,
+                                25,
+                                27)];
+    [self.emojiBtn setFrame:CGRectMake(277,
+                                       self.inPutView.frame.size.height-12-36,
+                                       45,
+                                       45)];
+    [self.kkChatAddButton setFrame:CGRectMake(242,
+                                              self.inPutView.frame.size.height-12-36,
+                                              45,
+                                              45)];
+    [audioBtn setFrame:CGRectMake(8,
+                                  self.inPutView.frame.size.height-12-27,
+                                  25,
+                                  27)];
 }
 
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
@@ -715,7 +1208,8 @@
         [messages replaceObjectAtIndex:changeRow withObject:dict];
         
         NSIndexPath* indexpath = [NSIndexPath indexPathForRow:changeRow inSection:0];
-        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
+                          withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
@@ -737,12 +1231,18 @@
 #pragma mark -
 #pragma mark Responding to keyboard events
 - (void)keyboardWillShow:(NSNotification *)notification {
+    
     ifEmoji = NO;
-    theEmojiView.hidden = YES;
+    self.kkchatInputType = KKChatInputTypeKeyboard;
+    
+    self.theEmojiView.hidden = YES;
+    self.kkChatAddView.hidden = YES;
+    
     [m_EmojiScrollView removeFromSuperview];
     [emojiBGV removeFromSuperview];
     [m_Emojipc removeFromSuperview];
-    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+    [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
+                   forState:UIControlStateNormal];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
@@ -750,6 +1250,7 @@
         [popLittleView removeFromSuperview];
     }
     canAdd = YES;
+    
     /*
      Reduce the size of the text view so that it's not obscured by the keyboard.
      Animate the resize so that it's in sync with the appearance of the keyboard.
@@ -770,6 +1271,7 @@
     
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
+    
 }
 
 
@@ -835,8 +1337,9 @@
     NSString *sender = KISDictionaryHaveKey(dict, @"sender");
     NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
     NSString *msgType = KISDictionaryHaveKey(dict, @"msgType");
-    NSString* status = KISDictionaryHaveKey(dict, @"status");
-    NSString* messageuuid = KISDictionaryHaveKey(dict, @"messageuuid");
+    NSString *status = KISDictionaryHaveKey(dict, @"status");
+    NSString *messageuuid = KISDictionaryHaveKey(dict, @"messageuuid");
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     
     if ([msgType isEqualToString:@"payloadchat"]) {
         //动态消息
@@ -844,29 +1347,39 @@
         KKNewsCell *cell =(KKNewsCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         
         if (cell == nil) {
-            cell = [[KKNewsCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
+            cell = [[KKNewsCell alloc] initWithStyle:UITableViewCellStyleValue1
+                                     reuseIdentifier:identifier];
         }
-        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue], [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
         size.width = size.width<20?20:size.width;
         size.height = size.height<20?20:size.height;
-        
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
+        NSDictionary* msgDic = [[self.finalMessageArray
+                                 objectAtIndex:indexPath.row] JSONValue];
         
-        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")]];
+        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon
+                                                         getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")]];
         CGSize contentSize = CGSizeZero;
-        
         cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"title");
         if ([sender isEqualToString:@"you"]) {
-            [cell.thumbImgV setFrame:CGRectMake(55, 40 + titleSize.height , 40, 40)];
+            [cell.thumbImgV setFrame:CGRectMake(55,
+                                                40 + titleSize.height,
+                                                40,
+                                                40)];
         }
         else{
-            [cell.thumbImgV setFrame:CGRectMake(70, 40 + titleSize.height , 40, 40)];
+            [cell.thumbImgV setFrame:CGRectMake(70,
+                                                40 + titleSize.height,
+                                                40,40)];
             
         }
-        contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")] withThumb:YES];
+        contentSize = [self getPayloadMsgContentSize:[GameCommon
+                                                      getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]
+                                           withThumb:YES];
         if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")].length > 0 && ![KISDictionaryHaveKey(msgDic, @"thumb") isEqualToString:@"null"]) {
             NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
             NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/30",imgStr]];
@@ -877,41 +1390,82 @@
         {
             cell.thumbImgV.imageURL = nil;
         }
-        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
         
+        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
         UIImage *bgImage = nil;
         
         if ([sender isEqualToString:@"you"]) {
-            [cell.headImgV setFrame:CGRectMake(320-10-40, padding*2-15, 40, 40)];
-            [cell.headImgV addTarget:self action:@selector(myBtnClicked) forControlEvents:UIControlEventTouchUpInside];
-            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            
+            [cell.headImgV setFrame:CGRectMake(320-10-40,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            
+            [cell.headImgV addTarget:self
+                              action:@selector(myBtnClicked)
+                    forControlEvents:UIControlEventTouchUpInside];
+            
+            cell.headImgV.placeholderImage = [UIImage
+                                              imageNamed:@"moren_people.png"];
+            
             if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
                 cell.headImgV.imageURL =nil;
             }else{
                 if (self.myHeadImg) {
-                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",self.myHeadImg]];
+                    NSURL * theUrl = [NSURL
+                                      URLWithString:[BaseImageUrl
+                                                     stringByAppendingFormat:@"%@/80",self.myHeadImg]];
                     cell.headImgV.imageURL = theUrl;
                 }
                 else{
                     cell.headImgV.imageURL =nil;
                 }
             }
-            bgImage = [[UIImage imageNamed:@"bubble_05"] stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_05"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
             
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30, padding*2-15, size.width+25, size.height+20)];
-            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            
             [cell.bgImageView setTag:(indexPath.row+1)];
             
-            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10, size.height/2+27, 8, 12)];
+            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10,
+                                                 size.height/2+27,
+                                                 8,
+                                                 12)];
             
-            [cell.titleLabel setFrame:CGRectMake(padding + 35, 33, titleSize.width, titleSize.height+(contentSize.height > 0 ? 0 : 5))];
-            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28, 35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width, contentSize.height)];
+            [cell.titleLabel setFrame:CGRectMake(padding + 35,
+                                                 33,
+                                                 titleSize.width,
+                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,
+                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
+                                                   contentSize.width,
+                                                   contentSize.height)];
         }else
         {
-            [cell.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
-            [cell.headImgV addTarget:self action:@selector(chatToBtnClicked) forControlEvents:UIControlEventTouchUpInside];
+            [cell.headImgV setFrame:CGRectMake(10,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            [cell.headImgV addTarget:self
+                              action:@selector(chatToBtnClicked)
+                    forControlEvents:UIControlEventTouchUpInside];
+            
             cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
                 cell.headImgV.imageURL = nil;
@@ -924,18 +1478,40 @@
                     cell.headImgV.imageURL = nil;
                 }
             }
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"] stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_04.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
             
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15, size.width+35, size.height + 20)];
-            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
+                                                  padding*2-15,
+                                                  size.width+35,
+                                                  size.height + 20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
             [cell.bgImageView setTag:(indexPath.row+1)];
             
-            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10, size.height/2+27, 8, 12)];
+            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10,
+                                                 size.height/2+27,
+                                                 8,
+                                                 12)];
             
-            [cell.titleLabel setFrame:CGRectMake(padding + 50, 33, titleSize.width, titleSize.height+(contentSize.height > 0 ? 0 : 5))];
-            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45, 35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width, contentSize.height)];
+            [cell.titleLabel setFrame:CGRectMake(padding + 50,
+                                                 33,
+                                                 titleSize.width,
+                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,
+                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
+                                                   contentSize.width,
+                                                   contentSize.height)];
         }
         
         NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
@@ -951,7 +1527,9 @@
         else
             cell.senderAndTimeLabel.hidden = NO;
         previousTime = nowTime;
-        NSString * timeStr = [self CurrentTime:[NSString stringWithFormat:@"%d",(int)nowTime] AndMessageTime:[NSString stringWithFormat:@"%d",[time intValue]]];
+        NSString * timeStr = [self CurrentTime:[NSString stringWithFormat:@"%d",(int)nowTime]
+                                AndMessageTime:[NSString stringWithFormat:@"%d",[time intValue]]];
+        
         if ([sender isEqualToString:@"you"]) {
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
         }
@@ -965,15 +1543,18 @@
     {
         //普通聊天消息
         static NSString *identifier = @"msgCell";
-        KKMessageCell *cell =(KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
-            cell = [[KKMessageCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
+            cell = [[KKMessageCell alloc] initWithStyle:UITableViewCellStyleValue1
+                                        reuseIdentifier:identifier];
         }
         
         cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
         
         //    CGSize size = [cell.messageContentView sizeThatFits:CGSizeMake(220, CGFLOAT_MAX)];
-        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue], [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        
         // CGSize size = [cell.messageContentView.attributedText sizeConstrainedToSize:CGSizeMake(220, CGFLOAT_MAX)];
         size.width = size.width<20?20:size.width;
         size.height = size.height<20?20:size.height;
@@ -985,7 +1566,12 @@
         
         UIImage *bgImage = nil;
         
+        [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]
+                                                 initWithTarget:self
+                                                 action:@selector(kkChatImageShowBigImage:)]];
+        cell.msgImageView.userInteractionEnabled = YES;
         if ([sender isEqualToString:@"you"]) {
+            
             cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
                 cell.headImgV.imageURL = nil;
@@ -999,29 +1585,91 @@
                 }
             }
             
-            [cell.headImgV setFrame:CGRectMake(320-10-40, padding*2-15, 40, 40)];
+            [cell.headImgV setFrame:CGRectMake(320-10-40,
+                                               padding*2-15,
+                                               40,
+                                               40)];
             bgImage = [[UIImage imageNamed:@"bubble_02.png"]
-                       stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
             [cell.headBtn setFrame:cell.headImgV.frame];
             
-            [cell.headBtn addTarget:self action:@selector(myBtnClicked) forControlEvents:UIControlEventTouchUpInside];
+            [cell.headBtn addTarget:self
+                             action:@selector(myBtnClicked)
+                   forControlEvents:UIControlEventTouchUpInside];
             
-            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2-4, size.width, size.height)];
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30, padding*2-15, size.width+25, size.height+20)];
-            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25,
+                                                         padding*2-4,
+                                                         size.width,
+                                                         size.height)];
+            cell.messageContentView.hidden = NO;
+            cell.msgImageView.hidden = YES;
+            
+            if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
+                
+                NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+                NSURL *kkChatImageMsgUrl = [NSURL fileURLWithPath:kkChatImageMsg];
+                [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-15-10-25,
+                                                       padding*2-4,
+                                                       size.width,
+                                                       size.height)];
+                //                cell.msgImageView.frame = cell.bgImageView.frame;
+                cell.messageContentView.hidden = YES;
+                cell.msgImageView.hidden = NO;
+                cell.msgImageView.imageURL = kkChatImageMsgUrl;
+                cell.progressView.frame = CGRectMake(30,
+                                                     CGRectGetHeight(cell.frame)/2,
+                                                     100,
+                                                     1);
+                cell.progressView.hidden = YES;
+                
+                
+            }
+            
+            //            if ([cell viewWithTag:10001]) {
+            ////                [[cell viewWithTag:10001] removeFromSuperview];
+            //                UIProgressView *progressView = (UIProgressView *)[cell viewWithTag:10001];
+            //                  NSLog(@"%f",progressView.progress);
+            //                if (progressView.progress == 1) {
+            //
+            //                    [progressView removeFromSuperview];
+            //                }
+            //            }
+            
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            
             [cell.bgImageView setTag:(indexPath.row+1)];
             
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchBegin:)
+                     forControlEvents:UIControlEventTouchDown];
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchEnd:)
+                     forControlEvents:UIControlEventTouchUpInside];
             [cell.failImage setTag:(indexPath.row+1)];
             
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15, (size.height+20)/2 + padding*2-15) status:status];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+                                                 (size.height+20)/2 + padding*2-15)
+                              status:status];
         }else {
             [cell.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
             [cell.chattoHeadBtn setFrame:cell.headImgV.frame];
-            [cell.chattoHeadBtn addTarget:self action:@selector(chatToBtnClicked) forControlEvents:UIControlEventTouchUpInside];
+            [cell.chattoHeadBtn addTarget:self
+                                   action:@selector(chatToBtnClicked)
+                         forControlEvents:UIControlEventTouchUpInside];
             cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
                 cell.headImgV.imageURL = nil;
@@ -1034,13 +1682,42 @@
                     cell.headImgV.imageURL = nil;
                 }
             }
-            bgImage = [[UIImage imageNamed:@"bubble_01.png"] stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_01.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
             
-            [cell.messageContentView setFrame:CGRectMake(padding+7+45, padding*2-4, size.width, size.height)];
+            [cell.messageContentView setFrame:CGRectMake(padding+7+45,
+                                                         padding*2-4,
+                                                         size.width,
+                                                         size.height)];
             
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15, size.width+25, size.height+20)];
-            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
+            cell.messageContentView.hidden = NO;
+            cell.msgImageView.hidden = YES;
+            if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
+                
+                NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+                NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
+                [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-15-15,
+                                                       padding*2-4,
+                                                       size.width,
+                                                       size.height)];
+                
+                cell.messageContentView.hidden = YES;
+                cell.msgImageView.hidden = NO;
+                cell.msgImageView.imageURL = kkChatImageMsgUrl;
+                
+            }
+            
+            
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
             [cell.bgImageView setTag:(indexPath.row+1)];
             [cell refreshStatusPoint:CGPointZero status:@"1"];
         }
@@ -1072,6 +1749,17 @@
     }
 }
 
+- (void)kkChatImageShowBigImage:(UITapGestureRecognizer *)tap{
+    //
+    //    UIImageView *imageView = (UIImageView *)tap.view;
+    //    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:@[imageView.image] images:@[imageView.image] indext:0];
+    //    [self presentViewController:pV animated:NO completion:^{
+    //
+    //    }];
+    
+}
+
+
 -(void)chatToBtnClicked
 {
     [self toContactProfile];
@@ -1090,7 +1778,11 @@
     touchTimePre = [[NSDate date] timeIntervalSince1970];
     tempBtn = sender;
     NSLog(@"begin");
-    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(endIt:) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:0.5
+                                     target:self
+                                   selector:@selector(endIt:)
+                                   userInfo:nil
+                                    repeats:NO];
 }
 
 -(void)offsetButtonTouchEnd:(UIButton *)sender
@@ -1105,11 +1797,16 @@
             OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
             detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
             detailVC.delegate = nil;
-            [self.navigationController pushViewController:detailVC animated:YES];
+            [self.navigationController pushViewController:detailVC
+                                                 animated:YES];
         }
         else if([msgType isEqualToString:@"normalchat"] && [status isEqualToString:@"0"])//是否重发
         {
-            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
+            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"
+                                                               delegate:self
+                                                      cancelButtonTitle:@"取消"
+                                                 destructiveButtonTitle:Nil
+                                                      otherButtonTitles:@"重新发送", nil];
             sheet.tag = 124;
             [sheet showInView:self.view];
         }
@@ -1194,7 +1891,6 @@
         [self becomeFirstResponder];
         
         [menu setMenuItems:[NSArray arrayWithObjects:copyItem,copyItem3, nil]];
-        
         [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
         [menu setMenuVisible:YES animated:YES];
     }
@@ -1219,16 +1915,23 @@
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
-    [DataStoreManager deleteCommonMsg:[[messages objectAtIndex:readyIndex] objectForKey:@"msg"] Time:[[messages objectAtIndex:readyIndex] objectForKey:@"time"]];
+    [DataStoreManager deleteCommonMsg:[[messages objectAtIndex:readyIndex] objectForKey:@"msg"]
+                                 Time:[[messages objectAtIndex:readyIndex] objectForKey:@"time"]];
+    
     [messages removeObjectAtIndex:readyIndex];
     [self.finalMessageArray removeObjectAtIndex:readyIndex];
     if (messages.count>0) {
-        [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject] ForUser:self.chatWithUser ifDel:NO];
+        [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]
+                                                       ForUser:self.chatWithUser
+                                                         ifDel:NO];
     }
     else
-        [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject] ForUser:self.chatWithUser ifDel:YES];
+        [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]
+                                                       ForUser:self.chatWithUser
+                                                         ifDel:YES];
     [self normalMsgToFinalMsg];
-    [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo] withRowAnimation:UITableViewRowAnimationRight];
+    [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]
+                      withRowAnimation:UITableViewRowAnimationRight];
     [self.tView reloadData];
     
 }
@@ -1257,7 +1960,6 @@
 #pragma mark -发送
 - (void)sendButton:(id)sender {
     
-    
     if (self.textView.text.length>255) {
         [self showAlertViewWithTitle:nil message:@"发送字数太多，请分条发送" buttonTitle:@"确定"];
         return;
@@ -1268,7 +1970,134 @@
     [self sendMsg:message];
     
 }
--(void)sendMsg:(NSString *)message
+
+- (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
+    
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSDictionary * dic = @{@"thumb":@"",@"title":@"",@"shiptype": @"",@"messageid":@"",@"msg":imageMsg,@"type": @"img"};
+    
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [dictionary setObject:@"[图片]" forKey:@"msg"];
+    [dictionary setObject:@"you" forKey:@"sender"];
+    [dictionary setObject:nowTime forKey:@"time"];
+    [dictionary setObject:self.chatWithUser forKey:@"receiver"];
+    [dictionary setObject:self.nickName?self.nickName:@"" forKey:@"nickname"];
+    [dictionary setObject:self.chatUserImg?self.chatUserImg:@"" forKey:@"img"];
+    [dictionary setObject:@"normalchat" forKey:@"msgType"];
+    [dictionary setObject:uuid forKey:@"messageuuid"];
+    [dictionary setObject:@"2" forKey:@"status"];
+    [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
+    //    [dictionary setObject:@"1" forKey:@"chatMsgType"];
+    
+    [messages addObject:dictionary];
+    
+    [self normalMsgToFinalMsg];
+    [DataStoreManager storeMyMessage:dictionary];
+    
+    
+    //重新刷新tableView
+    [self.tView reloadData];
+    
+    if (messages.count>0) {
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
+    
+}
+
+- (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
+    NSLog(@"+++++%@",[imageMsg class]);
+    if (imageMsg.length==0)
+    {
+        return;
+    }
+    if ([[imageMsg stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
+        //如果发送信息为空或者为空格的时候弹框提示
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"不能发送空消息" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
+    NSString* nowTime = [GameCommon getCurrentTime];
+    //生成<body>文档
+    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+    [body setStringValue:@"[图片]"];
+    
+    NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
+    NSDictionary * dic = @{@"thumb":@"",
+                           @"title":@"",
+                           @"shiptype": @"",
+                           @"messageid":@"",
+                           @"msg":imageMsg,
+                           @"type":@"img"};
+    [payload setStringValue:[dic JSONFragment]];
+    
+    
+    //生成XML消息文档
+    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+    //   [mes addAttributeWithName:@"nickname" stringValue:@"aaaa"];
+    //消息类型
+    [mes addAttributeWithName:@"type" stringValue:@"chat"];
+    
+    //发送给谁
+    [mes addAttributeWithName:@"to" stringValue:[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    //        //由谁发送
+    //        [mes addAttributeWithName:@"from" stringValue:[[SFHFKeychainUtils getPasswordForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil] stringByAppendingString:[[TempData sharedInstance] getDomain]]];
+    //由谁发送
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    
+    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
+    [mes addAttributeWithName:@"fileType" stringValue:@"img"];  //如果发送图片音频改这里
+    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
+    //    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    [mes addAttributeWithName:@"id" stringValue:uuid];
+    NSLog(@"消息uuid ~!~~ %@", uuid);
+    
+    //组合
+    [mes addChild:body];
+    [mes addChild:payload];
+    
+    //发送消息
+    
+    [self.appDel.xmppHelper sendMessage:mes];
+    //
+    //    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    //    [dictionary setObject:@"[图片]" forKey:@"msg"];
+    //    [dictionary setObject:@"you" forKey:@"sender"];
+    //    [dictionary setObject:nowTime forKey:@"time"];
+    //    [dictionary setObject:self.chatWithUser forKey:@"receiver"];
+    //    [dictionary setObject:self.nickName?self.nickName:@"" forKey:@"nickname"];
+    //    [dictionary setObject:self.chatUserImg?self.chatUserImg:@"" forKey:@"img"];
+    //    [dictionary setObject:@"normalchat" forKey:@"msgType"];
+    //    [dictionary setObject:uuid forKey:@"messageuuid"];
+    //    [dictionary setObject:@"2" forKey:@"status"];
+    //    [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
+    ////    [dictionary setObject:@"1" forKey:@"chatMsgType"];
+    //
+    //    [messages addObject:dictionary];
+    //
+    //
+    //    [self normalMsgToFinalMsg];
+    //    [DataStoreManager storeMyMessage:dictionary];
+    
+    
+    //重新刷新tableView
+    //    [self.tView reloadData];
+    
+    //    if (messages.count>0) {
+    //        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    //    }
+    //    self.textView.text = @"";
+    
+    [wxSDArray removeAllObjects];
+    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+    
+    if (![wxSDArray containsObject:self.chatWithUser]) {
+        [self getSayHello];
+    }
+    
+    //    }
+}
+- (void)sendMsg:(NSString *)message
 {
     NSLog(@"+++++%@",[message class]);
     if (message.length==0)
@@ -1288,6 +2117,7 @@
     
     //生成XML消息文档
     NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+    
     //   [mes addAttributeWithName:@"nickname" stringValue:@"aaaa"];
     //消息类型
     [mes addAttributeWithName:@"type" stringValue:@"chat"];
@@ -1312,6 +2142,7 @@
     //发送消息
     [self.appDel.xmppHelper sendMessage:mes];
     
+    
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:message forKey:@"msg"];
     [dictionary setObject:@"you" forKey:@"sender"];
@@ -1331,11 +2162,13 @@
     //重新刷新tableView
     [self.tView reloadData];
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
     self.textView.text = @"";
     [wxSDArray removeAllObjects];
-    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+    [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]
+                                    objectForKey:@"sayHello_wx_info_id"]];
     
     if (![wxSDArray containsObject:self.chatWithUser]) {
         [self getSayHello];
@@ -1379,17 +2212,20 @@
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
     
-    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]
+                  forKey:@"token"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [wxSDArray addObject:self.chatWithUser];
-        [DataStoreManager storeThumbMsgUser:chatWithUser type:@"1"];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
-        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-    }];
+    [NetManager requestWithURLStrNoController:BaseClientUrl
+                                   Parameters:postDict1
+                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                          [wxSDArray addObject:self.chatWithUser];
+                                          [DataStoreManager storeThumbMsgUser:chatWithUser type:@"1"];
+                                          [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
+                                          [[NSUserDefaults standardUserDefaults] setObject:wxSDArray
+                                                                                    forKey:@"sayHello_wx_info_id"];
+                                          
+                                      } failure:^(AFHTTPRequestOperation *operation, id error) {
+                                      }];
 }
 //- (void)scrollToOldMassageRang:(NSArray *)array
 //{
@@ -1399,6 +2235,7 @@
 //
 //    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:array.count inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 //}
+#pragma mark - 下拉刷新
 
 - (void)kkChatAddRefreshHeadView{
     
@@ -1416,16 +2253,16 @@
     header.arrowImage.frame = headerRect;
     header.arrowImage.center = CGPointMake(160, header.arrowImage.center.y+15);
     header.activityView.center = header.arrowImage.center;
-    
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         
-        array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+        array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser
+                                                    FetchOffset:messages.count];
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
         }
         [self normalMsgToFinalMsg];
         loadHistoryArrayCount = array.count;
-        
+        //计算出 拉出的历史纪录高度
         loadMoreMsgHeight = [self kkChatLoadMsgHeigh:array];
         
         [header endRefreshing];
@@ -1448,15 +2285,16 @@
         
         switch (state) {
             case MJRefreshStateNormal:
+                
                 break;
             case MJRefreshStatePulling:
-
+                
                 break;
             case MJRefreshStateRefreshing:
-
+                
                 break;
             case MJRefreshStateWillRefreshing:
-
+                
                 break;
                 
             default:
@@ -1466,18 +2304,15 @@
     };
     self.kkChatControllerRefreshHeadView = header;
     
-    
-}
-- (void)kkChatLoadHistory{
-    
 }
 #pragma mark KKMessageDelegate
 - (void)newMesgReceived:(NSNotification*)notification
 {
-    
     NSDictionary* tempDic = notification.userInfo;
-    NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender") rangeOfString:@"@"];
-    NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender") substringToIndex:range.location];
+    NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender")
+                     rangeOfString:@"@"];
+    NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender")
+                         substringToIndex:range.location];
     if ([sender isEqualToString:self.chatWithUser]) {
         [messages addObject:tempDic];
         [self normalMsgToFinalMsg];
@@ -1491,10 +2326,10 @@
     }
     else
     {
-        unReadL.hidden = NO;
+        self.unReadL.hidden = NO;
         _unreadNo++;
         if (_unreadNo>0) {
-            unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+            self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
         }
     }
 }
@@ -1534,6 +2369,7 @@
     int theCurrentT = [currentTime intValue];
     int theMessageT = [messageTime intValue];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
     //设定时间格式,这里可以设置成自己需要的格式
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
@@ -1608,9 +2444,20 @@
     //        finalTime = [NSString stringWithFormat:@"%@ %@",messageDateStr,msgT];
     //    }
     else
-        finalTime = [NSString stringWithFormat:@"%@年%@月%@日 %@",[[messageDateStr substringFromIndex:0] substringToIndex:4] ,[[messageDateStr substringFromIndex:5] substringToIndex:2],[messageDateStr substringFromIndex:8], msgT];
+        finalTime = [NSString stringWithFormat:@"%@年%@月%@日 %@",
+                     [[messageDateStr substringFromIndex:0] substringToIndex:4],
+                     [[messageDateStr substringFromIndex:5] substringToIndex:2],
+                     [messageDateStr substringFromIndex:8],
+                     msgT];
     
     return finalTime;
+}
+
+- (void)setCell:(KKMessageCell *)cell progress:(double)progress{
+    [cell.progressView setProgress:progress animated:YES];
+    if (progress==1) {
+        [cell.progressView setHidden:YES];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -1619,14 +2466,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
 }
-//-(KKAppDelegate *)appDelegate{
-//
-//    return (KKAppDelegate *)[[UIApplication sharedApplication] delegate];
-//}
-//
-//-(XMPPStream *)xmppStream{
-//    
-//    return [[self appDelegate] xmppStream];
-//}
+
 
 @end

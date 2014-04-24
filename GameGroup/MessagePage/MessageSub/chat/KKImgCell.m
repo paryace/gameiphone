@@ -29,14 +29,11 @@
         self.headImgV.layer.cornerRadius = 5;
         self.headImgV.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImgV];
-
+        
         self.MSGImageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
         self.MSGImageView.layer.cornerRadius = 5;
         self.headImgV.layer.masksToBounds  = YES;
         [self.contentView addSubview:self.MSGImageView];
-        
-        
-        
         
         
         
@@ -52,7 +49,7 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 

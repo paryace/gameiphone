@@ -360,7 +360,6 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
-    //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_1];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
@@ -376,7 +375,6 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_Friendheader endRefreshing];
-        //  [slimeView_friend endRefresh];
     }];
 }
 

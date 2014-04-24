@@ -155,24 +155,20 @@
     self.guildLabel.font = [UIFont boldSystemFontOfSize:14];
     [self.titleView addSubview:self.guildLabel];
     
-    //职业图标
-    /* clazz_1.png--10 */
-//    self.clazzImageView = [[UIImageView alloc]initWithFrame:CGRectMake(230, 9, 20, 20)];
-// //   self.clazzImageView.image = KUIImage(@"clazz_1");
-//    [self.titleView addSubview:self.clazzImageView];
 
     
     //等级
     self.levelLabel = [[UILabel alloc]initWithFrame:CGRectMake(247, 8, 73, 25)];
-  //  self.levelLabel.text = @"90级";
     self.levelLabel.backgroundColor = [UIColor clearColor];
     self.levelLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
+    self.levelLabel.textAlignment = NSTextAlignmentRight;
+
     self.levelLabel.font = [UIFont boldSystemFontOfSize:12];
     [self.titleView addSubview:self.levelLabel];
 
     //装等
     self.itemlevelView = [[UILabel alloc]initWithFrame:CGRectMake(230, 28, 90, 30)];
-  //  self.itemlevelView.text = @"576/576";
+    self.itemlevelView.textAlignment = NSTextAlignmentRight;
     self.itemlevelView.backgroundColor = [UIColor clearColor];
     self.itemlevelView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.itemlevelView.font = [UIFont fontWithName:@"DigifaceWide" size:16];

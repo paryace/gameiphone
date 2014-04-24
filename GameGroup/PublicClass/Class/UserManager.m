@@ -103,6 +103,28 @@ static UserManager *userManager = NULL;
      [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
     }];
 }
+-(void)getSayHiUserId
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@"" forKey:@"touserid"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"154" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        
+        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"deviceToken fail");
+        
+    }];
+    
+}
 
 -(void) onUserUpdate:(NSNotification*)notification{
 

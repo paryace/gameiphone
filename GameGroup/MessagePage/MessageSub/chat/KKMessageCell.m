@@ -16,12 +16,20 @@
 @synthesize headImgV;
 @synthesize headBtn,chattoHeadBtn;
 @synthesize ifRead,playAudioImageV;
+@synthesize msgImageView;
+
+
+
+
+
 
 -(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         //日期标签
+        self.isUploadImage = NO;
+        
         self.backgroundColor = [UIColor clearColor];
         senderAndTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 20)];
         //居中显示
@@ -51,30 +59,49 @@
         //  [bgImageView setAdjustsImageWhenHighlighted:NO];
         [self.contentView addSubview:bgImageView];
         
+        
+        
         //聊天信息
         messageContentView = [[OHAttributedLabel alloc] initWithFrame:CGRectZero];
         messageContentView.backgroundColor = [UIColor clearColor];
         messageContentView.delegate = self;
-//        messageContentView.backgroundColor = [UIColor clearColor];
-//        //不可编辑
-//        //        messageContentView.editable = NO;
-//        //        messageContentView.scrollEnabled = NO;
-//        [messageContentView setNumberOfLines:0];
-//        [messageContentView setLineBreakMode:UILineBreakModeCharacterWrap];
-//        [messageContentView setFont:[UIFont boldSystemFontOfSize:13]];
+        
+        
+        msgImageView = [[EGOImageView alloc]
+                        initWithPlaceholderImage:[UIImage
+                                                  imageNamed:@"default_icon.png"]];
+        msgImageView.frame = CGRectZero;
+        msgImageView.layer.masksToBounds = YES;
+        msgImageView.layer.borderWidth = 1;
+        msgImageView.layer.borderColor = [UIColor clearColor].CGColor;
+        msgImageView.layer.cornerRadius = 6;
+        [self.contentView addSubview:msgImageView];
+        
+        
+        self.progressView = [[UIProgressView alloc] init];
+        
+        [self.contentView addSubview:self.progressView];
+        
+        //        messageContentView.backgroundColor = [UIColor clearColor];
+        //        //不可编辑
+        //        //        messageContentView.editable = NO;
+        //        //        messageContentView.scrollEnabled = NO;
+        //        [messageContentView setNumberOfLines:0];
+        //        [messageContentView setLineBreakMode:UILineBreakModeCharacterWrap];
+        //        [messageContentView setFont:[UIFont boldSystemFontOfSize:13]];
         // [messageContentView sizeToFit];
         [self.contentView addSubview:messageContentView];
         NSLog(@"fffff%f",self.frame.size.height);
         
-//        self.ifRead = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
-//        [ifRead setImage:[UIImage imageNamed:@"redCB.png"]];
-//        [self.contentView addSubview:self.ifRead];
+        //        self.ifRead = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
+        //        [ifRead setImage:[UIImage imageNamed:@"redCB.png"]];
+        //        [self.contentView addSubview:self.ifRead];
         
         self.playAudioImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
         self.playAudioImageV.animationDuration=1.0;
         self.playAudioImageV.animationRepeatCount=0;
         [self.contentView addSubview:self.playAudioImageV];
-
+        
         self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.statusLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
         [self.statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
@@ -87,6 +114,9 @@
         self.failImage = [[UIButton alloc]initWithFrame:CGRectZero];
         [self.failImage setBackgroundImage:KUIImage(@"fail_bg") forState:UIControlStateNormal];
         [self.contentView addSubview:self.failImage];
+        
+        
+        
     }
     
     return self;
@@ -98,7 +128,7 @@
         self.failImage.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
         self.failImage.hidden = NO;
         self.statusLabel.hidden = YES;
-
+        
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
             self.cellTimer = nil;
@@ -109,7 +139,7 @@
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES;
-
+        
         if (![self.cellTimer isValid]) {
             self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(stopActivity) userInfo:nil repeats:YES];
             [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
@@ -163,14 +193,14 @@
         self.cellTimer = nil;
     }
     [self.activityView stopAnimating];
-
+    
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:self.messageuuid,@"src_id",@"0", @"received",nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
 }
 
 -(BOOL)attributedLabel:(OHAttributedLabel *)attributedLabel shouldFollowLink:(NSTextCheckingResult *)linkInfo
 {
-//	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
+    //	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
 	[attributedLabel setNeedsRecomputeLinksInText];
 	
     if ([[UIApplication sharedApplication] canOpenURL:linkInfo.extendedURL])
@@ -191,8 +221,8 @@
                 NSLog(@"%@",linkInfo.phoneNumber);
                 break;
             default: {
-//                NSString* message = [NSString stringWithFormat:@"You typed on an unknown link type (NSTextCheckingType %lld)",linkInfo.resultType];
-//                [UIAlertView showWithTitle:@"Unknown link type" message:message];
+                //                NSString* message = [NSString stringWithFormat:@"You typed on an unknown link type (NSTextCheckingType %lld)",linkInfo.resultType];
+                //                [UIAlertView showWithTitle:@"Unknown link type" message:message];
                 break;
             }
         }

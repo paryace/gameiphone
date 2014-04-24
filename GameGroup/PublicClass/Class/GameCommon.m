@@ -483,6 +483,20 @@ static GameCommon *my_gameCommon = NULL;
     return @"";
 }
 
++(NSString *)isNewOrOldWithImage:(NSString *)imgStr
+{
+    unichar c;
+    for (int i=0; i<imgStr.length; i++) {
+        c=[imgStr characterAtIndex:i];
+        if (!isdigit(c)) {
+            return NewBaseImageUrl;
+        }
+    }
+    return BaseImageUrl;
+}
+
+
+
 #pragma mark tabBar小红点
 -(void)displayTabbarNotification
 {
