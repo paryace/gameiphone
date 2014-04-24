@@ -1024,18 +1024,45 @@
 //}
 
 #pragma mark web
-//加载完后获取高度
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
-//    NSString *htmlHeight = [webView stringByEvaluatingJavaScriptFromString:@"document.getElementById(\"foo\").offsetHeight;"];
-//    webViewHeight = [htmlHeight doubleValue];
-//    NSLog(@"%@", htmlHeight);
-    
-    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
-    NSLog(@"------finish=%@",str);
+    //修改WebView的样式
+    [self changeWebViewStyle:webView];
 
+
+}
+
+
+- (void)changeWebViewStyle:(UIWebView *)webView{
     
+    //添加javascript 控制图片的宽度
+    [webView stringByEvaluatingJavaScriptFromString:@
+     "var script = document.createElement('script');"
+     "script.type = 'text/javascript';"
+     "script.text = \"function ResizeImages(){"
+     "var myimg,oldwidth,oldheight;"
+     "var maxwidth=305;"    //这是默认宽度
+     "for(i=0;i <document.images.length;i++){"
+     "myimg = document.images[i];"
+     "if(myimg.width > maxwidth){"
+     "oldwidth = myimg.width;"
+     "oldheight = myimg.height;"
+     "myimg.style.width = '';"     //必须先设置为空， 才能改变。不然会出现形如  <style width = "1500px" width = "305">这种坑爹的情况
+     "myimg.style.height = '';"
+     "myimg.width = maxwidth;"
+     "myimg.height = oldheight * (maxwidth/oldwidth);"
+     "}"
+     "}"
+     "}\";"
+     "document.getElementsByTagName('head')[0].appendChild(script);"];
+    
+    [webView stringByEvaluatingJavaScriptFromString:@"ResizeImages();"];
+    
+//    NSString *lJs = @"document.documentElement.innerHTML";
+//    NSString *lHtml1 = [webView stringByEvaluatingJavaScriptFromString:lJs];
+//    NSLog(@"%@", lHtml1);
     
 }
+
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
 //    [hud show:YES];
