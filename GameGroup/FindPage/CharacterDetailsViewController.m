@@ -578,16 +578,7 @@
         ranking.pageCount3 = -1;
         ranking.characterName =m_characterName;
         ranking. titleOfRanking = [titleArray objectAtIndex:indexPath.row];
-      //  NSArray *array = [m_charaInfo.friendOfRanking allKeys];
-     //   NSLog(@"array%@",array);
-        /*
-         pvpScore,
-         pveScore,
-         itemlevel,
-         totalHonorableKills,
-         achievementPoints
-         */
-        
+
         switch (indexPath.row) {
             case 0:
                 ranking.dRankvaltype = @"pveScore";
@@ -612,13 +603,6 @@
         ranking.COME_FROM =[NSString stringWithFormat:@"%u",self.myViewType];
         NSLog(@"COME_FROM%@",ranking.COME_FROM);
         [self.navigationController pushViewController:ranking animated:YES];
-
-//    }else{
-//        
-//        [self showAlertViewWithTitle:@"提示" message:[NSString stringWithFormat:@"该角色尚未进入“%@”排行",alertTitle] buttonTitle:@"确定"];
-//        isGoToNextPage =YES;
-//    }
-    
     
 }
 

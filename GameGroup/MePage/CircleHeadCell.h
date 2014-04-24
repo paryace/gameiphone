@@ -9,9 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
-@interface CircleHeadCell : UITableViewCell
+@protocol CircleHeadDelegate;
+
+@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource>
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
-@property(nonatomic,strong)EGOImageView *thumbImgView;
 @property(nonatomic,strong)UILabel *nickNameLabel;
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *contentLabel;
@@ -20,8 +21,33 @@
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,strong)UIView * shareView;
 @property(nonatomic,strong)UIButton *openBtn;
+@property(nonatomic,strong)UIImageView *menuImageView;
 @property(nonatomic,strong)EGOImageView *shareImgView;
+@property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
+@property(nonatomic,strong)UIView *commentsView;
+@property(nonatomic,strong)UILabel*commentsLabel;
+@property(nonatomic,strong)UILabel *commNameLabel;
+@property(nonatomic,strong)UILabel *zanNameLabel;
+@property(nonatomic,strong)UIImageView *zanImageView;
+@property(nonatomic,strong)UILabel *zanLabel;
+@property(nonatomic,strong)UILabel *sayAllcommentsLabel;
+@property(nonatomic,strong)UIView *zanView;
+@property(nonatomic,strong)UICollectionViewFlowLayout *layout;
+@property(nonatomic,strong)UICollectionView *customPhotoCollectionView;
+
+
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier imgStr:(NSMutableString*)imgStr;
+
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
--(void)buildImagePathWithImage:(NSString *)imgStr;
 - (void)refreshCell;
 @end
+@protocol CircleHeadDelegate <NSObject>
+
+- (void)pinglunWithCircle:(CircleHeadCell*)myCell;
+- (void)zanWithCircle:(CircleHeadCell*)myCell;
+- (void)bigImgWithCircle:(CircleHeadCell*)myCell;
+@end
+
+
+

@@ -251,7 +251,7 @@
 #pragma mark--- 检测网络是否连接
 -(void)DetectNetwork
 {
-    AppDelegate *app = [[UIApplication sharedApplication]delegate];
+    AppDelegate *app = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         [self showMessageWithContent:@"请求数据失败，请检查网络" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;

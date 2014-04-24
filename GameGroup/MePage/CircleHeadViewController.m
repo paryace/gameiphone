@@ -10,6 +10,7 @@
 #import "OnceDynamicViewController.h"
 #import "CircleWithMeViewController.h"
 #import "MyCircleViewController.h"
+#import "PhotoViewController.h"
 #import "CircleHeadCell.h"
 #import "MJRefresh.h"
 #import "UserManager.h"
@@ -25,9 +26,8 @@
     EGOImageView *headImageView;
     EGOImageView *imageView;
     UIButton *friendZanBtn;
-    
     UIButton *abobtMeBtn;
-    
+    NSIndexPath *indexPaths;
 }
 @end
 
@@ -46,7 +46,6 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
-    
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
 
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
@@ -58,6 +57,7 @@
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+//    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     
     UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 350)];
@@ -152,7 +152,6 @@
             [m_myTableView reloadData];
         }
         
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_header endRefreshing];
         [m_footer endRefreshing];
@@ -165,8 +164,6 @@
         }
         [hud hide:YES];
     }];
-    
-    
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -176,119 +173,218 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
 
      NSString *identifier =[NSString stringWithFormat: @"cell%d",indexPath.row];
     CircleHeadCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell ==nil) {
-        cell = [[CircleHeadCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[CircleHeadCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier imgStr:KISDictionaryHaveKey(dict, @"img")];
     }
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]]];
+    int m_currmagY =0;
+    cell.tag = indexPath.row+100;
+    indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.headImgBtn.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]] stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]]];
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
-    cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
     cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
-    
-    
-    CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"msg")];
-    
-    cell.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
-
-    [cell buildImagePathWithImage:KISDictionaryHaveKey(dict, @"img")];
-
+    cell.myCellDelegate = self;
 
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
 
-    cell.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
-    
-    if (![KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]&&[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
-        
-        NSArray* arr = [KISDictionaryHaveKey(dict, @"img") componentsSeparatedByString:@","];
-       // NSLog(@"arr%@-->%@-->%d",arr,imgStr,arr.count);
-        
-        for (int i =0; i<3; i++) {
-            for (int j = 0; j<arr.count/3; j++) {
-                cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
- 
-                if (arr.count==1)
-                {
-                    cell.thumbImgView.frame = CGRectMake(60, size.height+27,180, cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width));
-                }
-                else{
-                    cell.thumbImgView.frame =CGRectMake(60+80*i, size.height+27+80*j, 75, 75);
-                }
-                cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[arr objectAtIndex:i+j*i] ] stringByAppendingString:[arr objectAtIndex:i+j*i]]];
-
-                [cell.contentView addSubview:cell.thumbImgView];
-
-            }
-        }
-            cell.timeLabel.frame = CGRectMake(60,size.height+27+80*arr.count/3, 120, 30);
-    }
     
     NSString *urlLink = KISDictionaryHaveKey(dict, @"urlLink");
-       if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil) {
+    if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil) {
         cell.shareView.hidden = YES;
         cell.contentLabel.hidden = YES;
         cell.shareImgView.hidden = YES;
-           //cell.thumbImgView.hidden = NO;
+        CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"msg")];
+        cell.titleLabel.frame = CGRectMake(60, 30, 250, size.height);
+        cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
+        
+        m_currmagY  = size.height+30;
+        
+        if ([KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
+            cell.customPhotoCollectionView.hidden =YES;
+
+                cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
+                cell.openBtn.frame = CGRectMake(250,m_currmagY+10, 50, 40);
+                m_currmagY+=50;
+        }else{
+            NSMutableString *imgStr = KISDictionaryHaveKey(dict, @"img");
+            
+            NSString *str = [imgStr substringFromIndex:imgStr.length];
+            NSString *str2;
+            if ([str isEqualToString:@","]) {
+                str2= [imgStr substringToIndex:imgStr.length-1];
+            }
+            else {
+                str2 = imgStr;
+            }
+
+            NSArray* arr = [imgStr componentsSeparatedByString:@","];
+            if ([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "]) {
+                [(NSMutableArray*)arr removeLastObject];
+            }
+
+            cell.customPhotoCollectionView.hidden =NO;
+            int i = (arr.count-1)/3;
+            cell.customPhotoCollectionView.frame = CGRectMake(60, size.height+30, 250, i*80+100) ;
+            
+            m_currmagY += cell.customPhotoCollectionView.bounds.size.height;
+            cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
+            cell.openBtn.frame = CGRectMake(250,m_currmagY, 50, 40);
+            m_currmagY+=40;
+            
+            
+        }
+       
     }else{
         cell.shareView.hidden = NO;
         cell.contentLabel.hidden = NO;
         cell.shareImgView.hidden = NO;
-        cell.timeLabel.frame = CGRectMake(60,size.height+27+cell.shareView.bounds.size.height+10, 120, 30);
-
-       // cell.thumbImgView.hidden = YES;
+        cell.customPhotoCollectionView.hidden =YES;
+        CGSize size1 = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
+        cell.titleLabel.frame = CGRectMake(60, 30, 250, size1.height);
+        cell.titleLabel.text = KISDictionaryHaveKey(dict, @"title");
+        cell.shareView.frame = CGRectMake(60, size1.height+30, 250, 50);
+        cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
+        cell.shareImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict,@"img")]stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+        m_currmagY  = size1.height+80;
+        
+        cell.timeLabel.frame = CGRectMake(60,size1.height+80, 120, 30);
+        cell.openBtn.frame = CGRectMake(250,size1.height+80, 50, 40);
+        m_currmagY+=cell.timeLabel.frame.size.height+10;
     }
-    cell.openBtn.frame = CGRectMake(250, cell.timeLabel.frame.origin.y, 50, 30);
+    if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
+        cell.zanView.frame = CGRectMake(60, m_currmagY, 200, 25);
+        NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
+        cell.zanView.hidden = NO;
+        cell.zanImageView.center = CGPointMake(5, 5);
+        cell.zanNameLabel.text = KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
+        cell.zanLabel.text = [NSString stringWithFormat:@"等%@人都觉得赞",KISDictionaryHaveKey(dict,@"zanNum")];
+        m_currmagY +=cell.zanView.frame.size.height;
 
+    }else{
+        cell.zanView.hidden = YES;
+    }
+    NSArray *commentArray = [NSArray array];
+    commentArray = KISDictionaryHaveKey(dict, @"commentList");
+    if (commentArray.count<1) {
+        cell.commentsView.hidden = YES;
+    }else{
+        
+        cell.commentsView.hidden = NO;
+    for (int i = 0; i<commentArray.count; i++) {
+        cell.commentsView = [[UIView alloc]initWithFrame:CGRectMake(60, m_currmagY+30*i, 250, 30)];
+        cell.commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+        [cell.contentView addSubview:cell.commentsView];
+        cell.commNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 30)];
+        cell.commNameLabel.font = [UIFont systemFontOfSize:12];
+        [cell.commentsView addSubview:cell.commNameLabel];
+        
+        cell.commentsLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 140, 30)];
+        cell.commentsLabel.font = [UIFont systemFontOfSize:12];
+        cell.commentsLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
+        [cell.commentsView addSubview:cell.commentsLabel];
+
+        NSDictionary *dic = [commentArray objectAtIndex:i];
+        cell.commNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname");
+        cell.commentsLabel.text =KISDictionaryHaveKey(dic,@"comment");
+    }
+    
+    m_currmagY +=commentArray.count*30;
+    }
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    
-    OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
-    detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
-    //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
-    
-    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
-    
-    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
-    
-    
-    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
-    
-    [self.navigationController pushViewController:detailVC animated:YES];
+//    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+//    
+//    OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
+//    detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
+//    //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
+//    
+//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+//    
+//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
+//    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+//    
+//    
+//    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
+//    
+//    [self.navigationController pushViewController:detailVC animated:YES];
 
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGSize size= [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey([m_dataArray objectAtIndex:indexPath.row], @"comment")];
+    float currnetY = 0;
+
     NSDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    
-    NSArray *arr =[KISDictionaryHaveKey(dict, @"img") componentsSeparatedByString:@","];
-    NSLog(@"arr/3--%d->%d",arr.count,arr.count/3);
-
     if (![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@""]&&![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@" "]) {
-        return size.height + 27 + 100;
-    }
-    
-   else if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
-        return size.height+27+60;
-    }
-    else
-    {
-       if (arr.count==1) {
-           return 150;
-       }
-       else{
-           return size.height+27+120+((arr.count/3)*80);
-       }
+        CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
 
+        currnetY +=size.height+30+50+40;
+    }else{
+        
+        CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"msg")];
+
+        currnetY +=size.height+30;
+        currnetY+=40;
+        NSArray *imgArray = [NSArray array];
+        NSString *imgStr =KISDictionaryHaveKey(dict, @"img");
+        NSString *str;
+        if ([imgStr isEqualToString:@""] || [imgStr isEqualToString:@" "]) {
+            str = @"";
+        }else{
+            str = [imgStr substringFromIndex:imgStr.length-1];
+            NSString *str2;
+            if ([str isEqualToString:@","]) {
+                str2= [imgStr substringToIndex:imgStr.length-1];
+            }
+            else {
+                str2 = imgStr;
+            }
+            
+            imgArray = [NSArray array];
+            
+            imgArray = [str2 componentsSeparatedByString:@","];
+        }
+
+    if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
+        
+        }
+        else
+        {
+            if (imgArray.count==1) {
+                currnetY +=180;
+            }
+            else if(imgArray.count>1&&imgArray.count<4){
+                currnetY+=80;
+            }
+            else if(imgArray.count>4&&imgArray.count<6){
+                currnetY  +=160;
+            }else{
+                currnetY +=240;
+            }
+        }
     }
+    if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]>0) {
+        currnetY+=40;
+    }else{
+        
+    }
+    NSArray *ar = [NSArray array];
+    ar = KISDictionaryHaveKey(dict, @"commentList");
+    if (ar.count>0) {
+        currnetY+=ar.count*30+10;
+    }
+    else{
+        
+    }
+    return currnetY;
+    currnetY =0;
+    
 }
 - (void)didReceiveMemoryWarning
 {
@@ -355,6 +451,10 @@
     }];
     
 }
+
+
+
+//获取时间
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime
 {
     NSString* currentString = [GameCommon getCurrentTime];
@@ -389,15 +489,101 @@
     return [messageDateStr substringFromIndex:5];
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+
+
+#pragma mark ---cell delegate
+-(void)pinglunWithCircle:(CircleHeadCell *)myCell
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    NSLog(@"评论");
 }
-*/
+
+-(void)zanWithCircle:(CircleHeadCell *)myCell
+{
+    NSLog(@"赞");
+}
+
+- (void)bigImgWithCircle:(CircleHeadCell*)myCell
+{
+    NSLog(@"点击查看大图");
+    NSDictionary *dict = [m_dataArray objectAtIndex:myCell.tag-100];
+    NSArray *array = [NSArray  array];
+
+    NSString *imgStr =KISDictionaryHaveKey(dict, @"img");
+    NSString *str;
+    if ([imgStr isEqualToString:@""] || [imgStr isEqualToString:@" "]) {
+        str = @"";
+    }else{
+        str = [imgStr substringFromIndex:imgStr.length-1];
+        NSString *str2;
+        if ([str isEqualToString:@","]) {
+            str2= [imgStr substringToIndex:imgStr.length-1];
+        }
+        else {
+            str2 = imgStr;
+        }
+        
+        array = [NSArray array];
+        
+        array = [str2 componentsSeparatedByString:@","];
+    }
+
+    
+    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:array indext:0];
+    [self presentViewController:pV animated:NO completion:^{
+        
+    }];
+
+}
+
+//            NSLog(@"第%d行--%d个--%@",indexPath.row,arr.count,arr);
+//            if (arr.count==1)
+//            {
+//                cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
+//
+//                cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")] ] stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+//
+//                cell.thumbImgView.frame = CGRectMake(60, size.height+30,180, cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width));
+//
+//                cell.timeLabel.frame = CGRectMake(60,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 120, 30);
+//                cell.openBtn.frame = CGRectMake(250,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 50, 40);
+//                m_currmagY+=cell.openBtn.frame.size.height;
+//
+//                m_currmagY +=cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width);
+//            }
+//            else if(arr.count ==2)
+//            {
+//                for (int i = 0; i<2; i++) {
+//
+//                cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
+//
+//                cell.thumbImgView.frame = CGRectMake(60+i*(250/2), size.height+30,250/2,80);
+//
+//                cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:[arr objectAtIndex:i]] ] stringByAppendingString:[arr objectAtIndex:i]]];
+//
+//                cell.openBtn.frame = CGRectMake(250,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 50, 40);
+//                m_currmagY+=cell.openBtn.frame.size.height;
+//
+//                m_currmagY +=cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width);
+//                }
+//            }
+//            else
+//            {
+//                cell.timeLabel.frame = CGRectMake(60,size.height+30+80+(arr.count/3)*80, 120, 30);
+//                cell.openBtn.frame = CGRectMake(250,size.height+30+80+ (arr.count/3)*80, 50, 40);
+//                m_currmagY+=80+arr.count/3*80;
+//
+//
+//                for (int i =0; i<arr.count/3; i++) {
+//                    for (int j = 0; j<3; j++) {
+//                        cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
+//                        cell.thumbImgView.frame =CGRectMake(60+80*j, size.height+35+80*i, 75, 75);
+//
+//                        cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[arr objectAtIndex:i*3+j] ] stringByAppendingString:[arr objectAtIndex:i*3+j]]];
+//
+//                        [cell.contentView addSubview:cell.thumbImgView];
+//                    }
+//                }
+//            }
 
 @end

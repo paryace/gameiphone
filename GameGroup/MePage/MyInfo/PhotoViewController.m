@@ -71,7 +71,7 @@
             [self imageViewLoadedImage:imageV];
         }
         else
-       imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
+       imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
         
         }
         else{
