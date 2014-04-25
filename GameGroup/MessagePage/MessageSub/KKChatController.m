@@ -1633,6 +1633,9 @@ UINavigationControllerDelegate>
                                                      CGRectGetHeight(cell.frame)/2,
                                                      100,
                                                      1);
+                cell.msgImageView.userInteractionEnabled = YES;
+                [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)]];
+                cell.msgImageView.tag = indexPath.row;
                 cell.progressView.hidden = YES;
                 
                 
@@ -1716,7 +1719,10 @@ UINavigationControllerDelegate>
                 
                 cell.messageContentView.hidden = YES;
                 cell.msgImageView.hidden = NO;
+                cell.msgImageView.userInteractionEnabled = YES;
                 cell.msgImageView.imageURL = kkChatImageMsgUrl;
+                [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)]];
+                cell.msgImageView.tag = indexPath.row;
                 
             }
             
@@ -2472,6 +2478,22 @@ UINavigationControllerDelegate>
     if (progress==1) {
         [cell.progressView setHidden:YES];
     }
+}
+
+-(void)lookBigImg:(UITapGestureRecognizer*)sender
+{
+    NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    NSString *str = KISDictionaryHaveKey(payload, @"msg");
+
+    NSArray *array = [NSArray arrayWithObjects:str, nil];
+    PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
+    photo.isComeFrmeUrl = YES;
+    [self presentViewController:photo animated:NO completion:^{
+        
+    }];
+    
+
 }
 
 -(void)viewWillDisappear:(BOOL)animated
