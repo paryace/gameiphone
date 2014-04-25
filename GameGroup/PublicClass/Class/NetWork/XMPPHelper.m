@@ -228,7 +228,7 @@
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
     NSLog(@"message =====%@",message);
-
+    
     if(msg==nil){
         return;
     }
@@ -237,13 +237,8 @@
     NSString *msgId = [[message attributeForName:@"id"] stringValue];
     NSRange range = [from rangeOfString:@"@"];
     NSString * fromName = [from substringToIndex:(range.location == NSNotFound) ? 0 : range.location];
-    
     NSString *type = [[message attributeForName:@"type"] stringValue];
-    
     NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:[GameCommon getCurrentTime];
-    
-    
-    
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];
@@ -258,21 +253,30 @@
     {
         if ([msgtype isEqualToString:@"normalchat"]) {//聊天的 或动态聊天消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];//是否含payload标签
-            if (payload.length > 0&&[payload JSONValue][@"title"]) {
+            
+            if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
-                
+            }
+            
+            if (payload.length > 0&&[[NSString stringWithFormat:@"%@",[payload JSONValue][@"type"]] isEqualToString:@"3"]) {
                 [dict setObject:@"payloadchat" forKey:@"msgType"];
+                
             }else if (payload.length > 0&&[payload JSONValue][@"active"]){
                 //发送通知 判断账号是否激活
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
                 [dict setObject:@"normalchat" forKey:@"msgType"];
-            }else{
+                
+            }else if (payload.length>0&&[[payload JSONValue][@"type"] isEqualToString:@"img"]){
+                //如果 payload 的type 是 img 的话
+                [dict setObject:@"normalchat" forKey:@"msgType"];
+                
+            }else {
                 [dict setObject:@"normalchat" forKey:@"msgType"];
             }
             
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
-
+            
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
@@ -284,8 +288,8 @@
             }
             else
                 [dict setObject:@""  forKey:@"shiptype"];
-             [self.deletePersonDelegate newAddReq:dict];
-          ///  [self comeBackDelivered:from msgId:msgId];
+            [self.deletePersonDelegate newAddReq:dict];
+            ///  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"deletePerson"])//取消关注
         {
@@ -297,10 +301,10 @@
             }
             else
                 [dict setObject:@""  forKey:@"shiptype"];
-
+            
             
             [self.deletePersonDelegate deletePersonReceived:dict];
-         //   [self comeBackDelivered:from msgId:msgId];
+            //   [self comeBackDelivered:from msgId:msgId];
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
@@ -309,7 +313,7 @@
             title = KISDictionaryHaveKey([title JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
             
-             [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
+            [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
             [self comeBackDelivered:from msgId:msgId];
@@ -327,9 +331,9 @@
                 }
             }
             [dict setObject:dis forKey:@"disStr"];
-             [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
+            [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
-          //  [self comeBackDelivered:from msgId:msgId];
+            //  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
         {
@@ -343,7 +347,7 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
             }
-        //    [self comeBackDelivered:from msgId:msgId];
+            //    [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
@@ -351,8 +355,8 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-           // [self comeBackDelivered:from msgId:msgId];
-             [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
+            // [self comeBackDelivered:from msgId:msgId];
+            [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
         [self comeBackDelivered:from msgId:msgId];
     }
@@ -387,6 +391,7 @@
     }
     
 }
+
 
 
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence

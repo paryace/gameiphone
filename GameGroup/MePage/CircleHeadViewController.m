@@ -131,7 +131,8 @@
     
     
     textView = [[UITextView alloc]initWithFrame:CGRectMake(10, 5, 250, 40)];
-    textView.font = [UIFont systemFontOfSize:<#(CGFloat)#>]
+    textView.font = [UIFont systemFontOfSize:12];
+    [self.view addSubview:textView];
     
     
     
