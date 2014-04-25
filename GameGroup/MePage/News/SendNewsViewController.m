@@ -248,7 +248,17 @@
     }
 }
 
+
+/**
+ *	@brief	依次上传一组图片，如果成功前一张，才会传后一张
+ *
+ *	@param 	picIndex 	从哪张图片开始传， 一般设置为0
+ *	@param 	imageArray 	图片们
+ *	@param 	imageNameArray 	图片的序号， 必须是从0开始（很莫名其妙吧， 要改）
+ *	@param 	reponseStrArray 	上传图片 返回的图片ID，数值， 形如 53878, 53879, 53880
+ */
 -(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
+
 {
     //hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
    // NSMutableArray* imageIndex = [[NSMutableArray alloc]init];

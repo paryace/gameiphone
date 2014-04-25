@@ -36,7 +36,7 @@
     _sc.pagingEnabled=YES;
     _sc.showsHorizontalScrollIndicator=NO;
     _sc.showsVerticalScrollIndicator=NO;
-    _sc.bounces = NO;
+    _sc.bounces = YES;
     _sc.contentOffset = CGPointMake(self.indext*320, 0);
     _sc.contentSize = CGSizeMake(320*self.imgIDArray.count, _sc.frame.size.height);
     [self.view addSubview:_sc];
@@ -52,15 +52,19 @@
         EGOImageView *imgview = [[EGOImageView alloc]init];
         imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
         imageV.placeholderImage = imgview.image;
+        imageV.userInteractionEnabled = YES;
         
         [subSC addSubview:imageV];
-        imageV.userInteractionEnabled = YES;
+        
+        
+        //菊花act
         UIActivityIndicatorView*act = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((_sc.frame.size.width-10)/2, (_sc.frame.size.height-10)/2, 10, 10)];
         [act startAnimating];
         [subSC addSubview:act];
+        
         imageV.delegate = self;
         NSRange range=[self.imgIDArray[i] rangeOfString:@"<local>"];
-        if (self.isComeFrmeUrl ==NO) {
+        if (self.isComeFrmeUrl ==NO) {      //不是网页图片
          if (range.location!=NSNotFound) {
             //        self.viewPhoto.image =
             NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
@@ -80,6 +84,15 @@
         }
         subSC.maximumZoomScale = 2.0;
         subSC.bouncesZoom = NO;
+        subSC.pagingEnabled = YES;
+        subSC.showsHorizontalScrollIndicator=NO;
+        subSC.showsVerticalScrollIndicator=NO;
+        
+        //设置可滚动的区域
+        NSInteger cs_width = 320; //宽度就是320
+        NSInteger cs_height = cs_width / imageV.image.size.width * imageV.image.size.height;
+        subSC.contentSize = CGSizeMake(cs_width,cs_height);
+        
         subSC.delegate = self;
         [_sc addSubview:subSC];
         
@@ -179,7 +192,8 @@
     [UIView animateWithDuration:0.3 animations:^{
         imageView.frame = CGRectMake(0, a, 320, 320*size.height/size.width);
     }];
-    [((UIActivityIndicatorView*)imageView.superview.subviews[1]) stopAnimating];
+    
+    [((UIActivityIndicatorView*)imageView.superview.subviews[1]) stopAnimating];    //读取成功， 停止动画
 }
 - (void)imageViewFailedToLoadImage:(EGOImageView*)imageView error:(NSError*)error
 {

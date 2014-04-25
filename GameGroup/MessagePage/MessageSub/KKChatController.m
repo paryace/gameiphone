@@ -657,12 +657,18 @@ UINavigationControllerDelegate>
     }
 }
 #pragma mark - 从相机或相册获取到图片
+
+//从相机中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
     
     
     
 }
+
+
+//从相册中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+
     
     NSLog(@"%@",info);
     
