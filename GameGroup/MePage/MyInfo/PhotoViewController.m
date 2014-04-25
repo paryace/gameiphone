@@ -31,6 +31,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    //建立一个Scorllview, 用来放置每张图片的scorllview, 以支持左右滑动
     self.sc = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height)];
     _sc.backgroundColor = [UIColor blackColor];
     _sc.pagingEnabled=YES;

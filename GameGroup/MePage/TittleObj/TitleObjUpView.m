@@ -172,9 +172,11 @@
 - (void)getImageByNetWithImageId:(NSString*)imageid
 {
     NSString* urlStr = [BaseImageUrl stringByAppendingString:imageid];
-    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@"" success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image){
+    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@""
+                                    success:^(NSURLRequest *request,
+                                              NSHTTPURLResponse *response,
+                                              UIImage *image){
             NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageid]];
-//            NSFileManager *fm = [NSFileManager defaultManager];
         
             if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:path atomically:YES]) {
                 self.rightBgImage.image = image;

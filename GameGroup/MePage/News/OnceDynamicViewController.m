@@ -512,7 +512,10 @@
 
 - (void)imageClick:(UIButton*)imageButton
 {
-    PhotoViewController * photoV = [[PhotoViewController alloc] initWithSmallImages:nil images:self.headImgArray indext:imageButton.tag];
+    PhotoViewController * photoV = [[PhotoViewController alloc]
+                                    initWithSmallImages:nil
+                                    images:self.headImgArray
+                                    indext:imageButton.tag];
     [self presentViewController:photoV animated:NO completion:^{
         
     }];

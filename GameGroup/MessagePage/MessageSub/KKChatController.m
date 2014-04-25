@@ -673,33 +673,37 @@ UINavigationControllerDelegate>
     NSLog(@"%@",info);
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-    //    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:image targetSizeX:100 targetSizeY:100];
-    //    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
+    
     if([fm fileExistsAtPath:path] == NO)
     {
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
     
+    //将图片写进文件
     if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
         NSLog(@"success///");
         
+        //发送图片消息
         [self sendImageMsgD:openImgPath UUID:uuid];
         
         
-        KKMessageCell *cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self getMsgRowWithId:uuid] inSection:0]];
+        [self.tView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self getMsgRowWithId:uuid] inSection:0]];
         
         [hud show:YES];
-        [NetManager uploadkkChatImage:upImage
+        
+        //上传此图片
+        [NetManager uploadImage:upImage
                            WithURLStr:BaseUploadImageUrl
-                            ImageName:@"1"
+                            ImageName:uuid
                         TheController:self
                              Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                                 double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-                                 
+                                 //double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+                                 //显示图片上传进度
                                  //                                 cell.progressView.hidden = NO;
                                  //                                 cell.progressView.progress = progress;
                                  
@@ -711,6 +715,7 @@ UINavigationControllerDelegate>
              
              NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
              //             [cell.progressView setHidden:YES];
+             //图片上传完毕， 发送消息给对方
              [self sendImageMsg:imageMsg UUID:uuid];
              
              
@@ -737,6 +742,7 @@ UINavigationControllerDelegate>
         
     }];
 }
+
 
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
@@ -1977,6 +1983,7 @@ UINavigationControllerDelegate>
     
 }
 
+//图片消息 - 本地显示
 - (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
     
     NSString* nowTime = [GameCommon getCurrentTime];
@@ -2011,6 +2018,7 @@ UINavigationControllerDelegate>
     
 }
 
+//图片消息 - 真实发送
 - (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
     NSLog(@"+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
