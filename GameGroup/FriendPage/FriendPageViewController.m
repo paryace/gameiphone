@@ -611,6 +611,7 @@
                 [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
             }
         }
+            m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
         [m_myAttentionsTableView reloadData];
     }
     else if(kSegmentFans == tabIndex)

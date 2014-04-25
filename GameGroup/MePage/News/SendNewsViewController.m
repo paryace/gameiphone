@@ -205,8 +205,9 @@
         return;
     }
     
+    //判断字数是否超出限制
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
-
+    
     if (ziNum<0) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您发布的字数已超出限制" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 67;
@@ -216,6 +217,8 @@
 
     [hud show:YES];
     [self.dynamicTV resignFirstResponder];
+    
+    //上传图片
     if (self.pictureArray.count>0) {
         [self.view bringSubviewToFront:hud];
         NSMutableArray* imageArray = [[NSMutableArray alloc]init];
@@ -248,22 +251,25 @@
 -(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
 {
     //hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
+   // NSMutableArray* imageIndex = [[NSMutableArray alloc]init];
     [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
         hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
     }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
         [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:picIndex]];
+     //   [imageIndex addObject:response];
+        
         if (reponseStrArray.count != imageArray.count) {
-            NSLog(@"aaaaaaaaa");
             [self publishOnePicture:(picIndex+1) image:imageArray imageName:imageNameArray reponseStrDic:reponseStrArray];
         }
         else
         {
             [hud hide:YES];
-            NSLog(@"reponseStrArray %@", reponseStrArray);
             self.imageId = [[NSMutableString alloc]init];
-            for (NSString*a in reponseStrArray) {
-                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+            
+            for (int i=0; i<reponseStrArray.count; i++) {
+                NSString *aString = [NSString stringWithFormat:@"%d", i];
+                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:aString]];
             }
             [self publishWithImageString:_imageId];
         }
