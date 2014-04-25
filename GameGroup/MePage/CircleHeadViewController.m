@@ -130,6 +130,10 @@
     [self addFootView];
     
     
+    textView = [[UITextView alloc]initWithFrame:CGRectMake(10, 5, 250, 40)];
+    textView.font = [UIFont systemFontOfSize:<#(CGFloat)#>]
+    
+    
     
     // Do any additional setup after loading the view.
 }
