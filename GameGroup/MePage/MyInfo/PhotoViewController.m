@@ -16,7 +16,17 @@
 @end
 
 @implementation PhotoViewController
+/**
+ *	@brief	显示一组图片
+ *
+ *	@param 	sImages 	缩略图集合
+ *	@param 	images 	大图集合
+ *	@param 	indext 	索引 - 显示这里面的第几张
+ *
+ *	@return	PhotoViewController
+ */
 - (id)initWithSmallImages:(NSArray*)sImages images:(NSArray*)images indext:(int)indext
+
 {
     self = [super init];
     if (self) {
@@ -38,77 +48,67 @@
     _sc.pagingEnabled=YES;
     _sc.showsHorizontalScrollIndicator=NO;
     _sc.showsVerticalScrollIndicator=NO;
-    _sc.bounces = YES;
+    _sc.bounces = NO;
     _sc.contentOffset = CGPointMake(self.indext*320, 0);
     _sc.contentSize = CGSizeMake(320*self.imgIDArray.count, _sc.frame.size.height);
     [self.view addSubview:_sc];
     
+    //添加手势
     UITapGestureRecognizer* tapOne = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapOne:)];
     tapOne.numberOfTapsRequired = 1;
     [_sc addGestureRecognizer:tapOne];
-
+    
+    
     for (int i = 0;i < self.imgIDArray.count;i++) {
-        UIScrollView * subSC = [[UIScrollView alloc]initWithFrame:CGRectMake(i*320, 0, 320, _sc.frame.size.height)];
+        
+        //为每张图片imageV建立单独的Scorllview
         EGOImageView* imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
         imageV.placeholderImage = _smallImageArray[i];
         EGOImageView *imgview = [[EGOImageView alloc]init];
         imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
         imageV.placeholderImage = imgview.image;
         imageV.userInteractionEnabled = YES;
-        
-        [subSC addSubview:imageV];
-        
-        
-        //菊花act
-        UIActivityIndicatorView*act = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((_sc.frame.size.width-10)/2, (_sc.frame.size.height-10)/2, 10, 10)];
-        [act startAnimating];
-        [subSC addSubview:act];
-        
         imageV.delegate = self;
-        NSRange range=[self.imgIDArray[i] rangeOfString:@"<local>"];
-        if (self.isComeFrmeUrl ==NO) {      //不是网页图片
-         if (range.location!=NSNotFound) {
-            //        self.viewPhoto.image =
-            NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
-            NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,[self.imgIDArray[i] substringFromIndex:7]];
-            NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
-            UIImage * openPic= [UIImage imageWithData:nsData];
-            imageV.image = openPic;
-            [self imageViewLoadedImage:imageV];
-        }
-        else
-       imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
         
-        }
-        else{
-            imageV.imageURL = [NSURL URLWithString:self.imgIDArray[i]];
-
-        }
+        UIScrollView * subSC = [[UIScrollView alloc]initWithFrame:CGRectMake(i*320, 0, 320, _sc.frame.size.height)];
         subSC.maximumZoomScale = 2.0;
         subSC.bouncesZoom = NO;
         subSC.pagingEnabled = YES;
         subSC.showsHorizontalScrollIndicator=NO;
         subSC.showsVerticalScrollIndicator=NO;
-        
-        //设置可滚动的区域
-        NSInteger cs_width = 320; //宽度就是320
-        NSInteger cs_height = cs_width / imageV.image.size.width * imageV.image.size.height;
-        subSC.contentSize = CGSizeMake(cs_width,cs_height);
-        
         subSC.delegate = self;
-        [_sc addSubview:subSC];
+    
         
-//        UITapGestureRecognizer* tapOne = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapOne:)];
-//        tapOne.numberOfTapsRequired = 1;
-//        [imageV addGestureRecognizer:tapOne];
+        //菊花
+        UIActivityIndicatorView*act = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((_sc.frame.size.width-10)/2, (_sc.frame.size.height-10)/2, 10, 10)];
+        [act startAnimating];
+        [subSC addSubview:act];
+        
+        NSRange range=[self.imgIDArray[i] rangeOfString:@"<local>"];
+        if (self.isComeFrmeUrl ==NO) {      //不是网页图片
+            if (range.location!=NSNotFound) {
+                NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+                NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,[self.imgIDArray[i] substringFromIndex:7]];
+                NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
+                UIImage * openPic= [UIImage imageWithData:nsData];
+                imageV.image = openPic;
+                [self imageViewLoadedImage:imageV];
+            }
+            else
+                imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
+        
+            }
+        else{
+            imageV.imageURL = [NSURL URLWithString:self.imgIDArray[i]];
 
-//        UITapGestureRecognizer* tapTwo = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapTwo:)];
-//        tapTwo.numberOfTapsRequired = 2;
-//        [imageV addGestureRecognizer:tapTwo];
+        }
+        
+        [subSC addSubview:imageV];
+        [_sc addSubview:subSC];
+
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPress:)];
         [imageV addGestureRecognizer:longPress];
         
-//        [tapOne requireGestureRecognizerToFail:tapTwo];
     }
 }
 
@@ -117,6 +117,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+//点击
 -(void)tapOne:(UITapGestureRecognizer*)tap
 {
     self.view.userInteractionEnabled = NO;
@@ -128,17 +130,7 @@
     }];
 }
 
--(void)tapTwo:(UITapGestureRecognizer*)tap
-{
-//    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(desappear) object:nil];
-    UIScrollView*subSC = (UIScrollView*)tap.view.superview;
-    CGPoint touchPoint = [tap locationInView:tap.view];
-    if (subSC.contentSize.width>639) {
-        [subSC setZoomScale:1 animated:YES];
-    }else{
-        [subSC zoomToRect:CGRectMake(touchPoint.x, touchPoint.y, 1, 1) animated:YES];
-    }
-}
+//长按
 -(void)longPress:(UILongPressGestureRecognizer*)longPress
 {
     if (longPress.state == UIGestureRecognizerStateBegan) {
@@ -147,6 +139,8 @@
         [act showInView:longPress.view];
     }
 }
+
+
 #pragma mark - actionsheet delegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -183,8 +177,17 @@
     }
 }
 #pragma mark - EGOImageView delegate
+
+
+/**
+ *	@brief	显示图片
+ *
+ *	@param 	imageView 	图片
+ */
 - (void)imageViewLoadedImage:(EGOImageView*)imageView
 {
+
+
     float a = 0.0;
     CGSize size = imageView.image.size;
     if (320*size.height/size.width<_sc.frame.size.height) {
@@ -195,8 +198,16 @@
         imageView.frame = CGRectMake(0, a, 320, 320*size.height/size.width);
     }];
     
-    [((UIActivityIndicatorView*)imageView.superview.subviews[1]) stopAnimating];    //读取成功， 停止动画
+    //控制该Image所在Scorllview的contentSize
+    NSInteger cs_width = 320; //宽度就是320
+    NSInteger cs_height = cs_width / imageView.image.size.width * imageView.image.size.height;
+    ((UIScrollView*)imageView.superview).contentSize = CGSizeMake(cs_width,cs_height);
+    
+    [((UIActivityIndicatorView*)imageView.superview.subviews[1]) stopAnimating];
+
 }
+
+
 - (void)imageViewFailedToLoadImage:(EGOImageView*)imageView error:(NSError*)error
 {
     //未完待续
