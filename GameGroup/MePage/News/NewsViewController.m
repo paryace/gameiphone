@@ -447,6 +447,10 @@
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"type")] isEqualToString:@"5"]) {
         cell.typeLabel.text = KISDictionaryHaveKey(tempDic, @"showtitle");
     }
+    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"type")] isEqualToString:@"7"])
+    {
+        cell.typeLabel.text = KISDictionaryHaveKey(tempDic, @"showtitle");
+    }
     NSString* tit = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"title")] isEqualToString:@""] ? KISDictionaryHaveKey(tempDic, @"msg") : KISDictionaryHaveKey(tempDic, @"title");
     cell.bigTitle.text = tit;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"title")] isEqualToString:@""]) {

@@ -15,7 +15,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.imageView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder")];
+        self.imageView = [[EGOImageView alloc]initWithFrame:self.bounds];
+        self.imageView.placeholderImage = KUIImage(@"placeholder");
+        self.imageView.userInteractionEnabled = YES;
         [self addSubview:self.imageView];
     }
     return self;

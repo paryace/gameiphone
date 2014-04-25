@@ -495,6 +495,18 @@ static GameCommon *my_gameCommon = NULL;
     return BaseImageUrl;
 }
 
++(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(int)a
+{
+    unichar c;
+    for (int i=0; i<imgStr.length; i++) {
+        c=[imgStr characterAtIndex:i];
+        if (!isdigit(c)) {
+            return [NSString stringWithFormat:@"%@%@?w=%d&h=%d",NewBaseImageUrl,imgStr,width,hieght];
+        }
+    }
+    return [NSString stringWithFormat:@"%@%@/%d",BaseImageUrl,imgStr,a];
+}
+
 
 
 #pragma mark tabBar小红点

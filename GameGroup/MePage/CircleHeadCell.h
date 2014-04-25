@@ -34,19 +34,19 @@
 @property(nonatomic,strong)UIView *zanView;
 @property(nonatomic,strong)UICollectionViewFlowLayout *layout;
 @property(nonatomic,strong)UICollectionView *customPhotoCollectionView;
+@property(nonatomic,strong)NSArray *collArray;
+@property(nonatomic,strong)NSArray *commentArray;
+@property(nonatomic,strong)NSArray *zanArray;
 
-
-
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier imgStr:(NSMutableString*)imgStr;
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
-- (void)refreshCell;
+- (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>
 
 - (void)pinglunWithCircle:(CircleHeadCell*)myCell;
 - (void)zanWithCircle:(CircleHeadCell*)myCell;
-- (void)bigImgWithCircle:(CircleHeadCell*)myCell;
+- (void)bigImgWithCircle:(CircleHeadCell*)myCell WithIndexPath:(NSInteger)row;
 @end
 
 

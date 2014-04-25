@@ -15,31 +15,14 @@ bool str_endwith(const char* str, const char c)
 }
 @implementation CircleHeadCell
 {
-    NSArray *imgArray;
 }
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier imgStr:(NSMutableString*)imgStr
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        NSString *str;
-        if ([imgStr isEqualToString:@""] || [imgStr isEqualToString:@" "]) {
-            str = @"";
-        }else{
-        str = [imgStr substringFromIndex:imgStr.length-1];
-        NSString *str2;
-        if ([str isEqualToString:@","]) {
-             str2= [imgStr substringToIndex:imgStr.length-1];
-        }
-        else {
-            str2 = imgStr;
-        }
-        
-        imgArray = [NSArray array];
-        
-        imgArray = [str2 componentsSeparatedByString:@","];
-        }
-        self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder")];
+
+        self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
     
         [self.contentView addSubview:self.headImgBtn];
@@ -109,31 +92,34 @@ bool str_endwith(const char* str, const char c)
         self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
         [self.zanView addSubview:self.zanLabel];
         
-        
-        
-        
+
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         self.layout.minimumInteritemSpacing = 1;
         self.layout.minimumLineSpacing = 1;
         //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
-        if (imgArray.count==1) {
+        if (self.collArray.count==1) {
             self.layout.itemSize = CGSizeMake(250, 180);
         }
-        else if(imgArray.count==2)
+        else if(self.collArray.count==2)
         {
-            self.layout.itemSize = CGSizeMake(125, 100);
+            self.layout.itemSize = CGSizeMake(110, 100);
         }
         else
         {
             self.layout.itemSize = CGSizeMake(70, 70);
         }
+
+        // 3.设置整个collectionView的内边距
+       
+        [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
+        
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
         self.customPhotoCollectionView.scrollEnabled = NO;
         self.customPhotoCollectionView.delegate = self;
         self.customPhotoCollectionView.dataSource = self;
-        [self.customPhotoCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"ImageCell"];
+        [self.customPhotoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.customPhotoCollectionView];
         
@@ -149,40 +135,50 @@ bool str_endwith(const char* str, const char c)
             button.tag = 100+i;
             [self.menuImageView addSubview:button];
         }
+        self.commentsView = [[UIView alloc]initWithFrame:CGRectZero];
+        self. commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+        [self.contentView addSubview:self.commentsView];
 
-        
     }
     return self;
 }
+
+-(void)comeBackMenuView:(UIGestureRecognizer *)sender
+{
+    self.menuImageView.hidden =YES;
+
+}
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return imgArray.count;
+    return self.collArray.count;
 }
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    
-    EGOImageView *imgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, self.layout.itemSize.width, self.layout.itemSize.height)];
-    imgaeView.placeholderImage = KUIImage(@"placeholder");
-    imgaeView.imageURL =[NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[imgArray objectAtIndex:indexPath.row]]stringByAppendingString:[GameCommon getHeardImgId:[imgArray objectAtIndex:indexPath.row]]]];
-    [cell.contentView addSubview:imgaeView];
+    ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
+    NSString *url = [self.collArray objectAtIndex:indexPath.row];
+    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:140];
+    NSURL *urls;
+    urls = [NSURL URLWithString:address];
+    cell.imageView.imageURL =urls;
     return cell;
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:)]) {
-        [self.myCellDelegate  bigImgWithCircle:self];
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:WithIndexPath:)]) {
+        [self.myCellDelegate  bigImgWithCircle:self WithIndexPath:indexPath.row];
     }
 }
 
 
 
 
--(void)openBtnList:(id)sender
+-(void)openBtnList:(UIButton *)sender
 {
     if (self.menuImageView.hidden==YES) {
         self.menuImageView.hidden =NO;
+        [self.contentView bringSubviewToFront:self.menuImageView];
+        self.menuImageView.frame = CGRectMake(80, sender.frame.origin.y, 190, 42);
         [self becomeFirstResponder];
     }else
     self.menuImageView.hidden =YES;
@@ -242,7 +238,7 @@ bool str_endwith(const char* str, const char c)
 //            self.timeLabel.frame = CGRectMake(60,size.height+27+80*arr.count/3, 120, 30);
 //        }
 //}
-- (void)refreshCell
+- (void)refreshCell:(NSInteger)hieght
 {
 }
 

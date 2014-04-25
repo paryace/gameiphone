@@ -17,8 +17,8 @@
 @interface CircleHeadViewController ()
 {
     UITableView *m_myTableView;
-    NSMutableArray *m_dataArray;
-    NSInteger  m_currPageCount;
+    NSMutableArray *m_dataArray;//数据集合
+    NSInteger  m_currPageCount;//分页加载
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     UILabel *nickNameLabel;
@@ -28,6 +28,9 @@
     UIButton *friendZanBtn;
     UIButton *abobtMeBtn;
     NSIndexPath *indexPaths;
+    NSMutableArray * commentArray;
+    UIView *toolView;
+    UITextView *textView;
 }
 @end
 
@@ -45,30 +48,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
 
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
     
     m_dataArray = [NSMutableArray array];
+    commentArray = [NSMutableArray array];
     m_currPageCount = 0;
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
 //    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     
-    UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 350)];
+    
+    
+    UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 440)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
-    topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
     
-    friendZanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    friendZanBtn.frame = CGRectMake(10, 210, 85, 25);
-    [friendZanBtn setBackgroundImage:KUIImage(@"朋友在赞_02") forState:UIControlStateNormal];
-    [topVIew addSubview:friendZanBtn];
     
     
     
@@ -78,11 +79,14 @@
         topImgaeView.image = KUIImage(@"ceshibg.jpg");
     }
     
+    
     topImgaeView.userInteractionEnabled =YES;
     [topImgaeView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [topVIew addSubview:topImgaeView];
     
-    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(138, 210, 85, 30)];
+    
+//    昵称
+    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(138, 280, 85, 30)];
     nickNameLabel.text =self.nickNmaeStr;
     nickNameLabel.layer.cornerRadius = 5;
     nickNameLabel.layer.masksToBounds=YES;
@@ -93,7 +97,9 @@
     nickNameLabel.textAlignment = NSTextAlignmentRight;
     [topVIew addSubview:nickNameLabel];
     
-    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 206, 80, 80)];
+    
+    //头像
+    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 280, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,self.imageStr]];
     headImageView.layer.cornerRadius = 5;
@@ -102,15 +108,28 @@
     
     [topVIew addSubview:headImageView];
 
+    //朋友在赞
+    friendZanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    friendZanBtn.frame = CGRectMake(10, 280, 85, 25);
+    [friendZanBtn setBackgroundImage:KUIImage(@"friendZan") forState:UIControlStateNormal];
+    [friendZanBtn addTarget:self action:@selector(friendZan:) forControlEvents:UIControlEventTouchUpInside];
+    [topVIew addSubview:friendZanBtn];
+    
+
+    //与我相关
     abobtMeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    abobtMeBtn.frame = CGRectMake(68, 300, 184, 37);
+    abobtMeBtn.frame = CGRectMake(68, 370, 184, 37);
     [abobtMeBtn setBackgroundImage:KUIImage(@"新消息_03") forState:UIControlStateNormal];
     [abobtMeBtn setTitle:@"N条新消息" forState:UIControlStateNormal];
     [abobtMeBtn addTarget:self action:@selector(enterAboutMePage:) forControlEvents:UIControlEventTouchUpInside];
     [topVIew addSubview:abobtMeBtn];
     
+    [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
+
+    [self addheadView];
+    [self addFootView];
     
-    [self getInfoFromNet];
+    
     
     // Do any additional setup after loading the view.
 }
@@ -165,6 +184,14 @@
         [hud hide:YES];
     }];
 }
+#pragma mark --朋友在赞触发方法与网络请求
+-(void)friendZan:(id)sender
+{
+    
+}
+
+
+
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -173,18 +200,23 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
 
-     NSString *identifier =[NSString stringWithFormat: @"cell%d",indexPath.row];
+    static NSString *identifier =@"cell";
     CircleHeadCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell ==nil) {
-        cell = [[CircleHeadCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier imgStr:KISDictionaryHaveKey(dict, @"img")];
+        cell = [[CircleHeadCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     int m_currmagY =0;
     cell.tag = indexPath.row+100;
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.headImgBtn.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]] stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]]];
+    
+    cell.headImgBtn.tag= indexPath.row;
+    [cell.headImgBtn addTarget:self action:@selector(enterPersonCirclePage:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
     cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
     cell.myCellDelegate = self;
@@ -193,6 +225,8 @@
 
     
     NSString *urlLink = KISDictionaryHaveKey(dict, @"urlLink");
+    
+    //判断是否是后台推送
     if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil) {
         cell.shareView.hidden = YES;
         cell.contentLabel.hidden = YES;
@@ -201,7 +235,7 @@
         cell.titleLabel.frame = CGRectMake(60, 30, 250, size.height);
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
         
-        m_currmagY  = size.height+30;
+        m_currmagY  += size.height+30;
         
         if ([KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
             cell.customPhotoCollectionView.hidden =YES;
@@ -221,24 +255,33 @@
                 str2 = imgStr;
             }
 
-            NSArray* arr = [imgStr componentsSeparatedByString:@","];
-            if ([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "]) {
-                [(NSMutableArray*)arr removeLastObject];
+            cell.collArray = [imgStr componentsSeparatedByString:@","];
+            if ([[cell.collArray lastObject]isEqualToString:@""]||[[cell.collArray lastObject]isEqualToString:@" "]) {
+                [(NSMutableArray*)cell.collArray removeLastObject];
             }
+ 
 
             cell.customPhotoCollectionView.hidden =NO;
-            int i = (arr.count-1)/3;
-            cell.customPhotoCollectionView.frame = CGRectMake(60, size.height+30, 250, i*80+100) ;
+            int i = (cell.collArray.count-1)/3;
+            cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 240, i*80+80) ;
+            CGFloat paddingY = 7;
+            CGFloat paddingX = 7;
+            cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
             
-            m_currmagY += cell.customPhotoCollectionView.bounds.size.height;
+            [cell.customPhotoCollectionView reloadData];
+            // 4.设置每一行之间的间距
+            cell.layout.minimumLineSpacing = paddingY;
+            m_currmagY += i*80+80;
+            
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(250,m_currmagY, 50, 40);
             m_currmagY+=40;
             
-            
         }
        
-    }else{
+    }
+    else
+    {
         cell.shareView.hidden = NO;
         cell.contentLabel.hidden = NO;
         cell.shareImgView.hidden = NO;
@@ -248,13 +291,26 @@
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"title");
         cell.shareView.frame = CGRectMake(60, size1.height+30, 250, 50);
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
-        cell.shareImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict,@"img")]stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+        
+        
+        UITapGestureRecognizer *tapGe = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterInfoPage:)];
+        [cell.shareView addGestureRecognizer:tapGe];
+        tapGe.view.tag = indexPath.row;
+        
+        cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:80]];
         m_currmagY  = size1.height+80;
         
         cell.timeLabel.frame = CGRectMake(60,size1.height+80, 120, 30);
         cell.openBtn.frame = CGRectMake(250,size1.height+80, 50, 40);
         m_currmagY+=cell.timeLabel.frame.size.height+10;
     }
+    
+//    UIView *listView = [[UIView alloc]initWithFrame:CGRectMake(60, m_currmagY+25, 200, 1)];
+//    listView.backgroundColor =UIColorFromRGBA(0xe1e1e1, 1);
+//    listView.hidden = YES;
+//    [cell.contentView addSubview:listView];
+//
+    
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
         cell.zanView.frame = CGRectMake(60, m_currmagY, 200, 25);
         NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
@@ -266,55 +322,43 @@
 
     }else{
         cell.zanView.hidden = YES;
+        [cell.zanView removeFromSuperview];
     }
-    NSArray *commentArray = [NSArray array];
-    commentArray = KISDictionaryHaveKey(dict, @"commentList");
-    if (commentArray.count<1) {
-        cell.commentsView.hidden = YES;
-    }else{
-        
-        cell.commentsView.hidden = NO;
+    commentArray =KISDictionaryHaveKey(dict, @"commentList");
+    if ([commentArray isKindOfClass:[NSArray class]]&&commentArray !=nil) {
+        cell.commentsView.hidden =NO;
+        NSArray *views = [cell.commentsView subviews];
+        for(UIView* view in views)
+        {
+            [view removeFromSuperview];
+        }
+        cell.commentsView.frame = CGRectMake(60, m_currmagY, 250, commentArray.count *20);
     for (int i = 0; i<commentArray.count; i++) {
-        cell.commentsView = [[UIView alloc]initWithFrame:CGRectMake(60, m_currmagY+30*i, 250, 30)];
-        cell.commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
-        [cell.contentView addSubview:cell.commentsView];
-        cell.commNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 30)];
-        cell.commNameLabel.font = [UIFont systemFontOfSize:12];
-        [cell.commentsView addSubview:cell.commNameLabel];
-        
-        cell.commentsLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 140, 30)];
-        cell.commentsLabel.font = [UIFont systemFontOfSize:12];
-        cell.commentsLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
-        [cell.commentsView addSubview:cell.commentsLabel];
+        UILabel * commNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 20*i, 100, 20)];
+        commNameLabel.font = [UIFont systemFontOfSize:12];
+        [cell.commentsView addSubview:commNameLabel];
+        UILabel * commentsLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 20*i, 140, 20)];
+        commentsLabel.font = [UIFont systemFontOfSize:12];
+        commentsLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
+        [cell.commentsView addSubview:commentsLabel];
 
         NSDictionary *dic = [commentArray objectAtIndex:i];
-        cell.commNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname");
-        cell.commentsLabel.text =KISDictionaryHaveKey(dic,@"comment");
+        commNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname");
+        commentsLabel.text =KISDictionaryHaveKey(dic,@"comment");
+        cell.commentsView.hidden = NO;
+        commNameLabel.hidden = NO;
+        commentsLabel.hidden = NO;
     }
-    
-    m_currmagY +=commentArray.count*30;
+        m_currmagY +=commentArray.count*20;
+    }
+    else{
+        cell.commentsView.hidden =YES;
     }
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-//    
-//    OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
-//    detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
-//    //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
-//    
-//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
-//    
-//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-//    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
-//    
-//    
-//    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
-//    
-//    [self.navigationController pushViewController:detailVC animated:YES];
-
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -377,27 +421,56 @@
     NSArray *ar = [NSArray array];
     ar = KISDictionaryHaveKey(dict, @"commentList");
     if (ar.count>0) {
-        currnetY+=ar.count*30+10;
+        currnetY+=ar.count*20+10;
     }
     else{
         
     }
     return currnetY;
     currnetY =0;
-    
 }
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)enterPersonCirclePage:(UIButton *)sender
+{
+    NSDictionary *dict = [m_dataArray objectAtIndex:sender.tag];
+    MyCircleViewController *VC = [[MyCircleViewController alloc]init];
+    VC.userId = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")];
+    VC.nickNmaeStr = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    VC.imageStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+    [self.navigationController pushViewController:VC animated:YES];
+}
+
+
+-(void)enterInfoPage:(UITapGestureRecognizer *)sender
+{
+    NSDictionary *dict = [m_dataArray objectAtIndex:sender.view.tag];
+    
+    OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
+    detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
+    
+    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+    
+    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
+    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    
+    
+    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
+    
+    [self.navigationController pushViewController:detailVC animated:YES];
+
+}
+
 -(void)changeTopImage:(UIGestureRecognizer*)sender
 {
     UIActionSheet *acs = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"相册" otherButtonTitles:@"相机", nil];
     [acs showInView:self.view];
     
 }
-
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     UIImagePickerController * imagePicker;
@@ -449,9 +522,7 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
-    
 }
-
 
 
 //获取时间
@@ -490,12 +561,13 @@
 }
 
 
-
-
 #pragma mark ---cell delegate
 -(void)pinglunWithCircle:(CircleHeadCell *)myCell
 {
     NSLog(@"评论");
+    
+    
+    
 }
 
 -(void)zanWithCircle:(CircleHeadCell *)myCell
@@ -503,7 +575,7 @@
     NSLog(@"赞");
 }
 
-- (void)bigImgWithCircle:(CircleHeadCell*)myCell
+- (void)bigImgWithCircle:(CircleHeadCell*)myCell WithIndexPath:(NSInteger)row
 {
     NSLog(@"点击查看大图");
     NSDictionary *dict = [m_dataArray objectAtIndex:myCell.tag-100];
@@ -522,19 +594,61 @@
         else {
             str2 = imgStr;
         }
-        
         array = [NSArray array];
         
         array = [str2 componentsSeparatedByString:@","];
     }
 
-    
-    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:array indext:0];
+    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:array indext:row];
     [self presentViewController:pV animated:NO completion:^{
         
     }];
 
 }
+
+-(void)addheadView
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_myTableView;
+    
+    header.scrollView = m_myTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currPageCount = 0;
+        [self getInfoFromNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+        
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+    [header beginRefreshing];
+    m_header = header;
+}
+-(void)addFootView
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_myTableView;
+    
+    footer.scrollView = m_myTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getInfoFromNet];
+        
+    };
+    m_footer = footer;
+    
+}
+
+
+
 
 //            NSLog(@"第%d行--%d个--%@",indexPath.row,arr.count,arr);
 //            if (arr.count==1)
