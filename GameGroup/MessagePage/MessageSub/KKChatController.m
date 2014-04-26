@@ -1836,43 +1836,35 @@ UINavigationControllerDelegate>
         [self.navigationController pushViewController:actVC animated:YES];
     }
 }
+//响应按键
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (actionSheet.tag == 124) {
-        if (buttonIndex == 1) {
+        if (buttonIndex == 1) { //点击取消
             return;
-        }
+        }   //buttonIndex ==0 为 点击了重发按钮
+        
+        
         NSInteger cellIndex = tempBtn.tag-1;
         NSMutableDictionary* dict = [messages objectAtIndex:cellIndex];
-        NSString* message = KISDictionaryHaveKey(dict, @"msg");
-        NSString* uuid = KISDictionaryHaveKey(dict, @"messageuuid");
-        NSString* sendtime = KISDictionaryHaveKey(dict, @"time");
-        [dict setObject:@"2" forKey:@"status"];
         
-        NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-        [body setStringValue:message];
-        
-        //生成XML消息文档
-        NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-        [mes addAttributeWithName:@"type" stringValue:@"chat"];
-        [mes addAttributeWithName:@"to" stringValue:[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
-        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
-        [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
-        [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
-        [mes addAttributeWithName:@"msgTime" stringValue:sendtime];
-        [mes addAttributeWithName:@"id" stringValue:uuid];
-        //组合
-        [mes addChild:body];
-        
-        //发送消息
-        if (![self.appDel.xmppHelper sendMessage:mes]) {
-            [KGStatusBar showSuccessWithStatus:@"网络有点问题，稍后再试吧" Controller:self];
-            [dict setObject:@"0" forKey:@"status"];
-            return;
+        //如果没有payload，就是普通消息
+        if([dict objectForKey:@"payload"]&&((NSString*)[dict objectForKey:@"payload"]).length>0)
+        {
+
+            NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+            NSString *str = KISDictionaryHaveKey(payload, @"type");
+            if([str isEqualToString:@"img"])    //是图片
+            {
+                NSLog(@"发送图片消息...");
+            }
+            
         }
-        [messages replaceObjectAtIndex:cellIndex withObject:dict];
-        NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
-        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+        else{
+            NSLog(@"发送普通消息...");
+            [self reSendMsg:dict cellIndex:cellIndex]; //重发普通消息
+         
+        }
     }
 }
 
@@ -2022,6 +2014,7 @@ UINavigationControllerDelegate>
     
 }
 
+
 - (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
     NSLog(@"+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
@@ -2100,16 +2093,17 @@ UINavigationControllerDelegate>
 }
 - (void)sendMsg:(NSString *)message
 {
-    NSLog(@"+++++%@",[message class]);
-    if (message.length==0)
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    if (message.length  ==0)
     {
-        return;
+        return ;
     }
     if ([[message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
         //如果发送信息为空或者为空格的时候弹框提示
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"不能发送空消息" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alertView show];
-        return;
+        return ;
     }
     NSString* nowTime = [GameCommon getCurrentTime];
     //生成<body>文档
@@ -2140,12 +2134,6 @@ UINavigationControllerDelegate>
     //组合
     [mes addChild:body];
     
-    //发送消息
-    [self.appDel.xmppHelper sendMessage:mes];
-    
-    
-    //存库
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:message forKey:@"msg"];
     [dictionary setObject:@"you" forKey:@"sender"];
     [dictionary setObject:nowTime forKey:@"time"];
@@ -2156,8 +2144,18 @@ UINavigationControllerDelegate>
     [dictionary setObject:uuid forKey:@"messageuuid"];
     [dictionary setObject:@"2" forKey:@"status"];
     
-    [messages addObject:dictionary];
+    //发送消息
+    if (![self.appDel.xmppHelper sendMessage:mes]) {
+        [KGStatusBar showSuccessWithStatus:@"网络有点问题，稍后再试吧" Controller:self];
+        [dictionary setObject:@"0" forKey:@"status"];
+        return ;
+    }
     
+
+    [messages addObject:dictionary];
+ 
+    
+    //存库
     [self normalMsgToFinalMsg];
     [DataStoreManager storeMyMessage:dictionary];
     
@@ -2175,7 +2173,53 @@ UINavigationControllerDelegate>
     if (![wxSDArray containsObject:self.chatWithUser]) {
         [self getSayHello];
     }
+    
+    return ;
 }
+
+//重新发送某条文字聊天
+- (void)reSendMsg:(NSMutableDictionary*)messageDict
+        cellIndex:(NSInteger)cellIndex
+{
+    //添加新消息
+    NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
+    NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
+    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
+    [messageDict setObject:@"2" forKey:@"status"];
+    
+    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+    [body setStringValue:message];
+    
+    //生成XML消息文档
+    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+    [mes addAttributeWithName:@"type" stringValue:@"chat"];
+    [mes addAttributeWithName:@"to" stringValue:[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+    [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
+    [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
+    [mes addAttributeWithName:@"msgTime" stringValue:sendtime];
+    [mes addAttributeWithName:@"id" stringValue:uuid];
+    //组合
+    [mes addChild:body];
+    
+    //发送消息
+    if (![self.appDel.xmppHelper sendMessage:mes]) {
+        [KGStatusBar showSuccessWithStatus:@"网络有点问题，稍后再试吧" Controller:self];
+        [messageDict setObject:@"0" forKey:@"status"];
+        return;
+    }
+    
+    //UI上删除掉重发的那条消息
+    //[messages removeObject:messageDict];
+    [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
+    
+    //刷新UI
+    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+    
+    
+}
+
 
 #pragma mark -
 #pragma mark 历史聊天记录展示
