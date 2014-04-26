@@ -24,14 +24,14 @@
 @property(nonatomic,strong)UIImageView *menuImageView;
 @property(nonatomic,strong)EGOImageView *shareImgView;
 @property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
-@property(nonatomic,strong)UIView *commentsView;
+@property(nonatomic,strong)UIImageView *commentsView;
 @property(nonatomic,strong)UILabel*commentsLabel;
 @property(nonatomic,strong)UILabel *commNameLabel;
 @property(nonatomic,strong)UILabel *zanNameLabel;
 @property(nonatomic,strong)UIImageView *zanImageView;
 @property(nonatomic,strong)UILabel *zanLabel;
 @property(nonatomic,strong)UILabel *sayAllcommentsLabel;
-@property(nonatomic,strong)UIView *zanView;
+@property(nonatomic,strong)UIImageView *zanView;
 @property(nonatomic,strong)UICollectionViewFlowLayout *layout;
 @property(nonatomic,strong)UICollectionView *customPhotoCollectionView;
 @property(nonatomic,strong)NSArray *collArray;

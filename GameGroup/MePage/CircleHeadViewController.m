@@ -132,6 +132,8 @@
     
     textView = [[UITextView alloc]initWithFrame:CGRectMake(10, 5, 250, 40)];
     textView.font = [UIFont systemFontOfSize:12];
+    textView.delegate = self;
+    textView.hidden = YES;
     [self.view addSubview:textView];
     
     
@@ -310,17 +312,12 @@
         m_currmagY+=cell.timeLabel.frame.size.height+10;
     }
     
-//    UIView *listView = [[UIView alloc]initWithFrame:CGRectMake(60, m_currmagY+25, 200, 1)];
-//    listView.backgroundColor =UIColorFromRGBA(0xe1e1e1, 1);
-//    listView.hidden = YES;
-//    [cell.contentView addSubview:listView];
-//
     
+    // 赞
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
-        cell.zanView.frame = CGRectMake(60, m_currmagY, 200, 25);
+        cell.zanView.frame = CGRectMake(60, m_currmagY, 250, 25);
         NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
         cell.zanView.hidden = NO;
-        cell.zanImageView.center = CGPointMake(5, 5);
         cell.zanNameLabel.text = KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
         cell.zanLabel.text = [NSString stringWithFormat:@"等%@人都觉得赞",KISDictionaryHaveKey(dict,@"zanNum")];
         m_currmagY +=cell.zanView.frame.size.height;
@@ -329,6 +326,9 @@
         cell.zanView.hidden = YES;
         [cell.zanView removeFromSuperview];
     }
+    
+    
+    // 评论
     commentArray =KISDictionaryHaveKey(dict, @"commentList");
     if ([commentArray isKindOfClass:[NSArray class]]&&commentArray !=nil) {
         cell.commentsView.hidden =NO;
@@ -337,24 +337,45 @@
         {
             [view removeFromSuperview];
         }
-        cell.commentsView.frame = CGRectMake(60, m_currmagY, 250, commentArray.count *20);
+        
+        if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
+            cell.commentsView.image = nil;
+        }else{
+            cell.commentsView.image = KUIImage(@"zanAndCommentBg");
+        }
+            float hieght = 0.0;
     for (int i = 0; i<commentArray.count; i++) {
-        UILabel * commNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 20*i, 100, 20)];
+        NSDictionary *dic = [commentArray objectAtIndex:i];
+        //计算size
+        CGSize size = [[NSString stringWithFormat:@"%@:",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname")] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 30) lineBreakMode:NSLineBreakByCharWrapping];
+        
+        CGSize size1 = [KISDictionaryHaveKey(dic, @"comment") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 200) lineBreakMode:NSLineBreakByCharWrapping];
+
+        UILabel * commNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, hieght, size.width, 18)];
         commNameLabel.font = [UIFont systemFontOfSize:12];
+        commNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
+        commNameLabel.userInteractionEnabled = YES;
+        [commNameLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(commentSomeBody:withCell:)]];
+        
+        commNameLabel.tag = i;
         [cell.commentsView addSubview:commNameLabel];
-        UILabel * commentsLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 20*i, 140, 20)];
+        
+        UILabel * commentsLabel = [[UILabel alloc]initWithFrame:CGRectMake(size.width, hieght, 250-size.width, size1.height)];
+        commentsLabel.numberOfLines =0;
         commentsLabel.font = [UIFont systemFontOfSize:12];
-        commentsLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         [cell.commentsView addSubview:commentsLabel];
 
-        NSDictionary *dic = [commentArray objectAtIndex:i];
-        commNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname");
+        hieght +=size1.height+3;
+
+        commNameLabel.text =[NSString stringWithFormat:@"%@:",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname")];
         commentsLabel.text =KISDictionaryHaveKey(dic,@"comment");
+
         cell.commentsView.hidden = NO;
         commNameLabel.hidden = NO;
         commentsLabel.hidden = NO;
     }
-        m_currmagY +=commentArray.count*20;
+    cell.commentsView.frame = CGRectMake(60, m_currmagY, 250, hieght);
+            m_currmagY +=hieght+5;
     }
     else{
         cell.commentsView.hidden =YES;
@@ -406,7 +427,7 @@
         else
         {
             if (imgArray.count==1) {
-                currnetY +=180;
+                currnetY +=80;
             }
             else if(imgArray.count>1&&imgArray.count<4){
                 currnetY+=80;
@@ -420,16 +441,11 @@
     }
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]>0) {
         currnetY+=40;
-    }else{
-        
     }
     NSArray *ar = [NSArray array];
     ar = KISDictionaryHaveKey(dict, @"commentList");
     if (ar.count>0) {
         currnetY+=ar.count*20+10;
-    }
-    else{
-        
     }
     return currnetY;
     currnetY =0;
@@ -439,6 +455,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark --enter MyCircleViewController page
 
 -(void)enterPersonCirclePage:(UIButton *)sender
 {
@@ -451,6 +469,7 @@
 }
 
 
+#pragma mark --enter OnceDynamicViewController Page
 -(void)enterInfoPage:(UITapGestureRecognizer *)sender
 {
     NSDictionary *dict = [m_dataArray objectAtIndex:sender.view.tag];
@@ -530,7 +549,7 @@
 }
 
 
-//获取时间
+#pragma mark --getTime
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime
 {
     NSString* currentString = [GameCommon getCurrentTime];
@@ -565,8 +584,15 @@
     return [messageDateStr substringFromIndex:5];
 }
 
+-(void)commentSomeBody:(UITapGestureRecognizer *)sender withCell:(CircleHeadCell*)cell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:cell.tag];
+    NSArray *array = KISDictionaryHaveKey(dic, @"commentList");
+    NSLog(@"sender  %@",[array objectAtIndex:sender.view.tag]);
+    
+}
 
-#pragma mark ---cell delegate
+#pragma mark ---cell delegate  commentAndZan
 -(void)pinglunWithCircle:(CircleHeadCell *)myCell
 {
     NSLog(@"评论");
@@ -580,6 +606,7 @@
     NSLog(@"赞");
 }
 
+#pragma mark --- clickseeBigImage
 - (void)bigImgWithCircle:(CircleHeadCell*)myCell WithIndexPath:(NSInteger)row
 {
     NSLog(@"点击查看大图");
@@ -606,11 +633,11 @@
 
     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:array indext:row];
     [self presentViewController:pV animated:NO completion:^{
-        
     }];
 
 }
 
+#pragma mark ---addRefreshHeadview and refreshFootView
 -(void)addheadView
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
@@ -649,60 +676,5 @@
         
     };
     m_footer = footer;
-    
 }
-
-
-
-
-//            NSLog(@"第%d行--%d个--%@",indexPath.row,arr.count,arr);
-//            if (arr.count==1)
-//            {
-//                cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
-//
-//                cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")] ] stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
-//
-//                cell.thumbImgView.frame = CGRectMake(60, size.height+30,180, cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width));
-//
-//                cell.timeLabel.frame = CGRectMake(60,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 120, 30);
-//                cell.openBtn.frame = CGRectMake(250,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 50, 40);
-//                m_currmagY+=cell.openBtn.frame.size.height;
-//
-//                m_currmagY +=cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width);
-//            }
-//            else if(arr.count ==2)
-//            {
-//                for (int i = 0; i<2; i++) {
-//
-//                cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
-//
-//                cell.thumbImgView.frame = CGRectMake(60+i*(250/2), size.height+30,250/2,80);
-//
-//                cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:[arr objectAtIndex:i]] ] stringByAppendingString:[arr objectAtIndex:i]]];
-//
-//                cell.openBtn.frame = CGRectMake(250,size.height+30+cell.thumbImgView.image.size.height*(180/cell.thumbImgView.image.size.height), 50, 40);
-//                m_currmagY+=cell.openBtn.frame.size.height;
-//
-//                m_currmagY +=cell.thumbImgView.image.size.height*(180/ cell.thumbImgView.image.size.width);
-//                }
-//            }
-//            else
-//            {
-//                cell.timeLabel.frame = CGRectMake(60,size.height+30+80+(arr.count/3)*80, 120, 30);
-//                cell.openBtn.frame = CGRectMake(250,size.height+30+80+ (arr.count/3)*80, 50, 40);
-//                m_currmagY+=80+arr.count/3*80;
-//
-//
-//                for (int i =0; i<arr.count/3; i++) {
-//                    for (int j = 0; j<3; j++) {
-//                        cell.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
-//                        cell.thumbImgView.frame =CGRectMake(60+80*j, size.height+35+80*i, 75, 75);
-//
-//                        cell.thumbImgView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[arr objectAtIndex:i*3+j] ] stringByAppendingString:[arr objectAtIndex:i*3+j]]];
-//
-//                        [cell.contentView addSubview:cell.thumbImgView];
-//                    }
-//                }
-//            }
-
 @end

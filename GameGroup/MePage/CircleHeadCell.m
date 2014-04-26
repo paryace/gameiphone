@@ -72,26 +72,6 @@ bool str_endwith(const char* str, const char c)
         CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
         self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
         
-        self.zanView = [[UIView alloc]initWithFrame:CGRectZero];
-        [self.contentView addSubview:self.zanView];
-        
-        
-        self.zanImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
-        self.zanImageView.image = KUIImage(@"zan_circle");
-        self.zanImageView.center = CGPointMake(5, 5);
-        [self.zanView addSubview:self.zanImageView];
-        
-        self.zanNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 100, 30)];
-        self.zanNameLabel.textColor = UIColorFromRGBA(0x455cab, 1);
-        self.zanNameLabel.font = [UIFont boldSystemFontOfSize:12];
-        self.zanNameLabel.backgroundColor = [UIColor clearColor];
-        [self.zanView addSubview:self.zanNameLabel];
-        
-        self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
-        self.zanLabel.textColor = [UIColor grayColor];
-        self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
-        [self.zanView addSubview:self.zanLabel];
-        
 
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];
@@ -135,14 +115,36 @@ bool str_endwith(const char* str, const char c)
             button.tag = 100+i;
             [self.menuImageView addSubview:button];
         }
-        self.commentsView = [[UIView alloc]initWithFrame:CGRectZero];
-        self. commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+        
+        self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
+        self.zanView.image = KUIImage(@"zanAndCommentBg");
+        [self.contentView addSubview:self.zanView];
+        
+        self.zanImageView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 10, 10, 10)];
+        self.zanImageView.image = KUIImage(@"zan_circle");
+        [self.zanView addSubview:self.zanImageView];
+        
+        self.zanNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, 100, 30)];
+        self.zanNameLabel.textColor = UIColorFromRGBA(0x455cab, 1);
+        self.zanNameLabel.font = [UIFont boldSystemFontOfSize:12];
+        self.zanNameLabel.backgroundColor = [UIColor clearColor];
+        [self.zanView addSubview:self.zanNameLabel];
+        
+        self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
+        self.zanLabel.textColor = [UIColor grayColor];
+        self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
+        [self.zanView addSubview:self.zanLabel];
+    
+        self.commentsView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 30, 30)];
+        self.commentsView.image = KUIImage(@"zanAndCommentBg");
+        self.commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self.contentView addSubview:self.commentsView];
 
     }
     return self;
 }
 
+//隐藏评论赞button
 -(void)comeBackMenuView:(UIGestureRecognizer *)sender
 {
     self.menuImageView.hidden =YES;
@@ -170,9 +172,6 @@ bool str_endwith(const char* str, const char c)
     }
 }
 
-
-
-
 -(void)openBtnList:(UIButton *)sender
 {
     if (self.menuImageView.hidden==YES) {
@@ -190,7 +189,6 @@ bool str_endwith(const char* str, const char c)
         if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(zanWithCircle:)]) {
             [self.myCellDelegate zanWithCircle:self];
         }
-        
     }else{
         if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(pinglunWithCircle:)]) {
             [self.myCellDelegate pinglunWithCircle:self];
@@ -203,43 +201,6 @@ bool str_endwith(const char* str, const char c)
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(250, 300) lineBreakMode:NSLineBreakByWordWrapping];
     NSLog(@"csize %f",cSize.height);
     return cSize;
-}
-
-//-(void)buildImagePathWithImage:(NSString *)imgStr
-//{
-//    CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
-//    self.thumbImgView.imageURL = nil;
-//    [self.thumbImgView removeFromSuperview];
-//    self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
-//    if (![imgStr isEqualToString:@""]) {
-//        
-//        NSArray* arr = [imgStr componentsSeparatedByString:@","];
-//        NSLog(@"arr%@-->%@-->%d",arr,imgStr,arr.count);
-//        
-//            for (int i =0; i<3; i++) {
-//                for (int j = 0; j<arr.count/3; j++) {
-//                    
-//                    if (arr.count==1)
-//                    {
-//                        self.thumbImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage( @"placeholder")];
-//                        self.thumbImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:0]]];
-//                        self.thumbImgView.frame = CGRectMake(60, size.height+27,180, self.thumbImgView.image.size.height*(180/ self.thumbImgView.image.size.width));
-//                        [self addSubview:self.thumbImgView];
-//                        self.timeLabel.frame = CGRectMake(60, size.height+27+self.thumbImgView.image.size.height*(180/self.thumbImgView.image.size.width), 120, 30);
-//                    }
-//                    else{
-//                    self.thumbImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(60+80*i, size.height+27+80*j, 75, 75)];
-//                    self.thumbImgView.placeholderImage = KUIImage(@"placeholder");
-//                    self.thumbImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:imgStr]];
-//                    [self addSubview:self.thumbImgView];
-//                    }
-//                }
-//            }
-//            self.timeLabel.frame = CGRectMake(60,size.height+27+80*arr.count/3, 120, 30);
-//        }
-//}
-- (void)refreshCell:(NSInteger)hieght
-{
 }
 
 - (void)awakeFromNib

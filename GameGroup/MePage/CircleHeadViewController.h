@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 #import "CircleHeadCell.h"
-@interface CircleHeadViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,CircleHeadDelegate>
+@interface CircleHeadViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,CircleHeadDelegate,UITextViewDelegate>
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;
 @property(nonatomic,copy)NSString *userId;
