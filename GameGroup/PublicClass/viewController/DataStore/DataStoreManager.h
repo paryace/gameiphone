@@ -34,6 +34,8 @@
 + (BOOL)savedMsgWithID:(NSString*)msgId;//消息是否已存
 + (BOOL)savedNewsMsgWithID:(NSString*)msgId;//消息是否已存
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
+
+//消息
 + (void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
 + (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
 + (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
@@ -48,6 +50,7 @@
 + (void)deleteAllThumbMsg;
 + (void)deleteThumbMsgWithSender:(NSString *)sender;
 + (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;
++ (void)deleteMsgInCommentWithUUid:(NSString *)uuid;   //删除指定uuid的消息
 + (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer;//根据userid分页查询
 + (NSMutableArray *)qureyAllCommonMessages:(NSString *)userid;
 + (NSString*)queryMessageStatusWithId:(NSString*)msgUUID;

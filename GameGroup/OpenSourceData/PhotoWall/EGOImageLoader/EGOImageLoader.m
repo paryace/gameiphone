@@ -159,7 +159,6 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 	if(!aURL) return nil;
 	
 	UIImage* anImage = [[EGOCache globalCache] imageForKey:keyForURL(aURL,nil)];
-    NSLog(@"cache image = %@",anImage);
 
 	if(anImage) {
 		return anImage;

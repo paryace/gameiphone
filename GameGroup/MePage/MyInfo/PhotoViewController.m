@@ -71,12 +71,8 @@
         imageV.delegate = self;
         
         UIScrollView * subSC = [[UIScrollView alloc]initWithFrame:CGRectMake(i*320, 0, 320, _sc.frame.size.height)];
-        subSC.maximumZoomScale = 2.0;
-        subSC.bouncesZoom = NO;
-        subSC.pagingEnabled = YES;
-        subSC.showsHorizontalScrollIndicator=NO;
-        subSC.showsVerticalScrollIndicator=NO;
         subSC.delegate = self;
+        [subSC addSubview:imageV];
     
         
         //菊花
@@ -92,7 +88,7 @@
                 NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
                 UIImage * openPic= [UIImage imageWithData:nsData];
                 imageV.image = openPic;
-                [self imageViewLoadedImage:imageV];
+                [self imageViewLoadedImage:imageV]; //读取图片
             }
             else
                 imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
@@ -103,7 +99,8 @@
 
         }
         
-        [subSC addSubview:imageV];
+        [self imageScrollViewStyleByImage:imageV scollView:subSC];  //调整ScorllView样式
+   
         [_sc addSubview:subSC];
 
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPress:)];
@@ -111,6 +108,7 @@
         
     }
 }
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -198,15 +196,33 @@
         imageView.frame = CGRectMake(0, a, 320, 320*size.height/size.width);
     }];
     
-    //控制该Image所在Scorllview的contentSize
-    NSInteger cs_width = 320; //宽度就是320
-    NSInteger cs_height = cs_width / imageView.image.size.width * imageView.image.size.height;
-    ((UIScrollView*)imageView.superview).contentSize = CGSizeMake(cs_width,cs_height);
+    //调整ScorllView样式
+    UIScrollView* subSC =(UIScrollView*)imageView.superview;
+    [self imageScrollViewStyleByImage:imageView scollView:subSC];
     
     [((UIActivityIndicatorView*)imageView.superview.subviews[1]) stopAnimating];
 
 }
 
+/**
+ *	@brief	修改ScorllView样式，使之可以缩放和点击，滑动
+ *
+ *	@param 	imageView 	图片
+ *	@param 	scrollView 	图片所在的ScorllVIew
+ */
+- (void)imageScrollViewStyleByImage:(EGOImageView*)imageView
+                          scollView:(UIScrollView*)subSC
+
+{
+    NSInteger static cs_width = 320; //宽度就是320
+    NSInteger cs_height = cs_width / imageView.image.size.width * imageView.image.size.height;
+    subSC.contentSize = CGSizeMake(cs_width,cs_height);
+    subSC.bouncesZoom = NO;
+    subSC.pagingEnabled = YES;
+    subSC.showsHorizontalScrollIndicator=NO;
+    subSC.showsVerticalScrollIndicator=NO;
+    subSC.maximumZoomScale = 2.0;
+}
 
 - (void)imageViewFailedToLoadImage:(EGOImageView*)imageView error:(NSError*)error
 {

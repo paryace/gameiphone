@@ -687,18 +687,16 @@ UINavigationControllerDelegate>
     if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
         NSLog(@"success///");
         
-        [self sendImageMsgD:openImgPath UUID:uuid];
+        [self sendImageMsgD:openImgPath UUID:uuid]; //本地写一条消息
         
-        
-        KKMessageCell *cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self getMsgRowWithId:uuid] inSection:0]];
         
         [hud show:YES];
-        [NetManager uploadkkChatImage:upImage
+        [NetManager uploadImage:upImage
                            WithURLStr:BaseUploadImageUrl
                             ImageName:@"1"
                         TheController:self
                              Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                                 double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+                        //、、  double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
                                  
                                  //                                 cell.progressView.hidden = NO;
                                  //                                 cell.progressView.progress = progress;
@@ -709,9 +707,8 @@ UINavigationControllerDelegate>
          {
              NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
              //             [cell.progressView setHidden:YES];
-             [self sendImageMsg:imageMsg UUID:uuid];
-             
-             
+             [self sendImageMsg:imageMsg UUID:uuid];    //改图片地址，并发送消息
+
          }
                               failure:^(AFHTTPRequestOperation *operation, NSError *error)
          {
@@ -1335,6 +1332,8 @@ UINavigationControllerDelegate>
     return [messages count];
 }
 
+
+//解析messages生成TabView
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
@@ -1570,10 +1569,13 @@ UINavigationControllerDelegate>
         
         UIImage *bgImage = nil;
         
+        
+        //为ImageView添加手势
         [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]
                                                  initWithTarget:self
                                                  action:@selector(kkChatImageShowBigImage:)]];
         cell.msgImageView.userInteractionEnabled = YES;
+        
         if ([sender isEqualToString:@"you"]) {
             
             cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
@@ -1609,18 +1611,32 @@ UINavigationControllerDelegate>
             cell.messageContentView.hidden = NO;
             cell.msgImageView.hidden = YES;
             
+            
+            //如果是图片消息
             if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
                 
-                NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-                NSURL *kkChatImageMsgUrl = [NSURL fileURLWithPath:kkChatImageMsg];
+                NSURL *kkChatImageMsgUrl;
+                
+                //看看有没有本地缩略图，如果有说明还没传上去，先显示本地的路径
+                NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
+                if (kkChatImagethumb.length>0){
+                    kkChatImageMsgUrl = [NSURL fileURLWithPath:kkChatImagethumb];
+                }
+                else{
+                    NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+                    NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@",kkChatImageMsg];
+                    kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
+                }
+                
                 [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-15-10-25,
                                                        padding*2-4,
                                                        size.width,
                                                        size.height)];
-                //                cell.msgImageView.frame = cell.bgImageView.frame;
+                //cell.msgImageView.frame = cell.bgImageView.frame;
                 cell.messageContentView.hidden = YES;
                 cell.msgImageView.hidden = NO;
                 cell.msgImageView.imageURL = kkChatImageMsgUrl;
+               // NSLog(@"msgImageView: %@",cell.msgImageView.image.size);//cell.msgImageView.image.size
                 cell.progressView.frame = CGRectMake(30,
                                                      CGRectGetHeight(cell.frame)/2,
                                                      100,
@@ -1630,19 +1646,9 @@ UINavigationControllerDelegate>
                 cell.msgImageView.tag = indexPath.row;
                 cell.progressView.hidden = YES;
                 
-                
             }
             
-            //            if ([cell viewWithTag:10001]) {
-            ////                [[cell viewWithTag:10001] removeFromSuperview];
-            //                UIProgressView *progressView = (UIProgressView *)[cell viewWithTag:10001];
-            //                  NSLog(@"%f",progressView.progress);
-            //                if (progressView.progress == 1) {
-            //
-            //                    [progressView removeFromSuperview];
-            //                }
-            //            }
-            
+//            
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
                                                   padding*2-15,
                                                   size.width+25,
@@ -1984,7 +1990,8 @@ UINavigationControllerDelegate>
 - (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
     
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSDictionary * dic = @{@"thumb":@"",@"title":@"",@"shiptype": @"",@"messageid":@"",@"msg":imageMsg,@"type": @"img"};
+    //thumb写成本地文件的地址， 方便显示
+    NSDictionary * dic = @{@"thumb":imageMsg,@"title":@"",@"shiptype": @"",@"messageid":@"",@"msg":imageMsg,@"type": @"img"};
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:@"[图片]" forKey:@"msg"];
@@ -2003,7 +2010,7 @@ UINavigationControllerDelegate>
     
     [self normalMsgToFinalMsg];
     [DataStoreManager storeMyMessage:dictionary];
-    
+//    
     
     //重新刷新tableView
     [self.tView reloadData];
@@ -2067,36 +2074,20 @@ UINavigationControllerDelegate>
     [mes addChild:payload];
     
     //发送消息
-    
     [self.appDel.xmppHelper sendMessage:mes];
-    //
-    //    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    //    [dictionary setObject:@"[图片]" forKey:@"msg"];
-    //    [dictionary setObject:@"you" forKey:@"sender"];
-    //    [dictionary setObject:nowTime forKey:@"time"];
-    //    [dictionary setObject:self.chatWithUser forKey:@"receiver"];
-    //    [dictionary setObject:self.nickName?self.nickName:@"" forKey:@"nickname"];
-    //    [dictionary setObject:self.chatUserImg?self.chatUserImg:@"" forKey:@"img"];
-    //    [dictionary setObject:@"normalchat" forKey:@"msgType"];
-    //    [dictionary setObject:uuid forKey:@"messageuuid"];
-    //    [dictionary setObject:@"2" forKey:@"status"];
-    //    [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
-    ////    [dictionary setObject:@"1" forKey:@"chatMsgType"];
-    //
-    //    [messages addObject:dictionary];
-    //
-    //
-    //    [self normalMsgToFinalMsg];
-    //    [DataStoreManager storeMyMessage:dictionary];
     
-    
-    //重新刷新tableView
-    //    [self.tView reloadData];
-    
-    //    if (messages.count>0) {
-    //        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    //    }
-    //    self.textView.text = @"";
+    //将图片地址替换为已经上传的网络地址
+    for (NSMutableDictionary* msg in messages){
+        NSString* msguuid =[msg objectForKey:@"messageuuid"];
+        if (msguuid == uuid) {
+            [msg setObject:[dic JSONFragment] forKey:@"payload"];
+            [self normalMsgToFinalMsg];
+            [DataStoreManager deleteMsgInCommentWithUUid:uuid];
+            [DataStoreManager storeMyMessage:msg];
+//            DataStoreManager
+//            [
+        }
+    }
     
     [wxSDArray removeAllObjects];
     [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
@@ -2153,6 +2144,7 @@ UINavigationControllerDelegate>
     [self.appDel.xmppHelper sendMessage:mes];
     
     
+    //存库
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:message forKey:@"msg"];
     [dictionary setObject:@"you" forKey:@"sender"];
@@ -2470,15 +2462,18 @@ UINavigationControllerDelegate>
     }
 }
 
+
+//点击图片
 -(void)lookBigImg:(UITapGestureRecognizer*)sender
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     NSString *str = KISDictionaryHaveKey(payload, @"msg");
-
+    NSLog(@"加载的图片地址：%@",str);
+    
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
-    photo.isComeFrmeUrl = YES;
+    //photo.isComeFrmeUrl = YES;
     [self presentViewController:photo animated:NO completion:^{
         
     }];

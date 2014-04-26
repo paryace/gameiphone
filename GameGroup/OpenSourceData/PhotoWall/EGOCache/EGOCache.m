@@ -279,7 +279,6 @@ static inline NSString* cachePathForKey(NSString* directory, NSString* key) {
 	
 	@try {
         NSString * path = cachePathForKey(_directory, key);
-        NSLog(@"paht = %@",path);
         image = [UIImage imageWithContentsOfFile:path];
 //原创，但是有bug，不能通过归档初始化image
 //		image = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePathForKey(_directory, key)];

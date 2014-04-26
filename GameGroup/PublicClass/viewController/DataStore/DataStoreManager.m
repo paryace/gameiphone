@@ -434,6 +434,8 @@
     }
     return unreadArray;
 }
+
+
 +(void)deleteThumbMsgWithSender:(NSString *)sender
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -458,6 +460,18 @@
         }
     }];
 }
+
++(void)deleteMsgInCommentWithUUid:(NSString *)uuid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",uuid];
+        DSCommonMsgs * commonMsgs = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
+        if (commonMsgs) {
+            [commonMsgs MR_deleteInContext:localContext];
+        }
+    }];
+}
+
 +(void)deleteAllNewsMsgs
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {

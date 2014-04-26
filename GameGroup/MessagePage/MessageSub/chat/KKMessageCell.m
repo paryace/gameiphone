@@ -91,7 +91,6 @@
         //        [messageContentView setFont:[UIFont boldSystemFontOfSize:13]];
         // [messageContentView sizeToFit];
         [self.contentView addSubview:messageContentView];
-        NSLog(@"fffff%f",self.frame.size.height);
         
         //        self.ifRead = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
         //        [ifRead setImage:[UIImage imageNamed:@"redCB.png"]];
@@ -232,7 +231,6 @@
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    NSLog(@"sss");
     
 }
 
