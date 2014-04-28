@@ -42,13 +42,21 @@
         self.headImgV.layer.cornerRadius = 5;
         self.headImgV.layer.masksToBounds=YES;
         self.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+        [self.contentView addSubview:self.headImgV];
         
         //重连
         self.failImage = [[UIButton alloc]initWithFrame:CGRectZero];
         [self.failImage setBackgroundImage:KUIImage(@"fail_bg") forState:UIControlStateNormal];
         [self.contentView addSubview:self.failImage];
-
-        [self.contentView addSubview:self.headImgV];
+        
+        self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [self.statusLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
+        [self.statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+        [self.contentView addSubview:self.statusLabel];
+        
+        self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        self.activityView.hidesWhenStopped = YES;
+        [self.contentView addSubview:self.activityView];
     }
     return self;
 }

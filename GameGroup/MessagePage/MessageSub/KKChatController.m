@@ -350,6 +350,10 @@ UINavigationControllerDelegate>
                                                    35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
                                                    contentSize.width,
                                                    contentSize.height)];
+            //刷新
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+                                                 (size.height+20)/2 + padding*2-15)
+                              status:status];
         }else
         {
             [cell.thumbImgV setFrame:CGRectMake(70,
@@ -503,7 +507,7 @@ UINavigationControllerDelegate>
             [cell.msgImageView addGestureRecognizer:tabPress];
             [cell.msgImageView addGestureRecognizer:longPress];
             
-            //刷新
+            //刷新状态
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                                  (size.height+20)/2 + padding*2-15)
                               status:status];
@@ -550,7 +554,7 @@ UINavigationControllerDelegate>
             [cell.msgImageView addGestureRecognizer:longPress];
             
             //刷新
-            [cell refreshStatusPoint:CGPointZero status:@"1"];
+            //[cell refreshStatusPoint:CGPointZero status:@"1"];
         }
         
         //显示双方聊天的时间
@@ -673,7 +677,7 @@ UINavigationControllerDelegate>
             cell.messageContentView.hidden = NO;
             
             //刷新
-            [cell refreshStatusPoint:CGPointZero status:@"1"];
+            //[cell refreshStatusPoint:CGPointZero status:@"1"];
             
         }
         
@@ -1196,7 +1200,7 @@ UINavigationControllerDelegate>
          NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
          cell.progressView.hidden = YES;
          
-         NSString* uuid = [[GameCommon shareGameCommon] uuid];
+         NSString* uuid = KISDictionaryHaveKey(messages[index], @"messageuuid");
          [self sendImageMsg:imageMsg UUID:uuid];    //改图片地址，并发送消息
 
          
@@ -1708,6 +1712,21 @@ UINavigationControllerDelegate>
     }
     return -1;
 }
+//根据uuid获取message
+- (NSMutableDictionary*)getMsgWithId:(NSString*)msgUUID
+{
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc]init];
+    if (messages.count>0 && msgUUID && msgUUID.length > 0)
+    {
+        for (int i = 0; i < [messages count]; i++) {
+            NSMutableDictionary* tempDic = [messages objectAtIndex:i];
+            if ([KISDictionaryHaveKey(tempDic, @"messageuuid") isEqualToString:msgUUID]) {
+                return messages[i];
+            }
+        }
+    }
+    return  dict;
+}
 
 #pragma mark -
 #pragma mark UI/UE : 响应各种交互操作
@@ -1991,15 +2010,6 @@ UINavigationControllerDelegate>
     [self.tView reloadData];
     
 }
-//-(void)btnLongTapAction:(UILongPressGestureRecognizer *)gestureRecognizer
-//{
-//    if ([gestureRecognizer state] == UIGestureRecognizerStateBegan)
-//        NSLog(@"222");
-//}
-//-(void)longPress:(UIButton*)sender
-//{
-//    
-//}
 
 //每一行的高度
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -2118,16 +2128,17 @@ UINavigationControllerDelegate>
     [self.appDel.xmppHelper sendMessage:mes];
     
     //将图片地址替换为已经上传的网络地址
-    for (NSMutableDictionary* msg in messages){
-        NSString* msguuid =[msg objectForKey:@"messageuuid"];
-        //[msg setObject:@"2" forKey:@"status"];
-        if (msguuid == uuid) {
-            [msg setObject:[dic JSONFragment] forKey:@"payload"];
-            [self normalMsgToFinalMsg];
-            [DataStoreManager deleteMsgInCommentWithUUid:uuid];
-            [DataStoreManager storeMyMessage:msg];
-        }
-    }
+    NSMutableDictionary* msg = [self getMsgWithId:uuid];
+    [msg setObject:[dic JSONFragment] forKey:@"payload"];
+    [msg setObject:@"3" forKey:@"status"];
+    NSInteger cellIndex = [self getMsgRowWithId:uuid];
+    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+    
+    [self normalMsgToFinalMsg];
+    [DataStoreManager deleteMsgInCommentWithUUid:uuid];
+    [DataStoreManager storeMyMessage:msg];
+
     
     [wxSDArray removeAllObjects];
     [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
@@ -2257,13 +2268,13 @@ UINavigationControllerDelegate>
         return;
     }
     
-    //UI上删除掉重发的那条消息
-    //[messages removeObject:messageDict];
+    //UI上改变之前那条的状态
+    [messageDict setObject:@"2" forKey:@"status"];
     [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
-    
-    //刷新UI
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
     [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+    [self normalMsgToFinalMsg];
+    [DataStoreManager storeMyMessage:messageDict];
     
     
 }
@@ -2277,7 +2288,6 @@ UINavigationControllerDelegate>
     NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
     NSString *thumb = KISDictionaryHaveKey(payloads, @"thumb");
-    [messageDict setObject:@"2" forKey:@"status"];
     
     //判端图片是否上传成功
     BOOL imgIsUploaded = NO;
@@ -2337,6 +2347,12 @@ UINavigationControllerDelegate>
         //发送消息
         [self.appDel.xmppHelper sendMessage:mes];
         
+        //UI上改变之前那条的状态
+        [messageDict setObject:@"2" forKey:@"status"];
+        [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
+        NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+        
     }
     else{
         //如果之前没上传成功
@@ -2347,13 +2363,8 @@ UINavigationControllerDelegate>
         [self uploadImage:imgFromUrl cellIndex:cellIndex];
 
     }
-    //重新刷新tableView
-    [self.tView reloadData];
-    if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
-                          atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    }
-
+    
+ 
 
 }
 

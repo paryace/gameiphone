@@ -14,7 +14,6 @@
 @synthesize senderAndTimeLabel; 
 @synthesize messageContentView;
 @synthesize bgImageView;    //聊天气泡
-@synthesize ifRead,playAudioImageV;
 
 
 
@@ -27,20 +26,6 @@
         messageContentView.backgroundColor = [UIColor clearColor];
         messageContentView.delegate = self;
         [self.contentView addSubview:messageContentView];
-        
-        self.playAudioImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-        self.playAudioImageV.animationDuration=1.0;
-        self.playAudioImageV.animationRepeatCount=0;
-        [self.contentView addSubview:self.playAudioImageV];
-        
-        self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        [self.statusLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
-        [self.statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
-        [self.contentView addSubview:self.statusLabel];
-        
-        self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        self.activityView.hidesWhenStopped = YES;
-        [self.contentView addSubview:self.activityView];
         
     }
     
