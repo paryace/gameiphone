@@ -9,8 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
-@interface KKImgCell : UITableViewCell
-@property(nonatomic, strong) EGOImageButton * headImgV;
-@property(nonatomic, strong) UILabel *senderAndTimeLabel;
-@property(nonatomic,strong)EGOImageView *MSGImageView;
+#import "KKChatCell.h"
+#import "KKMessageCell.h"
+@interface KKImgCell : KKChatCell
+@property (nonatomic, strong) EGOImageView *msgImageView;
+@property (nonatomic, strong) UIProgressView *progressView;
+
 @end

@@ -14,25 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.backgroundColor = [UIColor clearColor];
-        self.senderAndTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 20)];
-        //居中显示
-        self.senderAndTimeLabel.backgroundColor = [UIColor clearColor];
-        self.senderAndTimeLabel.textAlignment = NSTextAlignmentCenter;
-        self.senderAndTimeLabel.font = [UIFont systemFontOfSize:11.0];
-        //文字颜色
-        self.senderAndTimeLabel.textColor = [UIColor lightGrayColor];
-        [self.contentView addSubview:self.senderAndTimeLabel];
-        
-        self.headImgV = [[EGOImageButton alloc] initWithFrame:CGRectZero];
-        self.headImgV.layer.cornerRadius = 5;
-        self.headImgV.layer.masksToBounds=YES;
-        [self.contentView addSubview:self.headImgV];
-        
-        self.bgImageView = [UIButton buttonWithType:UIButtonTypeCustom];
-        [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-        [self.contentView addSubview:self.bgImageView];
-        
         //标题
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, 270, 50)];
         self.titleLabel.textAlignment = NSTextAlignmentLeft;

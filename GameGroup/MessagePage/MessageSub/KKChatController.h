@@ -19,6 +19,8 @@
 #import "OHASBasicHTMLParser.h"
 #import "EmojiView.h"
 #import "KKMessageCell.h"
+#import "KKChatCell.h"
+#import "KKImgCell.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -33,6 +35,7 @@ AVAudioRecorderDelegate,
 AVAudioSessionDelegate,
 AVAudioPlayerDelegate,
 HPGrowingTextViewDelegate,
+KKChatCellDelegate,
 EmojiViewDelegate>
 {
     //    UILabel    *titleLabel;
@@ -100,7 +103,7 @@ EmojiViewDelegate>
 @property(nonatomic, assign) BOOL ifFriend;
 @property(nonatomic, retain) NSString *nickName;
 @property(nonatomic, retain) NSString *friendStatus;
-@property(nonatomic, retain) NSString *chatUserImg;
+@property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;
 @property (nonatomic,retain) AVAudioSession *session;

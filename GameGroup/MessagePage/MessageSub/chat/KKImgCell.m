@@ -15,28 +15,24 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.backgroundColor = [UIColor clearColor];
-        self.senderAndTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 20)];
-        //居中显示
-        self.senderAndTimeLabel.backgroundColor = [UIColor clearColor];
-        self.senderAndTimeLabel.textAlignment = NSTextAlignmentCenter;
-        self.senderAndTimeLabel.font = [UIFont systemFontOfSize:11.0];
-        //文字颜色
-        self.senderAndTimeLabel.textColor = [UIColor lightGrayColor];
-        [self.contentView addSubview:self.senderAndTimeLabel];
         
-        self.headImgV = [[EGOImageButton alloc] initWithFrame:CGRectZero];
-        self.headImgV.layer.cornerRadius = 5;
-        self.headImgV.layer.masksToBounds=YES;
-        [self.contentView addSubview:self.headImgV];
+        self.msgImageView = [[EGOImageView alloc]
+                        initWithPlaceholderImage:[UIImage
+                                                  imageNamed:@"default_icon.png"]];
+        self.msgImageView.frame = CGRectZero;
+        self.msgImageView.layer.masksToBounds = YES;
+        self.msgImageView.layer.borderWidth = 1;
+        self.msgImageView.layer.borderColor = [UIColor clearColor].CGColor;
+        self.msgImageView.layer.cornerRadius = 6;
+        [self.contentView addSubview:self.msgImageView];
         
-        self.MSGImageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
-        self.MSGImageView.layer.cornerRadius = 5;
-        self.headImgV.layer.masksToBounds  = YES;
-        [self.contentView addSubview:self.MSGImageView];
+        self.progressView = [[UIProgressView alloc] initWithFrame:CGRectZero];
+        [self.progressView setProgressViewStyle:UIProgressViewStyleBar];    //进度条样式
+        self.progressView.progressTintColor = UIColorFromRGBA(0x16a3f0, 1);
+        self.progressView.hidden = YES;
         
-        
-        
+        [self.contentView addSubview:self.progressView];
+    
     }
     return self;
 }
