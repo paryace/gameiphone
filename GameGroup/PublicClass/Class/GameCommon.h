@@ -36,8 +36,9 @@
 +(NSString *)getCurrentTime;
 +(NSString *)getWeakDay:(NSDate *)datetime;
 +(NSString *)CurrentTime:(NSString *)currentTime AndMessageTime:(NSString *)messageTime;
-
-+ (NSString*)getTimeWithMessageTime:(NSString*)messageTime;
+//获取各种时间格式
++(NSString *)getTimeWithChatStyle:(NSString *)currentTime AndMessageTime:(NSString *)messageTime; //聊天界面 Label上显示的格式
++(NSString *)getTimeWithMessageTime:(NSString*)messageTime;
 
 - (NSString*)getDataWithTimeInterval:(NSString*)timeInterval;
 + (NSString*)getTimeAndDistWithTime:(NSString*)time Dis:(NSString*)distrance;

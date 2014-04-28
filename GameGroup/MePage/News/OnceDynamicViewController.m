@@ -1079,8 +1079,9 @@
 - (BOOL)webView:(UIWebView *)webViewLocal shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
 	NSString *myURL = [[request URL] absoluteString];
+    NSLog(@"%@",self.imgStr);
     //    NSLog(@"%@", myURL);//进来时：about:blank  http://www.ruyicai.com/
-    if([myURL hasPrefix:@"http:"] && [self.urlLink isEqualToString:@""])
+    if([myURL hasPrefix:@"http:"] && [self.urlLink isEqualToString:@""]) //动态
 	{
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:myURL]];
         return NO;
@@ -1100,9 +1101,8 @@
         }];
         return NO;
     }
-    else{
+    else{ //文章
     NSString *requestString = [[request URL] absoluteString];
-       
     NSArray *components = [requestString componentsSeparatedByString:@":"];
     NSLog(@"-----%@",components);
          NSLog(@"requsetstring%@",requestString);
@@ -1111,9 +1111,6 @@
             //这个就是图片的路径
             NSLog(@"+++++++%@",components);
             NSString *path = [NSString stringWithFormat:@"%@:%@",[components objectAtIndex:1],[components objectAtIndex:2]];
-
-            
-            
             PhotoViewController * photoV = [[PhotoViewController alloc] initWithSmallImages:nil images:[NSArray arrayWithObject:path] indext:0];
             photoV.isComeFrmeUrl = YES;
             [self presentViewController:photoV animated:NO completion:^{

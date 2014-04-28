@@ -42,11 +42,11 @@ EmojiViewDelegate>
     NSMutableDictionary * peopleDict;
     //    UIView * inPutView;
     UILongPressGestureRecognizer *btnLongTap;
-    UIButton * tempBtn;
+    UIButton * tempBtn; //被点击的按钮
     UIView * popLittleView;
     UIView * btnBG;
-    int readyIndex;
-    NSIndexPath * indexPathTo;
+    int readyIndex;                 //设置当前待操作cell的INDEX
+    NSIndexPath * indexPathTo;      //设置当前待操作cell的indexPathTo
     NSString * tempStr;
     UIView * clearView;
     BOOL canAdd;
@@ -87,11 +87,11 @@ EmojiViewDelegate>
     
     UIMenuController * menu;
 }
-@property (nonatomic, strong) UIButton *emojiBtn;
-@property (nonatomic, strong) UILabel *titleLabel;
-@property (assign, nonatomic)  NSInteger unreadNo;
-@property (strong, nonatomic)  NSString* myHeadImg;
-@property (strong, nonatomic)  UITableView *tView;
+@property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
+@property (nonatomic, strong) UILabel *titleLabel;  //导航条标题
+@property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
+@property (strong, nonatomic)  NSString* myHeadImg; //我的头像
+@property (strong, nonatomic)  UITableView *tView;  //消息cell组成的TableVIew
 @property (strong, nonatomic)  NSMutableArray *finalMessageArray;
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
 @property (strong, nonatomic)  UITextField *messageTextField;
@@ -106,5 +106,7 @@ EmojiViewDelegate>
 @property (nonatomic,retain) AVAudioSession *session;
 @property (nonatomic,retain) AVAudioRecorder *recorder;
 - (void)sendButton:(id)sender;
+
+
 
 @end

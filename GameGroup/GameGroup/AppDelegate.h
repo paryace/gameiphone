@@ -19,7 +19,7 @@ WeiboSDKDelegate
 ,WXApiDelegate
 >
 {
-    NSString* wbtoken;
+    NSString* _wbtoken;
     
 }
 @property(nonatomic,assign)BOOL bSinaWB;
@@ -30,4 +30,6 @@ WeiboSDKDelegate
 @property (strong, nonatomic) StartViewController *startViewController;
 @property (nonatomic,strong) XMPPHelper *xmppHelper;
 @property(nonatomic,strong)Reachability * reach;
+
+- (void)didReceiveWeiboResponse:(WBBaseResponse *)response;
 @end

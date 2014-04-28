@@ -272,6 +272,47 @@ static GameCommon *my_gameCommon = NULL;
     return finalTime;
 }
 
++(NSString *)getTimeWithChatStyle:(NSString *)currentTime AndMessageTime:(NSString *)messageTime
+{
+    NSString * finalTime;
+    int theCurrentT = [currentTime intValue];
+    int theMessageT = [messageTime intValue];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    //设定时间格式,这里可以设置成自己需要的格式
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
+    NSString *currentStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
+    NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
+    [dateFormatter2 setDateFormat:@"HH:mm"];
+    NSString * msgT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
+    NSString * nowT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
+    int hours = [[nowT substringToIndex:2] intValue];
+    int minutes = [[nowT substringFromIndex:3] intValue];
+    int currentDayBegin = theCurrentT-hours*3600-minutes*60;
+    int yesterdayBegin = currentDayBegin-3600*24;
+    //今天
+    if ([currentStr isEqualToString:messageDateStr]) {
+    
+        finalTime = [NSString stringWithFormat:@"%@",msgT];
+    }
+    //昨天
+    else if(theMessageT>=yesterdayBegin&&theMessageT<currentDayBegin){
+      
+        finalTime = [NSString stringWithFormat:@"昨天 %@",msgT];
+    }
+  
+    else
+        finalTime = [NSString stringWithFormat:@"%@年%@月%@日 %@",
+                     [[messageDateStr substringFromIndex:0] substringToIndex:4],
+                     [[messageDateStr substringFromIndex:5] substringToIndex:2],
+                     [messageDateStr substringFromIndex:8],
+                     msgT];
+    
+    return finalTime;
+}
+
+
 + (NSString*)getTimeWithMessageTime:(NSString*)messageTime
 {
     NSString* currentString = [GameCommon getCurrentTime];

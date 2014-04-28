@@ -32,7 +32,8 @@
         self.bgImageView = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
         [self.contentView addSubview:self.bgImageView];
-
+        
+        //标题
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, 270, 50)];
         self.titleLabel.textAlignment = NSTextAlignmentLeft;
         self.titleLabel.numberOfLines = 2;
@@ -55,9 +56,6 @@
         self.contentLabel.font = [UIFont boldSystemFontOfSize:13.0];
         [self.contentView addSubview:self.contentLabel];
         
-//        self.arrowImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 8, 12)];
-//        self.arrowImage.image = KUIImage(@"right_arrow");
-//        [self.contentView addSubview:self.arrowImage];
     }
     return self;
 }
