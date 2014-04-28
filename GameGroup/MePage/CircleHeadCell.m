@@ -20,9 +20,7 @@ bool str_endwith(const char* str, const char c)
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
-
-        self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
     
         [self.contentView addSubview:self.headImgBtn];
@@ -92,7 +90,7 @@ bool str_endwith(const char* str, const char c)
 
         // 3.设置整个collectionView的内边距
        
-        [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
+       // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
         
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
@@ -135,11 +133,13 @@ bool str_endwith(const char* str, const char c)
         self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
         [self.zanView addSubview:self.zanLabel];
     
-        self.commentsView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 30, 30)];
-        self.commentsView.image = KUIImage(@"zanAndCommentBg");
-        self.commentsView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
-        [self.contentView addSubview:self.commentsView];
 
+        self.commentTabelView = [[UITableView alloc]initWithFrame:CGRectMake(60, 100, 255, 50) style:UITableViewStylePlain];
+        self.commentTabelView.delegate = self;
+        self.commentTabelView.dataSource = self;
+        self.commentTabelView.bounces = NO;
+        [self.contentView addSubview:self.commentTabelView];
+        
     }
     return self;
 }
@@ -148,8 +148,9 @@ bool str_endwith(const char* str, const char c)
 -(void)comeBackMenuView:(UIGestureRecognizer *)sender
 {
     self.menuImageView.hidden =YES;
-
 }
+
+#pragma mark ---collectionviewdelegate datasourse
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     return self.collArray.count;
@@ -164,13 +165,50 @@ bool str_endwith(const char* str, const char c)
     cell.imageView.imageURL =urls;
     return cell;
 }
-
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:WithIndexPath:)]) {
         [self.myCellDelegate  bigImgWithCircle:self WithIndexPath:indexPath.row];
     }
 }
+
+#pragma mark-- tableviewdelegate  datasourse
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.commentArray.count;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifier  = @"cell1";
+    CommentCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell == nil) {
+        cell = [[CommentCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    cell.tag = indexPath.row;
+    NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
+    cell.nicknameLabel.text =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") stringByAppendingString:@":"];
+    cell.commentContLabel.text = KISDictionaryHaveKey(dict, @"comment");
+    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    cell.commentStr = KISDictionaryHaveKey(dict, @"comment");
+    [cell  refreshCell];
+    cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+    return cell;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    tableView =self.commentTabelView;
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(editCommentOfYouWithCircle:withIndexPath:)]) {
+        [self.myCellDelegate editCommentOfYouWithCircle:self withIndexPath:indexPath.row];
+    }
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
+    CGSize  size = [CommentCell getcommentHeigthWithNIckNameStr:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") Commentstr:KISDictionaryHaveKey(dic, @"comment")];
+    return size.height+5;
+}
+
+
 
 -(void)openBtnList:(UIButton *)sender
 {
@@ -199,7 +237,6 @@ bool str_endwith(const char* str, const char c)
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(250, 300) lineBreakMode:NSLineBreakByWordWrapping];
-    NSLog(@"csize %f",cSize.height);
     return cSize;
 }
 

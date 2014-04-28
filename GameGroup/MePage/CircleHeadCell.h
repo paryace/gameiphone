@@ -9,9 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
+#import "CommentCell.h"
+
 @protocol CircleHeadDelegate;
 
-@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource>
+@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource,UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
 @property(nonatomic,strong)UILabel *nickNameLabel;
 @property(nonatomic,strong)UILabel *titleLabel;
@@ -24,13 +26,9 @@
 @property(nonatomic,strong)UIImageView *menuImageView;
 @property(nonatomic,strong)EGOImageView *shareImgView;
 @property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
-@property(nonatomic,strong)UIImageView *commentsView;
-@property(nonatomic,strong)UILabel*commentsLabel;
-@property(nonatomic,strong)UILabel *commNameLabel;
 @property(nonatomic,strong)UILabel *zanNameLabel;
 @property(nonatomic,strong)UIImageView *zanImageView;
 @property(nonatomic,strong)UILabel *zanLabel;
-@property(nonatomic,strong)UILabel *sayAllcommentsLabel;
 @property(nonatomic,strong)UIImageView *zanView;
 @property(nonatomic,strong)UICollectionViewFlowLayout *layout;
 @property(nonatomic,strong)UICollectionView *customPhotoCollectionView;
@@ -38,15 +36,30 @@
 @property(nonatomic,strong)NSArray *commentArray;
 @property(nonatomic,strong)NSArray *zanArray;
 
-
+@property(nonatomic,strong)UITableView *commentTabelView;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 - (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>
 
+//评论点击事件
 - (void)pinglunWithCircle:(CircleHeadCell*)myCell;
+
+//赞点击事件
 - (void)zanWithCircle:(CircleHeadCell*)myCell;
+
+//传送collectionview点击事件 获取大图
 - (void)bigImgWithCircle:(CircleHeadCell*)myCell WithIndexPath:(NSInteger)row;
+
+//传送msgid 获取
+- (void)getmsgIdwithCircle:(CircleHeadCell *)myCell withindexPath:(NSInteger)row;
+
+//传送评论条点击事件
+- (void)editCommentOfYouWithCircle:(CircleHeadCell *)myCell withIndexPath:(NSInteger)row;
+
+//传送评论者昵称点击事件
+-(void)transferClickEventsWithCell:(CircleHeadCell *)myCell withIndexPath:(NSInteger)row;
+
 @end
 
 

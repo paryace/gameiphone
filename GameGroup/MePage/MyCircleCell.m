@@ -42,7 +42,7 @@
 }
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:15.0] constrainedToSize:CGSizeMake(155, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(225, 300) lineBreakMode:NSLineBreakByWordWrapping];
     
     return cSize;
 }
@@ -91,9 +91,7 @@
             }
             self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:i]]];
             [self addSubview:self.thumbImageView];
-
         }
-
     }
     else if (arr.count>4){
         for (int i =0; i<2; i++) {
@@ -107,13 +105,10 @@
     }
 }
 
-
-
 - (void)refreshCell
 {
     CGSize size = [MyCircleCell getContentHeigthWithStr:self.commentStr];
-    
-    self.titleLabel.frame = CGRectMake(80, 0, 225, size.height);
+    self.titleLabel.frame = CGRectMake(80, 5, 225, size.height);
 }
 
 - (void)awakeFromNib

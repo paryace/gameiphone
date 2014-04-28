@@ -173,68 +173,6 @@ KISDictionaryHaveKey(dic, @"time")]];
 }
 
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-//{
-//    if (m_myTableView.contentSize.height < m_myTableView.frame.size.height) {
-//        refreshView.viewMaxY = 0;
-//    }
-//    else
-//        refreshView.viewMaxY = m_myTableView.contentSize.height - m_myTableView.frame.size.height;
-//    [refreshView viewdidScroll:scrollView];
-//    [_slimeView scrollViewDidScroll];
-//}
-//
-//
-//
-//#pragma mark pull up refresh
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-//{
-//    if(scrollView == m_myTableView)
-//    {
-//        [refreshView viewWillBeginDragging:scrollView];
-//    }
-//}
-//
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-//{
-//    if(scrollView == m_myTableView)
-//    {
-//        [refreshView didEndDragging:scrollView];
-//        [_slimeView scrollViewDidEndDraging];
-//        
-//    }
-//}
-//
-//- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
-//{
-//    NSLog(@"start");
-//        //[self getNewsInfoByNet];
-//}
-//
-//#pragma mark - slimeRefresh delegate
-//- (void)slimeRefreshStartRefresh:(SRRefreshView *)refreshView
-//{
-//    //    [self performSelector:@selector(endRefresh)
-//    //               withObject:nil
-//    //               afterDelay:2
-//    //                  inModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
-//    m_pageNum = 0;
-//    
-//    //[self getNewsInfoByNet];
-//}
-//
-//-(void)endRefresh
-//{
-//    [_slimeView endRefreshFinish:^{
-//        
-//    }];
-//}
-
 #pragma mark----处理时间戳
 - (NSString*)getDataWithTimeInterval:(NSString*)timeInterval
 {
@@ -283,5 +221,10 @@ KISDictionaryHaveKey(dic, @"time")]];
     return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
 
 @end

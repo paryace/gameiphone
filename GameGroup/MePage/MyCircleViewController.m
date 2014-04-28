@@ -16,7 +16,7 @@
     UITableView *m_myTableView;
     UILabel *nickNameLabel;
     EGOImageView *headImageView;
-    UIImageView *topImgaeView;
+    EGOImageView *topImgaeView;
     NSMutableArray *dataArray;
     NSInteger *PageNum;
 }
@@ -51,9 +51,8 @@
     UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
-    topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
-    
-    topImgaeView.image = KUIImage(@"ceshibg.jpg");
+    topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
     
     [topVIew addSubview:topImgaeView];
     
@@ -62,13 +61,13 @@
     nickNameLabel.layer.cornerRadius = 5;
     nickNameLabel.layer.masksToBounds=YES;
     nickNameLabel.textColor = [UIColor whiteColor];
-    nickNameLabel.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.2];
+    nickNameLabel.backgroundColor =[UIColor clearColor];
     nickNameLabel.textAlignment = NSTextAlignmentRight;
     [topVIew addSubview:nickNameLabel];
     
     headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:self.imageStr width:80 hieght:80 a:80]];
+    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:80 hieght:80 a:80]];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
 
@@ -96,8 +95,12 @@
     
   
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [dataArray addObjectsFromArray:responseObject];
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            topImgaeView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+            
+            [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
+            [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
             [m_myTableView reloadData];
         }
         
@@ -131,24 +134,37 @@
     }
     cell.selectionStyle =UITableViewCellSelectionStyleNone;
     NSDictionary *dic = [dataArray objectAtIndex:indexPath.row];
-    
-    cell.dataLabel.text =[NSString stringWithFormat:@"%d",indexPath.row+1];
-    cell.monthLabel.text = @"Mar.2014";
+    NSDictionary *dict= [NSDictionary dictionary];
+    if (indexPath.row>0) {
+        dict = [dataArray objectAtIndex:indexPath.row-1];
+    }
+    if ([[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]isEqualToString:[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]]&&[[GameCommon getNewStringWithId:[self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]] isEqualToString:[self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]]) {
+        cell.dataLabel.hidden = YES;
+        cell.monthLabel.hidden = YES;
+    }else{
+        cell.dataLabel.hidden = NO;
+        cell.monthLabel.hidden = NO;
+    cell.dataLabel.text =[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+    cell.monthLabel.text = [self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+    }
+
     NSArray* arr = [KISDictionaryHaveKey(dic, @"img") componentsSeparatedByString:@","];
 
-
-    if (arr.count ==1&&[(NSString *)[arr objectAtIndex:0]isEqualToString:@""]) {
+    if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
         cell.imgCountLabel.hidden = YES;
         cell.thumbImageView.hidden =YES;
         cell.commentStr = KISDictionaryHaveKey(dic, @"msg");
         [cell refreshCell];
 
         //cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.center.y);
-        cell.titleLabel.font = [UIFont systemFontOfSize:15];
+        cell.titleLabel.font = [UIFont systemFontOfSize:13];
         cell.titleLabel.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
-        cell.titleLabel.numberOfLines = 2;
+        cell.titleLabel.numberOfLines = 0;
         
     }else{
+        if ([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "]) {
+            [(NSMutableArray*)arr removeLastObject];
+        }
         cell.imgCountLabel.hidden = NO;
         cell.thumbImageView.hidden =NO;
     //    cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.titleLabel.center.y);
@@ -156,11 +172,9 @@
         cell.titleLabel.font = [UIFont systemFontOfSize:12];
         cell.titleLabel.backgroundColor = [UIColor clearColor];
         cell.titleLabel.numberOfLines = 3;
-
     }
 
     cell.imgCountLabel.text = [NSString stringWithFormat:@"(共%d张)",arr.count];
-    
     
     cell.thumbImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")] width:140 hieght:140 a:140 ]];
     
@@ -187,10 +201,10 @@
 
 {
     NSDictionary *dic = [dataArray objectAtIndex:indexPath.row];
-    if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]) {
+    if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
         CGSize size = [MyCircleCell getContentHeigthWithStr:KISDictionaryHaveKey(dic, @"msg")];
-        if (size.height<60) {
-            return 60;
+        if (size.height<50) {
+            return 50;
         }else{
         return size.height;
         }
@@ -199,6 +213,53 @@
     }
 }
 
+#pragma mark----处理时间戳
+- (NSString*)getDataWithTimeInterval:(NSString*)timeInterval
+{
+    if ([NSString stringWithFormat:@"%.f", [timeInterval doubleValue]].length < 10) {
+        return timeInterval;
+    }
+    NSString* timeStr = [timeInterval substringToIndex:timeInterval.length-3];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];//location设置为中国
+    [dateFormatter setDateFormat:@"MMM,YYYY"];
+    
+    double time = [timeStr doubleValue];
+    NSLog(@"%@", [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]]);
+    return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
+}
+
+
+- (NSString*)getDataWithTimeDataInterval:(NSString*)timeInterval
+{
+    if ([NSString stringWithFormat:@"%.f", [timeInterval doubleValue]].length < 10) {
+        return timeInterval;
+    }
+    NSString* timeStr = [timeInterval substringToIndex:timeInterval.length-3];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"]];//location设置为中国
+    [dateFormatter setDateFormat:@"dd"];
+    
+    double time = [timeStr doubleValue];
+    NSLog(@"%@", [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]]);
+    return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
+}
+
+- (NSString*)getDataWithTimeMiaoInterval:(NSString*)timeInterval
+{
+    if ([NSString stringWithFormat:@"%.f", [timeInterval doubleValue]].length < 10) {
+        return timeInterval;
+    }
+    NSString* timeStr = [timeInterval substringToIndex:timeInterval.length-3];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"]];//location设置为中国
+    [dateFormatter setDateFormat:@"HH:mm"];
+    
+    double time = [timeStr doubleValue];
+    NSLog(@"%@", [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]]);
+    return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
+}
 
 
 - (void)didReceiveMemoryWarning

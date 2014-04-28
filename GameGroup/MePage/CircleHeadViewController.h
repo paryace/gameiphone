@@ -8,8 +8,22 @@
 
 #import "BaseViewController.h"
 #import "CircleHeadCell.h"
-@interface CircleHeadViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,CircleHeadDelegate,UITextViewDelegate>
+#import "HPGrowingTextView.h"
+@interface CircleHeadViewController : BaseViewController
+<
+UITableViewDataSource,
+UITableViewDelegate,
+UINavigationControllerDelegate,
+UIImagePickerControllerDelegate,
+UIActionSheetDelegate,
+CircleHeadDelegate,
+UITextViewDelegate,
+HPGrowingTextViewDelegate,
+UIActionSheetDelegate
+>
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;
 @property(nonatomic,copy)NSString *userId;
+@property(nonatomic,strong)HPGrowingTextView *textView;
+
 @end
