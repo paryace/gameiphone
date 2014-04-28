@@ -107,4 +107,6 @@ EmojiViewDelegate>
 @property (nonatomic,retain) AVAudioRecorder *recorder;
 - (void)sendButton:(id)sender;
 
+
+
 @end

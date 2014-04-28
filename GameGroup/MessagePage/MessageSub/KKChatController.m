@@ -239,7 +239,585 @@ UINavigationControllerDelegate>
     
 }
 
+#pragma mark ---TabView 显示方法
+//用message构建一条TabViewCell
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //数据读取
+    NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
+    NSString *sender = KISDictionaryHaveKey(dict, @"sender");
+    NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
+    NSString *msgType = KISDictionaryHaveKey(dict, @"msgType");
+    NSString *status = KISDictionaryHaveKey(dict, @"status");
+    NSString *messageuuid = KISDictionaryHaveKey(dict, @"messageuuid");
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    
+    //时间计算
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    NSString * timeStr =   [GameCommon getTimeWithChatStyle:strNowTime
+                                             AndMessageTime:strTime];
+    previousTime = nowTime;
+
+    
+    //动态消息
+    if ([msgType isEqualToString:@"payloadchat"]) {
+        
+        //传说中的复用！
+        static NSString *identifier = @"newsCell";
+        KKNewsCell *cell =(KKNewsCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        
+        if (cell == nil) {
+            cell = [[KKNewsCell alloc] initWithStyle:UITableViewCellStyleValue1
+                                     reuseIdentifier:identifier];
+        }
+        
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        size.width = size.width<20?20:size.width;
+        size.height = size.height<20?20:size.height;
+        
+        NSDictionary* msgDic = [[self.finalMessageArray
+                                 objectAtIndex:indexPath.row] JSONValue];
+        
+        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon
+                                                         getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")]];
+        CGSize contentSize = CGSizeZero;
+        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"title");
+
+        contentSize = [self getPayloadMsgContentSize:[GameCommon
+                                                      getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]
+                                           withThumb:YES];
+        
+        //动态缩略图
+        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")].length > 0 && ![KISDictionaryHaveKey(msgDic, @"thumb") isEqualToString:@"null"]) {
+            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
+            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/30",imgStr]];
+            cell.thumbImgV.imageURL = titleImage;
+            
+        }
+        else
+        {
+            cell.thumbImgV.imageURL = nil;
+        }
+        
+        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        UIImage *bgImage = nil;
+        
+        if ([sender isEqualToString:@"you"]) {
+            
+            [cell.thumbImgV setFrame:CGRectMake(55,
+                                                40 + titleSize.height,
+                                                40,
+                                                40)];
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
+            
+            [cell.headImgV setFrame:CGRectMake(320-10-40,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            
+            [cell.headImgV addTarget:self
+                              action:@selector(myBtnClicked)
+                    forControlEvents:UIControlEventTouchUpInside];
+            
+            cell.headImgV.placeholderImage = [UIImage
+                                              imageNamed:@"moren_people.png"];
+            
+            if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL =nil;
+            }else{
+                if (self.myHeadImg) {
+                    NSURL * theUrl = [NSURL
+                                      URLWithString:[BaseImageUrl
+                                                     stringByAppendingFormat:@"%@/80",self.myHeadImg]];
+                    cell.headImgV.imageURL = theUrl;
+                }
+                else{
+                    cell.headImgV.imageURL =nil;
+                }
+            }
+            bgImage = [[UIImage imageNamed:@"bubble_05"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            
+            
+            //响应点击和长按
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            
+            [cell.titleLabel setFrame:CGRectMake(padding + 35,
+                                                 33,
+                                                 titleSize.width,
+                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,
+                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
+                                                   contentSize.width,
+                                                   contentSize.height)];
+        }else
+        {
+            [cell.thumbImgV setFrame:CGRectMake(70,
+                                                40 + titleSize.height,
+                                                40,40)];
+            
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
+            
+            [cell.headImgV setFrame:CGRectMake(10,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            [cell.headImgV addTarget:self
+                              action:@selector(chatToBtnClicked)
+                    forControlEvents:UIControlEventTouchUpInside];
+            
+            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL = nil;
+            }else{
+                if (self.chatUserImg) {
+                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
+                    cell.headImgV.imageURL = theUrl;
+                }else
+                {
+                    cell.headImgV.imageURL = nil;
+                }
+            }
+            bgImage = [[UIImage imageNamed:@"bubble_04.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
+                                                  padding*2-15,
+                                                  size.width+35,
+                                                  size.height + 20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            [cell.titleLabel setFrame:CGRectMake(padding + 50,
+                                                 33,
+                                                 titleSize.width,
+                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,
+                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
+                                                   contentSize.width,
+                                                   contentSize.height)];
+        }
+        
+        //显示双方聊天的时间
+        if (indexPath.row>0) {
+            if ([time intValue]-[[[[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"] substringToIndex:10]intValue]<60) {
+                cell.senderAndTimeLabel.hidden = YES;
+            }
+            else
+            {
+                cell.senderAndTimeLabel.hidden = NO;
+            }
+        }
+        else
+            cell.senderAndTimeLabel.hidden = NO;
+
+        return cell;
+    }
+    
+    //图片消息
+    else if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
+        //CELL重用
+        static NSString *identifier = @"imgCell";
+        KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell == nil) {
+            cell = [[KKMessageCell alloc] initWithStyle:UITableViewCellStyleValue1
+                                        reuseIdentifier:identifier];
+        }
+        
+        cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
+        
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        
+        size.width = size.width<20?20:size.width;
+        size.height = size.height<20?20:size.height;
+        
+        cell.messageuuid = messageuuid;
+        
+        UIImage *bgImage = nil;
+        
+        if ([sender isEqualToString:@"you"])
+        {
+            //设置时间Label
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
+            
+            //设置头像
+            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL = nil;
+            }else{
+                if (self.myHeadImg) {
+                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", self.myHeadImg]];
+                    cell.headImgV.imageURL = theUrl;
+                }else
+                {
+                    cell.headImgV.imageURL = nil;
+                }
+            }
+            
+            [cell.headImgV setFrame:CGRectMake(320-10-40,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            bgImage = [[UIImage imageNamed:@"bubble_02.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            [cell.headBtn setFrame:cell.headImgV.frame];
+            
+            [cell.headBtn addTarget:self
+                             action:@selector(myBtnClicked)
+                   forControlEvents:UIControlEventTouchUpInside];
+            
+            //设置背景气泡
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            //failImage 失败图标
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchBegin:)
+                     forControlEvents:UIControlEventTouchDown];
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchEnd:)
+                     forControlEvents:UIControlEventTouchUpInside];
+            [cell.failImage setTag:(indexPath.row+1)];
+            
+            //图片显示
+            NSURL *kkChatImageMsgUrl;
+            
+            //看看有没有本地缩略图，如果有说明还没传上去，先显示本地的路径
+            NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
+            if (kkChatImagethumb.length>0){
+                kkChatImageMsgUrl = [NSURL fileURLWithPath:kkChatImagethumb];
+            }
+            else{
+                NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+                NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@",kkChatImageMsg];
+                kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
+            }
+            
+            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-15-10-25,
+                                                   padding*2-4,
+                                                   size.width,
+                                                   size.height)];
+            //cell.msgImageView.frame = cell.bgImageView.frame;
+            cell.messageContentView.hidden = YES;
+            cell.msgImageView.hidden = NO;
+            
+            cell.msgImageView.imageURL = kkChatImageMsgUrl;
+            // NSLog(@"msgImageView: %@",cell.msgImageView.image.size);//cell.msgImageView.image.size
+            cell.progressView.frame = CGRectMake(30,
+                                                 CGRectGetHeight(cell.frame)/2,
+                                                 100,
+                                                 1);
+            cell.msgImageView.tag = indexPath.row;
+            
+            //msgImageView响应手势
+            cell.msgImageView.userInteractionEnabled = YES;
+            UITapGestureRecognizer* tabPress =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)];
+            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self
+                                                                                                   action:@selector(longPressImg:)];
+            [cell.msgImageView addGestureRecognizer:tabPress];
+            [cell.msgImageView addGestureRecognizer:longPress];
+            
+            cell.progressView.hidden = YES;
+            
+            //刷新
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+                                                 (size.height+20)/2 + padding*2-15)
+                              status:status];
+        }
+        else{
+            //设置时间
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
+            
+            //设置头像
+            [cell.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
+            [cell.chattoHeadBtn setFrame:cell.headImgV.frame];
+            [cell.chattoHeadBtn addTarget:self
+                                   action:@selector(chatToBtnClicked)
+                         forControlEvents:UIControlEventTouchUpInside];
+            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL = nil;
+            }else{
+                if (self.chatUserImg) {
+                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
+                    cell.headImgV.imageURL = theUrl;
+                }else
+                {
+                    cell.headImgV.imageURL = nil;
+                }
+            }
+            //设置背景气泡
+            bgImage = [[UIImage imageNamed:@"bubble_01.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            //设置图片显示
+            NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
+            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-15-15,
+                                                   padding*2-4,
+                                                   size.width,
+                                                   size.height)];
+            
+            cell.messageContentView.hidden = YES;
+            cell.msgImageView.hidden = NO;
+            cell.msgImageView.imageURL = kkChatImageMsgUrl;
+            cell.msgImageView.tag = indexPath.row;
+            
+            //msgImageView响应手势
+            cell.msgImageView.userInteractionEnabled = YES;
+            UITapGestureRecognizer* tabPress =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)];
+            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self
+                                                                                                   action:@selector(longPressImg:)];
+            [cell.msgImageView addGestureRecognizer:tabPress];
+            [cell.msgImageView addGestureRecognizer:longPress];
+            
+            //刷新
+            [cell refreshStatusPoint:CGPointZero status:@"1"];
+        }
+        
+        //显示双方聊天的时间
+        if (indexPath.row > 0) {
+            if ([time intValue]-[[[[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"] substringToIndex:10]intValue]<60) {
+                cell.senderAndTimeLabel.hidden = YES;
+            }
+            else
+            {
+                cell.senderAndTimeLabel.hidden = NO;
+            }
+        }
+        else
+            cell.senderAndTimeLabel.hidden = NO;
+        
+        return  cell;
+    }
+    
+    //普通消息
+    else
+    {
+        //CELL重用
+        static NSString *identifier = @"msgCell";
+        KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell == nil) {
+            cell = [[KKMessageCell alloc] initWithStyle:UITableViewCellStyleValue1
+                                        reuseIdentifier:identifier];
+        }
+        
+        cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
+        
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        
+        size.width = size.width<20?20:size.width;
+        size.height = size.height<20?20:size.height;
+
+        cell.messageuuid = messageuuid;
+        
+        UIImage *bgImage = nil;
+        
+        //你自己发送的消息
+        if ([sender isEqualToString:@"you"]) {
+            
+            //设置时间Label
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
+            
+            //设置头像
+            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL = nil;
+            }else{
+                if (self.myHeadImg) {
+                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", self.myHeadImg]];
+                    cell.headImgV.imageURL = theUrl;
+                }else
+                {
+                    cell.headImgV.imageURL = nil;
+                }
+            }
+            
+            [cell.headImgV setFrame:CGRectMake(320-10-40,
+                                               padding*2-15,
+                                               40,
+                                               40)];
+            bgImage = [[UIImage imageNamed:@"bubble_02.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            [cell.headBtn setFrame:cell.headImgV.frame];
+            
+            [cell.headBtn addTarget:self
+                             action:@selector(myBtnClicked)
+                   forControlEvents:UIControlEventTouchUpInside];
+            
+            //设置背景气泡
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchEnd:)
+                       forControlEvents:UIControlEventTouchUpInside];
+            
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            //failImage 失败图标
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchBegin:)
+                     forControlEvents:UIControlEventTouchDown];
+            [cell.failImage addTarget:self
+                               action:@selector(offsetButtonTouchEnd:)
+                     forControlEvents:UIControlEventTouchUpInside];
+            [cell.failImage setTag:(indexPath.row+1)];
+            
+            //如果是其他消息
+            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25,
+                                                         padding*2-4,
+                                                         size.width,
+                                                         size.height)];
+            cell.messageContentView.hidden = NO;
+            cell.msgImageView.hidden = YES;
+            
+            //刷新
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+                                                 (size.height+20)/2 + padding*2-15)
+                              status:status];
+          
+        }else { //不是你，是对方
+            
+            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
+            
+            [cell.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
+            [cell.chattoHeadBtn setFrame:cell.headImgV.frame];
+            [cell.chattoHeadBtn addTarget:self
+                                   action:@selector(chatToBtnClicked)
+                         forControlEvents:UIControlEventTouchUpInside];
+            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+            
+            if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
+                cell.headImgV.imageURL = nil;
+            }else{
+                if (self.chatUserImg) {
+                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
+                    cell.headImgV.imageURL = theUrl;
+                }else
+                {
+                    cell.headImgV.imageURL = nil;
+                }
+            }
+            //设置背景气泡
+            bgImage = [[UIImage imageNamed:@"bubble_01.png"]
+                       stretchableImageWithLeftCapWidth:15
+                       topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
+                                                  padding*2-15,
+                                                  size.width+25,
+                                                  size.height+20)];
+            [cell.bgImageView setBackgroundImage:bgImage
+                                        forState:UIControlStateNormal];
+            [cell.bgImageView addTarget:self
+                                 action:@selector(offsetButtonTouchBegin:)
+                       forControlEvents:UIControlEventTouchDown];
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            
+            //设置文字区域
+            [cell.messageContentView setFrame:CGRectMake(padding+7+45,
+                                                         padding*2-4,
+                                                         size.width,
+                                                         size.height)];
+            
+            cell.messageContentView.hidden = NO;
+            cell.msgImageView.hidden = YES;
+            
+            //刷新
+            [cell refreshStatusPoint:CGPointZero status:@"1"];
+            
+        }
+        
+        //显示双方聊天的时间
+        if (indexPath.row > 0) {
+            if ([time intValue]-[[[[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"] substringToIndex:10]intValue]<60) {
+                cell.senderAndTimeLabel.hidden = YES;
+            }
+            else
+            {
+                cell.senderAndTimeLabel.hidden = NO;
+            }
+        }
+        else
+            cell.senderAndTimeLabel.hidden = NO;
+ 
+        
+        return cell;
+    }
+}
+
+
 #pragma mark - Views
+//表情按钮
 - (EmojiView *)theEmojiView{
     if (!_theEmojiView) {
         _theEmojiView = [[EmojiView alloc]
@@ -252,6 +830,7 @@ UINavigationControllerDelegate>
     }
     return _theEmojiView;
 }
+//加号（图片，照片，位置等）
 - (UIView *)kkChatAddView{
     
     if (!_kkChatAddView) {
@@ -473,7 +1052,7 @@ UINavigationControllerDelegate>
     {
         NSString *message = [plainEntry objectForKey:@"msg"];
         NSString *msgType = KISDictionaryHaveKey(plainEntry, @"msgType");
-        if ([msgType isEqualToString:@"payloadchat"]) {
+        if ([msgType isEqualToString:@"payloadchat"]) { //如果是动态详情
             NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
             
             CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"title")]];
@@ -621,7 +1200,9 @@ UINavigationControllerDelegate>
 {
     return (theContent.length > 0)?[theContent sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(haveThumb ? 150 : 180, 80)] : CGSizeZero;
 }
-//
+
+
+//点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
     NSLog(@"%d",sender.tag);
     UIImagePickerController *imagePicker = nil;
@@ -807,7 +1388,7 @@ UINavigationControllerDelegate>
         return ;
     }
     
-    if (self.kkchatInputType != KKChatInputTypeAdd) {
+    if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
         [self.textView resignFirstResponder];
         self.kkchatInputType = KKChatInputTypeAdd;
         
@@ -817,7 +1398,7 @@ UINavigationControllerDelegate>
                        forState:UIControlStateNormal];
         [self showEmojiScrollView];
         
-    }else{
+    }else{      //点击切回键盘
         
         [self.textView.internalTextView becomeFirstResponder];
         ifEmoji = NO;
@@ -1349,462 +1930,14 @@ UINavigationControllerDelegate>
 }
 
 
-//解析messages生成TabView
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
-    NSString *sender = KISDictionaryHaveKey(dict, @"sender");
-    NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
-    NSString *msgType = KISDictionaryHaveKey(dict, @"msgType");
-    NSString *status = KISDictionaryHaveKey(dict, @"status");
-    NSString *messageuuid = KISDictionaryHaveKey(dict, @"messageuuid");
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    
-    if ([msgType isEqualToString:@"payloadchat"]) {
-        //动态消息
-        static NSString *identifier = @"newsCell";
-        KKNewsCell *cell =(KKNewsCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
-        
-        if (cell == nil) {
-            cell = [[KKNewsCell alloc] initWithStyle:UITableViewCellStyleValue1
-                                     reuseIdentifier:identifier];
-        }
-        
-        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
-                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
-        size.width = size.width<20?20:size.width;
-        size.height = size.height<20?20:size.height;
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        NSDictionary* msgDic = [[self.finalMessageArray
-                                 objectAtIndex:indexPath.row] JSONValue];
-        
-        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon
-                                                         getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")]];
-        CGSize contentSize = CGSizeZero;
-        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"title");
-        if ([sender isEqualToString:@"you"]) {
-            [cell.thumbImgV setFrame:CGRectMake(55,
-                                                40 + titleSize.height,
-                                                40,
-                                                40)];
-        }
-        else{
-            [cell.thumbImgV setFrame:CGRectMake(70,
-                                                40 + titleSize.height,
-                                                40,40)];
-            
-        }
-        contentSize = [self getPayloadMsgContentSize:[GameCommon
-                                                      getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]
-                                           withThumb:YES];
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")].length > 0 && ![KISDictionaryHaveKey(msgDic, @"thumb") isEqualToString:@"null"]) {
-            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
-            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/30",imgStr]];
-            cell.thumbImgV.imageURL = titleImage;
-            
-        }
-        else
-        {
-            cell.thumbImgV.imageURL = nil;
-        }
-        
-        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
-        UIImage *bgImage = nil;
-        
-        if ([sender isEqualToString:@"you"]) {
-            
-            [cell.headImgV setFrame:CGRectMake(320-10-40,
-                                               padding*2-15,
-                                               40,
-                                               40)];
-            
-            [cell.headImgV addTarget:self
-                              action:@selector(myBtnClicked)
-                    forControlEvents:UIControlEventTouchUpInside];
-            
-            cell.headImgV.placeholderImage = [UIImage
-                                              imageNamed:@"moren_people.png"];
-            
-            if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
-                cell.headImgV.imageURL =nil;
-            }else{
-                if (self.myHeadImg) {
-                    NSURL * theUrl = [NSURL
-                                      URLWithString:[BaseImageUrl
-                                                     stringByAppendingFormat:@"%@/80",self.myHeadImg]];
-                    cell.headImgV.imageURL = theUrl;
-                }
-                else{
-                    cell.headImgV.imageURL =nil;
-                }
-            }
-            bgImage = [[UIImage imageNamed:@"bubble_05"]
-                       stretchableImageWithLeftCapWidth:15
-                       topCapHeight:22];
-            
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
-                                                  padding*2-15,
-                                                  size.width+25,
-                                                  size.height+20)];
-            
-            [cell.bgImageView setBackgroundImage:bgImage
-                                        forState:UIControlStateNormal];
-            
-            
-            //响应点击和长按
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchBegin:)
-                       forControlEvents:UIControlEventTouchDown];
-            
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchEnd:)
-                       forControlEvents:UIControlEventTouchUpInside];
-            
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            
-            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10,
-                                                 size.height/2+27,
-                                                 8,
-                                                 12)];
-            
-            [cell.titleLabel setFrame:CGRectMake(padding + 35,
-                                                 33,
-                                                 titleSize.width,
-                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
-            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,
-                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
-                                                   contentSize.width,
-                                                   contentSize.height)];
-        }else
-        {
-            [cell.headImgV setFrame:CGRectMake(10,
-                                               padding*2-15,
-                                               40,
-                                               40)];
-            [cell.headImgV addTarget:self
-                              action:@selector(chatToBtnClicked)
-                    forControlEvents:UIControlEventTouchUpInside];
-            
-            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-            if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
-                cell.headImgV.imageURL = nil;
-            }else{
-                if (self.chatUserImg) {
-                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
-                    cell.headImgV.imageURL = theUrl;
-                }else
-                {
-                    cell.headImgV.imageURL = nil;
-                }
-            }
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]
-                       stretchableImageWithLeftCapWidth:15
-                       topCapHeight:22];
-            
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
-                                                  padding*2-15,
-                                                  size.width+35,
-                                                  size.height + 20)];
-            
-            [cell.bgImageView setBackgroundImage:bgImage
-                                        forState:UIControlStateNormal];
-            
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchBegin:)
-                       forControlEvents:UIControlEventTouchDown];
-            
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchEnd:)
-                       forControlEvents:UIControlEventTouchUpInside];
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            
-            [cell.arrowImage setFrame:CGRectMake(padding-10+45 + size.width+27 + 10,
-                                                 size.height/2+27,
-                                                 8,
-                                                 12)];
-            
-            [cell.titleLabel setFrame:CGRectMake(padding + 50,
-                                                 33,
-                                                 titleSize.width,
-                                                 titleSize.height+(contentSize.height > 0 ? 0 : 5))];
-            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,
-                                                   35 + titleSize.height + (titleSize.height > 0 ? 5 : 0),
-                                                   contentSize.width,
-                                                   contentSize.height)];
-        }
-        
-        NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-        if (indexPath.row>0) {
-            if ([time intValue]-[[[[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"] substringToIndex:10]intValue]<60) {
-                cell.senderAndTimeLabel.hidden = YES;
-            }
-            else
-            {
-                cell.senderAndTimeLabel.hidden = NO;
-            }
-        }
-        else
-            cell.senderAndTimeLabel.hidden = NO;
-        previousTime = nowTime;
-        NSString * timeStr = [self CurrentTime:[NSString stringWithFormat:@"%d",(int)nowTime]
-                                AndMessageTime:[NSString stringWithFormat:@"%d",[time intValue]]];
-        
-        if ([sender isEqualToString:@"you"]) {
-            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
-        }
-        else
-        {
-            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-        }
-        return cell;
-    }
-    else
-    {
-        //普通聊天消息
-        static NSString *identifier = @"msgCell";
-        KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell == nil) {
-            cell = [[KKMessageCell alloc] initWithStyle:UITableViewCellStyleValue1
-                                        reuseIdentifier:identifier];
-        }
-        
-        cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
-        
-        //    CGSize size = [cell.messageContentView sizeThatFits:CGSizeMake(220, CGFLOAT_MAX)];
-        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
-                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
-        
-        // CGSize size = [cell.messageContentView.attributedText sizeConstrainedToSize:CGSizeMake(220, CGFLOAT_MAX)];
-        size.width = size.width<20?20:size.width;
-        size.height = size.height<20?20:size.height;
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        // cell.userInteractionEnabled = NO;
-        
-        cell.messageuuid = messageuuid;
-        
-        UIImage *bgImage = nil;
-        
-        
-        //为ImageView添加手势
-//        [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]
-//                                                 initWithTarget:self
-//                                                 action:@selector(kkChatImageShowBigImage:)]];
-//        cell.msgImageView.userInteractionEnabled = YES;
-        
-        if ([sender isEqualToString:@"you"]) {
-            
-            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-            if ([self.myHeadImg isEqualToString:@""]||[self.myHeadImg isEqualToString:@" "]) {
-                cell.headImgV.imageURL = nil;
-            }else{
-                if (self.myHeadImg) {
-                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", self.myHeadImg]];
-                    cell.headImgV.imageURL = theUrl;
-                }else
-                {
-                    cell.headImgV.imageURL = nil;
-                }
-            }
-            
-            [cell.headImgV setFrame:CGRectMake(320-10-40,
-                                               padding*2-15,
-                                               40,
-                                               40)];
-            bgImage = [[UIImage imageNamed:@"bubble_02.png"]
-                       stretchableImageWithLeftCapWidth:15
-                       topCapHeight:22];
-            [cell.headBtn setFrame:cell.headImgV.frame];
-            
-            [cell.headBtn addTarget:self
-                             action:@selector(myBtnClicked)
-                   forControlEvents:UIControlEventTouchUpInside];
-            
-            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25,
-                                                         padding*2-4,
-                                                         size.width,
-                                                         size.height)];
-            cell.messageContentView.hidden = NO;
-            cell.msgImageView.hidden = YES;
-            
-            
-            //如果是图片消息
-            if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
-                
-                NSURL *kkChatImageMsgUrl;
-                
-                //看看有没有本地缩略图，如果有说明还没传上去，先显示本地的路径
-                NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
-                if (kkChatImagethumb.length>0){
-                    kkChatImageMsgUrl = [NSURL fileURLWithPath:kkChatImagethumb];
-                }
-                else{
-                    NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-                    NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@",kkChatImageMsg];
-                    kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
-                }
-                
-                [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-15-10-25,
-                                                       padding*2-4,
-                                                       size.width,
-                                                       size.height)];
-                //cell.msgImageView.frame = cell.bgImageView.frame;
-                cell.messageContentView.hidden = YES;
-                cell.msgImageView.hidden = NO;
-                cell.msgImageView.imageURL = kkChatImageMsgUrl;
-               // NSLog(@"msgImageView: %@",cell.msgImageView.image.size);//cell.msgImageView.image.size
-                cell.progressView.frame = CGRectMake(30,
-                                                     CGRectGetHeight(cell.frame)/2,
-                                                     100,
-                                                     1);
-                cell.msgImageView.tag = indexPath.row;
-                
-                //msgImageView响应手势
-                cell.msgImageView.userInteractionEnabled = YES;
-                UITapGestureRecognizer* tabPress =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)];
-                UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self
-                            action:@selector(longPressImg:)];
-                [cell.msgImageView addGestureRecognizer:tabPress];
-                [cell.msgImageView addGestureRecognizer:longPress];
-                
-                cell.progressView.hidden = YES;
-                
-            }
-            
-//            
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
-                                                  padding*2-15,
-                                                  size.width+25,
-                                                  size.height+20)];
-            
-            [cell.bgImageView setBackgroundImage:bgImage
-                                        forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchBegin:)
-                       forControlEvents:UIControlEventTouchDown];
-            
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchEnd:)
-                       forControlEvents:UIControlEventTouchUpInside];
-            
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            
-            [cell.failImage addTarget:self
-                               action:@selector(offsetButtonTouchBegin:)
-                     forControlEvents:UIControlEventTouchDown];
-            [cell.failImage addTarget:self
-                               action:@selector(offsetButtonTouchEnd:)
-                     forControlEvents:UIControlEventTouchUpInside];
-            [cell.failImage setTag:(indexPath.row+1)];
-            
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
-                                                 (size.height+20)/2 + padding*2-15)
-                              status:status];
-        }else {
-            [cell.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
-            [cell.chattoHeadBtn setFrame:cell.headImgV.frame];
-            [cell.chattoHeadBtn addTarget:self
-                                   action:@selector(chatToBtnClicked)
-                         forControlEvents:UIControlEventTouchUpInside];
-            cell.headImgV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-            if ([self.chatUserImg isEqualToString:@""]||[self.chatUserImg isEqualToString:@" "]) {
-                cell.headImgV.imageURL = nil;
-            }else{
-                if (self.chatUserImg) {
-                    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:self.chatUserImg]]];
-                    cell.headImgV.imageURL = theUrl;
-                }else
-                {
-                    cell.headImgV.imageURL = nil;
-                }
-            }
-            bgImage = [[UIImage imageNamed:@"bubble_01.png"]
-                       stretchableImageWithLeftCapWidth:15
-                       topCapHeight:22];
-            
-            [cell.messageContentView setFrame:CGRectMake(padding+7+45,
-                                                         padding*2-4,
-                                                         size.width,
-                                                         size.height)];
-            
-            cell.messageContentView.hidden = NO;
-            cell.msgImageView.hidden = YES;
-            if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
-                
-                NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-                NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
-                [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-15-15,
-                                                       padding*2-4,
-                                                       size.width,
-                                                       size.height)];
-                
-                cell.messageContentView.hidden = YES;
-                cell.msgImageView.hidden = NO;
-                cell.msgImageView.userInteractionEnabled = YES;
-                cell.msgImageView.imageURL = kkChatImageMsgUrl;
-                [cell.msgImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)]];
-                cell.msgImageView.tag = indexPath.row;
-                
-            }
-            
-            
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45,
-                                                  padding*2-15,
-                                                  size.width+25,
-                                                  size.height+20)];
-            [cell.bgImageView setBackgroundImage:bgImage
-                                        forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self
-                                 action:@selector(offsetButtonTouchBegin:)
-                       forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            [cell refreshStatusPoint:CGPointZero status:@"1"];
-        }
-        
-        NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-        
-        if (indexPath.row > 0) {
-            if ([time intValue]-[[[[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"] substringToIndex:10]intValue]<60) {
-                cell.senderAndTimeLabel.hidden = YES;
-            }
-            else
-            {
-                cell.senderAndTimeLabel.hidden = NO;
-            }
-        }
-        else
-            cell.senderAndTimeLabel.hidden = NO;
-        previousTime = nowTime;
-        NSString * timeStr = [self CurrentTime:[NSString stringWithFormat:@"%d",(int)nowTime] AndMessageTime:[NSString stringWithFormat:@"%d",[time intValue]]];
-        if ([sender isEqualToString:@"you"]) {
-            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", @"我", timeStr];
-        }
-        else
-        {
-            cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-        }
-        
-        return cell;
-    }
-}
-
-- (void)kkChatImageShowBigImage:(UITapGestureRecognizer *)tap{
-    //
-    //    UIImageView *imageView = (UIImageView *)tap.view;
-    //    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:@[imageView.image] images:@[imageView.image] indext:0];
-    //    [self presentViewController:pV animated:NO completion:^{
-    //
-    //    }];
-    
-}
 
 
+//点击他人的头像
 -(void)chatToBtnClicked
 {
     [self toContactProfile];
 }
+//点击我的头像
 -(void)myBtnClicked
 {
     TestViewController * detailV = [[TestViewController alloc] init];
@@ -2561,95 +2694,6 @@ UINavigationControllerDelegate>
     [DataStoreManager refreshMessageStatusWithId:msgId status:@"4"];
 }
 
--(NSString *)CurrentTime:(NSString *)currentTime AndMessageTime:(NSString *)messageTime
-{
-    NSString * finalTime;
-    int theCurrentT = [currentTime intValue];
-    int theMessageT = [messageTime intValue];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    
-    //设定时间格式,这里可以设置成自己需要的格式
-    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
-    NSString *currentStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
-    NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
-    [dateFormatter2 setDateFormat:@"HH:mm"];
-    NSString * msgT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
-    NSString * nowT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
-    //    int msgHour = [[msgT substringToIndex:2] intValue];
-    int hours = [[nowT substringToIndex:2] intValue];
-    int minutes = [[nowT substringFromIndex:3] intValue];
-    // NSLog(@"hours:%d,minutes:%d",hours,minutes);
-    int currentDayBegin = theCurrentT-hours*3600-minutes*60;
-    int yesterdayBegin = currentDayBegin-3600*24;
-    //    int qiantianBegin = yesterdayBegin-3600*24;
-    //今天
-    if ([currentStr isEqualToString:messageDateStr]) {
-        //        if (msgHour>0&&msgHour<11) {
-        //            finalTime = [NSString stringWithFormat:@"早上 %@",msgT];
-        //        }
-        //        else if (msgHour>=11&&msgHour<13){
-        //            finalTime = [NSString stringWithFormat:@"中午 %@",msgT];
-        //        }
-        //        else if(msgHour>=13&&msgHour<18) {
-        //            finalTime = [NSString stringWithFormat:@"下午 %@",msgT];
-        //        }
-        //        else{
-        //            finalTime = [NSString stringWithFormat:@"晚上 %@",msgT];
-        //        }
-        finalTime = [NSString stringWithFormat:@"%@",msgT];
-    }
-    //昨天
-    else if(theMessageT>=yesterdayBegin&&theMessageT<currentDayBegin){
-        //        if (msgHour>0&&msgHour<11) {
-        //            finalTime = [NSString stringWithFormat:@"昨天早上 %@",msgT];
-        //        }
-        //        else if (msgHour>=11&&msgHour<13){
-        //            finalTime = [NSString stringWithFormat:@"昨天中午 %@",msgT];
-        //        }
-        //        else if(msgHour>=13&&msgHour<18) {
-        //            finalTime = [NSString stringWithFormat:@"昨天下午 %@",msgT];
-        //        }
-        //        else{
-        //            finalTime = [NSString stringWithFormat:@"昨天晚上 %@",msgT];
-        //        }
-        finalTime = [NSString stringWithFormat:@"昨天 %@",msgT];
-    }
-    //前天
-    //    else if (theMessageT>=qiantianBegin&&theMessageT<yesterdayBegin)
-    //    {
-    //        NSDate * msgDate = [NSDate dateWithTimeIntervalSince1970:theMessageT];
-    //        NSString * weekday = [GameCommon getWeakDay:msgDate];
-    //        if (msgHour>0&&msgHour<11) {
-    //            finalTime = [NSString stringWithFormat:@"%@早晨 %@",weekday,msgT];
-    //        }
-    //        else if (msgHour>=11&&msgHour<13){
-    //            finalTime = [NSString stringWithFormat:@"%@中午 %@",weekday,msgT];
-    //        }
-    //        else if(msgHour>=13&&msgHour<18) {
-    //            finalTime = [NSString stringWithFormat:@"%@下午 %@",weekday,msgT];
-    //        }
-    //        else{
-    //            finalTime = [NSString stringWithFormat:@"%@晚上 %@",weekday,msgT];
-    //        }
-    //    }
-    //今年
-    //    else if([[messageDateStr substringToIndex:4] isEqualToString:[currentStr substringToIndex:4]]){
-    //        finalTime = [NSString stringWithFormat:@"%@月%@日 %@",[[messageDateStr substringFromIndex:5] substringToIndex:2],[messageDateStr substringFromIndex:8],msgT];
-    //    }
-    //    else
-    //    {
-    //        finalTime = [NSString stringWithFormat:@"%@ %@",messageDateStr,msgT];
-    //    }
-    else
-        finalTime = [NSString stringWithFormat:@"%@年%@月%@日 %@",
-                     [[messageDateStr substringFromIndex:0] substringToIndex:4],
-                     [[messageDateStr substringFromIndex:5] substringToIndex:2],
-                     [messageDateStr substringFromIndex:8],
-                     msgT];
-    
-    return finalTime;
-}
 
 - (void)setCell:(KKMessageCell *)cell progress:(double)progress{
     [cell.progressView setProgress:progress animated:YES];
@@ -2681,9 +2725,9 @@ UINavigationControllerDelegate>
     
     EGOImageView* imgV = (EGOImageView*)sender.view;
     readyIndex = imgV.tag ; //设置当前要操作的cell idnex
+    indexPathTo = [[NSIndexPath indexPathForRow:(imgV.tag) inSection:0] copy];
     
     //弹出菜单
-    indexPathTo = [[NSIndexPath indexPathForRow:(imgV.tag) inSection:0] copy];
     KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
    // tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
     CGRect rect = [self.view convertRect:imgV.frame fromView:cell.contentView];

@@ -7,16 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "KKChatCell.h"
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
 
-@interface KKNewsCell : UITableViewCell
+@interface KKNewsCell : KKChatCell
 
-@property(nonatomic, retain) EGOImageButton * headImgV;
-@property(nonatomic, retain) UILabel *senderAndTimeLabel;
-@property(nonatomic, retain) UIButton *bgImageView;
+//@property(nonatomic, retain) EGOImageButton * headImgV;
+//@property(nonatomic, retain) UILabel *senderAndTimeLabel;
+//@property(nonatomic, retain) UIButton *bgImageView;
 @property(nonatomic, retain) UILabel *titleLabel;
 @property(nonatomic, retain) EGOImageView * thumbImgV;
 @property(nonatomic, retain) UILabel *contentLabel;
-@property(nonatomic, retain) UIImageView* arrowImage;
+//@property(nonatomic, retain) UIImageView* arrowImage;
 @end

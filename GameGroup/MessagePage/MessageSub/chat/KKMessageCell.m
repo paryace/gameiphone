@@ -10,13 +10,13 @@
 
 @implementation KKMessageCell
 
-@synthesize senderAndTimeLabel;
+@synthesize senderAndTimeLabel; 
 @synthesize messageContentView;
-@synthesize bgImageView;
-@synthesize headImgV;
+@synthesize bgImageView;    //聊天气泡
+@synthesize headImgV;   //头像
 @synthesize headBtn,chattoHeadBtn;
 @synthesize ifRead,playAudioImageV;
-@synthesize msgImageView;
+@synthesize msgImageView;   //如果是图片聊天
 
 
 
@@ -27,6 +27,11 @@
     
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        
+        //默认样式
+        self.accessoryType = UITableViewCellAccessoryNone;
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        
         //日期标签
         self.isUploadImage = NO;
         
@@ -49,7 +54,7 @@
         [chattoHeadBtn setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:chattoHeadBtn];
         
-        headImgV = [[EGOImageView alloc] initWithFrame:CGRectZero];
+        headImgV = [[EGOImageButton alloc] initWithFrame:CGRectZero];
         self.headImgV.layer.cornerRadius = 5;
         self.headImgV.layer.masksToBounds=YES;
         [self.contentView addSubview:headImgV];
