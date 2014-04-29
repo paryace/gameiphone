@@ -70,7 +70,7 @@
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSArray * dRecommend = [DSRecommendList MR_findAllInContext:localContext];
         for (DSRecommendList* Recommend in dRecommend) {
-            NSDictionary* tempDic = [NSDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",nil];
+            NSDictionary* tempDic = [NSDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",Recommend.recommendReason,@"recommendReason",nil];
             [m_tableData insertObject:tempDic atIndex:0];
         }
         m_pageIndex = [m_tableData count] > 20?20:[m_tableData count];

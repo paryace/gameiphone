@@ -19,5 +19,6 @@
 @dynamic userid;
 @dynamic userName;
 @dynamic sendTime;
+@dynamic recommendReason;
 
 @end

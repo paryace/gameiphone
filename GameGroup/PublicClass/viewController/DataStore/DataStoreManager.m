@@ -1940,6 +1940,7 @@ return @"";
     NSString * userNickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"nickname")];
     NSString * fromID = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"type")];
     NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"userid")];
+     NSString * recommendReason = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"recommendReason")];
     NSArray* headArr = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"img")] componentsSeparatedByString:@","];
     NSString * headImgID = [headArr count] != 0 ? [headArr objectAtIndex:0] : @"";
     NSString * fromStr = userInfoDict[@"recommendMsg"];//推荐理由
@@ -1962,6 +1963,7 @@ return @"";
         Recommend.fromStr = fromStr;
         Recommend.fromID = fromID;
         Recommend.userid = userid;
+        Recommend.recommendReason=recommendReason;
 
     }];
 

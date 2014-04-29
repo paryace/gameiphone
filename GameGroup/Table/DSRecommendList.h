@@ -20,5 +20,6 @@
 @property (nonatomic, retain) NSString * userid;
 @property (nonatomic, retain) NSString * userName;
 @property (nonatomic, retain) NSDate * sendTime;
+@property (nonatomic, retain) NSString * recommendReason;
 
 @end
