@@ -37,7 +37,7 @@
 
 
 //重连
-- (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status; //在这指定位置刷新重连标记
+- (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status; //在指定位置刷新重连标记
 
 //头像 
 - (void)setHeadImgByMe; //头像是自己
