@@ -15,4 +15,6 @@
 @property (nonatomic, strong) EGOImageView *msgImageView;
 @property (nonatomic, strong) UIProgressView *progressView;
 
+
+
 @end

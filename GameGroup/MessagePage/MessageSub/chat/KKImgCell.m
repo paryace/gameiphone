@@ -16,26 +16,29 @@
     if (self) {
         // Initialization code
         
+        self.bgImageView.hidden = YES;  //图片聊天不要背景泡泡
+        
         self.msgImageView = [[EGOImageView alloc]
                         initWithPlaceholderImage:[UIImage
                                                   imageNamed:@"default_icon.png"]];
-        self.msgImageView.frame = CGRectZero;
+        //self.msgImageView.frame = CGRectZero;
         self.msgImageView.layer.masksToBounds = YES;
         self.msgImageView.layer.borderWidth = 1;
         self.msgImageView.layer.borderColor = [UIColor clearColor].CGColor;
-        self.msgImageView.layer.cornerRadius = 6;
+        self.msgImageView.layer.cornerRadius = 5;
         [self.contentView addSubview:self.msgImageView];
         
         self.progressView = [[UIProgressView alloc] initWithFrame:CGRectZero];
         [self.progressView setProgressViewStyle:UIProgressViewStyleBar];    //进度条样式
         self.progressView.progressTintColor = UIColorFromRGBA(0x16a3f0, 1);
-        self.progressView.hidden = YES;
+        self.progressView.hidden = YES; 
         
         [self.contentView addSubview:self.progressView];
     
     }
     return self;
 }
+
 
 - (void)awakeFromNib
 {

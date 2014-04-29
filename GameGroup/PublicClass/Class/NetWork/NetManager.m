@@ -11,7 +11,6 @@
 
 #define CompressionQuality 1  //图片上传时压缩质量
 
-
 @implementation NetManager
 NSString * gen_uuid()
 {
@@ -517,20 +516,44 @@ NSString * gen_uuid()
 	return theImage;
 }
 
-//
+//将原图显示为指定大小。先按比例缩放，再居中裁剪
 + (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize
 {
 	CGSize size = image.size;
 	
+    float dwidth = 0.0f;
+    float dheight = 0.0f;
+    float rate = 0.0f;
+    
+    if (size.width> size.height) //宽为长边
+    {
+        if (size.width < viewsize.width)
+        {
+            return image;
+        }
+        rate = viewsize.height / size.height;
+        float w = rate * size.width;
+        
+        dwidth = (viewsize.width - w) / 2.0f;
+        dheight = 0;
+    }
+    else    //长为长边
+    {
+        if (size.height< viewsize.height)
+        {
+            return image;
+        }
+        rate = viewsize.width / size.width;
+        float h = rate * size.height;
+        dwidth = 0;
+        dheight = (viewsize.height - h) /2.0f;
+        
+    }
+    CGRect rect = CGRectMake(dwidth, dheight, size.width*rate, size.height*rate);
 	UIGraphicsBeginImageContext(viewsize);
-	float dwidth = (viewsize.width - size.width) / 2.0f;
-	float dheight = (viewsize.height - size.height) / 2.0f;
-	
-	CGRect rect = CGRectMake(dwidth, dheight, size.width, size.height);
-	[image drawInRect:rect];
-	
-    UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+	[image drawInRect:rect];  // scales image to rect
+	UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
 	
     return newimg;
 }
@@ -551,22 +574,6 @@ NSString * gen_uuid()
         actualWidth = sizeX;
     }
     
-    //	if(actualWidth > sizeX || actualHeight > sizeY)
-    //	{
-    //		float maxRatio = sizeX / sizeY;
-    //
-    //		if(imgRatio < maxRatio){
-    //            imgRatio = sizeY / actualHeight;
-    //			actualWidth = imgRatio * actualWidth;
-    //			actualHeight = sizeY;
-    //		} else {
-    //            imgRatio = sizeX / actualWidth;
-    //			actualHeight = imgRatio * actualHeight;
-    //			actualWidth = sizeX;
-    //
-    //		}
-    //
-    //	}
 	CGRect rect = CGRectMake(0.0, 0.0, actualWidth, actualHeight);
 	UIGraphicsBeginImageContext(rect.size);
 	[bigImage drawInRect:rect];  // scales image to rect

@@ -41,8 +41,8 @@
                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 +(UIImage*)compressImageDownToPhoneScreenSize:(UIImage*)theImage targetSizeX:(CGFloat) sizeX targetSizeY:(CGFloat) sizeY;
-+ (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize;
-
++(UIImage*)compressImage:(UIImage*)theImage targetSizeX:(CGFloat) sizeX targetSizeY:(CGFloat) sizeY; //图片压缩 设置最宽，按比例压缩
++ (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
 
 
 //删除图片
