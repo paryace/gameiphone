@@ -16,3 +16,4 @@
 @property(nonatomic, retain) UILabel *titleLabel;
 @property(nonatomic, retain) EGOImageView * thumbImgV;
 @property(nonatomic, retain) UILabel *contentLabel;
+@end

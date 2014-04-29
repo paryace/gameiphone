@@ -601,19 +601,6 @@
     return @"";
 }
 
-+(void)deleteCommonMsg:(NSString *)content Time:(NSString *)theTime
-{
-    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[theTime doubleValue]];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgContent==[c]%@ OR senTime==[c]%@",content,sendTime];
-        DSCommonMsgs * commonMsgs = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
-        if (commonMsgs) {
-            [commonMsgs MR_deleteInContext:localContext];
-        }
-     
-    }];
-}
-
 +(void)deleteAllCommonMsg
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {

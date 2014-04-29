@@ -95,7 +95,7 @@ EmojiViewDelegate>
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  UITableView *tView;  //消息cell组成的TableVIew
-@property (strong, nonatomic)  NSMutableArray *finalMessageArray;
+@property (strong, nonatomic)  NSMutableArray *finalMessageArray;       //带样式的String 通过normalMsgToFinalMsg方式， 将普通文本转化为带样式的文本
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
 @property (strong, nonatomic)  UITextField *messageTextField;
 //@property (strong, nonatomic)  UIButton * sendBtn;
