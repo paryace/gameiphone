@@ -9,14 +9,16 @@
 #import "MyCircleViewController.h"
 #import "CircleWithMeViewController.h"
 #import "OnceDynamicViewController.h"
+#import "TestViewController.h"
 #import "EGOImageView.h"
+#import "EGOImageButton.h"
 #import "MyCircleCell.h"
 @interface MyCircleViewController ()
 {
     UITableView *m_myTableView;
     UILabel *nickNameLabel;
     EGOImageView *headImageView;
-    EGOImageView *topImgaeView;
+    EGOImageButton *topImgaeView;
     NSMutableArray *dataArray;
     NSInteger *PageNum;
 }
@@ -51,7 +53,8 @@
     UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
-    topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
     
     [topVIew addSubview:topImgaeView];
@@ -77,8 +80,16 @@
 }
 
 
+-(void)enterPersonPage:(id)sender
+{
+    TestViewController* VC = [[TestViewController alloc] init];
+    
+    VC.userId =self.userId;
+    VC.nickName =self.nickNmaeStr;
+    VC.isChatPage = NO;
+    [self.navigationController pushViewController:VC animated:YES];
 
-
+}
 
 -(void)getInfoFromNet
 {
@@ -138,10 +149,24 @@
     if (indexPath.row>0) {
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
-    if ([[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]isEqualToString:[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]]&&[[GameCommon getNewStringWithId:[self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]] isEqualToString:[self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]]) {
+    
+    
+    if ([[self getDataWithTimeDataInterval:
+          [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
+         isEqualToString:
+         [self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]]
+        &&
+        [[GameCommon getNewStringWithId:[self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]]]
+         isEqualToString:
+         [self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]])
+    {
         cell.dataLabel.hidden = YES;
         cell.monthLabel.hidden = YES;
-    }else{
+    }
+    
+    else
+    
+    {
         cell.dataLabel.hidden = NO;
         cell.monthLabel.hidden = NO;
     cell.dataLabel.text =[self getDataWithTimeDataInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
@@ -159,7 +184,7 @@
         //cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.center.y);
         cell.titleLabel.font = [UIFont systemFontOfSize:13];
         cell.titleLabel.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
-        cell.titleLabel.numberOfLines = 0;
+        cell.titleLabel.numberOfLines = 2;
         
     }else{
         if ([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "]) {

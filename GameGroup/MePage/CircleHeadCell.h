@@ -60,6 +60,8 @@
 //传送评论者昵称点击事件
 -(void)transferClickEventsWithCell:(CircleHeadCell *)myCell withIndexPath:(NSInteger)row;
 
+
+-(void)hiddenOrShowMenuImageViewWithCell:(CircleHeadCell*)myCell;
 @end
 
 

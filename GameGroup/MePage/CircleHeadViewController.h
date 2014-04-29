@@ -19,7 +19,8 @@ UIActionSheetDelegate,
 CircleHeadDelegate,
 UITextViewDelegate,
 HPGrowingTextViewDelegate,
-UIActionSheetDelegate
+UIActionSheetDelegate,
+UIScrollViewDelegate
 >
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;
