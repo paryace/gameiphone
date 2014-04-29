@@ -35,36 +35,40 @@
 + (BOOL)savedNewsMsgWithID:(NSString*)msgId;//消息是否已存
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
 
-#grama mark -
-#grama mark 消息
-+ (void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
-+ (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
-+ (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
+//ThumbMsg
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 + (void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName;//修改别名
-+ (NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
-+ (NSString *)queryMsgHeadImageForUser:(NSString *)userid;
-+ (void)blankMsgUnreadCountForUser:(NSString *)userid;
-+ (NSArray *)queryUnreadCountForCommonMsg;
-+ (void)deleteAllNewsMsgs;
 + (void)deleteAllThumbMsg;
 + (void)deleteThumbMsgWithSender:(NSString *)sender;
-+ (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;    //删除指定发送者的所有消息
++ (void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
++ (NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
+
+//聊天消息
++ (void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
++ (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
++ (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
 + (void)deleteMsgInCommentWithUUid:(NSString *)uuid;   //删除指定uuid的消息
 + (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer;//根据userid分页查询
 + (NSMutableArray *)qureyAllCommonMessages:(NSString *)userid;
 + (NSString*)queryMessageStatusWithId:(NSString*)msgUUID;
 + (void)deleteAllCommonMsg;
-+ (void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
-+ (NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
+
++ (NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
++ (NSString *)queryMsgHeadImageForUser:(NSString *)userid;
++ (void)blankMsgUnreadCountForUser:(NSString *)userid;
++ (NSArray *)queryUnreadCountForCommonMsg;
++ (void)deleteAllNewsMsgs;
++ (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;    //删除指定发送者的所有消息
+
+
+
+
 + (void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;
 + (NSArray *)qureyAllNewsMessage;
 + (NSArray *)queryAllReceivedHellos;
 + (NSDictionary *)qureyLastReceivedHello;
 
-#grama mark -
-#grama mark 储存所有看到过的用户信息
 +(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
 +(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
@@ -81,7 +85,7 @@
 +(NSMutableArray *)queryAttentionSections;
 +(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
 
-#grama mark 好友
+
 //是否存在这个联系人
 +(BOOL)ifHaveThisUser:(NSString *)userId;
 +(BOOL)ifFriendHaveNicknameAboutUser:(NSString *)userId;
@@ -102,20 +106,17 @@
 
 +(void)deleteAllHello;//清除打招呼列表
 
-#grama mark -
-#grama mark 动态
+
 +(void)saveMyNewsWithData:(NSDictionary*)dataDic;
 +(void)cleanMyNewsList;
 +(void)saveFriendsNewsWithData:(NSDictionary*)dataDic;
 +(void)cleanFriendsNewsList;
 
-#grama mark -
-#grama mark 好友推荐
+
 +(void)saveRecommendWithData:(NSDictionary*)dataDic;
 +(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userName;
 
-#grama mark -
-#grama mark 角色、头衔、战斗力消息
+
 +(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict;
 +(NSArray *)queryAllOtherMsg;
 +(void)cleanOtherMsg;

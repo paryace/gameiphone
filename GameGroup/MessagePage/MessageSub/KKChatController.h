@@ -68,13 +68,13 @@ EmojiViewDelegate>
     BOOL ifEmoji;
     
     UIButton * audioBtn;
-    //    UIButton * emojiBtn;
+    //UIButton * emojiBtn;
     UIButton * picBtn;
-    UIButton * audioRecordBtn;
+    //UIButton * audioRecordBtn;
     
-    NSTimeInterval beginTime;
+    //NSTimeInterval beginTime;
     UIButton * audioplayButton;
-    UIImageView *recordAnimationIV;
+    //UIImageView *recordAnimationIV;
     
     UIScrollView *m_EmojiScrollView;
     UIPageControl *m_Emojipc;

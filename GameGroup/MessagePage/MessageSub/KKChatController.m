@@ -128,9 +128,6 @@ UINavigationControllerDelegate>
                                qureyCommonMessagesWithUserID:self.chatWithUser
                                FetchOffset:0]];
     
-    
-    NSLog(@"从数据库中取出与 %@ 的聊天纪律:messages%@",self.chatWithUser, messages);
-    
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//告诉对方 消息已读
     
@@ -216,11 +213,7 @@ UINavigationControllerDelegate>
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     
-    //???????????
-//    btnLongTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self
-//                                                               action:@selector(btnLongTapAction:)];
-//    btnLongTap.minimumPressDuration = 1;
-    
+
     //清空此人所有的未读消息
     [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
     
@@ -249,7 +242,7 @@ UINavigationControllerDelegate>
     
 }
 
-#pragma mark ---TabView 显示方法
+#pragma mark - TabView
 //用message构建一条TabViewCell
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -493,8 +486,9 @@ UINavigationControllerDelegate>
                 kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
             }
             
-            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-15-10-25,
-                                                   padding*2-4,
+            cell.bgImageView.hidden = YES;
+            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+                                                   padding*2-15,
                                                    size.width,
                                                    size.height)];
             //cell.msgImageView.frame = cell.bgImageView.frame;
@@ -545,8 +539,9 @@ UINavigationControllerDelegate>
             //设置图片显示
             NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
             NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
-            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-15-15,
-                                                   padding*2-4,
+            cell.msgImageView.hidden = YES;
+            [cell.msgImageView setFrame:CGRectMake(padding-10+45,
+                                                   padding*2-15,
                                                    size.width,
                                                    size.height)];
             
@@ -717,6 +712,10 @@ UINavigationControllerDelegate>
     
     return height;
     
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return [messages count];
 }
 
 #pragma mark - Views
@@ -1119,7 +1118,7 @@ UINavigationControllerDelegate>
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
                 imagePicker.delegate = self;
-                imagePicker.allowsEditing = YES;
+                imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
@@ -1138,7 +1137,7 @@ UINavigationControllerDelegate>
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
                 imagePicker.delegate=self;
-                imagePicker.allowsEditing = YES;
+                imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -1161,21 +1160,10 @@ UINavigationControllerDelegate>
 }
 #pragma mark - 从相机或相册获取到图片
 
-//从相机中选取图片
+//选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
     
-    
-    
-}
-
-
-//从相册中选取图片
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-
-    
-    NSLog(@"%@",info);
-    
-    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+    UIImage * upImage = image;
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -1200,47 +1188,11 @@ UINavigationControllerDelegate>
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
-}
-
-//图片聊天上传图片
--(void)uploadImage:(UIImage*)image cellIndex:(int)index
-{
-    //开启进度条 - 在最后一个ＣＥＬＬ处。
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
-    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-    cell.progressView.hidden = NO;
     
-    [hud show:YES];
-    [NetManager uploadImage:image
-                 WithURLStr:BaseUploadImageUrl
-                  ImageName:@"1"
-              TheController:self
-                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                       double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-                       cell.progressView.progress = progress;
-                   }
-                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
-         cell.progressView.hidden = YES;
-         
-         NSString* uuid = KISDictionaryHaveKey(messages[index], @"messageuuid");
-         [self sendImageMsg:imageMsg UUID:uuid];    //改图片地址，并发送消息
-
-         
-     }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         cell.progressView.hidden = YES;
-         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                         message:@"发送图片失败请重新发送"
-                                                        delegate:nil
-                                               cancelButtonTitle:@"知道啦"
-                                               otherButtonTitles:nil];
-         [alert show];
-     }];
-
 }
+
+
+
 
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
@@ -1268,7 +1220,7 @@ UINavigationControllerDelegate>
                               forState:UIControlStateNormal];
         
         self.textView.hidden = NO;
-        audioRecordBtn.hidden = YES;
+        //audioRecordBtn.hidden = YES;
         [self showEmojiScrollView];
         
     }
@@ -1598,10 +1550,10 @@ UINavigationControllerDelegate>
 	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
     
     CGRect containerFrame = self.inPutView.frame;
-    containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
+    containerFrame.origin.y = self.view.frame.size.height - (h + containerFrame.size.height);
+    //containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	// animations settings
-    
-	
+	NSLog(@"inputView 初始位置 %f / %f",self.inPutView.frame.origin.x,self.inPutView.frame.origin.y);
 	// set views with new info
 	self.inPutView.frame = containerFrame;
     self.tView.frame = CGRectMake(0.0f,
@@ -1692,10 +1644,10 @@ UINavigationControllerDelegate>
                                               self.inPutView.frame.size.height-12-36,
                                               45,
                                               45)];
-    [audioBtn setFrame:CGRectMake(8,
-                                  self.inPutView.frame.size.height-12-27,
-                                  25,
-                                  27)];
+ //   [audioBtn setFrame:CGRectMake(8,
+//                                  self.inPutView.frame.size.height-12-27,
+//                                  25,
+//                                  27)];
 }
 
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
@@ -1867,9 +1819,7 @@ UINavigationControllerDelegate>
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [messages count];
-}
+
 
 
 
@@ -2510,6 +2460,54 @@ UINavigationControllerDelegate>
     self.kkChatControllerRefreshHeadView = header;
     
 }
+
+#pragma mark imagePickerControllerDelegate
+
+//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+//
+//}
+
+
+//图片聊天上传图片
+-(void)uploadImage:(UIImage*)image cellIndex:(int)index
+{
+    //开启进度条 - 在最后一个ＣＥＬＬ处。
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
+    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    cell.progressView.hidden = NO;
+    
+    [hud show:YES];
+    [NetManager uploadImage:image
+                 WithURLStr:BaseUploadImageUrl
+                  ImageName:@"1"
+              TheController:self
+                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+                       double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+                       cell.progressView.progress = progress;
+                   }
+                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
+         cell.progressView.hidden = YES;
+         
+         NSString* uuid = KISDictionaryHaveKey(messages[index], @"messageuuid");
+         [self sendImageMsg:imageMsg UUID:uuid];    //改图片地址，并发送消息
+         
+         
+     }
+                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
+     {
+         cell.progressView.hidden = YES;
+         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                         message:@"发送图片失败请重新发送"
+                                                        delegate:nil
+                                               cancelButtonTitle:@"知道啦"
+                                               otherButtonTitles:nil];
+         [alert show];
+     }];
+    
+}
+
 
 #pragma mark KKChatDelegate
 //点击他人的头像
