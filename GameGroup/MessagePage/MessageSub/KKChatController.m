@@ -487,7 +487,7 @@ UINavigationControllerDelegate>
             }
             
             cell.bgImageView.hidden = YES;
-            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,
+            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30+18,
                                                    padding*2-15,
                                                    size.width,
                                                    size.height)];
@@ -511,7 +511,7 @@ UINavigationControllerDelegate>
             [cell.msgImageView addGestureRecognizer:longPress];
             
             //刷新状态
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15+18,
                                                  (size.height+20)/2 + padding*2-15)
                               status:status];
         }
@@ -539,8 +539,8 @@ UINavigationControllerDelegate>
             //设置图片显示
             NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
             NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
-            cell.msgImageView.hidden = YES;
-            [cell.msgImageView setFrame:CGRectMake(padding-10+45,
+            cell.bgImageView.hidden = YES;
+            [cell.msgImageView setFrame:CGRectMake(padding-10+45+7,
                                                    padding*2-15,
                                                    size.width,
                                                    size.height)];
