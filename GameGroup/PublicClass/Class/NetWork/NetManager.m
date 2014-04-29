@@ -35,36 +35,36 @@ NSString * gen_uuid()
 
 //post请求，需自己设置失败提示
 +(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-    failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
+                 failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
 {
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:urlStr]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     [httpClient postPath:@"" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-            NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-            NSDictionary * dict = [receiveStr JSONValue];
-            NSLog(@"获得数据：%@", dict);
-            int status = [[dict objectForKey:@"errorcode"] intValue];
-            if (status==0) {
-                success(operation,[dict objectForKey:@"entity"]);
-            }
-            else
-            {
-                NSDictionary* failDic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"entity"), kFailMessageKey, KISDictionaryHaveKey(dict, @"errorcode"), kFailErrorCodeKey, nil];
+        
+        NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+        NSDictionary * dict = [receiveStr JSONValue];
+        NSLog(@"获得数据：%@", dict);
+        int status = [[dict objectForKey:@"errorcode"] intValue];
+        if (status==0) {
+            success(operation,[dict objectForKey:@"entity"]);
+        }
+        else
+        {
+            NSDictionary* failDic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"entity"), kFailMessageKey, KISDictionaryHaveKey(dict, @"errorcode"), kFailErrorCodeKey, nil];
+            
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"errorcode")] isEqualToString:@"100001"])
+            {//token无效
+                NSLog(@"token invalid");
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
                 
-                if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"errorcode")] isEqualToString:@"100001"])
-                {//token无效
-                    NSLog(@"token invalid");
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
-                   
-                    [self getTokenStatusMessage];
-                    [GameCommon loginOut];
-                }
-                failure(operation, failDic);
+                [self getTokenStatusMessage];
+                [GameCommon loginOut];
             }
+            failure(operation, failDic);
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-            failure(operation,error);
+        failure(operation,error);
         
     }];
 }
@@ -91,12 +91,12 @@ NSString * gen_uuid()
 }
 
 +(void)requestWithURLStrNoController:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                 failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
+                             failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
 {
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:urlStr]];
     [httpClient setParameterEncoding:AFFormURLParameterEncoding];
     [httpClient postPath:@"" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-    
+        
         NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSDictionary * dict = [receiveStr JSONValue];
         NSLog(@"获得数据：%@",dict);
@@ -107,7 +107,7 @@ NSString * gen_uuid()
         else
         {
             NSDictionary* failDic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"entity"), kFailMessageKey, KISDictionaryHaveKey(dict, @"errorcode"), kFailErrorCodeKey, nil];
-
+            
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"errorcode")] isEqualToString:@"100001"])
             {//token无效
                 [self getTokenStatusMessage];
@@ -119,7 +119,7 @@ NSString * gen_uuid()
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-            failure(operation,error);
+        failure(operation,error);
         
     }];
 }
@@ -152,60 +152,17 @@ NSString * gen_uuid()
     operation = [AFImageRequestOperation imageRequestOperationWithRequest:request imageProcessingBlock:nil success:success  failure:failure];
     
     [operation start];
-
-}
-
-#pragma mark 上传单张图片,压缩
-+(void)uploadImageWithCompres:(UIImage *)uploadImage
-                   WithURLStr:(NSString *)urlStr
-                    ImageName:(NSString *)imageName
-                TheController:(UIViewController *)controller
-                     Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    NSURL *url = [NSURL URLWithString:urlStr];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:uploadImage targetSizeX:100 targetSizeY:100];
-    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
-    NSData *imageData = UIImageJPEGRepresentation(upImage, 1);
-//    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"N",@"compressImage",@"N",@"addTopImage", nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"album",@"type",@"Y",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
-
-    NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
-    }];
     
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:block];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (controller) {
-            NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-            NSDictionary * dict = [receiveStr JSONValue];
-            int status = [[dict objectForKey:@"errorcode"] intValue];
-            if (status==0) {
-                success(operation,[dict objectForKey:@"entity"]);
-            }
-            else
-            {
-                failure(operation,nil);
-            }
-        
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(operation,error);
-    }];
-    [httpClient enqueueHTTPRequestOperation:operation];
 }
-
 #pragma mark 删除图片
 +(void)deleteImageWithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSURL *url = [NSURL URLWithString:[urlStr stringByAppendingString:imageName]];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:nil constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-//        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
+        //        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
     }];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -232,14 +189,14 @@ NSString * gen_uuid()
 }
 
 +(void)deleteImagesWithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     for (int i = 0; i<imageNameArray.count; i++) {
         [NetManager deleteImageWithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-                if (controller) {
-                    success(operation,nil);
-                }
+            
+            if (controller) {
+                success(operation,nil);
+            }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             if (controller) {
                 failure(operation,error);
@@ -250,40 +207,29 @@ NSString * gen_uuid()
 
 #pragma mark 上传注册时头像
 +(void)uploadImageWithRegister:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSURL *url = [NSURL URLWithString:urlStr];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
-    NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
-    //    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"OK",@"compressImage",@"N",@"addTopImage", nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"register", @"userid",@"album",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
-    
-    NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
-    }];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:block];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (controller) {
-            NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-            NSDictionary * dict = [receiveStr JSONValue];
-            int status = [[dict objectForKey:@"errorcode"] intValue];
-            if (status==0) {
-                success(operation,[dict objectForKey:@"entity"]);
-            }
-            else
-            {
-                failure(operation,nil);
-            }
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if (controller) {
-            failure(operation,error);
-        }
-    }];
-    [httpClient enqueueHTTPRequestOperation:operation];
+    AFHTTPClient *httpClient =  [NetManager getClient:urlStr];
+    NSData *imageData = [NetManager getImageDataCompressNor:uploadImage];
+    NSDictionary * dict =[NetManager getDict:@"register" imageType:@"album" compressImage:@"N" addTopImage:@"N"];
+    NSMutableURLRequest *request =[NetManager getRequest:httpClient Dict:dict ImageData:imageData ImageName:imageName];
+    [NetManager startUpload:httpClient Request:request TheController:controller Progress:block Success:success failure:failure];
+}
+
+
+#pragma mark 上传单张图片,压缩
++(void)uploadImageWithCompres:(UIImage *)uploadImage
+                   WithURLStr:(NSString *)urlStr
+                    ImageName:(NSString *)imageName
+                TheController:(UIViewController *)controller
+                     Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPClient *httpClient =  [NetManager getClient:urlStr];
+    NSData *imageData = [NetManager getImageDataCompress:uploadImage W:100 H:100];
+    NSDictionary * dict =[NetManager getDict:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] imageType:@"album" compressImage:@"N" addTopImage:@"N"];
+    NSMutableURLRequest *request =[NetManager getRequest:httpClient Dict:dict ImageData:imageData ImageName:imageName];
+    [NetManager startUpload:httpClient Request:request TheController:controller Progress:block Success:success failure:failure];
 }
 
 #pragma mark 上传单张图片,不压缩
@@ -299,24 +245,124 @@ NSString * gen_uuid()
         WithURLStr:(NSString *)urlStr
          ImageName:(NSString *)imageName
      TheController:(UIViewController *)controller
-          Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+          Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block
+           Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 
+{
+    AFHTTPClient *httpClient=[NetManager getClient:urlStr];
+    NSData *imageData = [NetManager getImageDataCompressNor:uploadImage];
+    NSDictionary * dict =[NetManager getDict:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] imageType:@"album" compressImage:@"N" addTopImage:@"N"];
+    NSLog(@"上传单张图片，参数表：%@",dict);
+    NSMutableURLRequest *request =[NetManager getRequest:httpClient Dict:dict ImageData:imageData ImageName:imageName];
+    [NetManager startUpload:httpClient Request:request TheController:controller Progress:block Success:success failure:failure];
+}
+
+#pragma mark 上传单张妹子图片
++(void)uploadGrilImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    
+    AFHTTPClient *httpClient=[NetManager getClient:urlStr];
+    NSData *imageData = [NetManager getImageDataCompressNor:uploadImage];
+    NSDictionary * dict =[NetManager getDict:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] imageType:@"girl" compressImage:@"N" addTopImage:@"N"];
+    NSLog(@"上传单张图片，参数表：%@",dict);
+    NSMutableURLRequest *request =[NetManager getRequest:httpClient Dict:dict ImageData:imageData ImageName:imageName];
+    [NetManager startUpload:httpClient Request:request TheController:controller Progress:block Success:success failure:failure];
+}
+#pragma mark 上传多张图片，压缩
++(void)uploadImagesWithCompres:(NSArray *)imageArray WithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
+    for (int i = 0; i<imageArray.count; i++) {
+        [NetManager uploadImageWithCompres:[imageArray objectAtIndex:i] WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSString *response = [GameCommon getNewStringWithId:responseObject];
+            [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];//图片id
+            if (reponseStrArray.count==imageArray.count) {
+                if (controller) {
+                    success(operation,reponseStrArray);
+                }
+                
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            if (controller) {
+                failure(operation,error);
+            }
+        }];
+    }
+}
+#pragma mark 上传多张图片，不压缩
++(void)uploadImages:(NSArray *)imageArray WithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
+            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
+    for (int i = 0; i<imageArray.count; i++) {
+        [NetManager uploadImage:[imageArray objectAtIndex:i] WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
+            [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];
+            if (reponseStrArray.count==imageArray.count) {
+                if (controller) {
+                    success(operation,reponseStrArray);
+                }
+                
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            if (controller) {
+                failure(operation,error);
+            }
+        }];
+    }
+}
+
+
+//没有压缩的图片
++(NSData *) getImageDataCompressNor:(UIImage *)uploadImage
+{
+    UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
+    return imageData;
+}
+
+//根据宽高压缩图片
++(NSData *) getImageDataCompress:(UIImage *)uploadImage W:(CGFloat)width H:(CGFloat)height
+{
+    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:uploadImage targetSizeX:width targetSizeY:height];
+    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(width, height)];
+    NSData *imageData = UIImageJPEGRepresentation(upImage, 1);
+    return imageData;
+}
+//AFHTTPClient
++(AFHTTPClient *) getClient:(NSString *)urlStr
 {
     NSURL *url = [NSURL URLWithString:urlStr];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
-    NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
-//    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:@"OK",@"compressImage",@"N",@"addTopImage", nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"album",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
-    NSLog(@"上传单张图片，参数表：%@",dict);
+    return httpClient;
+}
+
+//NSMutableURLRequest
++(NSMutableURLRequest *)getRequest:(AFHTTPClient *)httpClient Dict:(NSDictionary *)dict ImageData:(NSData *)imageData ImageName:(NSString *)imageName
+{
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
     }];
-    
+    return request;
+}
+//上传配置
++(NSDictionary *) getDict:(NSString *)userid imageType:(NSString *)imageType compressImage:(NSString *)compressImage addTopImage:(NSString *)addTopImage
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:userid,"userid",imageType,@"type",compressImage,@"compressImage",addTopImage,@"addTopImage", gen_uuid(), @"sn",nil];
+}
+
+//开始执行上传图片
++(void)startUpload:(AFHTTPClient *)httpClient Request:(NSMutableURLRequest *)request TheController:(UIViewController *)controller
+          Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block
+           Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setUploadProgressBlock:block];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
         if (controller) {
             NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
             NSDictionary * dict = [receiveStr JSONValue];
@@ -340,89 +386,8 @@ NSString * gen_uuid()
 }
 
 
-#pragma mark 上传单张妹子图片
-+(void)uploadGrilImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    NSURL *url = [NSURL URLWithString:urlStr];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    UIImage * a = [NetManager compressImage:uploadImage targetSizeX:640 targetSizeY:1136];
-    NSData *imageData = UIImageJPEGRepresentation(a, CompressionQuality);
-    NSDictionary * dict = [NSDictionary dictionaryWithObjectsAndKeys:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID], @"userid",@"girl",@"type",@"N",@"compressImage",@"N",@"addTopImage", gen_uuid(), @"sn",nil];
-    
-    NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"" parameters:dict constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-        [formData appendPartWithFileData:imageData name:@"file" fileName:imageName mimeType:@"image/jpeg"];
-    }];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:block];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (controller) {
-            NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-            NSDictionary * dict = [receiveStr JSONValue];
-            int status = [[dict objectForKey:@"errorcode"] intValue];
-            if (status==0) {
-                success(operation,[dict objectForKey:@"entity"]);
-            }
-            else
-            {
-                failure(operation,nil);
-            }
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if (controller) {
-            failure(operation,error);
-        }
-    }];
-    [httpClient enqueueHTTPRequestOperation:operation];
-}
-#pragma mark 上传多张图片，压缩
-+(void)uploadImagesWithCompres:(NSArray *)imageArray WithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
-    for (int i = 0; i<imageArray.count; i++) {
-        [NetManager uploadImageWithCompres:[imageArray objectAtIndex:i] WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSString *response = [GameCommon getNewStringWithId:responseObject];
-                [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];//图片id
-                if (reponseStrArray.count==imageArray.count) {
-                    if (controller) {
-                        success(operation,reponseStrArray);
-                    }
-            
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            if (controller) {
-                failure(operation,error);
-            }
-        }];
-    }
-}
-#pragma mark 上传多张图片，不压缩
-+(void)uploadImages:(NSArray *)imageArray WithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
-    for (int i = 0; i<imageArray.count; i++) {
-        [NetManager uploadImage:[imageArray objectAtIndex:i] WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
-            [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];
-            if (reponseStrArray.count==imageArray.count) {
-                if (controller) {
-                    success(operation,reponseStrArray);
-                }
-            
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            if (controller) {
-                failure(operation,error);
-            }
-        }];
-    }
-}
-
 +(void)uploadWaterMarkImages:(NSArray *)imageArray WithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
     for (int i = 0; i<imageArray.count; i++) {
@@ -443,7 +408,7 @@ NSString * gen_uuid()
     }
 }
 +(void)uploadWaterMarkImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSURL *url = [NSURL URLWithString:urlStr];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
@@ -512,6 +477,9 @@ NSString * gen_uuid()
     }];
     [operation start];;
 }
+
+
+
 //图片压缩 两个方法组合
 +(UIImage*)compressImageDownToPhoneScreenSize:(UIImage*)theImage targetSizeX:(CGFloat) sizeX targetSizeY:(CGFloat) sizeY
 {
@@ -534,7 +502,7 @@ NSString * gen_uuid()
             imgRatio = sizeY / actualHeight;
 			actualWidth = imgRatio * actualWidth;
 			actualHeight = sizeY;
-
+            
 		}
         
 	}
@@ -545,6 +513,8 @@ NSString * gen_uuid()
 	UIGraphicsEndImageContext();
 	return theImage;
 }
+
+//
 + (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize
 {
 	CGSize size = image.size;
