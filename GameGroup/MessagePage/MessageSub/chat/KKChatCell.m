@@ -80,7 +80,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-        [self.activityView stopAnimating];
+  //      [self.activityView stopAnimating];
     }
     else if([status isEqualToString:@"2"])//发送中
     {
@@ -102,7 +102,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-        [self.activityView stopAnimating];
+     //   [self.activityView stopAnimating];
         
         self.statusLabel.hidden = NO;
         self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -115,7 +115,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-        [self.activityView stopAnimating];
+  //     [self.activityView stopAnimating];
         
         self.statusLabel.hidden = NO;
         self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -123,13 +123,14 @@
     }
     else
     {
+        NSLog(@"意外中止转圈圈：@%",status);
         self.statusLabel.hidden = YES;
         self.failImage.hidden = YES;
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-        [self.activityView stopAnimating];
+     //   [self.activityView stopAnimating];
     }
 }
 

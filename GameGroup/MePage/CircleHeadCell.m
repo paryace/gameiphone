@@ -9,17 +9,13 @@
 #import "CircleHeadCell.h"
 #import "FinderView.h"
 #import "ImgCollCell.h"
-bool str_endwith(const char* str, const char c)
-{
-    return *(str + strlen(str) - 1) == c;
-}
 @implementation CircleHeadCell
-{
-}
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        
+        
          self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
     
@@ -49,7 +45,7 @@ bool str_endwith(const char* str, const char c)
         [self.shareView addSubview:self.shareImgView];
         
         self.contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 5, 190, 40)];
-        self.contentLabel.font = [UIFont systemFontOfSize:10];
+        self.contentLabel.font = [UIFont systemFontOfSize:12];
         self.contentLabel.numberOfLines = 2;
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.shareView addSubview:self.contentLabel];
@@ -59,6 +55,7 @@ bool str_endwith(const char* str, const char c)
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
         [self.openBtn setBackgroundImage:KUIImage(@"add_click") forState:UIControlStateNormal];
         [self.openBtn addTarget:self action:@selector(openBtnList:) forControlEvents:UIControlEventTouchUpInside];
+        self.openBtn.tag =self.tag;
         [self.contentView addSubview:self.openBtn];
         
         self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(85, 60, 190, 42)];
@@ -138,6 +135,8 @@ bool str_endwith(const char* str, const char c)
         self.commentTabelView.delegate = self;
         self.commentTabelView.dataSource = self;
         self.commentTabelView.bounces = NO;
+        self.commentTabelView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.commentTabelView.scrollEnabled = NO;
         [self.contentView addSubview:self.commentTabelView];
         
     }
@@ -186,10 +185,19 @@ bool str_endwith(const char* str, const char c)
     }
     cell.tag = indexPath.row;
     NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    cell.nicknameLabel.text =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    cell.commentContLabel.text = KISDictionaryHaveKey(dict, @"comment");
-    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
-    cell.commentStr = KISDictionaryHaveKey(dict, @"comment");
+    
+    
+    //判断是否是恢复某人的评论
+    if ([[dict allKeys]containsObject:@"destUser"]) {
+        cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
+
+    }else{
+        cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
+
+    }
+    cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
+    cell.commentContLabel.text =cell.commentStr;
+
     [cell  refreshCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     return cell;
@@ -204,7 +212,15 @@ bool str_endwith(const char* str, const char c)
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
-    CGSize  size = [CommentCell getcommentHeigthWithNIckNameStr:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") Commentstr:KISDictionaryHaveKey(dic, @"comment")];
+    NSString *str;
+    if ([[dic allKeys]containsObject:@"destUser"]) {
+        str =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname")];
+    }else{
+        str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
+    }
+
+    CGSize  size = [CommentCell getcommentNickNameHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
+    
     return size.height+5;
 }
 
@@ -213,12 +229,23 @@ bool str_endwith(const char* str, const char c)
 -(void)openBtnList:(UIButton *)sender
 {
     if (self.menuImageView.hidden==YES) {
+//        if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(hiddenOrShowMenuImageViewWithCell:)]) {
+//            [self.myCellDelegate hiddenOrShowMenuImageViewWithCell:self];
+//        }
+        
         self.menuImageView.hidden =NO;
         [self.contentView bringSubviewToFront:self.menuImageView];
         self.menuImageView.frame = CGRectMake(80, sender.frame.origin.y, 190, 42);
-        [self becomeFirstResponder];
+        [self.contentView  becomeFirstResponder];
     }else
+    {
     self.menuImageView.hidden =YES;
+    }
+}
+
+-(void)hidenMenuView:(UIGestureRecognizer *)sender
+{
+    self.menuImageView.hidden = YES;
 }
 
 -(void)pinglunAndZan:(UIButton *)sender
@@ -244,6 +271,7 @@ bool str_endwith(const char* str, const char c)
 {
     // Initialization code
 }
+
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {

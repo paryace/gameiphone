@@ -337,8 +337,9 @@
 {
     [hud show:YES];
     if (waitingUploadImgArray.count>0) {
-        
-        [self uploadImages:waitingUploadImgArray WithURLStr:BaseUploadImageUrl view:self.view ImageName:waitingUploadStrArray TheController:self   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+        [self uploadImages:waitingUploadImgArray WithURLStr:BaseUploadImageUrl view:self.view ImageName:waitingUploadStrArray TheController:self   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+           // hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picPage+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
+        } Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
             [hud hide:YES];
             
             NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
@@ -351,11 +352,11 @@
             }
             self.headImgArray = a1;
             [self refreshMyInfo];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        }
+                   failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             [hud hide:YES];
             [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
         }];
-        
     }
     else//只是修改顺序
         [self refreshMyInfo];
@@ -364,15 +365,23 @@
 -(void)uploadImages:(NSArray *)imageArray WithURLStr:(NSString *)urlStr view:(UIView*)view ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSMutableDictionary * reponseStrArray = [NSMutableDictionary dictionary];
+   // picPage ＝ 0;
+    NSMutableDictionary * reponseStrArray = [[NSMutableDictionary dictionary] init];
     for (int i = 0; i<imageArray.count; i++) {
-       
-        [NetManager uploadImage:[imageArray objectAtIndex:i] WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i] TheController:controller Progress:block Success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [NetManager uploadImage:[imageArray objectAtIndex:i]
+                     WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i]
+                  TheController:controller
+                       Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+                           double progressPercent = ((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100;
+                           hud.labelText = [NSString stringWithFormat:@"照片上传中 %.2f％", progressPercent];
+                       }
+                        Success:^(AFHTTPRequestOperation *operation, id responseObject) {
             
             NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
             [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];
-            
-            picPage =reponseStrArray.count;
+          //  picPage = picPage + 1;
+            //                NSLog(@"%d - %d",picPage, pageindex);
+            //picPage =reponseStrArray.count;
             
             if (reponseStrArray.count==imageArray.count) {
                 if (controller) {
@@ -384,45 +393,10 @@
             if (controller) {
                 failure(operation,error);
             }
+
         }];
     }
 }
-
-/*
-
--(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
-{
-    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-        hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-    }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
-        [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:picIndex]];
-        if (reponseStrArray.count != imageArray.count) {
-            NSLog(@"aaaaaaaaa");
-            [self publishOnePicture:(picIndex+1) image:imageArray imageName:imageNameArray reponseStrDic:reponseStrArray];
-        }
-        else
-        {
-            [hud hide:YES];
-            
-            NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-            for (NSString*a in reponseStrArray) {
-                for (int i = 0;i<a1.count;i++) {
-                    if ([[a1 objectAtIndex:i] isEqualToString:a]) {
-                        [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
-                    }
-                }
-            }
-                self.headImgArray = a1;
-             [self refreshMyInfo];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [hud hide:YES];
-        [self showAlertViewWithTitle:@"提示" message:@"上传图片失败" buttonTitle:@"确定"];
-    }];
-}
-
-*/
 
 - (void)refreshMyInfo//更新个人头像数据
 {

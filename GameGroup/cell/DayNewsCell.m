@@ -72,7 +72,7 @@
         self.authorLabel.textAlignment = NSTextAlignmentRight;
         [bgauthView addSubview:self.authorLabel];
         
-        self.NumLabel =[FinderView setLabelWithFrame:CGRectMake(20, 280, 57, 55) backgroundColor:[UIColor clearColor] textColor:UIColorFromRGBA(0x5aacf0, 1) font:[UIFont fontWithName:@"汉仪菱心体简" size:60]];
+        self.NumLabel =[FinderView setLabelWithFrame:CGRectMake(20, 280, 60, 55) backgroundColor:[UIColor clearColor] textColor:UIColorFromRGBA(0x5aacf0, 1) font:[UIFont fontWithName:@"汉仪菱心体简" size:60]];
         self.NumLabel.textAlignment = NSTextAlignmentCenter;
         [self.topImageView addSubview:self.NumLabel];
         

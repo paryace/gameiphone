@@ -108,7 +108,12 @@
 - (void)refreshCell
 {
     CGSize size = [MyCircleCell getContentHeigthWithStr:self.commentStr];
-    self.titleLabel.frame = CGRectMake(80, 5, 225, size.height);
+    if (size.height<40) {
+        self.titleLabel.frame = CGRectMake(80, 5, 225,size.height);
+    }else{
+        self.titleLabel.frame = CGRectMake(80, 5, 225,40);
+    }
+    self.titleLabel.center = CGPointMake(self.titleLabel.center.x, self.center.y);
 }
 
 - (void)awakeFromNib

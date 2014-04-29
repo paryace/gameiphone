@@ -10,12 +10,11 @@
 
 
 @interface CommentCell : UITableViewCell
-@property(nonatomic,strong)UILabel *nicknameLabel;
+//@property(nonatomic,strong)UILabel *nicknameLabel;
 @property(nonatomic,strong)UILabel *commentContLabel;
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,copy)NSString *comNickNameStr;
 -(void)refreshCell;
-+ (CGSize)getcommentHeigthWithNIckNameStr:(NSString*)contStr Commentstr:(NSString *)str;
 + (CGSize)getcommentNickNameHeigthWithStr:(NSString*)contStr;
 @end
 
