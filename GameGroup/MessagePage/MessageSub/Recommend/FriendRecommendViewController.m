@@ -197,6 +197,7 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
     [paramDict setObject:KISDictionaryHaveKey(tempDic, @"userid")forKey:@"frienduserid"];
+    [paramDict setObject:KISDictionaryHaveKey(tempDic, @"recommendReason") forKey:@"recommendReason"];
     if ([KISDictionaryHaveKey(tempDic, @"type") isEqualToString:@"1"]) {
         [paramDict setObject:@"5" forKey:@"type"];
     }
