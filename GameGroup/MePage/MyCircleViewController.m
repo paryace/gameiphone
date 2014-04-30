@@ -173,28 +173,36 @@
     cell.monthLabel.text = [self getDataWithTimeInterval:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
     }
 
+    
     NSArray* arr = [KISDictionaryHaveKey(dic, @"img") componentsSeparatedByString:@","];
+    if (([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "])&&arr.count>1) {
+        [(NSMutableArray*)arr removeLastObject];
+    }
 
     if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
         cell.imgCountLabel.hidden = YES;
         cell.thumbImageView.hidden =YES;
         cell.commentStr = KISDictionaryHaveKey(dic, @"msg");
-        [cell refreshCell];
+      //  [cell refreshCell];
+
+            cell.titleLabel.frame = CGRectMake(80, 5, 225,40);
 
         //cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.center.y);
         cell.titleLabel.font = [UIFont systemFontOfSize:13];
         cell.titleLabel.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+        cell.titleLabel.text = KISDictionaryHaveKey(dic, @"msg");
+
         cell.titleLabel.numberOfLines = 2;
         
     }else{
-        if ([[arr lastObject]isEqualToString:@""]||[[arr lastObject]isEqualToString:@" "]) {
-            [(NSMutableArray*)arr removeLastObject];
-        }
+        
         cell.imgCountLabel.hidden = NO;
         cell.thumbImageView.hidden =NO;
     //    cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.titleLabel.center.y);
         cell.titleLabel.frame = CGRectMake(155, 0, 155, 70);
         cell.titleLabel.font = [UIFont systemFontOfSize:12];
+        cell.titleLabel.text = KISDictionaryHaveKey(dic, @"msg");
+
         cell.titleLabel.backgroundColor = [UIColor clearColor];
         cell.titleLabel.numberOfLines = 3;
     }
@@ -204,7 +212,6 @@
     cell.thumbImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")] width:140 hieght:140 a:140 ]];
     
    // [cell getImageWithCount:KISDictionaryHaveKey(dic, @"img")];
-    cell.titleLabel.text = KISDictionaryHaveKey(dic, @"msg");
     return cell;
 }
 

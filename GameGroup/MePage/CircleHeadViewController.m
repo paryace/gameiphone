@@ -176,7 +176,6 @@
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor clearColor];
-
     
     UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -186,15 +185,20 @@
     
     UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
     UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-    UIImageView *imageView1 = [[UIImageView alloc] initWithImage:background];
-    imageView1.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
-    imageView1.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+    imageView.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
     // view hierachy
-    [inPutView addSubview:imageView1];
+    [inPutView addSubview:imageView];
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
+    
+    
+    
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [button setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
     [button setTitle:@"评论" forState:UIControlStateNormal];
@@ -683,6 +687,7 @@
     self.textView.placeholder= nil;
 
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
+    m_myTableView.contentOffset =CGPointMake(0, myCell.tag-100*myCell.bounds.size.height);
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
@@ -698,6 +703,24 @@
     NSDictionary *dic= [m_dataArray objectAtIndex:myCell.tag-100];
     [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id")];
     myCell.menuImageView.hidden = YES;
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    [commentUser setObject:@"" forKey:@"img"];
+    [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
+    [commentUser setObject:@"0" forKey:@"superstar"];
+    [commentUser setObject:@"" forKey:@"userid"];
+    [commentUser setObject:@"" forKey:@"username"];
+    
+    
+    for (NSDictionary *dic in m_dataArray) {
+        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
+            [arr addObject:commentUser];
+            int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
+            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
+        }
+    }
+    [m_myTableView reloadData];
+
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
 
     [m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
@@ -710,8 +733,28 @@
 {
     NSLog(@"commentView-->%@",self.textView.text);
  
-    [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text];
     
+    //离线评论
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    [commentUser setObject:@"" forKey:@"img"];
+    [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
+    [commentUser setObject:@"0" forKey:@"superstar"];
+    [commentUser setObject:@"" forKey:@"userid"];
+    [commentUser setObject:@"" forKey:@"username"];
+    
+    NSDictionary *dict =[ NSDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser", nil];
+    
+    for (NSDictionary *dic in m_dataArray) {
+        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
+            [arr insertObject:dict atIndex:0];
+            int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
+            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+        }
+    }
+    [m_myTableView reloadData];
+    [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text];
+
     commentMsgId =nil;
     destuserId = nil;
     destMsgId = nil;
@@ -723,6 +766,10 @@
     NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag-100];
     
     NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
+    if ( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:@""]) {
+        return;
+    }
+    
     if( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
         act.tag = row;
@@ -993,9 +1040,10 @@
 #pragma mark 输入
 #pragma mark HPExpandingTextView delegate
 //改变键盘高度
+//改变键盘高度
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
-    float diff = (growingTextView.frame.size.height);
+    float diff = (growingTextView.frame.size.height - height);
     
 	CGRect r = inPutView.frame;
     r.size.height -= diff;
