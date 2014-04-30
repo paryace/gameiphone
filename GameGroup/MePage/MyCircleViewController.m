@@ -70,7 +70,7 @@
     
     headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:80 hieght:80 a:80]];
+    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:80 hieght:80 a:@"80"]];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
 
@@ -209,7 +209,7 @@
 
     cell.imgCountLabel.text = [NSString stringWithFormat:@"(共%d张)",arr.count];
     
-    cell.thumbImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")] width:140 hieght:140 a:140 ]];
+    cell.thumbImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")] width:140 hieght:140 a:@"140"]];
     
    // [cell getImageWithCount:KISDictionaryHaveKey(dic, @"img")];
     return cell;

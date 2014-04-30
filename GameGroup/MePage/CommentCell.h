@@ -14,7 +14,7 @@
 @property(nonatomic,strong)UILabel *commentContLabel;
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,copy)NSString *comNickNameStr;
--(void)refreshCell;
+-(void)refreshsCell;
 + (CGSize)getcommentNickNameHeigthWithStr:(NSString*)contStr;
 @end
 

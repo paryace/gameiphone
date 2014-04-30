@@ -20,7 +20,8 @@ CircleHeadDelegate,
 UITextViewDelegate,
 HPGrowingTextViewDelegate,
 UIActionSheetDelegate,
-UIScrollViewDelegate
+UIScrollViewDelegate,
+EGOImageViewDelegate
 >
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;

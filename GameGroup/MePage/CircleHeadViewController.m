@@ -207,8 +207,6 @@
     button.frame = CGRectMake(260, 7, 50, 35);
     [inPutView bringSubviewToFront:button];
     [inPutView addSubview:button];
-
-
 }
 
 
@@ -353,22 +351,52 @@
             }
 
             cell.collArray = [imgStr componentsSeparatedByString:@","];
+            
             if ([[cell.collArray lastObject]isEqualToString:@""]||[[cell.collArray lastObject]isEqualToString:@" "]) {
                 [(NSMutableArray*)cell.collArray removeLastObject];
             }
- 
-            cell.customPhotoCollectionView.hidden =NO;
-            int i = (cell.collArray.count-1)/3;
-            cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 240, i*80+80) ;
-            CGFloat paddingY = 7;
-            CGFloat paddingX = 7;
-            cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
+            
+            if (cell.collArray.count<2&&cell.collArray.count>0) {
+                cell.customPhotoCollectionView.hidden =YES;
+                cell.oneImageView.hidden = NO;
+                
+                
+                
+                cell.oneImageView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[cell.collArray objectAtIndex:0] width:180 hieght:60 a:@"180/120"]];
+                cell.oneImageView.delegate = self;
+                
+                
+                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
+                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[[cell.collArray objectAtIndex:0] stringByAppendingString:[GameCommon getHeardImgId:[cell.collArray objectAtIndex:0]]]]];
+                [cell.contentView addSubview:imageView];
+                
+                
+                if (imageView.image==nil) {
+                    cell.oneImageView.frame = CGRectMake(60, m_currmagY,180 ,100);
+                    m_currmagY +=100;
+                }else{
+                    cell.oneImageView.frame = CGRectMake(60, m_currmagY, 180, imageView.image.size.width/imageView.image.size.height*180);
+                    m_currmagY +=imageView.image.size.width/imageView.image.size.height*180;
+                }
+                [imageView removeFromSuperview];
+            }
+            else
+            {
+                cell.oneImageView.hidden =YES;
+                cell.oneImageView.imageURL  =nil;
+                cell.oneImageView.backgroundColor = [UIColor redColor];
+                cell.customPhotoCollectionView.hidden = NO;
+                int i = (cell.collArray.count-1)/3;
+                cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 240, i*80+80) ;
+                CGFloat paddingY = 7;
+                CGFloat paddingX = 7;
+                cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
+                cell.layout.minimumLineSpacing = paddingY;
+                m_currmagY += i*80+80;
+
+            }
             
             [cell.customPhotoCollectionView reloadData];
-            // 4.设置每一行之间的间距
-            cell.layout.minimumLineSpacing = paddingY;
-            m_currmagY += i*80+80;
-            
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(250,m_currmagY, 50, 40);
             m_currmagY+=40;
@@ -379,6 +407,8 @@
         cell.shareView.hidden = NO;
         cell.contentLabel.hidden = NO;
         cell.shareImgView.hidden = NO;
+        cell.oneImageView.hidden =YES;
+        cell.oneImageView.imageURL = nil;
         cell.customPhotoCollectionView.hidden =YES;
         CGSize size1 = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
         cell.titleLabel.frame = CGRectMake(60, 30, 250, size1.height);
@@ -392,7 +422,7 @@
         tapGe.view.tag = indexPath.row;
         
         
-        cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:80]];
+        cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:@"80"]];
         m_currmagY  = size1.height+85;
         cell.timeLabel.frame = CGRectMake(60,size1.height+80, 120, 30);
         cell.openBtn.frame = CGRectMake(250,size1.height+80, 50, 40);
@@ -413,10 +443,8 @@
         }else
         cell.zanNameLabel.text = KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
         m_currmagY +=cell.zanView.frame.size.height;
-
     }else{
         cell.zanView.hidden = YES;
-       // [cell.zanView removeFromSuperview];
     }
     
     // 评论
@@ -439,7 +467,7 @@
         }
     }
     //评论列表的frame
-    cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght+commentArray.count*5);
+    cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght);
     [cell.commentTabelView reloadData];
     return cell;
 }
@@ -496,7 +524,14 @@
         else
         {
             if (imgArray.count==1) {
-                currnetY +=80;
+                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
+                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[KISDictionaryHaveKey(dict, @"img") stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]]];
+                
+                if (imageView.image ==nil) {
+                    currnetY +=100;
+                }else{
+                    currnetY +=imageView.image.size.height*180/imageView.image.size.width;
+                }
             }
             else if(imgArray.count>1&&imgArray.count<4){
                 currnetY+=80;
@@ -656,8 +691,6 @@
     double theCurrentT = [curStr doubleValue];
     double theMessageT = [mesStr doubleValue];
     
-    NSLog(@"%f--%f",theCurrentT,theMessageT);
-    NSLog(@"++%f",theCurrentT-theMessageT);
     if (((int)(theCurrentT-theMessageT))<60) {
         return @"1分钟以前";
     }
@@ -687,7 +720,7 @@
     self.textView.placeholder= nil;
 
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
-    m_myTableView.contentOffset =CGPointMake(0, myCell.tag-100*myCell.bounds.size.height);
+    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
@@ -1070,5 +1103,11 @@
     return YES;
 }
 
+//- (void)imageViewLoadedImage:(EGOImageView*)imageView
+//{
+//    CGSize size = imageView.image.size;
+//    imageView.frame = CGRectMake(60, imageView.bounds.origin.y, 180,180*size.height/size.width );
+//    
+//}
 
 @end

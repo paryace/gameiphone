@@ -33,7 +33,7 @@
     return size1;
 }
 
--(void)refreshCell
+-(void)refreshsCell
 {
     CGSize size1 =[CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@",self.commentStr]];
 //    CGSize size2 = [CommentCell getcommentHeigthWithNIckNameStr:self.comNickNameStr Commentstr:self.commentStr];

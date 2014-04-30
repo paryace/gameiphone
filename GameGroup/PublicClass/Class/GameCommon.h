@@ -19,7 +19,7 @@
 
 + (NSString*)getNewStringWithId:(id)oldString;//剔除json里的空格字段
 
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(int)a;//测试 用于切图
++(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString *)a;//测试 用于切图
 
 
 + (GameCommon*)shareGameCommon;

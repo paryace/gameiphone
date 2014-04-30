@@ -133,7 +133,7 @@
     cell.selectionStyle =UITableViewCellSelectionStyleNone;
     NSDictionary *dict = [dataArray objectAtIndex:indexPath.row];
     
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")] width:80 hieght:80 a:80]];
+    cell.headImgBtn.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")] width:80 hieght:80 a:@"80"]];
     [cell.headImgBtn addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
     cell.headImgBtn.tag = indexPath.row;
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");

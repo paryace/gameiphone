@@ -34,7 +34,7 @@
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
-        self.timeLabel.textColor =kColorWithRGB(41, 164, 246, 1.0);
+        self.timeLabel.textColor =[UIColor grayColor];
         [self.contentView addSubview:self.timeLabel];
         
         self.shareView = [[UIView alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
@@ -50,45 +50,24 @@
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.shareView addSubview:self.contentLabel];
      
-        
-        self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.openBtn.frame = CGRectMake(270, 60, 50, 30);
-        [self.openBtn setBackgroundImage:KUIImage(@"add_click") forState:UIControlStateNormal];
-        [self.openBtn addTarget:self action:@selector(openBtnList:) forControlEvents:UIControlEventTouchUpInside];
-        self.openBtn.tag =self.tag;
-        [self.contentView addSubview:self.openBtn];
-        
-        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(85, 60, 190, 42)];
-        self.menuImageView.image = KUIImage(@"bgImg");
-        self.menuImageView.userInteractionEnabled = YES;
-        self.menuImageView.hidden = YES;
-        [self.contentView addSubview:self.menuImageView];
+       self.oneImageView  = [[EGOImageView alloc]initWithFrame:CGRectMake(60, 100, 100, 100)];
+        self.oneImageView.hidden = YES;
+        self.oneImageView.delegate = self;
+        [self.contentView addSubview:self.oneImageView];
         
         CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
         self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
         
-
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         self.layout.minimumInteritemSpacing = 1;
         self.layout.minimumLineSpacing = 1;
         //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
-        if (self.collArray.count==1) {
-            self.layout.itemSize = CGSizeMake(250, 180);
-        }
-        else if(self.collArray.count==2)
-        {
-            self.layout.itemSize = CGSizeMake(110, 100);
-        }
-        else
-        {
-            self.layout.itemSize = CGSizeMake(70, 70);
-        }
 
         // 3.设置整个collectionView的内边距
        
        // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
-        
+        self.layout.itemSize = CGSizeMake(70, 70);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
         self.customPhotoCollectionView.scrollEnabled = NO;
@@ -99,17 +78,6 @@
         [self addSubview:self.customPhotoCollectionView];
         
         
-        NSArray *array = [NSArray arrayWithObjects:@"zan_circle_normal",@"pinglun_circle_normal", nil];
-        NSArray *array1 = [NSArray arrayWithObjects:@"zan_circle_click",@"pinglun_circle_click", nil];
-        for (int i =0; i<2; i++) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.frame = CGRectMake(5+92*i, 5, 87, 32);
-            [button setBackgroundImage:KUIImage([array objectAtIndex:i]) forState:UIControlStateNormal];
-            [button setBackgroundImage:KUIImage([array1 objectAtIndex:i]) forState:UIControlStateHighlighted];
-            [button addTarget:self action:@selector(pinglunAndZan:) forControlEvents:UIControlEventTouchUpInside];
-            button.tag = 100+i;
-            [self.menuImageView addSubview:button];
-        }
         
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
         self.zanView.image = KUIImage(@"zanAndCommentBg");
@@ -139,6 +107,34 @@
         self.commentTabelView.scrollEnabled = NO;
         [self.contentView addSubview:self.commentTabelView];
         
+        self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.openBtn.frame = CGRectMake(270, 60, 50, 30);
+        [self.openBtn setBackgroundImage:KUIImage(@"add_click") forState:UIControlStateNormal];
+        [self.openBtn addTarget:self action:@selector(openBtnList:) forControlEvents:UIControlEventTouchUpInside];
+        self.openBtn.tag =self.tag;
+        [self.contentView addSubview:self.openBtn];
+        
+        
+        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(85, 60, 190, 42)];
+        self.menuImageView.image = KUIImage(@"bgImg");
+        self.menuImageView.userInteractionEnabled = YES;
+        self.menuImageView.hidden = YES;
+        [self.contentView addSubview:self.menuImageView];
+
+        NSArray *array = [NSArray arrayWithObjects:@"zan_circle_normal",@"pinglun_circle_normal", nil];
+        NSArray *array1 = [NSArray arrayWithObjects:@"zan_circle_click",@"pinglun_circle_click", nil];
+        for (int i =0; i<2; i++) {
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.frame = CGRectMake(5+92*i, 5, 87, 32);
+            [button setBackgroundImage:KUIImage([array objectAtIndex:i]) forState:UIControlStateNormal];
+            [button setBackgroundImage:KUIImage([array1 objectAtIndex:i]) forState:UIControlStateHighlighted];
+            [button addTarget:self action:@selector(pinglunAndZan:) forControlEvents:UIControlEventTouchUpInside];
+            button.tag = 100+i;
+            [self.menuImageView addSubview:button];
+        }
+
+        
+        
     }
     return self;
 }
@@ -158,7 +154,7 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:140];
+    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:@"140/140"];
     NSURL *urls;
     urls = [NSURL URLWithString:address];
     cell.imageView.imageURL =urls;
@@ -198,7 +194,7 @@
     cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
     cell.commentContLabel.text =cell.commentStr;
 
-    [cell  refreshCell];
+    [cell  refreshsCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     return cell;
 }
@@ -235,7 +231,7 @@
         
         self.menuImageView.hidden =NO;
         [self.contentView bringSubviewToFront:self.menuImageView];
-        self.menuImageView.frame = CGRectMake(80, sender.frame.origin.y, 190, 42);
+        self.menuImageView.frame = CGRectMake(80, sender.frame.origin.y-14, 190, 42);
         [self.contentView  becomeFirstResponder];
     }else
     {

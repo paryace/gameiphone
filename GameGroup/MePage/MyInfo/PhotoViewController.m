@@ -91,12 +91,10 @@
                 [self imageViewLoadedImage:imageV]; //读取图片
             }
             else
-                imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];//            self.viewPhoto.imageURL = [NSURL URLWithString:url];
-        
+                imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];
             }
         else{
             imageV.imageURL = [NSURL URLWithString:self.imgIDArray[i]];
-
         }
         
         [self imageScrollViewStyleByImage:imageV scollView:subSC];  //调整ScorllView样式
@@ -105,7 +103,6 @@
 
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPress:)];
         [imageV addGestureRecognizer:longPress];
-        
     }
 }
 

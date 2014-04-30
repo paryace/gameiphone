@@ -13,7 +13,7 @@
 
 @protocol CircleHeadDelegate;
 
-@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource,UITableViewDataSource,UITableViewDelegate>
+@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource,UITableViewDataSource,UITableViewDelegate,EGOImageViewDelegate>
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
 @property(nonatomic,strong)UILabel *nickNameLabel;
 @property(nonatomic,strong)UILabel *titleLabel;
@@ -35,7 +35,7 @@
 @property(nonatomic,strong)NSArray *collArray;
 @property(nonatomic,strong)NSArray *commentArray;
 @property(nonatomic,strong)NSArray *zanArray;
-
+@property(nonatomic,strong)EGOImageView *oneImageView;
 @property(nonatomic,strong)UITableView *commentTabelView;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 - (void)refreshCell:(NSInteger)hieght;

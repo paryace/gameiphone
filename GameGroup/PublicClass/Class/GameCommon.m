@@ -536,7 +536,7 @@ static GameCommon *my_gameCommon = NULL;
     return BaseImageUrl;
 }
 
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(int)a
++(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString*)a
 {
     unichar c;
     for (int i=0; i<imgStr.length; i++) {
@@ -545,7 +545,7 @@ static GameCommon *my_gameCommon = NULL;
             return [NSString stringWithFormat:@"%@%@?w=%d&h=%d",NewBaseImageUrl,imgStr,width,hieght];
         }
     }
-    return [NSString stringWithFormat:@"%@%@/%d",BaseImageUrl,imgStr,a];
+    return [NSString stringWithFormat:@"%@%@/%@",BaseImageUrl,imgStr,a];
 }
 
 
