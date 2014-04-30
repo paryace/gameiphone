@@ -37,6 +37,12 @@
         self.timeLabel.textColor =[UIColor grayColor];
         [self.contentView addSubview:self.timeLabel];
         
+        self.delBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 50, 30)];
+        [self.delBtn setTitle:@"删除" forState:UIControlStateNormal];
+        [self.delBtn setTitleColor: UIColorFromRGBA(0xf0f1f3, 1) forState:UIControlStateNormal];
+        [self.contentView addSubview:self.delBtn];
+        
+        
         self.shareView = [[UIView alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self addSubview:self.shareView];
@@ -119,7 +125,7 @@
         self.menuImageView.image = KUIImage(@"bgImg");
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
-        [self.contentView addSubview:self.menuImageView];
+        [self addSubview:self.menuImageView];
 
         NSArray *array = [NSArray arrayWithObjects:@"zan_circle_normal",@"pinglun_circle_normal", nil];
         NSArray *array1 = [NSArray arrayWithObjects:@"zan_circle_click",@"pinglun_circle_click", nil];

@@ -37,6 +37,10 @@
 @property(nonatomic,strong)NSArray *zanArray;
 @property(nonatomic,strong)EGOImageView *oneImageView;
 @property(nonatomic,strong)UITableView *commentTabelView;
+@property(nonatomic,strong)UIButton *delBtn;
+
+
+
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 - (void)refreshCell:(NSInteger)hieght;
 @end

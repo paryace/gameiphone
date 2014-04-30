@@ -356,32 +356,29 @@
                 [(NSMutableArray*)cell.collArray removeLastObject];
             }
             
-            if (cell.collArray.count<2&&cell.collArray.count>0) {
-                cell.customPhotoCollectionView.hidden =YES;
-                cell.oneImageView.hidden = NO;
-                
-                
-                
-                cell.oneImageView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[cell.collArray objectAtIndex:0] width:180 hieght:60 a:@"180/120"]];
-                cell.oneImageView.delegate = self;
-                
-                
-                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
-                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[[cell.collArray objectAtIndex:0] stringByAppendingString:[GameCommon getHeardImgId:[cell.collArray objectAtIndex:0]]]]];
-                [cell.contentView addSubview:imageView];
-                
-                
-                if (imageView.image==nil) {
-                    cell.oneImageView.frame = CGRectMake(60, m_currmagY,180 ,100);
-                    m_currmagY +=100;
-                }else{
-                    cell.oneImageView.frame = CGRectMake(60, m_currmagY, 180, imageView.image.size.width/imageView.image.size.height*180);
-                    m_currmagY +=imageView.image.size.width/imageView.image.size.height*180;
-                }
-                [imageView removeFromSuperview];
-            }
-            else
-            {
+//            if (cell.collArray.count<2&&cell.collArray.count>0) {
+//                cell.customPhotoCollectionView.hidden =YES;
+//                cell.oneImageView.hidden = NO;
+//                
+//                cell.oneImageView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[cell.collArray objectAtIndex:0] width:180 hieght:60 a:@"180/120"]];
+//                cell.oneImageView.delegate = self;
+//                
+//                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
+//                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[[cell.collArray objectAtIndex:0] stringByAppendingString:[GameCommon getHeardImgId:[cell.collArray objectAtIndex:0]]]]];
+//                [cell.contentView addSubview:imageView];
+//                
+//                
+//                if (imageView.image==nil) {
+//                    cell.oneImageView.frame = CGRectMake(60, m_currmagY,180 ,100);
+//                    m_currmagY +=100;
+//                }else{
+//                    cell.oneImageView.frame = CGRectMake(60, m_currmagY, 180, imageView.image.size.width/imageView.image.size.height*180);
+//                    m_currmagY +=imageView.image.size.width/imageView.image.size.height*180;
+//                }
+//                [imageView removeFromSuperview];
+//            }
+//            else
+//            {
                 cell.oneImageView.hidden =YES;
                 cell.oneImageView.imageURL  =nil;
                 cell.oneImageView.backgroundColor = [UIColor redColor];
@@ -394,8 +391,7 @@
                 cell.layout.minimumLineSpacing = paddingY;
                 m_currmagY += i*80+80;
 
-            }
-            
+           // }
             [cell.customPhotoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(250,m_currmagY, 50, 40);
@@ -428,6 +424,18 @@
         cell.openBtn.frame = CGRectMake(250,size1.height+80, 50, 40);
         m_currmagY+=cell.timeLabel.frame.size.height+10;
     }
+    
+    
+    if ([KISDictionaryHaveKey(dict, @"id")intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]intValue]) {
+        cell.delBtn.hidden =NO;
+        cell.delBtn.frame = CGRectMake(60, cell.timeLabel.frame.origin.y, cell.timeLabel.frame.size.width+70, 30);
+        
+    }else{
+        cell.delBtn.hidden =YES;
+    }
+
+    
+    
     
     // 赞
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
