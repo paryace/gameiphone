@@ -39,7 +39,9 @@
         
         self.delBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 50, 30)];
         [self.delBtn setTitle:@"删除" forState:UIControlStateNormal];
-        [self.delBtn setTitleColor: UIColorFromRGBA(0xf0f1f3, 1) forState:UIControlStateNormal];
+        [self.delBtn setTitleColor: [UIColor blueColor] forState:UIControlStateNormal];
+        self.delBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        [self.delBtn addTarget:self action:@selector(delCell:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.delBtn];
         
         
@@ -273,6 +275,15 @@
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(250, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
+
+-(void)delCell:(UIButton *)sender
+{
+    if (self.myCellDelegate && [self.myCellDelegate respondsToSelector:@selector(delCellWithCell:)]) {
+        [self.myCellDelegate delCellWithCell:self];
+    }
+}
+
+
 
 - (void)awakeFromNib
 {

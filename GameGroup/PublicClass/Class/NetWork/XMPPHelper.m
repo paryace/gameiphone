@@ -347,6 +347,15 @@
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
+                
+                
+                NSMutableData *data= [[NSMutableData alloc]init];
+                
+                NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+                [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
+                [archiver finishEncoding];
+                
+                [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
