@@ -9,11 +9,15 @@
 #import "KKChatCell.h"
 
 @implementation KKChatCell
+{
+    CGPoint mPoint;
+}
 
 @synthesize message;
 @synthesize headImgV;
 @synthesize senderAndTimeLabel;
 @synthesize bgImageView;
+
 
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -55,7 +59,7 @@
         [self.contentView addSubview:self.statusLabel];
         
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        self.activityView.hidesWhenStopped = YES;
+       // self.activityView.hidesWhenStopped = YES;
         [self.contentView addSubview:self.activityView];
     }
     return self;
@@ -71,6 +75,7 @@
 #pragma mark 重连标识 FailImg
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
 {
+    mPoint = point;
     if ([status isEqualToString:@"0"]) {//失败
         self.failImage.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
         self.failImage.hidden = NO;
@@ -80,7 +85,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-  //      [self.activityView stopAnimating];
+        [self.activityView stopAnimating];
     }
     else if([status isEqualToString:@"2"])//发送中
     {
@@ -102,7 +107,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-     //   [self.activityView stopAnimating];
+        [self.activityView stopAnimating];
         
         self.statusLabel.hidden = NO;
         self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -115,7 +120,7 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-  //     [self.activityView stopAnimating];
+       [self.activityView stopAnimating];
         
         self.statusLabel.hidden = NO;
         self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -123,7 +128,6 @@
     }
     else
     {
-        NSLog(@"意外中止转圈圈：@%",status);
         self.statusLabel.hidden = YES;
         self.failImage.hidden = YES;
         if ([self.cellTimer isValid]) {
@@ -134,13 +138,18 @@
     }
 }
 
-
+//菊花停止转动
 - (void)stopActivity
 {
     if ([self.cellTimer isValid]) {
         [self.cellTimer invalidate];
         self.cellTimer = nil;
     }
+    //设为失败，重发
+//    self.failImage.frame = CGRectMake(mPoint.x-12, mPoint.y-12, 24, 24);
+//    self.failImage.hidden = NO;
+//    self.statusLabel.hidden = YES;
+    
     [self.activityView stopAnimating];
     
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
