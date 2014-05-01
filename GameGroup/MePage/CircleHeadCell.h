@@ -71,6 +71,11 @@
 
 //传送显示的 评论，赞菜单的Cell
 - (void)openMenuCell:(CircleHeadCell*)myCell;
+
+-(void)delCellWithCell:(CircleHeadCell*)myCell;
+
+
+
 @end
 
 

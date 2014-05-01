@@ -170,7 +170,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
     NSLog(@"messageContent%@",messageContent);
-    //[DataStoreManager saveDynamicAboutMe:messageContent];
+    [DataStoreManager saveDynamicAboutMe:messageContent];
 }
 
 #pragma mark 收到聊天消息
