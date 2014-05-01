@@ -98,12 +98,20 @@
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
     m_dataArray = [NSMutableArray array];
+    
     commentArray = [NSMutableArray array];
     m_currPageCount = 0;
     methodStr = @"1";
     //判断是否是回复某人的评论
     isComeBackComment = NO;
     isfriendCircle = YES;
+    
+    
+    
+    
+    
+  //  [self getInfoFromNet];
+    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -227,6 +235,21 @@
     [self addFootView];
     //创建评论框
     [self buildcommentView];
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"circleFriend_huancun_01_wx"]) {//有值 查找用户
+        
+        //将nsuserdefaults中获取到的数据 转换成data 并且转化成NSDictionary
+        NSMutableData *data= [NSMutableData data];
+        data =[[NSUserDefaults standardUserDefaults]objectForKey:@"circleFriend_huancun_01_wx"];
+        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+        [m_dataArray removeAllObjects];
+        [m_dataArray addObjectsFromArray: [unarchiver decodeObjectForKey: @"getdatatatata"]];
+        [unarchiver finishDecoding];
+        [self getInfoFromNet];
+    }else{
+        [self getInfoFromNet];
+    }
+
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
@@ -283,9 +306,8 @@
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [button setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
     [senderBnt setTitle:@"评论" forState:UIControlStateNormal];
-    [senderBnt setTitle:@"完了" forState:UIControlStateHighlighted];
     senderBnt.backgroundColor= [UIColor grayColor];
-    [senderBnt addTarget:self action:@selector(updateComment) forControlEvents:UIControlEventTouchUpInside];
+    [senderBnt addTarget:self action:@selector(updateComment) forControlEvents:UIControlEventTouchDown];
     senderBnt.frame = CGRectMake(260, 7, 50, 35);
     [inPutView bringSubviewToFront:senderBnt];
     [inPutView addSubview:senderBnt];
@@ -350,10 +372,19 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
             topImgaeView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]stringByAppendingString:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+            
             if (m_currPageCount==0) {
                 [m_dataArray removeAllObjects];
+                
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+                
+                NSMutableData *data= [[NSMutableData alloc]init];
+                NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+                [archiver encodeObject:KISDictionaryHaveKey(responseObject, @"dynamicMsgList") forKey: @"getdatatatata"];
+                [archiver finishEncoding];
+                [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
                 
             }else{
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
@@ -1107,7 +1138,7 @@
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
     };
-    [header beginRefreshing];
+  //  [header beginRefreshing];
     m_header = header;
 }
 
