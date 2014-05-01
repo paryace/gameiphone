@@ -38,6 +38,8 @@
 @property(nonatomic,strong)EGOImageView *oneImageView;
 @property(nonatomic,strong)UITableView *commentTabelView;
 @property(nonatomic,strong)UIButton *delBtn;
+@property(nonatomic,strong)UIButton *zanBtn;
+@property(nonatomic,strong)UIButton *commentBtn;
 
 
 

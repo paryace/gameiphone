@@ -229,7 +229,9 @@
     [self buildcommentView];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    openMenuBtn.menuImageView.hidden =YES;
+    if (openMenuBtn.menuImageView.hidden==NO) {
+        openMenuBtn.menuImageView.hidden =YES;
+    }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
     }
@@ -438,7 +440,22 @@
     
     
     cell.headImgBtn.tag= indexPath.row;
+    
     [cell.headImgBtn addTarget:self action:@selector(enterPersonCirclePage:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //判断赞按钮状态显示相应的图标
+    UIButton *button  = cell.zanBtn;
+    NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
+    if (isZan !=nil ){
+        if([isZan intValue]==0){
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_click"] forState:UIControlStateHighlighted];
+        }else{
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
+        }
+    }
+    
     
     
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
@@ -937,8 +954,6 @@
 -(void)zanWithCircle:(CircleHeadCell *)myCell
 {
     NSLog(@"赞");
-   // UIButton *button  = (UIButton *)[self.view viewWithTag:myCell.tag];
-   // [button setBackgroundImage:KUIImage(@"cancle_normal") forState:UIControlStateNormal];
     
     NSDictionary *dic= [m_dataArray objectAtIndex:myCell.tag-100];
     [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id")];
@@ -961,10 +976,9 @@
     }
     [m_myTableView reloadData];
 
-    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
-
-    [m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
-                      withRowAnimation:UITableViewRowAnimationNone];
+   //  NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
+    //[m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
+      //                withRowAnimation:UITableViewRowAnimationNone];
 }
 
 

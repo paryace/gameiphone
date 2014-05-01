@@ -9,6 +9,10 @@
 #import "CircleHeadCell.h"
 #import "FinderView.h"
 #import "ImgCollCell.h"
+@interface CircleHeadCell(){
+    int nickNameLenght;
+}
+@end
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -129,20 +133,18 @@
         self.menuImageView.hidden = YES;
         [self addSubview:self.menuImageView];
 
-        NSArray *array = [NSArray arrayWithObjects:@"zan_circle_normal",@"pinglun_circle_normal", nil];
-        NSArray *array1 = [NSArray arrayWithObjects:@"zan_circle_click",@"pinglun_circle_click", nil];
-        for (int i =0; i<2; i++) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.frame = CGRectMake(5+92*i, 5, 87, 32);
-            [button setBackgroundImage:KUIImage([array objectAtIndex:i]) forState:UIControlStateNormal];
-            [button setBackgroundImage:KUIImage([array1 objectAtIndex:i]) forState:UIControlStateHighlighted];
-            [button addTarget:self action:@selector(pinglunAndZan:) forControlEvents:UIControlEventTouchUpInside];
-            button.tag = 100+i;
-            [self.menuImageView addSubview:button];
-        }
-
         
+        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(5, 5, 87, 32)];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        [self.zanBtn addTarget:self action:@selector(zan:) forControlEvents:UIControlEventTouchUpInside];
+        [self.menuImageView addSubview:self.zanBtn];
         
+        self.commentBtn=[[ UIButton alloc]initWithFrame:CGRectMake(97, 5, 87, 32)];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
+        [self.commentBtn addTarget:self action:@selector(pinglun:) forControlEvents:UIControlEventTouchUpInside];
+        [self.menuImageView addSubview:self.commentBtn];
     }
     return self;
 }
@@ -193,19 +195,28 @@
     
     //判断是否是恢复某人的评论
     if ([[dict allKeys]containsObject:@"destUser"]) {
+        nickNameLenght=[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") length];
+        
         cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
 
     }else{
         cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
+        nickNameLenght=[cell.comNickNameStr length];
 
     }
     cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
-    cell.commentContLabel.text =cell.commentStr;
+
+    NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
+    [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
+    cell.commentContLabel.attributedText = stratt;
+
+//    cell.commentContLabel.text =cell.commentStr;
 
     [cell  refreshsCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     return cell;
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     tableView =self.commentTabelView;
@@ -256,17 +267,18 @@
 {
     self.menuImageView.hidden = YES;
 }
-
--(void)pinglunAndZan:(UIButton *)sender
+//赞点击事件
+-(void)zan:(UIButton *)sender
 {
-    if (sender.tag ==100) {
-        if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(zanWithCircle:)]) {
+    if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(zanWithCircle:)]) {
             [self.myCellDelegate zanWithCircle:self];
-        }
-    }else{
-        if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(pinglunWithCircle:)]) {
+    }
+}
+//评论点击事件
+-(void)pinglun:(UIButton *)sender
+{
+    if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(pinglunWithCircle:)]) {
             [self.myCellDelegate pinglunWithCircle:self];
-        }
     }
 }
 
