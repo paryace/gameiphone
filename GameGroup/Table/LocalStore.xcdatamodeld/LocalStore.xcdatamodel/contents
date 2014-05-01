@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="12E3067" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13A603" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="DSAttentionNameIndex" representedClassName="DSAttentionNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -17,6 +17,22 @@
         <attribute name="sex" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
+        <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSCommonMsgs" representedClassName="DSCommonMsgs" syncable="YES">
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
@@ -214,5 +230,6 @@
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
         <element name="Entity" positionX="-288" positionY="423" width="128" height="45"/>
+        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="255"/>
     </elements>
 </model>

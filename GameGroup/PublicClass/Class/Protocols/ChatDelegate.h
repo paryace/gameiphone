@@ -12,4 +12,5 @@
 
 -(void)newMessageReceived:(NSDictionary *)messageContent;
 -(void)dailynewsReceived:(NSDictionary * )messageContent;
+-(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 @end
