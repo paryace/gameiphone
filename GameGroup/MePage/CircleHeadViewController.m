@@ -169,7 +169,9 @@
     [self buildcommentView];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    openMenuBtn.menuImageView.hidden =YES;
+    if (openMenuBtn.menuImageView.hidden==NO) {
+        openMenuBtn.menuImageView.hidden =YES;
+    }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
     }
