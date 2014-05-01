@@ -9,6 +9,10 @@
 #import "CircleHeadCell.h"
 #import "FinderView.h"
 #import "ImgCollCell.h"
+@interface CircleHeadCell(){
+    int nickNameLenght;
+}
+@end
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -191,19 +195,28 @@
     
     //判断是否是恢复某人的评论
     if ([[dict allKeys]containsObject:@"destUser"]) {
+        nickNameLenght=[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") length];
+        
         cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
 
     }else{
         cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
+        nickNameLenght=[cell.comNickNameStr length];
 
     }
     cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
-    cell.commentContLabel.text =cell.commentStr;
+
+    NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
+    [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
+    cell.commentContLabel.attributedText = stratt;
+
+//    cell.commentContLabel.text =cell.commentStr;
 
     [cell  refreshsCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     return cell;
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     tableView =self.commentTabelView;

@@ -814,8 +814,8 @@
 -(void)zanWithCircle:(CircleHeadCell *)myCell
 {
     NSLog(@"赞");
-    UIButton *button  = (UIButton *)[self.view viewWithTag:myCell.tag];
-    [button setBackgroundImage:KUIImage(@"cancle_normal") forState:UIControlStateNormal];
+//    UIButton *button  = (UIButton *)[self.view viewWithTag:myCell.tag];
+//    [button setBackgroundImage:KUIImage(@"cancle_normal") forState:UIControlStateNormal];
     
     NSDictionary *dic= [m_dataArray objectAtIndex:myCell.tag-100];
     [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id")];
