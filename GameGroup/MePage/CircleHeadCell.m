@@ -230,6 +230,11 @@
 
 -(void)openBtnList:(UIButton *)sender
 {
+    if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(openMenuCell:)]) {
+        [self.myCellDelegate openMenuCell:self];
+    }
+    
+    
     if (self.menuImageView.hidden==YES) {
 //        if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(hiddenOrShowMenuImageViewWithCell:)]) {
 //            [self.myCellDelegate hiddenOrShowMenuImageViewWithCell:self];

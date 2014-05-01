@@ -66,6 +66,9 @@
 
 
 -(void)hiddenOrShowMenuImageViewWithCell:(CircleHeadCell*)myCell;
+
+//传送显示的 评论，赞菜单的Cell
+- (void)openMenuCell:(CircleHeadCell*)myCell;
 @end
 
 

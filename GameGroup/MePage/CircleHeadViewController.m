@@ -25,6 +25,9 @@
     EGOImageView *topImgaeView;
     EGOImageView *headImageView;
     EGOImageView *imageViewC;
+    
+    CircleHeadCell *openMenuBtn;
+    
     UIButton *friendZanBtn;
     UIButton *abobtMeBtn;
     NSIndexPath *indexPaths;
@@ -72,6 +75,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGr];
+    
+    
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
@@ -159,7 +168,12 @@
     //创建评论框
     [self buildcommentView];
 }
-
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    openMenuBtn.menuImageView.hidden =YES;
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+}
 -(void)buildcommentView
 {
     inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, 320, 50)];
@@ -736,8 +750,11 @@
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     return [messageDateStr substringFromIndex:5];
 }
-
-
+#pragma mark ---cell delegate  openMenuCell
+- (void)openMenuCell:(CircleHeadCell*)myCell
+{
+    openMenuBtn=myCell;
+}
 #pragma mark ---cell delegate  commentAndZan
 //评论button方法
 -(void)pinglunWithCircle:(CircleHeadCell *)myCell
