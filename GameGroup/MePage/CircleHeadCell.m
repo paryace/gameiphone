@@ -131,20 +131,18 @@
         self.menuImageView.hidden = YES;
         [self addSubview:self.menuImageView];
 
-        NSArray *array = [NSArray arrayWithObjects:@"zan_circle_normal",@"pinglun_circle_normal", nil];
-        NSArray *array1 = [NSArray arrayWithObjects:@"zan_circle_click",@"pinglun_circle_click", nil];
-        for (int i =0; i<2; i++) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.frame = CGRectMake(5+92*i, 5, 87, 32);
-            [button setBackgroundImage:KUIImage([array objectAtIndex:i]) forState:UIControlStateNormal];
-            [button setBackgroundImage:KUIImage([array1 objectAtIndex:i]) forState:UIControlStateHighlighted];
-            [button addTarget:self action:@selector(pinglunAndZan:) forControlEvents:UIControlEventTouchUpInside];
-            button.tag = 100+i;
-            [self.menuImageView addSubview:button];
-        }
-
         
+        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(5, 5, 87, 32)];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        [self.zanBtn addTarget:self action:@selector(zan:) forControlEvents:UIControlEventTouchUpInside];
+        [self.menuImageView addSubview:self.zanBtn];
         
+        self.commentBtn=[[ UIButton alloc]initWithFrame:CGRectMake(97, 5, 87, 32)];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
+        [self.commentBtn addTarget:self action:@selector(pinglun:) forControlEvents:UIControlEventTouchUpInside];
+        [self.menuImageView addSubview:self.commentBtn];
     }
     return self;
 }
@@ -267,17 +265,18 @@
 {
     self.menuImageView.hidden = YES;
 }
-
--(void)pinglunAndZan:(UIButton *)sender
+//赞点击事件
+-(void)zan:(UIButton *)sender
 {
-    if (sender.tag ==100) {
-        if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(zanWithCircle:)]) {
+    if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(zanWithCircle:)]) {
             [self.myCellDelegate zanWithCircle:self];
-        }
-    }else{
-        if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(pinglunWithCircle:)]) {
+    }
+}
+//评论点击事件
+-(void)pinglun:(UIButton *)sender
+{
+    if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(pinglunWithCircle:)]) {
             [self.myCellDelegate pinglunWithCircle:self];
-        }
     }
 }
 

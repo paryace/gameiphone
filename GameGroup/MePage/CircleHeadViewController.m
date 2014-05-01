@@ -383,7 +383,22 @@
     
     
     cell.headImgBtn.tag= indexPath.row;
+    
     [cell.headImgBtn addTarget:self action:@selector(enterPersonCirclePage:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //判断赞按钮状态显示相应的图标
+    UIButton *button  = cell.zanBtn;
+    NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
+    if (isZan !=nil ){
+        if([isZan intValue]==0){
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_click"] forState:UIControlStateHighlighted];
+        }else{
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
+        }
+    }
+    
     
     
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
@@ -838,10 +853,9 @@
     }
     [m_myTableView reloadData];
 
-    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
-
-    [m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
-                      withRowAnimation:UITableViewRowAnimationNone];
+   //  NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
+    //[m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
+      //                withRowAnimation:UITableViewRowAnimationNone];
 }
 
 
