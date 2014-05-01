@@ -1278,36 +1278,41 @@ return @"";
         customObject = @"zanObject";
         customUser = @"zanUser";
     }
+    NSString *msgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"id")];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgid==[c]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"id")]];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgid==[c]%@",msgid];
         DSCircleWithMe * dCircle= [DSCircleWithMe MR_findFirstWithPredicate:predicate];
-        if (!dCircle) {
+        if (!dCircle)
+            dCircle = [DSCircleWithMe MR_createInContext:localContext];
+            dCircle.myType =[NSString stringWithFormat:@"%@",type];
+
             dCircle.msgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"id")];
             
             dCircle.username =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser) ,@"username")];
             
             dCircle.alias =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser), @"alias")];
             dCircle.nickname =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser), @"nickname")];
+            
             dCircle.headImg =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser), @"img")];
+            
             dCircle.userid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser), @"userid")];
             dCircle.superstar =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info, customObject),customUser), @"supserstar")];
             
             dCircle.createDate =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"createDate")];
+        
             if ([type intValue] ==5) {
             dCircle.comment =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"comment")];
 
             }
-            dCircle.msgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"supserstar")];
-            
+        
             dCircle.myMsgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"id")];
             dCircle.myMsgImg =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"img")];
             dCircle.myCreateDate =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"createDate")];
             
             dCircle.myMsg =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"msg")];
-            dCircle.myType =type;
-            
-        }
+        
+        
 
     }];
 }

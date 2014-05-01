@@ -179,29 +179,27 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dict = [dataArray objectAtIndex:indexPath.row];
+    DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
-    detailVC.messageid = KISDictionaryHaveKey(dict, @"messageId");
+    detailVC.messageid = dCircle.myMsgid;
     //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
     
-    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+    NSString* imageName = [GameCommon getHeardImgId:dCircle.headImg];
     
     detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    detailVC.nickNameStr = dCircle.nickname;
     
     
-    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
-    // detailVC.touxianStr = [GameCommon getHeardImgId:KISDictionaryHaveKey(destDic, @"userimg")];
-   // detailVC.zanStr =[self getZanLabelWithNum:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"zannum")]];
-    
+    detailVC.timeStr =dCircle.createDate;
 
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    float heigth = [CircleMeCell getContentHeigthWithStr:KISDictionaryHaveKey([dataArray objectAtIndex:indexPath.row], @"comment")] + 50;
+    DSCircleWithMe *dcircle =[dataArray objectAtIndex:indexPath.row];
+    float heigth = [CircleMeCell getContentHeigthWithStr:(dcircle.comment)] + 50;
     return heigth < 80 ? 80 : heigth;
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
