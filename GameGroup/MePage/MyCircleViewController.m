@@ -13,6 +13,7 @@
 #import "EGOImageView.h"
 #import "EGOImageButton.h"
 #import "MyCircleCell.h"
+#import "MJRefresh.h"
 @interface MyCircleViewController ()
 {
     UITableView *m_myTableView;
@@ -21,6 +22,9 @@
     EGOImageButton *topImgaeView;
     NSMutableArray *dataArray;
     NSInteger *PageNum;
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
+    int m_currPageCount;
 }
 @end
 
@@ -75,7 +79,9 @@
     headImageView.layer.masksToBounds=YES;
 
     [topVIew addSubview:headImageView];
-    
+    [self addheadView];
+    [self addFootView];
+
     [self getInfoFromNet];
 }
 
@@ -97,7 +103,7 @@
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:self.userId forKey:@"userid"];
-    [paramDic setObject:@"0" forKey:@"pageIndex"];
+    [paramDic setObject:[NSString stringWithFormat:@"%d",m_currPageCount] forKey:@"pageIndex"];
     [paramDic setObject:@"20" forKey:@"maxSize"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
@@ -111,8 +117,19 @@
             topImgaeView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]];
             
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
-            [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+            if (m_currPageCount==0) {
+                [dataArray removeAllObjects];
+                [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+                
+            }else{
+                [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+            }
+            m_currPageCount++;
+            [m_header endRefreshing];
+            [m_footer endRefreshing];
             [m_myTableView reloadData];
+            [hud  hide:YES];
+        
         }
         
         
@@ -234,12 +251,7 @@
 {
     NSDictionary *dic = [dataArray objectAtIndex:indexPath.row];
     if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
-        CGSize size = [MyCircleCell getContentHeigthWithStr:KISDictionaryHaveKey(dic, @"msg")];
-        if (size.height<50) {
-            return 50;
-        }else{
-        return size.height;
-        }
+        return 50;
     }else{
         return 100;
     }
@@ -293,6 +305,47 @@
     return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
 }
 
+#pragma mark ---addRefreshHeadview and refreshFootView
+//添加下拉刷新
+-(void)addheadView
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_myTableView;
+    
+    header.scrollView = m_myTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currPageCount = 0;
+        [self getInfoFromNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+  //  [header beginRefreshing];
+    m_header = header;
+}
+
+//添加上拉加载更多
+-(void)addFootView
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_myTableView;
+    
+    footer.scrollView = m_myTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getInfoFromNet];
+    };
+    m_footer = footer;
+}
 
 - (void)didReceiveMemoryWarning
 {

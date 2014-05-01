@@ -282,7 +282,26 @@
         isfriendCircle =YES;
     }
     
-    [self getInfoFromNet];
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:methodStr forKey:@"aboutFriendSwitch"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"199" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        m_currPageCount =0;
+        [self getInfoFromNet];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -728,7 +747,7 @@
     self.textView.placeholder= nil;
 
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
-    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
@@ -947,11 +966,6 @@
     if (isComeBackComment ==YES) {
     [paramDic setObject:destUserid?destUserid:destUserid forKey:@"destUserid"];
     [paramDic setObject:destCommentId?destCommentId:destCommentId forKey:@"destCommentId"];
-    }
-    else
-    {
-        [paramDic setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
-        [paramDic setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
     }
     [paramDic setObject:comment forKey:@"comment"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
