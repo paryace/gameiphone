@@ -29,15 +29,13 @@
 }
 + (CGSize)getcommentNickNameHeigthWithStr:(NSString*)contStr
 {
-    CGSize size1 =[contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 16) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize size1 =[contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 200) lineBreakMode:NSLineBreakByWordWrapping];
     return size1;
 }
 
 -(void)refreshsCell
 {
     CGSize size1 =[CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@",self.commentStr]];
-//    CGSize size2 = [CommentCell getcommentHeigthWithNIckNameStr:self.comNickNameStr Commentstr:self.commentStr];
-//self.nicknameLabel.frame = CGRectMake(5, 0, size1.width, 16);
     self.commentContLabel.frame = CGRectMake(5, 0,250, size1.height);
 }
 - (void)awakeFromNib

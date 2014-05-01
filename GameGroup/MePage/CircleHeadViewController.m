@@ -29,7 +29,12 @@
     CircleHeadCell *openMenuBtn;
     
     UIButton *friendZanBtn;
-    UIButton *abobtMeBtn;
+    
+    
+    UIImageView *abobtMeImageView;
+    EGOImageView *aboutMeHeadImgView;
+    UILabel *aboutMeLabel;
+    
     NSIndexPath *indexPaths;
     NSMutableArray * commentArray;
     UIView *toolView;
@@ -42,6 +47,8 @@
     UITapGestureRecognizer *hidenMenuTap;
     NSString *methodStr;
     BOOL isfriendCircle;
+    
+    int m_commentAboutMeCount;
 }
 @end
 
@@ -59,7 +66,7 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:Nil];
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"mydynamicmsg_wx" object:nil];
     [super viewWillDisappear:animated];
 }
 
@@ -70,6 +77,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showAboutMePage:) name:@"mydynamicmsg_wx" object:nil];
 }
 
 - (void)viewDidLoad
@@ -150,12 +158,29 @@
     
 
     //与我相关
-    abobtMeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    abobtMeBtn.frame = CGRectMake(68, 370, 184, 37);
-    [abobtMeBtn setBackgroundImage:KUIImage(@"新消息_03") forState:UIControlStateNormal];
-    [abobtMeBtn setTitle:@"N条新消息" forState:UIControlStateNormal];
-    [abobtMeBtn addTarget:self action:@selector(enterAboutMePage:) forControlEvents:UIControlEventTouchUpInside];
-    [topVIew addSubview:abobtMeBtn];
+    abobtMeImageView = [[UIImageView alloc]init];
+    abobtMeImageView.frame = CGRectMake(68, 370, 184, 37);
+    abobtMeImageView.image = [UIImage imageNamed:@"newinfoaboutme"];
+    //[abobtMeImageView addTarget:self action:@selector(enterAboutMePage:) forControlEvents:UIControlEventTouchUpInside];
+    abobtMeImageView.userInteractionEnabled = YES;
+    [abobtMeImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterAboutMePage:)]];
+    abobtMeImageView.hidden = YES;
+    [topVIew addSubview:abobtMeImageView];
+    
+    aboutMeHeadImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(3, 3, 30, 30)];
+    aboutMeHeadImgView.placeholderImage = KUIImage(@"moren_people.png");
+    [abobtMeImageView addSubview:aboutMeHeadImgView];
+    
+    aboutMeLabel = [[UILabel alloc]initWithFrame:CGRectMake(37, 3, 140, 30)];
+    aboutMeLabel.textColor = [UIColor whiteColor];
+    aboutMeLabel.backgroundColor =[UIColor clearColor];
+    aboutMeLabel.font = [UIFont boldSystemFontOfSize:13];
+    [abobtMeImageView addSubview:aboutMeLabel];
+    
+    
+    
+    
+    
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
 
@@ -225,6 +250,19 @@
     [inPutView addSubview:button];
 }
 
+
+
+-(void)showAboutMePage:(NSNotification *)info
+{
+    m_commentAboutMeCount++;
+    abobtMeImageView.hidden =NO;
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, @"commentUser"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, @"commentUser"), @"img")isEqualToString:@" "]) {
+        aboutMeHeadImgView.imageURL =nil;
+    }else
+    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, @"commentUser"), @"img")] width:60 hieght:60 a:@"60"]];
+    aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
+    
+}
 
 #pragma mark --进入与我相关界面
 -(void)enterAboutMePage:(id)sender

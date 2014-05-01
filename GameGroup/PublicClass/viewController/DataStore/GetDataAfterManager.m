@@ -166,13 +166,19 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [self storeNewMessage:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
+#pragma mark --收到与我相关动态消息
+-(void)newdynamicAboutMe:(NSDictionary *)messageContent;
+{
+    NSLog(@"messageContent%@",messageContent);
+    //[DataStoreManager saveDynamicAboutMe:messageContent];
+}
+
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
     NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    NSLog(@"sendera;oidfjasl;kfjas---->(%@)",sender);
     
     if ([DataStoreManager savedMsgWithID:msgId]) {
         [self.xmppHelper comeBackDelivered:[messageContent objectForKey:@"sender"] msgId:msgId];
@@ -192,14 +198,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    
-
-    
     [self storeNewMessage:messageContent];
-
-    
-    
-    
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];
     }
@@ -208,7 +207,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSDictionary* user=[[UserManager singleton] getUser:sender];
         [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
-    
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 

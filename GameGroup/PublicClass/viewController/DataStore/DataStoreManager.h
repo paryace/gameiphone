@@ -86,6 +86,9 @@
 +(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
 
 
+
++(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
+
 //是否存在这个联系人
 +(BOOL)ifHaveThisUser:(NSString *)userId;
 +(BOOL)ifFriendHaveNicknameAboutUser:(NSString *)userId;

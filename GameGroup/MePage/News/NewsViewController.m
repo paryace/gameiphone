@@ -142,7 +142,23 @@
         for (DSMyNewsList* news in dMyNews) {
             NSLog(@"dMyNews%@",dMyNews);
             NSDictionary* commentDic = [NSDictionary dictionaryWithObject:news.commentObj forKey:@"msg"];
-            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:news.newsId, @"id", news.heardImgId, @"userimg", news.bigTitle, @"title", news.msg, @"msg", news.detailPageId, @"detailPageId", news.createDate, @"createDate", news.nickName, @"nickname",news.type, @"type",commentDic, @"commentObj",news.urlLink, @"urlLink",news.img, @"thumb",news.zannum, @"zannum",news.userid, @"userid",news.username, @"username",news.showTitle, @"showtitle",news.superstar, @"superstar",nil];
+            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                            news.newsId, @"id",
+                                            news.heardImgId, @"userimg",
+                                            news.bigTitle, @"title",
+                                            news.msg, @"msg",
+                                            news.detailPageId,@"detailPageId",
+                                            news.createDate, @"createDate",
+                                            news.nickName, @"nickname",
+                                            news.type, @"type",
+                                            commentDic, @"commentObj",
+                                            news.urlLink, @"urlLink",
+                                            news.img, @"thumb",
+                                            news.zannum, @"zannum",
+                                            news.userid, @"userid",
+                                            news.username, @"username",
+                                            news.showTitle, @"showtitle",
+                                            news.superstar, @"superstar",nil];
             [m_newsArray addObject:tempDic];
         }
     }];
@@ -156,7 +172,23 @@
             
             NSLog(@"dFriendNews%@",dFriendsNews);
             NSDictionary* commentDic = [NSDictionary dictionaryWithObject:news.commentObj forKey:@"msg"];
-            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:news.newsId, @"id", news.heardImgId, @"userimg", news.bigTitle, @"title", news.msg, @"msg", news.detailPageId, @"detailPageId", news.createDate, @"createDate", news.nickName, @"nickname",news.type, @"type",commentDic, @"commentObj",news.urlLink, @"urlLink",news.img, @"thumb",news.zannum, @"zannum",news.userid, @"userid",news.username, @"username",news.showTitle, @"showtitle",news.superstar, @"superstar",nil];
+            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                            news.newsId, @"id",
+                                            news.heardImgId, @"userimg",
+                                            news.bigTitle, @"title",
+                                            news.msg, @"msg",
+                                            news.detailPageId, @"detailPageId",
+                                            news.createDate, @"createDate",
+                                            news.nickName, @"nickname",
+                                            news.type, @"type",
+                                            commentDic, @"commentObj",
+                                            news.urlLink, @"urlLink",
+                                            news.img, @"thumb",
+                                            news.zannum, @"zannum",
+                                            news.userid, @"userid",
+                                            news.username, @"username",
+                                            news.showTitle, @"showtitle",
+                                            news.superstar, @"superstar",nil];
             [m_newsArray addObject:tempDic];
         }
     }];

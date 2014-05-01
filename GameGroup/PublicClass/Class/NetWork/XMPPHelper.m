@@ -340,9 +340,13 @@
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
+                
             }
             else
             {
+                NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+                [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
