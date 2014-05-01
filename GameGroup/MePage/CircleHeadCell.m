@@ -187,6 +187,7 @@
     if (cell == nil) {
         cell = [[CommentCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    //cell.selectionStyle =UITableViewCellSelectionStyleNone;
     cell.tag = indexPath.row;
     NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     
