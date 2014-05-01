@@ -987,6 +987,7 @@
     NSLog(@"赞");
     
     NSDictionary *zanDic= [m_dataArray objectAtIndex:myCell.tag-100];
+    
     myCell.menuImageView.hidden = YES;
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
     [commentUser setObject:@"" forKey:@"img"];
@@ -1002,11 +1003,13 @@
             [arr addObject:commentUser];
             int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
             
+            
              NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
-            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
             if ([isZan intValue]==0) {
+                [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
             }else
+                [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
         }
     }
