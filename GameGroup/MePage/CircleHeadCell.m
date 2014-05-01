@@ -127,7 +127,7 @@
         [self.contentView addSubview:self.openBtn];
         
         
-        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(85, 60, 190, 42)];
+        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 190, 42)];
         self.menuImageView.image = KUIImage(@"bgImg");
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
@@ -190,11 +190,12 @@
         cell = [[CommentCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     //cell.selectionStyle =UITableViewCellSelectionStyleNone;
+    cell.accessoryType = UITableViewCellAccessoryNone;
     cell.tag = indexPath.row;
     NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     
     
-    //判断是否是恢复某人的评论
+    //判断是否是回复某人的评论
     if ([[dict allKeys]containsObject:@"destUser"]) {
         nickNameLenght=[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") length];
         
@@ -256,7 +257,7 @@
         
         self.menuImageView.hidden =NO;
         [self.contentView bringSubviewToFront:self.menuImageView];
-        self.menuImageView.frame = CGRectMake(80, sender.frame.origin.y-14, 190, 42);
+        self.menuImageView.frame = CGRectMake(90, sender.frame.origin.y-4, 190, 42);
         [self.contentView  becomeFirstResponder];
     }else
     {

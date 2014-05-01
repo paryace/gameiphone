@@ -512,7 +512,7 @@
             cell.customPhotoCollectionView.hidden =YES;
 
                 cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
-                cell.openBtn.frame = CGRectMake(250,m_currmagY+10, 50, 40);
+                cell.openBtn.frame = CGRectMake(270,m_currmagY+10, 50, 40);
             if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
                 cell.delBtn.hidden =NO;
                 cell.delBtn.frame = CGRectMake(190,m_currmagY+10,50, 30);
@@ -578,7 +578,7 @@
            // }
             [cell.customPhotoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
-            cell.openBtn.frame = CGRectMake(250,m_currmagY, 50, 40);
+            cell.openBtn.frame = CGRectMake(270,m_currmagY, 50, 40);
             
             if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
                 cell.delBtn.hidden =NO;
@@ -614,7 +614,7 @@
         cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:@"80"]];
         m_currmagY  = size1.height+85;
         cell.timeLabel.frame = CGRectMake(60,size1.height+80, 120, 30);
-        cell.openBtn.frame = CGRectMake(250,size1.height+80, 50, 40);
+        cell.openBtn.frame = CGRectMake(270,size1.height+80, 50, 40);
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
             cell.delBtn.hidden =NO;
             cell.delBtn.frame = CGRectMake(190,size1.height+80,50, 30);
