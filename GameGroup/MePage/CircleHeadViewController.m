@@ -955,8 +955,7 @@
 {
     NSLog(@"赞");
     
-    NSDictionary *dic= [m_dataArray objectAtIndex:myCell.tag-100];
-    [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id")];
+    NSDictionary *zanDic= [m_dataArray objectAtIndex:myCell.tag-100];
     myCell.menuImageView.hidden = YES;
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
     [commentUser setObject:@"" forKey:@"img"];
@@ -965,17 +964,23 @@
     [commentUser setObject:@"" forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
     
-    
     for (NSDictionary *dic in m_dataArray) {
-        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
-            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
+        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
+            
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
             [arr addObject:commentUser];
             int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
+            
+             NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
             [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
+            if ([isZan intValue]==0) {
+                [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
+            }else
+                [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
         }
     }
     [m_myTableView reloadData];
-
+    [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id")];
    //  NSIndexPath* indexpath = [NSIndexPath indexPathForRow:myCell.tag-100 inSection:0];
     //[m_myTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]
       //                withRowAnimation:UITableViewRowAnimationNone];
