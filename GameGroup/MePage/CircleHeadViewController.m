@@ -1114,7 +1114,10 @@
     }else{//点击的是别人的评论，弹出评论框
         
         //键盘定位
-        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+//        [m_myTableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
+        
+        [m_myTableView setContentOffset:CGPointMake(0, 100)];
+//        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         
         self.textView.text = nil;
         self.textView.placeholder= nil;
