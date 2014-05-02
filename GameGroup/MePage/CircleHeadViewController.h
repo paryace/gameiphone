@@ -24,6 +24,7 @@ UIActionSheetDelegate,
 UIScrollViewDelegate,
 EGOImageViewDelegate,
 UIAlertViewDelegate,
+UIScrollViewDelegate,
 TableViewDatasourceDidChange
 >
 @property(nonatomic,copy)NSString *imageStr;

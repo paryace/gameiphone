@@ -501,7 +501,14 @@
         }
     }];
 }
-
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+    if(scrollView==m_myTableView){
+        if (openMenuBtn.menuImageView.hidden==NO) {
+            openMenuBtn.menuImageView.hidden =YES;
+        }
+    }
+    
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return m_dataArray.count;
@@ -958,8 +965,7 @@
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
-    
-    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
@@ -1108,7 +1114,7 @@
     }else{//点击的是别人的评论，弹出评论框
         
         //键盘定位
-        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         
         self.textView.text = nil;
         self.textView.placeholder= nil;
@@ -1223,7 +1229,8 @@
 
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self showMessageWindowWithContent:@"评论成功" imageType:0];
+        [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"赞已成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
