@@ -11,6 +11,7 @@
 #import "DSuser.h"
 #import "UserManager.h"
 #import "DSCircleWithMe.h"
+#import "DSOfflineComments.h"
 @implementation DataStoreManager
 -(void)nothing
 {}
@@ -1322,6 +1323,75 @@ return @"";
     NSArray *array= [DSCircleWithMe MR_findAll];
     return array;
 }
+
++(void)saveCommentsWithDic:(NSDictionary *)dic
+{
+    NSString *uuid = KISDictionaryHaveKey(dic, @"uuid");
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"uuid==[c]%@",uuid];
+        DSOfflineComments * offline= [DSOfflineComments MR_findFirstWithPredicate:predicate];
+        if (!offline)
+            offline = [DSOfflineComments MR_createInContext:localContext];
+        offline.msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
+        offline.comments = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"comments")];
+        if ([[dic allKeys]containsObject:@"destCommentId"]) {
+            offline.destCommentId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destCommentId")];
+        }
+        if ([[dic allKeys]containsObject:@"destUserid"]) {
+        offline.destUserid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destUserid")];
+        }
+        offline.uuid = uuid;
+    }];
+
+}
++(NSArray *)queryallcomments
+{
+    NSArray *array= [DSOfflineComments MR_findAll];
+    return array;
+
+}
++(void)removeOfflineCommentsWithuuid:(NSString *)uuid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"uuid==[c]%@",uuid];
+        DSOfflineComments * dUserManager = [DSOfflineComments MR_findFirstWithPredicate:predicate];
+        if (dUserManager) {
+            [dUserManager MR_deleteInContext:localContext];
+        }
+    }];
+
+}
+
++(void)saveOfflineZanWithDic:(NSDictionary *)dic
+{
+    NSString *uuid = KISDictionaryHaveKey(dic, @"uuid");
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"uuid==[c]%@",uuid];
+        DSOfflineZan * offline= [DSOfflineZan MR_findFirstWithPredicate:predicate];
+        if (!offline)
+            offline = [DSOfflineComments MR_createInContext:localContext];
+        offline.msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
+        offline.uuid = uuid;
+    }];
+
+}
++(NSArray *)queryallOfflineZan
+{
+    NSArray *array= [DSOfflineZan MR_findAll];
+    return array;
+}
++(void)removeOfflineZanWithuuid:(NSString *)uuid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"uuid==[c]%@",uuid];
+        DSOfflineZan * dUserManager = [DSOfflineZan MR_findFirstWithPredicate:predicate];
+        if (dUserManager) {
+            [dUserManager MR_deleteInContext:localContext];
+        }
+    }];
+
+}
+
 
 
 

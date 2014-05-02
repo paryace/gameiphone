@@ -15,6 +15,7 @@
 #import "CircleHeadCell.h"
 #import "MJRefresh.h"
 #import "UserManager.h"
+#import "DSOfflineZan.h"
 @interface CircleHeadViewController ()
 {
     UITableView *m_myTableView;
@@ -30,7 +31,7 @@
     CircleHeadCell *openMenuBtn;
     
     UIButton *friendZanBtn;
-    
+    AppDelegate *app;
     
     UIImageView *abobtMeImageView;
     EGOImageView *aboutMeHeadImgView;
@@ -53,6 +54,8 @@
     
     UIAlertView *delCellAlertView;
     int  delCellCount;//删除动态的cell行数（位置）
+    
+    NSMutableDictionary *delcommentDic;
     
 }
 @end
@@ -100,22 +103,16 @@
     m_dataArray = [NSMutableArray array];
     
     commentArray = [NSMutableArray array];
+    delcommentDic = [NSMutableDictionary dictionary];
     m_currPageCount = 0;
     methodStr = @"1";
     //判断是否是回复某人的评论
     isComeBackComment = NO;
     isfriendCircle = YES;
     
-    
-    
-    
-    
-  //  [self getInfoFromNet];
-    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-//    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     
     
@@ -142,12 +139,6 @@
     UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 280, 320, 40)];
     topunderBgImageView.image = KUIImage(@"underbg");
     [topVIew addSubview:topunderBgImageView];
-    
-    
-//    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 280, 240, 40)];
-//    view.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.3];
-//    [topVIew addSubview:view];
-    
     
 //    昵称
     
@@ -254,6 +245,13 @@
     
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
+
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
 
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"加载中...";
@@ -278,6 +276,15 @@
         [self getInfoFromNet];
     }
 
+}
+#pragma mark ---发表新动态
+-(void)publishInfo:(UIButton *)sender
+{
+    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
+    sendNews.delegate = self;
+    sendNews.isComeFromMe = YES;
+    [self.navigationController pushViewController:sendNews animated:YES];
+    
 }
 
 -(void)enterPersonViewController:(UIButton *)sender
@@ -345,9 +352,7 @@
     
     
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
-    //    [button setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
     [senderBnt setBackgroundImage:KUIImage(@"send_msg_btn_normal") forState:UIControlStateNormal];
-   // senderBnt.backgroundColor= [UIColor grayColor];
     [senderBnt addTarget:self action:@selector(updateComment) forControlEvents:UIControlEventTouchDown];
     senderBnt.frame = CGRectMake(260, 0, 50, 50);
     [inPutView bringSubviewToFront:senderBnt];
@@ -462,8 +467,9 @@
 #pragma mark --朋友在赞触发方法与网络请求
 -(void)friendZan:(UIButton *)sender
 {
-    sender.selected  =!sender.selected;
+  //  sender.selected  =!sender.selected;
     m_currPageCount =0;
+    hud.labelText =@"加载中...";
     [hud show:YES];
     NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
     if ([str intValue]==1) {
@@ -590,29 +596,7 @@
                 [(NSMutableArray*)cell.collArray removeLastObject];
             }
             
-//            if (cell.collArray.count<2&&cell.collArray.count>0) {
-//                cell.customPhotoCollectionView.hidden =YES;
-//                cell.oneImageView.hidden = NO;
-//                
-//                cell.oneImageView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[cell.collArray objectAtIndex:0] width:180 hieght:60 a:@"180/120"]];
-//                cell.oneImageView.delegate = self;
-//                
-//                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
-//                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[[cell.collArray objectAtIndex:0] stringByAppendingString:[GameCommon getHeardImgId:[cell.collArray objectAtIndex:0]]]]];
-//                [cell.contentView addSubview:imageView];
-//                
-//                
-//                if (imageView.image==nil) {
-//                    cell.oneImageView.frame = CGRectMake(60, m_currmagY,180 ,100);
-//                    m_currmagY +=100;
-//                }else{
-//                    cell.oneImageView.frame = CGRectMake(60, m_currmagY, 180, imageView.image.size.width/imageView.image.size.height*180);
-//                    m_currmagY +=imageView.image.size.width/imageView.image.size.height*180;
-//                }
-//                [imageView removeFromSuperview];
-//            }
-//            else
-//            {
+
                 cell.oneImageView.hidden =YES;
                 cell.oneImageView.imageURL  =nil;
                 cell.oneImageView.backgroundColor = [UIColor redColor];
@@ -625,7 +609,6 @@
                 cell.layout.minimumLineSpacing = paddingY;
                 m_currmagY += i*85+85;
 
-           // }
             [cell.customPhotoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY, 50, 40);
@@ -660,8 +643,16 @@
         [cell.shareView addGestureRecognizer:tapGe];
         tapGe.view.tag = indexPath.row;
         
+        if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
+            cell.shareImgView.imageURL =nil;
+            cell.shareImgView.hidden =YES;
+            cell.contentLabel.frame = CGRectMake(5, 5, 245, 40);
+        }else{
+            cell.shareImgView.hidden =NO;
+            cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:@"80"]];
+            cell.contentLabel.frame = CGRectMake(60, 5, 190, 40);
+        }
         
-        cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:@"80"]];
         m_currmagY  = size1.height+85;
         cell.timeLabel.frame = CGRectMake(60,size1.height+80, 120, 30);
         cell.openBtn.frame = CGRectMake(270,size1.height+80, 50, 40);
@@ -899,9 +890,10 @@
             }
         }
 
-    }else{
+    }else if(actionSheet.tag ==888888){
         if (buttonIndex==0) {
-            NSLog(@"去你妹的");
+            
+            [self delcomment];
         }else{
             return;
         }
@@ -1010,6 +1002,8 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
+        [self getInfoFromNet];
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -1057,7 +1051,8 @@
   [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id")];
 }
 
-//评论button触发方法
+#pragma mark-------
+#pragma mark ---发送评论
 -(void)updateComment
 {
     NSLog(@"commentView-->%@",self.textView.text);
@@ -1085,6 +1080,7 @@
         }
     }
     [m_myTableView reloadData];
+    
     [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text];
 
     commentMsgId =nil;
@@ -1103,7 +1099,11 @@
     //点击的是自己的评论，弹出删除菜单
     if( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
-        act.tag = row;
+        act.tag = 888888;
+        
+        [delcommentDic removeAllObjects];
+        [delcommentDic setObject:@(mycell.tag-100) forKey:@"mycell"];
+        [delcommentDic setObject:@(row) forKey:@"row"];
         [act showInView:self.view];
     }else{//点击的是别人的评论，弹出评论框
         
@@ -1213,7 +1213,14 @@
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"185" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
+                             msgid,@"msgId",
+                             uuid,@"uuid",nil];
+        [DataStoreManager saveOfflineZanWithDic:dic];
+    }
+
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self showMessageWindowWithContent:@"评论成功" imageType:0];
@@ -1227,6 +1234,48 @@
         }
     }];
 }
+
+-(void)delcomment
+{
+    hud.labelText = @"删除中...";
+    [hud show:YES];
+    
+    NSDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
+    NSMutableArray *arr = [dic objectForKey:@"commentList"];
+    NSString *msgId = KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"id");
+ 
+    
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgId forKey:@"commentId"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"195" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self showMessageWindowWithContent:@"删除成功" imageType:0];
+        [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
+        [m_myTableView reloadData];
+
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+
+    }];
+
+}
+
+
 
 
 //上传评论
@@ -1245,7 +1294,20 @@
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"186" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
+   
+        //如果没有网。。。。
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
+                             msgid,@"msgId",
+                             destUserid,@"destUserid",
+                             destCommentId,@"destCommentId",
+                             comment,@"comments",
+                             uuid,@"uuid",nil];
+        [DataStoreManager saveCommentsWithDic:dic];
+    }
+
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self showMessageWindowWithContent:@"评论成功" imageType:0];
@@ -1403,11 +1465,5 @@
 {
     delCellAlertView.delegate = nil;
 }
-//- (void)imageViewLoadedImage:(EGOImageView*)imageView
-//{
-//    CGSize size = imageView.image.size;
-//    imageView.frame = CGRectMake(60, imageView.bounds.origin.y, 180,180*size.height/size.width );
-//    
-//}
 
 @end

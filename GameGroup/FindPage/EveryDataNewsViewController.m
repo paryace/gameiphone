@@ -9,7 +9,7 @@
 #import "EveryDataNewsViewController.h"
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
-#import "DayNewsCell.h"
+#import "PhotoViewController.h"
 @interface EveryDataNewsViewController ()
 {
     UITableView *m_myTableView;
@@ -70,24 +70,6 @@
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x-30, KISHighVersion_7 ? 27 : 7, 30, 30)];
     imageView.image = KUIImage(@"WOW图标_03");
     [self.view addSubview:imageView];
-
-//    _slimeView = [[SRRefreshView alloc] init];
-//    _slimeView.delegate = self;
-//    _slimeView.upInset = 0;
-//    _slimeView.slimeMissWhenGoingBack = NO;
-//    _slimeView.slime.bodyColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-//    _slimeView.slime.skinColor = [UIColor whiteColor];
-//    _slimeView.slime.lineWith = 1;
-//    _slimeView.slime.shadowBlur = 4;
-//    _slimeView.slime.shadowColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-//    [m_myTableView addSubview:_slimeView];
-//    
-//    refreshView = [[PullUpRefreshView alloc] initWithFrame:CGRectMake(0, kScreenHeigth - startX-(KISHighVersion_7?0:20), 320, REFRESH_HEADER_HEIGHT)];//上拉加载
-//    [m_myTableView addSubview:refreshView];
-//    refreshView.pullUpDelegate = self;
-//    refreshView.myScrollView = m_myTableView;
-//    [refreshView stopLoading:NO];
-//    
     
     dictDic = [NSMutableDictionary dictionary];
 	// Do any additional setup after loading the view.
@@ -104,6 +86,8 @@
     if (cell == nil) {
         cell = [[DayNewsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    cell.myCellDelegate = self;
+    cell.tag =indexPath.row;
         NSDictionary *dic= [m_tableArray objectAtIndex:indexPath.row];
     NSString * fruits = KISDictionaryHaveKey(dic, @"userImg");
     NSArray  * array= [fruits componentsSeparatedByString:@","];
@@ -148,8 +132,7 @@ KISDictionaryHaveKey(dic, @"time")]];
     cell.contentLabel.frame = CGRectMake(100, cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height-5, 190, 70);
     
         cell.contentLabel.text = KISDictionaryHaveKey(dic, @"content");
-   // [cell.newsOfBtn addTarget:self action:@selector(toViewNews:) forControlEvents:UIControlEventTouchUpInside];
-    [cell.topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(toViewNews:)]];
+    
     cell.topImageView.tag =1000 +indexPath.row;
     return cell;
 }
@@ -158,10 +141,10 @@ KISDictionaryHaveKey(dic, @"time")]];
     return NO;
 }
 
--(void)toViewNews:(UIGestureRecognizer*)sender
+-(void)toViewNewsWithCell:(DayNewsCell *)mycell
 {
     OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
-    detailVC.messageid = [GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tableArray objectAtIndex:sender.view.tag-1000], @"messageId")];
+    detailVC.messageid = [GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tableArray objectAtIndex:mycell.tag], @"messageId")];
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
@@ -219,6 +202,21 @@ KISDictionaryHaveKey(dic, @"time")]];
     double time = [timeStr doubleValue];
     NSLog(@"%@", [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]]);
     return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
+}
+-(void)getBigImgWithCell:(DayNewsCell *)mycell
+{
+    NSMutableArray *array  = [NSMutableArray array];
+    
+    for (int i =0; i<m_tableArray.count; i++) {
+        NSDictionary *dic = [m_tableArray objectAtIndex:i];
+        [array addObject:KISDictionaryHaveKey(dic, @"img")];
+    }
+    
+    
+    PhotoViewController *photoVC = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:mycell.tag];
+    [self presentViewController:photoVC animated:NO completion:^{
+        
+    }];
 }
 
 - (void)didReceiveMemoryWarning

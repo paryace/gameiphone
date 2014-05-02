@@ -29,6 +29,7 @@
         self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 30, 310, 400)];
         self.topImageView.image =KUIImage(@"bg_cell");
         self.topImageView.userInteractionEnabled = YES;
+        [self.topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(toViewNews:)]];
         [self  addSubview:self.topImageView];
         
         
@@ -57,11 +58,12 @@
         [self.signatureLabel setNumberOfLines:2];
         [self.topImageView addSubview:self.signatureLabel];
         
-        self.bigImageView =[[EGOImageView alloc]initWithFrame:CGRectMake(20, 83, 270, 180)];
+        self.bigImageView =[[EGOImageButton alloc]initWithFrame:CGRectMake(20, 83, 270, 180)];
         self.bigImageView.layer.cornerRadius = 5;
         self.bigImageView.layer.masksToBounds=YES;
-
-        self.bigImageView.backgroundColor = [UIColor grayColor];
+        self.bigImageView.userInteractionEnabled = YES;
+        [self.bigImageView addTarget:self action:@selector(lookBigImg:) forControlEvents:UIControlEventTouchDown];
+        self.bigImageView.placeholderImage =KUIImage(@"placehoder");
         [self.topImageView addSubview:self.bigImageView];
         UIImageView *bgauthView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 150,270, 30)];
         bgauthView.image = KUIImage(@"text_bg_cell.png");
@@ -104,11 +106,20 @@
     }
     return self;
 }
-
--(void)enterTodt:(id)sender
+-(void)toViewNews:(id)sender
 {
-    NSLog(@"点击");
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(toViewNewsWithCell:)]) {
+        [self.myCellDelegate toViewNewsWithCell:self];
+    }
 }
+
+-(void)lookBigImg:(id)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(getBigImgWithCell:)]) {
+        [self.myCellDelegate getBigImgWithCell:self];
+    }
+}
+
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
