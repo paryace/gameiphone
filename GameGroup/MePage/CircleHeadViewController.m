@@ -628,7 +628,7 @@
     
     // 赞，取最后一个用户的昵称显示
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
-        cell.zanView.frame = CGRectMake(60, m_currmagY, 250, 25);
+        cell.zanView.frame = CGRectMake(60, m_currmagY-10, 250, 25);
         NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
         NSString *zanNickName=KISDictionaryHaveKey([array lastObject], @"nickname");
         
@@ -659,7 +659,7 @@
         }
     }
     //评论列表的frame
-    cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght);
+    cell.commentTabelView.frame = CGRectMake(60, m_currmagY-10, 250,commHieght);
     [cell.commentTabelView reloadData];
     return cell;
 }
@@ -681,7 +681,8 @@
     float currnetY = 0;
 
     NSDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    if (![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@""]&&![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@" "]) {
+    
+    if (![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@""]&&![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@" "]) {//链接的动态
         CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
 
         currnetY +=size.height+30+50+40;
@@ -692,6 +693,7 @@
         currnetY +=size.height+30;
         currnetY+=40;
         NSArray *imgArray = [NSArray array];
+        
         NSString *imgStr =KISDictionaryHaveKey(dict, @"img");
         NSString *str;
         if ([imgStr isEqualToString:@""] || [imgStr isEqualToString:@" "]) {
@@ -715,22 +717,20 @@
         }
         else
         {
-            if (imgArray.count==1) {
+            if (imgArray.count==1) {//但张图片
                 EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
                 imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[KISDictionaryHaveKey(dict, @"img") stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]]];
                 
                 if (imageView.image ==nil) {
-                    currnetY +=100;
+                    currnetY +=80;
                 }else{
-                    currnetY +=imageView.image.size.height*180/imageView.image.size.width;
+                    currnetY +=imageView.image.size.height*160/imageView.image.size.width;
                 }
-            }
-            else if(imgArray.count>1&&imgArray.count<4){
+            }else if(imgArray.count>1&&imgArray.count<4){//一行图片
                 currnetY+=80;
-            }
-            else if(imgArray.count>4&&imgArray.count<6){
+            }else if(imgArray.count>4&&imgArray.count<6){//两行图片
                 currnetY  +=160;
-            }else{
+            }else{//三行图片
                 currnetY +=240;
             }
         }
@@ -913,7 +913,6 @@
     NSLog(@"评论%d",myCell.tag);
     self.textView.text = nil;
     self.textView.placeholder= nil;
-
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
     [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     isComeBackComment = NO;
@@ -987,6 +986,7 @@
     
     for (NSDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
+            
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
             int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
              NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
@@ -1001,7 +1001,7 @@
             }
         }
     }
-//    [m_myTableView reloadData];
+    //请求网络点赞
   [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id")];
 }
 
@@ -1009,7 +1009,7 @@
 -(void)updateComment
 {
     NSLog(@"commentView-->%@",self.textView.text);
- 
+
     if (self.textView.text.length<1) {
         return;
     }
