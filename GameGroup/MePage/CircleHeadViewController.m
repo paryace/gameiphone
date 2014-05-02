@@ -914,6 +914,7 @@
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
+    
     [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
