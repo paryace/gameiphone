@@ -11,14 +11,6 @@
 static OfflineComment *my_gameCommon = NULL;
 
 @implementation OfflineComment
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
-    }
-    return self;
-}
 
 + (OfflineComment*)singleton
 {
@@ -31,22 +23,37 @@ static OfflineComment *my_gameCommon = NULL;
 	}
 	return my_gameCommon;
 }
+-(id)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
+    }
+    return self;
+}
 
--(void)appBecomeActiveWithNet:(NSNotification *)notification
+
+
+
+- (void)appBecomeActiveWithNet:(NSNotification*)notification
 {
     Reachability* reach = notification.object;
     if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
         
      NSArray *array = [DataStoreManager queryallcomments];
+        if ([array isKindOfClass:[NSArray class]]&&array.count>0) {
+
         for (int i =0; i<array.count; i++) {
             DSOfflineComments *offline = [array objectAtIndex:i];
             [self postCommentWithOffLine:offline];
         }
-        
+        }
         NSArray *array1 = [DataStoreManager queryallOfflineZan];
-        for (int i = 0; i <array.count; i++) {
-            DSOfflineZan *offlineZan = [array1 objectAtIndex:i];
-            [self postZanWithMsgId:offlineZan];
+        if ([array1 isKindOfClass:[NSArray class]]&&array1.count>0) {
+            for (int i = 0; i <array.count; i++) {
+                DSOfflineZan *offlineZan = [array1 objectAtIndex:i];
+                [self postZanWithMsgId:offlineZan];
+            }
         }
      }
 }

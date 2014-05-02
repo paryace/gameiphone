@@ -17,7 +17,7 @@
 #import "ReconnectMessage.h"
 #import "AddAddressBookViewController.h"
 #import "XMPPping.h"
-
+#import "OfflineComment.h"
 @implementation AppDelegate
 {
    
@@ -70,7 +70,7 @@
         [self.xmppHelper connect];
     }
    
-
+    [OfflineComment singleton];
 //    [DDLog addLogger:[DDTTYLogger sharedInstance]];//打印xmpp输出
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     

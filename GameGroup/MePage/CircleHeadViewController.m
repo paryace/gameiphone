@@ -224,7 +224,7 @@
             customObject = @"zanObject";
             customUser = @"zanUser";
         }
-        else if ([KISDictionaryHaveKey(dic, @"type")intValue]==5)
+        else if ([KISDictionaryHaveKey(dic, @"type")intValue]==5||[KISDictionaryHaveKey(dic, @"type")intValue]==7)
         {
             customObject =@"commentObject";
             customUser = @"commentUser";
@@ -1306,13 +1306,15 @@
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         NSString* uuid = [[GameCommon shareGameCommon] uuid];
 
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-                             msgid,@"msgId",
-                             destUserid,@"destUserid",
-                             destCommentId,@"destCommentId",
-                             comment,@"comments",
-                             uuid,@"uuid",nil];
-        [DataStoreManager saveCommentsWithDic:dic];
+        
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:msgid forKey:@"msgId"];
+ 
+        [dict setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
+        [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
+        [dict setObject:comment forKey:@"comments"];
+        [dict setObject:uuid forKey:@"uuid"];
+        [DataStoreManager saveCommentsWithDic:dict];
     }
 
     
@@ -1451,22 +1453,10 @@
 
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
 {
-    [self.textView resignFirstResponder];
-    
-    //    [self okButtonClick:nil];
+    [self updateComment];
     return YES;
 }
 
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if ([text isEqualToString:@"\n"]) {
-        [self.textView resignFirstResponder];
-        self.textView.text = nil;
-        self.textView.placeholder= nil;
-        return NO;
-    }
-    return YES;
-}
 
 -(void)dealloc
 {

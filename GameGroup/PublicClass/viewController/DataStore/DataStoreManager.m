@@ -1270,7 +1270,7 @@ return @"";
     NSString *type = KISDictionaryHaveKey(info, @"type");
     NSString *customObject;
     NSString *customUser;
-    if ([type intValue]==5) {
+    if ([type intValue]==5||[type intValue]==7) {
         customObject =@"commentObject";
         customUser = @"commentUser";
     }
@@ -1279,6 +1279,7 @@ return @"";
         customObject = @"zanObject";
         customUser = @"zanUser";
     }
+
     NSString *msgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"id")];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -1334,10 +1335,10 @@ return @"";
             offline = [DSOfflineComments MR_createInContext:localContext];
         offline.msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
         offline.comments = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"comments")];
-        if ([[dic allKeys]containsObject:@"destCommentId"]) {
+        if (![KISDictionaryHaveKey(dic, @"destCommentId")isEqualToString:@""]) {
             offline.destCommentId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destCommentId")];
         }
-        if ([[dic allKeys]containsObject:@"destUserid"]) {
+        if (![KISDictionaryHaveKey(dic, @"destUserid")isEqualToString:@""]) {
         offline.destUserid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destUserid")];
         }
         offline.uuid = uuid;
