@@ -1286,7 +1286,7 @@
             }];
         }
     }
-    else if (alertView.tag == 23) {
+    else if (alertView.tag == 23) { //举报
         if (buttonIndex != alertView.cancelButtonIndex) {
             [hud show:YES];
             NSString* str = [NSString stringWithFormat:@"本人举报用户id为%@的用户信息含不良内容，请尽快处理！", self.hostInfo.userId];

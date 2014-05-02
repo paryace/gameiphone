@@ -1,7 +1,7 @@
 //
 //  SearchPersonViewController.h
 //  GameGroup
-//
+//  搜索角色
 //  Created by Shen Yanping on 13-12-16.
 //  Copyright (c) 2013年 Swallow. All rights reserved.
 //

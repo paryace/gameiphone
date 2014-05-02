@@ -1108,7 +1108,7 @@
     }else{//点击的是别人的评论，弹出评论框
         
         //键盘定位
-        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
         
         self.textView.text = nil;
         self.textView.placeholder= nil;
