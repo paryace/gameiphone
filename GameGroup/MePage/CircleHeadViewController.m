@@ -914,13 +914,12 @@
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
-    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
     [self.textView becomeFirstResponder];    
 }
-
 #pragma mark--删除动态方法
 -(void)delCellWithCell:(CircleHeadCell *)myCell
 {
@@ -1043,18 +1042,20 @@
 - (void)editCommentOfYouWithCircle:(CircleHeadCell *)mycell withIndexPath:(NSInteger)row
 {
     NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag-100];
-    
     NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
     if ( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:@""]) {
         return;
     }
-    
+    //点击的是自己的评论，弹出删除菜单
     if( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
         act.tag = row;
         [act showInView:self.view];
-    }
-    else{
+    }else{//点击的是别人的评论，弹出评论框
+        
+        //键盘定位
+        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-99 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        
         self.textView.text = nil;
         self.textView.placeholder= nil;
 
