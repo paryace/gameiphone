@@ -1046,15 +1046,18 @@
                 [arr addObject:commentUser];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
+                //请求网络点赞
+                [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
             }else{//假如是已经赞的状态
                 [arr removeObject:commentUser];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
+                //请求网络取消
+                [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
             }
         }
     }
-    //请求网络点赞
-  [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id")];
+
 }
 
 #pragma mark-------
@@ -1114,11 +1117,7 @@
     }else{//点击的是别人的评论，弹出评论框
         
         //键盘定位
-//        [m_myTableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
-        
-        [m_myTableView setContentOffset:CGPointMake(0, 100)];
-//        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        
+        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         self.textView.text = nil;
         self.textView.placeholder= nil;
 
@@ -1212,7 +1211,7 @@
 
 
 //上传赞
--(void)postZanWithMsgId:(NSString *)msgid
+-(void)postZanWithMsgId:(NSString *)msgid IsZan:(BOOL)isZan
 {
     
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
@@ -1233,7 +1232,12 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_myTableView reloadData];
-        [self showMessageWindowWithContent:@"赞已成功" imageType:0];
+        if (isZan==YES) {
+            [self showMessageWindowWithContent:@"赞已成功" imageType:0];
+        }else{
+            [self showMessageWindowWithContent:@"赞已取消" imageType:0];
+        }
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
