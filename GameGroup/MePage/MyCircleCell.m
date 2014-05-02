@@ -20,7 +20,7 @@
         self.dataLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:self.dataLabel];
         
-        self.monthLabel =[FinderView setLabelWithFrame:CGRectMake(10, 30, 60, 20) backgroundColor:[UIColor clearColor] textColor:UIColorFromRGBA(0x767676, 1) font:[UIFont boldSystemFontOfSize:14]];
+        self.monthLabel =[FinderView setLabelWithFrame:CGRectMake(10, 30, 60, 20) backgroundColor:[UIColor clearColor] textColor:UIColorFromRGBA(0x767676, 1) font:[UIFont boldSystemFontOfSize:13]];
         self.monthLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:self.monthLabel];
 

@@ -10,6 +10,7 @@
 #import "OnceDynamicViewController.h"
 #import "CircleWithMeViewController.h"
 #import "MyCircleViewController.h"
+#import "TestViewController.h"
 #import "PhotoViewController.h"
 #import "CircleHeadCell.h"
 #import "MJRefresh.h"
@@ -23,7 +24,7 @@
     MJRefreshFooterView *m_footer;
     UILabel *nickNameLabel;
     EGOImageView *topImgaeView;
-    EGOImageView *headImageView;
+    EGOImageButton *headImageView;
     EGOImageView *imageViewC;
     
     CircleHeadCell *openMenuBtn;
@@ -51,7 +52,6 @@
     int m_commentAboutMeCount;
     
     UIAlertView *delCellAlertView;
- 
     int  delCellCount;//删除动态的cell行数（位置）
     
 }
@@ -139,13 +139,29 @@
     [topVIew addSubview:topImgaeView];
     
     
+    UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 280, 320, 40)];
+    topunderBgImageView.image = KUIImage(@"underbg");
+    [topVIew addSubview:topunderBgImageView];
+    
+    
+//    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 280, 240, 40)];
+//    view.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.3];
+//    [topVIew addSubview:view];
+    
+    
 //    昵称
+    
+    UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(139, 281, 85, 30)];
+    underNickLabel.text =self.nickNmaeStr;
+    underNickLabel.text = KISDictionaryHaveKey(user, @"nickname");
+    underNickLabel.textColor = [UIColor blackColor];
+    underNickLabel.backgroundColor =[UIColor clearColor];
+    underNickLabel.textAlignment = NSTextAlignmentRight;
+    [topVIew addSubview:underNickLabel];
+    
     nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(138, 280, 85, 30)];
     nickNameLabel.text =self.nickNmaeStr;
-    nickNameLabel.layer.cornerRadius = 5;
-    nickNameLabel.layer.masksToBounds=YES;
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickname");
-
     nickNameLabel.textColor = [UIColor whiteColor];
     nickNameLabel.backgroundColor =[UIColor clearColor];
     nickNameLabel.textAlignment = NSTextAlignmentRight;
@@ -153,23 +169,37 @@
     
     
     //头像
-    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 280, 80, 80)];
+    headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(236, 280, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,self.imageStr]];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
+    [headImageView addTarget:self action:@selector(enterPersonViewController:) forControlEvents:UIControlEventTouchDown];
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
     
     [topVIew addSubview:headImageView];
 
     //朋友在赞
     friendZanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    friendZanBtn.frame = CGRectMake(10, 280, 85, 25);
-    [friendZanBtn setBackgroundImage:KUIImage(@"friendZan") forState:UIControlStateNormal];
+    friendZanBtn.frame = CGRectMake(10, 306, 74, 28);
+    [friendZanBtn setBackgroundImage:KUIImage(@"friend_is_zan_on") forState:UIControlStateNormal];
+    [friendZanBtn setBackgroundImage:KUIImage(@"friend_is_zan_off") forState:UIControlStateSelected];
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"]) {
+        NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
+        if ([str intValue]==1) {
+            friendZanBtn.selected =YES;
+        }else{
+            friendZanBtn.selected = NO;
+        }
+    }
+    
     [friendZanBtn addTarget:self action:@selector(friendZan:) forControlEvents:UIControlEventTouchUpInside];
     [topVIew addSubview:friendZanBtn];
     
 
+    
+    
     //与我相关
     abobtMeImageView = [[UIImageView alloc]init];
     abobtMeImageView.frame = CGRectMake(68, 370, 184, 37);
@@ -223,8 +253,6 @@
     }
     
     
-    
-    
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
 
     hud = [[MBProgressHUD alloc]initWithView:self.view];
@@ -251,6 +279,19 @@
     }
 
 }
+
+-(void)enterPersonViewController:(UIButton *)sender
+{
+    TestViewController *testVC = [[TestViewController alloc]init];
+    testVC.userId =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    testVC.nickName = self.nickNmaeStr;
+    testVC.viewType = VIEW_TYPE_Self1;
+    [self.navigationController pushViewController:testVC animated:YES];
+}
+
+
+
+
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
@@ -305,10 +346,10 @@
     
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [button setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
-    [senderBnt setTitle:@"评论" forState:UIControlStateNormal];
-    senderBnt.backgroundColor= [UIColor grayColor];
+    [senderBnt setBackgroundImage:KUIImage(@"send_msg_btn_normal") forState:UIControlStateNormal];
+   // senderBnt.backgroundColor= [UIColor grayColor];
     [senderBnt addTarget:self action:@selector(updateComment) forControlEvents:UIControlEventTouchDown];
-    senderBnt.frame = CGRectMake(260, 7, 50, 35);
+    senderBnt.frame = CGRectMake(260, 0, 50, 50);
     [inPutView bringSubviewToFront:senderBnt];
     [inPutView addSubview:senderBnt];
 }
@@ -373,6 +414,13 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
+            if ([KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch")intValue]==1) {
+                friendZanBtn.selected = YES;
+            }else{
+                friendZanBtn.selected =NO;
+            }
+            [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
+
             topImgaeView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]stringByAppendingString:KISDictionaryHaveKey(responseObject, @"coverImg")]];
             
             if (m_currPageCount==0) {
@@ -414,14 +462,15 @@
 #pragma mark --朋友在赞触发方法与网络请求
 -(void)friendZan:(UIButton *)sender
 {
+    sender.selected  =!sender.selected;
     m_currPageCount =0;
     [hud show:YES];
-    if (isfriendCircle) {
+    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
+    if ([str intValue]==1) {
         methodStr = @"2";
-        isfriendCircle = NO;
     }else{
         methodStr = @"1";
-        isfriendCircle =YES;
+
     }
     
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
@@ -433,6 +482,7 @@
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
         m_currPageCount =0;
         [self getInfoFromNet];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -568,12 +618,12 @@
                 cell.oneImageView.backgroundColor = [UIColor redColor];
                 cell.customPhotoCollectionView.hidden = NO;
                 int i = (cell.collArray.count-1)/3;
-                cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 240, i*80+80) ;
-                CGFloat paddingY = 7;
-                CGFloat paddingX = 7;
+                cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 250, i*85+85) ;
+                CGFloat paddingY = 2;
+                CGFloat paddingX = 2;
                 cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
                 cell.layout.minimumLineSpacing = paddingY;
-                m_currmagY += i*80+80;
+                m_currmagY += i*85+85;
 
            // }
             [cell.customPhotoCollectionView reloadData];
@@ -726,12 +776,14 @@
                 }else{
                     currnetY +=imageView.image.size.height*160/imageView.image.size.width;
                 }
-            }else if(imgArray.count>1&&imgArray.count<4){//一行图片
-                currnetY+=80;
-            }else if(imgArray.count>4&&imgArray.count<6){//两行图片
-                currnetY  +=160;
-            }else{//三行图片
-                currnetY +=240;
+            }
+            else if(imgArray.count>1&&imgArray.count<4){
+                currnetY+=85;
+            }
+            else if(imgArray.count>=4&&imgArray.count<7){
+                currnetY  +=175;
+            }else if(imgArray.count>6){
+                currnetY +=255;
             }
         }
     }
@@ -1010,6 +1062,7 @@
     NSLog(@"commentView-->%@",self.textView.text);
 
     if (self.textView.text.length<1) {
+        [self showMessageWithContent:@"评论不能回复空内容" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
     //离线评论
@@ -1162,9 +1215,7 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        m_currPageCount =0;
-//        [self getInfoFromNet];
-        [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"评论成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -1196,6 +1247,7 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self showMessageWindowWithContent:@"评论成功" imageType:0];
         [self getInfoFromNet];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -1298,7 +1350,7 @@
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
     [self.view bringSubviewToFront:self.textView];
-    [self autoMovekeyBoard:-50];
+    [self autoMovekeyBoard:-inPutView.bounds.size.height];
 }
 -(void) autoMovekeyBoard: (float) h{
     

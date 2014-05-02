@@ -79,7 +79,7 @@
         // 3.设置整个collectionView的内边距
        
        // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
-        self.layout.itemSize = CGSizeMake(70, 70);
+        self.layout.itemSize = CGSizeMake(80, 80);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
         self.customPhotoCollectionView.scrollEnabled = NO;
@@ -286,7 +286,7 @@
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(250, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 
