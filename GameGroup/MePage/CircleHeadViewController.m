@@ -495,7 +495,14 @@
         }
     }];
 }
-
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+    if(scrollView==m_myTableView){
+        if (openMenuBtn.menuImageView.hidden==NO) {
+            openMenuBtn.menuImageView.hidden =YES;
+        }
+    }
+    
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return m_dataArray.count;
@@ -1215,7 +1222,8 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self showMessageWindowWithContent:@"评论成功" imageType:0];
+        [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"赞已成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

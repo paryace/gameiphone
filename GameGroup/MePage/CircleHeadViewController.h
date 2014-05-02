@@ -22,7 +22,8 @@ HPGrowingTextViewDelegate,
 UIActionSheetDelegate,
 UIScrollViewDelegate,
 EGOImageViewDelegate,
-UIAlertViewDelegate
+UIAlertViewDelegate,
+UIScrollViewDelegate
 >
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;
