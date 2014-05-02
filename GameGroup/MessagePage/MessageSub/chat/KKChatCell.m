@@ -56,6 +56,7 @@
         self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.statusLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
         [self.statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+        self.statusLabel.hidden = YES;
         [self.contentView addSubview:self.statusLabel];
         
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -126,6 +127,19 @@
         self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
         self.statusLabel.text = @"已读";
     }
+    else if ([status isEqualToString:@"1"])//已发送，对方未收到
+    {
+        self.failImage.hidden = YES;
+        if ([self.cellTimer isValid]) {
+            [self.cellTimer invalidate];
+            self.cellTimer = nil;
+        }
+        [self.activityView stopAnimating];
+        
+        self.statusLabel.hidden = YES; //这种情况不显示状态
+        self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
+        self.statusLabel.text = @"已发送";
+    }
     else
     {
         self.statusLabel.hidden = YES;
@@ -160,15 +174,13 @@
 
 #pragma mark 头像 - Headimg
 
-- (void)setHeadImgByMe
+- (void)setHeadImgByMe:(NSString*) myHeadImg;
 {
     [self.headImgV setFrame:CGRectMake(320-10-40,
                                        padding*2-15,
                                        40,
                                        40)];
     
-    NSString* myHeadImg = [DataStoreManager queryFirstHeadImageForUser_userManager:[[NSUserDefaults standardUserDefaults]
-                                                                                    objectForKey:kMYUSERID]];
     if ([myHeadImg isEqualToString:@""]||[myHeadImg isEqualToString:@" "]) {
         self.headImgV.imageURL = nil;
     }else{
@@ -180,8 +192,8 @@
             self.headImgV.imageURL = nil;
         }
     }
+    [self.headImgV removeTarget:self action:@selector(chatUserHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
     
-
     [self.headImgV  addTarget:self
                        action:@selector(myHeadImgClicked:)
              forControlEvents:UIControlEventTouchUpInside];
@@ -206,9 +218,11 @@
     }
 
     //点击事件
+    [self.headImgV removeTarget:self action:@selector(myHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.headImgV addTarget:self
                       action:@selector(chatUserHeadImgClicked:)
                 forControlEvents:UIControlEventTouchUpInside];
+
 }
 //点击我的头像
 -(void)myHeadImgClicked:(id)Sender
