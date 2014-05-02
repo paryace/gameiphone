@@ -9,11 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
+
+@protocol EveryDataNewsCellDelegate;
+
+
 @interface DayNewsCell : UITableViewCell
 @property(nonatomic,strong)EGOImageButton *headImageBtn;
 @property(nonatomic,strong)UILabel  * nickNameLabel;
 @property(nonatomic,strong)UILabel  * signatureLabel;
-@property(nonatomic,strong)EGOImageView *bigImageView;
+@property(nonatomic,strong)EGOImageButton *bigImageView;
 @property(nonatomic,strong)UILabel  *authorLabel;
 @property(nonatomic,strong)UILabel  *NumLabel;
 @property(nonatomic,strong)UILabel  *timeLabel;
@@ -24,4 +28,13 @@
 @property(nonatomic,strong)UIButton *newsOfBtn;
 @property(nonatomic,strong)UILabel *bianzheLabel;
 @property(nonatomic,strong)UIButton *nickNameBtn;
+
+@property(nonatomic,assign)id<EveryDataNewsCellDelegate>myCellDelegate;
+@end
+
+@protocol EveryDataNewsCellDelegate <NSObject>
+
+-(void)getBigImgWithCell:(DayNewsCell*)mycell;
+-(void)toViewNewsWithCell:(DayNewsCell*)mycell;
+
 @end

@@ -9,6 +9,7 @@
 #import "BaseViewController.h"
 #import "CircleHeadCell.h"
 #import "HPGrowingTextView.h"
+#import "SendNewsViewController.h"
 @interface CircleHeadViewController : BaseViewController
 <
 UITableViewDataSource,
@@ -22,7 +23,9 @@ HPGrowingTextViewDelegate,
 UIActionSheetDelegate,
 UIScrollViewDelegate,
 EGOImageViewDelegate,
-UIAlertViewDelegate
+UIAlertViewDelegate,
+UIScrollViewDelegate,
+TableViewDatasourceDidChange
 >
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;

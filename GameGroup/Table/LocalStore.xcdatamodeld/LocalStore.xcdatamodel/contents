@@ -137,6 +137,17 @@
         <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sendtime" optional="YES" attributeType="Date" syncable="YES"/>
     </entity>
+    <entity name="DSOfflineComments" representedClassName="DSOfflineComments" syncable="YES">
+        <attribute name="comments" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destCommentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destUserid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSOfflineZan" representedClassName="DSOfflineZan" syncable="YES">
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSOtherMsgs" representedClassName="DSOtherMsgs" syncable="YES">
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
@@ -211,10 +222,10 @@
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="Entity" syncable="YES"/>
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
+        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="255"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="195"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
         <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
@@ -229,7 +240,7 @@
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="240"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
-        <element name="Entity" positionX="-288" positionY="423" width="128" height="45"/>
-        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="255"/>
+        <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
+        <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
     </elements>
 </model>

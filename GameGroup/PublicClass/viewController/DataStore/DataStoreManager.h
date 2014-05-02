@@ -28,6 +28,7 @@
 #import "DSNewsMsgs.h"//新闻
 #import "DSuser.h"
 
+#import "DSOfflineZan.h"
 @interface DataStoreManager : NSObject
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
@@ -89,6 +90,17 @@
 
 +(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
 +(NSArray *)queryallDynamicAboutMe;
+
+
+
+
++(void)saveCommentsWithDic:(NSDictionary *)dic;
++(NSArray *)queryallcomments;
++(void)removeOfflineCommentsWithuuid:(NSString *)uuid;
+
++(void)saveOfflineZanWithDic:(NSDictionary *)dic;
++(NSArray *)queryallOfflineZan;
++(void)removeOfflineZanWithuuid:(NSString *)uuid;
 
 
 

@@ -42,7 +42,8 @@
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
 //    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
 //    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateHighlighted];
-    [shareButton setTitle:@"发表" forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
