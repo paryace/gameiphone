@@ -36,7 +36,7 @@
 -(void)refreshsCell
 {
     CGSize size1 =[CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@",self.commentStr]];
-    self.commentContLabel.frame = CGRectMake(5, 0,250, size1.height);
+    self.commentContLabel.frame = CGRectMake(5, 0,245, size1.height);
 }
 - (void)awakeFromNib
 {

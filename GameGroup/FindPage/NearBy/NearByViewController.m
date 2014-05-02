@@ -172,7 +172,7 @@
         [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:@"gender"];
     }
     [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_currentPage] forKey:@"pageIndex"];
-    [paramDict setObject:@"10" forKey:@"maxSize"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     
