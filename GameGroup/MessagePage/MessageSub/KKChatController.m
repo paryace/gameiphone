@@ -190,6 +190,10 @@ UINavigationControllerDelegate>
     
     [self.view addSubview:self.unReadL]; //未读数量
     
+    hud = [[MBProgressHUD alloc] initWithView:self.view];   
+    hud.labelText = @"正在处理图片...";
+    [self.view addSubview:hud];
+    
     
     float version = [[[UIDevice currentDevice] systemVersion] floatValue];
     if (version >= 5.0) {
@@ -1032,8 +1036,8 @@ UINavigationControllerDelegate>
                     NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
                     UIImage *image = [[UIImage alloc]initWithContentsOfFile:kkChatImagethumb];
                     if(image){
-                        UIImage* thumbimg = [NetManager image:image centerInSize:CGSizeMake(100, 100)];
-                        [imgs setObject:thumbimg forKey:uuid];
+                        //UIImage* thumbimg = [NetManager image:image centerInSize:CGSizeMake(100, 100)];
+                        [imgs setObject:image forKey:uuid];
                         NSLog(@"finalmesg添加%@",uuid);
                     }
                     else
@@ -1202,11 +1206,15 @@ UINavigationControllerDelegate>
 
 //从相册中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    
 
-
+    [hud show:YES];
+  //  [self.view addSubview:hud];
+    //hud.labelText = @"查询中...";
+    
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
+    UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
 
-    //UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -1216,7 +1224,7 @@ UINavigationControllerDelegate>
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
     
-    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
         NSLog(@"success///");
         
         [self sendImageMsgD:openImgPath UUID:uuid]; //一条图片消息写到本地
@@ -1230,6 +1238,7 @@ UINavigationControllerDelegate>
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+    [hud hide:YES];
 }
 
 //图片聊天上传图片
@@ -1239,7 +1248,6 @@ UINavigationControllerDelegate>
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.progressView.hidden = NO;
-    
     [hud show:YES];
     [NetManager uploadImage:image
                  WithURLStr:BaseUploadImageUrl
@@ -1268,6 +1276,7 @@ UINavigationControllerDelegate>
                                                cancelButtonTitle:@"知道啦"
                                                otherButtonTitles:nil];
          [alert show];
+         
      }];
 
 }
@@ -2171,7 +2180,6 @@ UINavigationControllerDelegate>
     
     
     
-    
     [wxSDArray removeAllObjects];
     [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
     
@@ -2361,8 +2369,11 @@ UINavigationControllerDelegate>
     //UI上改变之前那条的状态
     [messageDict setObject:status forKey:@"status"];
     [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
-    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+    [DataStoreManager deleteMsgInCommentWithUUid:uuid];
+    [DataStoreManager storeMyMessage:messageDict];
+    [self normalMsgToFinalMsg];
     
+    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
     
     CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],
                              [[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
@@ -2370,10 +2381,8 @@ UINavigationControllerDelegate>
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                          (size.height+20)/2 + padding*2-15)
                       status:status];
-    
     [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
-    [self normalMsgToFinalMsg];
-    [DataStoreManager storeMyMessage:messageDict];
+    
     
     
 }

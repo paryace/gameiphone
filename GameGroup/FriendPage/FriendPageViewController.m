@@ -84,26 +84,7 @@
     }
 }
 
-#pragma mark 刷新表格
-- (void)reloadContentList:(NSNotification*)notification
-{
-    NSString* tabIndex = notification.object?notification.object : @"0";
-    [self refreshSortType:[tabIndex integerValue]];
-}
 
-- (void)refreshSortType:(NSInteger)tabIndex
-{
-    NSString* sort_1 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] : @"1";
-    NSString* sort_2 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] : @"1";
-    NSString* sort_3 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] : @"1";
-
-    [m_sortTypeDic setObject:sort_1 forKey:sorttype_1];
-    [m_sortTypeDic setObject:sort_2 forKey:sorttype_2];
-    [m_sortTypeDic setObject:sort_3 forKey:sorttype_3];
-
-    
-    [self refreshFriendList:tabIndex];
-}
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -114,7 +95,7 @@
     }
     NSLog(@"[[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]%@",[[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]);
     
-
+    
 }
 - (void)viewDidLoad
 {
@@ -173,14 +154,14 @@
     m_myAttentionsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX + 40, 320, self.view.frame.size.height - (40 + 50 + startX)) style:UITableViewStylePlain];
     m_myAttentionsTableView.dataSource = self;
     m_myAttentionsTableView.delegate = self;
-
+    
     m_myAttentionsTableView.hidden = YES;
     
     
     m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX + 40, 320, self.view.frame.size.height - (40 + 50 + startX)) style:UITableViewStylePlain];
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
-
+    
     [self.view addSubview:m_myFansTableView];
     m_myFansTableView.hidden = YES;
     
@@ -198,6 +179,27 @@
     
 }
 
+
+#pragma mark 刷新表格
+- (void)reloadContentList:(NSNotification*)notification
+{
+    NSString* tabIndex = notification.object?notification.object : @"0";
+    [self refreshSortType:[tabIndex integerValue]];
+}
+
+- (void)refreshSortType:(NSInteger)tabIndex
+{
+    NSString* sort_1 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] : @"1";
+    NSString* sort_2 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] : @"1";
+    NSString* sort_3 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] : @"1";
+
+    [m_sortTypeDic setObject:sort_1 forKey:sorttype_1];
+    [m_sortTypeDic setObject:sort_2 forKey:sorttype_2];
+    [m_sortTypeDic setObject:sort_3 forKey:sorttype_3];
+
+    
+    [self refreshFriendList:tabIndex];
+}
 - (void)addTopView
 {
     UIImageView* topBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, 40)];
@@ -241,7 +243,7 @@
         return;
     }
     
-    if (segButton == m_friendButton) {
+    if (segButton == m_friendButton) {  //好友
         m_friendButton.selected = YES;
         m_attentionButton.selected = NO;
         m_fansButton.selected = NO;
@@ -266,7 +268,7 @@
             }
         }
     }
-    else if(segButton == m_attentionButton)
+    else if(segButton == m_attentionButton)     //关注
     {
         m_friendButton.selected = NO;
         m_attentionButton.selected = YES;
@@ -294,7 +296,7 @@
             }
         }
     }
-    else
+    else    //粉丝
     {
         m_friendButton.selected = NO;
         m_attentionButton.selected = NO;

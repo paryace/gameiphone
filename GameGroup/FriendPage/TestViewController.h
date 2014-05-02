@@ -1,6 +1,6 @@
 //
 //  TestViewController.h
-//  GameGroup 
+//  他人资料/个人资料页 
 //
 //  Created by admin on 14-3-4.
 //  Copyright (c) 2014年 Swallow. All rights reserved.

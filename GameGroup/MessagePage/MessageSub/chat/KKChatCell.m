@@ -159,11 +159,6 @@
         [self.cellTimer invalidate];
         self.cellTimer = nil;
     }
-    //设为失败，重发
-//    self.failImage.frame = CGRectMake(mPoint.x-12, mPoint.y-12, 24, 24);
-//    self.failImage.hidden = NO;
-//    self.statusLabel.hidden = YES;
-    
     [self.activityView stopAnimating];
     
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
