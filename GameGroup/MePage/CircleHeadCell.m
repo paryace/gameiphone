@@ -127,20 +127,20 @@
         [self.contentView addSubview:self.openBtn];
         
         
-        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 190, 42)];
+        self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 180, 38)];
         self.menuImageView.image = KUIImage(@"bgImg");
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
         [self addSubview:self.menuImageView];
 
         
-        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(5, 5, 87, 32)];
+        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(2, 2, 87, 36)];
         [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
         [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
         [self.zanBtn addTarget:self action:@selector(zan:) forControlEvents:UIControlEventTouchUpInside];
         [self.menuImageView addSubview:self.zanBtn];
         
-        self.commentBtn=[[ UIButton alloc]initWithFrame:CGRectMake(97, 5, 87, 32)];
+        self.commentBtn=[[ UIButton alloc]initWithFrame:CGRectMake(91, 2, 87, 36)];
         [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
         [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
         [self.commentBtn addTarget:self action:@selector(pinglun:) forControlEvents:UIControlEventTouchUpInside];
@@ -257,7 +257,7 @@
         
         self.menuImageView.hidden =NO;
         [self.contentView bringSubviewToFront:self.menuImageView];
-        self.menuImageView.frame = CGRectMake(90, sender.frame.origin.y-4, 190, 42);
+        self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y, 180, 38);
         [self.contentView  becomeFirstResponder];
     }else
     {
