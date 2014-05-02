@@ -40,7 +40,7 @@
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status; //在指定位置刷新重连标记
 
 //头像 
-- (void)setHeadImgByMe; //头像是自己
+- (void)setHeadImgByMe:(NSString*) myHeadImg; //头像是自己
 - (void)setHeadImgByChatUser:(NSString*) chatUserImg; //把头像设置为聊天对像
 @end
 
