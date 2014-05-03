@@ -164,6 +164,7 @@
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"0", @"received",nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
+    //10秒后通知大家检查现在的status状态
 }
 
 

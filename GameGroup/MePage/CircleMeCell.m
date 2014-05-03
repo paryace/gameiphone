@@ -19,8 +19,8 @@
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
         [self addSubview:self.headImgBtn];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
-        self.nickNameLabel.textColor = kColorWithRGB(41, 164, 246, 1.0);
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
+        self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self addSubview:self.nickNameLabel];
@@ -46,9 +46,9 @@
         self.contentsLabel.textColor = [UIColor grayColor];
         [bgView addSubview:self.contentsLabel];
         
-        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, CGRectGetMidY(self.titleLabel.frame)+7, 170, 20)];
-        self.timeLabel.font = [UIFont systemFontOfSize:10];
-        self.timeLabel.textColor =kColorWithRGB(41, 164, 246, 1.0);
+        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, CGRectGetMidY(self.titleLabel.frame)+20, 170, 20)];
+        self.timeLabel.font = [UIFont systemFontOfSize:11];
+        self.timeLabel.textColor = [UIColor grayColor];
         [self addSubview:self.timeLabel];
         
     }

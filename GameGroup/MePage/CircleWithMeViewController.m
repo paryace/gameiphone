@@ -40,8 +40,7 @@
     
     [self setTopViewWithTitle:@"消息" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
-//    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-//    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateHighlighted];
+    
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
@@ -159,8 +158,9 @@
     }else{
         cell.contentsLabel.hidden =YES;
         cell.contentImageView.hidden = NO;
-        cell.contentImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]]];
-
+        NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
+        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/60/60"]];
+        cell.contentImageView.imageURL = imageContetURL;
     }
     
     
@@ -221,10 +221,10 @@
 -(void)enterPersonInfoPage:(UIButton *)sender
 {
     TestViewController *tsVC = [[TestViewController alloc]init];
-    NSDictionary *dict = [dataArray objectAtIndex:sender.tag];
-    tsVC.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")];
-    tsVC.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname")];
+    DSCircleWithMe *dCircle = [dataArray objectAtIndex:sender.tag];
     
+    tsVC.nickName =dCircle.nickname;
+    tsVC.userId =dCircle.userid;
     [self.navigationController pushViewController:tsVC animated:YES];
     
 }
