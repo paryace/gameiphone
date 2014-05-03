@@ -87,7 +87,7 @@
     [self.xmppStream setHostName:host];
 
     //连接服务器
-    NSError *err = nil;
+   // NSError *err = nil;
     
     [self.xmppReconnect manualStart];
     

@@ -1321,7 +1321,7 @@ return @"";
 
 +(NSArray *)queryallDynamicAboutMe
 {
-    NSArray *array= [DSCircleWithMe MR_findAll];
+    NSArray *array= [DSCircleWithMe MR_findAllSortedBy:@"createDate" ascending:NO];
     return array;
 }
 

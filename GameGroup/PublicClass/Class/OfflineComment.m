@@ -34,7 +34,7 @@ static OfflineComment *my_gameCommon = NULL;
 
 
 
-
+//当网络变得可用
 - (void)appBecomeActiveWithNet:(NSNotification*)notification
 {
     Reachability* reach = notification.object;

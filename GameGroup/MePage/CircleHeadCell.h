@@ -22,7 +22,7 @@
 @property(nonatomic,strong)UILabel *lastLabel;//XXX发表了 、分享了XXX
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,strong)UIView * shareView;
-@property(nonatomic,strong)UIButton *openBtn;
+@property(nonatomic,strong)UIButton *openBtn; //展开菜单“。。。”
 @property(nonatomic,strong)UIImageView *menuImageView;
 @property(nonatomic,strong)EGOImageView *shareImgView;
 @property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
