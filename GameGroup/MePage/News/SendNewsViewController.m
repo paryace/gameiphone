@@ -230,18 +230,6 @@
         hud.labelText = @"上传图片中...";
         [hud show:YES];
         [self publishOnePicture:0 image:imageArray imageName:nameArray reponseStrDic:[NSMutableDictionary dictionaryWithCapacity:1]];
-//        [NetManager uploadImages:imageArray WithURLStr:BaseUploadImageUrl ImageName:nameArray   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传图片
-//            [hud hide:YES];
-//
-//            self.imageId = [[NSMutableString alloc]init];
-//            for (NSString*a in responseObject) {
-//                [_imageId appendFormat:@"%@,",[responseObject objectForKey:a]];
-//            }
-//            [self publishWithImageString:_imageId];
-//            
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            [hud hide:YES];
-//        }];
     }else
     {
         [self publishWithImageString:@""];

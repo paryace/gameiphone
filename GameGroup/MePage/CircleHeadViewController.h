@@ -1,7 +1,7 @@
 //
 //  CircleHeadViewController.h
 //  GameGroup
-//
+//  朋友圈
 //  Created by 魏星 on 14-4-23.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
@@ -27,9 +27,9 @@ UIAlertViewDelegate,
 UIScrollViewDelegate,
 TableViewDatasourceDidChange
 >
-@property(nonatomic,copy)NSString *imageStr;
-@property(nonatomic,copy)NSString *nickNmaeStr;
-@property(nonatomic,copy)NSString *userId;
+@property(nonatomic,copy)NSString *imageStr;    //Cover图片
+@property(nonatomic,copy)NSString *nickNmaeStr; //昵称
+@property(nonatomic,copy)NSString *userId;  //userid
 @property(nonatomic,strong)HPGrowingTextView *textView;
 
 @end

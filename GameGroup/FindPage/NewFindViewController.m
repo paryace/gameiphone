@@ -136,6 +136,7 @@
 -(void)ss:(NSNotification*)sender
 {
     NSLog(@"监听");
+    //控制红点
     friendDunamicmsgCount ++;
     
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];

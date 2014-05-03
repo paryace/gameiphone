@@ -245,23 +245,10 @@
 
 -(void)openBtnList:(UIButton *)sender
 {
+    self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y-18, 180, 38);
+
     if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(openMenuCell:)]) {
         [self.myCellDelegate openMenuCell:self];
-    }
-    
-    
-    if (self.menuImageView.hidden==YES) {
-//        if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(hiddenOrShowMenuImageViewWithCell:)]) {
-//            [self.myCellDelegate hiddenOrShowMenuImageViewWithCell:self];
-//        }
-        
-        self.menuImageView.hidden =NO;
-        [self.contentView bringSubviewToFront:self.menuImageView];
-        self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y, 180, 38);
-        [self.contentView  becomeFirstResponder];
-    }else
-    {
-    self.menuImageView.hidden =YES;
     }
 }
 

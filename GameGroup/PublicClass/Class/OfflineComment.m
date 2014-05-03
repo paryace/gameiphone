@@ -59,7 +59,7 @@ static OfflineComment *my_gameCommon = NULL;
 }
 -(void)postCommentWithOffLine:(DSOfflineComments *)offline
 {
-    
+
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:offline.msgId forKey:@"messageId"];
@@ -68,6 +68,10 @@ static OfflineComment *my_gameCommon = NULL;
     }
     if (offline.destUserid) {
         [paramDic setObject:offline.destUserid forKey:@"destUserid"];
+    }
+    if (!offline.comments)  //评论内容为空，不让发。
+    {
+        return ;
     }
     [paramDic setObject:offline.comments forKey:@"comment"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

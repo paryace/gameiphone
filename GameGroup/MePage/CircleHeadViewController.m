@@ -962,8 +962,20 @@
 #pragma mark ---cell delegate  openMenuCell
 - (void)openMenuCell:(CircleHeadCell*)myCell
 {
-    openMenuBtn=myCell;
-}
+    if(openMenuBtn) //如果有打开的cell
+    {
+        //关闭它
+        CircleHeadCell* cell = openMenuBtn;
+        cell.menuImageView.hidden = YES;
+        if (openMenuBtn.tag == myCell.tag) {    //如果打开的是自己
+            openMenuBtn=nil;
+            return;
+        }
+    }  
+        [myCell.contentView bringSubviewToFront:myCell.menuImageView];
+        [myCell.contentView  becomeFirstResponder];
+        myCell.menuImageView.hidden = NO;
+        openMenuBtn=myCell;}
 #pragma mark ---cell delegate  commentAndZan
 //评论button方法
 -(void)pinglunWithCircle:(CircleHeadCell *)myCell
@@ -1025,6 +1037,7 @@
                 [alert show];
             }
         }
+        
     }];
 
 }
@@ -1066,7 +1079,7 @@
             }
         }
     }
-    [m_myTableView reloadData];
+    
 
 }
 
@@ -1085,7 +1098,7 @@
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
     [commentUser setObject:@"0" forKey:@"superstar"];
-    [commentUser setObject:@"" forKey:@"userid"];
+    [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
     
     NSDictionary *dict =[ NSDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser", nil];
@@ -1242,6 +1255,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_myTableView reloadData];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -1252,6 +1266,7 @@
     }];
 }
 
+//删除评论
 -(void)delcomment
 {
     hud.labelText = @"删除中...";
