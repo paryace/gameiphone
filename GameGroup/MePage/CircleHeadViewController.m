@@ -56,8 +56,10 @@
     int  delCellCount;//删除动态的cell行数（位置）
     
     NSMutableDictionary *delcommentDic;
-    
-//    NSMutableArray *newArray;
+
+    NSMutableDictionary *cellhightarray;//存放每个Cell的高度
+    float offer;
+    int height;
     
 }
 @end
@@ -98,8 +100,8 @@
     tapGr.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapGr];
     
-    
-//     newArray = [[NSMutableArray alloc] init];
+    cellhightarray = [NSMutableDictionary dictionary];
+    height=216;
     
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
@@ -854,8 +856,9 @@
         }
         currnetY+=hieght+10;
     }
-//     NSNumber *number = [NSNumber numberWithFloat:currnetY];
-//    [newArray addObject:number];
+    NSLog(@"长度－－》%f",currnetY);
+    NSNumber *number = [NSNumber numberWithFloat:currnetY];
+    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];//以动态id为键存放每个cell的高度到集合里
     return currnetY;
     currnetY =0;
 }
@@ -1028,11 +1031,11 @@
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
-    [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:myCell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     isComeBackComment = NO;
     commentMsgId =KISDictionaryHaveKey(dic, @"id");
     myCell.menuImageView.hidden = YES;
-    [self.textView becomeFirstResponder];    
+    [self.textView becomeFirstResponder];
+    [self keyboardLocation:myCell];
 }
 #pragma mark--删除动态方法
 -(void)delCellWithCell:(CircleHeadCell *)myCell
@@ -1049,15 +1052,15 @@
         return;
     }
     NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount-100)];
-
-    [m_dataArray removeObjectAtIndex:delCellCount-100];
-    [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
-
+//  [m_dataArray removeObjectAtIndex:delCellCount-100];
+//  [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
+//  [m_myTableView reloadData];
     NSLog(@"dic---%@",dic);
     [self delCellWithMsgId:KISDictionaryHaveKey(dic, @"id")];
 }
 
-//230746
+
+//删除动态230746
 -(void)delCellWithMsgId:(NSString *)msgId
 {
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
@@ -1070,6 +1073,9 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [m_dataArray removeObjectAtIndex:delCellCount-100];
+        [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         
         [self getInfoFromNet];
         
@@ -1189,14 +1195,10 @@
         [delcommentDic setObject:@(row) forKey:@"row"];
         [act showInView:self.view];
     }else{//点击的是别人的评论，弹出评论框
-        
-        //键盘定位
-        [m_myTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:mycell.tag-100 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         self.textView.text = nil;
         self.textView.placeholder= nil;
-
         [self.textView becomeFirstResponder];
-        
+        [self keyboardLocation:mycell];
         isComeBackComment = YES;
         NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag-100];
         commentMsgId =KISDictionaryHaveKey(dic, @"id");
@@ -1211,6 +1213,17 @@
         destuserId  =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
         destMsgId = KISDictionaryHaveKey(dict, @"id");
     }
+}
+//tableView定位
+-(void)keyboardLocation:(CircleHeadCell *)mycell
+{
+    for (int i=0; i<(mycell.tag-100+1); i++) {
+        NSDictionary *dict =[m_dataArray objectAtIndex:i];
+        offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
+    }
+    offer+=(350-height-23);
+    [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
+    offer=0;
 }
 #pragma mark --- clickseeBigImage
 //点击查看大图
@@ -1341,6 +1354,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        [cellhightarray removeObjectForKey:KISDictionaryHaveKey(dic, @"id")];
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
         [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
         [m_myTableView reloadData];
@@ -1483,6 +1497,7 @@
     
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
+    height = keyboardRect.size.height;
 }
 
 
