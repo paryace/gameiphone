@@ -45,7 +45,7 @@ static OfflineComment *my_gameCommon = NULL;
 
         for (int i =0; i<array.count; i++) {
             DSOfflineComments *offline = [array objectAtIndex:i];
-           // [self postCommentWithOffLine:offline];
+            [self postCommentWithOffLine:offline];
         }
         }
         NSArray *array1 = [DataStoreManager queryallOfflineZan];

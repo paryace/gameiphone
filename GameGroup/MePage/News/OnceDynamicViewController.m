@@ -333,6 +333,7 @@
     [hud show:YES];
     [paramDict setObject:@"4" forKey:@"type"];
     [paramDict setObject:self.messageid forKey:@"messageid"];
+ //   [paramDict setObject:@"mydynamicmsg" forKey:@"msgtype"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];

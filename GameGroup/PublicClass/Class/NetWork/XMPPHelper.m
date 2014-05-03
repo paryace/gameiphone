@@ -337,12 +337,12 @@
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
         {
-            if ([msgtype isEqualToString:@"frienddynamicmsg"]) {
+            if ([msgtype isEqualToString:@"frienddynamicmsg"]) {    //新的朋友圈动态
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
                 
             }
-            else
+            else if ([msgtype isEqualToString:@"mydynamicmsg"])
             {
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
@@ -359,6 +359,8 @@
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
+            }
+            else{   //未知的动态
             }
             //    [self comeBackDelivered:from msgId:msgId];
         }

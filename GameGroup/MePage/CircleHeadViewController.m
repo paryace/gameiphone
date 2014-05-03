@@ -497,8 +497,15 @@
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
+                
             }
         }
+        else
+        {
+            UIAlertView* alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+            [alertView1 show];
+        }
+        [hud hide:YES];
     }];
 }
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{

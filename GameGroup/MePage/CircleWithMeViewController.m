@@ -38,7 +38,7 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"消息" withBackButton:YES];
+    [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
     
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];

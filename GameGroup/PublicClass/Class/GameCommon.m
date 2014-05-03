@@ -550,22 +550,23 @@ static GameCommon *my_gameCommon = NULL;
 
 
 
-#pragma mark tabBar小红点
+#pragma mark MyNews - tabBar小红点
 -(void)displayTabbarNotification
 {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews])
     {
-        if (![[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"0"]) {
-            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
+        int value = [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] intValue];
+        if (value!=0) {
+            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
         }
         else
         {
-            [[Custom_tabbar showTabBar] removeNotificatonOfIndex:3];
+            [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
         }
     }
     else
     {
-        [[Custom_tabbar showTabBar] removeNotificatonOfIndex:3];
+        [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
     }
 }
 #pragma mark 粉丝数变化
