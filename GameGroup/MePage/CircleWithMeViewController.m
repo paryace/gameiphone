@@ -38,7 +38,7 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"消息" withBackButton:YES];
+    [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
     
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
@@ -147,13 +147,15 @@
     cell.headImgBtn.tag = indexPath.row;
     cell.nickNameLabel.text =dCircle.nickname;
     
+    
+    //右边的样式
     if ([dCircle.myMsgImg isEqualToString:@""]||[dCircle.myMsgImg isEqualToString:@" "]) {
         cell.contentsLabel.hidden = NO;
         cell.contentImageView.hidden = YES;
-        NSString *str = [NSString stringWithFormat:@"%@",dCircle.comment];
+        NSString *str = [NSString stringWithFormat:@"%@",dCircle.myMsg];
         CGSize titleSize = [str sizeWithFont:cell.contentsLabel.font constrainedToSize:CGSizeMake(60, 60) lineBreakMode:NSLineBreakByCharWrapping];
         cell.contentsLabel.frame = CGRectMake(CGRectGetMinX(cell.contentsLabel.frame), CGRectGetMinY(cell.contentsLabel.frame), titleSize.width, titleSize.height);
-        cell.contentsLabel.text = dCircle.comment;
+        cell.contentsLabel.text = dCircle.myMsg;
         
     }else{
         cell.contentsLabel.hidden =YES;

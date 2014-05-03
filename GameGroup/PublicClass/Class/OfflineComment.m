@@ -34,7 +34,7 @@ static OfflineComment *my_gameCommon = NULL;
 
 
 
-
+//当网络变得可用
 - (void)appBecomeActiveWithNet:(NSNotification*)notification
 {
     Reachability* reach = notification.object;
@@ -45,7 +45,7 @@ static OfflineComment *my_gameCommon = NULL;
 
         for (int i =0; i<array.count; i++) {
             DSOfflineComments *offline = [array objectAtIndex:i];
-           // [self postCommentWithOffLine:offline];
+            [self postCommentWithOffLine:offline];
         }
         }
         NSArray *array1 = [DataStoreManager queryallOfflineZan];
@@ -59,7 +59,7 @@ static OfflineComment *my_gameCommon = NULL;
 }
 -(void)postCommentWithOffLine:(DSOfflineComments *)offline
 {
-    
+
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:offline.msgId forKey:@"messageId"];
@@ -68,6 +68,10 @@ static OfflineComment *my_gameCommon = NULL;
     }
     if (offline.destUserid) {
         [paramDic setObject:offline.destUserid forKey:@"destUserid"];
+    }
+    if (!offline.comments)  //评论内容为空，不让发。
+    {
+        return ;
     }
     [paramDic setObject:offline.comments forKey:@"comment"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

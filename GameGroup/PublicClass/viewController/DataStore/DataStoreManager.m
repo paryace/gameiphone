@@ -1321,7 +1321,7 @@ return @"";
 
 +(NSArray *)queryallDynamicAboutMe
 {
-    NSArray *array= [DSCircleWithMe MR_findAll];
+    NSArray *array= [DSCircleWithMe MR_findAllSortedBy:@"createDate" ascending:NO];
     return array;
 }
 
@@ -1335,12 +1335,8 @@ return @"";
             offline = [DSOfflineComments MR_createInContext:localContext];
         offline.msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
         offline.comments = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"comments")];
-        if (![KISDictionaryHaveKey(dic, @"destCommentId")isEqualToString:@""]) {
-            offline.destCommentId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destCommentId")];
-        }
-        if (![KISDictionaryHaveKey(dic, @"destUserid")isEqualToString:@""]) {
+        offline.destCommentId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destCommentId")];
         offline.destUserid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"destUserid")];
-        }
         offline.uuid = uuid;
     }];
 

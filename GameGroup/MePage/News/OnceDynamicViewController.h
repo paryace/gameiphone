@@ -1,7 +1,7 @@
 //
 //  OnceDynamicViewController.h
 //  GameGroup
-//
+//  动态详情页
 //  Created by Shen Yanping on 14-1-2.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //

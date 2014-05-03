@@ -17,6 +17,8 @@
         // Initialization code
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
+        self.headImgBtn.layer.cornerRadius = 5;
+        self.headImgBtn.layer.masksToBounds = YES;
         [self addSubview:self.headImgBtn];
         
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
@@ -41,9 +43,9 @@
         
         self.contentsLabel  =[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 60, 60)];
         self.contentsLabel.numberOfLines = 4;
-        self.contentsLabel.font = [UIFont systemFontOfSize:10];
+        self.contentsLabel.font = [UIFont systemFontOfSize:12];
         self.contentsLabel.backgroundColor = [UIColor clearColor];
-        self.contentsLabel.textColor = [UIColor grayColor];
+        self.contentsLabel.textColor = [UIColor darkGrayColor];
         [bgView addSubview:self.contentsLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, CGRectGetMidY(self.titleLabel.frame)+20, 170, 20)];

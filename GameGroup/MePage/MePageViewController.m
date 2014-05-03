@@ -23,6 +23,7 @@
 #import "TitleObjTableCell.h"
 #import "MyStateTableCell.h"
 #import "NewsViewController.h"
+#import "UserManager.h"
 
 #import "FunsOfOtherViewController.h"
 #import "MyCircleViewController.h"
@@ -377,11 +378,11 @@
                 cell.nameLabel.text = [NSString stringWithFormat:@"「%@」", tit];
             }
             cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
-            if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] && [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"1"]){
-                cell.notiBgV.hidden = NO;
-            }
-            else
-                cell.notiBgV.hidden = YES;
+//            if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] && [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"1"]){
+//                cell.notiBgV.hidden = NO;
+//            }
+//            else
+//                cell.notiBgV.hidden = YES;
         }
         else
         {
@@ -622,19 +623,29 @@
 - (void)myStateClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    CircleWithMeViewController *cirMe = [[CircleWithMeViewController alloc]init];
-    cirMe.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-
-    [self.navigationController pushViewController:cirMe animated:YES];
-
-//    NewsViewController* VC = [[NewsViewController alloc] init];
-//    VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-//    VC.myViewType = ME_NEWS_TYPE;
-//    [self.navigationController pushViewController:VC animated:YES];
+//    //进入与我相关
+//    CircleWithMeViewController *cirMe = [[CircleWithMeViewController alloc]init];
+//    cirMe.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+//
+//    [self.navigationController pushViewController:cirMe animated:YES];
     
-    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    [[GameCommon shareGameCommon] displayTabbarNotification];
+    //消除红点
+    //[[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
+    //[[NSUserDefaults standardUserDefaults] synchronize];
+    //[[GameCommon shareGameCommon] displayTabbarNotification];
+
+    MyCircleViewController* VC = [[MyCircleViewController alloc] init];
+    NSString * myUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    VC.userId = myUserid;
+    NSDictionary* user=[[UserManager singleton] getUser:myUserid];
+    NSString * myNickName = [user objectForKey:@"nickname"];
+    NSString * myImg = [user objectForKey:@"img"];
+    VC.nickNmaeStr = myNickName;
+    VC.imageStr = myImg;
+    // VC.myViewType = ME_NEWS_TYPE;  暂时不能识别是自己的还是别人的
+    [self.navigationController pushViewController:VC animated:YES];
+    
+
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;

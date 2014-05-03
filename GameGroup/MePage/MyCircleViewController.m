@@ -54,28 +54,44 @@
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     
+    //顶部图片
     UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
     [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
-    topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
-    topImgaeView.backgroundColor = [UIColor grayColor];
+    //topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
+    topImgaeView.backgroundColor = [UIColor darkGrayColor];
     
     [topVIew addSubview:topImgaeView];
     
-    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 210, 200, 30)];
+    //黑白渐变Label以突出文字
+    UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 210, 320, 40)];
+    topunderBgImageView.image = KUIImage(@"underbg");
+    [topVIew addSubview:topunderBgImageView];
+    
+    
+    //    昵称
+ 
+    CGSize nickLabelsize =[self.nickNmaeStr sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+    
+    UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 211, nickLabelsize.width, 30)];
+    underNickLabel.text =self.nickNmaeStr;
+    underNickLabel.textColor = [UIColor blackColor];
+    underNickLabel.backgroundColor =[UIColor clearColor];
+    underNickLabel.textAlignment = NSTextAlignmentRight;
+    [topVIew addSubview:underNickLabel];
+    
+    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 210, nickLabelsize.width, 30)];
     nickNameLabel.text =self.nickNmaeStr;
-    nickNameLabel.layer.cornerRadius = 5;
-    nickNameLabel.layer.masksToBounds=YES;
     nickNameLabel.textColor = [UIColor whiteColor];
     nickNameLabel.backgroundColor =[UIColor clearColor];
     nickNameLabel.textAlignment = NSTextAlignmentRight;
     [topVIew addSubview:nickNameLabel];
     
-    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 206, 80, 80)];
+    //头像
+    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-//    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:160 hieght:160 a:@"160/160"]];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
 
@@ -115,9 +131,11 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
-            topImgaeView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+            NSString *strImg = KISDictionaryHaveKey(responseObject, @"coverImg");
+            NSString *strImgID = [NSString stringWithFormat:BaseImageUrl@"%@",strImg];
+            topImgaeView.imageURL = [NSURL URLWithString:strImgID];
             
-            [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
+           // [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
             if (m_currPageCount==0) {
                 [dataArray removeAllObjects];
                 [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
@@ -197,14 +215,17 @@
         [(NSMutableArray*)arr removeLastObject];
     }
 
-    if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
+    
+    if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "])
+    //文字
+    {
         cell.imgCountLabel.hidden = YES;
         cell.thumbImageView.hidden =YES;
         cell.commentStr = KISDictionaryHaveKey(dic, @"msg");
       //  [cell refreshCell];
 
             cell.titleLabel.frame = CGRectMake(80, 5, 225,40);
-
+        
         //cell.titleLabel.center = CGPointMake(cell.titleLabel.center.x, cell.center.y);
         cell.titleLabel.font = [UIFont systemFontOfSize:13];
         cell.titleLabel.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
@@ -212,7 +233,9 @@
 
         cell.titleLabel.numberOfLines = 2;
         
-    }else{
+    }
+    //图片
+    else{
         
         cell.imgCountLabel.hidden = NO;
         cell.thumbImageView.hidden =NO;

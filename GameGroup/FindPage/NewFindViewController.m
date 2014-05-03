@@ -36,11 +36,13 @@
     UIButton    *m_meetBtn;//邂逅
     UIButton    *m_activateBtn;
     HostInfo    *hostInfo;
-    UIImageView *m_notibgInfoImageView;
+    UIImageView *m_notibgInfoImageView; //与我相关红点
+    UIImageView *m_notibgCircleNewsImageView; //朋友圈红点
     UILabel *lb;
     DSuser   * m_userInfo;
    // NSMutableDictionary *friendImgDic;
     NSInteger    friendDunamicmsgCount;
+    NSInteger    myDunamicmsgCount;
     BOOL myActive;
 }
 @property(nonatomic,retain)NSString * friendImgStr;
@@ -54,7 +56,13 @@
     if (self) {
         // Custom initialization
        
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ss:) name:@"frienddunamicmsgChange_WX" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(ss:) name:@"frienddunamicmsgChange_WX"
+                                                  object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self
+                                                selector:@selector(receivedMyDynamicMsg:)
+                                                    name:@"mydynamicmsg_wx"
+                                                  object:nil];
 
     }
     return self;
@@ -85,12 +93,54 @@
     
     
 }
+
+#pragma mark -
+#pragma mark 红点监听
+//监听与我相关的消息来临
+-(void)receivedMyDynamicMsg:(NSNotification*)sender
+{
+    myDunamicmsgCount ++;
+    //添加Tab上的小红点
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    
+    //显示头像
+    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
+    if ([fruits isEqualToString:@""]) {
+        m_dynamicBtn.imageURL =nil;
+    }else{
+        NSArray  * array= [fruits componentsSeparatedByString:@","];
+        self.friendImgStr =[array objectAtIndex:0];
+        
+        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
+        if (_friendImgStr) {
+            m_dynamicBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+        }else{
+            m_dynamicBtn.imageURL = nil;
+        }
+    }
+    
+    //显示数字
+    if (myDunamicmsgCount && myDunamicmsgCount !=0)
+    {
+        m_notibgInfoImageView.hidden = NO;  //数字
+        if (myDunamicmsgCount > 99) {
+            lb.text = @"99";
+        }
+        else
+            lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
+    }
+    
+    
+}
+//监听消息来临
 -(void)ss:(NSNotification*)sender
 {
     NSLog(@"监听");
+    //控制红点
     friendDunamicmsgCount ++;
     
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    //显示头像
     NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
     if ([fruits isEqualToString:@""]) {
         m_dynamicBtn.imageURL =nil;
@@ -105,19 +155,23 @@
         m_dynamicBtn.imageURL = nil;
     }
     }
+    
     if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
     {
         NSLog(@"-------->>>%d",friendDunamicmsgCount);
-        m_notibgInfoImageView.hidden = NO;
-        if (friendDunamicmsgCount > 99) {
-            lb.text = @"99";
+        if(m_notibgInfoImageView.hidden)
+        {
+            m_notibgCircleNewsImageView.hidden = NO;
         }
-        else
-            lb.text =[NSString stringWithFormat:@"%d",friendDunamicmsgCount] ;
-    }
-    else
-    {
-       
+        else{
+            m_notibgCircleNewsImageView.hidden = YES;
+        }
+//        m_notibgInfoImageView.hidden = NO;
+//        if (friendDunamicmsgCount > 99) {
+//            lb.text = @"99";
+//        }
+//        else
+//            lb.text =[NSString stringWithFormat:@"%d",friendDunamicmsgCount] ;
     }
 }
 
@@ -178,7 +232,14 @@
 
     [self.view addSubview:m_dynamicBtn];
    
-    
+    //红点 - 朋友圈
+    m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(123, 70+startX, 15, 15)];
+    m_notibgCircleNewsImageView.center =CGPointMake(m_meetBtn.center.x-25, m_meetBtn.center.y-140);
+    [self.view bringSubviewToFront:m_notibgCircleNewsImageView];
+    [m_notibgCircleNewsImageView setImage:[UIImage imageNamed:@"redpot.png"]];
+    [self.view addSubview:m_notibgCircleNewsImageView];
+    m_notibgCircleNewsImageView.hidden = YES;
+    //红点 - 与我相关
     m_notibgInfoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(123, 70+startX, 18, 18)];
      m_notibgInfoImageView.center =CGPointMake(m_meetBtn.center.x-25, m_meetBtn.center.y-140);
     [self.view bringSubviewToFront:m_notibgInfoImageView];
@@ -297,8 +358,12 @@
 
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
 //        [[NSUserDefaults standardUserDefaults] synchronize];
-         m_notibgInfoImageView.hidden = YES;
+        
+        //清除红点
+        m_notibgInfoImageView.hidden = YES;
+        m_notibgCircleNewsImageView.hidden = YES;
         friendDunamicmsgCount =0;
+        myDunamicmsgCount =0;
       //  [[GameCommon shareGameCommon] displayTabbarNotification];
         
         //清除tabbar红点 以前是上面方法 综合发现和我的动态通知

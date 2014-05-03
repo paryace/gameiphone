@@ -10,6 +10,7 @@
 
 #define kFailMessageKey @"failMessage"
 #define kFailErrorCodeKey @"failErrorCode"
+#define kErrorMessage @"NSLocalizedDescription"
 //联网
 
 @interface NetManager : NSObject

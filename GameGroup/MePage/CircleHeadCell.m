@@ -43,7 +43,7 @@
         
         self.delBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 50, 30)];
         [self.delBtn setTitle:@"删除" forState:UIControlStateNormal];
-        [self.delBtn setTitleColor: [UIColor blueColor] forState:UIControlStateNormal];
+        [self.delBtn setTitleColor:UIColorFromRGBA(0x455ca8, 1) forState:UIControlStateNormal];
         self.delBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [self.delBtn addTarget:self action:@selector(delCell:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.delBtn];
@@ -119,6 +119,7 @@
         self.commentTabelView.scrollEnabled = NO;
         [self.contentView addSubview:self.commentTabelView];
         
+        //展开菜单“。。。”
         self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
         [self.openBtn setBackgroundImage:KUIImage(@"add_click") forState:UIControlStateNormal];
@@ -245,23 +246,10 @@
 
 -(void)openBtnList:(UIButton *)sender
 {
+    self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y-18, 180, 38);
+
     if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(openMenuCell:)]) {
         [self.myCellDelegate openMenuCell:self];
-    }
-    
-    
-    if (self.menuImageView.hidden==YES) {
-//        if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(hiddenOrShowMenuImageViewWithCell:)]) {
-//            [self.myCellDelegate hiddenOrShowMenuImageViewWithCell:self];
-//        }
-        
-        self.menuImageView.hidden =NO;
-        [self.contentView bringSubviewToFront:self.menuImageView];
-        self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y, 180, 38);
-        [self.contentView  becomeFirstResponder];
-    }else
-    {
-    self.menuImageView.hidden =YES;
     }
 }
 
