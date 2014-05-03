@@ -1134,9 +1134,6 @@
         destMsgId = KISDictionaryHaveKey(dict, @"id");
     }
 }
-
-
-
 #pragma mark --- clickseeBigImage
 //点击查看大图
 - (void)bigImgWithCircle:(CircleHeadCell*)myCell WithIndexPath:(NSInteger)row

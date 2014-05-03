@@ -74,7 +74,7 @@
     
     headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(236, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:160 hieght:160 a:@"160/160"]];
+//    headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:160 hieght:160 a:@"160/160"]];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
 
@@ -167,7 +167,7 @@
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
     
-    
+     headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:160 hieght:160 a:@"160/160"]];
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:
