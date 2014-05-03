@@ -856,7 +856,6 @@
         }
         currnetY+=hieght+10;
     }
-    NSLog(@"长度－－》%f",currnetY);
     NSNumber *number = [NSNumber numberWithFloat:currnetY];
     [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];//以动态id为键存放每个cell的高度到集合里
     return currnetY;
