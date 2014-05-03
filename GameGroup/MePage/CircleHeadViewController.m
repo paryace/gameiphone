@@ -57,6 +57,8 @@
     
     NSMutableDictionary *delcommentDic;
     
+//    NSMutableArray *newArray;
+    
 }
 @end
 
@@ -96,6 +98,8 @@
     tapGr.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapGr];
     
+    
+//     newArray = [[NSMutableArray alloc] init];
     
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
@@ -805,6 +809,8 @@
         }
         currnetY+=hieght+10;
     }
+//     NSNumber *number = [NSNumber numberWithFloat:currnetY];
+//    [newArray addObject:number];
     return currnetY;
     currnetY =0;
 }
@@ -1450,7 +1456,7 @@
     r.origin.y += diff;
 	inPutView.frame = r;
 }
-
+//评论按钮
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
 {
     [self updateComment];
