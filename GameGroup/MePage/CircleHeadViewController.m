@@ -115,9 +115,9 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
-    
+    //顶部图片
     UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 400)];
-    topVIew.backgroundColor  =[UIColor whiteColor];
+    //topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
     topImgaeView.placeholderImage =KUIImage(@"ceshibg.jpg");

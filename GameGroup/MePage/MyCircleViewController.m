@@ -43,7 +43,7 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
+    [self setTopViewWithTitle:@"个人动态" withBackButton:YES];
     
     PageNum =0;
     dataArray = [NSMutableArray array];
@@ -60,6 +60,7 @@
     topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
     [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
+    topImgaeView.backgroundColor = [UIColor grayColor];
     
     [topVIew addSubview:topImgaeView];
     

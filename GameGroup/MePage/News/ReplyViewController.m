@@ -11,6 +11,7 @@
 #import "MyProfileViewController.h"
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
+#import "UserManager.h"
 
 @interface ReplyViewController ()
 {
@@ -36,6 +37,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        
     }
     return self;
 }
@@ -259,14 +261,20 @@
         
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-          //  if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
-            //    [self.delegate dynamicListJustReload];
-            
-            
             NSMutableDictionary *dic = [NSMutableDictionary dictionary];
             dic  = responseObject;
+            NSString * myUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+            NSDictionary* user=[[UserManager singleton] getUser:myUserid];
+            NSString * myNickName = [user objectForKey:@"nickname"];
+            NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+            NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
             [dic removeObjectForKey:@"msg"];
             [dic setObject:msgStr forKey:@"msg"];
+            [dic setObject:myUserid forKey:@"userid"];
+            [dic setObject:myNickName forKey:@"nickname"];
+            [dic setObject:@"5" forKey:@"type"];
+            [dic setObject:[user objectForKey:@"img"] forKey:@"userimg"];
+            [dic setObject:strNowTime forKey:@"createDate"];
             self.textView.text = nil;
 
             [m_dataReply insertObject:dic atIndex:0];

@@ -2154,26 +2154,28 @@ UINavigationControllerDelegate>
     
     //UI上改变之前那条的状态
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
-    [messageDict setObject:@"1" forKey:@"status"];
+    [messageDict setObject:@"2" forKey:@"status"];
     
     [messageDict setObject:[dic JSONFragment] forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     NSInteger cellIndex = [self getMsgRowWithId:uuid];
     [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+
+    // [self normalMsgToFinalMsg];  仅仅替换图片地址，无需执行更新。
+    //存库
+    [DataStoreManager deleteMsgInCommentWithUUid:uuid];
+    [DataStoreManager storeMyMessage:messageDict];
+    
     //刷状态
     CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],
                              [[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexpath];
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                          (size.height+20)/2 + padding*2-15)
-                      status:@"1"];
-    
-    //存库
-    [DataStoreManager deleteMsgInCommentWithUUid:uuid];
-    [DataStoreManager storeMyMessage:messageDict];
+                      status:@"2"];
     
     //刷新ROw
-       // [self normalMsgToFinalMsg];  替换图片地址，并不会改变图片外观。
+    
     [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
 
     NSLog(@"----上传图片，并更新数据成功-%@", uuid);
@@ -2248,7 +2250,7 @@ UINavigationControllerDelegate>
     //发送消息
     if([self.appDel.xmppHelper sendMessage:mes])
     { //发送成功
-        status = @"1";
+        status = @"2";
     }
     else{
         status = @"0";
@@ -2256,15 +2258,13 @@ UINavigationControllerDelegate>
     [dictionary setObject:status forKey:@"status"];
     [messages addObject:dictionary];
     
+ 
     
     //存库
     [self normalMsgToFinalMsg];
     [DataStoreManager storeMyMessage:dictionary];
     
     //刷状态
-    //NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
-    //[messageDict setObject:@"1" forKey:@"status"];
-    // [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
     NSInteger cellIndex = [self getMsgRowWithId:uuid];
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
     
@@ -2274,6 +2274,7 @@ UINavigationControllerDelegate>
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                          (size.height+20)/2 + padding*2-15)
                       status:status];
+    
     //重新刷新tableView
     [self.tView reloadData];
     if (messages.count>0) {
@@ -2369,18 +2370,20 @@ UINavigationControllerDelegate>
     //UI上改变之前那条的状态
     [messageDict setObject:status forKey:@"status"];
     [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
+    //存库
+    [self normalMsgToFinalMsg];
     [DataStoreManager deleteMsgInCommentWithUUid:uuid];
     [DataStoreManager storeMyMessage:messageDict];
-    [self normalMsgToFinalMsg];
     
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
-    
+    //刷状态
     CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],
                              [[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
     KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexpath];
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                          (size.height+20)/2 + padding*2-15)
                       status:status];
+    
     [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
     
     
@@ -2459,6 +2462,11 @@ UINavigationControllerDelegate>
         [messageDict setObject:@"2" forKey:@"status"];
         [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
         NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+        
+        //存库
+        [DataStoreManager deleteMsgInCommentWithUUid:uuid];
+        [DataStoreManager storeMyMessage:messageDict];
+        
         //刷状态
         CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],
                                  [[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
@@ -2466,6 +2474,8 @@ UINavigationControllerDelegate>
         [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
                                              (size.height+20)/2 + padding*2-15)
                           status:@"2"];
+
+        
         //更新row
         [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
         
