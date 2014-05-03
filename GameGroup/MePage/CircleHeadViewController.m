@@ -1046,17 +1046,20 @@
                 [arr addObject:commentUser];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
+                [self showMessageWindowWithContent:@"赞已成功" imageType:0];
                 //请求网络点赞
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
             }else{//假如是已经赞的状态
                 [arr removeObject:commentUser];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
+                [self showMessageWindowWithContent:@"赞已取消" imageType:0];
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
             }
         }
     }
+    [m_myTableView reloadData];
 
 }
 
@@ -1079,17 +1082,19 @@
     [commentUser setObject:@"" forKey:@"username"];
     
     NSDictionary *dict =[ NSDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser", nil];
-    
+    //将评论添加到数组里
     for (NSDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
             [arr insertObject:dict atIndex:0];
+            //
             int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
+            
             [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
         }
     }
     [m_myTableView reloadData];
-    
+    //执行提交评论操作
     [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text];
 
     commentMsgId =nil;
@@ -1229,12 +1234,6 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_myTableView reloadData];
-        if (isZan==YES) {
-            [self showMessageWindowWithContent:@"赞已成功" imageType:0];
-        }else{
-            [self showMessageWindowWithContent:@"赞已取消" imageType:0];
-        }
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -1306,11 +1305,9 @@
     [dict setObject:@"186" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
    
-        //如果没有网。。。。
+        //如果没有网，将数据保存到数据库。。。。
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         NSString* uuid = [[GameCommon shareGameCommon] uuid];
-
-        
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:msgid forKey:@"msgId"];
  
@@ -1448,7 +1445,6 @@
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
     float diff = (growingTextView.frame.size.height - height);
-    
 	CGRect r = inPutView.frame;
     r.size.height -= diff;
     r.origin.y += diff;
