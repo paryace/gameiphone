@@ -306,6 +306,7 @@
     
 }
 
+#pragma mark ---进入个人资料页
 -(void)enterPersonViewController:(UIButton *)sender
 {
     TestViewController *testVC = [[TestViewController alloc]init];
@@ -608,8 +609,9 @@
         cell.shareView.hidden = YES;
         cell.contentLabel.hidden = YES;
         cell.shareImgView.hidden = YES;
-        CGSize size = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"msg")];
-        cell.titleLabel.frame = CGRectMake(60, 30, 250, size.height);
+        NSString *strMsg = KISDictionaryHaveKey(dict, @"msg");
+        CGSize size =  [strMsg sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) ];
+        cell.titleLabel.frame = CGRectMake(60, 27, 250, size.height);
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
         
         m_currmagY  += size.height+30;
@@ -687,8 +689,8 @@
         cell.oneImageView.hidden =YES;
         cell.oneImageView.imageURL = nil;
         cell.customPhotoCollectionView.hidden =YES;
-        CGSize size1 = [CircleHeadCell getContentHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
-        cell.titleLabel.frame = CGRectMake(60, 30, 250, size1.height);
+            CGSize size1 =  [KISDictionaryHaveKey(dict, @"title") sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            cell.titleLabel.frame = CGRectMake(60, 27, 250, size1.height);
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"title");
         cell.shareView.frame = CGRectMake(60, size1.height+35, 250, 50);
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
@@ -736,6 +738,7 @@
         CGSize size =[zanNickName sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
         cell.zanNameLabel.frame = CGRectMake(15, 0, size.width+5, 30);
         cell.zanLabel.text = [NSString stringWithFormat:@"等%@人都觉得赞",KISDictionaryHaveKey(dict,@"zanNum")];
+      
         cell.zanLabel.frame  = CGRectMake(20+size.width, 0, 225-15-size.width, 30);
         m_currmagY +=cell.zanView.frame.size.height;
     }else{
@@ -750,10 +753,10 @@
         NSDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
         if ([[dic allKeys]containsObject:@"destUser"]) {
-         CGSize    size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+         CGSize    size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             commHieght +=(size1.height+5);
         }else{
-         CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+         CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             commHieght +=(size1.height+5);
         }
     }
@@ -763,14 +766,14 @@
     return cell;
 }
 
-+ (CGSize)getcommentNickNameHeigthWithStr:(NSString*)contStr
++ (CGSize)getCellHeigthWithStr:(NSString*)contStr
 {
     CGSize size1 =[[contStr stringByAppendingString:@"："] sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 16) lineBreakMode:NSLineBreakByWordWrapping];
     return size1;
 }
 + (CGSize)getcommentHeigthWithNIckNameStr:(NSString*)contStr Commentstr:(NSString *)str
 {
-    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getcommentNickNameHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getCellHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 
@@ -847,10 +850,10 @@
             NSDictionary *dic = [ar objectAtIndex:i];
             //判断是否是回复某人的评论
             if ([[dict allKeys]containsObject:@"destUser"]) {
-                CGSize    size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                CGSize    size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
             }else{
-                CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
             }
         }
@@ -1175,6 +1178,19 @@
     destuserId = nil;
     destMsgId = nil;
 }
+#pragma mark --- CommentCell被点击
+- (void)handleNickNameButton_HeadCell:(CircleHeadCell*)cell withIndexPathRow:(NSInteger)row
+{
+    TestViewController *testVC = [[TestViewController alloc]init];
+    NSDictionary *dic = [m_dataArray objectAtIndex:row];
+    NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid");
+    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
+    testVC.userId =userid;
+    testVC.nickName = nickName;
+    testVC.viewType = VIEW_TYPE_STRANGER1;
+    [self.navigationController pushViewController:testVC animated:YES];
+}
+
 #pragma mark ---tableviewdelegate ----点击自己发的评论-删除  点击他人评论 回复
 //点击删除或者点击回复某人的评论
 - (void)editCommentOfYouWithCircle:(CircleHeadCell *)mycell withIndexPath:(NSInteger)row
@@ -1212,6 +1228,11 @@
         destuserId  =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
         destMsgId = KISDictionaryHaveKey(dict, @"id");
     }
+}
+
+- (void)handleNickNameButton_HeadCell:(CommentCell*)cell
+{
+    NSLog(@"TableView响应点击 %d",cell.tag);
 }
 //tableView定位
 -(void)keyboardLocation:(CircleHeadCell *)mycell

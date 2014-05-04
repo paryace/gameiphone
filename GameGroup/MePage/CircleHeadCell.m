@@ -25,13 +25,13 @@
     
         [self.contentView addSubview:self.headImgBtn];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self.contentView addSubview:self.nickNameLabel];
         
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 22, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
@@ -68,7 +68,7 @@
         [self.contentView addSubview:self.oneImageView];
         
         CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
-        self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
+        self.titleLabel.frame = CGRectMake(60, 22, 170, size.height);
         
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];
@@ -101,7 +101,7 @@
         
         self.zanNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, 100, 30)];
         self.zanNameLabel.textColor = UIColorFromRGBA(0x455cab, 1);
-        self.zanNameLabel.font = [UIFont boldSystemFontOfSize:12];
+        self.zanNameLabel.font = [UIFont systemFontOfSize:12];
         self.zanNameLabel.backgroundColor = [UIColor clearColor];
         [self.zanView addSubview:self.zanNameLabel];
         
@@ -193,28 +193,32 @@
     //cell.selectionStyle =UITableViewCellSelectionStyleNone;
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.tag = indexPath.row;
+    cell.myCommentCellDelegate = self;
     NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    
+    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
     
     //判断是否是回复某人的评论
     if ([[dict allKeys]containsObject:@"destUser"]) {
-        nickNameLenght=[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") length];
+        nickNameLenght=[nickName length];
         
-        cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
+        cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", nickName,KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
 
     }else{
-        cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
+        cell.comNickNameStr =[nickName stringByAppendingString:@":"];
         nickNameLenght=[cell.comNickNameStr length];
 
     }
+    
+
     cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
+    
 
     NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
     [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
     cell.commentContLabel.attributedText = stratt;
 
 //    cell.commentContLabel.text =cell.commentStr;
-
+    [cell showNickNameButton:nickName];
     [cell  refreshsCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     return cell;
@@ -237,7 +241,7 @@
         str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
     }
 
-    CGSize  size = [CommentCell getcommentNickNameHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
+    CGSize  size = [CommentCell getCellHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
     
     return size.height+5;
 }
@@ -264,6 +268,18 @@
             [self.myCellDelegate zanWithCircle:self];
     }
 }
+#pragma mark 昵称被点击 delegate
+- (void)handleNickNameButton:(CommentCell*)cell
+{
+    [self handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
+    
+    //NSLog(@"HeadCell - 进入个人资料页: %d %@", cell.tag, cell.nicknameButton.titleLabel.text);
+}
+- (void)handleNickNameButton_HeadCell:(CircleHeadCell*)cell withIndexPathRow:(NSInteger)row
+{
+    [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:row];
+}
+
 //评论点击事件
 -(void)pinglun:(UIButton *)sender
 {
@@ -274,7 +290,7 @@
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 
