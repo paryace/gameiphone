@@ -249,12 +249,13 @@
             customUser = @"commentUser";
         }
         
-        m_commentAboutMeCount++;
         abobtMeImageView.hidden =NO;
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@" "]) {
             aboutMeHeadImgView.imageURL =nil;
         }else
-            aboutMeHeadImgView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")] width:60 hieght:60 a:@"60"]];
+            aboutMeHeadImgView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")] width:60 hieght:60 a:@"60/60"]];
+        
+        m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
         aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
 
     }else
@@ -428,6 +429,7 @@
     m_myTableView.tableHeaderView = view;
     
     m_commentAboutMeCount=0;
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"mydynamicmsg_huancunCount_wx"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"mydynamicmsg_huancun_wx"];
     CircleWithMeViewController *cir = [[CircleWithMeViewController alloc]init];
     cir.userId = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];

@@ -231,12 +231,11 @@
 {
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
-    if ([[dic allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname")];
-    }else{
+//    if ([[dic allKeys]containsObject:@"destUser"]) {
+//        str =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname")];
+//    }else{
         str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    }
-
+ //   }
     CGSize  size = [CommentCell getcommentNickNameHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
     
     return size.height+5;

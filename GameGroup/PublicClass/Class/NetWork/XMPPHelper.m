@@ -354,6 +354,13 @@
                 NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
                 [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
                 [archiver finishEncoding];
+                if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
+                   int i=1;
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
+                }else{
+                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
+                }
                 
                 [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
