@@ -8,6 +8,8 @@
 
 #import "BaseViewController.h"
 #import "SendNewsViewController.h"
+
+
 @interface CircleWithMeViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,TableViewDatasourceDidChange>
 @property(nonatomic,copy)NSString *userId;
 @end

@@ -20,11 +20,11 @@
 @property(nonatomic,strong)UILabel *contentLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UILabel *lastLabel;//XXX发表了 、分享了XXX
-@property(nonatomic,copy)NSString *commentStr;
-@property(nonatomic,strong)UIView * shareView;
+@property(nonatomic,copy)NSString *commentStr;//评论内容
+@property(nonatomic,strong)UIView * shareView;//如果来自后台分享 展示此界面
 @property(nonatomic,strong)UIButton *openBtn; //展开菜单“。。。”
-@property(nonatomic,strong)UIImageView *menuImageView;
-@property(nonatomic,strong)EGOImageView *shareImgView;
+@property(nonatomic,strong)UIImageView *menuImageView;//点击展开评论和赞
+@property(nonatomic,strong)EGOImageView *shareImgView;//后台分享的图片
 @property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
 @property(nonatomic,strong)UILabel *zanNameLabel;
 @property(nonatomic,strong)UIImageView *zanImageView;
@@ -32,7 +32,7 @@
 @property(nonatomic,strong)UIImageView *zanView;
 @property(nonatomic,strong)UICollectionViewFlowLayout *layout;
 @property(nonatomic,strong)UICollectionView *customPhotoCollectionView;
-@property(nonatomic,strong)NSArray *collArray;
+@property(nonatomic,strong)NSArray *collArray;//图片数组
 @property(nonatomic,strong)NSArray *commentArray;
 @property(nonatomic,strong)NSArray *zanArray;
 @property(nonatomic,strong)EGOImageView *oneImageView;
@@ -40,8 +40,8 @@
 @property(nonatomic,strong)UIButton *delBtn;
 @property(nonatomic,strong)UIButton *zanBtn;
 @property(nonatomic,strong)UIButton *commentBtn;
-
-
+@property(nonatomic,assign)NSInteger  commentCount;
+@property(nonatomic,strong)UIButton *commentMoreBtn;
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 - (void)refreshCell:(NSInteger)hieght;
@@ -68,6 +68,11 @@
 
 
 -(void)hiddenOrShowMenuImageViewWithCell:(CircleHeadCell*)myCell;
+
+
+-(void)enterCommentPageWithCell:(CircleHeadCell *)myCell;
+
+
 
 //传送显示的 评论，赞菜单的Cell
 - (void)openMenuCell:(CircleHeadCell*)myCell;

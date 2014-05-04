@@ -11,6 +11,7 @@
 #import "CircleWithMeViewController.h"
 #import "MyCircleViewController.h"
 #import "TestViewController.h"
+#import "ReplyViewController.h"
 #import "PhotoViewController.h"
 #import "CircleHeadCell.h"
 #import "MJRefresh.h"
@@ -60,7 +61,6 @@
     NSMutableDictionary *cellhightarray;//存放每个Cell的高度
     float offer;
     int height;
-    
 }
 @end
 
@@ -86,7 +86,6 @@
 {
     [super viewWillAppear:animated];
     
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showAboutMePage:) name:@"mydynamicmsg_wx" object:nil];
@@ -95,7 +94,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapGr];
@@ -265,7 +263,7 @@
     
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
 
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
@@ -297,12 +295,19 @@
     }
 
 }
+
+-(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
+{
+    m_currPageCount = 0;
+    [self getInfoFromNet];
+}
 #pragma mark ---发表新动态
 -(void)publishInfo:(UIButton *)sender
 {
     SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
     sendNews.delegate = self;
     sendNews.isComeFromMe = YES;
+    sendNews.delegate = self;
     [self.navigationController pushViewController:sendNews animated:YES];
     
 }
@@ -387,7 +392,7 @@
         customObject = @"zanObject";
         customUser = @"zanUser";
     }
-    else if ([KISDictionaryHaveKey(info.userInfo, @"type")intValue]==5)
+    else if ([KISDictionaryHaveKey(info.userInfo, @"type")intValue]==5||[KISDictionaryHaveKey(info.userInfo, @"type")intValue]==7)
     {
         customObject =@"commentObject";
         customUser = @"commentUser";
@@ -598,7 +603,7 @@
     
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
     cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
-
+    cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
 
     
@@ -751,17 +756,23 @@
     for (int i =0; i<commentArray.count; i++) {
         NSDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
-        if ([[dic allKeys]containsObject:@"destUser"]) {
-         CGSize    size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
-            commHieght +=(size1.height+5);
-        }else{
          CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             commHieght +=(size1.height+5);
-        }
     }
     //评论列表的frame
     cell.commentTabelView.frame = CGRectMake(60, m_currmagY-10, 250,commHieght);
+    cell.commentTabelView.backgroundColor = [UIColor redColor];
     [cell.commentTabelView reloadData];
+    
+    if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
+        cell.commentMoreBtn.hidden = NO;
+        cell.commentMoreBtn.frame = CGRectMake(60, m_currmagY-10+commHieght, 250, 20);
+    }else{
+        cell.commentMoreBtn.hidden = YES;
+        cell.commentMoreBtn.frame = CGRectZero;
+    }
+    
+    
     return cell;
 }
 
@@ -848,15 +859,15 @@
         for (int i =0; i<ar.count; i ++) {
             NSDictionary *dic = [ar objectAtIndex:i];
             //判断是否是回复某人的评论
-            if ([[dict allKeys]containsObject:@"destUser"]) {
-                CGSize    size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
-                currnetY +=(size1.height+5);
-            }else{
                 CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
-            }
         }
         currnetY+=hieght+10;
+    }
+    if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
+        currnetY+=20;
+    }else{
+        
     }
     NSNumber *number = [NSNumber numberWithFloat:currnetY];
     [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];//以动态id为键存放每个cell的高度到集合里
@@ -1183,11 +1194,12 @@
 {
     NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag-100];
     NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
-    if ( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:@""]) {
-        return;
-    }
     //点击的是自己的评论，弹出删除菜单
     if( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        
+        if (![KISDictionaryHaveKey(dict, @"id")intValue]) {
+            return;
+        }
         UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
         act.tag = 888888;
         
@@ -1359,7 +1371,6 @@
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
         [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
         [m_myTableView reloadData];
-
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -1407,11 +1418,9 @@
         [dict setObject:uuid forKey:@"uuid"];
         [DataStoreManager saveCommentsWithDic:dict];
     }
-
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self showMessageWindowWithContent:@"评论成功" imageType:0];
-        [self getInfoFromNet];
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -1475,6 +1484,18 @@
     }];
 
 }
+
+#pragma mark----
+#pragma mark ----查看全部评论
+-(void)enterCommentPageWithCell:(CircleHeadCell *)myCell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
+    ReplyViewController *reply = [[ReplyViewController alloc]init];
+    reply.messageid = KISDictionaryHaveKey(dic, @"id");
+    reply.isHaveArticle = YES;
+    [self.navigationController pushViewController:reply animated:YES];
+}
+
 
 
 - (void)keyboardWillShow:(NSNotification *)notification {

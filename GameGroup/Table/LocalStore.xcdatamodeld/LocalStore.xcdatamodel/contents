@@ -31,6 +31,7 @@
         <attribute name="myType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unRead" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -225,7 +226,7 @@
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
-        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="255"/>
+        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="195"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
         <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
@@ -234,13 +235,13 @@
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
         <element name="DSNewsMsgs" positionX="-18" positionY="234" width="128" height="118"/>
+        <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
+        <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
         <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="120"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="240"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
-        <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
-        <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
     </elements>
 </model>
