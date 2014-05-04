@@ -68,9 +68,13 @@
     if ([[TempData sharedInstance] isHaveLogin] ) {
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         [self.xmppHelper connect];
+        
+        
     }
    
+    //注册离线系统  里面监听重连事件 自动提交赞与评论 未来可以添加其他离线的内容
     [OfflineComment singleton];
+    
 //    [DDLog addLogger:[DDTTYLogger sharedInstance]];//打印xmpp输出
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     

@@ -38,7 +38,7 @@ static OfflineComment *my_gameCommon = NULL;
 - (void)appBecomeActiveWithNet:(NSNotification*)notification
 {
     Reachability* reach = notification.object;
-    if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网
+    if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网 且 已登陆
         
      NSArray *array = [DataStoreManager queryallcomments];
         if ([array isKindOfClass:[NSArray class]]&&array.count>0) {
@@ -63,14 +63,15 @@ static OfflineComment *my_gameCommon = NULL;
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:offline.msgId forKey:@"messageId"];
-    if (offline.destCommentId) {
+    if (offline.destCommentId && (offline.destCommentId.length>0)) {
         [paramDic setObject:offline.destCommentId forKey:@"destCommentId"];
     }
-    if (offline.destUserid) {
+    if (offline.destUserid && (offline.destUserid.length>0)) {
         [paramDic setObject:offline.destUserid forKey:@"destUserid"];
     }
     if (!offline.comments)  //评论内容为空，不让发。
     {
+        [DataStoreManager removeOfflineCommentsWithuuid:offline.uuid];
         return ;
     }
     [paramDic setObject:offline.comments forKey:@"comment"];

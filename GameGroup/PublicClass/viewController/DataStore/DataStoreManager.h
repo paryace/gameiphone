@@ -93,7 +93,7 @@
 
 
 
-
+//离线评论和赞
 +(void)saveCommentsWithDic:(NSDictionary *)dic;
 +(NSArray *)queryallcomments;
 +(void)removeOfflineCommentsWithuuid:(NSString *)uuid;
