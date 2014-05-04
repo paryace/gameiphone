@@ -1220,7 +1220,7 @@
         NSDictionary *dict =[m_dataArray objectAtIndex:i];
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
-    offer+=(350-height-23);
+    offer+=(350-height-73);
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
     offer=0;
 }

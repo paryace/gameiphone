@@ -1032,7 +1032,9 @@
     //修改WebView的样式
     [self changeWebViewStyle:webView];
 
-
+    //为图片添加点击响应
+    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
+    NSLog(@"------finish=%@",str);
 }
 
 - (void)changeWebViewStyle:(UIWebView *)webView{
@@ -1106,7 +1108,7 @@
     NSArray *components = [requestString componentsSeparatedByString:@":"];
     NSLog(@"-----%@",components);
          NSLog(@"requsetstring%@",requestString);
-    if ([components count] > 1 && [(NSString *)[components objectAtIndex:0] isEqualToString:@"lfyprotocol"]) {
+    if ([components count] > 1 && [(NSString *)[components objectAtIndex:0] isEqualToString:@"lfyprotocol"]) {  //图片点击放大
         if([(NSString *)[components objectAtIndex:1] isEqualToString:@"http"] || [(NSString *)[components objectAtIndex:1] isEqualToString:@"https"]){
             //这个就是图片的路径
             NSLog(@"+++++++%@",components);

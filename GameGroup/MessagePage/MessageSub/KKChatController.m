@@ -384,7 +384,7 @@ UINavigationControllerDelegate>
                                  action:@selector(offsetButtonTouchEnd:)
                        forControlEvents:UIControlEventTouchUpInside];
             [cell.bgImageView setTag:(indexPath.row+1)];
-            
+            cell.statusLabel.hidden = YES;
             [cell.titleLabel setFrame:CGRectMake(padding + 50,
                                                  33,
                                                  titleSize.width,
@@ -516,7 +516,7 @@ UINavigationControllerDelegate>
             [cell.msgImageView addGestureRecognizer:longPress];
             
             //刷新
-            //[cell refreshStatusPoint:CGPointZero status:@"1"];
+            cell.statusLabel.hidden = YES;
         }
         
         //显示双方聊天的时间
@@ -638,7 +638,7 @@ UINavigationControllerDelegate>
             cell.messageContentView.hidden = NO;
             
             //刷新
-            //[cell refreshStatusPoint:CGPointZero status:@"1"];
+            cell.statusLabel.hidden = YES;
             
         }
         
