@@ -19,22 +19,28 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
+        //内容（动态）
+        CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
+        self.titleLabel.frame = CGRectMake(60, 22, 170, size.height);
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 22, 170, 30)];
+        self.titleLabel.font = [UIFont systemFontOfSize:13];
+        self.titleLabel.numberOfLines=0;
+        [self addSubview:self.titleLabel];
         
-         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+        
+        //头像
+        self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
-    
         [self.contentView addSubview:self.headImgBtn];
         
+        //昵称
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self.contentView addSubview:self.nickNameLabel];
         
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 22, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:13];
-        self.titleLabel.numberOfLines=0;
-        [self addSubview:self.titleLabel];
+    
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
@@ -57,7 +63,7 @@
         [self.shareView addSubview:self.shareImgView];
         
         self.contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 5, 190, 40)];
-        self.contentLabel.font = [UIFont systemFontOfSize:12];
+        self.contentLabel.font = [UIFont systemFontOfSize:13];
         self.contentLabel.numberOfLines = 2;
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.shareView addSubview:self.contentLabel];
@@ -67,18 +73,10 @@
         self.oneImageView.delegate = self;
         [self.contentView addSubview:self.oneImageView];
         
-        CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
-        self.titleLabel.frame = CGRectMake(60, 22, 170, size.height);
-        
-        
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         self.layout.minimumInteritemSpacing = 1;
         self.layout.minimumLineSpacing = 1;
-        //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
-
         // 3.设置整个collectionView的内边距
-       
-       // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
         self.layout.itemSize = CGSizeMake(80, 80);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
@@ -107,7 +105,7 @@
         
         self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
         self.zanLabel.textColor = [UIColor grayColor];
-        self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
+        self.zanLabel.font = [UIFont systemFontOfSize:12];
         [self.zanView addSubview:self.zanLabel];
     
 

@@ -34,10 +34,6 @@
     // 实现可点击昵称的原理
     // 生成一个Button覆盖在文字之上， 写着相同的内容。 响应点击。
 	CGPoint outputPoint = CGPointZero;
-    NSLog(@"***********当前commentCell的坐标%f,%f,%f,%f",self.frame.origin.x,self.frame.origin.y,
-          self.frame.size.width,self.frame.size.height);
-    NSLog(@"***********当前commentContLabel的坐标%f,%f,%f,%f",self.commentContLabel.frame.origin.x,self.commentContLabel.frame.origin.y,
-          self.commentContLabel.frame.size.width,self.commentContLabel.frame.size.height);
     CGSize textSize =[self.commentStr sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
 	CGRect bounds = [self bounds];
 	if (textSize.height < bounds.size.height)
@@ -47,18 +43,13 @@
 		CGFloat textMidY = textSize.height / 2.0;
 		outputPoint.y = ceilf(boundsMidY - textMidY);
 	}
-    
-    //创建按钮
     UIFont *font = self.commentContLabel.font;
     CGSize matchSize = [nickName sizeWithFont:font];
-    
     CGRect matchFrame = CGRectMake(2,0, matchSize.width + 6.0f, matchSize.height);
     [self.nicknameButton setFrame:matchFrame];
 	[self.nicknameButton.titleLabel setFont:font];
 	[self.nicknameButton setTitle:nickName forState:UIControlStateNormal];
 	[self.nicknameButton.titleLabel setLineBreakMode:[self.commentContLabel lineBreakMode]];
-	//[self.nicknameButton  setTitleColor:[UIColor redColor] forState:(UIControlStateNormal)];
-	//[self.nicknameButton setTitleColor:self.highlightColor forState:UIControlStateHighlighted];
 	[self.nicknameButton addTarget:self action:@selector(handleNickNameButton:) forControlEvents:UIControlEventTouchUpInside];
     self.nicknameButton.hidden = NO;
 }

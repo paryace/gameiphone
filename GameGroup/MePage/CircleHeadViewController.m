@@ -592,8 +592,7 @@
             [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
         }
     }
-    
-    
+
     
     cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
     cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
@@ -610,7 +609,7 @@
         cell.contentLabel.hidden = YES;
         cell.shareImgView.hidden = YES;
         NSString *strMsg = KISDictionaryHaveKey(dict, @"msg");
-        CGSize size =  [strMsg sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) ];
+        CGSize size =  [strMsg sizeWithFont:cell.titleLabel.font constrainedToSize:CGSizeMake(245, MAXFLOAT) ];
         cell.titleLabel.frame = CGRectMake(60, 27, 250, size.height);
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
         
@@ -689,11 +688,15 @@
         cell.oneImageView.hidden =YES;
         cell.oneImageView.imageURL = nil;
         cell.customPhotoCollectionView.hidden =YES;
-            CGSize size1 =  [KISDictionaryHaveKey(dict, @"title") sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-            cell.titleLabel.frame = CGRectMake(60, 27, 250, size1.height);
-        cell.titleLabel.text = KISDictionaryHaveKey(dict, @"title");
-        cell.shareView.frame = CGRectMake(60, size1.height+35, 250, 50);
-        cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
+            
+            CGSize size1 = CGSizeMake(245, 40);
+//            CGSize size1 =  [KISDictionaryHaveKey(dict, @"title") sizeWithFont:cell.titleLabel.font constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+       // cell.titleLabel.frame = CGRectMake(60, 27, 250, size1.height);
+       // cell.titleLabel.frame = CGRectMake(60, 0, 250, 0);
+       // cell.titleLabel.text = nil;
+        cell.titleLabel.hidden=NO;
+        cell.shareView.frame = CGRectMake(60, 35, 250, 50);
+        cell.contentLabel.text = KISDictionaryHaveKey(dict, @"title");
         
         
         UITapGestureRecognizer *tapGe = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterInfoPage:)];
@@ -768,14 +771,14 @@
 
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr
 {
-    CGSize size1 =[[contStr stringByAppendingString:@"："] sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 16) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize size1 =[[contStr stringByAppendingString:@"："] sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     return size1;
 }
-+ (CGSize)getcommentHeigthWithNIckNameStr:(NSString*)contStr Commentstr:(NSString *)str
-{
-    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getCellHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
-    return cSize;
-}
+//+ (CGSize)getcommentHeigthWithNIckNameStr:(NSString*)contStr Commentstr:(NSString *)str
+//{
+//    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getCellHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
+//    return cSize;
+//}
 
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1178,20 +1181,28 @@
     destuserId = nil;
     destMsgId = nil;
 }
-#pragma mark --- CommentCell被点击
+
+
+#pragma mark -
+
+#pragma mark Delegates CommentCell被点击
 - (void)handleNickNameButton_HeadCell:(CircleHeadCell*)cell withIndexPathRow:(NSInteger)row
 {
     TestViewController *testVC = [[TestViewController alloc]init];
-    NSDictionary *dic = [m_dataArray objectAtIndex:row];
-    NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid");
-    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
+    NSDictionary *dic = [m_dataArray objectAtIndex:cell.tag-100];
+    NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
+    if ( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:@""]) {
+        return;
+    }
+    NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
+    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
     testVC.userId =userid;
     testVC.nickName = nickName;
     testVC.viewType = VIEW_TYPE_STRANGER1;
     [self.navigationController pushViewController:testVC animated:YES];
 }
 
-#pragma mark ---tableviewdelegate ----点击自己发的评论-删除  点击他人评论 回复
+#pragma mark Delegates 点击自己发的评论-删除  点击他人评论 回复
 //点击删除或者点击回复某人的评论
 - (void)editCommentOfYouWithCircle:(CircleHeadCell *)mycell withIndexPath:(NSInteger)row
 {
@@ -1230,10 +1241,7 @@
     }
 }
 
-- (void)handleNickNameButton_HeadCell:(CommentCell*)cell
-{
-    NSLog(@"TableView响应点击 %d",cell.tag);
-}
+
 //tableView定位
 -(void)keyboardLocation:(CircleHeadCell *)mycell
 {
