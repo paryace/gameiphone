@@ -26,4 +26,5 @@
 @property (nonatomic, retain) NSString * myMsg;
 @property (nonatomic, retain) NSString * myType;
 @property (nonatomic, retain) NSString * myCreateDate;
+@property (nonatomic, retain) NSString * unRead;
 @end

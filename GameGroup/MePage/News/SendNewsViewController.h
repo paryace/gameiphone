@@ -9,6 +9,8 @@
 #import "BaseViewController.h"
 #import "TableViewDatasourceDidChange.h"
 #import "EmojiView.h"
+
+
 @interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;

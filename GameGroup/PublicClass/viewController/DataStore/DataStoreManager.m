@@ -1303,9 +1303,8 @@ return @"";
             
             dCircle.createDate =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"createDate")];
         
-            if ([type intValue] ==5) {
+            if ([type intValue] ==5||[type intValue] ==7) {
             dCircle.comment =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"comment")];
-
             }
         
             dCircle.myMsgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"id")];
@@ -1314,16 +1313,39 @@ return @"";
             
             dCircle.myMsg =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"msg")];
         
-        
+           dCircle.unRead = @"0";//设置未读属性 0 未读 、1 已读
 
     }];
 }
 
-+(NSArray *)queryallDynamicAboutMe
++(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)unRead
 {
     NSArray *array= [DSCircleWithMe MR_findAllSortedBy:@"createDate" ascending:NO];
-    return array;
+    NSMutableArray *arr = [NSMutableArray array];
+    for (int i =0; i<array.count; i++) {
+        DSCircleWithMe *circleMe = [array objectAtIndex:i];
+        if ([circleMe.unRead isEqualToString:unRead]) {
+            [arr addObject:circleMe];
+            circleMe.unRead = @"1";
+        }
+    }
+    return arr;
 }
+
++(void)deletecommentWithMsgId:(NSString*)msgid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgid==[c]%@",msgid];
+        DSCircleWithMe * dUserManager = [DSCircleWithMe MR_findFirstWithPredicate:predicate];
+        if (dUserManager) {
+            [dUserManager MR_deleteInContext:localContext];
+        }
+    }];
+}
+
+
+
+
 
 +(void)saveCommentsWithDic:(NSDictionary *)dic
 {

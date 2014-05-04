@@ -17,8 +17,6 @@
 {
     UITableView *m_myTableView;
     NSMutableArray *dataArray;
-    MJRefreshHeaderView *m_header;
-    MJRefreshFooterView *m_footer;
     NSInteger m_currentPage;
 }
 @end
@@ -39,7 +37,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30)];
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
@@ -49,78 +47,50 @@
 
     dataArray = [NSMutableArray array];
     m_currentPage = 0;
-    dataArray = (NSMutableArray *)[DataStoreManager queryallDynamicAboutMe];
+    dataArray = (NSMutableArray *)[DataStoreManager queryallDynamicAboutMeWithUnRead:@"0"];
 
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight =80;
     [self.view addSubview:m_myTableView];
-
-    //[self addheadView];
-    //[self addFootView];
-  //  [self getInfoFromNet];
+    
+    UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    [button setTitle:@"查看更多" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(loadMore:) forControlEvents:UIControlEventTouchUpInside];
+    [footView addSubview:button];
+    
+    m_myTableView.tableFooterView = footView;
+    
+    hud =[[ MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"加载中...";
+    
     
     // Do any additional setup after loading the view.
 }
-
+-(void)loadMore:(UIButton *)sender
+{
+    [hud show:YES];
+    NSArray *array = [DataStoreManager queryallDynamicAboutMeWithUnRead:@"1"];
+    [dataArray removeAllObjects];
+    [dataArray addObjectsFromArray:array];
+    sleep(2);
+    [m_myTableView reloadData];
+    [hud hide:YES];
+    [sender.superview removeFromSuperview];
+}
 -(void)publishInfo:(UIButton *)sender
 {
     SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
     sendNews.delegate = self;
     sendNews.isComeFromMe = YES;
     [self.navigationController pushViewController:sendNews animated:YES];
-
 }
 
 
--(void)getInfoFromNet
-{
-    
-    
-    
-//    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
-//    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-//    [paramDic setObject:self.userId forKey:@"userid"];
-//    [paramDic setObject:[NSString stringWithFormat:@"%d",m_currentPage] forKey:@"pageIndex"];
-//    [paramDic setObject:@"20" forKey:@"maxSize"];
-//    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [dict setObject:paramDic forKey:@"params"];
-//    [dict setObject:@"191" forKey:@"method"];
-//    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//    
-    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        if ([responseObject isKindOfClass:[NSArray class]]) {
-//            if (m_currentPage==0) {
-//                [dataArray removeAllObjects];
-//                [dataArray addObjectsFromArray:responseObject];
-//
-//            }else{
-//                [dataArray addObjectsFromArray:responseObject];
-//            }
-//            m_currentPage++;
-//            [m_header endRefreshing];
-//            [m_footer endRefreshing];
-//            [m_myTableView reloadData];
-//        }
-//        
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        [m_header endRefreshing];
-//        [m_footer endRefreshing];
-//        if ([error isKindOfClass:[NSDictionary class]]) {
-//            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//            {
-//                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                [alert show];
-//            }
-//        }
-//        [hud hide:YES];
-//    }];
-    
-    
-}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -170,7 +140,7 @@
         cell.titleLabel.text = @"赞了该内容";
         cell.commentStr = @"赞了该内容";
     }
-    else if ([dCircle.myType intValue]==5){
+    else if ([dCircle.myType intValue]==5||[dCircle.myType intValue]==7){
         cell.titleLabel.text =dCircle.comment;
         cell.commentStr=dCircle.comment;
     }
@@ -214,10 +184,13 @@
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle==UITableViewCellEditingStyleDelete) {
+        DSCircleWithMe *circleM =[dataArray objectAtIndex:indexPath.row];
+        NSLog(@"-------------------------------%@",circleM);
+        [DataStoreManager deletecommentWithMsgId:circleM.msgid];
+
         [dataArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
-
-    }
+    }//231850
 }
 
 -(void)enterPersonInfoPage:(UIButton *)sender
@@ -264,46 +237,6 @@
     return [messageDateStr substringFromIndex:5];
 }
 
--(void)addheadView
-{
-    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    CGRect headerRect = header.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    header.arrowImage.frame = headerRect;
-    header.activityView.center = header.arrowImage.center;
-    header.scrollView = m_myTableView;
-    
-    header.scrollView = m_myTableView;
-    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        m_currentPage = 0;
-        [self getInfoFromNet];
-    };
-    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
-        
-    };
-    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-        
-    };
-     [header beginRefreshing];
-    m_header = header;
-}
--(void)addFootView
-{
-    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
-    CGRect headerRect = footer.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    footer.arrowImage.frame = headerRect;
-    footer.activityView.center = footer.arrowImage.center;
-    footer.scrollView = m_myTableView;
-    
-    footer.scrollView = m_myTableView;
-    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        [self getInfoFromNet];
-        
-    };
-    m_footer = footer;
-
-}
 
 - (void)didReceiveMemoryWarning
 {

@@ -25,4 +25,5 @@
 @dynamic myMsg;
 @dynamic myType;
 @dynamic myCreateDate;
+@dynamic unRead;
 @end

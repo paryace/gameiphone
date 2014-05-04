@@ -89,7 +89,8 @@
 
 
 +(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
-+(NSArray *)queryallDynamicAboutMe;
++(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)UnRead;
++(void)deletecommentWithMsgId:(NSString*)msgid;
 
 
 
