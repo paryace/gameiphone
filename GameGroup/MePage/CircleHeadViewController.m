@@ -1161,14 +1161,15 @@
         return;
     }
     //离线评论
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
-    
-    NSDictionary *dict =[ NSDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser", nil];
+
+    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser",uuid,@"id", nil];
     //将评论添加到数组里
     for (NSDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
@@ -1182,7 +1183,7 @@
     }
     [m_myTableView reloadData];
     //执行提交评论操作
-    [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text];
+    [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text uuid:uuid];
 
     commentMsgId =nil;
     destuserId = nil;
@@ -1390,7 +1391,7 @@
 
 
 //上传评论
--(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment
+-(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
 {
     
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
@@ -1408,7 +1409,6 @@
    
         //如果没有网，将数据保存到数据库。。。。
     if (app.reach.currentReachabilityStatus ==NotReachable) {
-        NSString* uuid = [[GameCommon shareGameCommon] uuid];
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:msgid forKey:@"msgId"];
  
@@ -1421,6 +1421,20 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self showMessageWindowWithContent:@"评论成功" imageType:0];
         
+        for (int i = 0; i <m_dataArray.count; i++) {
+            NSDictionary *dic = [m_dataArray objectAtIndex:i];
+            if ([KISDictionaryHaveKey(dic, @"id")intValue]==[msgid intValue]) {
+                NSArray *array = [dic objectForKey:@"commentList"];
+                for (int i = 0; i < array.count; i++) {
+                    NSMutableDictionary *commDic = (NSMutableDictionary *)[array objectAtIndex:i];
+                    NSString *str =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(commDic, @"id")];
+                    if ([str isEqualToString:uuid]) {
+                        [commDic setObject:KISDictionaryHaveKey(responseObject, @"id") forKey:@"id"];
+                    }
+                }
+            }
+        }
+        [m_myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
