@@ -190,9 +190,8 @@ UINavigationControllerDelegate>
     
     [self.view addSubview:self.unReadL]; //未读数量
     
-    hud = [[MBProgressHUD alloc] initWithView:self.view];   
-    hud.labelText = @"正在处理图片...";
-    [self.view addSubview:hud];
+    
+    
     
     
     float version = [[[UIDevice currentDevice] systemVersion] floatValue];
@@ -243,6 +242,10 @@ UINavigationControllerDelegate>
     [self.view addSubview:profileButton];
     [self.view bringSubviewToFront:profileButton];
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"正在处理图片...";
+    [self.view addSubview:hud];
     
 }
 
@@ -1238,7 +1241,7 @@ UINavigationControllerDelegate>
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
-    [hud hide:YES];
+//    [hud hide:YES];
 }
 
 //图片聊天上传图片
@@ -1248,6 +1251,9 @@ UINavigationControllerDelegate>
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.progressView.hidden = NO;
+//    hud = [[MBProgressHUD alloc] initWithView:self.view];
+//    hud.labelText = @"正在处理图片...";
+//    [self.view addSubview:hud];
     [hud show:YES];
     [NetManager uploadImage:image
                  WithURLStr:BaseUploadImageUrl
@@ -1255,12 +1261,18 @@ UINavigationControllerDelegate>
               TheController:self
                    Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
                        double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-                       cell.progressView.progress = progress;
+                       
+                           
+                           cell.progressView.progress = progress;
+                       
                    }
                     Success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
-         cell.progressView.hidden = YES;
+         dispatch_async(dispatch_get_main_queue(), ^{
+             cell.progressView.hidden = YES;
+             [hud hide:YES];
+             });
          
          if(index < messages.count)
              [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
@@ -1269,13 +1281,17 @@ UINavigationControllerDelegate>
      }
                     failure:^(AFHTTPRequestOperation *operation, NSError *error)
      {
-         cell.progressView.hidden = YES;
-         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                         message:@"发送图片失败请重新发送"
-                                                        delegate:nil
-                                               cancelButtonTitle:@"知道啦"
-                                               otherButtonTitles:nil];
-         [alert show];
+         dispatch_async(dispatch_get_main_queue(), ^{
+             
+             cell.progressView.hidden = YES;
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                             message:@"发送图片失败请重新发送"
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"知道啦"
+                                                   otherButtonTitles:nil];
+             [alert show];
+             [hud hide:YES];
+         });
          
      }];
 
@@ -1607,15 +1623,21 @@ UINavigationControllerDelegate>
 #pragma mark Responding to keyboard events
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    
+    
 	return YES;
 }
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-	if(textField == self.messageTextField)
-	{
-        
-	}
+//	if(textField == self.messageTextField)
+//	{
+//        
+//	}
+    
 }
+
+
+
 
 -(void) autoMovekeyBoard: (float) h{
     
@@ -1678,7 +1700,17 @@ UINavigationControllerDelegate>
                                                    cancelButtonTitle:@"取消"
                                                    otherButtonTitles:@"去激活", nil];
     [UnActionAlertV show];
+    
+//    [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+//                          forState:UIControlStateNormal];
     return NO;
+}
+
+- (void)growingTextViewDidBeginEditing:(HPGrowingTextView *)growingTextView
+{
+    [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                          forState:UIControlStateNormal];
+    
 }
 //改变键盘高度
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
