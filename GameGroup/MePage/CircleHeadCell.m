@@ -32,7 +32,7 @@
         [self.contentView addSubview:self.nickNameLabel];
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
         
@@ -208,7 +208,7 @@
     }
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     cell.accessoryType = UITableViewCellAccessoryNone;
-
+    cell.myCommentCellDelegate = self;
         //cell.selectionStyle =UITableViewCellSelectionStyleNone;
         cell.tag = indexPath.row;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
@@ -217,7 +217,8 @@
             nickNameLenght=[cell.comNickNameStr length];
             
         cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
-        
+        [cell showNickNameButton:cell.comNickNameStr];
+
         NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
         [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
         cell.commentContLabel.attributedText = stratt;
@@ -242,10 +243,14 @@
     
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
-    str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    CGSize  size = [CommentCell getCellHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
+    if (self.destUserStr) {
+        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),self.destUserStr,KISDictionaryHaveKey(dic, @"comment")];
+    }else{
+    str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+     }
+    CGSize  size = [CommentCell getCellHeigthWithStr:str];
     return size.height+5;
-    
+    str =nil;
 }
 
 -(void)loadMoreComment:(UIButton *)sender
@@ -287,6 +292,11 @@
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
++ (CGSize)getTitleHeigthWithStr:(NSString*)contStr
+{
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    return cSize;
+}
 
 -(void)delCell:(UIButton *)sender
 {
@@ -295,7 +305,12 @@
     }
 }
 
-
+- (void)handleNickNameButton:(CommentCell*)cell
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(handleNickNameButton_HeadCell:withIndexPathRow:)]) {
+        [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
+    }
+}
 
 - (void)awakeFromNib
 {

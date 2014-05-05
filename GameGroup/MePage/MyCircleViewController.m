@@ -18,7 +18,7 @@
 {
     UITableView *m_myTableView;
     UILabel *nickNameLabel;
-    EGOImageView *headImageView;
+    EGOImageButton *headImageView;
     EGOImageButton *topImgaeView;
     NSMutableArray *dataArray;
     NSInteger *PageNum;
@@ -60,7 +60,6 @@
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
     [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
-    //topImgaeView.placeholderImage = KUIImage(@"ceshibg.jpg");
     topImgaeView.backgroundColor = [UIColor darkGrayColor];
     
     [topVIew addSubview:topImgaeView];
@@ -90,7 +89,7 @@
     [topVIew addSubview:nickNameLabel];
     
     //头像
-    headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
+    headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;

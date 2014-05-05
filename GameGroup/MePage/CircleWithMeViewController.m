@@ -37,6 +37,8 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
+    
+    self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
@@ -56,9 +58,20 @@
     [self.view addSubview:m_myTableView];
     
     UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    UIView *upLineView = [[UIView alloc]initWithFrame:CGRectMake(0, 10, 310, 1)];
+    upLineView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [footView addSubview:upLineView];
+    
+    UIView *downLineView = [[UIView alloc]initWithFrame:CGRectMake(43, 10, 310, 1)];
+    downLineView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [footView addSubview:downLineView];
+
+    
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 1, 320, 42)];
     [button setTitle:@"查看更多" forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setBackgroundColor:UIColorFromRGBA(0xf7f7f7, 1)];
+    button.titleLabel.font = [UIFont systemFontOfSize:13];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(loadMore:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
     
@@ -84,12 +97,19 @@
 }
 -(void)publishInfo:(UIButton *)sender
 {
-    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
-    sendNews.delegate = self;
-    sendNews.isComeFromMe = YES;
-    [self.navigationController pushViewController:sendNews animated:YES];
+    UIAlertView *delAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"是否确定删除？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    [delAlertView show];
 }
-
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex ==1) {
+        [ DataStoreManager deleteAllcomment];
+        [dataArray removeAllObjects];
+        [m_myTableView reloadData];
+    }else{
+        return;
+    }
+}
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -104,6 +124,7 @@
     if (cell ==nil) {
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     

@@ -48,10 +48,14 @@ static OfflineComment *my_gameCommon = NULL;
             [self postCommentWithOffLine:offline];
         }
         }
+        
+        
         NSArray *array1 = [DataStoreManager queryallOfflineZan];
+        
         if ([array1 isKindOfClass:[NSArray class]]&&array1.count>0) {
-            for (int i = 0; i <array.count; i++) {
+            for (int i = 0; i <array1.count; i++) {
                 DSOfflineZan *offlineZan = [array1 objectAtIndex:i];
+                NSLog(@"offline--%@",offlineZan);
                 [self postZanWithMsgId:offlineZan];
             }
         }

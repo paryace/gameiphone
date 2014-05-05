@@ -42,8 +42,9 @@
 @property(nonatomic,strong)UIButton *commentBtn;
 @property(nonatomic,assign)NSInteger  commentCount;
 @property(nonatomic,strong)UIButton *commentMoreBtn;
-
+@property(nonatomic,strong)NSString *destUserStr;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
++ (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
 //- (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>

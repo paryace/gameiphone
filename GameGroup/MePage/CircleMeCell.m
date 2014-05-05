@@ -33,7 +33,7 @@
         [self addSubview:self.titleLabel];
         
         UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(245 , 10, 65, 60)];
-        bgView.backgroundColor = [UIColor colorWithRed:240/255.0f green:240/255.0f blue:240/255.0f alpha:1];
+        bgView.backgroundColor = [UIColor clearColor];
         [self addSubview:bgView];
 
         self.contentImageView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder")];
