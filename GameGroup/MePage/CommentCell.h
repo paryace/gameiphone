@@ -9,12 +9,22 @@
 #import <UIKit/UIKit.h>
 
 
+@protocol CommentCellDelegate;
+
 @interface CommentCell : UITableViewCell
-//@property(nonatomic,strong)UILabel *nicknameLabel;
+@property(nonatomic,assign)id<CommentCellDelegate>myCommentCellDelegate;
+@property(nonatomic,strong)UIButton *nicknameButton;
 @property(nonatomic,strong)UILabel *commentContLabel;
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,copy)NSString *comNickNameStr;
 -(void)refreshsCell;
-+ (CGSize)getcommentNickNameHeigthWithStr:(NSString*)contStr;
+//显示可点击的呢称
+-(void)showNickNameButton:(NSString *)nickName;
++ (CGSize)getCellHeigthWithStr:(NSString*)contStr;
 @end
 
+
+@protocol CommentCellDelegate <NSObject>
+//点击昵称 代理 
+- (void)handleNickNameButton:(CommentCell*)cell;
+@end

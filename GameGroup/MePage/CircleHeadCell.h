@@ -13,11 +13,11 @@
 
 @protocol CircleHeadDelegate;
 
-@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource,UITableViewDataSource,UITableViewDelegate,EGOImageViewDelegate>
+@interface CircleHeadCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource,UITableViewDataSource,UITableViewDelegate,CommentCellDelegate,EGOImageViewDelegate>
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
 @property(nonatomic,strong)UILabel *nickNameLabel;
-@property(nonatomic,strong)UILabel *titleLabel;
-@property(nonatomic,strong)UILabel *contentLabel;
+@property(nonatomic,strong)UILabel *titleLabel; //动态内容
+@property(nonatomic,strong)UILabel *contentLabel;   //文章
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UILabel *lastLabel;//XXX发表了 、分享了XXX
 @property(nonatomic,copy)NSString *commentStr;//评论内容
@@ -26,7 +26,7 @@
 @property(nonatomic,strong)UIImageView *menuImageView;//点击展开评论和赞
 @property(nonatomic,strong)EGOImageView *shareImgView;//后台分享的图片
 @property(nonatomic,assign)id<CircleHeadDelegate>myCellDelegate;
-@property(nonatomic,strong)UILabel *zanNameLabel;
+@property(nonatomic,strong)UILabel *zanNameLabel;  //赞Label
 @property(nonatomic,strong)UIImageView *zanImageView;
 @property(nonatomic,strong)UILabel *zanLabel;
 @property(nonatomic,strong)UIImageView *zanView;
@@ -44,9 +44,12 @@
 @property(nonatomic,strong)UIButton *commentMoreBtn;
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
-- (void)refreshCell:(NSInteger)hieght;
+//- (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>
+
+//CommentCell中得NickNameButton被点击
+- (void)handleNickNameButton_HeadCell:(CircleHeadCell*)cell withIndexPathRow:(NSInteger)row;
 
 //评论点击事件
 - (void)pinglunWithCircle:(CircleHeadCell*)myCell;

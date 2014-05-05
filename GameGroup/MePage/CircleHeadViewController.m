@@ -756,7 +756,7 @@
     for (int i =0; i<commentArray.count; i++) {
         NSDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
-         CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+         CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             commHieght +=(size1.height+5);
     }
     //评论列表的frame
@@ -783,7 +783,7 @@
 }
 + (CGSize)getcommentHeigthWithNIckNameStr:(NSString*)contStr Commentstr:(NSString *)str
 {
-    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getcommentNickNameHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(250-[CommentCell getCellHeigthWithStr:contStr].width, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 
@@ -859,7 +859,7 @@
         for (int i =0; i<ar.count; i ++) {
             NSDictionary *dic = [ar objectAtIndex:i];
             //判断是否是回复某人的评论
-                CGSize   size1 = [CommentCell getcommentNickNameHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
         }
         currnetY+=hieght+10;

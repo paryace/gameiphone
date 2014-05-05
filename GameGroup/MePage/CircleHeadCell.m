@@ -213,17 +213,9 @@
         cell.tag = indexPath.row;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
         
-        //判断是否是回复某人的评论
-        if ([[dict allKeys]containsObject:@"destUser"]) {
-            nickNameLenght=[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") length];
-            
-            cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
-            
-        }else{
             cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
             nickNameLenght=[cell.comNickNameStr length];
             
-        }
         cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
         
         NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
@@ -247,11 +239,13 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
     str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    CGSize  size = [CommentCell getcommentNickNameHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
+    CGSize  size = [CommentCell getCellHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
     return size.height+5;
+    
 }
 
 -(void)loadMoreComment:(UIButton *)sender
