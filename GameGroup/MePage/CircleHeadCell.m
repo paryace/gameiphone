@@ -32,7 +32,7 @@
         [self.contentView addSubview:self.nickNameLabel];
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:13];
+        self.titleLabel.font = [UIFont systemFontOfSize:12];
         self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
         

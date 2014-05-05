@@ -1168,8 +1168,14 @@
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
-
-    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:self.textView.text,@"comment",commentUser,@"commentUser",uuid,@"id", nil];
+    NSString *comment ;
+    if (self.textView.placeholder!=nil) {
+        comment = [NSString stringWithFormat:@"%@ %@",self.textView.placeholder,self.textView.text];
+    }else{
+        comment = self.textView.text;
+    }
+    
+    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"id", nil];
     //将评论添加到数组里
     for (NSDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
@@ -1430,6 +1436,7 @@
                     NSString *str =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(commDic, @"id")];
                     if ([str isEqualToString:uuid]) {
                         [commDic setObject:KISDictionaryHaveKey(responseObject, @"id") forKey:@"id"];
+                      //  [commDic setObject:KISDictionaryHaveKey(responseObject, @"comment") forKey:@"comment"];
                     }
                 }
             }
