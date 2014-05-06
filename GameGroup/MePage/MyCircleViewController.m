@@ -185,8 +185,11 @@
     if (indexPath.row>0) {
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
-    
+    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
+        headImageView.imageURL = nil;
+    }else{
      headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
+    }
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:
