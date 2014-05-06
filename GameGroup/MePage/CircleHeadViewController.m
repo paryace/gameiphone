@@ -697,7 +697,6 @@ typedef enum : NSUInteger {
     cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
 
-    
     NSString *urlLink = KISDictionaryHaveKey(dict, @"urlLink");
     
     //开始正文布局
@@ -725,13 +724,11 @@ typedef enum : NSUInteger {
             }else{
                 cell.delBtn.hidden =YES;
             }
-
                 m_currmagY+=50;
         }
             //有图动态
         else{
             NSMutableString *imgStr = KISDictionaryHaveKey(dict, @"img");
-            
             NSString *str = [imgStr substringFromIndex:imgStr.length];
             NSString *str2;
             if ([str isEqualToString:@","]) {
@@ -740,7 +737,6 @@ typedef enum : NSUInteger {
             else {
                 str2 = imgStr;
             }
-
             cell.collArray = [imgStr componentsSeparatedByString:@","];
             
             if ([[cell.collArray lastObject]isEqualToString:@""]||[[cell.collArray lastObject]isEqualToString:@" "]) {
@@ -860,11 +856,11 @@ typedef enum : NSUInteger {
         //判断是否是回复某人的评论
       //  CGSize size1;
         if ([[dic allKeys]containsObject:@"destUser"]) {
-      CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+      CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname");
             commHieght +=(size1.height+5);
         }else{
-       CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+       CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr = nil;
             commHieght +=(size.height+5);
         }
@@ -878,6 +874,7 @@ typedef enum : NSUInteger {
     if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
         cell.commentMoreBtn.hidden = NO;
         cell.commentMoreBtn.frame = CGRectMake(60, m_currmagY-10+commHieght, 250, 20);
+        [cell.commentMoreBtn setTitle:[NSString stringWithFormat:@"查看全部%@条评论",KISDictionaryHaveKey(dict, @"commentNum")] forState:UIControlStateNormal];
     }else{
         cell.commentMoreBtn.hidden = YES;
         cell.commentMoreBtn.frame = CGRectZero;
@@ -961,11 +958,11 @@ typedef enum : NSUInteger {
             NSDictionary *dic = [ar objectAtIndex:i];
             //判断是否是回复某人的评论
             if ([[dic allKeys]containsObject:@"destUser"]) {
-                CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
             }else{
                 
-                CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                CGSize   size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
                 currnetY +=(size1.height+5);
             }
 

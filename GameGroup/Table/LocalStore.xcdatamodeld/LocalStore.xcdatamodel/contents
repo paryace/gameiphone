@@ -65,6 +65,7 @@
     <entity name="DSFansNameIndex" representedClassName="DSFansNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSFriendCircle" syncable="YES"/>
     <entity name="DSFriends" representedClassName="DSFriends" syncable="YES">
         <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
@@ -243,5 +244,6 @@
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="240"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
+        <element name="DSFriendCircle" positionX="-81" positionY="-45" width="128" height="43"/>
     </elements>
 </model>
