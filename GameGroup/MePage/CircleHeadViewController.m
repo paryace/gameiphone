@@ -329,6 +329,7 @@ typedef enum : NSUInteger {
 //点击添加表情按钮
 -(void)emojiBtnClicked:(UIButton *)sender
 {
+    ifEmoji=YES;
     sender.selected = !sender.selected;
     if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
         [self showEmojiScrollView];
@@ -408,8 +409,8 @@ typedef enum : NSUInteger {
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    if (tapGr.state == UIGestureRecognizerStateEnded)
-    {
+    if (ifEmoji) {
+        ifEmoji=NO;
         return;
     }
     if (openMenuBtn.menuImageView.hidden==NO) {
@@ -417,6 +418,9 @@ typedef enum : NSUInteger {
     }
     if(self.theEmojiView.hidden == NO){
         self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
     }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
@@ -1690,6 +1694,8 @@ typedef enum : NSUInteger {
      Animate the resize so that it's in sync with the appearance of the keyboard.
      */
     self.theEmojiView.hidden = YES;
+    self.commentInputType = CommentInputTypeKeyboard;
+    senderBnt.selected = NO;
     NSDictionary *userInfo = [notification userInfo];
     
     // Get the origin of the keyboard when it's displayed.

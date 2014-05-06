@@ -68,6 +68,10 @@ typedef enum : NSUInteger {
 {
     [super viewDidLoad];
     
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGr];
+    
     [self setTopViewWithTitle:@"评论" withBackButton:YES];
     m_pageIndex = 0;
     m_dataReply = [[NSMutableArray alloc] initWithCapacity:1];
@@ -158,7 +162,21 @@ typedef enum : NSUInteger {
     
     [self getDataByNet];
 }
-
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+//    if (ifEmoji) {
+//        ifEmoji=NO;
+//        return;
+//    }
+//    if(self.theEmojiView.hidden == NO){
+//        self.theEmojiView.hidden = YES;
+//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+//        self.commentInputType = CommentInputTypeKeyboard;
+//        inputButton.selected = NO;
+//    }
+//    if([self.textView isFirstResponder]){
+//        [self.textView resignFirstResponder];
+//    }
+}
 
 #pragma mark - Views
 //表情按钮
@@ -177,6 +195,7 @@ typedef enum : NSUInteger {
 //点击添加表情按钮
 -(void)emojiBtnClicked:(UIButton *)sender
 {
+    ifEmoji=YES;
     sender.selected = !sender.selected;
     if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
         [self showEmojiScrollView];
@@ -419,7 +438,9 @@ typedef enum : NSUInteger {
      Reduce the size of the text view so that it's not obscured by the keyboard.
      Animate the resize so that it's in sync with the appearance of the keyboard.
      */
-    
+     self.theEmojiView.hidden = YES;
+    self.commentInputType = CommentInputTypeKeyboard;
+    inputButton.selected = NO;
     NSDictionary *userInfo = [notification userInfo];
     
     // Get the origin of the keyboard when it's displayed.

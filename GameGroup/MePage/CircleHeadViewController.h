@@ -31,7 +31,9 @@ UIAlertViewDelegate,
 UIScrollViewDelegate,
 TableViewDatasourceDidChange
 ,EmojiViewDelegate
->
+>{
+     BOOL ifEmoji;
+}
 @property(nonatomic,copy)NSString *imageStr;    //Cover图片
 @property(nonatomic,copy)NSString *nickNmaeStr; //昵称
 @property(nonatomic,copy)NSString *userId;  //userid

@@ -15,6 +15,11 @@
 
 @interface ReplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, PullUpDelegate, SRRefreshDelegate,CellButtonClickDelegate,HPGrowingTextViewDelegate,EmojiViewDelegate>
 
+{
+    BOOL ifEmoji;
+}
+
+
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 
 @property (nonatomic, strong)NSString* messageid;
