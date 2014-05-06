@@ -497,7 +497,7 @@
 
     [littleImgArray removeAllObjects];
     for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
-        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/80"];
+        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/160/160"];
         [littleImgArray addObject:str];
     }
 
@@ -744,8 +744,7 @@
    // NewsViewController* VC = [[NewsViewController alloc] init];
     MyCircleViewController *VC = [[MyCircleViewController alloc]init];
     VC.userId = self.hostInfo.userId;
-    VC.nickNmaeStr = self.hostInfo.nickName;
-    VC.imageStr = [GameCommon getNewStringWithId:[self.hostInfo.headImgArray objectAtIndex:0]];
+    VC.nickNmaeStr = self.hostInfo.nickName?self.hostInfo.nickName:@"";
   //  VC.myViewType = ONEPERSON_NEWS_TYPE;
     [self.navigationController pushViewController:VC animated:YES];
 }

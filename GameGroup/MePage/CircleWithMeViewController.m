@@ -152,7 +152,7 @@
         cell.contentsLabel.hidden =YES;
         cell.contentImageView.hidden = NO;
         NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
-        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/60/60"]];
+        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
         cell.contentImageView.imageURL = imageContetURL;
     }
     
