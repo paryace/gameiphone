@@ -138,7 +138,7 @@
     topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
     topImgaeView.placeholderImage =KUIImage(@"ceshibg.jpg");
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImage1_wx"]) {
-        topImgaeView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImage1_wx"] width:640 hieght:500 a:@""]];
+        topImgaeView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImage1_wx"]]];
     }else{
         topImgaeView.image = KUIImage(@"ceshibg.jpg");
     }
@@ -252,7 +252,7 @@
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@" "]) {
             aboutMeHeadImgView.imageURL =nil;
         }else
-            aboutMeHeadImgView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")] width:60 hieght:60 a:@"60/60"]];
+            aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")],@"/60/60"]];
         
         m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
         aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
@@ -261,7 +261,6 @@
     {
         abobtMeImageView.hidden = YES;
     }
-    
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -416,7 +415,7 @@
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")isEqualToString:@" "]) {
         aboutMeHeadImgView.imageURL =nil;
     }else
-    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")] width:60 hieght:60 a:@"60"]];
+    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")],@"/60/60"]];
     aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
     
 }
@@ -469,7 +468,7 @@
             }
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
 
-            topImgaeView.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(responseObject, @"coverImg")]stringByAppendingString:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+            topImgaeView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(responseObject, @"coverImg")]];
             
             if (m_currPageCount==0) {
                 [m_dataArray removeAllObjects];
@@ -580,7 +579,7 @@
     cell.tag = indexPath.row+100;
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
     
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]] stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]]];
+    cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")]]];
     
     
     cell.headImgBtn.tag= indexPath.row;
@@ -710,9 +709,10 @@
             
         
         
-        UITapGestureRecognizer *tapGe = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterInfoPage:)];
-        [cell.shareView addGestureRecognizer:tapGe];
-        tapGe.view.tag = indexPath.row;
+       // UITapGestureRecognizer *tapGe = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterInfoPage:)];
+       // [cell.shareView addGestureRecognizer:tapGe];
+            [cell.shareView addTarget:self action:@selector(enterInfoPage:) forControlEvents:UIControlEventTouchUpInside];
+        cell.shareView.tag = indexPath.row;
         
             //无图文章
         if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
@@ -722,7 +722,7 @@
             cell.contentLabel.numberOfLines =2;
         }else{  //有图文章
             cell.shareImgView.hidden =NO;
-            cell.shareImgView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:KISDictionaryHaveKey(dict, @"img") width:80 hieght:80 a:@"80"]];
+            cell.shareImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
             cell.contentLabel.frame = CGRectMake(60, 5, 190, 40);
             cell.contentLabel.numberOfLines = 2;
         }
@@ -850,17 +850,7 @@
         }
         else
         {
-            if (imgArray.count==1) {//但张图片
-                EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectZero];
-                imageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[KISDictionaryHaveKey(dict, @"img") stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]]];
-                
-                if (imageView.image ==nil) {
-                    currnetY +=80;
-                }else{
-                    currnetY +=imageView.image.size.height*160/imageView.image.size.width;
-                }
-            }
-            else if(imgArray.count>1&&imgArray.count<4){
+            if(imgArray.count>0&&imgArray.count<4){
                 currnetY+=85;
             }
             else if(imgArray.count>=4&&imgArray.count<7){
@@ -922,9 +912,9 @@
 
 
 #pragma mark --enter OnceDynamicViewController Page  进入动态详情界面
--(void)enterInfoPage:(UITapGestureRecognizer *)sender
+-(void)enterInfoPage:(UIButton *)sender
 {
-    NSDictionary *dict = [m_dataArray objectAtIndex:sender.view.tag];
+    NSDictionary *dict = [m_dataArray objectAtIndex:sender.tag];
     
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
     detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
@@ -1493,7 +1483,7 @@
    
         //如果没有网，将数据保存到数据库。。。。
     if (app.reach.currentReachabilityStatus ==NotReachable) {
-        if ([msgid isEqualToString:@""]||msgid ==nil) {
+        if (msgid||msgid ==nil||msgid.length<1) {
             return;
         }
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -1532,13 +1522,11 @@
             }
         }];
     }
-
     
     [self.textView resignFirstResponder];
     self.textView.text = nil;
     self.textView.placeholder= nil;
     
-
 }
 #pragma mark --上传顶部图片
 -(void)uploadbgImg:(UIImage *)image

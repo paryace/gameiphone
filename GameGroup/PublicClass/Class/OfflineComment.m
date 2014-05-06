@@ -40,21 +40,21 @@ static OfflineComment *my_gameCommon = NULL;
     Reachability* reach = notification.object;
     if ([reach currentReachabilityStatus] != NotReachable  && [[TempData sharedInstance] isHaveLogin]) {//有网 且 已登陆
         
-     NSArray *array = [DataStoreManager queryallcomments];
-        if ([array isKindOfClass:[NSArray class]]&&array.count>0) {
+     NSArray *commentArray = [DataStoreManager queryallcomments];
+        if ([commentArray isKindOfClass:[NSArray class]]&&commentArray.count>0) {
 
-        for (int i =0; i<array.count; i++) {
-            DSOfflineComments *offline = [array objectAtIndex:i];
+        for (int i =0; i<commentArray.count; i++) {
+            DSOfflineComments *offline = [commentArray objectAtIndex:i];
             [self postCommentWithOffLine:offline];
         }
         }
         
         
-        NSArray *array1 = [DataStoreManager queryallOfflineZan];
+        NSArray *offlineZanArray = [DataStoreManager queryallOfflineZan];
         
-        if ([array1 isKindOfClass:[NSArray class]]&&array1.count>0) {
-            for (int i = 0; i <array1.count; i++) {
-                DSOfflineZan *offlineZan = [array1 objectAtIndex:i];
+        if ([offlineZanArray isKindOfClass:[NSArray class]]&&offlineZanArray.count>0) {
+            for (int i = 0; i <offlineZanArray.count; i++) {
+                DSOfflineZan *offlineZan = [offlineZanArray objectAtIndex:i];
                 NSLog(@"offline--%@",offlineZan);
                 [self postZanWithMsgId:offlineZan];
             }

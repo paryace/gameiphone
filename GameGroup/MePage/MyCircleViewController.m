@@ -59,7 +59,7 @@
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
-    [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
+//    [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     topImgaeView.backgroundColor = [UIColor darkGrayColor];
     
     [topVIew addSubview:topImgaeView];
@@ -91,6 +91,7 @@
     //头像
     headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
+    [headImageView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
 
@@ -185,7 +186,7 @@
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
     
-     headImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:self.imageStr] width:160 hieght:160 a:@"160/160"]];
+     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:
@@ -249,7 +250,7 @@
 
     cell.imgCountLabel.text = [NSString stringWithFormat:@"(共%d张)",arr.count];
     
-    cell.thumbImageView.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")] width:140 hieght:140 a:@"140/140"]];
+    cell.thumbImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")],@"/140/140"]];
     
    // [cell getImageWithCount:KISDictionaryHaveKey(dic, @"img")];
     return cell;

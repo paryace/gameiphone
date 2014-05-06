@@ -125,13 +125,13 @@
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-    cell.selectionStyle =UITableViewCellSelectionStyleNone;
+   // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
     if ([dCircle.headImg isEqualToString:@""]||[dCircle.headImg isEqualToString:@" "]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-        cell.headImgBtn.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:dCircle.headImg] width:80 hieght:80 a:@"80"]];
+        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:dCircle.headImg],@"/160/160"]];
     }
     
     [cell.headImgBtn addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];

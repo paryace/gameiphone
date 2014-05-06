@@ -49,7 +49,7 @@
         [self.contentView addSubview:self.delBtn];
         
         
-        self.shareView = [[UIView alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
+        self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self addSubview:self.shareView];
         self.shareImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(5, 5, 40, 40)];
@@ -174,7 +174,7 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:@"140/140"];
+    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
     NSURL *urls;
     urls = [NSURL URLWithString:address];
     cell.imageView.imageURL =urls;
