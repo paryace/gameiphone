@@ -35,7 +35,7 @@ static CGFloat const kLabelVMargin = 10;
         [self.contentView addSubview:self.nickNameLabel];
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
         
@@ -52,7 +52,7 @@ static CGFloat const kLabelVMargin = 10;
         [self.contentView addSubview:self.delBtn];
         
         
-        self.shareView = [[UIView alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
+        self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self addSubview:self.shareView];
         self.shareImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(5, 5, 40, 40)];
@@ -177,7 +177,7 @@ static CGFloat const kLabelVMargin = 10;
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:@"140/140"];
+    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
     NSURL *urls;
     urls = [NSURL URLWithString:address];
     cell.imageView.imageURL =urls;
@@ -211,7 +211,7 @@ static CGFloat const kLabelVMargin = 10;
     }
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     cell.accessoryType = UITableViewCellAccessoryNone;
-
+    cell.myCommentCellDelegate = self;
         //cell.selectionStyle =UITableViewCellSelectionStyleNone;
         cell.tag = indexPath.row;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
@@ -234,7 +234,10 @@ static CGFloat const kLabelVMargin = 10;
     [commentStr addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
     
     cell.commentContLabel.attributedText = commentStr;
+    [cell showNickNameButton:cell.comNickNameStr];
     [cell refreshsCell];
+    
+
     return cell;
 }
 
@@ -250,14 +253,14 @@ static CGFloat const kLabelVMargin = 10;
 {
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
-    str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    CGSize  size = [CommentCell getCellHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
-
-    if (size.height<15) {
-        return 20;
-    }
+    if (self.destUserStr) {
+        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),self.destUserStr,KISDictionaryHaveKey(dic, @"comment")];
+    }else{
+    str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+     }
+    CGSize  size = [CommentCell getCellHeigthWithStr:str];
     return size.height+5;
-    
+    str =nil;
 }
 
 -(void)loadMoreComment:(UIButton *)sender
@@ -299,6 +302,11 @@ static CGFloat const kLabelVMargin = 10;
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
++ (CGSize)getTitleHeigthWithStr:(NSString*)contStr
+{
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    return cSize;
+}
 
 -(void)delCell:(UIButton *)sender
 {
@@ -307,7 +315,12 @@ static CGFloat const kLabelVMargin = 10;
     }
 }
 
-
+- (void)handleNickNameButton:(CommentCell*)cell
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(handleNickNameButton_HeadCell:withIndexPathRow:)]) {
+        [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
+    }
+}
 
 - (void)awakeFromNib
 {

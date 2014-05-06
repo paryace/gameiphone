@@ -42,7 +42,9 @@
 #define monvbangURL @"http://58.83.193.120/h5/index.html"
 #define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
 #define BaseHelpUrl @"http://58.83.193.120/faq/"
-#define NewBaseImageUrl @"http://114.215.109.110/"//最新获取图片地址
+
+
+//#define NewBaseImageUrl @"http://114.215.109.110/"//最新获取图片地址
 
 
 

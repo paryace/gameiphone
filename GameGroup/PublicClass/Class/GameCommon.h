@@ -19,12 +19,12 @@
 
 + (NSString*)getNewStringWithId:(id)oldString;//剔除json里的空格字段
 
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString *)a;//测试 用于切图
+//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString *)a;//测试 用于切图
 
 
 + (GameCommon*)shareGameCommon;
 + (float)diffHeight:(UIViewController *)controller;
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr;
+//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr;
 -(NSString *)convertChineseToPinYin:(NSString *)chineseName;
 -(NSUInteger) unicodeLengthOfString: (NSString *) text;
 -(NSUInteger) asciiLengthOfString: (NSString *) text;

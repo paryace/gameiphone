@@ -91,7 +91,7 @@
                 [self imageViewLoadedImage:imageV]; //读取图片
             }
             else
-                imageV.imageURL = [NSURL URLWithString:[[GameCommon isNewOrOldWithImage:self.imgIDArray[i]] stringByAppendingString: self.imgIDArray[i]]];
+                imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
             }
         else{
             imageV.imageURL = [NSURL URLWithString:self.imgIDArray[i]];

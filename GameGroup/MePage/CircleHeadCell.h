@@ -21,7 +21,7 @@
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UILabel *lastLabel;//XXX发表了 、分享了XXX
 @property(nonatomic,copy)NSString *commentStr;//评论内容
-@property(nonatomic,strong)UIView * shareView;//如果来自后台分享 展示此界面
+@property(nonatomic,strong)UIButton * shareView;//如果来自后台分享 展示此界面
 @property(nonatomic,strong)UIButton *openBtn; //展开菜单“。。。”
 @property(nonatomic,strong)UIImageView *menuImageView;//点击展开评论和赞
 @property(nonatomic,strong)EGOImageView *shareImgView;//后台分享的图片
@@ -42,8 +42,9 @@
 @property(nonatomic,strong)UIButton *commentBtn;
 @property(nonatomic,assign)NSInteger  commentCount;
 @property(nonatomic,strong)UIButton *commentMoreBtn;
-
+@property(nonatomic,strong)NSString *destUserStr;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
++ (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
 //- (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>
