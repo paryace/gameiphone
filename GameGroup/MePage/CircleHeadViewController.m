@@ -61,7 +61,6 @@ typedef enum : NSUInteger {
     int  delCellCount;//删除动态的cell行数（位置）
     
     NSMutableDictionary *delcommentDic;
-
     NSMutableDictionary *cellhightarray;//存放每个Cell的高度
     float offer;
     int height;
@@ -122,7 +121,6 @@ typedef enum : NSUInteger {
     isComeBackComment = NO;
     isfriendCircle = YES;
     
-   // m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)) style:UITableViewStylePlain];
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -130,16 +128,7 @@ typedef enum : NSUInteger {
     
     //顶部图片
     UIView *topVIew;
-    topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
-//    if (m_commentAboutMeCount&&m_commentAboutMeCount>0)
-//    {
-//        topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 350)];
-//    }
-//    else
-//    {
-//        topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
-//    }
-    
+    topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];    
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
@@ -666,7 +655,7 @@ typedef enum : NSUInteger {
     cell.myCellDelegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     int m_currmagY =0;
     cell.tag = indexPath.row+100;
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
@@ -709,6 +698,7 @@ typedef enum : NSUInteger {
         cell.contentLabel.hidden = YES;
         cell.shareImgView.hidden = YES;
         CGSize size = [CircleHeadCell getTitleHeigthWithStr:KISDictionaryHaveKey(dict, @"msg")];
+        [dict setObject:@(size.height) forKey:@"titleLabelHieght"];
         cell.titleLabel.frame = CGRectMake(60, 30, 250, size.height);
         cell.titleLabel.text = KISDictionaryHaveKey(dict, @"msg");
         
@@ -745,19 +735,22 @@ typedef enum : NSUInteger {
             if ([[cell.collArray lastObject]isEqualToString:@""]||[[cell.collArray lastObject]isEqualToString:@" "]) {
                 [(NSMutableArray*)cell.collArray removeLastObject];
             }
-            
-
-                cell.oneImageView.hidden =YES;
-                cell.oneImageView.imageURL  =nil;
-                cell.oneImageView.backgroundColor = [UIColor redColor];
                 cell.customPhotoCollectionView.hidden = NO;
+            if ([[dict allKeys]containsObject:@"imgHieght"]) {
+                cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 250,[KISDictionaryHaveKey(dict, @"imgHieght") floatValue]) ;
+                m_currmagY +=[KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
+
+            }else{
                 int i = (cell.collArray.count-1)/3;
                 cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 250, i*85+85) ;
+            [dict setObject:@(i*85+85) forKey:@"imgHieght"];
+                m_currmagY += i*85+85;
+
+            }
                 CGFloat paddingY = 2;
                 CGFloat paddingX = 2;
                 cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
                 cell.layout.minimumLineSpacing = paddingY;
-                m_currmagY += i*85+85;
 
             [cell.customPhotoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
@@ -852,25 +845,34 @@ typedef enum : NSUInteger {
     
     // 评论
     commentArray =KISDictionaryHaveKey(dict, @"commentList");
-    cell.commentArray = commentArray;
     float commHieght = 0.0;
+    if ([[dict allKeys]containsObject:@"commentListHieght"]) {
+    cell.commentTabelView.frame = CGRectMake(60, m_currmagY-10, 250,[KISDictionaryHaveKey(dict, @"commentListHieght") floatValue]);
+        commHieght =[KISDictionaryHaveKey(dict, @"commentListHieght") floatValue];
+    }else{
     for (int i =0; i<commentArray.count; i++) {
-        NSDictionary *dic = [commentArray objectAtIndex:i];
+        NSMutableDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
-      //  CGSize size1;
         if ([[dic allKeys]containsObject:@"destUser"]) {
       CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname");
             commHieght +=(size1.height+5);
+            [dic setObject:@(size1.height+5) forKey:@"commentCellHieght"];
         }else{
        CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr = nil;
             commHieght +=(size.height+5);
+            [dic setObject:@(size.height+5) forKey:@"commentCellHieght"];
         }
     }
     //评论列表的frame
-
+    [dict setObject:@(commHieght) forKey:@"commentListHieght"];
+    
     cell.commentTabelView.frame = CGRectMake(60, m_currmagY-10, 250,commHieght);
+    }
+    cell.commentArray = commentArray;
+    
+    
     cell.commentTabelView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     [cell.commentTabelView reloadData];
     
@@ -903,8 +905,12 @@ typedef enum : NSUInteger {
 {
     float currnetY = 0;
 
-    NSDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
+    NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
     
+    if ([[dict allKeys]containsObject:@"cellHieght"]) {
+        return [KISDictionaryHaveKey(dict, @"cellHieght")floatValue];
+    }
+    else{
     if (![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@""]&&![KISDictionaryHaveKey(dict, @"urlLink")isEqualToString:@" "]) {//链接的动态
         CGSize size = [CircleHeadCell getTitleHeigthWithStr:KISDictionaryHaveKey(dict, @"title")];
 
@@ -979,8 +985,11 @@ typedef enum : NSUInteger {
     }
     NSNumber *number = [NSNumber numberWithFloat:currnetY];
     [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];//以动态id为键存放每个cell的高度到集合里
+    
+    [dict setObject:@(currnetY) forKey:@"cellHieght"];
     return currnetY;
     currnetY =0;
+    }
 }
 - (void)didReceiveMemoryWarning
 {

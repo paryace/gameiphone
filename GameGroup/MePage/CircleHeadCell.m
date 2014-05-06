@@ -256,7 +256,12 @@ static CGFloat const kLabelVMargin = 10;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
+    NSMutableDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
+    if ([[dic allKeys]containsObject:@"commentCellHieght"]) {
+        return [KISDictionaryHaveKey(dic, @"commentCellHieght")floatValue];
+    }
+    else
+    {
     NSString *str;
     if ([[dic allKeys]containsObject:@"destUser"]) {
         str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
@@ -270,6 +275,7 @@ static CGFloat const kLabelVMargin = 10;
     //CGSize  size = [CommentCell getCellHeigthWithStr:str];
     return size1.height+5;
     str =nil;
+    }
 }
 
 -(void)loadMoreComment:(UIButton *)sender
