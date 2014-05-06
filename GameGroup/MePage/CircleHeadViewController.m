@@ -371,6 +371,7 @@ typedef enum : NSUInteger {
 //发送表情
 -(void)emojiSendBtnDo
 {
+    
     [self updateComment];
 }
 //选择表情
@@ -1285,6 +1286,15 @@ typedef enum : NSUInteger {
     if (self.textView.text.length<1) {
         [self showMessageWithContent:@"评论不能回复空内容" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
     }
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
