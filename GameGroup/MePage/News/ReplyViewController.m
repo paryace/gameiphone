@@ -671,7 +671,7 @@ typedef enum : NSUInteger {
 }
 //手势代理的方法，解决手势冲突
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    if ([touch.view isKindOfClass:[UIButton class]])
+    if ([touch.view isKindOfClass:[UIButton class]]||[touch.view isKindOfClass:[UIScrollView class]])
     {
         return NO;
     }
