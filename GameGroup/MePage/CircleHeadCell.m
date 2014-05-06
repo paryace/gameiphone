@@ -213,7 +213,7 @@ static CGFloat const kLabelVMargin = 10;
     cell.myCommentCellDelegate = self;
         //cell.selectionStyle =UITableViewCellSelectionStyleNone;
         cell.tag = indexPath.row;
-        NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
+        NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str;
     if ([[dict allKeys]containsObject:@"destUser"]) {
         str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
@@ -226,10 +226,18 @@ static CGFloat const kLabelVMargin = 10;
             
         cell.commentStr =str;
     
-    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
-   
+    if (![[dict allKeys]containsObject:@"formatedComment"]) {
+        NSAttributedString* formatedCommentStr =[CommentCell GetAttributedCommentWithStr:str];
+        [dict setObject:formatedCommentStr forKey:@"formatedComment"];
+        cell.commentContLabel.attributedText = formatedCommentStr;
+    }
+    else
+    {
+        cell.commentContLabel.attributedText = KISDictionaryHaveKey(dict,@"formatedComment");
+    }
     
-    cell.commentContLabel.attributedText = commentStr;
+    
+    
     
     //创建昵称的隐形按钮
 //    NSAttributedString *attrStr =commentStr;
@@ -238,7 +246,19 @@ static CGFloat const kLabelVMargin = 10;
     NSLog(@"comment framesize------%f, %f",cell.commentContLabel.frame.size.width,cell.commentContLabel.frame.size.height);
 
     [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
-    [cell refreshsCell];
+    
+    if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+        CGSize size1 = [cell.commentContLabel.attributedText sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
+        [dict setObject:@(size1.height+5) forKey:@"commentCellHieght"];
+        cell.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
+    }
+    else
+    {
+        CGFloat height = [KISDictionaryHaveKey(dict,@"commentCellHieght") floatValue];
+        cell.commentContLabel.frame = CGRectMake(5, 5, 245, height);
+    }
+    
+    //[cell refreshsCell];
     
 
     return cell;

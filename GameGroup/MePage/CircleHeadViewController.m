@@ -854,15 +854,24 @@ typedef enum : NSUInteger {
         NSMutableDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
         if ([[dic allKeys]containsObject:@"destUser"]) {
-      CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+            NSString * strComment = [NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+            
+         //   [dic setObject:strComment forKey:@"formatedComment"];
+            
             cell.destUserStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname");
-            commHieght +=(size1.height+5);
-            [dic setObject:@(size1.height+5) forKey:@"commentCellHieght"];
+            
+            if(![[dic allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+                CGSize  size1 = [CommentCell getCellHeigthWithStr:strComment];
+                commHieght +=(size1.height+5);
+                [dic setObject:@(size1.height+5) forKey:@"commentCellHieght"];
+            }
         }else{
-       CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr = nil;
-            commHieght +=(size.height+5);
-            [dic setObject:@(size.height+5) forKey:@"commentCellHieght"];
+            if(![[dic allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+                CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                commHieght +=(size.height+5);
+                [dic setObject:@(size.height+5) forKey:@"commentCellHieght"];
+            }
         }
     }
     //评论列表的frame
