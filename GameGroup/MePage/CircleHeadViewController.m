@@ -1341,6 +1341,7 @@ typedef enum : NSUInteger {
         [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
 
     }
+    [self showMessageWindowWithContent:@"评论成功" imageType:0];
     [m_myTableView reloadData];
     //执行提交评论操作
     [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text uuid:uuid];
@@ -1384,7 +1385,7 @@ typedef enum : NSUInteger {
         NSDictionary *dict = [array objectAtIndex:row];
       //  self.textView.placeholder = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") ;
         NSString* nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
-        self.textView.placeholder = [NSString stringWithFormat:@"回复@%@：", nickName];
+        self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
         self.textView.placeholderColor = [UIColor grayColor];
         
         //将对方信息保存在临时变量
@@ -1605,7 +1606,7 @@ typedef enum : NSUInteger {
     }
     else{
         [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [self showMessageWindowWithContent:@"评论成功" imageType:0];
+//            [self showMessageWindowWithContent:@"评论成功" imageType:0];
             
             for (int i = 0; i <m_dataArray.count; i++) {
                 NSDictionary *dic = [m_dataArray objectAtIndex:i];
@@ -1775,7 +1776,7 @@ typedef enum : NSUInteger {
 }
 //手势代理的方法，解决手势冲突
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    if ([touch.view isKindOfClass:[UIButton class]])
+    if ([touch.view isKindOfClass:[UIButton class]]||[touch.view isKindOfClass:[UIScrollView class]])
     {
         return NO;
     }

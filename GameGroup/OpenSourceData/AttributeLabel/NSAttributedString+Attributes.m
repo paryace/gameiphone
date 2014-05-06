@@ -399,8 +399,8 @@ static NSString* const kHelveticaNeueUI_Bold_Italic = @".HelveticaNeueUI-BoldIta
 }
 -(void)setEmoit:(NSString *)link
 {
-    NSLog(@"%@-%@",self,link);
-    NSLog(@"sellllllllflength:%d",[self length]);
+   // NSLog(@"%@-%@",self,link);
+  //  NSLog(@"sellllllllflength:%d",[self length]);
     [self removeAttribute:kOHEmoitAttributeName range:NSMakeRange(0,[self length])]; // Work around for Apple leak
     if (link)
     {

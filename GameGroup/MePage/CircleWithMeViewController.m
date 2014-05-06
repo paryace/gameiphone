@@ -13,6 +13,7 @@
 #import "SendNewsViewController.h"
 #import "MJRefresh.h"
 #import "DSCircleWithMe.h"
+#import "OHASBasicHTMLParser_SmallEmoji.h"
 @interface CircleWithMeViewController ()
 {
     UITableView *m_myTableView;
@@ -158,17 +159,31 @@
     
     
     if ([dCircle.myType intValue]==4) {
-        cell.titleLabel.text = @"赞了该内容";
+//        cell.titleLabel.text = @"赞了该内容";
+        cell.titleLabel.attributedText = [self getNSMutable:@"赞了该内容"];
         cell.commentStr = @"赞了该内容";
     }
     else if ([dCircle.myType intValue]==5||[dCircle.myType intValue]==7){
-        cell.titleLabel.text =dCircle.comment;
+//        cell.titleLabel.text =dCircle.comment;
+        cell.titleLabel.attributedText = [self getNSMutable:dCircle.comment];
         cell.commentStr=dCircle.comment;
     }
+    
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:dCircle.createDate]];
     
     [cell refreshCell];
     return cell;
+}
+-(NSMutableAttributedString*) getNSMutable:(NSString*)str
+{
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:str];
+    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 0.0f;
+    [commentStr setParagraphStyle:paragraphStyle];
+    [commentStr setFont:[UIFont systemFontOfSize:12]];
+    return commentStr;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -193,7 +208,11 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DSCircleWithMe *dcircle =[dataArray objectAtIndex:indexPath.row];
-    float heigth = [CircleMeCell getContentHeigthWithStr:(dcircle.comment)] + 50;
+    NSString *str=dcircle.comment;
+    if (str==nil) {
+        str=@"赞了该内容";
+    }
+    float heigth = [CircleMeCell getContentHeigthWithStr:(str)] + 50;
     return heigth < 80 ? 80 : heigth;
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
