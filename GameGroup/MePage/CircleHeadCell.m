@@ -9,7 +9,6 @@
 #import "CircleHeadCell.h"
 #import "FinderView.h"
 #import "ImgCollCell.h"
-#import "OHASBasicHTMLParser.h"
 @interface CircleHeadCell(){
     int nickNameLenght;
 }
@@ -217,9 +216,9 @@ static CGFloat const kLabelVMargin = 10;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str;
     if ([[dict allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }else{
-        str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font>:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }
 
       cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
@@ -227,25 +226,25 @@ static CGFloat const kLabelVMargin = 10;
             
         cell.commentStr =str;
     
-    
-    
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:cell.commentStr];
-    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 0.0f;
-    [commentStr setParagraphStyle:paragraphStyle];
-    [commentStr setFont:[UIFont systemFontOfSize:12]];
-    [commentStr setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
-    [commentStr addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
+    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
+   
     
     cell.commentContLabel.attributedText = commentStr;
-    [cell showNickNameButton:cell.comNickNameStr];
+    
+    //创建昵称的隐形按钮
+//    NSAttributedString *attrStr =commentStr;
+//    CGRect commentrect = [attrStr boundingRectWithSize:CGSizeMake(245, MAXFLOAT) options:NSStringDrawingUsesFontLeading context:nil];
+//    NSLog(@"comment size------%f, %f",commentrect.size.width,commentrect.size.height);
+    NSLog(@"comment framesize------%f, %f",cell.commentContLabel.frame.size.width,cell.commentContLabel.frame.size.height);
+
+    [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
     [cell refreshsCell];
     
 
     return cell;
 }
+
+
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -264,8 +263,12 @@ static CGFloat const kLabelVMargin = 10;
     }else{
     str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
      }
-    CGSize  size = [CommentCell getCellHeigthWithStr:str];
-    return size.height+5;
+    
+    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
+    
+    //CGSize  size = [CommentCell getCellHeigthWithStr:str];
+    return size1.height+5;
     str =nil;
 }
 

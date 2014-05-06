@@ -20,10 +20,12 @@
 @property (nonatomic, retain) OHAttributedLabel *commentContLabel;
 -(void)refreshsCell;
 //显示可点击的呢称
--(void)showNickNameButton:(NSString *)nickName;
+-(void)showNickNameButton:(NSString *)nickName withSize:(CGSize)commentstrSize;
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr;
 -(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
++(NSMutableAttributedString*)GetAttributedCommentWithStr:(NSString*)Str;
 @end
+
 
 
 
