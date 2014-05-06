@@ -8,14 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
+#import "OHAttributedLabel.h"
 
-@interface ReplyCell : UITableViewCell
+@interface ReplyCell : UITableViewCell<OHAttributedLabelDelegate>
 
 @property (assign,nonatomic) id<CellButtonClickDelegate> myDelegate;
 @property (strong,nonatomic) EGOImageButton * headImageV;
 
 @property (strong,nonatomic) UILabel* nickNameLabel;
-@property (strong,nonatomic) UILabel* commentLabel;
+@property (strong,nonatomic) OHAttributedLabel* commentLabel;
 @property (strong,nonatomic) UILabel* timeLabel;
 @property (strong,nonatomic) NSString* commentStr;
 @property (assign,nonatomic) NSInteger rowIndex;

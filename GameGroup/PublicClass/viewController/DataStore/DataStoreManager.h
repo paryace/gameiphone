@@ -91,13 +91,14 @@
 +(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
 +(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)UnRead;
 +(void)deletecommentWithMsgId:(NSString*)msgid;
-
++(void)deleteAllcomment;
 
 
 //离线评论和赞
 +(void)saveCommentsWithDic:(NSDictionary *)dic;
 +(NSArray *)queryallcomments;
 +(void)removeOfflineCommentsWithuuid:(NSString *)uuid;
+
 
 +(void)saveOfflineZanWithDic:(NSDictionary *)dic;
 +(NSArray *)queryallOfflineZan;

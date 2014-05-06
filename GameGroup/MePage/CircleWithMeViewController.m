@@ -13,6 +13,7 @@
 #import "SendNewsViewController.h"
 #import "MJRefresh.h"
 #import "DSCircleWithMe.h"
+#import "OHASBasicHTMLParser_SmallEmoji.h"
 @interface CircleWithMeViewController ()
 {
     UITableView *m_myTableView;
@@ -37,6 +38,8 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
+    
+    self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
@@ -56,9 +59,20 @@
     [self.view addSubview:m_myTableView];
     
     UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    UIView *upLineView = [[UIView alloc]initWithFrame:CGRectMake(0, 10, 310, 1)];
+    upLineView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [footView addSubview:upLineView];
+    
+    UIView *downLineView = [[UIView alloc]initWithFrame:CGRectMake(43, 10, 310, 1)];
+    downLineView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [footView addSubview:downLineView];
+
+    
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 1, 320, 42)];
     [button setTitle:@"查看更多" forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setBackgroundColor:UIColorFromRGBA(0xf7f7f7, 1)];
+    button.titleLabel.font = [UIFont systemFontOfSize:13];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(loadMore:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
     
@@ -84,12 +98,19 @@
 }
 -(void)publishInfo:(UIButton *)sender
 {
-    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
-    sendNews.delegate = self;
-    sendNews.isComeFromMe = YES;
-    [self.navigationController pushViewController:sendNews animated:YES];
+    UIAlertView *delAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"是否确定删除？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    [delAlertView show];
 }
-
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex ==1) {
+        [ DataStoreManager deleteAllcomment];
+        [dataArray removeAllObjects];
+        [m_myTableView reloadData];
+    }else{
+        return;
+    }
+}
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -104,13 +125,14 @@
     if (cell ==nil) {
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.selectionStyle =UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+   // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
     if ([dCircle.headImg isEqualToString:@""]||[dCircle.headImg isEqualToString:@" "]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-        cell.headImgBtn.imageURL = [NSURL URLWithString:[GameCommon isNewOrOldWithImage:[GameCommon getHeardImgId:dCircle.headImg] width:80 hieght:80 a:@"80"]];
+        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:dCircle.headImg],@"/160/160"]];
     }
     
     [cell.headImgBtn addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -131,23 +153,37 @@
         cell.contentsLabel.hidden =YES;
         cell.contentImageView.hidden = NO;
         NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
-        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/60/60"]];
+        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
         cell.contentImageView.imageURL = imageContetURL;
     }
     
     
     if ([dCircle.myType intValue]==4) {
-        cell.titleLabel.text = @"赞了该内容";
+//        cell.titleLabel.text = @"赞了该内容";
+        cell.titleLabel.attributedText = [self getNSMutable:@"赞了该内容"];
         cell.commentStr = @"赞了该内容";
     }
     else if ([dCircle.myType intValue]==5||[dCircle.myType intValue]==7){
-        cell.titleLabel.text =dCircle.comment;
+//        cell.titleLabel.text =dCircle.comment;
+        cell.titleLabel.attributedText = [self getNSMutable:dCircle.comment];
         cell.commentStr=dCircle.comment;
     }
+    
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:dCircle.createDate]];
     
     [cell refreshCell];
     return cell;
+}
+-(NSMutableAttributedString*) getNSMutable:(NSString*)str
+{
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:str];
+    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 0.0f;
+    [commentStr setParagraphStyle:paragraphStyle];
+    [commentStr setFont:[UIFont systemFontOfSize:12]];
+    return commentStr;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,7 +208,11 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DSCircleWithMe *dcircle =[dataArray objectAtIndex:indexPath.row];
-    float heigth = [CircleMeCell getContentHeigthWithStr:(dcircle.comment)] + 50;
+    NSString *str=dcircle.comment;
+    if (str==nil) {
+        str=@"赞了该内容";
+    }
+    float heigth = [CircleMeCell getContentHeigthWithStr:(str)] + 50;
     return heigth < 80 ? 80 : heigth;
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

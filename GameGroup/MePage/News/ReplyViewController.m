@@ -12,7 +12,11 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "UserManager.h"
-
+#import "OHASBasicHTMLParser_SmallEmoji.h"
+typedef enum : NSUInteger {
+    CommentInputTypeKeyboard,
+    CommentInputTypeEmoji,
+} CommentInputType;
 @interface ReplyViewController ()
 {
     UITableView*     m_replyTabel;
@@ -27,7 +31,8 @@
     UIButton* inputButton;
 }
 @property (strong,nonatomic) HPGrowingTextView *textView;
-
+@property (nonatomic, strong) EmojiView *theEmojiView;
+@property (nonatomic, assign) CommentInputType commentInputType;
 @end
 
 @implementation ReplyViewController
@@ -62,6 +67,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
+    [self.view addGestureRecognizer:tapGr];
     
     [self setTopViewWithTitle:@"评论" withBackButton:YES];
     m_pageIndex = 0;
@@ -124,22 +133,151 @@
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
     
-    inputButton = [[UIButton alloc] initWithFrame:CGRectMake(255, 8, 60, 35)];
-    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_normal") forState:UIControlStateNormal];
-    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_click") forState:UIControlStateHighlighted];
-    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
-    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    [inputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+//    inputButton = [[UIButton alloc] initWithFrame:CGRectMake(255, 8, 60, 35)];
+//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_normal") forState:UIControlStateNormal];
+//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_click") forState:UIControlStateHighlighted];
+//    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
+//    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
+//    [inputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [inPutView addSubview:inputButton];
+    
+    
+    
+    
+    inputButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [inputButton setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [inputButton setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    inputButton.frame = CGRectMake(260, 0, 50, 50);
+    [inPutView bringSubviewToFront:inputButton];
     [inPutView addSubview:inputButton];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
+    [self.view addSubview:self.theEmojiView];
+    self.theEmojiView.hidden = YES;
     
     [self getDataByNet];
 }
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        inputButton.selected = NO;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+}
+
+#pragma mark - Views
+//表情按钮
+- (EmojiView *)theEmojiView{
+    if (!_theEmojiView) {
+        _theEmojiView = [[EmojiView alloc]
+                         initWithFrame:CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253)
+                         WithSendBtn:YES];
+        _theEmojiView.delegate = self;
+    }
+    return _theEmojiView;
+}
+//点击添加表情按钮
+-(void)emojiBtnClicked:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
+        [self showEmojiScrollView];
+    }else{//点击切回键盘
+        [self showKeyboardView];
+        
+    }
+}
+//显示键盘
+-(void)showKeyboardView
+{
+    [self.textView becomeFirstResponder];
+    self.commentInputType = CommentInputTypeKeyboard;
+    self.theEmojiView.hidden = YES;
+}
+//显示表情布局
+-(void)showEmojiScrollView
+{
+    self.commentInputType = CommentInputTypeEmoji;
+    [self.textView resignFirstResponder];
+    self.theEmojiView.hidden = NO;
+    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+    [self autoMovekeyBoard:253];
+}
+
+//删除表情
+-(void)deleteEmojiStr
+{
+    if (self.textView.text.length>=1) {
+        if ([self.textView.text hasSuffix:@"] "] && [self.textView.text length] >= 5) {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-5)];
+        }
+        else
+        {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+        }
+    }
+}
+//发送表情
+-(void)emojiSendBtnDo
+{
+    [self okButtonClick];
+}
+//选择表情
+-(NSString *)selectedEmoji:(NSString *)ssss
+{
+	if (self.textView.text == nil) {
+		self.textView.text = ssss;
+	}
+	else {
+		self.textView.text = [self.textView.text stringByAppendingString:ssss];
+	}
+    return 0;
+}
+//隐藏表情
+-(void)hideEmoji
+{
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:0];
+        self.commentInputType = CommentInputTypeKeyboard;
+        inputButton.selected = NO;
+    }
+}
+//隐藏键盘
+-(void)hideKeyBoard
+{
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+}
+
 - (void)backButtonClick:(id)sender
 {
+    
+        if(self.theEmojiView.hidden == NO){
+            self.theEmojiView.hidden = YES;
+            [self autoMovekeyBoard:0];
+            self.commentInputType = CommentInputTypeKeyboard;
+            inputButton.selected = NO;
+            return ;
+        }
+        if([self.textView isFirstResponder]){
+            [self.textView resignFirstResponder];
+            return ;
+        }
+    
     if (!KISEmptyOrEnter(self.textView.text)) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定放弃已编写的评论内容吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
         alert.tag = 100;
@@ -225,15 +363,17 @@
     [self.navigationController pushViewController:oneVC animated:YES];
 }
 
-
 #pragma mark 发表
-- (void)okButtonClick:(id)sender
+- (void)okButtonClick
 {
+    
+    
     if (KISEmptyOrEnter(self.textView.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入评论内容" buttonTitle:@"确定"];
         return;
     }
-    [self.textView resignFirstResponder];
+    [self hideEmoji];
+    [self hideKeyBoard];
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -314,7 +454,7 @@
 {
     [self.textView resignFirstResponder];
     
-    //    [self okButtonClick:nil];
+    [self okButtonClick];
     return YES;
 }
 
@@ -324,7 +464,9 @@
      Reduce the size of the text view so that it's not obscured by the keyboard.
      Animate the resize so that it's in sync with the appearance of the keyboard.
      */
-    
+     self.theEmojiView.hidden = YES;
+    self.commentInputType = CommentInputTypeKeyboard;
+    inputButton.selected = NO;
     NSDictionary *userInfo = [notification userInfo];
     
     // Get the origin of the keyboard when it's displayed.
@@ -387,6 +529,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     float heigth = [ReplyCell getContentHeigthWithStr:KISDictionaryHaveKey([m_dataReply objectAtIndex:indexPath.row], @"msg")] + 30;
+    NSLog(@"%f",heigth);
     return heigth < 60 ? 60 : heigth;
 }
 
@@ -415,7 +558,21 @@
     
     cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
-    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
+//    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
+    
+    
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"msg")];
+    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 0.0f;
+    [commentStr setParagraphStyle:paragraphStyle];
+    [commentStr setFont:[UIFont systemFontOfSize:12]];
+    
+    cell.commentLabel.attributedText = commentStr;
+
+    
+    
     cell.commentStr = KISDictionaryHaveKey(tempDic, @"msg");
     cell.rowIndex = indexPath.row;
     cell.myDelegate = self;
@@ -513,7 +670,14 @@
 {
     [self.textView resignFirstResponder];
 }
-
+//手势代理的方法，解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if ([touch.view isKindOfClass:[UIButton class]]||[touch.view isKindOfClass:[UIScrollView class]])
+    {
+        return NO;
+    }
+    return YES;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

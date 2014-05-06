@@ -524,29 +524,29 @@ static GameCommon *my_gameCommon = NULL;
     return @"";
 }
 
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr
-{
-    unichar c;
-    for (int i=0; i<imgStr.length; i++) {
-        c=[imgStr characterAtIndex:i];
-        if (!isdigit(c)) {
-            return NewBaseImageUrl;
-        }
-    }
-    return BaseImageUrl;
-}
+//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr
+//{
+//    unichar c;
+//    for (int i=0; i<imgStr.length; i++) {
+//        c=[imgStr characterAtIndex:i];
+//        if (!isdigit(c)) {
+//            return NewBaseImageUrl;
+//        }
+//    }
+//    return BaseImageUrl;
+//}
 
-+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString*)a
-{
-    unichar c;
-    for (int i=0; i<imgStr.length; i++) {
-        c=[imgStr characterAtIndex:i];
-        if (!isdigit(c)) {
-            return [NSString stringWithFormat:@"%@%@?w=%d&h=%d",NewBaseImageUrl,imgStr,width,hieght];
-        }
-    }
-    return [NSString stringWithFormat:@"%@%@/%@",BaseImageUrl,imgStr,a];
-}
+//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString*)a
+//{
+//    unichar c;
+//    for (int i=0; i<imgStr.length; i++) {
+//        c=[imgStr characterAtIndex:i];
+//        if (!isdigit(c)) {
+//            return [NSString stringWithFormat:@"%@%@?w=%d&h=%d",NewBaseImageUrl,imgStr,width,hieght];
+//        }
+//    }
+//    return [NSString stringWithFormat:@"%@%@/%@",BaseImageUrl,imgStr,a];
+//}
 
 
 

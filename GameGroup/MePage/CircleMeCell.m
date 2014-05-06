@@ -7,6 +7,7 @@
 //
 
 #import "CircleMeCell.h"
+#import "OHASBasicHTMLParser.h"
 
 @implementation CircleMeCell
 
@@ -27,13 +28,14 @@
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self addSubview:self.nickNameLabel];
         
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
+        self.titleLabel = [[OHAttributedLabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
-        self.titleLabel.numberOfLines=0;
+//        self.titleLabel.numberOfLines=0;
+        self.titleLabel.delegate=self;
         [self addSubview:self.titleLabel];
         
         UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(245 , 10, 65, 60)];
-        bgView.backgroundColor = [UIColor colorWithRed:240/255.0f green:240/255.0f blue:240/255.0f alpha:1];
+        bgView.backgroundColor = [UIColor clearColor];
         [self addSubview:bgView];
 
         self.contentImageView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder")];
@@ -58,14 +60,14 @@
 }
 + (float)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(170, 300) lineBreakMode:NSLineBreakByWordWrapping];
-    
-    return cSize.height;
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:contStr];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(250, MAXFLOAT)];
+    return size1.height;
 }
 - (void)refreshCell
 {
     float heigth = [CircleMeCell getContentHeigthWithStr:self.commentStr];
-    self.titleLabel.frame = CGRectMake(60, 27, 170, heigth);
+    self.titleLabel.frame = CGRectMake(60, 30, 170, heigth);
     self.timeLabel.frame  = CGRectMake(60, 30+heigth, 170, 20);
 }
 

@@ -457,7 +457,7 @@ UINavigationControllerDelegate>
 //                NSLog(@"thumbimg取图%@",uuid);
 //                NSMutableDictionary *finalimgs = self.finalImage;
                 UIImage* thumbimg = KISDictionaryHaveKey(self.finalImage,uuid_thumimg);
-            if (thumbimg){
+            if (thumbimg&&thumbimg!=nil){
                 cell.msgImageView.image = thumbimg;
             }
            // }

@@ -13,34 +13,30 @@
     int nickNameLenght;
 }
 @end
+static CGFloat const kLabelWidth = 300;
+static CGFloat const kLabelVMargin = 10;
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        //内容（动态）
-        CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
-        self.titleLabel.frame = CGRectMake(60, 22, 170, size.height);
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 22, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:13];
-        self.titleLabel.numberOfLines=0;
-        [self addSubview:self.titleLabel];
         
-        
-        //头像
-        self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
+    
         [self.contentView addSubview:self.headImgBtn];
         
-        //昵称
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self.contentView addSubview:self.nickNameLabel];
         
-    
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
+        self.titleLabel.font = [UIFont systemFontOfSize:13];
+        self.titleLabel.numberOfLines=0;
+        [self addSubview:self.titleLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
@@ -55,7 +51,7 @@
         [self.contentView addSubview:self.delBtn];
         
         
-        self.shareView = [[UIView alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
+        self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self addSubview:self.shareView];
         self.shareImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(5, 5, 40, 40)];
@@ -63,7 +59,7 @@
         [self.shareView addSubview:self.shareImgView];
         
         self.contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 5, 190, 40)];
-        self.contentLabel.font = [UIFont systemFontOfSize:13];
+        self.contentLabel.font = [UIFont systemFontOfSize:12];
         self.contentLabel.numberOfLines = 2;
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.shareView addSubview:self.contentLabel];
@@ -73,10 +69,18 @@
         self.oneImageView.delegate = self;
         [self.contentView addSubview:self.oneImageView];
         
+        CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
+        self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
+        
+        
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         self.layout.minimumInteritemSpacing = 1;
         self.layout.minimumLineSpacing = 1;
+        //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
+
         // 3.设置整个collectionView的内边距
+       
+       // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
         self.layout.itemSize = CGSizeMake(80, 80);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
@@ -99,13 +103,13 @@
         
         self.zanNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, 100, 30)];
         self.zanNameLabel.textColor = UIColorFromRGBA(0x455cab, 1);
-        self.zanNameLabel.font = [UIFont systemFontOfSize:12];
+        self.zanNameLabel.font = [UIFont boldSystemFontOfSize:12];
         self.zanNameLabel.backgroundColor = [UIColor clearColor];
         [self.zanView addSubview:self.zanNameLabel];
         
         self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
         self.zanLabel.textColor = [UIColor grayColor];
-        self.zanLabel.font = [UIFont systemFontOfSize:12];
+        self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
         [self.zanView addSubview:self.zanLabel];
     
 
@@ -144,6 +148,15 @@
         [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
         [self.commentBtn addTarget:self action:@selector(pinglun:) forControlEvents:UIControlEventTouchUpInside];
         [self.menuImageView addSubview:self.commentBtn];
+        
+        self.commentMoreBtn = [[UIButton alloc]initWithFrame:CGRectMake(100, 0, 250, 20)];
+        [self.commentMoreBtn setTitle:@"查看更多评论" forState:UIControlStateNormal];
+        [self.commentMoreBtn setTitleColor: UIColorFromRGBA(0x455ca8, 1) forState:UIControlStateNormal];
+        self.commentMoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        [self.commentMoreBtn addTarget:self action:@selector(loadMoreComment:) forControlEvents:UIControlEventTouchUpInside];
+        self.commentMoreBtn .backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+        self.commentMoreBtn.hidden =YES;
+        [self.contentView addSubview:self.commentMoreBtn];
     }
     return self;
 }
@@ -163,7 +176,7 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    NSString *address =[GameCommon isNewOrOldWithImage:url width:140 hieght:140 a:@"140/140"];
+    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
     NSURL *urls;
     urls = [NSURL URLWithString:address];
     cell.imageView.imageURL =urls;
@@ -177,79 +190,104 @@
 }
 
 #pragma mark-- tableviewdelegate  datasourse
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+        return 1;
+}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.commentArray.count;
+        return self.commentArray.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+
     static NSString *identifier  = @"cell1";
     CommentCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell == nil) {
         cell = [[CommentCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    //cell.selectionStyle =UITableViewCellSelectionStyleNone;
-    cell.accessoryType = UITableViewCellAccessoryNone;
-    cell.tag = indexPath.row;
-    cell.myCommentCellDelegate = self;
-    NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
-    
-    //判断是否是回复某人的评论
-    if ([[dict allKeys]containsObject:@"destUser"]) {
-        nickNameLenght=[nickName length];
-        
-        cell.comNickNameStr =[NSString stringWithFormat:@"%@ 回复 %@:", nickName,KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname")];
-
-    }else{
-        cell.comNickNameStr =[nickName stringByAppendingString:@":"];
-        nickNameLenght=[cell.comNickNameStr length];
-
-    }
-    
-
-    cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
-    
-
-    NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
-    [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
-    cell.commentContLabel.attributedText = stratt;
-
-//    cell.commentContLabel.text =cell.commentStr;
-    [cell showNickNameButton:nickName];
-    [cell  refreshsCell];
     cell.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.myCommentCellDelegate = self;
+        //cell.selectionStyle =UITableViewCellSelectionStyleNone;
+        cell.tag = indexPath.row;
+        NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
+    NSString * str;
+    if ([[dict allKeys]containsObject:@"destUser"]) {
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+    }else{
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font>: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+    }
+
+      cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+      nickNameLenght=[cell.comNickNameStr length];
+            
+        cell.commentStr =str;
+    
+    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
+   
+    
+    cell.commentContLabel.attributedText = commentStr;
+    
+    //创建昵称的隐形按钮
+//    NSAttributedString *attrStr =commentStr;
+//    CGRect commentrect = [attrStr boundingRectWithSize:CGSizeMake(245, MAXFLOAT) options:NSStringDrawingUsesFontLeading context:nil];
+//    NSLog(@"comment size------%f, %f",commentrect.size.width,commentrect.size.height);
+    NSLog(@"comment framesize------%f, %f",cell.commentContLabel.frame.size.width,cell.commentContLabel.frame.size.height);
+
+    [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
+    [cell refreshsCell];
+    
+
     return cell;
 }
 
+
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    tableView =self.commentTabelView;
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(editCommentOfYouWithCircle:withIndexPath:)]) {
-        [self.myCellDelegate editCommentOfYouWithCircle:self withIndexPath:indexPath.row];
-    }
+        tableView =self.commentTabelView;
+        if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(editCommentOfYouWithCircle:withIndexPath:)]) {
+            [self.myCellDelegate editCommentOfYouWithCircle:self withIndexPath:indexPath.row];
+            NSLog(@"----%d",indexPath.row);
+        }
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
+    NSMutableDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
+    if ([[dic allKeys]containsObject:@"commentCellHieght"]) {
+        return [KISDictionaryHaveKey(dic, @"commentCellHieght")floatValue];
+    }
+    else
+    {
     NSString *str;
     if ([[dic allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@:", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname")];
+        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
     }else{
-        str =[KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname") stringByAppendingString:@":"];
-    }
-
-    CGSize  size = [CommentCell getCellHeigthWithStr:[str stringByAppendingString: KISDictionaryHaveKey(dic, @"comment")]];
+    str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+     }
     
-    return size.height+5;
+    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
+    
+    //CGSize  size = [CommentCell getCellHeigthWithStr:str];
+    return size1.height+5;
+    str =nil;
+    }
 }
 
-
+-(void)loadMoreComment:(UIButton *)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(enterCommentPageWithCell:)]) {
+        [self.myCellDelegate enterCommentPageWithCell:self];
+    }
+}
 
 -(void)openBtnList:(UIButton *)sender
 {
     self.menuImageView.frame = CGRectMake(100, sender.frame.origin.y-18, 180, 38);
-
     if (self.myCellDelegate&&[self.myCellDelegate respondsToSelector:@selector(openMenuCell:)]) {
         [self.myCellDelegate openMenuCell:self];
     }
@@ -266,18 +304,6 @@
             [self.myCellDelegate zanWithCircle:self];
     }
 }
-#pragma mark 昵称被点击 delegate
-- (void)handleNickNameButton:(CommentCell*)cell
-{
-    [self handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
-    
-    //NSLog(@"HeadCell - 进入个人资料页: %d %@", cell.tag, cell.nicknameButton.titleLabel.text);
-}
-- (void)handleNickNameButton_HeadCell:(CircleHeadCell*)cell withIndexPathRow:(NSInteger)row
-{
-    [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:row];
-}
-
 //评论点击事件
 -(void)pinglun:(UIButton *)sender
 {
@@ -288,7 +314,12 @@
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    return cSize;
+}
++ (CGSize)getTitleHeigthWithStr:(NSString*)contStr
+{
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 
@@ -299,7 +330,12 @@
     }
 }
 
-
+- (void)handleNickNameButton:(CommentCell*)cell
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(handleNickNameButton_HeadCell:withIndexPathRow:)]) {
+        [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
+    }
+}
 
 - (void)awakeFromNib
 {

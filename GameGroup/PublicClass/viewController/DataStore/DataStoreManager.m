@@ -1306,7 +1306,6 @@ return @"";
             if ([type intValue] ==5||[type intValue] ==7) {
             dCircle.comment =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"comment")];
             }
-        
             dCircle.myMsgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"id")];
             dCircle.myMsgImg =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"img")];
             dCircle.myCreateDate =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info, @"dynamicMsg"), @"createDate")];
@@ -1343,6 +1342,15 @@ return @"";
     }];
 }
 
++(void)deleteAllcomment
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * newsMsgs = [DSCircleWithMe MR_findAllInContext:localContext];
+        for (DSNewsMsgs* msg in newsMsgs) {
+            [msg deleteInContext:localContext];
+        }
+    }];
+}
 
 
 
@@ -1388,7 +1396,7 @@ return @"";
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"uuid==[c]%@",uuid];
         DSOfflineZan * offline= [DSOfflineZan MR_findFirstWithPredicate:predicate];
         if (!offline)
-            offline = [DSOfflineComments MR_createInContext:localContext];
+            offline = [DSOfflineZan MR_createInContext:localContext];
         offline.msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
         offline.uuid = uuid;
     }];
