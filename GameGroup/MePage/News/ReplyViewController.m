@@ -67,9 +67,9 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
     
     [self setTopViewWithTitle:@"评论" withBackButton:YES];
@@ -163,19 +163,15 @@ typedef enum : NSUInteger {
     [self getDataByNet];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-//    if (ifEmoji) {
-//        ifEmoji=NO;
-//        return;
-//    }
-//    if(self.theEmojiView.hidden == NO){
-//        self.theEmojiView.hidden = YES;
-//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-//        self.commentInputType = CommentInputTypeKeyboard;
-//        inputButton.selected = NO;
-//    }
-//    if([self.textView isFirstResponder]){
-//        [self.textView resignFirstResponder];
-//    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        inputButton.selected = NO;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
 }
 
 #pragma mark - Views
@@ -195,7 +191,6 @@ typedef enum : NSUInteger {
 //点击添加表情按钮
 -(void)emojiBtnClicked:(UIButton *)sender
 {
-    ifEmoji=YES;
     sender.selected = !sender.selected;
     if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
         [self showEmojiScrollView];
@@ -250,10 +245,39 @@ typedef enum : NSUInteger {
 	}
     return 0;
 }
-
+//隐藏表情
+-(void)hideEmoji
+{
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:0];
+        self.commentInputType = CommentInputTypeKeyboard;
+        inputButton.selected = NO;
+    }
+}
+//隐藏键盘
+-(void)hideKeyBoard
+{
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+}
 
 - (void)backButtonClick:(id)sender
 {
+    
+        if(self.theEmojiView.hidden == NO){
+            self.theEmojiView.hidden = YES;
+            [self autoMovekeyBoard:0];
+            self.commentInputType = CommentInputTypeKeyboard;
+            inputButton.selected = NO;
+            return ;
+        }
+        if([self.textView isFirstResponder]){
+            [self.textView resignFirstResponder];
+            return ;
+        }
+    
     if (!KISEmptyOrEnter(self.textView.text)) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定放弃已编写的评论内容吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
         alert.tag = 100;
@@ -339,15 +363,17 @@ typedef enum : NSUInteger {
     [self.navigationController pushViewController:oneVC animated:YES];
 }
 
-
 #pragma mark 发表
 - (void)okButtonClick
 {
+    
+    
     if (KISEmptyOrEnter(self.textView.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入评论内容" buttonTitle:@"确定"];
         return;
     }
-    [self.textView resignFirstResponder];
+    [self hideEmoji];
+    [self hideKeyBoard];
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -428,7 +454,7 @@ typedef enum : NSUInteger {
 {
     [self.textView resignFirstResponder];
     
-    //    [self okButtonClick:nil];
+    [self okButtonClick];
     return YES;
 }
 
@@ -643,7 +669,14 @@ typedef enum : NSUInteger {
 {
     [self.textView resignFirstResponder];
 }
-
+//手势代理的方法，解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if ([touch.view isKindOfClass:[UIButton class]])
+    {
+        return NO;
+    }
+    return YES;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

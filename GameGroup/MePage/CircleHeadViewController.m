@@ -102,6 +102,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
     
     cellhightarray = [NSMutableDictionary dictionary];
@@ -329,7 +330,6 @@ typedef enum : NSUInteger {
 //点击添加表情按钮
 -(void)emojiBtnClicked:(UIButton *)sender
 {
-    ifEmoji=YES;
     sender.selected = !sender.selected;
     if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
         [self showEmojiScrollView];
@@ -409,12 +409,11 @@ typedef enum : NSUInteger {
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    if (ifEmoji) {
-        ifEmoji=NO;
-        return;
-    }
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
     }
     if(self.theEmojiView.hidden == NO){
         self.theEmojiView.hidden = YES;
@@ -422,10 +421,6 @@ typedef enum : NSUInteger {
         self.commentInputType = CommentInputTypeKeyboard;
         senderBnt.selected = NO;
     }
-    if([self.textView isFirstResponder]){
-        [self.textView resignFirstResponder];
-    }
-    
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -1760,6 +1755,15 @@ typedef enum : NSUInteger {
     [self updateComment];
     return YES;
 }
+//手势代理的方法，解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if ([touch.view isKindOfClass:[UIButton class]])
+    {
+        return NO;
+    }
+    return YES;
+}
+
 
 
 -(void)dealloc
