@@ -212,11 +212,17 @@
         //cell.selectionStyle =UITableViewCellSelectionStyleNone;
         cell.tag = indexPath.row;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-        
-            cell.comNickNameStr =[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname")stringByAppendingString:@":"];
-            nickNameLenght=[cell.comNickNameStr length];
+    NSString * str;
+    if ([[dict allKeys]containsObject:@"destUser"]) {
+        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+    }else{
+        str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+    }
+
+      cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+      nickNameLenght=[cell.comNickNameStr length];
             
-        cell.commentStr =[cell.comNickNameStr stringByAppendingString: KISDictionaryHaveKey(dict, @"comment")];
+        cell.commentStr =str;
         [cell showNickNameButton:cell.comNickNameStr];
 
         NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
@@ -243,8 +249,8 @@
     
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
-    if (self.destUserStr) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),self.destUserStr,KISDictionaryHaveKey(dic, @"comment")];
+    if ([[dic allKeys]containsObject:@"destUser"]) {
+        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
     }else{
     str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
      }

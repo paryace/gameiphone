@@ -773,11 +773,10 @@
             cell.destUserStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname");
             commHieght +=(size1.height+5);
         }else{
-       CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+       CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr = nil;
-            commHieght +=(size1.height+5);
+            commHieght +=(size.height+5);
         }
-
     }
     //评论列表的frame
 
