@@ -1157,7 +1157,11 @@ UINavigationControllerDelegate>
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
                 //                [self presentModalViewController:imagePicker animated:YES];
                 [self presentViewController:imagePicker animated:YES completion:^{
-                    
+//                    hud = [[MBProgressHUD alloc] initWithView:self.view];
+//                    hud.labelText = @"正在处理图片...";
+//                    [imagePicker.view addSubview:hud];
+//                    
+//                    [hud show:YES];
                 }];
             }
             else {
@@ -1211,9 +1215,14 @@ UINavigationControllerDelegate>
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     
 
-    [hud show:YES];
   //  [self.view addSubview:hud];
     //hud.labelText = @"查询中...";
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"正在处理图片...";
+    [picker.view.superview addSubview:hud];
+    
+    [hud show:YES];
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
@@ -1240,8 +1249,8 @@ UINavigationControllerDelegate>
     
     [self dismissViewControllerAnimated:YES completion:^{
         
+        [hud hide:YES];
     }];
-//    [hud hide:YES];
 }
 
 //图片聊天上传图片
@@ -1251,38 +1260,49 @@ UINavigationControllerDelegate>
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.progressView.hidden = NO;
-//    hud = [[MBProgressHUD alloc] initWithView:self.view];
-//    hud.labelText = @"正在处理图片...";
-//    [self.view addSubview:hud];
-    [hud show:YES];
+
+//    [hud show:YES];
+    
+
     [NetManager uploadImage:image
                  WithURLStr:BaseUploadImageUrl
                   ImageName:@"1"
               TheController:self
-                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                       double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-                       
-                           
-                           cell.progressView.progress = progress;
-                       
+                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
+    {
+        @synchronized (self) {
+            
+            double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                cell.progressView.progress = progress;
+                NSLog(@"%f---------------", progress);
+                if (progress == 1) {
+                    
+                    cell.progressView.hidden = YES;
+                }
+                
+            });
+        }
                    }
                     Success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
          dispatch_async(dispatch_get_main_queue(), ^{
              cell.progressView.hidden = YES;
-             [hud hide:YES];
+//             [hud hide:YES];
+//             NSLog(@"+++++++++++++++++++++++++++");
+             
              });
-         
          if(index < messages.count)
              [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
 
-         
+     
      }
                     failure:^(AFHTTPRequestOperation *operation, NSError *error)
      {
          dispatch_async(dispatch_get_main_queue(), ^{
-             
+     
              cell.progressView.hidden = YES;
              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
                                                              message:@"发送图片失败请重新发送"
@@ -1290,11 +1310,20 @@ UINavigationControllerDelegate>
                                                    cancelButtonTitle:@"知道啦"
                                                    otherButtonTitles:nil];
              [alert show];
-             [hud hide:YES];
+//             [hud hide:YES];
+             
+             CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
+                                      [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+             
+             size.width = size.width<20?20:size.width;
+             size.height = size.height<20?20:size.height;
+             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
+                                                  (size.height+20)/2 + padding*2-15) status:@"0"];
          });
-         
+     
      }];
 
+//    });
 }
 
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
