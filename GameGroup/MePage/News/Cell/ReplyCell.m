@@ -7,6 +7,7 @@
 //
 
 #import "ReplyCell.h"
+#import "OHASBasicHTMLParser.h"
 
 @implementation ReplyCell
 
@@ -43,8 +44,9 @@
         [self.timeLabel setTextColor:kColorWithRGB(153, 153, 153, 1.0)];
         [self addSubview:self.timeLabel];
         
-        self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 23, 250, 20)];
+        self.commentLabel = [[OHAttributedLabel alloc] initWithFrame:CGRectMake(70, 23, 250, 20)];
         self.commentLabel.numberOfLines = 0;
+         self.commentLabel.delegate = self;
         [self.commentLabel setTextAlignment:NSTextAlignmentLeft];
         [self.commentLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.commentLabel setBackgroundColor:[UIColor clearColor]];
@@ -56,8 +58,10 @@
 
 - (void)refreshCell
 {
-    float heigth = [ReplyCell getContentHeigthWithStr:self.commentStr];
-    self.commentLabel.frame = CGRectMake(70, 23, 250, heigth);
+    
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:self.commentStr];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(10, MAXFLOAT)];
+    self.commentLabel.frame = CGRectMake(70, 23, 250,size1.height);
 }
 
 - (void)headButtonClick
@@ -73,5 +77,33 @@
 
     // Configure the view for the selected state
 }
-
+-(BOOL)attributedLabel:(OHAttributedLabel *)attributedLabel shouldFollowLink:(NSTextCheckingResult *)linkInfo
+{
+    //	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
+	[attributedLabel setNeedsRecomputeLinksInText];
+	
+    if ([[UIApplication sharedApplication] canOpenURL:linkInfo.extendedURL])
+    {
+        // use default behavior
+        return YES;
+    }
+    else
+    {
+        switch (linkInfo.resultType) {
+            case NSTextCheckingTypeAddress:
+                NSLog(@"%@",[linkInfo.addressComponents description]);
+                break;
+            case NSTextCheckingTypeDate:
+                NSLog(@"%@",[linkInfo.date description]);
+                break;
+            case NSTextCheckingTypePhoneNumber:
+                NSLog(@"%@",linkInfo.phoneNumber);
+                break;
+            default: {
+                break;
+            }
+        }
+        return NO;
+    }
+}
 @end

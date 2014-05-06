@@ -9,10 +9,13 @@
 #import "CircleHeadCell.h"
 #import "FinderView.h"
 #import "ImgCollCell.h"
+#import "OHASBasicHTMLParser.h"
 @interface CircleHeadCell(){
     int nickNameLenght;
 }
 @end
+static CGFloat const kLabelWidth = 300;
+static CGFloat const kLabelVMargin = 10;
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -223,15 +226,23 @@
       nickNameLenght=[cell.comNickNameStr length];
             
         cell.commentStr =str;
-        [cell showNickNameButton:cell.comNickNameStr];
-
-        NSMutableAttributedString *stratt = [[NSMutableAttributedString alloc] initWithString:cell.commentStr];
-        [stratt addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
-        cell.commentContLabel.attributedText = stratt;
-        
-        //    cell.commentContLabel.text =cell.commentStr;
-        
-        [cell  refreshsCell];
+    
+    
+    
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:cell.commentStr];
+    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 0.0f;
+    [commentStr setParagraphStyle:paragraphStyle];
+    [commentStr setFont:[UIFont systemFontOfSize:12]];
+    [commentStr setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
+    [commentStr addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
+    
+    cell.commentContLabel.attributedText = commentStr;
+    [cell showNickNameButton:cell.comNickNameStr];
+    [cell refreshsCell];
+    
 
     return cell;
 }
@@ -246,7 +257,6 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
     if ([[dic allKeys]containsObject:@"destUser"]) {
