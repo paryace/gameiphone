@@ -13,9 +13,9 @@
 
 + (float)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(250, 300) lineBreakMode:NSLineBreakByWordWrapping];
-    
-    return cSize.height;
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:contStr];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(250, MAXFLOAT)];
+    return size1.height;
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -45,7 +45,7 @@
         [self addSubview:self.timeLabel];
         
         self.commentLabel = [[OHAttributedLabel alloc] initWithFrame:CGRectMake(65, 28, 250, 20)];
-        self.commentLabel.numberOfLines = 0;
+        //self.commentLabel.numberOfLines = 0;
          self.commentLabel.delegate = self;
         [self.commentLabel setTextAlignment:NSTextAlignmentLeft];
         [self.commentLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
@@ -58,10 +58,8 @@
 
 - (void)refreshCell
 {
-    
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:self.commentStr];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(250, MAXFLOAT)];
-    self.commentLabel.frame = CGRectMake(65, 28, 250,size1.height);
+    float hight=[ReplyCell getContentHeigthWithStr:self.commentStr];
+    self.commentLabel.frame = CGRectMake(65, 28, 250,hight);
 }
 
 - (void)headButtonClick

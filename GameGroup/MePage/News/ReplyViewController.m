@@ -12,7 +12,7 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "UserManager.h"
-#import "OHASBasicHTMLParser.h"
+#import "OHASBasicHTMLParser_SmallEmoji.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -529,6 +529,7 @@ typedef enum : NSUInteger {
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     float heigth = [ReplyCell getContentHeigthWithStr:KISDictionaryHaveKey([m_dataReply objectAtIndex:indexPath.row], @"msg")] + 30;
+    NSLog(@"%f",heigth);
     return heigth < 60 ? 60 : heigth;
 }
 
@@ -560,7 +561,7 @@ typedef enum : NSUInteger {
 //    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
     
     
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"msg")];
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"msg")];
     OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
     paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
     paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;

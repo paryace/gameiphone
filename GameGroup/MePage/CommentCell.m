@@ -56,7 +56,7 @@
     [self.nicknameButton setFrame:matchFrame];
 	[self.nicknameButton.titleLabel setFont:font];
     [self.nicknameButton.titleLabel setTextColor:[UIColor clearColor]];
-	[self.nicknameButton setTitle:nickName forState:UIControlStateNormal];
+	//[self.nicknameButton setTitle:nickName forState:UIControlStateNormal];
 	[self.nicknameButton.titleLabel setLineBreakMode:[self.commentContLabel lineBreakMode]];
 	[self.nicknameButton addTarget:self action:@selector(handleNickNameButton:) forControlEvents:UIControlEventTouchUpInside];
     self.nicknameButton.hidden = NO;
