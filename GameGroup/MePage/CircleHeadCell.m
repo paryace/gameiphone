@@ -216,9 +216,9 @@ static CGFloat const kLabelVMargin = 10;
         NSDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str;
     if ([[dict allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }else{
-        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font>:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font>: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }
 
       cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
@@ -259,9 +259,9 @@ static CGFloat const kLabelVMargin = 10;
     NSDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
     NSString *str;
     if ([[dic allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@:%@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
     }else{
-    str =[NSString stringWithFormat:@"%@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+    str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
      }
     
     NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
