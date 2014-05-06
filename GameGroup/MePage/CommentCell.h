@@ -7,21 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OHAttributedLabel.h"
 
 
 @protocol CommentCellDelegate;
 
-@interface CommentCell : UITableViewCell
+@interface CommentCell : UITableViewCell<OHAttributedLabelDelegate>
 @property(nonatomic,assign)id<CommentCellDelegate>myCommentCellDelegate;
 @property(nonatomic,strong)UIButton *nicknameButton;
-@property(nonatomic,strong)UILabel *commentContLabel;
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,copy)NSString *comNickNameStr;
+@property (nonatomic, retain) OHAttributedLabel *commentContLabel;
 -(void)refreshsCell;
 //显示可点击的呢称
 -(void)showNickNameButton:(NSString *)nickName;
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr;
+-(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 @end
+
 
 
 @protocol CommentCellDelegate <NSObject>

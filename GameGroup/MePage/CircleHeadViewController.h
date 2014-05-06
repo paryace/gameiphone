@@ -10,6 +10,9 @@
 #import "CircleHeadCell.h"
 #import "HPGrowingTextView.h"
 #import "SendNewsViewController.h"
+#import "EmojiView.h"
+
+
 @interface CircleHeadViewController : BaseViewController
 <
 UITableViewDataSource,
@@ -27,6 +30,7 @@ EGOImageViewDelegate,
 UIAlertViewDelegate,
 UIScrollViewDelegate,
 TableViewDatasourceDidChange
+,EmojiViewDelegate
 >
 @property(nonatomic,copy)NSString *imageStr;    //Cover图片
 @property(nonatomic,copy)NSString *nickNmaeStr; //昵称

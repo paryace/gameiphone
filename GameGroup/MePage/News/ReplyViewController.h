@@ -11,8 +11,9 @@
 #import "SRRefreshView.h"
 #import "HPGrowingTextView.h"
 #import "TableViewDatasourceDidChange.h"
+#import "EmojiView.h"
 
-@interface ReplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, PullUpDelegate, SRRefreshDelegate,CellButtonClickDelegate,HPGrowingTextViewDelegate>
+@interface ReplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, PullUpDelegate, SRRefreshDelegate,CellButtonClickDelegate,HPGrowingTextViewDelegate,EmojiViewDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 

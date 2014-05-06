@@ -7,22 +7,27 @@
 //
 
 #import "CommentCell.h"
+#import "OHASBasicHTMLParser.h"
 
 @implementation CommentCell
+
+@synthesize commentContLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-    // Initialization code
         self.nicknameButton = [[UIButton alloc]initWithFrame:CGRectMake(5,0, 100, 16)];
         self.nicknameButton.titleLabel.textColor =  UIColorFromRGBA(0x455ca8, 1);
         [self.contentView addSubview:self.nicknameButton];
         self.nicknameButton.hidden = YES;
         
-        self.commentContLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
+        
+        self.commentContLabel = [[OHAttributedLabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
+        self.commentContLabel.delegate = self;
         self.commentContLabel.font = [UIFont systemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
+        self.commentContLabel.textAlignment=NSTextAlignmentCenter;
         [self.contentView addSubview:self.commentContLabel];
     }
     return self;
@@ -64,14 +69,16 @@
 
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr
 {
-    CGSize size1 =[contStr sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize size1 =[contStr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)lineBreakMode:NSLineBreakByWordWrapping];
     return size1;
 }
 
 -(void)refreshsCell
 {
-    CGSize size1 =[CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@",self.commentStr]];
-    self.commentContLabel.frame = CGRectMake(5, 0, 245, size1.height);
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:self.commentStr];
+    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(10, MAXFLOAT)];
+//    CGSize size1 =[CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@",self.commentStr]];
+    self.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
 }
 - (void)awakeFromNib
 {
@@ -84,5 +91,33 @@
 
     // Configure the view for the selected state
 }
-
+-(BOOL)attributedLabel:(OHAttributedLabel *)attributedLabel shouldFollowLink:(NSTextCheckingResult *)linkInfo
+{
+    //	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
+	[attributedLabel setNeedsRecomputeLinksInText];
+	
+    if ([[UIApplication sharedApplication] canOpenURL:linkInfo.extendedURL])
+    {
+        // use default behavior
+        return YES;
+    }
+    else
+    {
+        switch (linkInfo.resultType) {
+            case NSTextCheckingTypeAddress:
+                NSLog(@"%@",[linkInfo.addressComponents description]);
+                break;
+            case NSTextCheckingTypeDate:
+                NSLog(@"%@",[linkInfo.date description]);
+                break;
+            case NSTextCheckingTypePhoneNumber:
+                NSLog(@"%@",linkInfo.phoneNumber);
+                break;
+            default: {
+                break;
+            }
+        }
+        return NO;
+    }
+}
 @end

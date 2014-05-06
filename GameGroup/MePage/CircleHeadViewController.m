@@ -17,6 +17,10 @@
 #import "MJRefresh.h"
 #import "UserManager.h"
 #import "DSOfflineZan.h"
+typedef enum : NSUInteger {
+    CommentInputTypeKeyboard,
+    CommentInputTypeEmoji,
+} CommentInputType;
 @interface CircleHeadViewController ()
 {
     UITableView *m_myTableView;
@@ -62,6 +66,8 @@
     float offer;
     int height;
 }
+@property (nonatomic, strong) EmojiView *theEmojiView;
+@property (nonatomic, assign) CommentInputType commentInputType;
 @end
 
 @implementation CircleHeadViewController
@@ -277,6 +283,11 @@
     
     [self addheadView];
     [self addFootView];
+    
+    [self.view addSubview:self.theEmojiView];
+    self.theEmojiView.hidden = YES;
+    
+    
     //创建评论框
     [self buildcommentView];
     
@@ -301,6 +312,78 @@
     m_currPageCount = 0;
     [self getInfoFromNet];
 }
+#pragma mark - Views
+//表情按钮
+- (EmojiView *)theEmojiView{
+    if (!_theEmojiView) {
+        _theEmojiView = [[EmojiView alloc]
+                         initWithFrame:CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253)
+                         WithSendBtn:YES];
+        _theEmojiView.delegate = self;
+    }
+    return _theEmojiView;
+}
+//点击添加表情按钮
+-(void)emojiBtnClicked:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
+        [self showEmojiScrollView];
+    }else{//点击切回键盘
+        [self showKeyboardView];
+        
+    }
+}
+//显示键盘
+-(void)showKeyboardView
+{
+    [self.textView becomeFirstResponder];
+    self.commentInputType = CommentInputTypeKeyboard;
+    self.theEmojiView.hidden = YES;
+}
+//显示表情布局
+-(void)showEmojiScrollView
+{
+    self.commentInputType = CommentInputTypeEmoji;
+    [self.textView resignFirstResponder];
+    self.theEmojiView.hidden = NO;
+    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+    [self autoMovekeyBoard:253];
+}
+
+//删除表情
+-(void)deleteEmojiStr
+{
+    if (self.textView.text.length>=1) {
+        if ([self.textView.text hasSuffix:@"] "] && [self.textView.text length] >= 5) {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-5)];
+        }
+        else
+        {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+        }
+    }
+}
+//发送表情
+-(void)emojiSendBtnDo
+{
+    [self updateComment];
+}
+//选择表情
+-(NSString *)selectedEmoji:(NSString *)ssss
+{
+	if (self.textView.text == nil) {
+		self.textView.text = ssss;
+	}
+	else {
+		self.textView.text = [self.textView.text stringByAppendingString:ssss];
+	}
+    return 0;
+}
+
 #pragma mark ---发表新动态
 -(void)publishInfo:(UIButton *)sender
 {
@@ -325,8 +408,15 @@
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    if (tapGr.state == UIGestureRecognizerStateEnded)
+    {
+        return;
+    }
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
     }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
@@ -374,10 +464,12 @@
     [inPutView addSubview:self.textView];
     
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
-    [senderBnt setBackgroundImage:KUIImage(@"send_msg_btn_normal") forState:UIControlStateNormal];
-    [senderBnt addTarget:self action:@selector(updateComment) forControlEvents:UIControlEventTouchDown];
+    [senderBnt setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [senderBnt setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [senderBnt addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
     senderBnt.frame = CGRectMake(260, 0, 50, 50);
     [inPutView bringSubviewToFront:senderBnt];
+    
     [inPutView addSubview:senderBnt];
 }
 
@@ -1528,7 +1620,7 @@
      Reduce the size of the text view so that it's not obscured by the keyboard.
      Animate the resize so that it's in sync with the appearance of the keyboard.
      */
-    
+    self.theEmojiView.hidden = YES;
     NSDictionary *userInfo = [notification userInfo];
     
     // Get the origin of the keyboard when it's displayed.

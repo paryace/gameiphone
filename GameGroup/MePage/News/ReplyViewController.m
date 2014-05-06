@@ -12,7 +12,11 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "UserManager.h"
-
+#import "OHASBasicHTMLParser.h"
+typedef enum : NSUInteger {
+    CommentInputTypeKeyboard,
+    CommentInputTypeEmoji,
+} CommentInputType;
 @interface ReplyViewController ()
 {
     UITableView*     m_replyTabel;
@@ -27,7 +31,8 @@
     UIButton* inputButton;
 }
 @property (strong,nonatomic) HPGrowingTextView *textView;
-
+@property (nonatomic, strong) EmojiView *theEmojiView;
+@property (nonatomic, assign) CommentInputType commentInputType;
 @end
 
 @implementation ReplyViewController
@@ -124,20 +129,110 @@
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
     
-    inputButton = [[UIButton alloc] initWithFrame:CGRectMake(255, 8, 60, 35)];
-    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_normal") forState:UIControlStateNormal];
-    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_click") forState:UIControlStateHighlighted];
-    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
-    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    [inputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+//    inputButton = [[UIButton alloc] initWithFrame:CGRectMake(255, 8, 60, 35)];
+//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_normal") forState:UIControlStateNormal];
+//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_click") forState:UIControlStateHighlighted];
+//    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
+//    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
+//    [inputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [inPutView addSubview:inputButton];
+    
+    
+    
+    
+    inputButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [inputButton setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [inputButton setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    inputButton.frame = CGRectMake(260, 0, 50, 50);
+    [inPutView bringSubviewToFront:inputButton];
     [inPutView addSubview:inputButton];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
+    [self.view addSubview:self.theEmojiView];
+    self.theEmojiView.hidden = YES;
     
     [self getDataByNet];
 }
+
+
+#pragma mark - Views
+//表情按钮
+- (EmojiView *)theEmojiView{
+    if (!_theEmojiView) {
+        _theEmojiView = [[EmojiView alloc]
+                         initWithFrame:CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253)
+                         WithSendBtn:YES];
+        _theEmojiView.delegate = self;
+    }
+    return _theEmojiView;
+}
+//点击添加表情按钮
+-(void)emojiBtnClicked:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
+        [self showEmojiScrollView];
+    }else{//点击切回键盘
+        [self showKeyboardView];
+        
+    }
+}
+//显示键盘
+-(void)showKeyboardView
+{
+    [self.textView becomeFirstResponder];
+    self.commentInputType = CommentInputTypeKeyboard;
+    self.theEmojiView.hidden = YES;
+}
+//显示表情布局
+-(void)showEmojiScrollView
+{
+    self.commentInputType = CommentInputTypeEmoji;
+    [self.textView resignFirstResponder];
+    self.theEmojiView.hidden = NO;
+    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+    [self autoMovekeyBoard:253];
+}
+
+//删除表情
+-(void)deleteEmojiStr
+{
+    if (self.textView.text.length>=1) {
+        if ([self.textView.text hasSuffix:@"] "] && [self.textView.text length] >= 5) {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-5)];
+        }
+        else
+        {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+        }
+    }
+}
+//发送表情
+-(void)emojiSendBtnDo
+{
+    [self okButtonClick];
+}
+//选择表情
+-(NSString *)selectedEmoji:(NSString *)ssss
+{
+	if (self.textView.text == nil) {
+		self.textView.text = ssss;
+	}
+	else {
+		self.textView.text = [self.textView.text stringByAppendingString:ssss];
+	}
+    return 0;
+}
+
+
 - (void)backButtonClick:(id)sender
 {
     if (!KISEmptyOrEnter(self.textView.text)) {
@@ -227,7 +322,7 @@
 
 
 #pragma mark 发表
-- (void)okButtonClick:(id)sender
+- (void)okButtonClick
 {
     if (KISEmptyOrEnter(self.textView.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入评论内容" buttonTitle:@"确定"];
@@ -415,7 +510,21 @@
     
     cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
-    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
+//    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
+    
+    
+    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"msg")];
+    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 0.0f;
+    [commentStr setParagraphStyle:paragraphStyle];
+    [commentStr setFont:[UIFont systemFontOfSize:12]];
+    
+    cell.commentLabel.attributedText = commentStr;
+
+    
+    
     cell.commentStr = KISDictionaryHaveKey(tempDic, @"msg");
     cell.rowIndex = indexPath.row;
     cell.myDelegate = self;
