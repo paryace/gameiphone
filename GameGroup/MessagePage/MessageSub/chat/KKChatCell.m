@@ -76,6 +76,8 @@
 #pragma mark 重连标识 FailImg
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
 {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+    
     mPoint = point;
     if ([status isEqualToString:@"0"]) {//失败
         self.failImage.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -87,6 +89,7 @@
             self.cellTimer = nil;
         }
         [self.activityView stopAnimating];
+   
     }
     else if([status isEqualToString:@"2"])//发送中
     {
@@ -150,6 +153,7 @@
         }
      //   [self.activityView stopAnimating];
     }
+//         });
 }
 
 //菊花停止转动
