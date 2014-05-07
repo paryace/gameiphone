@@ -96,7 +96,7 @@ EmojiViewDelegate>
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像
 @property (strong, nonatomic)  UITableView *tView;  //消息cell组成的TableVIew
-@property (strong, nonatomic)  NSMutableArray *finalMessageArray;       //带样式的String 通过normalMsgToFinalMsg方式， 将普通文本转化为带样式的文本
+@property (strong, nonatomic)  NSMutableArray *finalMessageArray;//带样式的String 通过normalMsgToFinalMsg方式,将普通文本转化为带样式的文本
 @property (strong, nonatomic)  NSMutableArray *finalMessageTime; //消息的时间
 @property (strong, nonatomic)  NSMutableDictionary *finalImage; //消息的图片
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
