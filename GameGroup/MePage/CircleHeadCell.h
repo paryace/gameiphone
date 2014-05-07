@@ -76,6 +76,7 @@
 
 -(void)enterCommentPageWithCell:(CircleHeadCell *)myCell;
 
+-(void)tapZanNickNameWithCell:(CircleHeadCell *)myCell;
 
 
 //传送显示的 评论，赞菜单的Cell

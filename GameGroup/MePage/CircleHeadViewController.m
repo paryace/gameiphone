@@ -29,7 +29,7 @@ typedef enum : NSUInteger {
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     UILabel *nickNameLabel;
-    EGOImageView *topImgaeView;
+    UIImageView *topImgaeView;
     EGOImageButton *headImageView;
     EGOImageView *imageViewC;
     
@@ -99,6 +99,9 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor blackColor];
+    
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -124,6 +127,7 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
     
     //顶部图片
@@ -131,10 +135,9 @@ typedef enum : NSUInteger {
     topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];    
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
-    topImgaeView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
-    topImgaeView.placeholderImage =KUIImage(@"ceshibg.jpg");
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImage1_wx"]) {
-        topImgaeView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImage1_wx"]]];
+    topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]) {
+        topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]];
     }else{
         topImgaeView.image = KUIImage(@"ceshibg.jpg");
     }
@@ -277,24 +280,17 @@ typedef enum : NSUInteger {
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
     
-    
     //创建评论框
     [self buildcommentView];
-    
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"circleFriend_huancun_01_wx"]) {//有值 查找用户
-        
-        //将nsuserdefaults中获取到的数据 转换成data 并且转化成NSDictionary
-        NSMutableData *data= [NSMutableData data];
-        data =[[NSUserDefaults standardUserDefaults]objectForKey:@"circleFriend_huancun_01_wx"];
-        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        [m_dataArray removeAllObjects];
-        [m_dataArray addObjectsFromArray: [unarchiver decodeObjectForKey: @"getdatatatata"]];
-        [unarchiver finishDecoding];
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString * documentsDirectory = [paths objectAtIndex:0];
+    NSString * path = [documentsDirectory stringByAppendingPathComponent:@"circleFriend_huancun_01_wx"];
+    if ([NSMutableArray arrayWithContentsOfFile:path]) {
+        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path];
         [self getInfoFromNet];
     }else{
         [self getInfoFromNet];
     }
-
 }
 
 -(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
@@ -394,8 +390,6 @@ typedef enum : NSUInteger {
     testVC.viewType = VIEW_TYPE_Self1;
     [self.navigationController pushViewController:testVC animated:YES];
 }
-
-
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
@@ -548,19 +542,12 @@ typedef enum : NSUInteger {
                 friendZanBtn.selected =NO;
             }
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
-
-            topImgaeView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(responseObject, @"coverImg")]];
             
             if (m_currPageCount==0) {
                 [m_dataArray removeAllObjects];
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
-                
-                NSMutableData *data= [[NSMutableData alloc]init];
-                NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-                [archiver encodeObject:KISDictionaryHaveKey(responseObject, @"dynamicMsgList") forKey: @"getdatatatata"];
-                [archiver finishEncoding];
-                [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
+                [self saveinfoToUserDefaults:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 
             }else{
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
@@ -830,7 +817,7 @@ typedef enum : NSUInteger {
     if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
         cell.zanView.frame = CGRectMake(59, m_currmagY-10, 251, 25);
         NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
-        NSString *zanNickName=KISDictionaryHaveKey([array lastObject], @"nickname");
+        NSString *zanNickName=KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
         
         cell.zanView.hidden = NO;
         cell.zanNameLabel.text = zanNickName;
@@ -1105,6 +1092,8 @@ typedef enum : NSUInteger {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     [self uploadbgImg:upImage];
     topImgaeView.image = upImage;
+    NSData *data = UIImageJPEGRepresentation(upImage, 0.7);
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"topImageData_wx"];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
@@ -1189,9 +1178,6 @@ typedef enum : NSUInteger {
         return;
     }
     NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount-100)];
-//  [m_dataArray removeObjectAtIndex:delCellCount-100];
-//  [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
-//  [m_myTableView reloadData];
     NSLog(@"dic---%@",dic);
     [self delCellWithMsgId:KISDictionaryHaveKey(dic, @"id")];
 }
@@ -1213,11 +1199,7 @@ typedef enum : NSUInteger {
         [m_dataArray removeObjectAtIndex:delCellCount-100];
         [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         if (delCellCount-100<20) {
-            NSMutableData *data= [[NSMutableData alloc]init];
-            NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-            [archiver encodeObject:m_dataArray forKey: @"getdatatatata"];
-            [archiver finishEncoding];
-            [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
+            [self saveinfoToUserDefaults:m_dataArray];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1259,7 +1241,7 @@ typedef enum : NSUInteger {
                 return;
             }
             if ([isZan intValue]==0) {//假如是未赞状态
-                [arr addObject:commentUser];
+                [arr insertObject:commentUser atIndex:0];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
                 [self showMessageWindowWithContent:@"赞已成功" imageType:0];
@@ -1282,6 +1264,10 @@ typedef enum : NSUInteger {
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
             }
+            
+            if (myCell.tag-100<20) {
+                [self saveinfoToUserDefaults:m_dataArray];
+            }
         }
     }
 }
@@ -1302,7 +1288,18 @@ typedef enum : NSUInteger {
     [self.navigationController pushViewController:testVC animated:YES];
 }
 
-
+-(void)tapZanNickNameWithCell:(CircleHeadCell *)myCell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
+    NSDictionary *zanDic  = [KISDictionaryHaveKey(dic,@"zanList")objectAtIndex:0];
+    TestViewController *testVC = [[TestViewController alloc]init];
+    NSString *userid =KISDictionaryHaveKey(zanDic, @"userid");
+    NSString *nickName = KISDictionaryHaveKey(zanDic, @"nickname");
+    testVC.userId =userid;
+    testVC.nickName = nickName;
+    [self.navigationController pushViewController:testVC animated:YES];
+ 
+}
 
 
 #pragma mark-------
@@ -1350,29 +1347,25 @@ typedef enum : NSUInteger {
     NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(size.height+5),@"commentCellHieght", nil];
     //将评论添加到数组里、
     int i = -1;
-    for (NSMutableDictionary *dic in m_dataArray) {
+    for (int j = 0;j<m_dataArray.count;j++) {
+        NSMutableDictionary *dic = [m_dataArray objectAtIndex:j];
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
-            [arr insertObject:dict atIndex:0];
-            //
+            float a =[KISDictionaryHaveKey(dic, @"commentListHieght")floatValue];
+            float b =[KISDictionaryHaveKey(dic, @"cellHieght")floatValue];
+            [dic setObject:[NSString stringWithFormat:@"%f",a+size.height+5] forKey:@"commentListHieght"];
             
-            [dic setObject:@([KISDictionaryHaveKey(dic, @"commentListHieght")floatValue]+size.height+5) forKey:@"commentListHieght"];
-            
-            [dic  setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+size.height+5) forKey:@"cellHieght"];
+            [dic  setObject:[NSString stringWithFormat:@"%f",b+size.height+5] forKey:@"cellHieght"];
             
             int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
             
-            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+            [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+            [arr insertObject:dict atIndex:0];
             i = [m_dataArray indexOfObject:dic];
         }
     }
     if (i>=0&&i<20) {
-        NSMutableData *data= [[NSMutableData alloc]init];
-        NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-        [archiver encodeObject:m_dataArray forKey: @"getdatatatata"];
-        [archiver finishEncoding];
-        [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
-
+        [self saveinfoToUserDefaults:m_dataArray];
     }
     [self showMessageWindowWithContent:@"评论成功" imageType:0];
     [m_myTableView reloadData];
@@ -1383,6 +1376,15 @@ typedef enum : NSUInteger {
     destuserId = nil;
     destMsgId = nil;
 }
+
+-(void)saveinfoToUserDefaults:(NSMutableArray *)array
+{
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString * documentsDirectory = [paths objectAtIndex:0];
+    NSString * path = [documentsDirectory stringByAppendingPathComponent:@"/circleFriend_huancun_01_wx"];
+    [array writeToFile:path atomically:NO];
+}
+
 #pragma mark ---tableviewdelegate ----点击自己发的评论-删除  点击他人评论 回复
 //点击删除或者点击回复某人的评论
 - (void)editCommentOfYouWithCircle:(CircleHeadCell *)mycell withIndexPath:(NSInteger)row
@@ -1687,9 +1689,7 @@ typedef enum : NSUInteger {
                    }
                     Success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
-         NSLog(@"responseObject--->%@",responseObject);
          if (responseObject) {
-             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"topImage1_wx"];
              [self uploadsuccessImg:responseObject];
          }
      }

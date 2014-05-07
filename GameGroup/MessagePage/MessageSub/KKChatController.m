@@ -241,7 +241,7 @@ UINavigationControllerDelegate>
     
     //个人资料按钮
     UIButton *profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    profileButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
+    profileButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
     [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
     [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];

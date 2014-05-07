@@ -69,7 +69,7 @@
     [self.view addSubview:m_titleLabel];
     
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    addButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
+    addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [addButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
     [addButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     [self.view addSubview:addButton];

@@ -45,6 +45,14 @@
     
     [self setTopViewWithTitle:@"个人动态" withBackButton:YES];
     
+    if ([self.userId intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] intValue]) {
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+    }
     PageNum =0;
     dataArray = [NSMutableArray array];
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
@@ -372,6 +380,15 @@
         [self getInfoFromNet];
     };
     m_footer = footer;
+}
+-(void)publishInfo:(UIButton *)sender
+{
+    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
+    sendNews.delegate = self;
+    sendNews.isComeFromMe = YES;
+    sendNews.delegate = self;
+    [self.navigationController pushViewController:sendNews animated:YES];
+    
 }
 
 - (void)didReceiveMemoryWarning

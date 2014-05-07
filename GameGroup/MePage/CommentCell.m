@@ -23,11 +23,11 @@
         [self.contentView addSubview:self.nicknameButton];
         self.nicknameButton.hidden = YES;
         
-        
         self.commentContLabel = [[OHAttributedLabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
         self.commentContLabel.delegate = self;
         self.commentContLabel.font = [UIFont systemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
+        self.commentContLabel.textColor = [UIColor grayColor];
         self.commentContLabel.textAlignment=NSTextAlignmentCenter;
         [self.contentView addSubview:self.commentContLabel];
     }
@@ -65,7 +65,6 @@
 //点击昵称
 - (void)handleNickNameButton:(id)cell
 {
-   
     [self.myCommentCellDelegate handleNickNameButton:self];
 }
 

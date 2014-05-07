@@ -215,7 +215,7 @@
     NSInteger cs_height = cs_width / imageView.image.size.width * imageView.image.size.height;
     subSC.contentSize = CGSizeMake(cs_width,cs_height);
     subSC.bouncesZoom = NO;
-    subSC.pagingEnabled = YES;
+    subSC.pagingEnabled = NO;
     subSC.showsHorizontalScrollIndicator=NO;
     subSC.showsVerticalScrollIndicator=NO;
     subSC.maximumZoomScale = 2.0;

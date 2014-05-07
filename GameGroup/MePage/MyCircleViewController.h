@@ -7,8 +7,8 @@
 //
 
 #import "BaseViewController.h"
-
-@interface MyCircleViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+#import "SendNewsViewController.h"
+@interface MyCircleViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,TableViewDatasourceDidChange>
 @property(nonatomic,copy)NSString *imageStr;
 @property(nonatomic,copy)NSString *nickNmaeStr;
 @property(nonatomic,copy)NSString *userId;

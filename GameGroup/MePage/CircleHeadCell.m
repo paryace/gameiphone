@@ -95,6 +95,8 @@ static CGFloat const kLabelVMargin = 10;
         
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
         self.zanView.image = KUIImage(@"zanAndCommentBg");
+        self.zanView.userInteractionEnabled = YES;
+
         [self.contentView addSubview:self.zanView];
         
         self.zanImageView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 10, 10, 10)];
@@ -105,6 +107,9 @@ static CGFloat const kLabelVMargin = 10;
         self.zanNameLabel.textColor = UIColorFromRGBA(0x455cab, 1);
         self.zanNameLabel.font = [UIFont boldSystemFontOfSize:12];
         self.zanNameLabel.backgroundColor = [UIColor clearColor];
+        self.zanNameLabel.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapgc =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(sssssss:)];
+        [self.zanNameLabel addGestureRecognizer:tapgc];
         [self.zanView addSubview:self.zanNameLabel];
         
         self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
@@ -356,6 +361,15 @@ static CGFloat const kLabelVMargin = 10;
         [self.myCellDelegate handleNickNameButton_HeadCell:self withIndexPathRow:cell.tag];
     }
 }
+-(void)sssssss:(id)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(tapZanNickNameWithCell:)]) {
+        [self.myCellDelegate tapZanNickNameWithCell:self];
+    }
+
+}
+
+
 
 - (void)awakeFromNib
 {

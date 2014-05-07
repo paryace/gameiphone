@@ -118,7 +118,7 @@
     sayhellocoArray = [NSMutableArray array];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    delButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
+    delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
     [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
     [self.view addSubview:delButton];

@@ -39,14 +39,15 @@
     
     [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
     
-    self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+
+    UIButton *delbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
+    [delbutton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [delbutton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    delbutton.backgroundColor = [UIColor clearColor];
+    [delbutton addTarget:self action:@selector(deleteInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:delbutton];
 
     dataArray = [NSMutableArray array];
     m_currentPage = 0;
@@ -68,11 +69,13 @@
     [footView addSubview:downLineView];
 
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(0, 1, 320, 42)];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+     button.frame = CGRectMake(0, 1, 320, 40);
     [button setTitle:@"查看更多" forState:UIControlStateNormal];
-    [button setBackgroundColor:UIColorFromRGBA(0xf7f7f7, 1)];
+    [button setBackgroundImage:KUIImage(@"addmorecomment") forState:UIControlStateNormal] ;
     button.titleLabel.font = [UIFont systemFontOfSize:13];
     [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(loadMore:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
     
@@ -96,7 +99,7 @@
     [hud hide:YES];
     [sender.superview removeFromSuperview];
 }
--(void)publishInfo:(UIButton *)sender
+-(void)deleteInfo:(UIButton *)sender
 {
     UIAlertView *delAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"是否确定删除？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     [delAlertView show];
@@ -125,7 +128,7 @@
     if (cell ==nil) {
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    cell.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
    // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     

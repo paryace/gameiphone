@@ -50,7 +50,6 @@
 {
     [super viewDidLoad];
     
-    
     [self.view addGestureRecognizer:[[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(ceshi)]];
 
     nieheImageView = [[UIView alloc]initWithFrame:self.view.bounds];

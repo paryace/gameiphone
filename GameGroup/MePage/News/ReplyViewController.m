@@ -26,9 +26,12 @@ typedef enum : NSUInteger {
     
     PullUpRefreshView      *refreshView;
     SRRefreshView   *_slimeView;
-    
+    AppDelegate *app;
     UIView* inPutView;
     UIButton* inputButton;
+    NSMutableDictionary *commentDic;
+    
+    BOOL isComeBackComment;
 }
 @property (strong,nonatomic) HPGrowingTextView *textView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -113,6 +116,9 @@ typedef enum : NSUInteger {
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor clearColor];
+    
+    
+    commentDic = [NSMutableDictionary dictionary];
     
     UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -302,13 +308,13 @@ typedef enum : NSUInteger {
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:self.messageid forKey:@"messageid"];
+    [paramDict setObject:self.messageid forKey:@"messageId"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%d", m_pageIndex] forKey:@"pageIndex"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"137" forKey:@"method"];
+    [postDict setObject:@"188" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     hud.labelText = @"获取评论中...";
     [hud show:YES];
@@ -321,11 +327,11 @@ typedef enum : NSUInteger {
             [_slimeView endRefresh];
             return;
         }
-        else if([responseObject count] != 0)
-        {
-            self.messageid = KISDictionaryHaveKey([responseObject objectAtIndex:0], @"messageid");
-        }
-        if (m_pageIndex == 0) {//默认展示存储的
+//        else if([responseObject count] != 0)
+//        {
+//            self.messageid = KISDictionaryHaveKey([responseObject objectAtIndex:0], @"messageid");
+//        }
+        if (m_pageIndex == 0) {//默认展示存储的r
             [m_dataReply removeAllObjects];
         }
         m_pageIndex ++;//从0开始
@@ -375,67 +381,61 @@ typedef enum : NSUInteger {
     [self hideEmoji];
     [self hideKeyBoard];
     
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
-    [paramDict setObject:@"5" forKey:@"type"];
-    if (!self.textView.placeholder) {
-        [paramDict setObject:self.textView.text forKey:@"msg"];
+    if (self.textView.placeholder) {
+        [self postCommentWithMsgId:self.messageid destUserid:KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"), @"userid") destCommentId:KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"comentUser"), @"id") comment:self.textView.text uuid:nil];
     }else{
-        [paramDict setObject:[NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text] forKey:@"msg"];
+        [self postCommentWithMsgId:self.messageid destUserid:@"" destCommentId:@"" comment:self.textView.text uuid:nil];
+    }
+}
+
+-(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
+{
+    
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgid forKey:@"messageId"];
+    [paramDic setObject:destUserid forKey:@"destUserid"];
+    [paramDic setObject:destCommentId forKey:@"destCommentId"];
+    [paramDic setObject:comment forKey:@"comment"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"186" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    //如果没有网，将数据保存到数据库。。。。
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        if (msgid||msgid ==nil||msgid.length<1) {
+            return;
+        }
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:msgid forKey:@"msgId"];
+        [dict setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
+        [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
+        [dict setObject:comment forKey:@"comments"];
+        [dict setObject:uuid forKey:@"uuid"];
+        [DataStoreManager saveCommentsWithDic:dict];
+        return;
+    }
+    else{
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+        }];
     }
     
-    NSString *msgStr = [paramDict objectForKey:@"msg"];
-    [paramDict setObject:self.messageid forKey:@"messageid"];
+    [self.textView resignFirstResponder];
+    self.textView.text = nil;
+    self.textView.placeholder= nil;
     
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"134" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    self.textView.placeholder = @"";
-    hud.labelText = @"评论中...";
-    [hud show:YES];
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
-        
-        
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-            dic  = responseObject;
-            NSString * myUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-            NSDictionary* user=[[UserManager singleton] getUser:myUserid];
-            NSString * myNickName = [user objectForKey:@"nickname"];
-            NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-            NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
-            [dic removeObjectForKey:@"msg"];
-            [dic setObject:msgStr forKey:@"msg"];
-            [dic setObject:myUserid forKey:@"userid"];
-            [dic setObject:myNickName forKey:@"nickname"];
-            [dic setObject:@"5" forKey:@"type"];
-            [dic setObject:[user objectForKey:@"img"] forKey:@"userimg"];
-            [dic setObject:strNowTime forKey:@"createDate"];
-            self.textView.text = nil;
-
-            [m_dataReply insertObject:dic atIndex:0];
-            [m_replyTabel reloadData];
-            [self showMessageWindowWithContent:@"评论成功" imageType:0];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
-    }];
-    
-    
-
 }
+
+
 
 #pragma mark 输入
 #pragma mark HPExpandingTextView delegate
@@ -544,24 +544,34 @@ typedef enum : NSUInteger {
     }
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"userimg")];
+    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img")];
     if ([imageName isEqualToString:@""]||[imageName isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{
         if (imageName) {
-            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80"]];;
+            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80/80"]];;
         }else
         {
             cell.headImageV.imageURL = nil;
         }
     }
     
-    cell.nickNameLabel.text = [KISDictionaryHaveKey(tempDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDic, @"nickname");
+    cell.nickNameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic,@"commentUser"), @"nickname") ;
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
-//    cell.commentLabel.text = KISDictionaryHaveKey(tempDic, @"msg");
     
-    
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"msg")];
+    NSMutableAttributedString* commentStr;
+    if ([[tempDic allKeys]containsObject:@"destUser"]) {
+        commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:[NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")]];
+        NSLog(@"1---->%@",commentStr);
+        cell.commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
+
+
+    }else{
+    commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"comment")];
+        cell.commentStr = KISDictionaryHaveKey(tempDic, @"comment");
+        NSLog(@"2---->%@",commentStr);
+
+    }
     OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
     paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
     paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
@@ -571,9 +581,8 @@ typedef enum : NSUInteger {
     
     cell.commentLabel.attributedText = commentStr;
 
+   // NSLog(@"%@",commentStr);
     
-    
-    cell.commentStr = KISDictionaryHaveKey(tempDic, @"msg");
     cell.rowIndex = indexPath.row;
     cell.myDelegate = self;
     
@@ -585,25 +594,16 @@ typedef enum : NSUInteger {
 {
     [m_replyTabel deselectRowAtIndexPath:indexPath animated:YES];
     
-    NSDictionary* tempDict = [m_dataReply objectAtIndex:indexPath.row];
-    //    NSString* nickName = [KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :KISDictionaryHaveKey(tempDict, @"nickname");
-    NSString* nickName = KISDictionaryHaveKey(tempDict, @"nickname");
-    
+    commentDic = [m_dataReply objectAtIndex:indexPath.row];
+    NSString* nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"),@"nickname");
+    isComeBackComment = YES;
     self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
     [self.textView becomeFirstResponder];
-    
-    
 }
 
 -(void)CellHeardButtonClick:(int)rowIndex
 {
     NSDictionary* tempDict = [m_dataReply objectAtIndex:rowIndex];
-    //    if ([KISDictionaryHaveKey(tempDict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-    //        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
-    //        [self.navigationController pushViewController:myP animated:YES];
-    //    }
-    //    else
-    //    {
     TestViewController* detailV = [[TestViewController alloc] init];
     detailV.userId = KISDictionaryHaveKey(tempDict, @"userid");
     detailV.nickName = KISDictionaryHaveKey(tempDict, @"nickname");

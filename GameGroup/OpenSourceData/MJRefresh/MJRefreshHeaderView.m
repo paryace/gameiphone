@@ -19,8 +19,8 @@
 + (instancetype)header
 {
     return [[MJRefreshHeaderView alloc] init];
+    
 }
-
 #pragma mark - UIScrollView相关
 #pragma mark 重写设置ScrollView
 - (void)setScrollView:(UIScrollView *)scrollView

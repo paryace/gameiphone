@@ -137,7 +137,7 @@
     m_otherSortAttentionArray = [NSMutableArray array];
     
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    addButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
+    addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [addButton setBackgroundImage:KUIImage(@"add_button_normal") forState:UIControlStateNormal];
     [addButton setBackgroundImage:KUIImage(@"add_button_click") forState:UIControlStateHighlighted];
     [self.view addSubview:addButton];

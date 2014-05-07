@@ -46,6 +46,9 @@
     UIButton* reportButton1;
     UIImageView *imageView1;
     NSString *m_msg;
+    
+   NSString * m_userid;
+    
 }
 @property(nonatomic, strong)NSDictionary* dataDic;
 @property(nonatomic, strong)NSArray*      headImgArray;
@@ -89,7 +92,7 @@
     [self setTopViewWithTitle:@"详情" withBackButton:YES];
     
     m_shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    m_shareButton.frame=CGRectMake(320-42, KISHighVersion_7?27:7, 37, 30);
+    m_shareButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [m_shareButton setBackgroundImage:KUIImage(@"share_normal") forState:UIControlStateNormal];
     [m_shareButton setBackgroundImage:KUIImage(@"share_click") forState:UIControlStateHighlighted];
     [self.view addSubview:m_shareButton];
@@ -204,21 +207,11 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-//        [bg1 removeFromSuperview];
-//        [headBtn1 removeFromSuperview];
-//        [nickLabel1 removeFromSuperview];
-//        [titleLabel1 removeFromSuperview];
-//        [titleLabel_no1 removeFromSuperview];
-//        [zanButton1 removeFromSuperview];
-//        [commentLabel12 removeFromSuperview];
-//        [line1 removeFromSuperview];
-//        [inputButton1 removeFromSuperview];
-//        [reportButton1 removeFromSuperview];
-//        [imageView1 removeFromSuperview];
-
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             self.dataDic = responseObject;
+            
+            m_userid = KISDictionaryHaveKey(responseObject, @"userid");
             
             m_msg = KISDictionaryHaveKey(responseObject, @"msg");
             m_shareButton.hidden = [KISDictionaryHaveKey(responseObject, @"type") integerValue] == 3 ? NO : YES;
@@ -467,7 +460,11 @@
     [reportButton setImage:KUIImage(@"news_report") forState:UIControlStateNormal];
     reportButton.imageEdgeInsets = UIEdgeInsetsMake(15.0/2, 34, 15.2/2, 100);
     reportButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 34);
-    [reportButton setTitle:@"举报投诉" forState:UIControlStateNormal];
+    if ([m_userid intValue]==[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]intValue ]) {
+        [reportButton setTitle:@"删除动态" forState:UIControlStateNormal];
+    }else{
+        [reportButton setTitle:@"举报投诉" forState:UIControlStateNormal];
+    }
     reportButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
     [reportButton setTitleColor:kColorWithRGB(102, 102, 102, 1.0) forState:UIControlStateNormal];
     [reportButton addTarget:self action:@selector(reportButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -813,7 +810,13 @@
 #pragma mark 举报 或评论
 - (void)reportButtonClick:(id)sender
 {
-    UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定举报该篇文章吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    NSString *str1;
+    if ([m_userid intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] intValue]) {
+        str1 = @"您确定要删除这篇文章吗?";
+    }else{
+        str1 =@"您确定举报该篇文章吗？";
+    }
+    UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:str1 delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 23;
     [alter show];
 }
@@ -823,31 +826,37 @@
     if (alertView.tag == 23) {
         if (buttonIndex != alertView.cancelButtonIndex) {
             
-            hud.labelText = @"举报中...";
-            [hud show:YES];
-            NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 标题为%@的文章含不良内容，请尽快处理！", self.messageid,m_msg];
-            NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",self.messageid,@"id",@"dynamic",@"type",nil];
-            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-            [postDict setObject:@"155" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-            [postDict setObject:dic forKey:@"params"];
-            
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [hud hide:YES];
-                [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
-            } failure:^(AFHTTPRequestOperation *operation, id error) {
-                if ([error isKindOfClass:[NSDictionary class]]) {
-                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                    {
-                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                        [alert show];
+            //如果ID相同 则删除动态 否则举报用户
+            if ([m_userid intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] intValue]) {
+                
+                hud.labelText = @"删除中...";
+                [hud show:YES];
+                
+                NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+                NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+                [paramDic setObject:self.messageid forKey:@"messageId"];
+                [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+                [dict setObject:paramDic forKey:@"params"];
+                [dict setObject:@"193" forKey:@"method"];
+                [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+                
+                [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [hud hide:YES];
+                    [self showMessageWindowWithContent:@"删除成功" imageType:0];
+                    [self.navigationController popViewControllerAnimated:YES];
+                } failure:^(AFHTTPRequestOperation *operation, id error) {
+                    if ([error isKindOfClass:[NSDictionary class]]) {
+                        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                        {
+                            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                            [alert show];
+                        }
                     }
-                }
-                [hud hide:YES];
-            }];
+                }];
+            }
         }
     }
+
 }
 
 - (void)okButtonClick:(id)sender
