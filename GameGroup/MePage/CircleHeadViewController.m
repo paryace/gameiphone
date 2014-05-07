@@ -854,15 +854,24 @@ typedef enum : NSUInteger {
         NSMutableDictionary *dic = [commentArray objectAtIndex:i];
         //判断是否是回复某人的评论
         if ([[dic allKeys]containsObject:@"destUser"]) {
-      CGSize  size1 = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+            NSString * strComment = [NSString stringWithFormat:@"%@ 回复%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+            
+         //   [dic setObject:strComment forKey:@"formatedComment"];
+            
             cell.destUserStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname");
-            commHieght +=(size1.height+5);
-            [dic setObject:@(size1.height+5) forKey:@"commentCellHieght"];
+            
+            if(![[dic allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+                CGSize  size1 = [CommentCell getCellHeigthWithStr:strComment];
+                commHieght +=(size1.height+5);
+                [dic setObject:@(size1.height+5) forKey:@"commentCellHieght"];
+            }
         }else{
-       CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
             cell.destUserStr = nil;
-            commHieght +=(size.height+5);
-            [dic setObject:@(size.height+5) forKey:@"commentCellHieght"];
+            if(![[dic allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+                CGSize  size = [CommentCell getCellHeigthWithStr:[NSString stringWithFormat:@"%@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")]];
+                commHieght +=(size.height+5);
+                [dic setObject:@(size.height+5) forKey:@"commentCellHieght"];
+            }
         }
     }
     //评论列表的frame
@@ -1201,11 +1210,15 @@ typedef enum : NSUInteger {
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
         [m_dataArray removeObjectAtIndex:delCellCount-100];
         [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
-        
-        [self getInfoFromNet];
+        if (delCellCount-100<20) {
+            NSMutableData *data= [[NSMutableData alloc]init];
+            NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+            [archiver encodeObject:m_dataArray forKey: @"getdatatatata"];
+            [archiver finishEncoding];
+            [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"circleFriend_huancun_01_wx"];
+        }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -1234,7 +1247,7 @@ typedef enum : NSUInteger {
     [commentUser setObject:@"" forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
 
-    for (NSDictionary *dic in m_dataArray) {
+    for (NSMutableDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
             
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
@@ -1250,6 +1263,9 @@ typedef enum : NSUInteger {
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
                 [self showMessageWindowWithContent:@"赞已成功" imageType:0];
+                if (commentNum<1) {
+                    [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+30) forKey:@"cellHieght"];
+                }
                 [m_myTableView reloadData];
 
                 //请求网络点赞
@@ -1259,6 +1275,9 @@ typedef enum : NSUInteger {
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
                 [self showMessageWindowWithContent:@"已取消" imageType:0];
+                if (commentNum<1) {
+                    [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-30) forKey:@"cellHieght"];
+                }
                 [m_myTableView reloadData];
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
@@ -1305,6 +1324,8 @@ typedef enum : NSUInteger {
         self.commentInputType = CommentInputTypeKeyboard;
         senderBnt.selected = NO;
     }
+    
+    
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
@@ -1313,21 +1334,32 @@ typedef enum : NSUInteger {
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
+    
     NSString *comment ;
     if (self.textView.placeholder!=nil) {
-        comment = [NSString stringWithFormat:@"%@ %@",self.textView.placeholder,self.textView.text];
+        comment = [NSString stringWithFormat:@"回复 %@:%@",self.textView.placeholder,self.textView.text];
     }else{
         comment = self.textView.text;
     }
     
-    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id", nil];
+   // CGSize size = [[NSString stringWithFormat:@"%@:%@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment] sizeWithFont:[UIFont systemFontOfSize:12] forWidth:245 lineBreakMode:NSLineBreakByCharWrapping];
+
+    CGSize size = [[NSString stringWithFormat:@"%@ %@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment]sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
+    
+    
+    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(size.height+5),@"commentCellHieght", nil];
     //将评论添加到数组里、
     int i = -1;
-    for (NSDictionary *dic in m_dataArray) {
+    for (NSMutableDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
             [arr insertObject:dict atIndex:0];
             //
+            
+            [dic setObject:@([KISDictionaryHaveKey(dic, @"commentListHieght")floatValue]+size.height+5) forKey:@"commentListHieght"];
+            
+            [dic  setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+size.height+5) forKey:@"cellHieght"];
+            
             int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
             
             [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
@@ -1532,7 +1564,7 @@ typedef enum : NSUInteger {
 -(void)delcomment
 {
     
-    NSDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
+    NSMutableDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
     NSMutableArray *arr = [dic objectForKey:@"commentList"];
     NSString *msgId = KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"id");
     [NSCharacterSet decimalDigitCharacterSet];
@@ -1552,6 +1584,11 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        
+        [dic setObject:@([KISDictionaryHaveKey(dic, @"commentListHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"commentListHieght"];
+        
+        [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"cellHieght"];
+        
         [cellhightarray removeObjectForKey:KISDictionaryHaveKey(dic, @"id")];
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
         [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
