@@ -1614,24 +1614,17 @@ return @"";
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dUser) {//不是好友 就去粉丝列表查
-        if (dUser.nickName.length>1) {
+    if (dUser) {
+        if (dUser.nickName) {
             return dUser.nickName;
         }
-        else
+        else{
             return dUser.userName;
-    }
-    DSuser* dFans = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dFans)
-    {
-        if (dFans.nickName.length>1) {
-            return dFans.nickName;
         }
-        else
-            return dFans.userName;
     }
-    else
+    else{
         return userId;
+    }
 }
 
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type

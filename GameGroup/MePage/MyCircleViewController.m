@@ -99,10 +99,10 @@
     //头像
     headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    [headImageView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
+   // [headImageView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
-
+    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/160/160",[DataStoreManager queryFirstHeadImageForUser_userManager:self.userId]]]];
     [topVIew addSubview:headImageView];
     [self addheadView];
     [self addFootView];
@@ -193,11 +193,11 @@
     if (indexPath.row>0) {
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
-    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
-        headImageView.imageURL = nil;
-    }else{
-     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
-    }
+//    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
+//        cell.headImageView.imageURL = nil;
+//    }else{
+//     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
+//    }
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:

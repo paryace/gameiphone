@@ -43,8 +43,8 @@
 
     UIButton *delbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
-    [delbutton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-    [delbutton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    [delbutton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
+    [delbutton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
     delbutton.backgroundColor = [UIColor clearColor];
     [delbutton addTarget:self action:@selector(deleteInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:delbutton];
