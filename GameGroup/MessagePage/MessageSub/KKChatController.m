@@ -753,16 +753,13 @@ UINavigationControllerDelegate>
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(10, 7, 235, 35);
+        entryImageView.frame = CGRectMake(10, 7, 225, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13
                                                                  topCapHeight:22];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-        imageView.frame = CGRectMake(0,
-                                     0,
-                                     self.inPutView.frame.size.width,
-                                     self.inPutView.frame.size.height);
+        imageView.frame = CGRectMake(0,0,self.inPutView.frame.size.width,self.inPutView.frame.size.height);
         imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         
         //    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -801,17 +798,16 @@ UINavigationControllerDelegate>
 - (UIButton *)kkChatAddButton{
     if (!_kkChatAddButton) {
         _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _kkChatAddButton.frame = CGRectMake(242,
+        _kkChatAddButton.frame = CGRectMake(240,
                                             self.inPutView.frame.size.height-12-36,
-                                            45,
-                                            45);
+                                            47,
+                                            43);
         [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
                           forState:UIControlStateNormal];
         
         [_kkChatAddButton addTarget:self
                              action:@selector(kkChatAddButtonClick:)
                    forControlEvents:UIControlEventTouchUpInside];
-        
     }
     return _kkChatAddButton;
 }
@@ -821,8 +817,8 @@ UINavigationControllerDelegate>
         _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _emojiBtn.frame = CGRectMake(277,
                                      self.inPutView.frame.size.height-12-36,
-                                     45,
-                                     45);
+                                     47,
+                                     43);
         [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
                    forState:UIControlStateNormal];
         [_emojiBtn addTarget:self
@@ -866,7 +862,7 @@ UINavigationControllerDelegate>
 
 - (HPGrowingTextView *)textView{
     if(!_textView){
-        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 235, 35)];
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 225, 35)];
         _textView.isScrollable = NO;
         _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         _textView.minNumberOfLines = 1;

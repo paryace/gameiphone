@@ -1483,7 +1483,7 @@ typedef enum : NSUInteger {
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
     if(iPhone5){
-        offer+=(300-height-23);
+        offer+=(300-height-20);
     }else{
         offer+=(300-height+65);
     }
