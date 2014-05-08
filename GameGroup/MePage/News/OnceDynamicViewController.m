@@ -852,6 +852,7 @@
                             [alert show];
                         }
                     }
+                    [hud hide:YES];
                 }];
             }
         }
