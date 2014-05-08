@@ -306,6 +306,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            //保存发送的动态 放置“我” 界面
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"dynamicFromMe_wx"];
+            
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"dynamicFromMe_wx_notification" object:nil userInfo:nil];
 //            [self addNewNewsToStore:responseObject];
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
                 [self.delegate dynamicListAddOneDynamic:responseObject];

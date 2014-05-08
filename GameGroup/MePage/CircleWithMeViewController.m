@@ -39,7 +39,7 @@
     
     [self setTopViewWithTitle:@"与我相关" withBackButton:YES];
     
-    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
 
     UIButton *delbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
@@ -57,6 +57,7 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight =80;
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:m_myTableView];
     
     UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
@@ -128,7 +129,7 @@
     if (cell ==nil) {
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
    // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
