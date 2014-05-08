@@ -48,6 +48,7 @@
     NSString *m_msg;
     
    NSString * m_userid;
+    AppDelegate *app;
     
 }
 @property(nonatomic, strong)NSDictionary* dataDic;
@@ -103,7 +104,7 @@
     [self.view addSubview:hud];
     
    // [self setUpViewBeforeLoading];
-
+    app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     
     [self getDataByNet];
 }
@@ -825,6 +826,12 @@
 {
     if (alertView.tag == 23) {
         if (buttonIndex != alertView.cancelButtonIndex) {
+            
+            if (app.reach.currentReachabilityStatus ==NotReachable) {
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"无法连接网络" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+                return;
+            }
             
             //如果ID相同 则删除动态 否则举报用户
             if ([m_userid intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] intValue]) {
