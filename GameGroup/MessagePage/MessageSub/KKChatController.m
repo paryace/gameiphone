@@ -1296,6 +1296,7 @@ UINavigationControllerDelegate>
             dispatch_async(dispatch_get_main_queue(), ^{
                 
                 cell.progressView.progress = progress;
+                NSLog(@"fafafaf-------->>>%f",progress);
                 if (progress == 1) {
                     
                     cell.progressView.hidden = YES;
@@ -2209,6 +2210,14 @@ UINavigationControllerDelegate>
     }
     else{//如果之前没上传成功,读取本地图片，再次上传
         UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
+        
+        [messageDict setObject:@"2" forKey:@"status"];
+        [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
+        [self updateMsgByUuid:messageDict];
+        [self refreStatusView:@"2" cellIndex:cellIndex];
+        NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
+        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
+        
         [self uploadImage:imgFromUrl cellIndex:cellIndex];
     }
 }
