@@ -7,6 +7,7 @@
 //
 
 #import "NewFindViewController.h"
+#import "NewNearByViewController.h"
 #import "NearByViewController.h"
 #import "NormalTableCell.h"
 #import "SameRealmViewController.h"
@@ -378,7 +379,7 @@
     }
     if (sender ==m_nearByBtn) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        NearByViewController* VC = [[NearByViewController alloc] init];
+        NewNearByViewController* VC = [[NewNearByViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
 
     }

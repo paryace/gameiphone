@@ -43,9 +43,12 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"个人动态" withBackButton:YES];
+    
+    
+    
     
     if ([self.userId intValue] ==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] intValue]) {
+        
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
@@ -55,25 +58,28 @@
     }
     PageNum =0;
     dataArray = [NSMutableArray array];
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.rowHeight = 130;
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     
+    [self setTopViewWithTitle:@"个人动态" withBackButton:YES];
+
+    
     //顶部图片
-    UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 300)];
+    UIView *topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 370)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
-    topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
 //    [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     topImgaeView.backgroundColor = [UIColor darkGrayColor];
     
     [topVIew addSubview:topImgaeView];
     
     //黑白渐变Label以突出文字
-    UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 210, 320, 40)];
+    UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 280, 320, 40)];
     topunderBgImageView.image = KUIImage(@"underbg");
     [topVIew addSubview:topunderBgImageView];
     
@@ -82,14 +88,14 @@
  
     CGSize nickLabelsize =[self.nickNmaeStr sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     
-    UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 211, nickLabelsize.width, 30)];
+    UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 281, nickLabelsize.width, 30)];
     underNickLabel.text =self.nickNmaeStr;
     underNickLabel.textColor = [UIColor blackColor];
     underNickLabel.backgroundColor =[UIColor clearColor];
     underNickLabel.textAlignment = NSTextAlignmentRight;
     [topVIew addSubview:underNickLabel];
     
-    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 210, nickLabelsize.width, 30)];
+    nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 280, nickLabelsize.width, 30)];
     nickNameLabel.text =self.nickNmaeStr;
     nickNameLabel.textColor = [UIColor whiteColor];
     nickNameLabel.backgroundColor =[UIColor clearColor];
@@ -97,16 +103,22 @@
     [topVIew addSubview:nickNameLabel];
     
     //头像
-    headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 206, 80, 80)];
+    headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 276, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    [headImageView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
+   // [headImageView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
-
+    
+    
+    NSString *imgStr =[DataStoreManager queryFirstHeadImageForUser_userManager:self.userId];
+    if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@" "]) {
+        headImageView.imageURL = nil;
+    }else{
+    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/160/160",imgStr]]];
+    }
     [topVIew addSubview:headImageView];
     [self addheadView];
     [self addFootView];
-
     [self getInfoFromNet];
 }
 
@@ -193,11 +205,11 @@
     if (indexPath.row>0) {
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
-    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
-        headImageView.imageURL = nil;
-    }else{
-     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
-    }
+//    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
+//        cell.headImageView.imageURL = nil;
+//    }else{
+//     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
+//    }
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:
@@ -275,7 +287,7 @@
     detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
     //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
     
-    
+    detailVC.delegate = self;
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
     [self.navigationController pushViewController:detailVC animated:YES];
 
@@ -390,6 +402,12 @@
     [self.navigationController pushViewController:sendNews animated:YES];
     
 }
+-(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
+{
+    m_currPageCount = 0;
+    [self getInfoFromNet];
+}
+
 
 - (void)didReceiveMemoryWarning
 {

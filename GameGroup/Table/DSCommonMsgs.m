@@ -21,5 +21,6 @@
 @dynamic senTime;
 @dynamic messageuuid;
 @dynamic status;
+@dynamic receiveTime;
 
 @end

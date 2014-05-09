@@ -25,5 +25,6 @@
 @property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) NSString * unRead;
 @property (nonatomic, retain) NSString * sayHiType;
+@property (nonatomic, retain) NSString * receiveTime;
 
 @end

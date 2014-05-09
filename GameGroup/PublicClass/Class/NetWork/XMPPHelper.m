@@ -251,6 +251,7 @@
     NSLog(@"theDict%@",dict);
     if ([type isEqualToString:@"chat"])
     {
+        [self comeBackDelivered:from msgId:msgId];
         if ([msgtype isEqualToString:@"normalchat"]) {//聊天的 或动态聊天消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];//是否含payload标签
             
@@ -380,7 +381,7 @@
             // [self comeBackDelivered:from msgId:msgId];
             [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
-        [self comeBackDelivered:from msgId:msgId];
+//        [self comeBackDelivered:from msgId:msgId];
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])
     {

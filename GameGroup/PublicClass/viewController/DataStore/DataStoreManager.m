@@ -147,6 +147,7 @@
             commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
             commonMsg.messageuuid = msgId;
             commonMsg.status = @"1";//已发送
+            commonMsg.receiveTime=[GameCommon getCurrentTime];
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             
@@ -164,6 +165,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
                 
             if ([sayhiType isEqualToString:@"2"]){
                     NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
@@ -178,6 +180,7 @@
                     thumbMsgs.messageuuid = @"wx123";
                     thumbMsgs.status = @"1";//已发送
                     thumbMsgs.sayHiType = @"1";
+                    thumbMsgs.receiveTime=[GameCommon getCurrentTime];
                 }
             
         }];
@@ -193,6 +196,7 @@
             commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
             commonMsg.messageuuid = msgId;
             commonMsg.status = @"1";//已发送
+            commonMsg.receiveTime=[GameCommon getCurrentTime];
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
@@ -209,6 +213,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         }];
     }
     else if([sendertype isEqualToString:SAYHELLOS])//关注 或取消关注
@@ -253,6 +258,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         }];
     }
     else if([sendertype isEqualToString:RECOMMENDFRIEND])//推荐好友
@@ -273,6 +279,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
 
         }];
     }
@@ -302,6 +309,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
 
         }];
     }
@@ -330,6 +338,7 @@
         commonMsg.payload = KISDictionaryHaveKey(message, @"payload");//动态 消息json
         commonMsg.messageuuid = messageuuid;
         commonMsg.status = @"2";//发送中
+        commonMsg.receiveTime=[GameCommon getCurrentTime];
         
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -347,6 +356,7 @@
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
         thumbMsgs.status = @"2";//发送中
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
     }];
 }
 +(void)storeMyMessage:(NSDictionary *)message
@@ -374,6 +384,7 @@
         commonMsg.payload = KISDictionaryHaveKey(message, @"payload");//动态 消息json
         commonMsg.messageuuid = messageuuid;
         commonMsg.status = @"2";//发送中
+        commonMsg.receiveTime=[GameCommon getCurrentTime];
 
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
         
@@ -392,6 +403,7 @@
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
         thumbMsgs.status = @"2";//发送中
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
     }];
 }
 
@@ -506,7 +518,8 @@
 + (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ OR receiver==[c]%@",userid,userid];
-    NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"senTime" ascending:NO];
+//  NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"senTime" ascending:NO];
+    NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"receiveTime" ascending:NO];
     NSFetchRequest * fetchRequest = [DSCommonMsgs MR_requestAllWithPredicate:predicate];
     [fetchRequest setFetchOffset:integer];
     [fetchRequest setFetchLimit:20];
@@ -1614,24 +1627,17 @@ return @"";
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dUser) {//不是好友 就去粉丝列表查
-        if (dUser.nickName.length>1) {
+    if (dUser) {
+        if (dUser.nickName) {
             return dUser.nickName;
         }
-        else
+        else{
             return dUser.userName;
-    }
-    DSuser* dFans = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dFans)
-    {
-        if (dFans.nickName.length>1) {
-            return dFans.nickName;
         }
-        else
-            return dFans.userName;
     }
-    else
+    else{
         return userId;
+    }
 }
 
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type

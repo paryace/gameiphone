@@ -67,48 +67,65 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self setTopViewWithTitle:@"" withBackButton:YES];
+    
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
 
     wxSDArray = [NSMutableArray array];
      littleImgArray = [NSMutableArray array];
     if (self.hostInfo!=NULL) {//有值 查找用户
-        [self buildMainView];
+        [self setInfoViewType:self.hostInfo];
         [self setBottomView];
-        
+        [self buildMainView];
     }
     else//没有详情 请求
     {
-
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]) {//有值 查找用户
-        
-         //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
-        NSMutableData *data= [NSMutableData data];
-        NSDictionary *dic = [NSDictionary dictionary];
-        data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-       dic = [unarchiver decodeObjectForKey: @"getDatat"];
-        [unarchiver finishDecoding];
-        //NSDictionary *dic = [[NSDictionary alloc]initWithCoder:;]
-        
-        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
-        [self buildMainView];
-        [self setBottomView];
-    
-        [[UserManager singleton]requestUserFromNet:self.userId];
-    }
-    else//没有详情 请求
-    {
-        [self buildInitialize];
-        
-        [[UserManager singleton]requestUserFromNet:self.userId];
-    }
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]) {//有值 查找用户
+            //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
+            NSMutableData *data= [NSMutableData data];
+            NSDictionary *dic = [NSDictionary dictionary];
+            data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+            NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+            dic = [unarchiver decodeObjectForKey: @"getDatat"];
+            [unarchiver finishDecoding];
+            self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
+            [self setInfoViewType:self.hostInfo];
+            [self setBottomView];
+            [self buildMainView];
+            [[UserManager singleton]requestUserFromNet:self.userId];
+        }
+        else//没有详情 请求
+        {
+            [self buildInitialize];
+            [[UserManager singleton]requestUserFromNet:self.userId];
+        }
     }
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
-
-    
+}
+-(void)setInfoViewType:(HostInfo*)hostInfo
+{
+    if ([self.hostInfo.relation isEqualToString:@"1"]) {
+        
+        self.viewType = VIEW_TYPE_FriendPage1;
+    }
+    else if([self.hostInfo.relation isEqualToString:@"2"]) {
+        
+        self.viewType = VIEW_TYPE_AttentionPage1;
+    }
+    else if([self.hostInfo.relation isEqualToString:@"3"]) {
+        
+        self.viewType = VIEW_TYPE_FansPage1;
+    }
+    else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
+    {
+        self.viewType = VIEW_TYPE_Self1;
+    }
+    else  {
+        self.viewType = VIEW_TYPE_STRANGER1;
+    }
 }
 
 -(void)getInfoFromUserManager:(NSNotification *)notification
@@ -137,53 +154,23 @@
     {
         [view removeFromSuperview];
     }
+    [self setTopViewWithTitle:@"" withBackButton:YES];
     self.hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+    [self setInfoViewType:self.hostInfo];
+    [self setBottomView];
     
     m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
-    
     NSLog(@"m_titlelabel%@",m_titleLabel.text);
-    
-    if ([self.hostInfo.relation isEqualToString:@"1"]) {
-        
-        self.viewType = VIEW_TYPE_FriendPage1;
-    }
-    
-    else if([self.hostInfo.relation isEqualToString:@"2"]) {
-        
-        self.viewType = VIEW_TYPE_AttentionPage1;
-    }
-    else if([self.hostInfo.relation isEqualToString:@"3"]) {
-        
-        self.viewType = VIEW_TYPE_FansPage1;
-    }
-    else if([self.hostInfo.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
-    {
-        self.viewType = VIEW_TYPE_Self1;
-    }
-    else  {
-        self.viewType = VIEW_TYPE_STRANGER1;
-    }
-    
     if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-        
         NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-        
         [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-        
         [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-        
         [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:self.hostInfo.relation];
     }
-    
-    else
+    else{
         [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:self.hostInfo.relation];
-
-    
-    
-    
+    }
     [self buildMainView];
-    [self setBottomView];
-  //  }
 }
 
 
@@ -194,9 +181,6 @@
 
 -(void)buildInitialize
 {
-    
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    
     UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
     editButton.frame=CGRectMake(270, startX - 44, 50, 44);
     [editButton setBackgroundImage:KUIImage(@"edit_normal") forState:UIControlStateNormal];
@@ -473,8 +457,6 @@
 }
 - (void)buildMainView
 {
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
     m_titleLabel.backgroundColor = [UIColor clearColor];
@@ -936,9 +918,6 @@
 #pragma mark -按钮布局
 - (void)setBottomView
 {
-    //    UIImageView* image_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(0, kScreenHeigth - 50 -(KISHighVersion_7 ? 0 : 20), kScreenWidth, 50)];
-    //    image_bottom.image = KUIImage(@"inputbg");
-    //    [self.view addSubview:image_bottom];
     switch (self.viewType) {
         case VIEW_TYPE_FriendPage1:
         {
@@ -947,9 +926,11 @@
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             //[editButton setTitle:@"备注" forState:UIControlStateNormal];
+            
             editButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
-            [self.view addSubview:editButton];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:editButton];
+            
             
             delFriendBtn = [CommonControlOrView
                                      setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height -44, 107, 44)//120
