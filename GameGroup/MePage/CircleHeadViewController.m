@@ -496,9 +496,8 @@ typedef enum : NSUInteger {
 #pragma mark --进入与我相关界面
 -(void)enterAboutMePage:(id)sender
 {
-    
+    offer-=20;
     abobtMeImageView.hidden =YES;
-    
     //改变Headview高度 以适配隐藏aboutMeImageView后的样式
     CGRect frame = m_myTableView.tableHeaderView.frame;
     frame.size.height = 350;
@@ -1483,9 +1482,12 @@ typedef enum : NSUInteger {
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
     if(iPhone5){
-        offer+=(300-height-20);
+        offer+=(300-height-15);
     }else{
         offer+=(300-height+65);
+    }
+    if (abobtMeImageView.hidden==NO) {
+        offer+=60;
     }
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
     offer=0;
