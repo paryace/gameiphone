@@ -24,5 +24,6 @@
 @dynamic status;
 @dynamic unRead;
 @dynamic sayHiType;
+@dynamic receiveTime;
 
 @end
