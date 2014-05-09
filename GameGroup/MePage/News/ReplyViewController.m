@@ -588,21 +588,11 @@ typedef enum : NSUInteger {
     
     NSString* commentStr;
     if ([[tempDic allKeys]containsObject:@"destUser"]) {
-<<<<<<< HEAD
         commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
         cell.commentStr = commentStr;
     }else{
         commentStr = KISDictionaryHaveKey(tempDic, @"comment");
         cell.commentStr = commentStr;
-=======
-        commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:[NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")]];
-        cell.commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
-
-
-    }else{
-    commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"comment")];
-        cell.commentStr = KISDictionaryHaveKey(tempDic, @"comment");
->>>>>>> FETCH_HEAD
 
     }
     
