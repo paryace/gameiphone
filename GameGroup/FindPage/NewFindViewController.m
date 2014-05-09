@@ -285,7 +285,7 @@
     
     UILabel *friendLb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 53, 16)];
     friendLb.center = CGPointMake(m_meetBtn.center.x-45, m_meetBtn.center.y-80);
-    friendLb.text = @"好友动态";
+    friendLb.text = @"朋友圈";
     [friendLb setBackgroundColor:[UIColor colorWithPatternImage:KUIImage(@"friendtext")]];
     friendLb.font = [UIFont systemFontOfSize:12];
     friendLb.textAlignment = NSTextAlignmentCenter;

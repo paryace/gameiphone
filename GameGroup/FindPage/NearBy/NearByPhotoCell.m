@@ -21,6 +21,7 @@
         [self addSubview:self.photoView];
         
         
+        
 //        self.lestView = [[UIView alloc]initWithFrame:CGRectMake(0, 65, 78, 15)];
 //        self.lestView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
 //        [self addSubview:self.lestView];

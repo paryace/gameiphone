@@ -1308,7 +1308,6 @@ typedef enum : NSUInteger {
                             [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
                             
                             //请求网络点赞
-                            [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
                         }else{//假如是已经赞的状态
                             [arr removeObject:commentUser];
                             [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];

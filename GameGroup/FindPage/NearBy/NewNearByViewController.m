@@ -11,6 +11,7 @@
 #import "LocationManager.h"
 #import "TestViewController.h"
 #import "MJRefresh.h"
+#import "CityViewController.h"
 @interface NewNearByViewController ()
 {
     UICollectionView *m_photoCollectionView;
@@ -22,7 +23,7 @@
     NSMutableArray *headImgArray;
     NSString *sexStr ;
     AppDelegate *app;
-    int m_currPageCount;
+    NSInteger m_currPageCount;
 }
 @end
 
@@ -70,6 +71,9 @@
     m_photoCollectionView.backgroundColor = [UIColor clearColor];
     m_myTableView.tableHeaderView = m_photoCollectionView;
     
+    [self addheadView];
+    [self addFootView];
+    
     [self getLocationForNet];
     
     // Do any additional setup after loading the view.
@@ -96,6 +100,7 @@
 }
 -(void)getTopImageFromNet
 {
+    sexStr =@"1";
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
@@ -133,12 +138,15 @@
 
 -(void)getInfoWithNet
 {
+    sexStr = @"1";
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"205" forKey:@"method"];
-    [paramDic setObject:sexStr?sexStr:@"" forKey:@"gender"];
+    [paramDic setObject:@(m_currPageCount) forKey:@"pageIndex"];
+    [paramDic setObject:@"" forKey:@"gender"];
+    [paramDic setObject:@"20" forKey:@"maxSize"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:@"1" forKey:@"gameid"];
@@ -256,7 +264,7 @@
         }
         cell.photoCollectionView.hidden = NO;
         cell.photoCollectionView.frame =  CGRectMake(60,size.height+35, 250, 80*(cell.photoArray.count-1)+80);
-        cell.timeLabel.frame = CGRectMake(60, size.height+35+80*(cell.photoArray.count-1)+80, 100, 30);
+        cell.timeLabel.frame = CGRectMake(60, size.height+35+80*(cell.photoArray.count-1)/3+80, 100, 30);
 
         }
     }else{
@@ -316,6 +324,7 @@
     UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 0, 100, 40)];
     [button setTitle:@"城市漫游" forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont systemFontOfSize:12];
+    [button addTarget:self action:@selector(enterCitisePage:) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [view addSubview:button];
     
@@ -362,6 +371,14 @@
     return currheight;
     currheight =0;
 }
+
+-(void)enterCitisePage:(UIButton *)sender
+{
+    CityViewController *cityVC = [[CityViewController alloc]init];
+    [self.navigationController pushViewController:cityVC animated:YES];
+}
+
+
 
 #pragma mark --getTime //时间戳方法
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime

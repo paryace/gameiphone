@@ -255,6 +255,8 @@ static CGFloat const kLabelVMargin = 10;
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.commentTabelView deselectRowAtIndexPath:indexPath animated:YES];
+
         tableView =self.commentTabelView;
         if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(editCommentOfYouWithCircle:withIndexPath:)]) {
             [self.myCellDelegate editCommentOfYouWithCircle:self withIndexPath:indexPath.row];

@@ -95,7 +95,6 @@
     NSArray *array = [DataStoreManager queryallDynamicAboutMeWithUnRead:@"1"];
     [dataArray removeAllObjects];
     [dataArray addObjectsFromArray:array];
-    sleep(2);
     [m_myTableView reloadData];
     [hud hide:YES];
     [sender.superview removeFromSuperview];
@@ -179,6 +178,8 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+
     DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
