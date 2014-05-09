@@ -431,8 +431,7 @@ UINavigationControllerDelegate>
         cell.myChatCellDelegate = self;
        // cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
         
-        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
-                                 [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
+        CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],[[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
         
         size.width = size.width<20?20:size.width;
         size.height = size.height<20?20:size.height;
@@ -449,50 +448,36 @@ UINavigationControllerDelegate>
             [cell.bgImageView setTag:(indexPath.row+1)];
             
             //failImage 失败图标
-            [cell.failImage addTarget:self
-                               action:@selector(offsetButtonTouchBegin:)
-                     forControlEvents:UIControlEventTouchDown];
-            [cell.failImage addTarget:self
-                               action:@selector(offsetButtonTouchEnd:)
-                     forControlEvents:UIControlEventTouchUpInside];
+            [cell.failImage addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
+            [cell.failImage addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
             [cell.failImage setTag:(indexPath.row+1)];
-            
-           
                //根据uuid取缩略图
-                NSString* uuid_thumimg = KISDictionaryHaveKey(dict, @"messageuuid");
+            NSString* uuid_thumimg = KISDictionaryHaveKey(dict, @"messageuuid");
 //                NSLog(@"thumbimg取图%@",uuid);
 //                NSMutableDictionary *finalimgs = self.finalImage;
-                UIImage* thumbimg = KISDictionaryHaveKey(self.finalImage,uuid_thumimg);
+            UIImage* thumbimg = KISDictionaryHaveKey(self.finalImage,uuid_thumimg);
             if (thumbimg&&thumbimg!=nil){
-                cell.msgImageView.image = thumbimg;
+                UIImage* thumbimgs = [NetManager image:thumbimg centerInSize:CGSizeMake(100, 100)];
+                cell.msgImageView.image = thumbimgs;
             }
            // }
       
-            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-44,
-                                                   padding*2-15,
-                                                   size.width,
-                                                   size.height)];
+            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-44,padding*2-15,size.width,size.height)];
             //显示为缩略图
 
             cell.msgImageView.hidden = NO;
             cell.msgImageView.tag = indexPath.row;
-            [cell.progressView setFrame:CGRectMake(320-size.width - padding-44,
-                                                   padding*2-10+100,
-                                                   size.width,
-                                                   50)];
+            [cell.progressView setFrame:CGRectMake(320-size.width - padding-44,padding*2-10+100,size.width,50)];
             
             //msgImageView响应手势
             cell.msgImageView.userInteractionEnabled = YES;
             UITapGestureRecognizer* tabPress =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)];
-            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self
-                                                                                                   action:@selector(longPressImg:)];
+            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressImg:)];
             [cell.msgImageView addGestureRecognizer:tabPress];
             [cell.msgImageView addGestureRecognizer:longPress];
             
             //刷新状态
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,
-                                                 (size.height+20)/2 + padding*2-15)
-                              status:status];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
         }
         else{
             //设置时间
@@ -503,10 +488,7 @@ UINavigationControllerDelegate>
             
             [cell.bgImageView setTag:(indexPath.row+1)];
           
-            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,
-                                                   padding*2-15,
-                                                   size.width,
-                                                   size.height)];
+            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15,size.width,size.height)];
             
             cell.msgImageView.tag = indexPath.row;
             
@@ -1203,44 +1185,9 @@ UINavigationControllerDelegate>
 
 //从相机中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
-    
-//    UIImage * upImage = image;
-//    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
-//    NSFileManager *fm = [NSFileManager defaultManager];
-//    if([fm fileExistsAtPath:path] == NO)
-//    {
-//        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-//    }
-//    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-//    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
-//    
-//    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
-//        NSLog(@"success///");
-//        
-//        [self sendImageMsgD:openImgPath UUID:uuid]; //一条图片消息写到本地
-//        [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
-//    }
-//    else
-//    {
-//        NSLog(@"fail");
-//    }
-//    
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        
-//    }];
-
-    
-    
 }
-
-
 //从相册中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    
-
-  //  [self.view addSubview:hud];
-    //hud.labelText = @"查询中...";
-    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [picker.view.superview addSubview:hud];
@@ -1248,8 +1195,7 @@ UINavigationControllerDelegate>
     [hud show:YES];
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
-
+//    UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -1259,9 +1205,8 @@ UINavigationControllerDelegate>
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
     
-    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
         NSLog(@"success///");
-        
         [self sendImageMsgD:openImgPath UUID:uuid]; //一条图片消息写到本地
         [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
     }
@@ -1269,14 +1214,12 @@ UINavigationControllerDelegate>
     {
         NSLog(@"fail");
     }
-    
     [self dismissViewControllerAnimated:YES completion:^{
-        
         [hud hide:YES];
     }];
 }
 
-//图片聊天上传图片
+#pragma mark 图片聊天上传图片
 -(void)uploadImage:(UIImage*)image cellIndex:(int)index
 {
     //开启进度条 - 在最后一个ＣＥＬＬ处。
@@ -1284,65 +1227,53 @@ UINavigationControllerDelegate>
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.progressView.progress = 0;
     cell.progressView.hidden = NO;
-    [NetManager uploadImage:image
-                 WithURLStr:BaseUploadImageUrl
-                  ImageName:@"1"
-              TheController:self
-                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
+    [NetManager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
+    Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
     {
         @synchronized (self) {
-            
             double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
             dispatch_async(dispatch_get_main_queue(), ^{
-                
                 cell.progressView.progress = progress;
                 NSLog(@"fafafaf-------->>>%f",progress);
                 if (progress == 1) {
-                    
                     cell.progressView.hidden = YES;
                 }
                 
             });
         }
-                   }
-                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
+    }
+    Success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
          dispatch_async(dispatch_get_main_queue(), ^{
              cell.progressView.hidden = YES;
-             });
-         if(index < messages.count)
+         });
+         if(index < messages.count){
              [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
-
-     
+         }
      }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
+    failure:^(AFHTTPRequestOperation *operation, NSError *error)
      {
          dispatch_async(dispatch_get_main_queue(), ^{
-     
              cell.progressView.hidden = YES;
-             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                             message:@"发送图片失败请重新发送"
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"知道啦"
-                                                   otherButtonTitles:nil];
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
+                                                   cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
              [alert show];
-//             [hud hide:YES];
-             
-             CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
-                                      [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
-             
-             size.width = size.width<20?20:size.width;
-             size.height = size.height<20?20:size.height;
-             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,
-                                                  (size.height+20)/2 + padding*2-15) status:@"0"];
+             [self refreMessageStatus:index Status:@"0"];
          });
-     
      }];
-
-//    });
 }
-
+// 刷新消息状态
+-(void)refreMessageStatus:(int)index Status:(NSString*)status
+{
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
+    NSMutableDictionary *dict = [messages objectAtIndex:index];
+    NSString *uuid = KISDictionaryHaveKey(dict, @"messageuuid");
+    [dict setObject:status forKey:@"status"];
+    [DataStoreManager refreshMessageStatusWithId:uuid status:status];
+    [messages replaceObjectAtIndex:index withObject:dict];
+    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
+}
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     if (!myActive) {
@@ -1723,7 +1654,6 @@ UINavigationControllerDelegate>
 - (void)messageAck:(NSNotification *)notification
 {
     NSDictionary* tempDic = notification.userInfo;
-    
     NSString* src_id = KISDictionaryHaveKey(tempDic, @"src_id");
     if ([tempDic isKindOfClass:[NSDictionary class]]) {
         NSString* status = [DataStoreManager queryMessageStatusWithId:src_id];
@@ -1741,10 +1671,7 @@ UINavigationControllerDelegate>
             [dict setObject:status forKey:@"status"];
         }
         [messages replaceObjectAtIndex:changeRow withObject:dict];
-        NSLog(@"status------------>>>>%@",status);
         [self refreStatusView:status cellIndex:changeRow];
-//        NSIndexPath* indexpath = [NSIndexPath indexPathForRow:changeRow inSection:0];
-//        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath]withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
@@ -1902,17 +1829,12 @@ UINavigationControllerDelegate>
 {
     touchTimePre = [[NSDate date] timeIntervalSince1970];
     tempBtn = sender;
-    [NSTimer scheduledTimerWithTimeInterval:0.5
-                                     target:self
-                                   selector:@selector(endIt:)
-                                   userInfo:nil
-                                    repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(endIt:) userInfo:nil repeats:NO];
 }
 
 //结束点击
 -(void)offsetButtonTouchEnd:(UIButton *)sender
 {
-    
     if ([[NSDate date] timeIntervalSince1970]-touchTimePre<=1) {    //单击
         NSMutableDictionary *dict = [messages objectAtIndex:(tempBtn.tag-1)];
         NSString* msgType = KISDictionaryHaveKey(dict, @"msgType");
@@ -1923,16 +1845,12 @@ UINavigationControllerDelegate>
             OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
             detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
             detailVC.delegate = nil;
-            [self.navigationController pushViewController:detailVC
-                                                 animated:YES];
+            [self.navigationController pushViewController:detailVC animated:YES];
         }
         else if([msgType isEqualToString:@"normalchat"] && [status isEqualToString:@"0"])   //是否重发 （普通消息，且status=0)
         {
-            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"
-                                                               delegate:self
-                                                      cancelButtonTitle:@"取消"
-                                                 destructiveButtonTitle:Nil
-                                                      otherButtonTitles:@"重新发送", nil];
+            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"delegate:self cancelButtonTitle:@"取消"
+                                                 destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
             sheet.tag = 124;
             [sheet showInView:self.view];
         }
@@ -2033,150 +1951,6 @@ UINavigationControllerDelegate>
     
 }
 
-//#pragma mark将发送图片的消息保存数据库
-//- (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
-//    
-//    NSString* nowTime = [GameCommon getCurrentTime];
-//    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg];
-//    NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"2"];
-//    [dictionary setObject:payloadStr forKey:@"payload"];
-//    [messages addObject:dictionary];
-//    [self newMsgToArray:dictionary];
-//    [DataStoreManager storeMyMessage:dictionary];
-//    //重新刷新tableView
-//    [self.tView reloadData];
-//    if (messages.count>0) {
-//        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-//    }
-//}
-//- (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
-//    NSLog(@"图片上传成功， 开始发送图片消息+++++%@",[imageMsg class]);
-//    if (imageMsg.length==0)
-//    {
-//        return;
-//    }
-//    if ([[imageMsg stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"不能发送空消息" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//        [alertView show];
-//        return;
-//    }
-//    NSDictionary* d = [self getMsgWithId:uuid];
-//    NSDictionary* pay = [KISDictionaryHaveKey(d, @"payload") JSONValue];
-//    NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
-//    
-//    NSString* from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSString* to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSString* nowTime=[GameCommon getCurrentTime];
-//    
-//    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb];
-//    NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
-//    [payload setStringValue:payloadStr];
-//    
-//    NSXMLElement *mes = [self createMes:nowTime Message:@"[图片]" UUid:uuid From:from To:to FileType:@"img" MsgType:@"normalchat" Type:@"chat"];
-//    [mes addChild:payload];
-//    //发送消息
-//    [self.appDel.xmppHelper sendMessage:mes];
-//    //UI上改变之前那条的状态
-//    NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
-//    [messageDict setObject:@"2" forKey:@"status"];
-//    
-//    [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
-//    NSInteger cellIndex = [self getMsgRowWithId:uuid];
-//    [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
-//    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
-//    [self updateMsgByUuid:messageDict];
-//    [self refreStatusView:@"2" cellIndex:cellIndex];
-//    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
-//    [self refreWX];
-//}
-//
-//
-//- (void)sendMsg:(NSString *)message
-//{
-//    if (message.length  ==0)
-//    {
-//        return ;
-//    }
-//    if ([[message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
-//        //如果发送信息为空或者为空格的时候弹框提示
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"不能发送空消息" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//        [alertView show];
-//        return ;
-//    }
-//  
-//    NSString* nowTime = [GameCommon getCurrentTime];
-//    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-//    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"normalchat" Type:@"chat"];
-//    //发送状态表示
-//    NSString *status = [[NSString alloc]initWithString:@"2"];
-//    //发送消息
-//    BOOL sendMsgSuccess=[self.appDel.xmppHelper sendMessage:mes];
-//    if(sendMsgSuccess)
-//    { //发送成功
-//        status = @"2";
-//    }
-//    else{
-//        status = @"0";
-//    }
-//
-//    NSMutableDictionary *dictionary=[self createMsgDictionary:message NowTime:nowTime UUid:uuid MsgStatus:status];
-//    [messages addObject:dictionary];
-//    [self newMsgToArray:dictionary];
-//    [self updateMsgByUuid:dictionary];
-//    //刷状态
-//    NSInteger cellIndex = [self getMsgRowWithId:uuid];
-//    [self refreStatusView:status cellIndex:cellIndex];
-//
-//    //重新刷新tableView
-//    [self.tView reloadData];
-//    if (messages.count>0) {
-//        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-//    }
-//    self.textView.text = @"";
-//    [self refreWX];
-//}
-//
-//
-//
-//
-//
-//
-//#pragma mark 重发消息
-////重新发送某条文字聊天
-//- (void)reSendMsg:(NSMutableDictionary*)messageDict
-//        cellIndex:(NSInteger)cellIndex
-//{
-//    //添加新消息
-//    NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
-//    NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
-//    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
-//    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-//    NSXMLElement *mes = [self createMes:sendtime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"normalchat" Type:@"chat"];
-//    //发送状态表示
-//    NSString *status = [[NSString alloc]initWithString:@"2"];
-//    BOOL sendMsgSuccess=[self.appDel.xmppHelper sendMessage:mes];
-//    //发送消息
-//    if (!sendMsgSuccess) {
-//        [KGStatusBar showSuccessWithStatus:@"网络有点问题，稍后再试吧" Controller:self];
-//        status = @"0";
-//        return;
-//    }
-//    else
-//        status = @"1";
-//    
-//    //UI上改变之前那条的状态
-//    [messageDict setObject:status forKey:@"status"];
-//    [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
-//    
-//    [self updateMsgByUuid:messageDict];
-//    [self refreStatusView:status cellIndex:cellIndex];
-//    NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
-//    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
-//}
-
 #pragma mark将发送图片的消息保存数据库
 - (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
     
@@ -2194,7 +1968,7 @@ UINavigationControllerDelegate>
     }
 }
 
-//重发图片消息
+#pragma mark 重发图片消息
 - (void)reSendimageMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
 {
     NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
@@ -2235,7 +2009,7 @@ UINavigationControllerDelegate>
     }
 }
 
-//发送图片消息
+#pragma mark 发送图片消息
 - (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
     NSLog(@"图片上传成功， 开始发送图片消息+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
@@ -2258,8 +2032,7 @@ UINavigationControllerDelegate>
     [self refreWX];
 }
 
-#pragma mark 重发消息
-//重新发文本消息
+#pragma mark 重新发文本消息
 - (void)reSendMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
 {
     //添加新消息
@@ -2285,7 +2058,7 @@ UINavigationControllerDelegate>
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"text" Type:@"chat" Payload:payloadStr];
 }
 
-//发送文本消息
+#pragma mark 发送文本消息
 -(void)sendMsg:(NSString *)message
 {
     NSString* nowTime = [GameCommon getCurrentTime];
@@ -2305,7 +2078,7 @@ UINavigationControllerDelegate>
     [self refreWX];
 }
 
-//发送Xmpp消息
+#pragma mark 发送Xmpp消息
 -(void)sendMessage:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to MsgType:(NSString*)msgType FileType:(NSString*)fileTyp Type:(NSString*)type Payload:(NSString*)payloadStr
 {
     NSXMLElement *mes = [self createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
@@ -2318,13 +2091,13 @@ UINavigationControllerDelegate>
     [self.appDel.xmppHelper sendMessage:mes];
 }
 
-//更新消息再数据库的状态
+#pragma mark 更新消息再数据库的状态
 -(void)updateMsgByUuid:(NSMutableDictionary*)messageDict
 {
     NSString *uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
     [DataStoreManager refreshMessageStatusWithId:uuid status:@"2"];
 }
-//刷新消息状态
+#pragma mark 刷新消息状态
 -(void)refreStatusView:(NSString*)status cellIndex:(NSInteger)cellIndex
 {
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
@@ -2332,7 +2105,7 @@ UINavigationControllerDelegate>
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexpath];
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
 }
-//判断是否需要执行第一次打招呼
+#pragma mark 判断是否需要执行第一次打招呼
 -(void)refreWX
 {
     [wxSDArray removeAllObjects];
@@ -2342,7 +2115,7 @@ UINavigationControllerDelegate>
     }
 }
 
-//创建payload
+#pragma mark 创建payload
 -(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage
 {
     NSDictionary * dic = @{@"thumb":thumbImage,
@@ -2353,7 +2126,7 @@ UINavigationControllerDelegate>
                            @"type":@"img"};
     return [dic JSONFragment];
 }
-//生成XML消息文档
+#pragma mark 生成XML消息文档
 -(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
 {
     NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
@@ -2374,7 +2147,7 @@ UINavigationControllerDelegate>
     return mes;
 }
 
-//创建消息对象
+#pragma mark 创建消息对象
 -(NSMutableDictionary*)createMsgDictionary:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid MsgStatus:(NSString *)status
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -2416,38 +2189,12 @@ UINavigationControllerDelegate>
     [self.tView reloadData];
     
 }
-
-
-
-
-#pragma mark -
 #pragma mark 历史聊天记录展示
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    
-    //    if (scrollView == self.tView) {
-    //
-    //        CGPoint offsetofScrollView = self.tView.contentOffset;
-    //        NSLog(@"%@", NSStringFromCGPoint(offsetofScrollView));
-    //        if (offsetofScrollView.y < -20) {//向上拉出20个像素高度时加载
-    //
-    //            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    //
-    //                NSArray * array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-    //                for (int i = 0; i < array.count; i++) {
-    //                    [messages insertObject:array[i] atIndex:i];
-    //                }
-    //                [self normalMsgToFinalMsg];
-    //                dispatch_async(dispatch_get_main_queue(), ^{
-    //                    [self.tView reloadData];
-    //                    [self performSelector:@selector(scrollToOldMassageRang:) withObject:array afterDelay:0];
-    //                });
-    //            });
-    //
-    //        }
-    //    }
+
 }
 
-//是否是打招呼  如果改变打招呼则运行
+#pragma mark 是否是打招呼  如果改变打招呼则运行
 -(void)getSayHello
 {
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
@@ -2590,7 +2337,7 @@ UINavigationControllerDelegate>
 
 
 
-//点击图片
+#pragma mark 点击图片
 -(void)lookBigImg:(UITapGestureRecognizer*)sender
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
@@ -2606,7 +2353,7 @@ UINavigationControllerDelegate>
     }];
 }
 
-//长按图片
+#pragma mark 长按图片
 -(void)longPressImg:(UITapGestureRecognizer*)sender
 {
     
