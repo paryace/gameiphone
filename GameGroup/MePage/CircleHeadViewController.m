@@ -127,7 +127,7 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-    m_myTableView.backgroundColor = [UIColor clearColor];
+  //  m_myTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
     
     //顶部图片
@@ -1194,6 +1194,14 @@ typedef enum : NSUInteger {
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
+        if ([KISDictionaryHaveKey(dic, @"id")intValue]==[KISDictionaryHaveKey([m_dataArray objectAtIndex:delCellCount-100], @"id")intValue]) {
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dynamicFromMe_wx"];
+        }
+        
+        
+        
         [m_dataArray removeObjectAtIndex:delCellCount-100];
         [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         [m_myTableView reloadData];
