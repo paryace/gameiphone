@@ -2211,7 +2211,7 @@ UINavigationControllerDelegate>
     else{//如果之前没上传成功,读取本地图片，再次上传
         UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
         
-        [messageDict setObject:@"2" forKey:@"status"];
+        
         [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
         [self updateMsgByUuid:messageDict];
         [self refreStatusView:@"2" cellIndex:cellIndex];
