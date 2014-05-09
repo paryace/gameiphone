@@ -159,7 +159,7 @@ typedef enum : NSUInteger {
     [inputButton setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
     [inputButton setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
     [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    inputButton.frame = CGRectMake(260, 0, 50, 50);
+    inputButton.frame = CGRectMake(260, 0, 53, 50);
     [inPutView bringSubviewToFront:inputButton];
     [inPutView addSubview:inputButton];
     
@@ -173,7 +173,7 @@ typedef enum : NSUInteger {
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if(self.theEmojiView.hidden == NO){
         self.theEmojiView.hidden = YES;
-        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        [self autoMovekeyBoard:0];
         self.commentInputType = CommentInputTypeKeyboard;
         inputButton.selected = NO;
     }
