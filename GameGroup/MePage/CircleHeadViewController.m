@@ -981,6 +981,7 @@ typedef enum : NSUInteger {
         
     NSNumber *number = [NSNumber numberWithFloat:[KISDictionaryHaveKey(dict, @"cellHieght")floatValue]];
     [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];//以动态id为键存放每个cell的高度到集合里
+        NSLog(@"cascsaca---%f",currnetY);
     return currnetY;
     currnetY =0;
     }
@@ -1220,7 +1221,6 @@ typedef enum : NSUInteger {
 -(void)zanWithCircle:(CircleHeadCell *)myCell
 {
     NSLog(@"赞");
-    
     NSDictionary *zanDic= [m_dataArray objectAtIndex:myCell.tag-100];
     myCell.menuImageView.hidden = YES;
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
@@ -1229,10 +1229,11 @@ typedef enum : NSUInteger {
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:@"" forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
-
+    
+    
     for (NSMutableDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
-            
+
             NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
             int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
              NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
@@ -1242,6 +1243,13 @@ typedef enum : NSUInteger {
                 return;
             }
             if ([isZan intValue]==0) {//假如是未赞状态
+                if (commentNum<=0) {
+                    float temphight=[[cellhightarray objectForKey:KISDictionaryHaveKey(zanDic, @"id")]floatValue];
+                    temphight+=30;
+                    NSNumber *number = [NSNumber numberWithFloat:temphight];
+                    [cellhightarray removeObjectForKey:KISDictionaryHaveKey(zanDic, @"id")];
+                    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(zanDic, @"id")];
+                }
                 [arr insertObject:commentUser atIndex:0];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
@@ -1254,6 +1262,13 @@ typedef enum : NSUInteger {
                 //请求网络点赞
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
             }else{//假如是已经赞的状态
+                if (commentNum==1) {
+                    float temphight=[[cellhightarray objectForKey:KISDictionaryHaveKey(zanDic, @"id")]floatValue];
+                    temphight-=30;
+                    NSNumber *number = [NSNumber numberWithFloat:temphight];
+                    [cellhightarray removeObjectForKey:KISDictionaryHaveKey(zanDic, @"id")];
+                    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(zanDic, @"id")];
+                }
                 [arr removeObject:commentUser];
                 [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
                 [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
