@@ -12,7 +12,7 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "UserManager.h"
-#import "OHASBasicHTMLParser_SmallEmoji.h"
+
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -528,14 +528,17 @@ typedef enum : NSUInteger {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    float heigth = [ReplyCell getContentHeigthWithStr:KISDictionaryHaveKey([m_dataReply objectAtIndex:indexPath.row], @"msg")] + 30;
-    NSLog(@"%f",heigth);
+    
+    ReplyCell *cell = (ReplyCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
+    float heigth = cell.commentLabel.frame.size.height + 35;
+
     return heigth < 60 ? 60 : heigth;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary* tempDic = [m_dataReply objectAtIndex:indexPath.row];
+     NSLog(@"cellForRowAtIndexPath: %d",indexPath.row);
+    NSMutableDictionary* tempDic = [m_dataReply objectAtIndex:indexPath.row];
     
     static NSString *identifier = @"myCell";
     ReplyCell *cell = (ReplyCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -559,34 +562,37 @@ typedef enum : NSUInteger {
     cell.nickNameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic,@"commentUser"), @"nickname") ;
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
     
-    NSMutableAttributedString* commentStr;
+    NSString* commentStr;
     if ([[tempDic allKeys]containsObject:@"destUser"]) {
-        commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:[NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")]];
-        NSLog(@"1---->%@",commentStr);
-        cell.commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
-
-
+        commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
+        cell.commentStr = commentStr;
     }else{
-    commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:KISDictionaryHaveKey(tempDic, @"comment")];
-        cell.commentStr = KISDictionaryHaveKey(tempDic, @"comment");
-        NSLog(@"2---->%@",commentStr);
+        commentStr = KISDictionaryHaveKey(tempDic, @"comment");
+        cell.commentStr = commentStr;
 
     }
-    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 0.0f;
-    [commentStr setParagraphStyle:paragraphStyle];
-    [commentStr setFont:[UIFont systemFontOfSize:12]];
     
-    cell.commentLabel.attributedText = commentStr;
-
-   // NSLog(@"%@",commentStr);
+    [cell.commentLabel setEmojiText:cell.commentStr];
+    
+    //计算高度, 刷新Cell
+    if([[tempDic allKeys]containsObject:@"commentCellHeight"])
+    {
+        float height = [KISDictionaryHaveKey(tempDic, @"commentCellHeight") floatValue];
+        cell.commentLabel.frame = CGRectMake(65, 28, 245, height);
+    }
+    else{
+        CGSize sizeThatFits = [cell.commentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
+        float height= sizeThatFits.height;
+        cell.commentLabel.frame = CGRectMake(65, 28, 245, height);
+        //纪录下高度
+        NSNumber* cellHeight = [NSNumber numberWithFloat:height];
+        [tempDic setObject:cellHeight forKey:@"commentCellHeight"];
+    }
     
     cell.rowIndex = indexPath.row;
     cell.myDelegate = self;
     
-    [cell refreshCell];
+
     return cell;
 }
 

@@ -7,14 +7,12 @@
 //
 
 #import "ReplyCell.h"
-#import "OHASBasicHTMLParser.h"
 
 @implementation ReplyCell
 
 + (float)getContentHeigthWithStr:(NSString*)contStr
 {
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:contStr];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(250, MAXFLOAT)];
+    CGSize size1 = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
     return size1.height;
 }
 
@@ -44,11 +42,9 @@
         [self.timeLabel setTextColor:[UIColor grayColor]];
         [self addSubview:self.timeLabel];
         
-        self.commentLabel = [[OHAttributedLabel alloc] initWithFrame:CGRectMake(65, 28, 250, 20)];
-        //self.commentLabel.numberOfLines = 0;
-         self.commentLabel.delegate = self;
-        [self.commentLabel setTextAlignment:NSTextAlignmentLeft];
+        self.commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(65, 28, 245, 20)];
         [self.commentLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
+        self.commentLabel.numberOfLines = 0;
         [self.commentLabel setBackgroundColor:[UIColor clearColor]];
         [self.commentLabel setTextColor:kColorWithRGB(153, 153, 153, 1.0)];
         [self addSubview:self.commentLabel];
@@ -58,8 +54,7 @@
 
 - (void)refreshCell
 {
-    float hight=[ReplyCell getContentHeigthWithStr:self.commentStr];
-    self.commentLabel.frame = CGRectMake(65, 28, 250,hight);
+    
 }
 
 - (void)headButtonClick
@@ -74,34 +69,5 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-}
--(BOOL)attributedLabel:(OHAttributedLabel *)attributedLabel shouldFollowLink:(NSTextCheckingResult *)linkInfo
-{
-    //	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
-	[attributedLabel setNeedsRecomputeLinksInText];
-	
-    if ([[UIApplication sharedApplication] canOpenURL:linkInfo.extendedURL])
-    {
-        // use default behavior
-        return YES;
-    }
-    else
-    {
-        switch (linkInfo.resultType) {
-            case NSTextCheckingTypeAddress:
-                NSLog(@"%@",[linkInfo.addressComponents description]);
-                break;
-            case NSTextCheckingTypeDate:
-                NSLog(@"%@",[linkInfo.date description]);
-                break;
-            case NSTextCheckingTypePhoneNumber:
-                NSLog(@"%@",linkInfo.phoneNumber);
-                break;
-            default: {
-                break;
-            }
-        }
-        return NO;
-    }
 }
 @end

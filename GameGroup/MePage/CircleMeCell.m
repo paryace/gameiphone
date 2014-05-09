@@ -7,7 +7,6 @@
 //
 
 #import "CircleMeCell.h"
-#import "OHASBasicHTMLParser.h"
 
 @implementation CircleMeCell
 
@@ -28,10 +27,9 @@
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self addSubview:self.nickNameLabel];
         
-        self.titleLabel = [[OHAttributedLabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
-        self.titleLabel.font = [UIFont systemFontOfSize:13];
-//        self.titleLabel.numberOfLines=0;
-        self.titleLabel.delegate=self;
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
+        self.titleLabel.font = [UIFont systemFontOfSize:14];
+        self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
         
         UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(245 , 10, 65, 60)];
@@ -60,8 +58,8 @@
 }
 + (float)getContentHeigthWithStr:(NSString*)contStr
 {
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:contStr];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(250, MAXFLOAT)];
+
+    CGSize size1 = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(170, MAXFLOAT)];
     return size1.height;
 }
 - (void)refreshCell

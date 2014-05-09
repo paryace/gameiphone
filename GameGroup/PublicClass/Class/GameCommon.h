@@ -11,7 +11,8 @@
 @interface GameCommon : NSObject
 
 @property(nonatomic, assign) BOOL haveNet;//是否有网
-
+@property(nonatomic, strong) NSArray* emoji_array; //用到de表情
+@property(nonatomic, strong) NSMutableDictionary* emoji_dict; //用到de表情字典
 @property(nonatomic, strong) NSMutableDictionary* wow_realms;//英雄联盟服务器 注册、搜索时用
 @property(nonatomic, strong) NSMutableArray* wow_clazzs;//职业
 

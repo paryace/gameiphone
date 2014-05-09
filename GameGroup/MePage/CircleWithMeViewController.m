@@ -13,7 +13,7 @@
 #import "SendNewsViewController.h"
 #import "MJRefresh.h"
 #import "DSCircleWithMe.h"
-#import "OHASBasicHTMLParser_SmallEmoji.h"
+
 @interface CircleWithMeViewController ()
 {
     UITableView *m_myTableView;
@@ -162,13 +162,12 @@
     
     
     if ([dCircle.myType intValue]==4) {
-//        cell.titleLabel.text = @"赞了该内容";
-        cell.titleLabel.attributedText = [self getNSMutable:@"赞了该内容"];
-        cell.commentStr = @"赞了该内容";
+        NSString *str = @"赞了该内容";
+        cell.titleLabel.text = str;
+        cell.commentStr = str;
     }
     else if ([dCircle.myType intValue]==5||[dCircle.myType intValue]==7){
-//        cell.titleLabel.text =dCircle.comment;
-        cell.titleLabel.attributedText = [self getNSMutable:dCircle.comment];
+        [cell.titleLabel setEmojiText:dCircle.comment];
         cell.commentStr=dCircle.comment;
     }
     
@@ -177,18 +176,6 @@
     [cell refreshCell];
     return cell;
 }
--(NSMutableAttributedString*) getNSMutable:(NSString*)str
-{
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:str];
-    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 0.0f;
-    [commentStr setParagraphStyle:paragraphStyle];
-    [commentStr setFont:[UIFont systemFontOfSize:12]];
-    return commentStr;
-}
-
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];

@@ -16,6 +16,7 @@
 static GameCommon *my_gameCommon = NULL;
 
 @synthesize wow_realms;
+@synthesize emoji_array;
 
 - (id)init
 {
@@ -26,6 +27,18 @@ static GameCommon *my_gameCommon = NULL;
         
         self.wow_realms = [NSMutableDictionary dictionaryWithCapacity:1];
         self.wow_clazzs = [NSMutableArray arrayWithCapacity:1];
+        
+        //初始化表情
+        NSString *path = [[NSBundle mainBundle] bundlePath];
+        NSString *finalPath = [path stringByAppendingPathComponent:@"EmojiList.plist"];
+        self.emoji_array = [NSArray arrayWithContentsOfFile:finalPath];
+        self.emoji_dict = [[NSMutableDictionary alloc]init];
+        for (int i =0; i<emoji_array.count; i++) {
+            NSDictionary *dic = emoji_array[i];
+            NSString *emoji = KISDictionaryHaveKey(dic, @"emoji");
+            NSString *thekey = KISDictionaryHaveKey(dic, @"thekey");
+            [self.emoji_dict setValue:emoji forKey:thekey];
+        }
     }
     return self;
 }

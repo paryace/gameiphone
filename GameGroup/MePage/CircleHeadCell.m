@@ -221,39 +221,21 @@ static CGFloat const kLabelVMargin = 10;
         NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str;
     if ([[dict allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font> 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }else{
-        str =[NSString stringWithFormat:@"<font color=\"#455ca8\">%@</font>: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
     }
 
       cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
       nickNameLenght=[cell.comNickNameStr length];
             
         cell.commentStr =str;
-    
-    if (![[dict allKeys]containsObject:@"formatedComment"]) {
-        NSAttributedString* formatedCommentStr =[CommentCell GetAttributedCommentWithStr:str];
-        [dict setObject:formatedCommentStr forKey:@"formatedComment"];
-        cell.commentContLabel.attributedText = formatedCommentStr;
-    }
-    else
-    {
-        cell.commentContLabel.attributedText = KISDictionaryHaveKey(dict,@"formatedComment");
-    }
-    
-    
-    
-    
+    [cell.commentContLabel setEmojiText:str];
     //创建昵称的隐形按钮
-//    NSAttributedString *attrStr =commentStr;
-//    CGRect commentrect = [attrStr boundingRectWithSize:CGSizeMake(245, MAXFLOAT) options:NSStringDrawingUsesFontLeading context:nil];
-//    NSLog(@"comment size------%f, %f",commentrect.size.width,commentrect.size.height);
-    NSLog(@"comment framesize------%f, %f",cell.commentContLabel.frame.size.width,cell.commentContLabel.frame.size.height);
-
     [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
     
     if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
-        CGSize size1 = [cell.commentContLabel.attributedText sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
+        CGSize size1 = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
         [dict setObject:@(size1.height+5) forKey:@"commentCellHieght"];
         cell.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
     }
@@ -293,11 +275,7 @@ static CGFloat const kLabelVMargin = 10;
     }else{
     str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
      }
-    
-    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:str];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
-    
-    //CGSize  size = [CommentCell getCellHeigthWithStr:str];
+          CGSize size1 = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
     return size1.height+5;
     str =nil;
     }
@@ -339,12 +317,12 @@ static CGFloat const kLabelVMargin = 10;
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr
 {
-    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
 

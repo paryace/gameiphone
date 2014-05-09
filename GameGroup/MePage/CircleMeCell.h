@@ -9,13 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
-#import "OHAttributedLabel.h"
-@interface CircleMeCell : UITableViewCell<OHAttributedLabelDelegate>
+#import "PBEmojiLabel.h"
+@interface CircleMeCell : UITableViewCell
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
 @property(nonatomic,strong)UILabel *nickNameLabel;
 @property(nonatomic,strong)UILabel *contentsLabel;
 @property(nonatomic,strong)EGOImageView *contentImageView;
-@property(nonatomic,strong)OHAttributedLabel *titleLabel;
+@property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,copy)NSString *commentStr;
 

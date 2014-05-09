@@ -15,7 +15,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        emojis = [Emojis allEmoji];
         [self showEmojiScrollView:ifWith];
+        
     }
     return self;
 }
@@ -97,7 +99,8 @@
 }
 -(void)emojiView
 {
-    for (int n = 0; n <=84; n++) {
+    
+    for (int n = 0; n <=18; n++) {
         UIButton *btn = [[UIButton alloc]init];
         if (n<28) {
             [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7), (n/7+1)*12+30*(n/7), 30, 30)];
@@ -107,24 +110,29 @@
         else
             [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+640, ((n-56)/7+1)*12+30*((n-56)/7), 30, 30)];
         [btn setBackgroundColor:[UIColor clearColor]];
-        NSString * emojiStr = n+1>=10?[NSString stringWithFormat:@"0%d",n+1]:[NSString stringWithFormat:@"00%d",n+1];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"biaoqing%@.png",emojiStr]] forState:UIControlStateNormal];
+        [btn.titleLabel setFont:[UIFont fontWithName:@"AppleColorEmoji" size:29.0]];
+        [btn setTitle: [emojis objectAtIndex:n] forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(emojiButtonPress:) forControlEvents:UIControlEventTouchUpInside];
         [btn setTag:n];
         
         [m_EmojiScrollView addSubview:btn];
     }
+    
+
 }
 -(void)emojiButtonPress:(id)sender
 {
 	//获取对应的button
 	UIButton *selectedButton = (UIButton *) sender;
 	int  n = selectedButton.tag;
-	//根据button的tag获取对应的图片名
-	NSString *facefilePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"emotionThird.plist"];
-	NSDictionary *m_pEmojiDic = [[NSDictionary alloc] initWithContentsOfFile:facefilePath];
-	NSString *i_transCharacter = [m_pEmojiDic objectForKey:[NSString stringWithFormat:@"%d",n+1]];
-    [self.delegate selectedEmoji:[NSString stringWithFormat:@"[%@] ",i_transCharacter]];
+	//根据button的tag获取对应的文字名
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSString *finalPath = [path stringByAppendingPathComponent:@"EmojiList.plist"];
+    NSArray *arrayEmoji = [NSArray arrayWithContentsOfFile:finalPath];
+    NSDictionary *dic = arrayEmoji[n];
+    NSString *thekey = KISDictionaryHaveKey(dic, @"thekey");
+    
+    [self.delegate selectedEmoji:[NSString stringWithFormat:@"%@ ",thekey]];
     //提示文字标签隐藏
 	//判断输入框是否有内容，追加转义字符
 //	if (self.textView.text == nil) {

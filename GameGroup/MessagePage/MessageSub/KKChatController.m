@@ -12,7 +12,6 @@
 #import "AppDelegate.h"
 #import "XMPPHelper.h"
 #import "JSON.h"
-#import "HeightCalculate.h"
 #import "KKNewsCell.h"
 #import "OnceDynamicViewController.h"
 #import "ActivateViewController.h"
@@ -554,7 +553,8 @@ UINavigationControllerDelegate>
             cell = [[KKMessageCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.myChatCellDelegate = self;
-        cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
+        NSString* msg = KISDictionaryHaveKey(dict, @"msg");
+        [cell.messageContentView setEmojiText:msg];
         
         CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
                                  [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
@@ -1061,8 +1061,7 @@ UINavigationControllerDelegate>
     switch (kkChatMsgType) {
         case KKChatMsgTypeText:
         {
-            NSMutableAttributedString* mas =[self getNSMutable:message];
-            CGSize size = [mas sizeConstrainedToSize:CGSizeMake(200, CGFLOAT_MAX)];
+            CGSize size = [message sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, MAXFLOAT)];
             NSNumber * width = [NSNumber numberWithFloat:size.width];
             NSNumber * height = [NSNumber numberWithFloat:size.height];
             array= [NSArray arrayWithObjects:width,height, nil];
@@ -1114,15 +1113,17 @@ UINavigationControllerDelegate>
 //格式化的文字（带表情的样式）
 -(NSMutableAttributedString*) getNSMutable:(NSString*)str
 {
-    NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:str];
-    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-    paragraphStyle.firstLineHeadIndent = 0.f;
-    paragraphStyle.lineSpacing = 5.f;
-    [mas setParagraphStyle:paragraphStyle];
-    [mas setFont:[UIFont systemFontOfSize:15]];
-    [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
+    NSMutableAttributedString* mas = [[NSMutableAttributedString alloc]initWithString:str];
+//    不再使用OHASBasicHTMLParser来显示表情
+//    NSMutableAttributedString* mas = [OHASBasicHTMLParser attributedStringByProcessingMarkupInString:str];
+//    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
+//    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
+//    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
+//    paragraphStyle.firstLineHeadIndent = 0.f;
+//    paragraphStyle.lineSpacing = 5.f;
+//    [mas setParagraphStyle:paragraphStyle];
+//    [mas setFont:[UIFont systemFontOfSize:15]];
+//    [mas setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
     return mas;
 }
 

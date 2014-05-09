@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Emojis.h"
 @protocol EmojiViewDelegate<NSObject>
 -(NSString *)selectedEmoji:(NSString *)ssss;
 -(void)deleteEmojiStr;
@@ -17,6 +18,7 @@
     UIScrollView *m_EmojiScrollView;
     UIPageControl *m_Emojipc;
     UIView * emojiBGV;
+    NSArray *emojis;
 }
 - (id)initWithFrame:(CGRect)frame WithSendBtn:(BOOL)ifWith;
 @property (nonatomic,assign)id<EmojiViewDelegate>delegate;

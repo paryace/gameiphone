@@ -16,7 +16,7 @@
 #import "TestViewController.h"
 #import "MyProfileViewController.h"
 #import "selectContactPage.h"
-#import "OHASBasicHTMLParser.h"
+#import "PBEmojiLabel.h"
 #import "EmojiView.h"
 #import "KKMessageCell.h"
 #import "KKChatCell.h"

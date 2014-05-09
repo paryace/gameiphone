@@ -7,7 +7,7 @@
 //
 
 #import "CommentCell.h"
-#import "OHASBasicHTMLParser_SmallEmoji.h"
+
 
 @implementation CommentCell
 
@@ -23,12 +23,11 @@
         [self.contentView addSubview:self.nicknameButton];
         self.nicknameButton.hidden = YES;
         
-        self.commentContLabel = [[OHAttributedLabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
-        self.commentContLabel.delegate = self;
+        self.commentContLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
         self.commentContLabel.font = [UIFont systemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
         self.commentContLabel.textColor = [UIColor grayColor];
-        self.commentContLabel.textAlignment=NSTextAlignmentCenter;
+        self.commentContLabel.textAlignment=NSTextAlignmentLeft;
         [self.contentView addSubview:self.commentContLabel];
     }
     return self;
@@ -45,8 +44,6 @@
 	if (commentstrSize.height < bounds.size.height)
 	{
 		// the lines of text are centered in the bounds, so adjust the output point
-//		CGFloat boundsMidY = CGRectGetMidY(bounds);
-//		CGFloat textMidY = commentstrSize.height / 2.0;
 		outputPoint.y = commentstrSize.height-10;
 	}
     UIFont *font = self.commentContLabel.font;
@@ -71,16 +68,13 @@
 
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr
 {
-    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:contStr];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
-    NSLog(@"%f, %f",size1.width, size1.height);
+    CGSize size1 = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
     return size1;
 }
 
 -(void)refreshsCell
 {
-    NSAttributedString* commentStr =[CommentCell GetAttributedCommentWithStr:self.commentStr];
-    CGSize size1 = [commentStr sizeConstrainedToSize:CGSizeMake(245, MAXFLOAT)];
+    CGSize size1 = [self.commentStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
     self.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
 }
 - (void)awakeFromNib
@@ -94,49 +88,4 @@
 
     // Configure the view for the selected state
 }
--(BOOL)attributedLabel:(OHAttributedLabel *)attributedLabel shouldFollowLink:(NSTextCheckingResult *)linkInfo
-{
-    //	[self.visitedLinks addObject:objectForLinkInfo(linkInfo)];
-	[attributedLabel setNeedsRecomputeLinksInText];
-	
-    if ([[UIApplication sharedApplication] canOpenURL:linkInfo.extendedURL])
-    {
-        // use default behavior
-        return YES;
-    }
-    else
-    {
-        switch (linkInfo.resultType) {
-            case NSTextCheckingTypeAddress:
-                NSLog(@"%@",[linkInfo.addressComponents description]);
-                break;
-            case NSTextCheckingTypeDate:
-                NSLog(@"%@",[linkInfo.date description]);
-                break;
-            case NSTextCheckingTypePhoneNumber:
-                NSLog(@"%@",linkInfo.phoneNumber);
-                break;
-            default: {
-                break;
-            }
-        }
-        return NO;
-    }
-}
-
-+(NSMutableAttributedString*)GetAttributedCommentWithStr:(NSString*)Str;
-{
-    
-    NSMutableAttributedString* commentStr = [OHASBasicHTMLParser_SmallEmoji attributedStringByProcessingMarkupInString:Str];
-    OHParagraphStyle* paragraphStyle = [OHParagraphStyle defaultParagraphStyle];
-    paragraphStyle.textAlignment = kCTJustifiedTextAlignment;
-    paragraphStyle.lineBreakMode = kCTLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 0.0f;
-    [commentStr setParagraphStyle:paragraphStyle];
-    [commentStr setFont:[UIFont systemFontOfSize:12]];
-    [commentStr setTextAlignment:kCTTextAlignmentLeft lineBreakMode:kCTLineBreakByWordWrapping];
-    // [commentStr addAttribute:NSForegroundColorAttributeName value: UIColorFromRGBA(0x455ca8, 1) range:NSMakeRange(0,nickNameLenght)];
-    return commentStr;
-}
 @end
-
