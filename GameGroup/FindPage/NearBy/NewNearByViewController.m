@@ -10,15 +10,19 @@
 #import "NearByPhotoCell.h"
 #import "LocationManager.h"
 #import "TestViewController.h"
+#import "MJRefresh.h"
 @interface NewNearByViewController ()
 {
     UICollectionView *m_photoCollectionView;
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
     UITableView *m_myTableView;
     UICollectionViewFlowLayout *m_layout;
     NSMutableArray *array;
     NSMutableArray *headImgArray;
     NSString *sexStr ;
     AppDelegate *app;
+    int m_currPageCount;
 }
 @end
 
@@ -38,7 +42,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"附近" withBackButton:YES];
-    
+    m_currPageCount = 0;
     array = [NSMutableArray array];
     headImgArray =[NSMutableArray array];
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -139,11 +143,17 @@
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:@"1" forKey:@"gameid"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
-            [array removeAllObjects];
-            [array addObjectsFromArray:responseObject];
+            if (m_currPageCount ==0) {
+                [array removeAllObjects];
+                [array addObjectsFromArray:responseObject];
+            }else{
+                [array addObjectsFromArray:responseObject];
+            }
+            m_currPageCount ++;
+            [m_footer endRefreshing];
+            [m_header endRefreshing];
             [m_myTableView reloadData];
         }
         
@@ -156,6 +166,9 @@
                 
             }
         }
+        [m_footer endRefreshing];
+        [m_header endRefreshing];
+
         [hud hide:YES];
     }];
     
@@ -226,6 +239,8 @@
         NSMutableString *imgStr = KISDictionaryHaveKey(dict, @"img");
         if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@" "]) {
             cell.photoCollectionView.hidden = YES;
+            cell.timeLabel.frame = CGRectMake(60, size.height+35, 100, 30);
+
         }else{
         NSString *str = [imgStr substringFromIndex:imgStr.length];
         NSString *str2;
@@ -241,6 +256,8 @@
         }
         cell.photoCollectionView.hidden = NO;
         cell.photoCollectionView.frame =  CGRectMake(60,size.height+35, 250, 80*(cell.photoArray.count-1)+80);
+        cell.timeLabel.frame = CGRectMake(60, size.height+35+80*(cell.photoArray.count-1)+80, 100, 30);
+
         }
     }else{
         cell.shareView.hidden = NO;
@@ -254,6 +271,8 @@
         cell.shareView.frame = CGRectMake(60, 40, 250, 50);
         cell.shareImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@/80/80",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
         cell.shareInfoLabel.text = KISDictionaryHaveKey(dict, @"msg");
+        cell.timeLabel.frame = CGRectMake(60, size.height+35+55, 100, 30);
+
     }
     /*
      commentNum = 8;
@@ -276,7 +295,6 @@
      zanNum = 10;
      },
      */
-    cell.timeLabel.frame = CGRectMake(60, 310, 100, 30);
     return cell;
   
 }
@@ -310,7 +328,39 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 340;
+    float currheight = 0.0;
+    NSDictionary *dic = [array objectAtIndex:indexPath.row];
+    NSString *urllink = KISDictionaryHaveKey(dic, @"urlLink");
+    if ([urllink isEqualToString:@""]||[urllink isEqualToString:@" "]) {
+        CGSize size = [NewNearByCell getContentHeigthWithStr:KISDictionaryHaveKey(dic, @"msg")];
+        currheight +=size.height+35;
+        NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"img")];
+        if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@" "]) {
+        
+        }else{
+            NSString *str = [imgStr substringFromIndex:imgStr.length];
+            NSString *str2;
+            if ([str isEqualToString:@","]) {
+                str2= [imgStr substringToIndex:imgStr.length-1];
+            }
+            else {
+                str2 = imgStr;
+            }
+            NSArray *photoArray = [imgStr componentsSeparatedByString:@","];
+            if ([[photoArray lastObject]isEqualToString:@""]||[[photoArray lastObject]isEqualToString:@" "]) {
+                [(NSMutableArray*)photoArray removeLastObject];
+            }
+            currheight +=(photoArray.count-1)*80/3+80;
+        }
+    }
+    else{
+        CGSize size = [NewNearByCell getContentHeigthWithStr:KISDictionaryHaveKey(dic, @"title")];
+        currheight +=size.height+35;
+        currheight+=50;
+    }
+    currheight+=40;
+    return currheight;
+    currheight =0;
 }
 
 #pragma mark --getTime //时间戳方法
@@ -344,6 +394,47 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     return [messageDateStr substringFromIndex:5];
+}
+#pragma mark ---addRefreshHeadview and refreshFootView
+//添加下拉刷新
+-(void)addheadView
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_myTableView;
+    
+    header.scrollView = m_myTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currPageCount = 0;
+        [self getInfoWithNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+    //  [header beginRefreshing];
+    m_header = header;
+}
+
+//添加上拉加载更多
+-(void)addFootView
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_myTableView;
+    
+    footer.scrollView = m_myTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getInfoWithNet];
+    };
+    m_footer = footer;
 }
 
 - (void)didReceiveMemoryWarning

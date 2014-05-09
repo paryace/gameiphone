@@ -849,6 +849,14 @@
                 
                 [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     [hud hide:YES];
+                    
+                    NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
+                    if ([KISDictionaryHaveKey(dic, @"id")intValue]==[self.messageid intValue]) {
+                        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dynamicFromMe_wx"];
+                    }
+                    if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
+                        [self.delegate dynamicListAddOneDynamic:responseObject];
+
                     [self showMessageWindowWithContent:@"删除成功" imageType:0];
                     [self.navigationController popViewControllerAnimated:YES];
                 } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -861,6 +869,28 @@
                     }
                     [hud hide:YES];
                 }];
+            }else{
+                hud.labelText = @"举报中...";
+                [hud show:YES];
+                NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 标题为%@的文章含不良内容，请尽快处理！", self.messageid,m_msg];
+                NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",self.messageid,@"id",@"dynamic",@"type",nil];
+                NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+                [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+                [postDict setObject:@"155" forKey:@"method"];
+                [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+                [postDict setObject:dic forKey:@"params"];
+                
+                [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [hud hide:YES];
+                    [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
+                } failure:^(AFHTTPRequestOperation *operation, id error) {
+                    if ([error isKindOfClass:[NSDictionary class]]) {
+                        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                        {
+                            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                            [alert show];
+                        }}}];
+
             }
         }
     }
@@ -869,180 +899,20 @@
 
 - (void)okButtonClick:(id)sender
 {
-//    if ([sender isKindOfClass:[UIButton class]]) {
-//        UIButton* tempBtn = (UIButton*)sender;
-//
-//        if ([tempBtn.titleLabel.text isEqualToString:@"发表"]) {//发表
-//            [self send];
-//        }
-//        else
-//        {
             ReplyViewController * VC = [[ReplyViewController alloc] init];
             VC.messageid = self.messageid;
             VC.delegate = self;
             VC.isHaveArticle = NO;
             [self.navigationController pushViewController:VC animated:YES];
-//        }
-//    }
 }
 
 - (void)dynamicListJustReload//新评论
 {
     allPL ++;
-//    [inputButton setTitle:[NSString stringWithFormat:@"评论 %d", allPL] forState:UIControlStateNormal];
     commentLabel.text = [NSString stringWithFormat:@"评论 %d", allPL];
     [self.delegate dynamicListJustReload];
 }
 
-//- (void)send
-//{
-//    if (KISEmptyOrEnter(self.textView.text)) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请输入评论内容" buttonTitle:@"确定"];
-//        return;
-//    }
-//    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    
-//    [paramDict setObject:@"5" forKey:@"type"];
-//    [paramDict setObject:self.textView.text forKey:@"msg"];
-//    [paramDict setObject:self.messageid forKey:@"messageid"];
-//    
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"134" forKey:@"method"];
-//    [postDict setObject:[SFHFKeychainUtils getPasswordForUsername:LOCALTOKEN andServiceName:LOCALACCOUNT error:nil] forKey:@"token"];
-//    
-//    [hud show:YES];
-//    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        [hud hide:YES];
-//        [self.textView resignFirstResponder];
-//        self.textView.text = @"";
-//        
-//        allPL ++;//评论数加1
-//        [inputButton setTitle:[NSString stringWithFormat:@"评论 %d", allPL] forState:UIControlStateNormal];
-//
-////        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-////            [self addNewNewsToStore:responseObject];
-////            if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
-////                [self.delegate dynamicListAddOneDynamic:responseObject];
-////        }
-//        ReplyViewController * VC = [[ReplyViewController alloc] init];
-//        VC.messageid = self.messageid;
-//        VC.isHaveArticle = NO;
-//        VC.delegate = self;
-//        [self.navigationController pushViewController:VC animated:YES];
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        if ([error isKindOfClass:[NSDictionary class]]) {
-//            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//            {
-//                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                [alert show];
-//            }
-//        }
-//        [hud hide:YES];
-//    }];
-//}
-
-//- (void)addNewNewsToStore:(NSDictionary*)dic
-//{
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSArray * dMyNews = [DSMyNewsList MR_findAllInContext:localContext];
-//        if ([dMyNews count] >= 20) {
-//            DSMyNewsList* news = [dMyNews lastObject];
-//            [news deleteInContext:localContext];//删除最后面一个
-//        }
-//    }];
-//    [DataStoreManager saveMyNewsWithData:dic];
-//}
-
-//#pragma mark 输入
-//#pragma mark HPExpandingTextView delegate
-////改变键盘高度
-//- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
-//{
-//    float diff = (growingTextView.frame.size.height - height);
-//    
-//	CGRect r = inPutView.frame;
-//    r.size.height -= diff;
-//    r.origin.y += diff;
-//	inPutView.frame = r;
-//}
-//
-//-(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
-//{
-//    [self send];
-////    [self.textView resignFirstResponder];
-//    return YES;
-//}
-//
-//#pragma mark Responding to keyboard events
-//- (void)keyboardWillShow:(NSNotification *)notification {
-//    /*
-//     Reduce the size of the text view so that it's not obscured by the keyboard.
-//     Animate the resize so that it's in sync with the appearance of the keyboard.
-//     */
-//    
-//    NSDictionary *userInfo = [notification userInfo];
-//    
-//    // Get the origin of the keyboard when it's displayed.
-//    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-//    
-//    // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
-//    CGRect keyboardRect = [aValue CGRectValue];
-//    
-//    // Get the duration of the animation.
-//    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
-//    NSTimeInterval animationDuration;
-//    [animationDurationValue getValue:&animationDuration];
-//    
-//    // Animate the resize of the text view's frame in sync with the keyboard's appearance.
-//    [self autoMovekeyBoard:keyboardRect.size.height];
-//    
-//    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
-//}
-//
-//
-//- (void)keyboardWillHide:(NSNotification *)notification {
-//    
-//    NSDictionary* userInfo = [notification userInfo];
-//    
-//    /*
-//     Restore the size of the text view (fill self's view).
-//     Animate the resize so that it's in sync with the disappearance of the keyboard.
-//     */
-//    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
-//    NSTimeInterval animationDuration;
-//    [animationDurationValue getValue:&animationDuration];
-//    
-//    [self autoMovekeyBoard:0];
-//    
-//    [inputButton setTitle:[NSString stringWithFormat:@"评论 %d", allPL] forState:UIControlStateNormal];
-//}
-//
-//-(void) autoMovekeyBoard: (float) h{
-//    
-////    [UIView beginAnimations:nil context:nil];
-////    [UIView setAnimationDuration:0.2];
-//	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
-//    
-//    
-//    CGRect containerFrame = inPutView.frame;
-//    containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
-//	// animations settings
-//    
-//	
-//	// set views with new info
-//	inPutView.frame = containerFrame;
-//    
-//}
-
-#pragma mark touch
-//-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-//{
-//    [super touchesBegan:touches withEvent:event];
-//    [self.textView resignFirstResponder];
-//}
 
 #pragma mark web
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
