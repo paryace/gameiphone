@@ -29,6 +29,8 @@
 
 
 @property(nonatomic,assign)id<NewNearByCellDelegate>myCellDelegate;
+
++ (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 //@property(nonatomic,strong)
 @end
 @protocol NewNearByCellDelegate <NSObject>

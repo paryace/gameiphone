@@ -16,8 +16,6 @@
     if (self) {
         // Initialization code
         
-        
-        
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
         [self.contentView addSubview:self.headImgBtn];
@@ -27,8 +25,6 @@
         self.focusButton.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.focusButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
         [self.contentView addSubview:self.focusButton];
-        
-        
         
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
@@ -54,6 +50,11 @@
         self.shareImageView.placeholderImage = KUIImage(@"placeholder");
         [self.shareView addSubview:self.shareImageView];
 
+        self.shareInfoLabel= [[UILabel alloc]initWithFrame:CGRectMake(50, 5, 190, 40)];
+        self.shareInfoLabel.font = [UIFont systemFontOfSize:12];
+        self.shareInfoLabel.backgroundColor =[UIColor clearColor];
+        self.shareInfoLabel.numberOfLines =2;
+        [self.shareView addSubview:self.shareInfoLabel];
         self.shareView.hidden = YES;
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];
@@ -73,13 +74,17 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];
-        
-
-        
-        
     }
     return self;
 }
+
++ (CGSize)getContentHeigthWithStr:(NSString*)contStr
+{
+    CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 300) lineBreakMode:NSLineBreakByWordWrapping];
+    return cSize;
+}
+
+
 #pragma mark ---collectionviewdelegate datasourse
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
