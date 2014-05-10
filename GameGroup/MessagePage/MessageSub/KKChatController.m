@@ -2375,13 +2375,27 @@ UINavigationControllerDelegate>
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString *str=KISDictionaryHaveKey(payload, @"title");//先加载本地的大图
-    if(str==nil||[str isEqualToString:@""]){//本地大图没有加载网络图片
-        str = KISDictionaryHaveKey(payload, @"msg");
-        if (str==nil||[str isEqualToString:@""]) {//网络图片没有就加载本地的小图
-            str=KISDictionaryHaveKey(payload, @"thumb");
+    NSString *senderId=KISDictionaryHaveKey(dict, @"sender");
+    NSString *str=KISDictionaryHaveKey(payload, @"msg");
+    
+    if ([senderId isEqualToString:@"you"]) {
+        str=KISDictionaryHaveKey(payload, @"title");
+        if(str==nil||[str isEqualToString:@""]){
+            str = KISDictionaryHaveKey(payload, @"msg");
+            if (str==nil||[str isEqualToString:@""]) {
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
+        }
+    }else{
+        str=KISDictionaryHaveKey(payload, @"msg");//先加载网络图片
+        if(str==nil||[str isEqualToString:@""]){//网络图片没有加载本地的大图
+            str = KISDictionaryHaveKey(payload, @"title");
+            if (str==nil||[str isEqualToString:@""]) {//本地大图没有就加载本地的小图
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
         }
     }
+    
     NSLog(@"加载的图片地址：%@",str);
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
