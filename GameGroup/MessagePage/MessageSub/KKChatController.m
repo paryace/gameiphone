@@ -1205,8 +1205,9 @@ UINavigationControllerDelegate>
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString* openImgPath=[self writeImageToFile:thumbimg];
+    NSString* upImagePath=[self writeImageToFile:upImage];
     if (openImgPath!=nil) {
-        [self sendImageMsgD:openImgPath UUID:uuid]; //一条图片消息写到本地
+        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
         [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
     }
     else
@@ -1981,10 +1982,10 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark将发送图片的消息保存数据库
-- (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
+- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
     
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg];
+    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
     NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"2"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [messages addObject:dictionary];
@@ -2039,7 +2040,7 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 发送图片消息
-- (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
+- (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{
     NSLog(@"图片上传成功， 开始发送图片消息+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
     {
@@ -2053,7 +2054,8 @@ UINavigationControllerDelegate>
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
     NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
-    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb];
+    NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
+    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
     [self refreWX];
@@ -2139,10 +2141,10 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 创建payload
--(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage
+-(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
 {
     NSDictionary * dic = @{@"thumb":thumbImage,
-                           @"title":@"",
+                           @"title":bigImagePath,
                            @"shiptype": @"",
                            @"messageid":@"",
                            @"msg":imageId,
@@ -2338,7 +2340,11 @@ UINavigationControllerDelegate>
         self.unReadL.hidden = NO;
         _unreadNo++;
         if (_unreadNo>0) {
-            self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+            if (_unreadNo>99) {
+                self.unReadL.text =@"N+";
+            }else{
+                self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+            }
         }
     }
 }
@@ -2368,9 +2374,14 @@ UINavigationControllerDelegate>
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString *str = KISDictionaryHaveKey(payload, @"msg");
+    NSString *str=KISDictionaryHaveKey(payload, @"title");//先加载本地的大图
+    if(str==nil||[str isEqualToString:@""]){//本地大图没有加载网络图片
+        str = KISDictionaryHaveKey(payload, @"msg");
+        if (str==nil||[str isEqualToString:@""]) {//网络图片没有就加载本地的小图
+            str=KISDictionaryHaveKey(payload, @"thumb");
+        }
+    }
     NSLog(@"加载的图片地址：%@",str);
-    
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
     //photo.isComeFrmeUrl = YES;

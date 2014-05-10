@@ -81,6 +81,8 @@
         [subSC addSubview:act];
         
         NSRange range=[self.imgIDArray[i] rangeOfString:@"<local>"];
+        NSString *docpath = RootDocPath;
+        NSRange docRange = [self.imgIDArray[i] rangeOfString:docpath];
         if (self.isComeFrmeUrl ==NO) {      //不是网页图片
             if (range.location!=NSNotFound) {
                 NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
@@ -90,9 +92,16 @@
                 imageV.image = openPic;
                 [self imageViewLoadedImage:imageV]; //读取图片
             }
-            else
+            else if(docRange.location!=NSNotFound) //本地图片
+            {
+                UIImage *image = [UIImage imageWithContentsOfFile:self.imgIDArray[i]];
+                imageV.image = image;
+                [self imageViewLoadedImage:imageV]; //读取图片
+            }
+            else{
                 imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
             }
+        }
         else{
             imageV.imageURL = [NSURL URLWithString:self.imgIDArray[i]];
         }
