@@ -864,7 +864,7 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    [self contentAnalyzer:dict];
+    [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
         
     //以动态id为键存放每个cell的高度到集合里
@@ -875,9 +875,9 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark Content分析器
-- (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict
+- (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
-    if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue]) {  //如果已经分析过
+    if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
             return contentDict;
     }
     
@@ -887,7 +887,7 @@ typedef enum : NSUInteger {
     cellHeight += 30;
     
     //正文高度
-    if([[contentDict allKeys]containsObject:@"titleLabelHieght"])
+    if([[contentDict allKeys]containsObject:@"titleLabelHieght"] &&!reAnalyzer)
     {
         cellHeight += [KISDictionaryHaveKey(contentDict, @"titleLabelHieght") floatValue];
     }
@@ -918,7 +918,7 @@ typedef enum : NSUInteger {
     }
     
     //图片
-    if([[contentDict allKeys]containsObject:@"imgHieght"])
+    if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
     {
         cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
     }
@@ -972,7 +972,7 @@ typedef enum : NSUInteger {
     }
     
     //评论table
-    if ([[contentDict allKeys]containsObject:@"commentListHieght"]) {
+    if ([[contentDict allKeys]containsObject:@"commentListHieght"] &&!reAnalyzer) {
         cellHeight +=[KISDictionaryHaveKey(contentDict, @"commentListHieght") floatValue];
     }
     else{
@@ -981,13 +981,13 @@ typedef enum : NSUInteger {
         for (int i =0; i<commentsArray.count; i++) {
             NSMutableDictionary *dic = [commentsArray objectAtIndex:i];
             //判断是否是回复某人的评论
-            if([[dic allKeys]containsObject:@"commentCellHieght"]){
+            if([[dic allKeys]containsObject:@"commentCellHieght"] &&!reAnalyzer){
                 float commentCellHeight = [KISDictionaryHaveKey(dic, @"commentCellHieght") floatValue];
                 commHieght +=commentCellHeight;
             }
             else{   //如果没算高度， 算出高度，存起来
                 NSString *str ;
-                if ([[dic allKeys]containsObject:@"commentStr"]) {
+                if ([[dic allKeys]containsObject:@"commentStr"] &&!reAnalyzer) {
                     str =KISDictionaryHaveKey(dic, @"commentStr");
                 }
                 else{
@@ -1410,8 +1410,9 @@ typedef enum : NSUInteger {
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [commentUser setObject:@"" forKey:@"img"];
-    [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
+    [commentUser setObject:nickName forKey:@"nickname"];
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
@@ -1425,27 +1426,21 @@ typedef enum : NSUInteger {
     
    // CGSize size = [[NSString stringWithFormat:@"%@:%@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment] sizeWithFont:[UIFont systemFontOfSize:12] forWidth:245 lineBreakMode:NSLineBreakByCharWrapping];
 
-    CGSize size = [[NSString stringWithFormat:@"%@ %@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment]sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
-    
-    
-    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(size.height+5),@"commentCellHieght", nil];
+ 
+    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
     //将评论添加到数组里、
     int i = -1;
     for (int j = 0;j<m_dataArray.count;j++) {
         NSMutableDictionary *dic = [m_dataArray objectAtIndex:j];
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
-            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
-            float a =[KISDictionaryHaveKey(dic, @"commentListHieght")floatValue];
-            float b =[KISDictionaryHaveKey(dic, @"cellHieght")floatValue];
-            [dic setObject:[NSString stringWithFormat:@"%f",a+size.height+5] forKey:@"commentListHieght"];
-            
-            [dic  setObject:[NSString stringWithFormat:@"%f",b+size.height+5] forKey:@"cellHieght"];
-            
+            //添加赞数
             int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
-            
             [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
             [arr insertObject:dict atIndex:0];
+            dic = [self contentAnalyzer:dic withReAnalyzer:YES];    //分析器强制更新这一条
             i = [m_dataArray indexOfObject:dic];
+            
         }
     }
     if (i>=0&&i<20) {

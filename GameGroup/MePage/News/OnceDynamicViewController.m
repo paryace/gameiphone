@@ -401,7 +401,7 @@
 
 - (void)setButtomView
 {
-    if ([self.urlLink isEqualToString:@""]) {
+    if ([self.urlLink isEqualToString:@""]) {   //如果是动态
 //        UIScrollView* scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 50 - startX - 60)];
 //        scroll.backgroundColor = [UIColor clearColor];
 //        [self.view addSubview:scroll];
@@ -423,6 +423,7 @@
 //        contentView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
         contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         contentView.delegate = self;
+        loadStr = [UILabel getStr:loadStr];
         [contentView loadHTMLString:loadStr baseURL:nil];
         UIScrollView *scroller = [contentView.subviews objectAtIndex:0];//去掉阴影
         if (scroller) {
@@ -435,7 +436,7 @@
         [self.view addSubview:contentView];
 
     }
-    else
+    else    //如果是网页
     {
         mWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 40 - startX - 60-(KISHighVersion_7?0:20))];
 //        mWebView.scalesPageToFit = YES;
