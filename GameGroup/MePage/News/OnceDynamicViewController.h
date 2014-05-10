@@ -10,6 +10,7 @@
 #import "HPGrowingTextView.h"
 #import "TableViewDatasourceDidChange.h"
 #import "selectContactPage.h"
+#import "PBEmojiLabel.h"
 
 @interface OnceDynamicViewController : BaseViewController
 <HPGrowingTextViewDelegate,
