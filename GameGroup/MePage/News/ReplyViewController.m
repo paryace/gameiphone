@@ -588,7 +588,6 @@ typedef enum : NSUInteger {
     
     NSString* commentStr;
     if ([[tempDic allKeys]containsObject:@"destUser"]) {
-
         commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
         cell.commentStr = commentStr;
     }else{

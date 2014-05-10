@@ -69,8 +69,12 @@
 -(id)initWithMessage:(NSMutableDictionary *)msg
    reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self.message = msg;
+//    self.message = msg;
     return [self initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier];
+}
+-(void)setMessageDictionary:(NSMutableDictionary*)msg
+{
+    self.message = msg;
 }
 
 #pragma mark 重连标识 FailImg
@@ -95,13 +99,14 @@
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES;
-        
+        self.activityView.center = point;
+        [self.activityView startAnimating];
         if (![self.cellTimer isValid]) {
             self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mSendTime target:self selector:@selector(stopActivity) userInfo:nil repeats:YES];
             [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
             
-            self.activityView.center = point;
-            [self.activityView startAnimating];
+//            self.activityView.center = point;
+//            [self.activityView startAnimating];
         }
     }
     else if ([status isEqualToString:@"3"])//送达
@@ -159,11 +164,11 @@
 //菊花停止转动
 - (void)stopActivity
 {
-    if ([self.cellTimer isValid]) {
-        [self.cellTimer invalidate];
-        self.cellTimer = nil;
-    }
-    [self.activityView stopAnimating];
+//    if ([self.cellTimer isValid]) {
+//        [self.cellTimer invalidate];
+//        self.cellTimer = nil;
+//    }
+//    [self.activityView stopAnimating];
     
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"0", @"received",nil];
