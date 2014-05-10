@@ -38,6 +38,7 @@
 
 //重连
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status; //在指定位置刷新重连标记
+-(void)setMessageDictionary:(NSMutableDictionary*)msg;
 
 //头像 
 - (void)setHeadImgByMe:(NSString*) myHeadImg; //头像是自己

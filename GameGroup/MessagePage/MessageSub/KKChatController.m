@@ -280,6 +280,7 @@ UINavigationControllerDelegate>
             cell = [[KKNewsCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
         
         CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
                                  [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
@@ -393,6 +394,7 @@ UINavigationControllerDelegate>
                        forControlEvents:UIControlEventTouchUpInside];
             [cell.bgImageView setTag:(indexPath.row+1)];
             cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
             [cell.titleLabel setFrame:CGRectMake(padding + 50,
                                                  33,
                                                  titleSize.width,
@@ -428,6 +430,7 @@ UINavigationControllerDelegate>
             cell = [[KKImgCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
        // cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
         
         CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],[[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
@@ -507,6 +510,7 @@ UINavigationControllerDelegate>
             
             //刷新
             cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
         }
         
         //显示双方聊天的时间
@@ -535,6 +539,7 @@ UINavigationControllerDelegate>
             cell = [[KKMessageCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
         NSString* msg = KISDictionaryHaveKey(dict, @"msg");
         [cell.messageContentView setEmojiText:msg];
         
@@ -630,6 +635,7 @@ UINavigationControllerDelegate>
             
             //刷新
             cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
             
         }
         
@@ -1686,13 +1692,15 @@ UINavigationControllerDelegate>
         if ([status isEqualToString:@"2"]) {//发送中-> 失败
             [DataStoreManager refreshMessageStatusWithId:src_id status:@"0"];//超时
             [dict setObject:@"0" forKey:@"status"];
+            [messages replaceObjectAtIndex:changeRow withObject:dict];
+            [self.tView reloadData];
         }
         else//送达、已读、失败
         {
             [dict setObject:status forKey:@"status"];
+            [messages replaceObjectAtIndex:changeRow withObject:dict];
+            [self refreStatusView:status cellIndex:changeRow];
         }
-        [messages replaceObjectAtIndex:changeRow withObject:dict];
-        [self refreStatusView:status cellIndex:changeRow];
     }
 }
 
@@ -2315,6 +2323,7 @@ UINavigationControllerDelegate>
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
+        [messages setValue:@"4" forKey:@"status"];
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
         [self.tView reloadData];
