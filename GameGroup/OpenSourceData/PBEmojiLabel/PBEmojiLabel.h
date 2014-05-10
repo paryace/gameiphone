@@ -13,4 +13,6 @@
 
 -(void)setEmojiText:(NSString *)emojiString;
 
+//将[嘻嘻]等表情文字，转换成iphone可自己显示的unicode str
++(NSString *)getStr:(NSString *)emojiString;
 @end

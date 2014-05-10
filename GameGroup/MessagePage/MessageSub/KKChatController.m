@@ -1045,7 +1045,8 @@ UINavigationControllerDelegate>
     switch (kkChatMsgType) {
         case KKChatMsgTypeText:
         {
-            CGSize size = [message sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, MAXFLOAT)];
+            NSString *emojiStr = [UILabel getStr:message];
+            CGSize size = [emojiStr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, MAXFLOAT)];
             NSNumber * width = [NSNumber numberWithFloat:size.width];
             NSNumber * height = [NSNumber numberWithFloat:size.height];
             array= [NSArray arrayWithObjects:width,height, nil];
