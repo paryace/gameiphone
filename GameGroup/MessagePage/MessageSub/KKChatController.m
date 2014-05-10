@@ -1112,9 +1112,6 @@ UINavigationControllerDelegate>
     return mas;
 }
 
-
-
-
 //删除controll里缓存的message相关对象
 -(void)deleteFinalMsg
 {
@@ -1206,8 +1203,9 @@ UINavigationControllerDelegate>
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString* openImgPath=[self writeImageToFile:thumbimg];
+    NSString* upImagePath=[self writeImageToFile:upImage];
     if (openImgPath!=nil) {
-        [self sendImageMsgD:openImgPath UUID:uuid]; //一条图片消息写到本地
+        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
         [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
     }
     else
@@ -1239,6 +1237,9 @@ UINavigationControllerDelegate>
 #pragma mark 图片聊天上传图片
 -(void)uploadImage:(UIImage*)image cellIndex:(int)index
 {
+    
+    
+    
     //开启进度条 - 在最后一个ＣＥＬＬ处。
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
@@ -1280,6 +1281,8 @@ UINavigationControllerDelegate>
          });
      }];
 }
+
+
 // 刷新消息状态
 -(void)refreMessageStatus:(int)index Status:(NSString*)status
 {
@@ -1291,17 +1294,15 @@ UINavigationControllerDelegate>
     [messages replaceObjectAtIndex:index withObject:dict];
     [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
+//刷新消息状态
 -(void)refreMessageStatus2:(NSMutableDictionary*)msgDictionary Status:(NSString*)status
 {
     NSString *uuid = KISDictionaryHaveKey(msgDictionary, @"messageuuid");
     NSInteger index = [self getMsgRowWithId:uuid];
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
-    NSMutableDictionary *dict = [messages objectAtIndex:index];
-    [dict setObject:status forKey:@"status"];
-    [DataStoreManager refreshMessageStatusWithId:uuid status:status];
-    [messages replaceObjectAtIndex:index withObject:dict];
-    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    [self refreMessageStatus:index Status:status];
 }
+
+
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     if (!myActive) {
@@ -1982,65 +1983,17 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark将发送图片的消息保存数据库
-- (void)sendImageMsgD:(NSString *)imageMsg UUID:(NSString *)uuid{
+- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
     
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg];
+    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
     NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"2"];
     [dictionary setObject:payloadStr forKey:@"payload"];
-    [messages addObject:dictionary];
-    [self newMsgToArray:dictionary];
-    [DataStoreManager storeMyMessage:dictionary];
-    //重新刷新tableView
-    [self.tView reloadData];
-    if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    }
-}
-
-#pragma mark 重发图片消息
-- (void)reSendimageMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
-{
-    NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
-    NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
-    NSString *thumb = KISDictionaryHaveKey(payloads, @"thumb");
-    if ([self isReUploadImage:thumb]==YES) {//如果已经成功 ，把message再发一遍
-        if (imageUrl.length==0)
-        {
-            return;
-        }
-        [messageDict setObject:@"2" forKey:@"status"];
-        [self reSendMsg:messageDict];
-    }
-    else{//如果之前没上传成功,读取本地图片，再次上传
-        UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
-        
-        
-        [messages replaceObjectAtIndex:cellIndex withObject:messageDict];
-        [self updateMsgByUuid:messageDict];
-        [self refreStatusView:@"2" cellIndex:cellIndex];
-        NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
-        [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexpath] withRowAnimation:UITableViewRowAnimationNone];
-        
-        [self uploadImage:imgFromUrl cellIndex:cellIndex];
-    }
-}
-/*
- * 判端图片是否上传成功
- */
--(BOOL)isReUploadImage:(NSString*)thumb
-{
-    if (thumb&&thumb.length>0)
-    {
-        return NO;
-    }
-    else{
-        return YES;
-    }
+    [self addNewMessageToTable:dictionary];
 }
 
 #pragma mark 发送图片消息
-- (void)sendImageMsg:(NSString *)imageMsg UUID:(NSString *)uuid{
+- (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{
     NSLog(@"图片上传成功， 开始发送图片消息+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
     {
@@ -2054,12 +2007,35 @@ UINavigationControllerDelegate>
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
     NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
-    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb];
+    NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
+    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
     [self refreWX];
 }
-
+#pragma mark 发送文本消息
+-(void)sendMsg:(NSString *)message
+{
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
+    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
+    NSMutableDictionary *dictionary=[self createMsgDictionary:message NowTime:nowTime UUid:uuid MsgStatus:@"2"];
+    [self addNewMessageToTable:dictionary];
+    [self sendMessage:message NowTime:nowTime UUid:uuid From:from To:to MsgType:@"normalchat" FileType:@"text" Type:@"chat" Payload:nil];
+    [self refreWX];
+}
+#pragma mark 添加一条新的消息到列表
+-(void)addNewMessageToTable:(NSMutableDictionary*)dictionary
+{
+    [messages addObject:dictionary];//添加到当前消息集合 内存
+    [self newMsgToArray:dictionary];//计算高度，添加高度到内存
+    [DataStoreManager storeMyMessage:dictionary];//添加到数据库
+    [self.tView reloadData];//刷新列表
+    if (messages.count>0) {//定位到列表最后
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
+}
 #pragma mark 重新发文本消息
 - (void)reSendMsg:(NSMutableDictionary*)messageDict
 {
@@ -2082,26 +2058,39 @@ UINavigationControllerDelegate>
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"text" Type:@"chat" Payload:payloadStr];
 }
 
-#pragma mark 发送文本消息
--(void)sendMsg:(NSString *)message
+#pragma mark 重发图片消息
+- (void)reSendimageMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
 {
-    NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSMutableDictionary *dictionary=[self createMsgDictionary:message NowTime:nowTime UUid:uuid MsgStatus:@"2"];
-    [messages addObject:dictionary];
-    [self newMsgToArray:dictionary];
-    [DataStoreManager storeMyMessage:dictionary];
-    //重新刷新tableView
-    [self.tView reloadData];
-    if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
+    NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
+    NSString *thumb = KISDictionaryHaveKey(payloads, @"thumb");
+    if ([self isReUploadImage:thumb]==YES) {//如果已经成功 ，把message再发一遍
+        if (imageUrl.length==0)
+        {
+            return;
+        }
+        [messageDict setObject:@"2" forKey:@"status"];
+        [self reSendMsg:messageDict];
     }
-    [self sendMessage:message NowTime:nowTime UUid:uuid From:from To:to MsgType:@"normalchat" FileType:@"text" Type:@"chat" Payload:nil];
-    [self refreWX];
+    else{//如果之前没上传成功,读取本地图片，再次上传
+        UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
+        [self refreMessageStatus2:messageDict Status:@"2"];
+        [self uploadImage:imgFromUrl cellIndex:cellIndex];
+    }
 }
-
+/*
+ * 判端图片是否上传成功
+ */
+-(BOOL)isReUploadImage:(NSString*)thumb
+{
+    if (thumb&&thumb.length>0)
+    {
+        return NO;
+    }
+    else{
+        return YES;
+    }
+}
 #pragma mark 发送Xmpp消息
 -(void)sendMessage:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to MsgType:(NSString*)msgType FileType:(NSString*)fileTyp Type:(NSString*)type Payload:(NSString*)payloadStr
 {
@@ -2140,10 +2129,10 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 创建payload
--(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage
+-(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
 {
     NSDictionary * dic = @{@"thumb":thumbImage,
-                           @"title":@"",
+                           @"title":bigImagePath,
                            @"shiptype": @"",
                            @"messageid":@"",
                            @"msg":imageId,
@@ -2339,7 +2328,11 @@ UINavigationControllerDelegate>
         self.unReadL.hidden = NO;
         _unreadNo++;
         if (_unreadNo>0) {
-            self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+            if (_unreadNo>99) {
+                self.unReadL.text =@"N+";
+            }else{
+                self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+            }
         }
     }
 }
@@ -2369,9 +2362,28 @@ UINavigationControllerDelegate>
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString *str = KISDictionaryHaveKey(payload, @"msg");
-    NSLog(@"加载的图片地址：%@",str);
+    NSString *senderId=KISDictionaryHaveKey(dict, @"sender");
+    NSString *str=KISDictionaryHaveKey(payload, @"msg");
     
+    if ([senderId isEqualToString:@"you"]) {
+        str=KISDictionaryHaveKey(payload, @"title");
+        if(str==nil||[str isEqualToString:@""]){
+            str = KISDictionaryHaveKey(payload, @"msg");
+            if (str==nil||[str isEqualToString:@""]) {
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
+        }
+    }else{
+        str=KISDictionaryHaveKey(payload, @"msg");//先加载网络图片
+        if(str==nil||[str isEqualToString:@""]){//网络图片没有加载本地的大图
+            str = KISDictionaryHaveKey(payload, @"title");
+            if (str==nil||[str isEqualToString:@""]) {//本地大图没有就加载本地的小图
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
+        }
+    }
+    
+    NSLog(@"加载的图片地址：%@",str);
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
     //photo.isComeFrmeUrl = YES;

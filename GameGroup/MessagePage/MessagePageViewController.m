@@ -263,37 +263,45 @@
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {
-    //获取所有聊过天人的id （你对他）
-    [allSayHelloArray removeAllObjects];
-    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]
-                                           objectForKey:@"sayHello_wx_info_id"]];
-    
-    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
-    allMsgArray = [array mutableCopy];
-    
-    NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
-    sayhellocoArray = [array1 mutableCopy];
-    
-    for (int i = 0; i <allMsgArray.count;i++) {
-        DSThumbMsgs *thumb = [allMsgArray objectAtIndex:i];
-        if ([thumb.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
-            if (sayhellocoArray.count==0) {
-                [allMsgArray removeObject:thumb];
-            }else{
-            thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
-            thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
-            
-            }
-        }
+    static dispatch_queue_t loadDealersQueue = NULL;
+    if (!loadDealersQueue) {
+        loadDealersQueue = dispatch_queue_create("com.geelycar.loadactivity.loaddealersqueue", NULL);
     }
     
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
-    [allMsgArray sortUsingDescriptors:sortDescriptors];
-
-    [m_messageTable reloadData];
-    
-    [self displayTabbarNotification];
+    dispatch_async(loadDealersQueue, ^{
+        @autoreleasepool {
+            //获取所有聊过天人的id （你对他）
+            [allSayHelloArray removeAllObjects];
+            [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+            
+            NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
+            allMsgArray = [array mutableCopy];
+            
+            NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
+            sayhellocoArray = [array1 mutableCopy];
+            for (int i = 0; i <allMsgArray.count;i++) {
+                DSThumbMsgs *thumb = [allMsgArray objectAtIndex:i];
+                if ([thumb.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
+                    if (sayhellocoArray.count==0) {
+                        [allMsgArray removeObject:thumb];
+                    }else{
+                        thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
+                        thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
+                    }
+                }
+            }
+            
+            NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
+            NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
+            [allMsgArray sortUsingDescriptors:sortDescriptors];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [m_messageTable reloadData];
+                [self displayTabbarNotification];
+            });
+        }
+        
+    });
 }
 -(void)displayTabbarNotification
 {
