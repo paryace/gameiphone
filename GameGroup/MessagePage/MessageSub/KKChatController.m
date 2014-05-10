@@ -1237,26 +1237,23 @@ UINavigationControllerDelegate>
 #pragma mark 图片聊天上传图片
 -(void)uploadImage:(UIImage*)image cellIndex:(int)index
 {
-    
-    
-    
     //开启进度条 - 在最后一个ＣＥＬＬ处。
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-    cell.progressView.progress = 0;
     cell.progressView.hidden = NO;
+    cell.progressView.progress = 0.0f;
+    
     [NetManager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
     Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
     {
         @synchronized (self) {
             double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
             dispatch_async(dispatch_get_main_queue(), ^{
-                cell.progressView.progress = progress;
                 NSLog(@"fafafaf-------->>>%f",progress);
+                cell.progressView.progress = progress;
                 if (progress == 1) {
                     cell.progressView.hidden = YES;
                 }
-                
             });
         }
     }
@@ -1700,8 +1697,10 @@ UINavigationControllerDelegate>
         else//送达、已读、失败
         {
             [dict setObject:status forKey:@"status"];
-            [messages replaceObjectAtIndex:changeRow withObject:dict];
-            [self refreStatusView:status cellIndex:changeRow];
+//            [messages replaceObjectAtIndex:changeRow withObject:dict];
+            
+            [self refreMessageStatus2:dict Status:status];
+//            [self refreStatusView:status cellIndex:changeRow];
         }
     }
 }
@@ -1987,7 +1986,7 @@ UINavigationControllerDelegate>
     
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-    NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"2"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"1"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
 }
