@@ -17,3 +17,4 @@ profile
 DerivedData
 .idea/
 GameGroup.xcodeproj
+GameGroup/StartView/ViewController.m
