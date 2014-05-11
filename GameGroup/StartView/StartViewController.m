@@ -48,16 +48,17 @@
     [self firtOpen];
     
     if (iPhone5) {
-        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"start_2.jpg"]];
+        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Default-568h@2x.png"]];
         splashImageView.frame=CGRectMake(0, 0, 320, self.view.frame.size.height);
     }
     else
     {
-        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"start.jpg"]];
+        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Default.png"]];
         splashImageView.frame=CGRectMake(0, 0, 320, self.view.frame.size.height);
     }
     [self.view addSubview:splashImageView];
     [self performSelector:@selector(showLoading:) withObject:nil afterDelay:kStartViewShowTime];
+    
     
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
