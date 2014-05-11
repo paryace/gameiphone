@@ -863,7 +863,7 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    [self contentAnalyzer:dict withReAnalyzer:NO];
+    dict = [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
         
     //以动态id为键存放每个cell的高度到集合里
@@ -905,9 +905,7 @@ typedef enum : NSUInteger {
         else {
             //分享的链接 URL
             NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
-            NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
-            NSLog(@"strTitle:%@",strTitle);
-            NSLog(@"strMsg:%@",strMsg);
+            //NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
             CGSize size1 = [strTitle sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
             NSNumber* titleLabelHieght = [NSNumber numberWithFloat:size1.height];
             [contentDict setObject:titleLabelHieght forKey:@"titleLabelHieght"];

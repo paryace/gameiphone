@@ -43,7 +43,7 @@
     m_EmojiScrollView.pagingEnabled = YES;
     m_EmojiScrollView.showsHorizontalScrollIndicator = NO;
     m_EmojiScrollView.showsVerticalScrollIndicator = NO;
-    [m_EmojiScrollView setContentSize:CGSizeMake(960,253)];//原来是253
+    [m_EmojiScrollView setContentSize:CGSizeMake(640,253)];//原来是253
     m_EmojiScrollView.backgroundColor = [UIColor clearColor];
     m_EmojiScrollView.scrollEnabled = YES;
     [self addSubview:m_EmojiScrollView];
@@ -88,7 +88,7 @@
 	//设置背景颜色
 	m_Emojipc.backgroundColor=[UIColor clearColor];
 	//设置pc页数（此时不会同步跟随显示）
-	m_Emojipc.numberOfPages=3;
+	m_Emojipc.numberOfPages=2;
 	//设置当前页,为第一张，索引为零
 	m_Emojipc.currentPage=0;
 	//添加事件处理，btn点击
@@ -100,17 +100,17 @@
 -(void)emojiView
 {
     
-    for (int n = 0; n <=18; n++) {
+    for (int n = 0; n <=55; n++) {
         UIButton *btn = [[UIButton alloc]init];
         if (n<28) {
             [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7), (n/7+1)*12+30*(n/7), 30, 30)];
         }
         else if(n>=28&&n<56)
             [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+320, ((n-28)/7+1)*12+30*((n-28)/7), 30, 30)];
-        else
-            [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+640, ((n-56)/7+1)*12+30*((n-56)/7), 30, 30)];
+//        else
+//            [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+640, ((n-56)/7+1)*12+30*((n-56)/7), 30, 30)];
         [btn setBackgroundColor:[UIColor clearColor]];
-        [btn.titleLabel setFont:[UIFont fontWithName:@"AppleColorEmoji" size:29.0]];
+        [btn.titleLabel setFont:[UIFont fontWithName:@"AppleColorEmoji" size:30.0]];
         [btn setTitle: [emojis objectAtIndex:n] forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(emojiButtonPress:) forControlEvents:UIControlEventTouchUpInside];
         [btn setTag:n];
