@@ -64,6 +64,9 @@ typedef enum : NSUInteger {
     NSMutableDictionary *cellhightarray;//存放每个Cell的高度
     float offer;
     int height;
+    
+    
+    
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -553,7 +556,6 @@ typedef enum : NSUInteger {
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
-                [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 for (int i =0; i<customArr.count; i++) {
                     [arr addObject:[self contentAnalyzer:customArr[i] withReAnalyzer:NO]];
                 }
@@ -1408,7 +1410,6 @@ typedef enum : NSUInteger {
         senderBnt.selected = NO;
     }
     
-    
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
@@ -1425,10 +1426,6 @@ typedef enum : NSUInteger {
     }else{
         comment = self.textView.text;
     }
-    
-   // CGSize size = [[NSString stringWithFormat:@"%@:%@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment] sizeWithFont:[UIFont systemFontOfSize:12] forWidth:245 lineBreakMode:NSLineBreakByCharWrapping];
-
- 
     NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
     //将评论添加到数组里、
     int i = -1;
@@ -1446,19 +1443,6 @@ typedef enum : NSUInteger {
         }
     }
     if (i>=0&&i<20) {
-//        NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-//        NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-//    NSMutableDictionary *dict1 =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id", nil];
-//        
-//        for (int j = 0;j<array.count;j++) {
-//            NSMutableDictionary *dic = [array objectAtIndex:j];
-//            if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
-//                NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
-//                int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
-//                [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
-//                [arr insertObject:dict1 atIndex:0];
-//            }
-//        }
         [self saveinfoToUserDefaults:m_dataArray];
     }
     [self showMessageWindowWithContent:@"评论成功" imageType:0];
@@ -1659,12 +1643,6 @@ typedef enum : NSUInteger {
 }
 }
 
-//判断是不是数字
-//- (BOOL)isPureInt:(NSString*)string{
-//    NSScanner* scan = [NSScanner scannerWithString:string];
-//    int val;
-//    return[scan scanInt:&val] && [scan isAtEnd];
-//}
 //删除评论
 -(void)delcomment
 {
@@ -1708,18 +1686,11 @@ typedef enum : NSUInteger {
             }
         }
         [hud hide:YES];
-
     }];
-
 }
-
-
-
-
 //上传评论
 -(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
 {
-    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:msgid forKey:@"messageId"];
@@ -1746,7 +1717,6 @@ typedef enum : NSUInteger {
     }
     else{
         [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//            [self showMessageWindowWithContent:@"评论成功" imageType:0];
             
             for (int i = 0; i <m_dataArray.count; i++) {
                 NSDictionary *dic = [m_dataArray objectAtIndex:i];

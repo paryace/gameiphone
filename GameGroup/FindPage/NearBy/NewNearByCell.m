@@ -18,12 +18,15 @@
         
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
+        [self.headImgBtn addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.headImgBtn];
         
         self.focusButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 60, 40, 20)];
         [self.focusButton setTitle:@"关注" forState:UIControlStateNormal];
         self.focusButton.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.focusButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        self.focusButton.backgroundColor =[UIColor grayColor];
+        [self.focusButton addTarget:self action:@selector(guanzhuing:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.focusButton];
         
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
@@ -74,6 +77,27 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];
+        
+        self.zanButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.zanButton.frame = CGRectMake(100, 100, 80, 30);
+        [self.zanButton setTitle:@"赞" forState:UIControlStateNormal];
+        self.zanButton.titleLabel.font = [UIFont systemFontOfSize:10];
+        [self.zanButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        self.zanButton.backgroundColor =[UIColor grayColor];
+
+        [self.zanButton addTarget:self action:@selector(didClickZan:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:self.zanButton];
+        
+        self.commentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.commentBtn.frame = CGRectMake(100, 100, 80, 30);
+        [self.commentBtn setTitle:@"评论数" forState:UIControlStateNormal];
+        self.commentBtn.titleLabel.font = [UIFont systemFontOfSize:10];
+        [self.commentBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        self.commentBtn.backgroundColor =[UIColor grayColor];
+
+        [self.commentBtn addTarget:self action:@selector(didClickZan:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:self.commentBtn];
+
     }
     return self;
 }
@@ -107,6 +131,18 @@
     }
 }
 
+-(void)enterPersonPage:(id)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(enterPersonPageWithCell:)]) {
+        [self.myCellDelegate enterPersonPageWithCell:self];
+    }
+}
+-(void)guanzhuing:(NSString *)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(changeShiptypeWithCell:)]) {
+        [self.myCellDelegate changeShiptypeWithCell:self];
+    }
+}
 - (void)awakeFromNib
 {
     // Initialization code

@@ -20,7 +20,7 @@
 @property(nonatomic,strong)UIButton *commentBtn;//评论butotn
 @property(nonatomic,strong)UIButton *zanButton;//赞button
 @property(nonatomic,strong)UILabel *timeLabel;//发表时间
-@property(nonatomic,strong)UIView *shareView;//后台推送显示背景
+@property(nonatomic,strong)UIButton *shareView;//后台推送显示背景
 @property(nonatomic,strong)EGOImageView *shareImageView;//后台推送显示图片
 @property(nonatomic,strong)UILabel *shareInfoLabel;//后台推送内容
 @property(nonatomic,strong)UICollectionView *photoCollectionView;//发表照片墙
@@ -37,4 +37,7 @@
 
 - (void)bigImgWithCircle:(NewNearByCell*)myCell WithIndexPath:(NSInteger)row;
 
+-(void)enterPersonPageWithCell:(NewNearByCell *)myCell;
+
+-(void)changeShiptypeWithCell:(NewNearByCell*)myCell;
 @end

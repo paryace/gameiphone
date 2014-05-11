@@ -9,7 +9,11 @@
 #import "CityViewController.h"
 #import "JSON.h"
 @interface CityViewController ()
-
+{
+    NSMutableArray *m_dataArray;
+    NSArray *m_sectionHeadsKeys;
+    NSDictionary *m_mianDict;
+}
 @end
 
 @implementation CityViewController
@@ -26,46 +30,67 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSBundle *mainBundle = [NSBundle mainBundle];
-    NSString *txtPath = [mainBundle pathForResource:@"BaiduMap_cityCenter" ofType:@"txt"];
-    NSString *str =[NSString stringWithContentsOfFile:txtPath encoding:NSUTF8StringEncoding error:nil];
-    NSData *data = [str  dataUsingEncoding : NSUTF8StringEncoding ];
-    NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    NSDictionary * dict = [receiveStr JSONValue];
-    [self getInfoWithNet];
+    [self setTopViewWithTitle:@"城市" withBackButton:YES];
+    
+    m_mianDict = [NSDictionary dictionary];
+    NSString *path = [[NSBundle mainBundle]pathForResource:@"CitiesList" ofType:@"plist"];
+    m_mianDict  = [NSDictionary dictionaryWithContentsOfFile:path];
+    m_sectionHeadsKeys =[NSArray array];
+    
+    m_sectionHeadsKeys = [m_mianDict allKeys];
+   m_sectionHeadsKeys = [m_sectionHeadsKeys sortedArrayUsingSelector:@selector(compare:)];
+
+    
+    UITableView *mTableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    mTableView.delegate = self;
+    mTableView.dataSource = self;
+    [self.view addSubview:mTableView];
 }
 
--(void)getInfoWithNet
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [dict setObject:paramDic forKey:@"params"];
-    [dict setObject:@"test" forKey:@"method"];
-    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"cityforyou"];
-        
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *path = [RootDocPath stringByAppendingString:@"weixing.plist"];
-        [responseObject writeToFile:path atomically:YES];
-        
-        
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
-    }];
+    return m_sectionHeadsKeys.count;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [m_sectionHeadsKeys objectAtIndex:section];
+}
 
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    return m_sectionHeadsKeys;
+}
 
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSArray *arr = [m_mianDict objectForKey:[m_sectionHeadsKeys objectAtIndex:section]];
+    return arr.count;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifier = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    if (cell ==nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    
+    NSArray *sectionArr = [m_mianDict objectForKey:[m_sectionHeadsKeys objectAtIndex:indexPath.section]];
+    NSDictionary *dic = [sectionArr objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = KISDictionaryHaveKey(dic, @"city");
+    return cell;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    NSArray *sectionArr = [m_mianDict objectForKey:[m_sectionHeadsKeys objectAtIndex:indexPath.section]];
+    NSDictionary *dic = [sectionArr objectAtIndex:indexPath.row];
+    
+    if (self.mydelegate &&[self.mydelegate respondsToSelector:@selector(pushCityNumTonextPageWithDictionary:)]) {
+        [self.mydelegate pushCityNumTonextPageWithDictionary:dic];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 
 - (void)didReceiveMemoryWarning
