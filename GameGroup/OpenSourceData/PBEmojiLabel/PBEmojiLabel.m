@@ -11,14 +11,26 @@
 @implementation UILabel (PBEmojiLabel)
 
 -(void)setEmojiText:(NSString *)emojiString{
+    
+    self.text = [UILabel getStr:emojiString];
 
+//    NSMutableDictionary *dict = [GameCommon shareGameCommon].emoji_dict;
+//
+//    for (NSString *key in dict.allKeys)
+//        emojiString = [emojiString stringByReplacingOccurrencesOfString:key
+//															 withString:[dict objectForKey:key]];
+//
+//    self.text = emojiString;
+}
+
++(NSString *)getStr:(NSString *)emojiString;
+{
     NSMutableDictionary *dict = [GameCommon shareGameCommon].emoji_dict;
-
+    
     for (NSString *key in dict.allKeys)
         emojiString = [emojiString stringByReplacingOccurrencesOfString:key
 															 withString:[dict objectForKey:key]];
-
-    self.text = emojiString;
+    return emojiString;
 }
 
 @end

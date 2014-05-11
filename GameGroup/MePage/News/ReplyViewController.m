@@ -562,7 +562,8 @@ typedef enum : NSUInteger {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
      NSLog(@"cellForRowAtIndexPath: %d",indexPath.row);
-    NSMutableDictionary* tempDic = [m_dataReply objectAtIndex:indexPath.row];
+   // NSDictionary* tempDic = [m_dataReply objectAtIndex:indexPath.row];
+    NSMutableDictionary *tempDic=[NSMutableDictionary dictionaryWithDictionary:[m_dataReply objectAtIndex:indexPath.row]];
     
     static NSString *identifier = @"myCell";
     ReplyCell *cell = (ReplyCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -606,11 +607,11 @@ typedef enum : NSUInteger {
     }
     else{
         CGSize sizeThatFits = [cell.commentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
-        float height= sizeThatFits.height;
-        cell.commentLabel.frame = CGRectMake(65, 28, 245, height);
+        float height1= sizeThatFits.height;
+        cell.commentLabel.frame = CGRectMake(65, 28, 245, height1);
         //纪录下高度
-        NSNumber* cellHeight = [NSNumber numberWithFloat:height];
-        [tempDic setObject:cellHeight forKey:@"commentCellHeight"];
+       // NSNumber* cellHeight = [NSNumber numberWithFloat:height];
+        [tempDic setObject:@(height1) forKey:@"commentCellHeight"];
     }
     
     cell.rowIndex = indexPath.row;

@@ -34,7 +34,7 @@
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
-        [self addSubview:self.titleLabel];
+        [self.contentView addSubview:self.titleLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
@@ -61,13 +61,8 @@
         self.contentLabel.numberOfLines = 2;
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.shareView addSubview:self.contentLabel];
-     
-       self.oneImageView  = [[EGOImageView alloc]initWithFrame:CGRectMake(60, 100, 100, 100)];
-        self.oneImageView.hidden = YES;
-        self.oneImageView.delegate = self;
-        [self.contentView addSubview:self.oneImageView];
         
-        CGSize size = [CircleHeadCell getContentHeigthWithStr:self.commentStr];
+        CGSize size = CGSizeZero;
         self.titleLabel.frame = CGRectMake(60, 27, 170, size.height);
         
         
@@ -116,7 +111,7 @@
         [self.zanView addSubview:self.zanLabel];
     
 
-        self.commentTabelView = [[UITableView alloc]initWithFrame:CGRectMake(60, 100, 255, 50) style:UITableViewStylePlain];
+        self.commentTabelView = [[UITableView alloc]initWithFrame:CGRectMake(60, 100, 245, 50) style:UITableViewStylePlain];
         self.commentTabelView.delegate = self;
         self.commentTabelView.dataSource = self;
         self.commentTabelView.bounces = NO;
@@ -215,37 +210,21 @@
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.myCommentCellDelegate = self;
         //cell.selectionStyle =UITableViewCellSelectionStyleNone;
-        cell.tag = indexPath.row;
-        NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    NSString * str;
-    if ([[dict allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
-    }else{
-        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
-    }
+    cell.tag = indexPath.row;
+    NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
+    NSString * str = KISDictionaryHaveKey(dict, @"commentStr");
 
-      cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
-      nickNameLenght=[cell.comNickNameStr length];
-            
-        cell.commentStr =str;
-    [cell.commentContLabel setEmojiText:str];
+    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    nickNameLenght=[cell.comNickNameStr length];
+    
+    cell.commentContLabel.text = str;
+    
     //创建昵称的隐形按钮
     [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
     
-    if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
-        CGSize size1 = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
-        [dict setObject:@(size1.height+5) forKey:@"commentCellHieght"];
-        cell.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
-    }
-    else
-    {
-        CGFloat height = [KISDictionaryHaveKey(dict,@"commentCellHieght") floatValue];
-        cell.commentContLabel.frame = CGRectMake(5, 5, 245, height);
-    }
+    float cellHeight = [KISDictionaryHaveKey(dict, @"commentCellHieght") floatValue];
+    cell.commentContLabel.frame = CGRectMake(5, 0, 245, cellHeight);
     
-    //[cell refreshsCell];
-    
-
     return cell;
 }
 
@@ -258,28 +237,40 @@
         tableView =self.commentTabelView;
         if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(editCommentOfYouWithCircle:withIndexPath:)]) {
             [self.myCellDelegate editCommentOfYouWithCircle:self withIndexPath:indexPath.row];
-            NSLog(@"----%d",indexPath.row);
         }
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSMutableDictionary *dic = [self.commentArray objectAtIndex:indexPath.row];
-    if ([[dic allKeys]containsObject:@"commentCellHieght"]) {
-        return [KISDictionaryHaveKey(dic, @"commentCellHieght")floatValue];
+    float height = 0.0f;
+    NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
+    
+    if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
+        NSString *str ;
+        if ([[dict allKeys]containsObject:@"commentStr"]) {
+            str =KISDictionaryHaveKey(dict, @"commentStr");
+        }
+        else{
+            if ([[dict allKeys]containsObject:@"destUser"]) {
+                str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+            }else{
+                str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+            }
+            str = [UILabel getStr:str];
+            [dict setObject:str forKey:@"commentStr"];
+        }
+       
+        CGSize size = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+        height= size.height;
+        [dict setObject:@(height) forKey:@"commentCellHieght"];
     }
     else
     {
-    NSString *str;
-    if ([[dic allKeys]containsObject:@"destUser"]) {
-        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
-    }else{
-    str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
-     }
-          CGSize size1 = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
-    return size1.height+5;
-    str =nil;
+        height = [KISDictionaryHaveKey(dict,@"commentCellHieght") floatValue];
     }
+    return height;
+    
 }
+
 
 -(void)loadMoreComment:(UIButton *)sender
 {

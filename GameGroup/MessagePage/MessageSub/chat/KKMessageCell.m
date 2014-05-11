@@ -24,6 +24,8 @@
         //聊天信息
         messageContentView = [[UILabel alloc] initWithFrame:CGRectZero];
         messageContentView.backgroundColor = [UIColor clearColor];
+        messageContentView.font = [UIFont systemFontOfSize:16];
+        messageContentView.numberOfLines = 0;
         [self.contentView addSubview:messageContentView];
         
     }

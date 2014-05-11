@@ -72,11 +72,6 @@
     return size1;
 }
 
--(void)refreshsCell
-{
-    CGSize size1 = [self.commentStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT)];
-    self.commentContLabel.frame = CGRectMake(5, 5, 245, size1.height);
-}
 - (void)awakeFromNib
 {
     // Initialization code

@@ -383,6 +383,7 @@
 -(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
     [DataStoreManager deleteAllUserWithShipType:@"1"];
+    
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([friendsList isKindOfClass:[NSDictionary class]]) {
