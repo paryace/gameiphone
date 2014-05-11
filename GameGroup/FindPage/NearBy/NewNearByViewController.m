@@ -27,8 +27,6 @@
     AppDelegate *app;
     NSInteger m_currPageCount;
     UILabel* titleLabel;
-    NSString *m_lat;
-    NSString *m_lon;
     NSString *cityCode;
     UILabel *nearBylabel;
     UILabel*            m_titleLabel;
@@ -176,8 +174,6 @@
     else{
         [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
             [[TempData sharedInstance] setLat:lat Lon:lon];
-            m_lat =[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]];
-            m_lon = [NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]];
             [self getTopImageFromNet];
             [self getInfoWithNet];
         } Failure:^{
@@ -208,8 +204,8 @@
         default:
             break;
     }
-    [paramDic setObject:m_lat forKey:@"latitude"];
-    [paramDic setObject:m_lon forKey:@"longitude"];
+    [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
+    [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:cityCode?cityCode:@"" forKey:@"cityCode"];
     [paramDic setObject:@"1" forKey:@"gameid"];
     
@@ -294,8 +290,8 @@
             break;
     }
     [paramDic setObject:@"20" forKey:@"maxSize"];
-    [paramDic setObject:m_lat forKey:@"latitude"];
-    [paramDic setObject:m_lon forKey:@"longitude"];
+    [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
+    [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:@"1" forKey:@"gameid"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -315,9 +311,9 @@
                 [array addObjectsFromArray:arr];
             }
             m_currPageCount ++;
+            [m_myTableView reloadData];
             [m_footer endRefreshing];
             [m_header endRefreshing];
-            [m_myTableView reloadData];
         }
         [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -582,8 +578,7 @@
 }
 
 -(void)pushCityNumTonextPageWithDictionary:(NSDictionary *)dic{
-    m_lat = KISDictionaryHaveKey(dic, @"latitude");
-    m_lon = KISDictionaryHaveKey(dic, @"longitude");
+
     cityCode = KISDictionaryHaveKey(dic, @"cityCode");
     titleLabel.text = KISDictionaryHaveKey(dic, @"city");
     citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(dic,@"city")];
