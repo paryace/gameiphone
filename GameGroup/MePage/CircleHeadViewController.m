@@ -545,13 +545,19 @@ typedef enum : NSUInteger {
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
 //                //拉数据回来以后直接格式化， 再保存
-//                for (int i=0; i<m_dataArray.count; i++) {
-//                    m_dataArray[i] = [self contentAnalyzer:m_dataArray[i]];
-//                }
+                for (int i=0; i<m_dataArray.count; i++) {
+                    m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
+                }
                 [self saveinfoToUserDefaults:m_dataArray];
                 
             }else{
+                NSMutableArray *arr  = [NSMutableArray array];
+                NSArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+                for (int i =0; i<customArr.count; i++) {
+                    [arr addObject:[self contentAnalyzer:customArr[i] withReAnalyzer:NO]];
+                }
+                [m_dataArray addObjectsFromArray:arr];
             }
             m_currPageCount++;
             [m_header endRefreshing];
@@ -559,9 +565,6 @@ typedef enum : NSUInteger {
             [m_myTableView reloadData];
             [hud  hide:YES];
         }
-        
-        
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_header endRefreshing];
         [m_footer endRefreshing];
@@ -587,9 +590,7 @@ typedef enum : NSUInteger {
         methodStr = @"2";
     }else{
         methodStr = @"1";
-
     }
-    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:methodStr forKey:@"aboutFriendSwitch"];
@@ -608,7 +609,6 @@ typedef enum : NSUInteger {
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
-                
             }
         }
         else
@@ -721,7 +721,6 @@ typedef enum : NSUInteger {
             }
             
         }
-        
             //有图动态
             else{
             NSArray *imgArray = KISDictionaryHaveKey(dict, @"imgArray");
@@ -1241,10 +1240,10 @@ typedef enum : NSUInteger {
         [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         [m_myTableView reloadData];
         if (delCellCount-100<20) {
-            NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-            NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-            [array removeObjectAtIndex:delCellCount-100];
-            [self saveinfoToUserDefaults:array];
+//            NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+//            NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
+//            [array removeObjectAtIndex:delCellCount-100];
+            [self saveinfoToUserDefaults:m_dataArray];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1323,35 +1322,38 @@ typedef enum : NSUInteger {
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
             }
-            
             if (myCell.tag-100<20) {
-                NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-                NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-                for (NSMutableDictionary *dic in array) {
-                    if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
-                        
-                        NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
-                        int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
-                        NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
-                        NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"),@"userid");
-                        if ([userid intValue]==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]intValue]) {
-                            
-                        }
-                        if ([isZan intValue]==0) {//假如是未赞状态
-                            [arr insertObject:commentUser atIndex:0];
-                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
-                            [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
-                            
-                            //请求网络点赞
-                        }else{//假如是已经赞的状态
-                            [arr removeObject:commentUser];
-                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
-                            [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
-                        }
-                        [self saveinfoToUserDefaults:array];
-                    }
-                }
+                [self saveinfoToUserDefaults:m_dataArray];
             }
+            
+//            if (myCell.tag-100<20) {
+//                NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+//                NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
+//                for (NSMutableDictionary *dic in array) {
+//                    if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
+//                        
+//                        NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
+//                        int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
+//                        NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
+//                        NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"),@"userid");
+//                        if ([userid intValue]==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]intValue]) {
+//                            
+//                        }
+//                        if ([isZan intValue]==0) {//假如是未赞状态
+//                            [arr insertObject:commentUser atIndex:0];
+//                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
+//                            [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
+//                            
+//                            //请求网络点赞
+//                        }else{//假如是已经赞的状态
+//                            [arr removeObject:commentUser];
+//                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
+//                            [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
+//                        }
+//                        [self saveinfoToUserDefaults:array];
+//                    }
+//                }
+//            }
         }
     }
 }
@@ -1444,20 +1446,20 @@ typedef enum : NSUInteger {
         }
     }
     if (i>=0&&i<20) {
-        NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-        NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-    NSMutableDictionary *dict1 =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id", nil];
-        
-        for (int j = 0;j<array.count;j++) {
-            NSMutableDictionary *dic = [array objectAtIndex:j];
-            if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
-                NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
-                int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
-                [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
-                [arr insertObject:dict1 atIndex:0];
-            }
-        }
-        [self saveinfoToUserDefaults:array];
+//        NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+//        NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
+//    NSMutableDictionary *dict1 =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id", nil];
+//        
+//        for (int j = 0;j<array.count;j++) {
+//            NSMutableDictionary *dic = [array objectAtIndex:j];
+//            if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
+//                NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
+//                int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
+//                [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+//                [arr insertObject:dict1 atIndex:0];
+//            }
+//        }
+        [self saveinfoToUserDefaults:m_dataArray];
     }
     [self showMessageWindowWithContent:@"评论成功" imageType:0];
     [m_myTableView reloadData];
