@@ -65,7 +65,7 @@ typedef enum : NSUInteger {
     float offer;
     int height;
     
-    
+    NSMutableDictionary *commentOffLineDict;
     
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -109,7 +109,7 @@ typedef enum : NSUInteger {
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
-    
+    commentOffLineDict = [NSMutableDictionary dictionary];
     cellhightarray = [NSMutableDictionary dictionary];
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     height=216;
@@ -1328,34 +1328,6 @@ typedef enum : NSUInteger {
                 [self saveinfoToUserDefaults:m_dataArray];
             }
             
-//            if (myCell.tag-100<20) {
-//                NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-//                NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-//                for (NSMutableDictionary *dic in array) {
-//                    if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
-//                        
-//                        NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
-//                        int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
-//                        NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
-//                        NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"),@"userid");
-//                        if ([userid intValue]==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]intValue]) {
-//                            
-//                        }
-//                        if ([isZan intValue]==0) {//假如是未赞状态
-//                            [arr insertObject:commentUser atIndex:0];
-//                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
-//                            [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
-//                            
-//                            //请求网络点赞
-//                        }else{//假如是已经赞的状态
-//                            [arr removeObject:commentUser];
-//                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
-//                            [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
-//                        }
-//                        [self saveinfoToUserDefaults:array];
-//                    }
-//                }
-//            }
         }
     }
 }
@@ -1413,20 +1385,25 @@ typedef enum : NSUInteger {
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:nickName forKey:@"nickname"];
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
-    
-    NSString *comment ;
+   NSString* comment = self.textView.text;
+
     if (self.textView.placeholder!=nil) {
-        comment = [NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text];
+        NSMutableDictionary *destUser = [NSMutableDictionary dictionary];
+        [destUser setObject:KISDictionaryHaveKey(commentOffLineDict, @"id") forKey:@"id"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"nickname") forKey:@"nickname"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"userid") forKey:@"userid"];
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",destUser,@"destUser", nil];
     }else{
-        comment = self.textView.text;
+      dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
     }
-    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
+    
     //将评论添加到数组里、
     int i = -1;
     for (int j = 0;j<m_dataArray.count;j++) {
@@ -1439,7 +1416,6 @@ typedef enum : NSUInteger {
             [arr insertObject:dict atIndex:0];
             dic = [self contentAnalyzer:dic withReAnalyzer:YES];    //分析器强制更新这一条
             i = [m_dataArray indexOfObject:dic];
-            
         }
     }
     if (i>=0&&i<20) {
@@ -1508,8 +1484,9 @@ typedef enum : NSUInteger {
         self.textView.placeholderColor = [UIColor grayColor];
         
         //将对方信息保存在临时变量
-        destuserId  =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
-        destMsgId = KISDictionaryHaveKey(dict, @"id");
+        [commentOffLineDict setDictionary:dict];
+        destMsgId =KISDictionaryHaveKey(dict, @"id");
+        destuserId = KISDictionaryHaveKey(KISDictionaryHaveKey(dict,@"commentUser"), @"userid");
     }
 }
 //tableView定位

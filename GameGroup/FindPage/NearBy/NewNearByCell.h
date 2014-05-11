@@ -40,4 +40,10 @@
 -(void)enterPersonPageWithCell:(NewNearByCell *)myCell;
 
 -(void)changeShiptypeWithCell:(NewNearByCell*)myCell;
+
+-(void)didClickToZan:(NewNearByCell*)myCell;
+-(void)didClickToComment:(NewNearByCell*)myCell;
+
+
+
 @end

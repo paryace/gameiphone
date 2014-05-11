@@ -22,13 +22,13 @@
         
         
         
-        self.lestView = [[UIView alloc]initWithFrame:CGRectMake(0, 65, 78, 15)];
+        self.lestView = [[UIView alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-15, self.bounds.size.width, 15)];
         self.lestView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
-        [self addSubview:self.lestView];
+        [self.photoView addSubview:self.lestView];
         
         
         self.tagImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
-        self.tagImageView.backgroundColor = [UIColor redColor];
+        self.tagImageView.image = KUIImage(@"icon_nearby");
         [self.lestView addSubview:self.tagImageView];
         
         self.distanceLabel = [[UILabel alloc]initWithFrame:CGRectMake(16, 0, 47, 15)];
@@ -39,7 +39,6 @@
         [self.lestView addSubview:self.distanceLabel];
         
         self.sexImageView = [[UIImageView alloc]initWithFrame:CGRectMake(63, 0, 15, 15)];
-        self.sexImageView.backgroundColor = [UIColor redColor];
         [self.lestView addSubview:self.sexImageView];
 //       
         

@@ -12,6 +12,8 @@
 #import "TestViewController.h"
 #import "MJRefresh.h"
 #import "PhotoViewController.h"
+#import "OnceDynamicViewController.h"
+#import "ReplyViewController.h"
 @interface NewNearByViewController ()
 {
     UICollectionView *m_photoCollectionView;
@@ -34,6 +36,7 @@
     NSString *citydongtaiStr;
     UIButton *menuButton;
     NSMutableArray *wxSDArray;
+    
 }
 @end
 
@@ -92,12 +95,12 @@
     m_layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
     m_layout.minimumLineSpacing = paddingY;
     m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, 320, 245) collectionViewLayout:m_layout];
-//    m_myTableView.backgroundColor = [UIColor grayColor];
+    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     m_photoCollectionView.scrollEnabled = NO;
     m_photoCollectionView.delegate = self;
     m_photoCollectionView.dataSource = self;
     [m_photoCollectionView registerClass:[NearByPhotoCell class] forCellWithReuseIdentifier:@"ImageCell"];
-    m_photoCollectionView.backgroundColor = [UIColor clearColor];
+    m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     m_myTableView.tableHeaderView = m_photoCollectionView;
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
@@ -233,7 +236,7 @@
             }
             else if(headImgArray.count>8&&headImgArray.count<13)
             {
-                m_photoCollectionView.frame = CGRectMake(0, 0, 320, 252);
+                m_photoCollectionView.frame = CGRectMake(0, 0, 320, 239);
             }
             else{
                 m_photoCollectionView.frame = CGRectMake(0, 0, 320, 334);
@@ -352,6 +355,13 @@
     }else{
     cell.photoView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,imgStr,@"/160/160"]];
     }
+    
+    if ([KISDictionaryHaveKey(dict, @"gender")intValue]==0) {
+        cell.sexImageView.image = KUIImage(@"gender_boy");
+    }else{
+        cell.sexImageView.image = KUIImage(@"gender_girl");
+    }
+    
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -381,19 +391,28 @@
     cell.tag = indexPath.row;
     NSDictionary *dict = [array objectAtIndex:indexPath.row];
     
+    if ([KISDictionaryHaveKey(dict, @"isZan")intValue] ==1) {
+        [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_normal") forState:UIControlStateNormal];
+        [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateNormal];
+    }else{
+        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
+        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+    }
+    
+    
+    
     cell.nickNameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
     m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
 
     cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
 
-    
     if (([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"])&&![KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         cell.focusButton.hidden = NO;
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]) {
-            [cell.focusButton setTitle:@"+关注" forState:UIControlStateNormal];
+            [cell.focusButton setBackgroundImage:KUIImage(@"guanzhu") forState:UIControlStateNormal];
         }else{
-            [cell.focusButton setTitle:@"+好友" forState:UIControlStateNormal];
+           // [cell.focusButton setTitle:@"+好友" forState:UIControlStateNormal];
         }
     }else{
         cell.focusButton.hidden = YES;
@@ -420,10 +439,9 @@
         if ([KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
             cell.photoCollectionView.hidden =YES;
             
-            cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
-            cell.zanButton.frame = CGRectMake(180, m_currmagY+10, 70, 30);
-            cell.commentBtn.frame = CGRectMake(250, m_currmagY+10, 70, 30);
-
+            cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
+            cell.zanButton.frame = CGRectMake(140, m_currmagY+15, 70, 20);
+            cell.commentBtn.frame = CGRectMake(220, m_currmagY+15, 70, 20);
         }
         //有图动态
         else{
@@ -441,9 +459,9 @@
             cell.layout.minimumLineSpacing = paddingY;
             
             [cell.photoCollectionView reloadData];
-            cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
-            cell.zanButton.frame = CGRectMake(180, m_currmagY, 70, 30);
-            cell.commentBtn.frame = CGRectMake(250, m_currmagY, 70, 30);
+            cell.timeLabel.frame = CGRectMake(60,m_currmagY, 80, 30);
+            cell.zanButton.frame = CGRectMake(140, m_currmagY+5, 70, 20);
+            cell.commentBtn.frame = CGRectMake(220, m_currmagY+5, 70, 20);
             //删除按钮 - 自己的文章
             }
         
@@ -490,38 +508,52 @@
             cell.shareInfoLabel.numberOfLines = 2;
         }
         
-        cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
-        cell.zanButton.frame = CGRectMake(180, m_currmagY+10, 70, 30);
-        cell.commentBtn.frame = CGRectMake(250, m_currmagY+10, 70, 30);
+        cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
+        cell.zanButton.frame = CGRectMake(140, m_currmagY+15, 70, 20);
+        cell.commentBtn.frame = CGRectMake(220, m_currmagY+15, 70, 20);
 
         m_currmagY  = cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
     }
-    
     
     return cell;
   
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary *dic = [array objectAtIndex:indexPath.row];
+    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
+    once.messageid =KISDictionaryHaveKey(dic, @"id");
+    [self.navigationController pushViewController:once animated:YES];
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UIView *view = [[UIView alloc ]initWithFrame:CGRectMake(0, 0, 320, 40)];
     view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-    nearBylabel = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 180, 40)];
+    
+    UIImageView *imageVIew =[[ UIImageView alloc]initWithFrame:CGRectMake(10, 0, 40, 40)];
+    imageVIew.image = KUIImage(@"compass");
+    [view addSubview:imageVIew];
+    
+    
+    nearBylabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 0, 180, 40)];
     nearBylabel.text  =citydongtaiStr;
     nearBylabel.textColor = [UIColor grayColor];
     nearBylabel.font = [UIFont systemFontOfSize:13];
     [view addSubview:nearBylabel];
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 0, 100, 40)];
-    [button setTitle:@"城市漫游" forState:UIControlStateNormal];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 0, 100, 39)];
+    [button setTitle:@"城市漫游 >" forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont systemFontOfSize:12];
     [button addTarget:self action:@selector(enterCitisePage:) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [view addSubview:button];
+    
+    UIView  * underView = [[UIView alloc]initWithFrame:CGRectMake(0, 39, 320, 1)];
+    underView.backgroundColor = UIColorFromRGBA(0xc1c1c1, 1);
+    [view addSubview:underView];
+    
     return view;
     
 }
@@ -834,6 +866,85 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
     
+}
+
+-(void)didClickToComment:(NewNearByCell *)myCell
+{
+    NSDictionary *dic = [array objectAtIndex:myCell.tag];
+    ReplyViewController *rep = [[ReplyViewController alloc]init];
+    rep.messageid = KISDictionaryHaveKey(dic,@"id");
+    [self.navigationController pushViewController:rep animated:YES];
+
+}
+
+-(void)didClickToZan:(NewNearByCell *)myCell
+{
+    NSMutableDictionary *dic = [array objectAtIndex:myCell.tag];
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    [commentUser setObject:@"" forKey:@"img"];
+    [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
+    [commentUser setObject:@"0" forKey:@"superstar"];
+    [commentUser setObject:@"" forKey:@"userid"];
+    [commentUser setObject:@"" forKey:@"username"];
+    
+    
+    NSString *isZan = KISDictionaryHaveKey(dic, @"isZan");
+    if ([isZan intValue]==0) {//假如是未赞状态
+        [self showMessageWindowWithContent:@"赞已成功" imageType:0];
+        [myCell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_normal") forState:UIControlStateNormal];
+        [myCell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateHighlighted];
+        [dic setObject:@"1" forKey:@"isZan"];
+
+        //请求网络点赞
+        [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id") IsZan:YES];
+    }else{//假如是已经赞的状态
+        [self showMessageWindowWithContent:@"已取消" imageType:0];
+        [myCell.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
+        [myCell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        [dic setObject:@"0" forKey:@"isZan"];
+        //请求网络取消
+        [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id") IsZan:NO];
+    }
+
+}
+//上传赞
+-(void)postZanWithMsgId:(NSString *)msgid IsZan:(BOOL)isZan
+{
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgid forKey:@"messageId"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"185" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    
+    
+    
+    
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+//        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+//        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
+//                             msgid,@"msgId",
+//                             uuid,@"uuid",nil];
+//        [DataStoreManager saveOfflineZanWithDic:dic];
+    }
+    else{
+        
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [m_myTableView reloadData];
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            [m_myTableView reloadData];
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+        }];
+    }
+
 }
 
 - (void)didReceiveMemoryWarning
