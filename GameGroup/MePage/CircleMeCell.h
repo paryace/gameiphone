@@ -19,7 +19,7 @@
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,copy)NSString *commentStr;
 
-- (void)refreshCell;
+//- (void)refreshCell;
 
 + (float)getContentHeigthWithStr:(NSString*)contStr;
 

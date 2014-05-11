@@ -59,7 +59,7 @@
     [self.view addSubview:splashImageView];
     [self performSelector:@selector(showLoading:) withObject:nil afterDelay:kStartViewShowTime];
     
-    
+//    [self showLoading:nil];
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
 }

@@ -21,7 +21,7 @@
         self.headImgBtn.layer.masksToBounds = YES;
         [self addSubview:self.headImgBtn];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 6, 120, 20)];
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 7, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
@@ -62,12 +62,12 @@
     CGSize size1 = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(170, MAXFLOAT)];
     return size1.height;
 }
-- (void)refreshCell
-{
-    float heigth = [CircleMeCell getContentHeigthWithStr:self.commentStr];
-    self.titleLabel.frame = CGRectMake(60, 30, 170, heigth);
-    self.timeLabel.frame  = CGRectMake(60, 30+heigth, 170, 20);
-}
+//- (void)refreshCell
+//{
+//    float heigth = [CircleMeCell getContentHeigthWithStr:self.commentStr];
+//    self.titleLabel.frame = CGRectMake(60, 30, 170, heigth);
+//    self.timeLabel.frame  = CGRectMake(60, 30+heigth, 170, 20);
+//}
 
 - (void)awakeFromNib
 {

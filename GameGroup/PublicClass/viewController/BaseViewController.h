@@ -24,7 +24,7 @@
 @property (nonatomic,assign) BOOL canDragBack;
 -(void)DetectNetwork;//监测网络是否连接（主要标注没有连接）
 
-- (void)setTopViewWithTitle:(NSString*)titleStr withBackButton:(BOOL)hasBacButton;
+- (void)setTopViewWithTitle:(NSString*)titleStr withBackButton:(BOOL)hasBacButton;  //顶部导航条
 - (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message buttonTitle:(NSString *)bTitle;
 - (void)showMessageWithContent:(NSString*)content point:(CGPoint)point;
 - (void)showMessageWindowWithContent:(NSString*)content imageType:(NSInteger)imageType;
