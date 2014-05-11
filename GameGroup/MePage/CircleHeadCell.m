@@ -13,8 +13,6 @@
     int nickNameLenght;
 }
 @end
-static CGFloat const kLabelWidth = 300;
-static CGFloat const kLabelVMargin = 10;
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

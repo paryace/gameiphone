@@ -32,6 +32,7 @@
     NSData *data = [str  dataUsingEncoding : NSUTF8StringEncoding ];
     NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
     NSDictionary * dict = [receiveStr JSONValue];
+    [self getInfoWithNet];
 }
 
 -(void)getInfoWithNet
@@ -40,10 +41,16 @@
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
-    [dict setObject:@"205" forKey:@"method"];
-    [paramDic setObject:@"1" forKey:@"gameid"];
+    [dict setObject:@"test" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"cityforyou"];
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSString *path = [RootDocPath stringByAppendingString:@"weixing.plist"];
+        [responseObject writeToFile:path atomically:YES];
+        
+        
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
