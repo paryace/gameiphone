@@ -144,7 +144,7 @@
 		<key>emoji</key>
 		<string>😶</string>
 		<key>thekey</key>
-		<string>[好衰]</string>
+		<string>[发呆]</string>
 	</dict>
 	<dict>
 		<key>emoji</key>
@@ -312,7 +312,7 @@
 		<key>emoji</key>
 		<string>🍭</string>
 		<key>thekey</key>
-		<string>棒糖</string>
+		<string>[棒糖]</string>
 	</dict>
 	<dict>
 		<key>emoji</key>
@@ -354,7 +354,7 @@
 		<key>emoji</key>
 		<string>😶</string>
 		<key>thekey</key>
-		<string>[发呆]</string>
+		<string>[好衰]</string>
 	</dict>
 </array>
 </plist>
