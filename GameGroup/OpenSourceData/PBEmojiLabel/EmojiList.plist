@@ -84,7 +84,7 @@
 		<key>emoji</key>
 		<string>😎</string>
 		<key>thekey</key>
-		<string>[耍酷]</string>
+		<string>[得意]</string>
 	</dict>
 	<dict>
 		<key>emoji</key>
@@ -337,6 +337,24 @@
 		<string>🇨🇳</string>
 		<key>thekey</key>
 		<string>[国旗]</string>
+	</dict>
+	<dict>
+		<key>emoji</key>
+		<string>😎</string>
+		<key>thekey</key>
+		<string>[耍酷]</string>
+	</dict>
+	<dict>
+		<key>emoji</key>
+		<string>😁</string>
+		<key>thekey</key>
+		<string>[呲牙]</string>
+	</dict>
+	<dict>
+		<key>emoji</key>
+		<string>😶</string>
+		<key>thekey</key>
+		<string>[发呆]</string>
 	</dict>
 </array>
 </plist>
