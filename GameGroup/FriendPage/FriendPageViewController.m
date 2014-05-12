@@ -687,13 +687,16 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == m_myTableView) {
-//        if (m_sectionArray_friend==nil||[m_sectionArray_friend count]==0) {
-//            return 0;
-//        }
+        if (m_sectionArray_friend==nil||[m_sectionArray_friend count]==0||section>[m_sectionArray_friend count]) {
+            return 0;
+        }
         return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
     }
     else if(tableView == m_myAttentionsTableView)
     {
+        if (m_sectionArray_attention==nil||[m_sectionArray_attention count]==0||section>[m_sectionArray_attention count]) {
+            return 0;
+        }
         return [[[m_sectionArray_attention objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
     }
     else
