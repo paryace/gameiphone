@@ -48,7 +48,7 @@
       //  [self buildButton];
         
         self. certificationImage = [[UIImageView alloc]initWithFrame:CGRectMake(287, 27, 28, 12)];
-        self.backgroundColor = UIColorFromRGBA(0x262930, 1);
+        self.backgroundColor = [UIColor clearColor];
         [self addSubview:self.certificationImage];
         
 
@@ -56,7 +56,7 @@
         self.listScrollView.pagingEnabled = YES;
         self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
         self.listScrollView.delegate = self;
-        self.listScrollView.backgroundColor = [UIColor whiteColor];
+        self.listScrollView.backgroundColor = [UIColor clearColor];
         self.listScrollView.showsHorizontalScrollIndicator =NO;
 
         [self addSubview:self.listScrollView];
@@ -64,13 +64,11 @@
         self.unlessLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 306, 320, 55)];
         self.unlessLabel.text = @"正在向英雄榜获取数据中...";
         self.unlessLabel.textAlignment = NSTextAlignmentCenter;
-        self.unlessLabel.backgroundColor = [UIColor whiteColor];
         self.unlessLabel.hidden =NO;
         [self addSubview:self.unlessLabel];
 
-        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 515, 320, 45)];
+        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 515, 300, 20)];
         self.helpLabel.text = @"如何获得PVP/PVE战斗力";
-        self.helpLabel.backgroundColor = [UIColor whiteColor];
         self.helpLabel.userInteractionEnabled = YES;
         self.helpLabel.font = [UIFont systemFontOfSize:12];
         self.helpLabel.textColor = kColorWithRGB(41, 164, 246, 1.0);
@@ -79,8 +77,7 @@
         
         
         self.reloadingBtn = [[UIButton alloc]init];
-        self.reloadingBtn.frame = CGRectMake(0, self.helpLabel.frame.origin.y+self.helpLabel.frame.size.height, 320, 50);
-        self.reloadingBtn.backgroundColor = [UIColor whiteColor];
+        self.reloadingBtn.frame = CGRectMake(10, 545, 300, 44);
         [self.reloadingBtn setBackgroundImage:KUIImage(@"btn_updata_normol") forState:UIControlStateNormal];
         [self.reloadingBtn setBackgroundImage:KUIImage(@"btn_updata_click") forState:UIControlStateSelected];
         

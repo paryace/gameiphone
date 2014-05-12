@@ -6,13 +6,13 @@
 //  Copyright (c) 2014年 itcast. All rights reserved.
 //
 
-const CGFloat MJRefreshViewHeight = 64;
+const CGFloat MJRefreshViewHeight = 64.0;
 const CGFloat MJRefreshAnimationDuration = 0.25;
 
 NSString *const MJRefreshBundleName = @"MJRefresh.bundle";
 
-NSString *const MJRefreshFooterPullToRefresh = @"上拉加载更多";
-NSString *const MJRefreshFooterReleaseToRefresh = @"松开立即加载";
+NSString *const MJRefreshFooterPullToRefresh = @"上拉可以加载更多数据";
+NSString *const MJRefreshFooterReleaseToRefresh = @"松开立即加载更多数据";
 NSString *const MJRefreshFooterRefreshing = @"正在加载...";
 
 NSString *const MJRefreshHeaderPullToRefresh = @"下拉可以刷新";

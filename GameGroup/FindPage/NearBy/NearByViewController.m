@@ -13,10 +13,11 @@
 #import "MJRefresh.h"
 @interface NearByViewController ()
 {
+    UILabel*            m_titleLabel;
     
     UITableView*        m_myTableView;
     NSMutableArray*     m_tabelData;
-    UILabel*            m_titleLabel;
+    
     NSInteger           m_searchType;//3全部 0男 1女
     
     NSInteger           m_totalPage;

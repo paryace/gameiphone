@@ -309,19 +309,19 @@
        promptLabel.text  =@"很遗憾，无法和小衰神打招呼，点击“换一个”远离小衰神" ;
         sayHelloBtn.enabled = NO;
     }else{
-        NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
-        [paramDict setObject:@"1" forKey:@"gameid"];
-        [paramDict setObject:self.characterId forKey:@"characterid"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
-        [paramDict setObject:KISDictionaryHaveKey(getDic, @"index") forKey:@"index"];
-        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
+//        NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
+//        [paramDict setObject:@"1" forKey:@"gameid"];
+//        [paramDict setObject:self.characterId forKey:@"characterid"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
+//        [paramDict setObject:KISDictionaryHaveKey(getDic, @"index") forKey:@"index"];
+//        [self getSayHelloForNetWithDictionary:paramDict method:@"165" prompt:@"打招呼ING" type:2];
         
-//        KKChatController * kkchat = [[KKChatController alloc] init];
-//        kkchat.chatWithUser =KISDictionaryHaveKey(getDic, @"userid");
-//        kkchat.nickName = KISDictionaryHaveKey(getDic, @"nickname");
-//        kkchat.chatUserImg = [GameCommon getHeardImgId:KISDictionaryHaveKey(getDic, @"img")];
-//        [self.navigationController pushViewController:kkchat animated:YES];
+        KKChatController * kkchat = [[KKChatController alloc] init];
+        kkchat.chatWithUser =KISDictionaryHaveKey(getDic, @"userid");
+        kkchat.nickName = KISDictionaryHaveKey(getDic, @"nickname");
+        kkchat.chatUserImg = [GameCommon getHeardImgId:KISDictionaryHaveKey(getDic, @"img")];
+        [self.navigationController pushViewController:kkchat animated:YES];
 
         
         
@@ -346,16 +346,16 @@
         inABtn.enabled = YES;
 
         [hud hide:YES];
-
         if (COME_TYPE ==1) {
             isXuyuanchi=NO;
             isSuccessToshuaishen =NO;
             sayHelloBtn.enabled = YES;
+
             inABtn.enabled = YES;
             sayHelloBtn.enabled = YES;
             headImageView.userInteractionEnabled = YES;
             clazzImageView.userInteractionEnabled = YES;
-            
+
             
             isWXCeiling =YES;
             getDic = nil;
@@ -370,7 +370,7 @@
             if (encoLastCount==-1) {
                 
             }else{
-                [inABtn setTitle:[NSString stringWithFormat:@"换一个(%d)",encoLastCount-EncoCount] forState:UIControlStateNormal];
+            [inABtn setTitle:[NSString stringWithFormat:@"换一个(%d)",encoLastCount-EncoCount] forState:UIControlStateNormal];
             }
             inABtn.titleLabel.textColor = [UIColor blackColor];
             
@@ -379,67 +379,67 @@
             
             if ([KISDictionaryHaveKey(getDic, @"encounterType")intValue] ==0) {
                 isCardOrAttion =NO;
-                //男♀♂
-                if ([KISDictionaryHaveKey(getDic, @"gender")isEqualToString:@"1"]) {
-                    sexLabel.text = @"♀";
-                    sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
-                }else{
-                    sexLabel.text = @"♂";
-                    sexLabel.textColor = kColorWithRGB(33, 193, 250, 1.0);
-                    
-                }
-                NickNameLabel.text = KISDictionaryHaveKey(getDic, @"nickname");
-                customLabel.text = [NSString stringWithFormat:@" %@ |%@",KISDictionaryHaveKey(getDic, @"age"),KISDictionaryHaveKey(getDic, @"constellation")];
-                
-                
-                promptLabel.text =KISDictionaryHaveKey(getDic, @"prompt");
-                NSInteger i;
-                
-                
-                NSLog(@"%@",headImageView.image);
-                NSString *imageStr =nil;
-                UIImage *  image;
-                if ([KISDictionaryHaveKey(getDic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(getDic, @"ing")isEqualToString:@" "]) {
-                    headImageView.imageURL = nil;
-                }else{
-                    
-                    if([KISDictionaryHaveKey(getDic, @"img") rangeOfString:@","].location !=NSNotFound) {
-                        NSString * fruits = KISDictionaryHaveKey(getDic, @"img");
-                        NSArray  * array= [fruits componentsSeparatedByString:@","];
-                        
-                        imageStr =[array objectAtIndex:0];
-                    }else{
-                        imageStr =KISDictionaryHaveKey(getDic, @"img");
-                    }
-                    NSLog(@"imageUrl--->%@",headImageView.imageURL);
-                    NSLog(@"imageUrl---->%@",headImageView.image);
-                    
-                    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]]]];
-                }
-                [headImageView rotate360WithDuration:1.0 repeatCount:1 timingMode:i7Rotate360TimingModeEaseInEaseOut];
-                headImageView.animationDuration = 2.0;
-                headImageView.animationImages =
-                [NSArray arrayWithObjects:
-                 image,
-                 nil];
-                headImageView.animationRepeatCount = 1;
-                [headImageView startAnimating];
-                
-                if ([KISDictionaryHaveKey(getDic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(getDic, @"ing")isEqualToString:@" "]) {
-                    headImageView.imageURL = nil;
-                }else{
-                    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]];
-                    headImageView.animationImages=nil;
-                }
-                i= promptLabel.text.length/20;
-                promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
-                promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
+            //男♀♂
+            if ([KISDictionaryHaveKey(getDic, @"gender")isEqualToString:@"1"]) {
+                sexLabel.text = @"♀";
+                sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
+            }else{
+                sexLabel.text = @"♂";
+                sexLabel.textColor = kColorWithRGB(33, 193, 250, 1.0);
+
+            }
+            NickNameLabel.text = KISDictionaryHaveKey(getDic, @"nickname");
+            customLabel.text = [NSString stringWithFormat:@" %@ |%@",KISDictionaryHaveKey(getDic, @"age"),KISDictionaryHaveKey(getDic, @"constellation")];
+            
+            
+            promptLabel.text =KISDictionaryHaveKey(getDic, @"prompt");
+            NSInteger i;
+            
+            
+            NSLog(@"%@",headImageView.image);
+            NSString *imageStr =nil;
+            UIImage *  image;
+            if ([KISDictionaryHaveKey(getDic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(getDic, @"ing")isEqualToString:@" "]) {
+                headImageView.imageURL = nil;
+            }else{
+
+            if([KISDictionaryHaveKey(getDic, @"img") rangeOfString:@","].location !=NSNotFound) {
+                NSString * fruits = KISDictionaryHaveKey(getDic, @"img");
+                NSArray  * array= [fruits componentsSeparatedByString:@","];
+               
+            imageStr =[array objectAtIndex:0];
+            }else{
+            imageStr =KISDictionaryHaveKey(getDic, @"img");
+            }
+            NSLog(@"imageUrl--->%@",headImageView.imageURL);
+            NSLog(@"imageUrl---->%@",headImageView.image);
+            
+         image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]]]];
+            }
+            [headImageView rotate360WithDuration:1.0 repeatCount:1 timingMode:i7Rotate360TimingModeEaseInEaseOut];
+            headImageView.animationDuration = 2.0;
+            headImageView.animationImages =
+            [NSArray arrayWithObjects:
+             image,
+             nil];
+            headImageView.animationRepeatCount = 1;
+            [headImageView startAnimating];
+            
+            if ([KISDictionaryHaveKey(getDic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(getDic, @"ing")isEqualToString:@" "]) {
+                headImageView.imageURL = nil;
+            }else{
+            headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]];
+            headImageView.animationImages=nil;
+            }
+            i= promptLabel.text.length/20;
+            promptView.frame = CGRectMake(0, 318-50-heightAox, 320, 35+15*i);
+            promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
             }
             else if ([KISDictionaryHaveKey(getDic, @"encounterType") intValue] ==1)
             {
                 isCardOrAttion =YES;
-                sexLabel.text = @"♀";
-                sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
+                    sexLabel.text = @"♀";
+                    sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
                 NickNameLabel.text = @"陌游激活码";
                 customLabel.text = [NSString stringWithFormat:@"    0 | 陌游"];
                 
@@ -465,7 +465,7 @@
             }
             else{
                 isCardOrAttion =YES;
-                
+
                 sexLabel.text = @"♀";
                 sexLabel.textColor = kColorWithRGB(238, 100, 196, 1.0);
                 NickNameLabel.text = @"魔兽世界点卡";
@@ -493,15 +493,7 @@
                 promptLabel.frame = CGRectMake(20, 0, 280, 30+15*i);
             }
         }
-        
-        else if (COME_TYPE ==2)
-        {
-            NSLog(@"打招呼");
-            [self showMessageWindowWithContent:@"打招呼成功" imageType:0];
-            sayHelloBtn.enabled = NO;
-        }
-        
-       else if (COME_TYPE ==3) {
+        if (COME_TYPE ==3) {
             if ([KISDictionaryHaveKey(responseObject, @"1") isKindOfClass:[NSArray class]]) {
                 [m_characterArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"1")];
                 
@@ -519,7 +511,7 @@
                     sayHelloBtn.hidden =NO;
                     promptLabel .hidden = NO;
                     promptView.hidden =NO;
-                    
+
                     charaterId =KISDictionaryHaveKey([m_characterArray objectAtIndex:0], @"id");
                     [self getEncoXhinfoWithNet:[m_characterArray objectAtIndex:0]];
                 }else{
@@ -533,11 +525,9 @@
                     [m_tableView reloadData];
                     tf.frame =CGRectMake(0, startX+40, 200, 30);
                     tf.center  = CGPointMake(160, startX+50);
-                    
-                }
 
-        
-        //  [[NSUserDefaults standardUserDefaults]setObject:m_characterArray forKey:@"CharacterArrayOfAllForYou"];
+                }
+              //  [[NSUserDefaults standardUserDefaults]setObject:m_characterArray forKey:@"CharacterArrayOfAllForYou"];
 
         }
             else{

@@ -788,8 +788,8 @@ UINavigationControllerDelegate>
         _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _kkChatAddButton.frame = CGRectMake(240,
                                             self.inPutView.frame.size.height-12-36,
-                                            45,
-                                            45);
+                                            47,
+                                            43);
         [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
                           forState:UIControlStateNormal];
         
@@ -805,8 +805,8 @@ UINavigationControllerDelegate>
         _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _emojiBtn.frame = CGRectMake(277,
                                      self.inPutView.frame.size.height-12-36,
-                                     45,
-                                     45);
+                                     47,
+                                     43);
         [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
                    forState:UIControlStateNormal];
         [_emojiBtn addTarget:self

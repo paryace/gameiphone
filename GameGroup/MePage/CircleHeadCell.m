@@ -13,6 +13,8 @@
     int nickNameLenght;
 }
 @end
+static CGFloat const kLabelWidth = 300;
+static CGFloat const kLabelVMargin = 10;
 @implementation CircleHeadCell
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -25,7 +27,7 @@
     
         [self.contentView addSubview:self.headImgBtn];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 8, 120, 20)];
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];

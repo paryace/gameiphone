@@ -75,7 +75,7 @@
     [button setTitle:@"查看更多" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"addmorecomment") forState:UIControlStateNormal] ;
     button.titleLabel.font = [UIFont systemFontOfSize:13];
-    [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(loadMore:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
@@ -160,28 +160,20 @@
         cell.contentImageView.imageURL = imageContetURL;
     }
     
-    NSString *str;
+    
     if ([dCircle.myType intValue]==4) {
-        str = @"赞了该内容";
+        NSString *str = @"赞了该内容";
         cell.titleLabel.text = str;
         cell.commentStr = str;
     }
     else if ([dCircle.myType intValue]==5||[dCircle.myType intValue]==7){
         [cell.titleLabel setEmojiText:dCircle.comment];
-        str = [UILabel getStr:dCircle.comment];
-        cell.commentStr=str;
+        cell.commentStr=dCircle.comment;
     }
     
-    CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-   float  heigth = size.height;
-    //[cell sizeToFit];
-   // float heigth = [self tableView:m_myTableView heightForRowAtIndexPath:indexPath];
-        cell.titleLabel.frame = CGRectMake(60, 30, 170, heigth);
-    
-    
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:dCircle.createDate]];
-    cell.timeLabel.frame  = CGRectMake(60, 33+heigth, 170, 30);
     
+    [cell refreshCell];
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -207,18 +199,12 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    float heigth = 0.0f;
-    
     DSCircleWithMe *dcircle =[dataArray objectAtIndex:indexPath.row];
-
     NSString *str=dcircle.comment;
-    
     if (str==nil) {
         str=@"赞了该内容";
     }
-    str = [UILabel getStr:str];
-    CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-    heigth = size.height + 60;
+    float heigth = [CircleMeCell getContentHeigthWithStr:(str)] + 50;
     return heigth < 80 ? 80 : heigth;
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -290,5 +276,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
 
 @end

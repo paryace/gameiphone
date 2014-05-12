@@ -18,15 +18,12 @@
         
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
-        [self.headImgBtn addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.headImgBtn];
         
         self.focusButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 60, 40, 20)];
-        [self.focusButton setBackgroundImage:KUIImage(@"guanzhu") forState:UIControlStateNormal];
+        [self.focusButton setTitle:@"关注" forState:UIControlStateNormal];
         self.focusButton.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.focusButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-//        self.focusButton.backgroundColor =[UIColor grayColor];
-        [self.focusButton addTarget:self action:@selector(guanzhuing:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.focusButton];
         
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
@@ -40,7 +37,7 @@
         self.titleLabel.numberOfLines=0;
         [self.contentView addSubview:self.titleLabel];
         
-        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 100, 30)];
+        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
         self.timeLabel.textColor =[UIColor grayColor];
         [self.contentView addSubview:self.timeLabel];
@@ -77,31 +74,6 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];
-        
-        self.zanButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.zanButton.frame = CGRectMake(100, 100, 80, 40);
-        [self.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
-        [self.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
-
-        self.zanButton.titleLabel.font = [UIFont systemFontOfSize:10];
-        [self.zanButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-        self.zanButton.backgroundColor =[UIColor grayColor];
-
-        [self.zanButton addTarget:self action:@selector(didClickZan:) forControlEvents:UIControlEventTouchUpInside];
-        [self.contentView addSubview:self.zanButton];
-        
-        self.commentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.commentBtn.frame = CGRectMake(100, 100, 70, 33);
-        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
-        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
-
-        self.commentBtn.titleLabel.font = [UIFont systemFontOfSize:10];
-        [self.commentBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-        self.commentBtn.backgroundColor =[UIColor grayColor];
-
-        [self.commentBtn addTarget:self action:@selector(didClickComment:) forControlEvents:UIControlEventTouchUpInside];
-        [self.contentView addSubview:self.commentBtn];
-
     }
     return self;
 }
@@ -133,35 +105,6 @@
     if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:WithIndexPath:)]) {
         [self.myCellDelegate  bigImgWithCircle:self WithIndexPath:indexPath.row];
     }
-}
-
--(void)enterPersonPage:(id)sender
-{
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(enterPersonPageWithCell:)]) {
-        [self.myCellDelegate enterPersonPageWithCell:self];
-    }
-}
--(void)guanzhuing:(NSString *)sender
-{
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(changeShiptypeWithCell:)]) {
-        [self.myCellDelegate changeShiptypeWithCell:self];
-    }
-}
-
--(void)didClickZan:(id)sender
-{
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(didClickToZan:)]) {
-        [self.myCellDelegate didClickToZan:self];
-    }
-
-}
-
--(void)didClickComment:(id)sender
-{
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(didClickToComment:)]) {
-        [self.myCellDelegate didClickToComment:self];
-    }
-
 }
 
 - (void)awakeFromNib

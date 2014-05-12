@@ -329,99 +329,98 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-//        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"]) {
-//            NSDictionary *dic=[[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
-//            cell.headImageV.hidden =NO;
-//            cell.titleLabel.text = @"我发表了";
-//            cell.nameLabel.text = KISDictionaryHaveKey(dic, @"msg");
-//            cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-//            NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"img")];
-//            if ([imgStr isEqualToString:@" "]||[imgStr isEqualToString:@""]) {
-//                cell.headImageV.imageURL =nil;
-//            }else{
-//            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@/80/80",BaseImageUrl,[GameCommon getHeardImgId:imgStr]]];
-//            }
-//        }else{
-//            cell.titleLabel.text = @"";
-//            cell.nameLabel.text = @"暂无新的动态";
-//            cell.timeLabel.text = @"";
-//            cell.headImageV.hidden = YES;
-//        }
-//        
-//        cell.fansLabel.text = [GameCommon getNewStringWithId:m_hostInfo.fanNum];
-//        cell.zanLabel.text = [GameCommon getNewStringWithId:m_hostInfo.zanNum];
-//        [cell.cellButton addTarget:self action:@selector(myStateClick:) forControlEvents:UIControlEventTouchUpInside];
-//
-//           return cell;
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"]) {
+            NSDictionary *dic=[[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
+            cell.headImageV.hidden =NO;
+            cell.titleLabel.text = @"我发表了";
+            cell.nameLabel.text = KISDictionaryHaveKey(dic, @"msg");
+            cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+            NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"img")];
+            if ([imgStr isEqualToString:@" "]||[imgStr isEqualToString:@""]) {
+                cell.headImageV.imageURL =nil;
+            }else{
+            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@/80/80",BaseImageUrl,[GameCommon getHeardImgId:imgStr]]];
+            }
+        }else{
+            cell.titleLabel.text = @"";
+            cell.nameLabel.text = @"暂无新的动态";
+            cell.timeLabel.text = @"";
+            cell.headImageV.hidden = YES;
+        }
+        
+        cell.fansLabel.text = [GameCommon getNewStringWithId:m_hostInfo.fanNum];
+        cell.zanLabel.text = [GameCommon getNewStringWithId:m_hostInfo.zanNum];
+        [cell.cellButton addTarget:self action:@selector(myStateClick:) forControlEvents:UIControlEventTouchUpInside];
+
+           return cell;
 
         
         
         
-        if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
-        {
-            if ([KISDictionaryHaveKey(m_hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
-                NSDictionary* destDic = KISDictionaryHaveKey(m_hostInfo.state, @"destUser");
-                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
-                if (imgid) {
-                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-                }else
-                {
-                    cell.headImageV.imageURL = nil;
-                }
-                
-                cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-            }
-            else
-            {
-                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(m_hostInfo.state, @"userimg")];
-                if ([imgid isEqualToString:@""]||[imgid isEqualToString:@" "]) {
-                     cell.headImageV.imageURL = nil;
-                }else{
-                if (imgid) {
-                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-                }else
-                {
-                    cell.headImageV.imageURL = nil;
-                }
-                
-                }
-                if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
-                {
-                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
-                        cell.titleLabel.text = @"我发表了该内容";
-                    }
-                    else
-                        cell.titleLabel.text = [NSString stringWithFormat:@"我%@",KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-                }
-                else
-                    cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"nickname") : KISDictionaryHaveKey(m_hostInfo.state, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-            }
-            NSString* tit = [[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")]] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"msg") : KISDictionaryHaveKey(m_hostInfo.state, @"title");
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")] isEqualToString:@""]) {
-                cell.nameLabel.text = tit;
-                
-            }
-            else
-            {
-                cell.nameLabel.text = [NSString stringWithFormat:@"「%@」", tit];
-            }
-            cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
-//            if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] && [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"1"]){
-//                cell.notiBgV.hidden = NO;
+//        if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
+//        {
+//            if ([KISDictionaryHaveKey(m_hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
+//                NSDictionary* destDic = KISDictionaryHaveKey(m_hostInfo.state, @"destUser");
+//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
+//                if (imgid) {
+//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
+//                }else
+//                {
+//                    cell.headImageV.imageURL = nil;
+//                }
+//                
+//                cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
 //            }
 //            else
-//                cell.notiBgV.hidden = YES;
-        }
-        else
-        {
-            cell.titleLabel.text = @"";
-            cell.nameLabel.text = @"暂无新的动态";
-            cell.timeLabel.text = @"";
-        }
-        cell.fansLabel.text = [GameCommon getNewStringWithId:m_hostInfo.fanNum];
-        cell.zanLabel.text = [GameCommon getNewStringWithId:m_hostInfo.zanNum];
-        [cell.cellButton addTarget:self action:@selector(myStateClick:) forControlEvents:UIControlEventTouchUpInside];
-        return cell;
+//            {
+//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(m_hostInfo.state, @"userimg")];
+//                if ([imgid isEqualToString:@""]||[imgid isEqualToString:@" "]) {
+//                     cell.headImageV.imageURL = nil;
+//                }else{
+//                if (imgid) {
+//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
+//                }else
+//                {
+//                    cell.headImageV.imageURL = nil;
+//                }
+//                
+//                }
+//                if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
+//                {
+//                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
+//                        cell.titleLabel.text = @"我发表了该内容";
+//                    }
+//                    else
+//                        cell.titleLabel.text = [NSString stringWithFormat:@"我%@",KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
+//                }
+//                else
+//                    cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"nickname") : KISDictionaryHaveKey(m_hostInfo.state, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
+//            }
+//            NSString* tit = [[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")]] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"msg") : KISDictionaryHaveKey(m_hostInfo.state, @"title");
+//            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")] isEqualToString:@""]) {
+//                cell.nameLabel.text = tit;
+//                
+//            }
+//            else
+//            {
+//                cell.nameLabel.text = [NSString stringWithFormat:@"「%@」", tit];
+//            }
+//            cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
+////            if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] && [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"1"]){
+////                cell.notiBgV.hidden = NO;
+////            }
+////            else
+////                cell.notiBgV.hidden = YES;
+//        }
+//        else
+//        {
+//            cell.titleLabel.text = @"";
+//            cell.nameLabel.text = @"暂无新的动态";
+//            cell.timeLabel.text = @"";
+//        }
+//        cell.fansLabel.text = [GameCommon getNewStringWithId:m_hostInfo.fanNum];
+//        cell.zanLabel.text = [GameCommon getNewStringWithId:m_hostInfo.zanNum];
+//        [cell.cellButton addTarget:self action:@selector(myStateClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     else if(2 == indexPath.section)//我的角色
     {

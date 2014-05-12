@@ -530,15 +530,15 @@
         NSString* imageId = @"";
         if ([KISDictionaryHaveKey(self.hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]])
         {//目标 别人评论了我
-//            NSDictionary* destDic = KISDictionaryHaveKey(self.hostInfo.state, @"destUser");
-//            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
-//            
-//            showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? [DataStoreManager queryRemarkNameForUser:KISDictionaryHaveKey(destDic, @"nickname")] : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
-//            
-//            if (showTitle ==nil) {
-//                showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
-//                
-//            }
+            NSDictionary* destDic = KISDictionaryHaveKey(self.hostInfo.state, @"destUser");
+            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
+            
+            showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? [DataStoreManager queryRemarkNameForUser:KISDictionaryHaveKey(destDic, @"nickname")] : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
+            
+            if (showTitle ==nil) {
+                showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
+                
+            }
         }
         else
         {

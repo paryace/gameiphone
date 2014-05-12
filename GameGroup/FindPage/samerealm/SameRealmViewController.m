@@ -67,7 +67,6 @@
     [self.view addSubview:m_myTableView];
     
     m_selectView = [[SelectView alloc] initWithFrame:CGRectZero];
-    m_selectView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     m_selectView.selectDelegate = self;
     [self.view addSubview:m_selectView];
     
