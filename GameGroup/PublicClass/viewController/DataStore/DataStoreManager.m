@@ -1454,6 +1454,9 @@ return @"";
 +(NSMutableArray *)querySections
 {
     NSMutableArray * sectionArray = [NSMutableArray array];
+    
+    
+    
     NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
     NSMutableArray * nameIndexArray = [NSMutableArray array];
     for (int i = 0; i<nameIndexArray2.count; i++) {
@@ -1463,21 +1466,16 @@ return @"";
     [nameIndexArray sortUsingSelector:@selector(compare:)];
     for (int i = 0; i<nameIndexArray.count; i++) {
         NSMutableArray * array = [NSMutableArray array];
-        
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
         NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
-        
-        
-        
         NSMutableArray * nameKeyArray = [NSMutableArray array];
-        
         for (int i = 0; i<fri.count; i++) {
             NSString * shipType = [[fri objectAtIndex:i]shiptype];
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
             
             if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&[shipType isEqualToString:@"1"]) {
-                [nameKeyArray addObject:nameK];//
+                [nameKeyArray addObject:nameK];
             }
         
         }

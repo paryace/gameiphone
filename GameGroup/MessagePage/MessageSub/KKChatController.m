@@ -23,8 +23,8 @@
 #import "amrFileCodec.h"
 #endif
 
-#define kChatImageSizeWidth @"100"
-#define kChatImageSizeHigh @"100"
+#define kChatImageSizeWidth @"200"
+#define kChatImageSizeHigh @"200"
 
 #define padding 20
 #define LocalMessage @"localMessage"
@@ -464,7 +464,8 @@ UINavigationControllerDelegate>
             }
            // }
       
-            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-44,padding*2-15,size.width,size.height)];
+//            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-44,padding*2-15,size.width,size.height)];
+            [cell.msgImageView setFrame:CGRectMake(320-size.width - padding-44,padding*2-15,100,100)];
             //显示为缩略图
 
             cell.msgImageView.hidden = NO;
@@ -490,7 +491,8 @@ UINavigationControllerDelegate>
             
             [cell.bgImageView setTag:(indexPath.row+1)];
           
-            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15,size.width,size.height)];
+//            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15,size.width,size.height)];
+            [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15,100,100)];
             
             cell.msgImageView.tag = indexPath.row;
             cell.msgImageView.placeholderImage = [UIImage imageNamed:@"placeholder.png"];
@@ -1025,7 +1027,7 @@ UINavigationControllerDelegate>
             NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
             NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh];
             NSURL *kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
-            EGOImageView *image = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+            EGOImageView *image = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
             image.imageURL = kkChatImageMsgUrl;
             return image.image;
             NSLog(@"finalmesg添加%@",uuid);

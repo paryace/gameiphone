@@ -189,13 +189,17 @@
 
 - (void)refreshSortType:(NSInteger)tabIndex
 {
-    NSString* sort_1 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] : @"1";
-    NSString* sort_2 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] : @"1";
-    NSString* sort_3 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] : @"1";
-
-    [m_sortTypeDic setObject:sort_1 forKey:sorttype_1];
-    [m_sortTypeDic setObject:sort_2 forKey:sorttype_2];
-    [m_sortTypeDic setObject:sort_3 forKey:sorttype_3];
+//    NSString* sort_1 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_1] : @"1";
+//    NSString* sort_2 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_2] : @"1";
+//    NSString* sort_3 = [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] ? [[NSUserDefaults standardUserDefaults] objectForKey:sorttype_3] : @"1";
+//
+//    [m_sortTypeDic setObject:sort_1 forKey:sorttype_1];
+//    [m_sortTypeDic setObject:sort_2 forKey:sorttype_2];
+//    [m_sortTypeDic setObject:sort_3 forKey:sorttype_3];
+    
+    [m_sortTypeDic setObject:@"1" forKey:sorttype_1];
+    [m_sortTypeDic setObject:@"1" forKey:sorttype_2];
+    [m_sortTypeDic setObject:@"1" forKey:sorttype_3];
 
     
     [self refreshFriendList:tabIndex];
@@ -323,13 +327,12 @@
     switch (m_segmentClickIndex) {
         case kSegmentFrinds:
         {
-                rowNum = [m_friendsArray count];
+            rowNum = [m_friendsArray count];
             titleLabel.text = [NSString stringWithFormat:@"好友(%d)", rowNum];
-        }   break;
+        }break;
         case kSegmentAttention:
         {
-                rowNum = [m_attentionsArray count];
-            
+            rowNum = [m_attentionsArray count];
             titleLabel.text = [NSString stringWithFormat:@"关注(%d)", rowNum];
         } break;
         case kSegmentFans:
@@ -339,12 +342,9 @@
                 rowNum = [[[NSUserDefaults standardUserDefaults] objectForKey:FansCount] integerValue];
             }
             else
-              rowNum =m_otherSortFansArray.count;
-
+            rowNum =m_otherSortFansArray.count;
             titleLabel.text = [NSString stringWithFormat:@"粉丝(%d)", rowNum];
         }break;
-        default:
-            break;
     }
 }
 
@@ -362,18 +362,16 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"111" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
+    success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults] setObject:sort forKey:sorttype_1];
         [[NSUserDefaults standardUserDefaults] synchronize];//保存方式
-        
         [m_sortTypeDic setObject:sort forKey:sorttype_1];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [self parseFriendsList:KISDictionaryHaveKey(responseObject, @"1")withType:@"1"];
         }
-        
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
-
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [m_Friendheader endRefreshing];
@@ -382,15 +380,14 @@
 
 -(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
-    [DataStoreManager deleteAllUserWithShipType:@"1"];
-    
+    [DataStoreManager deleteAllUserWithShipType:@"1"];//先清，在存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([friendsList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [friendsList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
@@ -399,28 +396,14 @@
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             };
         }
-        //先存后取
-        m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
-        m_sectionArray_friend = [DataStoreManager querySections];
-
-        [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
-        for (int i = 0; i < m_sectionArray_friend.count; i++) {
-            NSLog(@"qq %@ #### %@",[m_sectionArray_friend objectAtIndex:i], [[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0]);
-            [m_sectionIndexArray_friend addObject:[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0]];
-        }
-        m_friendsArray = [NSMutableArray arrayWithArray:[m_friendDict allKeys]];
-        [m_friendsArray sortUsingSelector:@selector(compare:)];
-        
+        [self getFriendDateFromDataSore];//从数据库取数据显示
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
-            
             [m_myTableView reloadData];
             [m_Friendheader endRefreshing];
-
             [self refreshTopLabel];
         });
     });
-    
 }
 
 #pragma mark -获得关注列表
@@ -479,19 +462,9 @@
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
             }
         }
-        //先存后取
-        m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
-        m_sectionArray_attention = [DataStoreManager queryAttentionSections];
-        [m_sectionIndexArray_attention removeAllObjects];
-        for (int i = 0; i < m_sectionArray_attention.count; i++) {
-            [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
-        }
-        m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-        [m_attentionsArray sortUsingSelector:@selector(compare:)];
-
+        [self setAttentionDateFromDataSore];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_attentionheader endRefreshing];
-            
             [m_myAttentionsTableView reloadData];
             [self refreshTopLabel];
         });
@@ -518,25 +491,18 @@
     
     //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-    
         [hud hide:YES];
-        
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
                 [m_fansheader endRefreshing];
                 [m_fansfooter endRefreshing];
-
                 return;
             }
             if (m_currentPage == 0) {//默认展示存储的
                 [DataStoreManager deleteAllUserWithShipType:@"3"];
-                
                 [m_otherSortFansArray removeAllObjects];
                 [m_myFansTableView reloadData];
-                
                 [self parseFansList:[KISDictionaryHaveKey(responseObject, @"3") objectForKey:@"users"]Withshiptype:@"3"];
-                
-                
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults")] forKey:FansCount];
                 [[NSUserDefaults standardUserDefaults] synchronize];
@@ -557,7 +523,6 @@
 }
 -(void)parseFansList:(id)fansList Withshiptype:(NSString *)shiptype
 {
-    //    [DataStoreManager cleanFansList];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if([fansList isKindOfClass:[NSArray class]]){
@@ -565,70 +530,77 @@
                 [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
-        
-            else if ([fansList isKindOfClass:[NSDictionary class]]) {
-                NSArray* keyArr = [fansList allKeys];
-                for (NSString* key in keyArr) {
-                    for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
-                        [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
-                    }
+        else if ([fansList isKindOfClass:[NSDictionary class]]) {
+            NSArray* keyArr = [fansList allKeys];
+            for (NSString* key in keyArr) {
+                for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
+                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
                 }
             }
+        }
         m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:nil ascend:NO];
-
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             [m_myFansTableView reloadData];
             [m_fansheader endRefreshing];
             [m_fansfooter endRefreshing];
-
             [self refreshTopLabel];
         });
     });
     //上拉加载
 }
 
+
+
+//m_friendDict：数据的集合
+//m_sectionArray_friend：每个索引字母对应的用户集合的集合
+//m_sectionIndexArray_friend：索引字母的集合
+//m_friendsArray：用户昵称和id的集合
+-(void) getFriendDateFromDataSore
+{
+    m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
+    m_sectionArray_friend = [DataStoreManager querySections];
+    [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
+    for (int i = 0; i < m_sectionArray_friend.count; i++) {
+        [m_sectionIndexArray_friend addObject:[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0]];
+    }
+    m_friendsArray = [NSMutableArray arrayWithArray:[m_friendDict allKeys]];
+    [m_friendsArray sortUsingSelector:@selector(compare:)];
+}
+//
+-(void)setAttentionDateFromDataSore
+{
+    m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
+    m_sectionArray_attention = [DataStoreManager queryAttentionSections];
+    [m_sectionIndexArray_attention removeAllObjects];
+    for (int i = 0; i < m_sectionArray_attention.count; i++) {
+        [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
+    }
+    m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
+    [m_attentionsArray sortUsingSelector:@selector(compare:)];
+}
 #pragma mark -刷新表格
 -(void)refreshFriendList:(NSInteger)tabIndex
 {
     if (tabIndex == kSegmentFrinds) {
         if ([[m_sortTypeDic objectForKey:sorttype_1] isEqualToString:@"1"]) {
-            m_friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];//所有朋友
-            m_sectionArray_friend = [DataStoreManager querySections];
-            [m_sectionIndexArray_friend removeAllObjects];//存放 index 目前 + M
-            for (int i = 0; i < m_sectionArray_friend.count; i++) {
-                [m_sectionIndexArray_friend addObject:[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0]];
-            }
-            m_friendsArray = [NSMutableArray arrayWithArray:[m_friendDict allKeys]];
-            [m_friendsArray sortUsingSelector:@selector(compare:)];
+            [self getFriendDateFromDataSore];
+            [m_myTableView reloadData];
         }
-        [m_myTableView reloadData];
+//        [m_myTableView reloadData];
     }
     else if(kSegmentAttention == tabIndex)
     {
         if ([[m_sortTypeDic objectForKey:sorttype_2] isEqualToString:@"1"]) {
-            m_attentionDict = [DataStoreManager queryAllUserManagerWithshipType:@"2"];
-            m_sectionArray_attention = [DataStoreManager queryAttentionSections];
-            [m_sectionIndexArray_attention removeAllObjects];
-            for (int i = 0; i < m_sectionArray_attention.count; i++) {
-                [m_sectionIndexArray_attention addObject:[[m_sectionArray_attention objectAtIndex:i] objectAtIndex:0]];
-            }
+            [self setAttentionDateFromDataSore];
+            [m_myAttentionsTableView reloadData];
         }
-            m_attentionsArray = [NSMutableArray arrayWithArray:[m_attentionDict allKeys]];
-        [m_myAttentionsTableView reloadData];
+//        [m_myAttentionsTableView reloadData];
     }
     else if(kSegmentFans == tabIndex)
     {
-        //        m_fansDict = [DataStoreManager queryAllFans];
-        //        m_fansArray = [NSMutableArray arrayWithArray:[m_fansDict allKeys]];
-        //        [m_fansArray sortUsingSelector:@selector(compare:)];
-        
         m_otherSortFansArray = [DataStoreManager queryAllFansWithOtherSortType:nil ascend:YES];
-        
         [m_myFansTableView reloadData];
-        // [refreshView setRefreshViewFrame];
     }
-
     [self refreshTopLabel];
 }
 
@@ -689,6 +661,7 @@
 {
     
 }
+//返回组的数量
 #pragma mark 表格
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
@@ -710,10 +683,13 @@
     else
         return 1;
 }
-
+//返回每个组里面的数据条数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == m_myTableView) {
+//        if (m_sectionArray_friend==nil||[m_sectionArray_friend count]==0) {
+//            return 0;
+//        }
         return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
     }
     else if(tableView == m_myAttentionsTableView)
@@ -861,7 +837,7 @@
 
 
 
-
+//返回索引的字母
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
@@ -885,7 +861,7 @@
     else
         return @"";
 }
-
+// 返回索引列表的集合
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
     if (tableView == m_myTableView) {
@@ -937,7 +913,9 @@
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_myTableView;
         header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-                    [self getFriendBySort:[m_sortTypeDic objectForKey:sorttype_1]];
+            
+//            [self getFriendBySort:[m_sortTypeDic objectForKey:sorttype_1]];
+            [self getFriendBySort:@"1"];
         };
         header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
             
@@ -959,7 +937,8 @@
 
     header.scrollView = m_myAttentionsTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        [self getAttentionBySort:[m_sortTypeDic objectForKey:sorttype_2]];
+//        [self getAttentionBySort:[m_sortTypeDic objectForKey:sorttype_2]];
+        [self getAttentionBySort:@"1"];
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
         
