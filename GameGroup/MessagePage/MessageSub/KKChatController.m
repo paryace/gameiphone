@@ -1242,8 +1242,9 @@ UINavigationControllerDelegate>
     KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.progressView.hidden = NO;
     cell.progressView.progress = 0.0f;
-    
-    [NetManager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
+   
+    NetManager *netmanager=[[NetManager alloc] init];
+    [netmanager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
     Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
     {
         @synchronized (self) {
@@ -1252,6 +1253,7 @@ UINavigationControllerDelegate>
                 NSLog(@"fafafaf-------->>>%f",progress);
                 cell.progressView.progress = progress;
                 if (progress == 1) {
+                    cell.progressView.progress = 1.0f;
                     cell.progressView.hidden = YES;
                 }
             });
@@ -1262,10 +1264,10 @@ UINavigationControllerDelegate>
          NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
          dispatch_async(dispatch_get_main_queue(), ^{
              cell.progressView.hidden = YES;
+             if(index < messages.count){
+                 [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
+             }
          });
-         if(index < messages.count){
-             [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
-         }
      }
     failure:^(AFHTTPRequestOperation *operation, NSError *error)
      {
