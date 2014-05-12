@@ -26,4 +26,5 @@
 @dynamic myType;
 @dynamic myCreateDate;
 @dynamic unRead;
+@dynamic cellHeight;
 @end

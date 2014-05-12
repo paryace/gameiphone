@@ -8,6 +8,12 @@
 
 #import "BaseViewController.h"
 
-@interface CityViewController : BaseViewController
+@protocol CityDelegate;
+@interface CityViewController : BaseViewController<UITableViewDelegate,UITableViewDataSource>
+@property(nonatomic,assign)id<CityDelegate>mydelegate;
+@end
+@protocol CityDelegate <NSObject>
+
+-(void)pushCityNumTonextPageWithDictionary:(NSDictionary *)dic;
 
 @end

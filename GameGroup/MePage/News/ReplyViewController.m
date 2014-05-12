@@ -12,6 +12,7 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "UserManager.h"
+#import "MJRefresh.h"
 
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
@@ -24,13 +25,15 @@ typedef enum : NSUInteger {
     
     NSInteger        m_pageIndex;
     
-    PullUpRefreshView      *refreshView;
-    SRRefreshView   *_slimeView;
+//    PullUpRefreshView      *refreshView;
+//    SRRefreshView   *_slimeView;
     AppDelegate *app;
     UIView* inPutView;
     UIButton* inputButton;
     NSMutableDictionary *commentDic;
-    
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
+
     BOOL isComeBackComment;
 }
 @property (strong,nonatomic) HPGrowingTextView *textView;
@@ -86,23 +89,9 @@ typedef enum : NSUInteger {
     m_replyTabel.dataSource = self;
     [self.view addSubview:m_replyTabel];
     
-    refreshView = [[PullUpRefreshView alloc] initWithFrame:CGRectMake(0, kScreenHeigth - startX-(KISHighVersion_7?0:20), 320, REFRESH_HEADER_HEIGHT)];//上拉加载
-    [m_replyTabel addSubview:refreshView];
-    refreshView.pullUpDelegate = self;
-    refreshView.myScrollView = m_replyTabel;
-    [refreshView stopLoading:NO];
-    
-    _slimeView = [[SRRefreshView alloc] init];
-    _slimeView.delegate = self;
-    _slimeView.upInset = 0;
-    _slimeView.slimeMissWhenGoingBack = NO;
-    _slimeView.slime.bodyColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-    _slimeView.slime.skinColor = [UIColor whiteColor];
-    _slimeView.slime.lineWith = 1;
-    _slimeView.slime.shadowBlur = 4;
-    _slimeView.slime.shadowColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1];
-    [m_replyTabel addSubview:_slimeView];
-    //    [_slimeView setLoadingWithexpansion];
+    [self addheadView];
+    [self addFootView];
+
     
     inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
     [self.view addSubview:inPutView];
@@ -140,18 +129,6 @@ typedef enum : NSUInteger {
     [inPutView addSubview:imageView];
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
-    
-    
-    
-//    inputButton = [[UIButton alloc] initWithFrame:CGRectMake(255, 8, 60, 35)];
-//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_normal") forState:UIControlStateNormal];
-//    [inputButton setBackgroundImage:KUIImage(@"blue_small_3_click") forState:UIControlStateHighlighted];
-//    [inputButton setTitle:@"发表" forState:UIControlStateNormal];
-//    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    [inputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [inPutView addSubview:inputButton];
-    
     
     
     
@@ -325,8 +302,8 @@ typedef enum : NSUInteger {
         [hud hide:YES];
         
         if (![responseObject isKindOfClass:[NSArray class]]) {
-            [refreshView stopLoading:YES];
-            [_slimeView endRefresh];
+            [m_header endRefreshing];
+            [m_footer endRefreshing];
             return;
         }
 //        else if([responseObject count] != 0)
@@ -341,11 +318,9 @@ typedef enum : NSUInteger {
         [m_dataReply addObjectsFromArray:responseObject];
         
         [m_replyTabel reloadData];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
         
-        [refreshView stopLoading:NO];
-        [refreshView setRefreshViewFrame];
-        
-        [_slimeView endRefresh];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -355,8 +330,8 @@ typedef enum : NSUInteger {
                 [alert show];
             }
         }
-        [refreshView stopLoading:NO];
-        [_slimeView endRefresh];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
         
         [hud hide:YES];
     }];
@@ -441,6 +416,7 @@ typedef enum : NSUInteger {
                     [m_replyTabel reloadData];
                 }
             }
+            [self showMessageWindowWithContent:@"评论成功" imageType:0];
             [hud hide:YES];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
@@ -646,58 +622,45 @@ typedef enum : NSUInteger {
     [self.navigationController pushViewController:detailV animated:YES];
     //    }
 }
-
-#pragma mark  scrollView  delegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//添加下拉刷新
+-(void)addheadView
 {
-    if (m_replyTabel.contentSize.height < m_replyTabel.frame.size.height) {
-        refreshView.viewMaxY = 0;
-    }
-    else
-        refreshView.viewMaxY = m_replyTabel.contentSize.height - m_replyTabel.frame.size.height;
-    [refreshView viewdidScroll:scrollView];
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_replyTabel;
     
-    [_slimeView scrollViewDidScroll];
-}
-
-
-#pragma mark pull up refresh
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    if(scrollView == m_replyTabel)
-    {
-        [refreshView viewWillBeginDragging:scrollView];
-    }
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    if(scrollView == m_replyTabel)
-    {
-        [refreshView didEndDragging:scrollView];
+    header.scrollView = m_replyTabel;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_pageIndex = 0;
+        [self getDataByNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
-        [_slimeView scrollViewDidEndDraging];
-    }
+    };
+    //  [header beginRefreshing];
+    m_header = header;
 }
 
-- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
+//添加上拉加载更多
+-(void)addFootView
 {
-    [self getDataByNet];
-}
-
-#pragma mark - slimeRefresh delegate
-- (void)slimeRefreshStartRefresh:(SRRefreshView *)refreshView
-{
-    m_pageIndex = 0;
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_replyTabel;
     
-    [self getDataByNet];
-}
-
--(void)endRefresh
-{
-    [_slimeView endRefreshFinish:^{
-        
-    }];
+    footer.scrollView = m_replyTabel;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getDataByNet];
+    };
+    m_footer = footer;
 }
 
 #pragma mark 手势

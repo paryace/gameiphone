@@ -30,23 +30,24 @@
 
         self.nickNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 100, 25)];
         [self.nickNameLabel setTextAlignment:NSTextAlignmentLeft];
-        [self.nickNameLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+        [self.nickNameLabel setFont:[UIFont systemFontOfSize:13.0]];
         [self.nickNameLabel setBackgroundColor:[UIColor clearColor]];
-        [self.nickNameLabel setTextColor:kColorWithRGB(51, 51, 200, 1.0)];
+        [self.nickNameLabel setTextColor:UIColorFromRGBA(0x455ca8, 1)];
         [self addSubview:self.nickNameLabel];
         
         self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(230, 4, 80, 25)];
         [self.timeLabel setTextAlignment:NSTextAlignmentRight];
-        [self.timeLabel setFont:[UIFont systemFontOfSize:12.0]];
+        [self.timeLabel setFont:[UIFont systemFontOfSize:11.0]];
         [self.timeLabel setBackgroundColor:[UIColor clearColor]];
-        [self.timeLabel setTextColor:[UIColor grayColor]];
+        [self.timeLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
         [self addSubview:self.timeLabel];
         
         self.commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(65, 28, 245, 20)];
-        [self.commentLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
+        [self.commentLabel setFont:[UIFont systemFontOfSize:13.0]];
         self.commentLabel.numberOfLines = 0;
         [self.commentLabel setBackgroundColor:[UIColor clearColor]];
-        [self.commentLabel setTextColor:kColorWithRGB(153, 153, 153, 1.0)];
+        [self.commentLabel setTextColor:[UIColor darkGrayColor]];
+        //[self.commentLabel setTextColor:kColorWithRGB(153, 153, 153, 1.0)];
         [self addSubview:self.commentLabel];
     }
     return self;

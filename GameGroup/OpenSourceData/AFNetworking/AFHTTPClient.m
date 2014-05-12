@@ -484,7 +484,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
                     NSString* a = [finalPostStr stringByReplacingOccurrencesOfString:@"%" withString:@"%25"];
                     NSString* b = [a stringByReplacingOccurrencesOfString:@"&" withString:@"%26"];
                     NSData *data = [b dataUsingEncoding:NSUTF8StringEncoding];
-                  //  NSLog(@"发送数据:%@",b);
+                    NSLog(@"发送数据:%@",b);
                     [request setHTTPBody:data];
                     
                 }

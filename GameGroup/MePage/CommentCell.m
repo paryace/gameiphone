@@ -24,7 +24,7 @@
         self.nicknameButton.hidden = YES;
         
         self.commentContLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
-        self.commentContLabel.font = [UIFont systemFontOfSize:12];
+        self.commentContLabel.font = [UIFont boldSystemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
         self.commentContLabel.textColor = [UIColor grayColor];
         self.commentContLabel.textAlignment=NSTextAlignmentLeft;

@@ -30,6 +30,8 @@
     #import "CellButtonClickDelegate.h"
     #import "WeiboSDK.h"
     #import "Reachability.h"
+    #import "PBEmojiLabel.h"
+
    #endif
 
 #define appType @"91"//91、appStore

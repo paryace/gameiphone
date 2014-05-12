@@ -27,4 +27,5 @@
 @property (nonatomic, retain) NSString * myType;
 @property (nonatomic, retain) NSString * myCreateDate;
 @property (nonatomic, retain) NSString * unRead;
+@property (nonatomic, retain) NSNumber * cellHeight;
 @end

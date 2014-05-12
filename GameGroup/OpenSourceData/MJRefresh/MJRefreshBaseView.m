@@ -70,7 +70,7 @@
         self.backgroundColor = [UIColor clearColor];
         
         // 2.时间标签
-        [self addSubview:_lastUpdateTimeLabel = [self labelWithFontSize:12]];
+        [self addSubview:_lastUpdateTimeLabel = [self labelWithFontSize:11]];
         
         // 3.状态标签
         [self addSubview:_statusLabel = [self labelWithFontSize:13]];
@@ -97,7 +97,7 @@
 #pragma mark 设置frame
 - (void)setFrame:(CGRect)frame
 {
-    frame.size.height = MJRefreshViewHeight;
+   frame.size.height = MJRefreshViewHeight;
     [super setFrame:frame];
     
     CGFloat w = frame.size.width;

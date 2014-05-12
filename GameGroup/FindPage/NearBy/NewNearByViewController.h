@@ -8,13 +8,17 @@
 
 #import "BaseViewController.h"
 #import "NewNearByCell.h"
+#import "CityViewController.h"
+
 @interface NewNearByViewController : BaseViewController
 <UICollectionViewDataSource,
 UICollectionViewDelegate,
 UITableViewDataSource,
 UITableViewDelegate,
 UIAlertViewDelegate,
-NewNearByCellDelegate
+NewNearByCellDelegate,
+CityDelegate,
+UIActionSheetDelegate
 >
 
 @end
