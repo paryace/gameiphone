@@ -88,7 +88,8 @@
 
 #define NewComment @"newCommentOfMyDynamic"
 
-#define NearByKey  @"nearBy"//附近的玩家筛选
+#define NearByKey  @"nearBy_"//附近的玩家筛选
+#define NewNearByKey @"newNearBy"
 
 //#define NotUseSimulator  @"YES"//聊天的录音 只支持真机
 

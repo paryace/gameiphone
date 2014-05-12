@@ -18,6 +18,7 @@
 @property(nonatomic,copy)NSString *commentStr;
 @property(nonatomic,copy)NSString *comNickNameStr;
 @property (nonatomic, retain) UILabel *commentContLabel;
+@property (nonatomic,strong)UILabel *nickNameLabel;
 
 -(void)refreshsCell;
 //显示可点击的呢称

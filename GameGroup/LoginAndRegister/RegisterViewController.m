@@ -247,13 +247,13 @@
     [self.navigationController pushViewController:viewController animated:YES];
 }
 /*判断输入手机号格式是否正确*/
-BOOL validateMobile(NSString* mobile) {
-    //手机号以13， 15，18开头，八个 \d 数字字符
-    NSString *phoneRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
-    NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",phoneRegex];
-    NSLog(@"phoneTest is %@",phoneTest);
-    return [phoneTest evaluateWithObject:mobile];
-}
+//BOOL validateMobile(NSString* mobile) {
+//    //手机号以13， 15，18开头，八个 \d 数字字符
+//    NSString *phoneRegex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
+//    NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",phoneRegex];
+//    NSLog(@"phoneTest is %@",phoneTest);
+//    return [phoneTest evaluateWithObject:mobile];
+//}
 - (void)getVerCodeButton:(id)sender//获取验证码
 {
     [m_phoneNumText resignFirstResponder];
@@ -267,11 +267,11 @@ BOOL validateMobile(NSString* mobile) {
         return;
     }
     //判断手机号格式是不是以 13 15 18 开头的 并且是11位
-    BOOL phoneRight = validateMobile(m_phoneNumText.text);
-    if (!phoneRight) {
-        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号" buttonTitle:@"确定"];
-        return;
-    }
+//    BOOL phoneRight = validateMobile(m_phoneNumText.text);
+//    if (!phoneRight) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号" buttonTitle:@"确定"];
+//        return;
+//    }
     if ([[TempData sharedInstance] registerNeedMsg]) {
         [self getVerificationCode];
     }else{

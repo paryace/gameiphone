@@ -25,6 +25,7 @@
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     int m_currPageCount;
+    
 }
 @end
 
@@ -119,6 +120,11 @@
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/160/160",imgStr]]];
     }
     [topVIew addSubview:headImageView];
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
+    
     [self addheadView];
     [self addFootView];
     [self getInfoFromNet];
@@ -138,7 +144,7 @@
 
 -(void)getInfoFromNet
 {
-    
+    [hud show:YES];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:self.userId forKey:@"userid"];

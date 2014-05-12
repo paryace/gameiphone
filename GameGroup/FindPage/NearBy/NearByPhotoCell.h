@@ -14,4 +14,5 @@
 @property(nonatomic,strong)UIImageView *tagImageView;
 @property(nonatomic,strong)UILabel *distanceLabel;
 @property(nonatomic,strong)UIImageView *sexImageView;
+@property(nonatomic,strong)UIImageView *moreImageView;
 @end

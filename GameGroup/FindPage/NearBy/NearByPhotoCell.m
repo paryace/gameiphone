@@ -17,7 +17,7 @@
         // Initialization code
         self.photoView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 77, 77)];
         self.photoView.placeholderImage = KUIImage(@"placeholder");
-        self.photoView.backgroundColor = [UIColor redColor];
+       // self.photoView.backgroundColor = [UIColor redColor];
         [self addSubview:self.photoView];
         
         
@@ -41,6 +41,10 @@
         self.sexImageView = [[UIImageView alloc]initWithFrame:CGRectMake(63, 0, 15, 15)];
         [self.lestView addSubview:self.sexImageView];
 //       
+        
+        self.moreImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 77, 77)];
+        self.moreImageView.hidden= YES;
+        [self addSubview:self.moreImageView];
         
         
     }

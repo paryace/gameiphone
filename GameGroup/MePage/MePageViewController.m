@@ -134,21 +134,11 @@
             break;
         case 1:
         {
-//            if(![m_hostInfo.state isEqualToString:@""])//动态
-//            {
                 return 35;
-//            }
-//            else
-//                return 0;
         }break;
         case 3:
         {
-//            if ([m_hostInfo.achievementArray count] != 0)
-//            {
                 return 35;
-//            }
-//            else
-//                return 0;
         }break;
         default:
             return 30;

@@ -113,7 +113,7 @@
         cell.headImageV.imageURL = nil;
     }else{
     if ([GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]) {
-        theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]]];
+        theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]]];
     }
     cell.headImageV.imageURL = theUrl;
     }
@@ -121,7 +121,6 @@
     
     if ([KISDictionaryHaveKey(tempDic, @"type") isEqualToString:@"1"]) {
         cell.fromImage.image = KUIImage(@"recommend_phone");
-        
     }
     else if ([KISDictionaryHaveKey(tempDic, @"type") isEqualToString:@"2"]) {
         cell.fromImage.image = KUIImage(@"recommend_star");

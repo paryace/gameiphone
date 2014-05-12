@@ -74,13 +74,10 @@
     menuButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [menuButton setBackgroundImage:KUIImage(@"menu_button_normal") forState:UIControlStateNormal];
     [menuButton setBackgroundImage:KUIImage(@"menu_button_click") forState:UIControlStateHighlighted];
-    menuButton.userInteractionEnabled =NO;
+   // menuButton.userInteractionEnabled =NO;
     [self.view addSubview:menuButton];
     
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
     
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_myTableView.dataSource = self;
@@ -122,38 +119,37 @@
     }
     [self addFooter];
     [self addHeader];
-    [self getLocationForNet];
+    [self getNearByDataByNet];
     //   [self getLocationForNet];
 }
-#pragma mark --获取位置 并且获取附近的人
--(void)getLocationForNet
-{
-    [m_loadImageView startAnimating];
-    
-    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
-    if (app.reach.currentReachabilityStatus ==NotReachable) {
-        alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-        [alertView show];
-        menuButton.userInteractionEnabled = YES;
-        [m_loadImageView stopAnimating];
-        return;
-    }
-    else{
-        [self getNearByDataByNet];
-        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-            [[TempData sharedInstance] setLat:lat Lon:lon];
-            [hud hide:YES];
-            [self getNearByDataByNet];
-        } Failure:^{
-            [hud hide:YES];
-            menuButton.userInteractionEnabled = YES;
-
-            [m_loadImageView stopAnimating];
-            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-        }
-         ];
-    }
-}
+//#pragma mark --获取位置 并且获取附近的人
+//-(void)getLocationForNet
+//{
+//    [m_loadImageView startAnimating];
+//    
+//    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
+//    if (app.reach.currentReachabilityStatus ==NotReachable) {
+//        alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+//        [alertView show];
+//        menuButton.userInteractionEnabled = YES;
+//        [m_loadImageView stopAnimating];
+//        return;
+//    }
+//    else{
+//        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+//            [[TempData sharedInstance] setLat:lat Lon:lon];
+//            [hud hide:YES];
+//            [self getNearByDataByNet];
+//        } Failure:^{
+//            [hud hide:YES];
+//            menuButton.userInteractionEnabled = YES;
+//
+//            [m_loadImageView stopAnimating];
+//            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+//        }
+//         ];
+//    }
+//}
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -183,7 +179,8 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
-        
+        menuButton.userInteractionEnabled =YES;
+
         [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {

@@ -368,6 +368,7 @@ typedef enum : NSUInteger {
 -(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment
 {
     hud.labelText = @"评论中...";
+    [hud show:YES];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:msgid forKey:@"messageId"];
@@ -382,19 +383,6 @@ typedef enum : NSUInteger {
     [dict setObject:@"186" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
-    //如果没有网，将数据保存到数据库。。。。
-//    if (app.reach.currentReachabilityStatus ==NotReachable) {
-//        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-//        [dict setObject:msgid forKey:@"msgId"];
-//        [dict setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
-//        [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
-//        [dict setObject:comment forKey:@"comments"];
-//        NSString* uuid = [[GameCommon shareGameCommon] uuid];
-//        [dict setObject:uuid forKey:@"uuid"];
-//        [DataStoreManager saveCommentsWithDic:dict];
-//        return;
-//    }
-//    else{
         [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             if ([responseObject isKindOfClass:[NSDictionary class]]) {
                 NSString *commentStr;
@@ -429,7 +417,6 @@ typedef enum : NSUInteger {
             [hud hide:YES];
 
         }];
- //   }
     
     [self.textView resignFirstResponder];
     self.textView.text = nil;

@@ -66,7 +66,7 @@ typedef enum : NSUInteger {
     int height;
     
     NSMutableDictionary *commentOffLineDict;
-    
+    UIActivityIndicatorView * m_loginActivity;
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -273,6 +273,18 @@ typedef enum : NSUInteger {
     [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
+    
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.view addSubview:m_loginActivity];
+    m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
+    // [m_loginActivity startAnimating];
+
+    
+    
+    
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"加载中...";
     [self.view addSubview:hud];
@@ -521,7 +533,7 @@ typedef enum : NSUInteger {
 
 #pragma mark --网络请求 获取信息
 -(void)getInfoFromNet
-{
+{ [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:self.userId forKey:@"userid"];
@@ -534,6 +546,7 @@ typedef enum : NSUInteger {
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_loginActivity stopAnimating];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
             if ([KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch")intValue]==1) {
@@ -570,6 +583,8 @@ typedef enum : NSUInteger {
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_header endRefreshing];
         [m_footer endRefreshing];
+        [m_loginActivity stopAnimating];
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -657,60 +672,63 @@ typedef enum : NSUInteger {
             [contentDict setObject:@(size.height) forKey:@"titleLabelHieght"];
             cellHeight += size.height +5 ;  //+5为了不和下面太紧
             
+            //图片
+            if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
+            {
+                cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
+            }
+            else{
+                if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
+                {
+                    //无图
+                    cellHeight += 0;
+                    
+                    [contentDict setObject:@(0) forKey:@"imgHieght"];
+                }
+                else
+                {
+                    //有图， 先解析出图片数组
+                    NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
+                    NSString *str = [imgStr substringFromIndex:imgStr.length];
+                    NSString *str2;
+                    if ([str isEqualToString:@","]) {
+                        str2= [imgStr substringToIndex:imgStr.length-1];
+                    }
+                    else {
+                        str2 = imgStr;
+                    }
+                    NSArray *collArray = [imgStr componentsSeparatedByString:@","];
+                    
+                    if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
+                        [(NSMutableArray*)collArray removeLastObject];
+                    }
+                    [contentDict setObject:collArray forKey:@"imgArray"];
+                    
+                    //根据图片数组接卸图片所占高度
+                    int i = (collArray.count-1)/3;
+                    float imgViewHeight = i*80+80; //图片的高度
+                    imgViewHeight += (i+1)*2; //图片的padding, 为2
+                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+                    
+                    cellHeight +=imgViewHeight;
+                }
+            }
         }
         else {
             //分享的链接 URL
+            //NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
             NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
-            //NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
+            NSLog(@"strTitle:%@",strTitle);
             CGSize size1 = [strTitle sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-            NSNumber* titleLabelHieght = [NSNumber numberWithFloat:(size1.height)];
+            NSLog(@"heightfloot:%f",size1.height);
+            NSNumber* titleLabelHieght = [NSNumber numberWithFloat:size1.height];
             [contentDict setObject:titleLabelHieght forKey:@"titleLabelHieght"];
             
-            cellHeight += size1.height + 50 + 5;  //+5为了不和下面太紧
+            cellHeight += size1.height  +50 +5 ;  //+5为了不和下面太紧
         }
     }
     
-    //图片
-    if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
-    {
-        cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
-    }
-    else{
-        if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
-        {
-            //无图
-            cellHeight += 0;
-            
-            [contentDict setObject:@(0) forKey:@"imgHieght"];
-        }
-        else
-        {
-            //有图， 先解析出图片数组
-            NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
-            NSString *str = [imgStr substringFromIndex:imgStr.length];
-            NSString *str2;
-            if ([str isEqualToString:@","]) {
-                str2= [imgStr substringToIndex:imgStr.length-1];
-            }
-            else {
-                str2 = imgStr;
-            }
-            NSArray *collArray = [imgStr componentsSeparatedByString:@","];
-            
-            if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
-                [(NSMutableArray*)collArray removeLastObject];
-            }
-            [contentDict setObject:collArray forKey:@"imgArray"];
-            
-            //根据图片数组接卸图片所占高度
-            int i = (collArray.count-1)/3;
-            float imgViewHeight = i*80+80; //图片的高度
-            imgViewHeight += (i+1)*2; //图片的padding, 为2
-            [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
-            
-            cellHeight +=imgViewHeight;
-        }
-    }
+   
     
     //时间label, 删除按钮与btn_more  50
     cellHeight += 50;
@@ -916,7 +934,7 @@ typedef enum : NSUInteger {
         cell.titleLabel.frame = CGRectMake(60, 30, 250, titleLabelHeight);
         cell.shareView.frame = CGRectMake(60, titleLabelHeight+35, 250, 50);
             //titleLabelHeight +=5;
-        m_currmagY += titleLabelHeight +50;
+        m_currmagY += titleLabelHeight+50 ;
             
         //去除掉首尾的空白字符和换行字符
         NSString *str = KISDictionaryHaveKey(dict, @"msg");

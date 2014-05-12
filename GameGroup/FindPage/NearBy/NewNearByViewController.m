@@ -14,6 +14,7 @@
 #import "PhotoViewController.h"
 #import "OnceDynamicViewController.h"
 #import "ReplyViewController.h"
+#import "NearByViewController.h"
 @interface NewNearByViewController ()
 {
     UICollectionView *m_photoCollectionView;
@@ -34,7 +35,11 @@
     NSString *citydongtaiStr;
     UIButton *menuButton;
     NSMutableArray *wxSDArray;
+    BOOL isSaveHcTopImg;
+    BOOL isSaveHcListInfo;
     
+    NSString *titleStr;
+    UIActivityIndicatorView *m_loginActivity;
 }
 @end
 
@@ -52,12 +57,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    isSaveHcListInfo = NO;
+    isSaveHcTopImg = NO;
     [self setTopViewWithTitle:@"" withBackButton:YES];
     titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.text = @"附近";
+    titleStr = @"附近";
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+        NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+        if ([type isEqualToString:@"0"]) {
+            titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
+        }
+        else if ([type isEqualToString:@"1"])
+        {
+            titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
+        }else
+        {
+            titleLabel.text = titleStr;
+        }
+    }else
+    titleLabel.text = titleStr;
+
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:titleLabel];
@@ -73,6 +94,17 @@
     array = [NSMutableArray array];
     headImgArray =[NSMutableArray array];
     wxSDArray = [NSMutableArray array];
+    
+    
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.view addSubview:m_loginActivity];
+    m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
+   // [m_loginActivity startAnimating];
+
+    
     
     
     
@@ -101,15 +133,30 @@
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     m_myTableView.tableHeaderView = m_photoCollectionView;
     
-    hud = [[MBProgressHUD alloc]initWithView:self.view];
-    hud.labelText = @"获取中...";
-    [self.view addSubview:hud];
+//    hud = [[MBProgressHUD alloc]initWithView:self.view];
+//    hud.labelText = @"获取中...";
+//    [self.view addSubview:hud];
     
     [self addheadView];
     [self addFootView];
     
+    NSFileManager *fileManager =[NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/HC_NearByTopImg"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        headImgArray= [NSMutableArray arrayWithContentsOfFile:path];
+    }
+    
+    NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+    BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
+    NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
+    if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        array= [NSMutableArray arrayWithContentsOfFile:path1];
+    }
     [self getLocationForNet];
     
+
     citydongtaiStr = @"附近的动态";
     // Do any additional setup after loading the view.
 }
@@ -144,18 +191,20 @@
     m_currPageCount = 0;
     if (buttonIndex == 0) {//男
         m_searchType = 0;
-        m_titleLabel.text = @"附近的玩家(男)";
+        titleLabel.text =[titleStr stringByAppendingString:@"(男)"];
     }
     else if (buttonIndex == 1) {//女
         m_searchType = 1;
-        m_titleLabel.text = @"附近的玩家(女)";
+        titleLabel.text =[titleStr stringByAppendingString:@"(女)"];
     }
     else//全部
     {
-        m_titleLabel.text = @"附近的玩家";
+        titleLabel.text = titleStr;
         m_searchType = 2;
     }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NearByKey];
+    
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NewNearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self getInfoWithNet];
     [self getTopImageFromNet];
@@ -167,16 +216,19 @@
 #pragma mark ---- 网络请求
 -(void)getLocationForNet
 {
-    
+    [m_loginActivity startAnimating];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         return;
     }
     else{
         [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
             [[TempData sharedInstance] setLat:lat Lon:lon];
+            isSaveHcTopImg = YES;
+            isSaveHcListInfo = YES;
             [self getTopImageFromNet];
             [self getInfoWithNet];
         } Failure:^{
+            [m_loginActivity stopAnimating];
         [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
         }
          ];
@@ -184,25 +236,24 @@
 }
 -(void)getTopImageFromNet
 {
+    [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     
-    switch (m_searchType) {
-        case 0:
-            [paramDic setObject:@"0" forKey:@"gender"];
-      
-            break;
-        case 1:
-            [paramDic setObject:@"1" forKey:@"gender"];
-     
-            break;
-        case 2:
-            [paramDic setObject:@"" forKey:@"gender"];
-   
-            break;
-    
-        default:
-            break;
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+            NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+            if ([type isEqualToString:@"0"]) {
+                [paramDic setObject:@"0" forKey:@"gender"];
+            }
+            else if ([type isEqualToString:@"1"])
+            {
+                [paramDic setObject:@"1" forKey:@"gender"];
+            }else
+            {
+                [paramDic setObject:@"" forKey:@"gender"];
+            }
+        }
     }
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
@@ -216,13 +267,20 @@
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_loginActivity stopAnimating];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [headImgArray removeAllObjects];
             [headImgArray addObjectsFromArray:responseObject];
+            if (headImgArray.count==12) {
+                [headImgArray removeLastObject];
+            }
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"seeMore.jpg",@"img", nil];
+            
+            [headImgArray addObject:dic];
             if (headImgArray.count<1) {
                 m_photoCollectionView.frame = CGRectMake(0, 0, 320, 0);
             }
-            else if(headImgArray.count>1&&headImgArray.count<5)
+            else if(headImgArray.count>0&&headImgArray.count<5)
             {
                 m_photoCollectionView.frame = CGRectMake(0, 0, 320, 83);
             }
@@ -245,9 +303,17 @@
             m_myTableView.tableHeaderView = view;
 
             [m_photoCollectionView reloadData];
+            
+            if (isSaveHcTopImg) {
+                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByTopImg"];
+                [headImgArray writeToFile:filePath atomically:YES];
+                isSaveHcTopImg = NO;
+            }
+            
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -264,6 +330,7 @@
 -(void)getInfoWithNet
 {
     [hud show:YES];
+    [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -272,29 +339,29 @@
     [paramDic setObject:cityCode?cityCode:@"" forKey:@"cityCode"];
     [paramDic setObject:@(m_currPageCount) forKey:@"pageIndex"];
     
-    switch (m_searchType) {
-        case 0:
-            [paramDic setObject:@"0" forKey:@"gender"];
-            
-            break;
-        case 1:
-            [paramDic setObject:@"1" forKey:@"gender"];
-            
-            break;
-        case 2:
-            [paramDic setObject:@"" forKey:@"gender"];
-            
-            break;
-            
-        default:
-            break;
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+            NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+            if ([type isEqualToString:@"0"]) {
+                [paramDic setObject:@"0" forKey:@"gender"];
+            }
+            else if ([type isEqualToString:@"1"])
+            {
+                [paramDic setObject:@"1" forKey:@"gender"];
+            }else
+            {
+                [paramDic setObject:@"" forKey:@"gender"];
+            }
+        }
     }
-    [paramDic setObject:@"20" forKey:@"maxSize"];
+    
+      [paramDic setObject:@"20" forKey:@"maxSize"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:@"1" forKey:@"gameid"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_loginActivity stopAnimating];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             if (m_currPageCount ==0) {
                 [array removeAllObjects];
@@ -302,6 +369,15 @@
                 for (int i =0; i <array.count; i++) {
                     array[i] = [self contentAnalyzer:array[i] withReAnalyzer:NO];
                 }
+                
+                
+                if (isSaveHcListInfo) {
+                    NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+                    [array writeToFile:filePath atomically:YES];
+                    isSaveHcListInfo = NO;
+                }
+
+                
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSArray *arrays = [NSArray arrayWithArray:responseObject];
@@ -317,6 +393,7 @@
         }
         [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -349,26 +426,54 @@
     if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@""]) {
         cell.photoView.imageURL = nil;
     }else{
-    cell.photoView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,imgStr,@"/160/160"]];
+        if ([imgStr isEqualToString:@"seeMore.jpg"]) {
+            cell.photoView.imageURL = nil;
+            cell.photoView.hidden = YES;
+            cell.moreImageView.hidden = NO;
+            cell.moreImageView.image = KUIImage(@"seeMore.jpg");
+        }
+        else{
+            cell.photoView.hidden = NO;
+            cell.moreImageView.hidden = YES;
+            cell.photoView.placeholderImage = KUIImage(@"placehoder");
+            cell.photoView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,imgStr,@"/160/160"]];
+        }
     }
     
-    if ([KISDictionaryHaveKey(dict, @"gender")intValue]==0) {
+    if ([KISDictionaryHaveKey(dict, @"gender")intValue]==0)
+    {
         cell.sexImageView.image = KUIImage(@"gender_boy");
-    }else{
+    }else
+    {
         cell.sexImageView.image = KUIImage(@"gender_girl");
     }
+    if (indexPath.row ==headImgArray.count-1)
+    {
+        cell.lestView.hidden = YES;
+    }
+    else
+    {
+        cell.lestView.hidden = NO;
+    }
+    
     
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"%d",indexPath.row);
+    if (indexPath.row ==headImgArray.count-1) {
+        NearByViewController *nearBy = [[NearByViewController alloc]init];
+        [self.navigationController pushViewController:nearBy animated:YES];
+    }
+    else{
+    
     NSDictionary *dict =[headImgArray objectAtIndex:indexPath.row];
     TestViewController *testVC = [[TestViewController alloc]init];
     testVC.nickName =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"nickname")];
     testVC.userId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"userid")];
     [self.navigationController pushViewController:testVC animated:YES];
-    
+    }
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -388,11 +493,11 @@
     NSDictionary *dict = [array objectAtIndex:indexPath.row];
     
     if ([KISDictionaryHaveKey(dict, @"isZan")intValue] ==1) {
-        [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_normal") forState:UIControlStateNormal];
-        [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateNormal];
+        [cell.zanButton setBackgroundImage:KUIImage(@"zan_cancle_nearBy") forState:UIControlStateNormal];
+   //     [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateNormal];
     }else{
-        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
-        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        [cell.zanButton setBackgroundImage:KUIImage(@"NearByZan") forState:UIControlStateNormal];
+//        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
     }
     
     
@@ -408,7 +513,7 @@
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]) {
             [cell.focusButton setBackgroundImage:KUIImage(@"guanzhu") forState:UIControlStateNormal];
         }else{
-           // [cell.focusButton setTitle:@"+好友" forState:UIControlStateNormal];
+           [cell.focusButton setBackgroundImage:KUIImage(@"NearByAddFriend")forState:UIControlStateNormal];
         }
     }else{
         cell.focusButton.hidden = YES;
@@ -436,8 +541,8 @@
             cell.photoCollectionView.hidden =YES;
             
             cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
-            cell.zanButton.frame = CGRectMake(140, m_currmagY+15, 70, 20);
-            cell.commentBtn.frame = CGRectMake(220, m_currmagY+15, 70, 20);
+            cell.zanButton.frame = CGRectMake(180, m_currmagY+14, 40, 22);
+            cell.commentBtn.frame = CGRectMake(260, m_currmagY+14, 40, 22);
         }
         //有图动态
         else{
@@ -456,8 +561,8 @@
             
             [cell.photoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 80, 30);
-            cell.zanButton.frame = CGRectMake(140, m_currmagY+5, 70, 20);
-            cell.commentBtn.frame = CGRectMake(220, m_currmagY+5, 70, 20);
+            cell.zanButton.frame = CGRectMake(180, m_currmagY+5, 40, 22);
+            cell.commentBtn.frame = CGRectMake(260, m_currmagY+5, 40, 22);
             //删除按钮 - 自己的文章
             }
         
@@ -505,12 +610,11 @@
         }
         
         cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
-        cell.zanButton.frame = CGRectMake(140, m_currmagY+15, 70, 20);
-        cell.commentBtn.frame = CGRectMake(220, m_currmagY+15, 70, 20);
+        cell.zanButton.frame = CGRectMake(180, m_currmagY+15, 40, 22);
+        cell.commentBtn.frame = CGRectMake(260, m_currmagY+15, 40, 22);
 
         m_currmagY  = cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
     }
-    
     return cell;
   
 }
@@ -528,10 +632,9 @@
     UIView *view = [[UIView alloc ]initWithFrame:CGRectMake(0, 0, 320, 40)];
     view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     
-    UIImageView *imageVIew =[[ UIImageView alloc]initWithFrame:CGRectMake(10, 0, 40, 40)];
+    UIImageView *imageVIew =[[ UIImageView alloc]initWithFrame:CGRectMake(10, 4, 32, 32)];
     imageVIew.image = KUIImage(@"compass");
     [view addSubview:imageVIew];
-    
     
     nearBylabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 0, 180, 40)];
     nearBylabel.text  =citydongtaiStr;
@@ -580,8 +683,29 @@
 -(void)pushCityNumTonextPageWithDictionary:(NSDictionary *)dic{
 
     cityCode = KISDictionaryHaveKey(dic, @"cityCode");
-    titleLabel.text = KISDictionaryHaveKey(dic, @"city");
+    titleStr =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"city")];
+    
+   if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey])
+   {
+       if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+           NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+           if ([type isEqualToString:@"0"]) {
+               titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
+           }
+           else if ([type isEqualToString:@"1"])
+           {
+               titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
+           }else
+           {
+               titleLabel.text = titleStr;
+           }
+       }
+   }
+    //titleLabel.text = KISDictionaryHaveKey(dic, @"city");
+    
+    
     citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(dic,@"city")];
+    m_currPageCount =0;
     [self getInfoWithNet];
     [self getTopImageFromNet];
 }
@@ -722,7 +846,48 @@
             CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
             [contentDict setObject:@(size.height) forKey:@"titleLabelHieght"];
             cellHeight += size.height;
-            
+            //图片
+            if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
+            {
+                cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
+            }
+            else{
+                if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
+                {
+                    //无图
+                    cellHeight += 0;
+                    
+                    [contentDict setObject:@(0) forKey:@"imgHieght"];
+                }
+                else
+                {
+                    //有图， 先解析出图片数组
+                    NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
+                    NSString *str = [imgStr substringFromIndex:imgStr.length];
+                    NSString *str2;
+                    if ([str isEqualToString:@","]) {
+                        str2= [imgStr substringToIndex:imgStr.length-1];
+                    }
+                    else {
+                        str2 = imgStr;
+                    }
+                    NSArray *collArray = [imgStr componentsSeparatedByString:@","];
+                    
+                    if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
+                        [(NSMutableArray*)collArray removeLastObject];
+                    }
+                    [contentDict setObject:collArray forKey:@"imgArray"];
+                    
+                    //根据图片数组接卸图片所占高度
+                    int i = (collArray.count-1)/3;
+                    float imgViewHeight = i*80+80; //图片的高度
+                    imgViewHeight += (i+1)*2; //图片的padding, 为2
+                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+                    
+                    cellHeight +=imgViewHeight;
+                }
+            }
+
         }
         else {
             //分享的链接 URL
@@ -737,47 +902,6 @@
         }
     }
     
-    //图片
-    if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
-    {
-        cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
-    }
-    else{
-        if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
-        {
-            //无图
-            cellHeight += 0;
-            
-            [contentDict setObject:@(0) forKey:@"imgHieght"];
-        }
-        else
-        {
-            //有图， 先解析出图片数组
-            NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
-            NSString *str = [imgStr substringFromIndex:imgStr.length];
-            NSString *str2;
-            if ([str isEqualToString:@","]) {
-                str2= [imgStr substringToIndex:imgStr.length-1];
-            }
-            else {
-                str2 = imgStr;
-            }
-            NSArray *collArray = [imgStr componentsSeparatedByString:@","];
-            
-            if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
-                [(NSMutableArray*)collArray removeLastObject];
-            }
-            [contentDict setObject:collArray forKey:@"imgArray"];
-            
-            //根据图片数组接卸图片所占高度
-            int i = (collArray.count-1)/3;
-            float imgViewHeight = i*80+80; //图片的高度
-            imgViewHeight += (i+1)*2; //图片的padding, 为2
-            [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
-            
-            cellHeight +=imgViewHeight;
-        }
-    }
     //时间label, 删除按钮与btn_more  50
     cellHeight += 50;
     
@@ -886,21 +1010,17 @@
     NSString *isZan = KISDictionaryHaveKey(dic, @"isZan");
     if ([isZan intValue]==0) {//假如是未赞状态
         [self showMessageWindowWithContent:@"赞已成功" imageType:0];
-        [myCell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_normal") forState:UIControlStateNormal];
-        [myCell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateHighlighted];
+        [myCell.zanButton setBackgroundImage:KUIImage(@"zan_cancle_nearBy") forState:UIControlStateNormal];
         [dic setObject:@"1" forKey:@"isZan"];
-
         //请求网络点赞
         [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id") IsZan:YES];
     }else{//假如是已经赞的状态
         [self showMessageWindowWithContent:@"已取消" imageType:0];
         [myCell.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
-        [myCell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
         [dic setObject:@"0" forKey:@"isZan"];
         //请求网络取消
         [self postZanWithMsgId:KISDictionaryHaveKey(dic, @"id") IsZan:NO];
     }
-
 }
 //上传赞
 -(void)postZanWithMsgId:(NSString *)msgid IsZan:(BOOL)isZan

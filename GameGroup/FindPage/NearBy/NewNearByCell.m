@@ -79,25 +79,25 @@
         [self.contentView addSubview:self.photoCollectionView];
         
         self.zanButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.zanButton.frame = CGRectMake(100, 100, 80, 40);
+        self.zanButton.frame = CGRectMake(100, 100, 80, 44);
         [self.zanButton setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
         [self.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
 
         self.zanButton.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.zanButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-        self.zanButton.backgroundColor =[UIColor grayColor];
+      //  self.zanButton.backgroundColor =[UIColor grayColor];
 
         [self.zanButton addTarget:self action:@selector(didClickZan:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.zanButton];
         
         self.commentBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.commentBtn.frame = CGRectMake(100, 100, 70, 33);
-        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
+        self.commentBtn.frame = CGRectMake(100, 100, 80, 44);
+        [self.commentBtn setBackgroundImage:KUIImage(@"NearByComment") forState:UIControlStateNormal];
         [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
 
         self.commentBtn.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.commentBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-        self.commentBtn.backgroundColor =[UIColor grayColor];
+       // self.commentBtn.backgroundColor =[UIColor grayColor];
 
         [self.commentBtn addTarget:self action:@selector(didClickComment:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.commentBtn];

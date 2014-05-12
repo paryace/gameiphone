@@ -30,7 +30,7 @@
 
         self.nickNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 100, 25)];
         [self.nickNameLabel setTextAlignment:NSTextAlignmentLeft];
-        [self.nickNameLabel setFont:[UIFont systemFontOfSize:13.0]];
+        [self.nickNameLabel setFont:[UIFont boldSystemFontOfSize:13.0]];
         [self.nickNameLabel setBackgroundColor:[UIColor clearColor]];
         [self.nickNameLabel setTextColor:UIColorFromRGBA(0x455ca8, 1)];
         [self addSubview:self.nickNameLabel];
