@@ -26,7 +26,6 @@
         self.lestView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
         [self.photoView addSubview:self.lestView];
         
-        
         self.tagImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
         self.tagImageView.image = KUIImage(@"icon_nearby");
         [self.lestView addSubview:self.tagImageView];

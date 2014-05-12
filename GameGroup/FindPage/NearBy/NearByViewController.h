@@ -10,4 +10,6 @@
 
 @interface NearByViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIAlertViewDelegate>
 @property (strong,nonatomic) AppDelegate * appDel;
+@property(nonatomic,copy)NSString *cityCode;
+@property(nonatomic,copy)NSString *titleStr;
 @end

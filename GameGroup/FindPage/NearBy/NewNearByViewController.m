@@ -456,6 +456,17 @@
         cell.lestView.hidden = NO;
     }
     
+    NSString *distrance =KISDictionaryHaveKey(dict, @"updateUserLocationDate");
+    double dis = [distrance doubleValue];
+    double gongLi = dis/1000;
+    
+    NSString* allStr = @"";
+    if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
+        allStr =@"未知";
+    }
+    else
+        allStr = [NSString stringWithFormat:@"%f",gongLi];
+    cell.distanceLabel.text = allStr;
     
     return cell;
 }
@@ -464,10 +475,11 @@
     NSLog(@"%d",indexPath.row);
     if (indexPath.row ==headImgArray.count-1) {
         NearByViewController *nearBy = [[NearByViewController alloc]init];
+        nearBy.cityCode =[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:cityCode]];
+        nearBy.titleStr =[NSString stringWithFormat:@"%@",titleStr];
         [self.navigationController pushViewController:nearBy animated:YES];
     }
     else{
-    
     NSDictionary *dict =[headImgArray objectAtIndex:indexPath.row];
     TestViewController *testVC = [[TestViewController alloc]init];
     testVC.nickName =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"nickname")];
@@ -700,10 +712,9 @@
                titleLabel.text = titleStr;
            }
        }
+   }else{
+       titleLabel.text = titleStr;
    }
-    //titleLabel.text = KISDictionaryHaveKey(dic, @"city");
-    
-    
     citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(dic,@"city")];
     m_currPageCount =0;
     [self getInfoWithNet];

@@ -45,25 +45,25 @@
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
     m_titleLabel.backgroundColor = [UIColor clearColor];
-    m_titleLabel.text = @"附近的玩家";
+    m_titleLabel.text = self.titleStr;
     m_titleLabel.textAlignment = NSTextAlignmentCenter;
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:m_titleLabel];
     
     m_searchType = 2;
     
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:NearByKey] && [[[NSUserDefaults standardUserDefaults] objectForKey:NearByKey] length] > 0) {
-        NSString* type = [[NSUserDefaults standardUserDefaults] objectForKey:NearByKey];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:NewNearByKey] && [[[NSUserDefaults standardUserDefaults] objectForKey:NewNearByKey] length] > 0) {
+        NSString* type = [[NSUserDefaults standardUserDefaults] objectForKey:NewNearByKey];
         if ([type isEqualToString:@"0"]) {
-            m_titleLabel.text = @"附近的玩家(男)";
+            m_titleLabel.text = [self.titleStr stringByAppendingString:@"(男)"];
             m_searchType = 0;
         }
         else if ([type isEqualToString:@"1"]) {
-            m_titleLabel.text = @"附近的玩家(女)";
+            m_titleLabel.text =[self.titleStr stringByAppendingString:@"(女)"];
             m_searchType = 1;
         }
         else if ([type isEqualToString:@"2"]) {
-            m_titleLabel.text = @"附近的玩家";
+            m_titleLabel.text = self.titleStr;
             m_searchType = 2;
         }
     }
@@ -122,35 +122,6 @@
     [self getNearByDataByNet];
     //   [self getLocationForNet];
 }
-//#pragma mark --获取位置 并且获取附近的人
-//-(void)getLocationForNet
-//{
-//    [m_loadImageView startAnimating];
-//    
-//    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication] .delegate;
-//    if (app.reach.currentReachabilityStatus ==NotReachable) {
-//        alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-//        [alertView show];
-//        menuButton.userInteractionEnabled = YES;
-//        [m_loadImageView stopAnimating];
-//        return;
-//    }
-//    else{
-//        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-//            [[TempData sharedInstance] setLat:lat Lon:lon];
-//            [hud hide:YES];
-//            [self getNearByDataByNet];
-//        } Failure:^{
-//            [hud hide:YES];
-//            menuButton.userInteractionEnabled = YES;
-//
-//            [m_loadImageView stopAnimating];
-//            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-//        }
-//         ];
-//    }
-//}
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     [self.navigationController popViewControllerAnimated:YES];
@@ -170,10 +141,11 @@
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
-    
+    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.cityCode?self.cityCode:@"" forKey:@"cityCode"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"120" forKey:@"method"];
+    [postDict setObject:@"206" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     
@@ -277,7 +249,7 @@
         m_titleLabel.text = @"附近的玩家";
         m_searchType = 2;
     }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NearByKey];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NewNearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [m_loadImageView startAnimating];
     [self getNearByDataByNet];

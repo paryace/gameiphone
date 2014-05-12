@@ -95,7 +95,13 @@
 
 -(void)randomCity:(id)sender
 {
-    
+    int i = arc4random()%m_sectionHeadsKeys.count;
+    NSArray *array =[m_mianDict objectForKey:m_sectionHeadsKeys[i]];
+    int j = arc4random()%array.count;
+    if (self.mydelegate &&[self.mydelegate respondsToSelector:@selector(pushCityNumTonextPageWithDictionary:)]) {
+        [self.mydelegate pushCityNumTonextPageWithDictionary:array[j]];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -130,7 +136,6 @@
     
     NSArray *sectionArr = [m_mianDict objectForKey:[m_sectionHeadsKeys objectAtIndex:indexPath.section]];
     NSDictionary *dic = [sectionArr objectAtIndex:indexPath.row];
-    
     cell.textLabel.text = KISDictionaryHaveKey(dic, @"city");
     return cell;
 }
