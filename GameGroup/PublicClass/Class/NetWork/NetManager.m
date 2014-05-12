@@ -42,7 +42,7 @@ NSString * gen_uuid()
         
         NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSDictionary * dict = [receiveStr JSONValue];
-        //NSLog(@"获得数据：%@", dict);
+        NSLog(@"获得数据：%@", dict);
         int status = [[dict objectForKey:@"errorcode"] intValue];
         if (status==0) {
             success(operation,[dict objectForKey:@"entity"]);
@@ -98,7 +98,7 @@ NSString * gen_uuid()
         
         NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSDictionary * dict = [receiveStr JSONValue];
-        //NSLog(@"获得数据：%@",dict);
+        NSLog(@"获得数据：%@",dict);
         int status = [[dict objectForKey:@"errorcode"] intValue];
         if (status==0) {
             success(operation,[dict objectForKey:@"entity"]);

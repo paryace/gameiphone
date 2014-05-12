@@ -69,7 +69,7 @@
         
         self.achievementArray = KISDictionaryHaveKey(info, @"title");//头衔
         
-        self.state = KISDictionaryHaveKey(info, @"dynamicmsg");//动态
+        self.state = KISDictionaryHaveKey(info, @"latestDynamicMsg");//动态
 
 //获取游戏角色列表
         //NSDictionary *charaDic = KISDictionaryHaveKey(info, @"dynamicmsg");

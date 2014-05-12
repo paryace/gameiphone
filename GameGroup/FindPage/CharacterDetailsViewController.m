@@ -70,16 +70,16 @@
      startX = KISHighVersion_7 ? 64 : 44;
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateHighlighted];
+    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    self.view.backgroundColor = [UIColor whiteColor];
+    //self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
 	// Do any additional setup after loading the view.
     
-    m_charaDetailsView.listScrollView.backgroundColor = [UIColor clearColor];
-    
+   // m_charaDetailsView.listScrollView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+   // m_charaDetailsView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX)];
 
     [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];

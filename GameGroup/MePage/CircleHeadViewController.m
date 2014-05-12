@@ -64,6 +64,9 @@ typedef enum : NSUInteger {
     NSMutableDictionary *cellhightarray;//存放每个Cell的高度
     float offer;
     int height;
+    
+    NSMutableDictionary *commentOffLineDict;
+    
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -106,7 +109,7 @@ typedef enum : NSUInteger {
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
-    
+    commentOffLineDict = [NSMutableDictionary dictionary];
     cellhightarray = [NSMutableDictionary dictionary];
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     height=216;
@@ -127,7 +130,7 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-  //  m_myTableView.backgroundColor = [UIColor clearColor];
+    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     [self.view addSubview:m_myTableView];
     
     //顶部图片
@@ -545,13 +548,18 @@ typedef enum : NSUInteger {
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
 //                //拉数据回来以后直接格式化， 再保存
-//                for (int i=0; i<m_dataArray.count; i++) {
-//                    m_dataArray[i] = [self contentAnalyzer:m_dataArray[i]];
-//                }
+                for (int i=0; i<m_dataArray.count; i++) {
+                    m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
+                }
                 [self saveinfoToUserDefaults:m_dataArray];
                 
             }else{
-                [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+                NSMutableArray *arr  = [NSMutableArray array];
+                NSArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
+                for (int i =0; i<customArr.count; i++) {
+                    [arr addObject:[self contentAnalyzer:customArr[i] withReAnalyzer:NO]];
+                }
+                [m_dataArray addObjectsFromArray:arr];
             }
             m_currPageCount++;
             [m_header endRefreshing];
@@ -559,9 +567,6 @@ typedef enum : NSUInteger {
             [m_myTableView reloadData];
             [hud  hide:YES];
         }
-        
-        
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_header endRefreshing];
         [m_footer endRefreshing];
@@ -587,9 +592,7 @@ typedef enum : NSUInteger {
         methodStr = @"2";
     }else{
         methodStr = @"1";
-
     }
-    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:methodStr forKey:@"aboutFriendSwitch"];
@@ -608,7 +611,6 @@ typedef enum : NSUInteger {
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
-                
             }
         }
         else
@@ -627,6 +629,153 @@ typedef enum : NSUInteger {
     }
     
 }
+#pragma mark Content分析器
+- (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
+{
+    if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
+        return contentDict;
+    }
+    
+    float cellHeight = 0.0f; //行高
+    
+    //昵称
+    cellHeight += 30;
+    
+    //正文高度
+    if([[contentDict allKeys]containsObject:@"titleLabelHieght"] &&!reAnalyzer)
+    {
+        cellHeight += [KISDictionaryHaveKey(contentDict, @"titleLabelHieght") floatValue];
+    }
+    else{
+        
+        NSString *urlLink = KISDictionaryHaveKey(contentDict, @"urlLink");
+        if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil){
+            //普通正文
+            NSString *str = KISDictionaryHaveKey(contentDict, @"msg");
+            str = [UILabel getStr:str];
+            CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            [contentDict setObject:@(size.height) forKey:@"titleLabelHieght"];
+            cellHeight += size.height +5 ;  //+5为了不和下面太紧
+            
+        }
+        else {
+            //分享的链接 URL
+            NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
+            //NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
+            CGSize size1 = [strTitle sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            NSNumber* titleLabelHieght = [NSNumber numberWithFloat:(size1.height)];
+            [contentDict setObject:titleLabelHieght forKey:@"titleLabelHieght"];
+            
+            cellHeight += size1.height + 50 + 5;  //+5为了不和下面太紧
+        }
+    }
+    
+    //图片
+    if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
+    {
+        cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
+    }
+    else{
+        if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
+        {
+            //无图
+            cellHeight += 0;
+            
+            [contentDict setObject:@(0) forKey:@"imgHieght"];
+        }
+        else
+        {
+            //有图， 先解析出图片数组
+            NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
+            NSString *str = [imgStr substringFromIndex:imgStr.length];
+            NSString *str2;
+            if ([str isEqualToString:@","]) {
+                str2= [imgStr substringToIndex:imgStr.length-1];
+            }
+            else {
+                str2 = imgStr;
+            }
+            NSArray *collArray = [imgStr componentsSeparatedByString:@","];
+            
+            if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
+                [(NSMutableArray*)collArray removeLastObject];
+            }
+            [contentDict setObject:collArray forKey:@"imgArray"];
+            
+            //根据图片数组接卸图片所占高度
+            int i = (collArray.count-1)/3;
+            float imgViewHeight = i*80+80; //图片的高度
+            imgViewHeight += (i+1)*2; //图片的padding, 为2
+            [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+            
+            cellHeight +=imgViewHeight;
+        }
+    }
+    
+    //时间label, 删除按钮与btn_more  50
+    cellHeight += 50;
+    
+    //赞label
+    if ([KISDictionaryHaveKey(contentDict, @"zanNum")intValue]!=0)
+    {
+        NSArray *array = KISDictionaryHaveKey(contentDict, @"zanList");
+        if (array.count>0){ //以前的数据有些没有zanlist
+            cellHeight +=30;
+        }
+    }
+    
+    //评论table
+    if ([[contentDict allKeys]containsObject:@"commentListHieght"] &&!reAnalyzer) {
+        cellHeight +=[KISDictionaryHaveKey(contentDict, @"commentListHieght") floatValue];
+    }
+    else{
+        float commHieght = 0.0f;
+        NSArray *commentsArray =KISDictionaryHaveKey(contentDict, @"commentList");
+        for (int i =0; i<commentsArray.count; i++) {
+            NSMutableDictionary *dic = [commentsArray objectAtIndex:i];
+            //判断是否是回复某人的评论
+            if([[dic allKeys]containsObject:@"commentCellHieght"] &&!reAnalyzer){
+                float commentCellHeight = [KISDictionaryHaveKey(dic, @"commentCellHieght") floatValue];
+                commHieght +=commentCellHeight;
+            }
+            else{   //如果没算高度， 算出高度，存起来
+                NSString *str ;
+                if ([[dic allKeys]containsObject:@"commentStr"] &&!reAnalyzer) {
+                    str =KISDictionaryHaveKey(dic, @"commentStr");
+                }
+                else{
+                    if ([[dic allKeys]containsObject:@"destUser"]) {
+                        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                    }else{
+                        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                    }
+                    str = [UILabel getStr:str];
+                    [dic setObject:str forKey:@"commentStr"];
+                }
+                
+                //计算ceommentCell 的高度
+                CGSize size = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+                float height1= size.height+5;
+                [dic setObject:@(height1) forKey:@"commentCellHieght"];
+                commHieght += height1;
+            }
+        }
+        [contentDict setObject:@(commHieght) forKey:@"commentListHieght"];
+        cellHeight += commHieght;
+    }
+    
+    //查看更多评论label
+    if ([KISDictionaryHaveKey(contentDict, @"commentNum")intValue]>7) {
+        cellHeight += 20;
+    }
+    [contentDict setObject:@(cellHeight) forKey:@"cellHieght"];
+    
+    bool Analyzed = YES;
+    [contentDict setObject:@(Analyzed) forKey:@"Analyzed"];
+    
+    return contentDict;
+}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return m_dataArray.count;
@@ -703,7 +852,7 @@ typedef enum : NSUInteger {
             //动态的高度
             float height1 = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
             cell.titleLabel.frame = CGRectMake(60, 30, 250, height1);
-            m_currmagY += height1;
+            m_currmagY += height1 + 5;
             
         
             //无图动态
@@ -721,7 +870,6 @@ typedef enum : NSUInteger {
             }
             
         }
-        
             //有图动态
             else{
             NSArray *imgArray = KISDictionaryHaveKey(dict, @"imgArray");
@@ -864,7 +1012,7 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    [self contentAnalyzer:dict withReAnalyzer:NO];
+    dict = [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
         
     //以动态id为键存放每个cell的高度到集合里
@@ -874,154 +1022,7 @@ typedef enum : NSUInteger {
     
 }
 
-#pragma mark Content分析器
-- (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
-{
-    if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
-            return contentDict;
-    }
-    
-    float cellHeight = 0.0f; //行高
-    
-    //昵称
-    cellHeight += 30;
-    
-    //正文高度
-    if([[contentDict allKeys]containsObject:@"titleLabelHieght"] &&!reAnalyzer)
-    {
-        cellHeight += [KISDictionaryHaveKey(contentDict, @"titleLabelHieght") floatValue];
-    }
-    else{
-        
-        NSString *urlLink = KISDictionaryHaveKey(contentDict, @"urlLink");
-        if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil){
-            //普通正文
-            NSString *str = KISDictionaryHaveKey(contentDict, @"msg");
-            str = [UILabel getStr:str];
-            CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-            [contentDict setObject:@(size.height) forKey:@"titleLabelHieght"];
-            cellHeight += size.height;
-            
-        }
-        else {
-            //分享的链接 URL
-            NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
-            NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
-            NSLog(@"strTitle:%@",strTitle);
-            NSLog(@"strMsg:%@",strMsg);
-            CGSize size1 = [strTitle sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-            NSNumber* titleLabelHieght = [NSNumber numberWithFloat:size1.height];
-            [contentDict setObject:titleLabelHieght forKey:@"titleLabelHieght"];
-            
-            cellHeight += size1.height + 50;
-        }
-    }
-    
-    //图片
-    if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
-    {
-        cellHeight +=[KISDictionaryHaveKey(contentDict, @"imgHieght") floatValue];
-    }
-    else{
-        if([KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(contentDict, @"img") isEqualToString:@" "])
-        {
-            //无图
-            cellHeight += 0;
-            
-            [contentDict setObject:@(0) forKey:@"imgHieght"];
-        }
-        else
-        {
-            //有图， 先解析出图片数组
-            NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
-            NSString *str = [imgStr substringFromIndex:imgStr.length];
-            NSString *str2;
-            if ([str isEqualToString:@","]) {
-                str2= [imgStr substringToIndex:imgStr.length-1];
-            }
-            else {
-                str2 = imgStr;
-            }
-            NSArray *collArray = [imgStr componentsSeparatedByString:@","];
-        
-            if ([[collArray lastObject]isEqualToString:@""]||[[collArray lastObject]isEqualToString:@" "]) {
-                [(NSMutableArray*)collArray removeLastObject];
-            }
-            [contentDict setObject:collArray forKey:@"imgArray"];
-            
-            //根据图片数组接卸图片所占高度
-            int i = (collArray.count-1)/3;
-            float imgViewHeight = i*80+80; //图片的高度
-            imgViewHeight += (i+1)*2; //图片的padding, 为2
-            [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
-            
-            cellHeight +=imgViewHeight;
-        }
-    }
-    
-    //时间label, 删除按钮与btn_more  50
-    cellHeight += 50;
-    
-    //赞label
-    if ([KISDictionaryHaveKey(contentDict, @"zanNum")intValue]!=0)
-    {
-        NSArray *array = KISDictionaryHaveKey(contentDict, @"zanList");
-        if (array.count>0){ //以前的数据有些没有zanlist
-            cellHeight +=30;
-        }
-    }
-    
-    //评论table
-    if ([[contentDict allKeys]containsObject:@"commentListHieght"] &&!reAnalyzer) {
-        cellHeight +=[KISDictionaryHaveKey(contentDict, @"commentListHieght") floatValue];
-    }
-    else{
-        float commHieght = 0.0f;
-        NSArray *commentsArray =KISDictionaryHaveKey(contentDict, @"commentList");
-        for (int i =0; i<commentsArray.count; i++) {
-            NSMutableDictionary *dic = [commentsArray objectAtIndex:i];
-            //判断是否是回复某人的评论
-            if([[dic allKeys]containsObject:@"commentCellHieght"] &&!reAnalyzer){
-                float commentCellHeight = [KISDictionaryHaveKey(dic, @"commentCellHieght") floatValue];
-                commHieght +=commentCellHeight;
-            }
-            else{   //如果没算高度， 算出高度，存起来
-                NSString *str ;
-                if ([[dic allKeys]containsObject:@"commentStr"] &&!reAnalyzer) {
-                    str =KISDictionaryHaveKey(dic, @"commentStr");
-                }
-                else{
-                    if ([[dic allKeys]containsObject:@"destUser"]) {
-                        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
-                    }else{
-                        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
-                    }
-                    str = [UILabel getStr:str];
-                    [dic setObject:str forKey:@"commentStr"];
-                }
-                
-                //计算ceommentCell 的高度
-                CGSize size = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-                float height1= size.height;
-                [dic setObject:@(height1) forKey:@"commentCellHieght"];
-                commHieght += height1;
-            }
-        }
-        [contentDict setObject:@(commHieght) forKey:@"commentListHieght"];
-        cellHeight += commHieght;
-    }
-    
-    //查看更多评论label
-    if ([KISDictionaryHaveKey(contentDict, @"commentNum")intValue]>7) {
-        cellHeight += 20;
-    }
-    [contentDict setObject:@(cellHeight) forKey:@"cellHieght"];
-   
-    bool Analyzed = YES;
-    [contentDict setObject:@(Analyzed) forKey:@"Analyzed"];
-    
-    return contentDict;
-}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -1241,10 +1242,10 @@ typedef enum : NSUInteger {
         [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount-100 inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         [m_myTableView reloadData];
         if (delCellCount-100<20) {
-            NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-            NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-            [array removeObjectAtIndex:delCellCount-100];
-            [self saveinfoToUserDefaults:array];
+//            NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+//            NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
+//            [array removeObjectAtIndex:delCellCount-100];
+            [self saveinfoToUserDefaults:m_dataArray];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1323,35 +1324,10 @@ typedef enum : NSUInteger {
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
             }
-            
             if (myCell.tag-100<20) {
-                NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-                NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-                for (NSMutableDictionary *dic in array) {
-                    if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
-                        
-                        NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
-                        int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
-                        NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
-                        NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"),@"userid");
-                        if ([userid intValue]==[[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]intValue]) {
-                            
-                        }
-                        if ([isZan intValue]==0) {//假如是未赞状态
-                            [arr insertObject:commentUser atIndex:0];
-                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
-                            [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
-                            
-                            //请求网络点赞
-                        }else{//假如是已经赞的状态
-                            [arr removeObject:commentUser];
-                            [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
-                            [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
-                        }
-                        [self saveinfoToUserDefaults:array];
-                    }
-                }
+                [self saveinfoToUserDefaults:m_dataArray];
             }
+            
         }
     }
 }
@@ -1406,28 +1382,28 @@ typedef enum : NSUInteger {
         senderBnt.selected = NO;
     }
     
-    
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:nickName forKey:@"nickname"];
     [commentUser setObject:@"0" forKey:@"superstar"];
     [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
-    
-    NSString *comment ;
+   NSString* comment = self.textView.text;
+
     if (self.textView.placeholder!=nil) {
-        comment = [NSString stringWithFormat:@"%@%@",self.textView.placeholder,self.textView.text];
+        NSMutableDictionary *destUser = [NSMutableDictionary dictionary];
+        [destUser setObject:KISDictionaryHaveKey(commentOffLineDict, @"id") forKey:@"id"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"nickname") forKey:@"nickname"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"userid") forKey:@"userid"];
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",destUser,@"destUser", nil];
     }else{
-        comment = self.textView.text;
+      dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
     }
     
-   // CGSize size = [[NSString stringWithFormat:@"%@:%@",[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]],comment] sizeWithFont:[UIFont systemFontOfSize:12] forWidth:245 lineBreakMode:NSLineBreakByCharWrapping];
-
- 
-    NSMutableDictionary *dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
     //将评论添加到数组里、
     int i = -1;
     for (int j = 0;j<m_dataArray.count;j++) {
@@ -1440,24 +1416,10 @@ typedef enum : NSUInteger {
             [arr insertObject:dict atIndex:0];
             dic = [self contentAnalyzer:dic withReAnalyzer:YES];    //分析器强制更新这一条
             i = [m_dataArray indexOfObject:dic];
-            
         }
     }
     if (i>=0&&i<20) {
-        NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
-        NSMutableArray *array = [NSMutableArray arrayWithContentsOfFile:path];
-    NSMutableDictionary *dict1 =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id", nil];
-        
-        for (int j = 0;j<array.count;j++) {
-            NSMutableDictionary *dic = [array objectAtIndex:j];
-            if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
-                NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
-                int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
-                [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
-                [arr insertObject:dict1 atIndex:0];
-            }
-        }
-        [self saveinfoToUserDefaults:array];
+        [self saveinfoToUserDefaults:m_dataArray];
     }
     [self showMessageWindowWithContent:@"评论成功" imageType:0];
     [m_myTableView reloadData];
@@ -1522,8 +1484,9 @@ typedef enum : NSUInteger {
         self.textView.placeholderColor = [UIColor grayColor];
         
         //将对方信息保存在临时变量
-        destuserId  =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
-        destMsgId = KISDictionaryHaveKey(dict, @"id");
+        [commentOffLineDict setDictionary:dict];
+        destMsgId =KISDictionaryHaveKey(dict, @"id");
+        destuserId = KISDictionaryHaveKey(KISDictionaryHaveKey(dict,@"commentUser"), @"userid");
     }
 }
 //tableView定位
@@ -1657,12 +1620,6 @@ typedef enum : NSUInteger {
 }
 }
 
-//判断是不是数字
-//- (BOOL)isPureInt:(NSString*)string{
-//    NSScanner* scan = [NSScanner scannerWithString:string];
-//    int val;
-//    return[scan scanInt:&val] && [scan isAtEnd];
-//}
 //删除评论
 -(void)delcomment
 {
@@ -1706,18 +1663,11 @@ typedef enum : NSUInteger {
             }
         }
         [hud hide:YES];
-
     }];
-
 }
-
-
-
-
 //上传评论
 -(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
 {
-    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:msgid forKey:@"messageId"];
@@ -1744,7 +1694,6 @@ typedef enum : NSUInteger {
     }
     else{
         [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//            [self showMessageWindowWithContent:@"评论成功" imageType:0];
             
             for (int i = 0; i <m_dataArray.count; i++) {
                 NSDictionary *dic = [m_dataArray objectAtIndex:i];
@@ -1925,5 +1874,7 @@ typedef enum : NSUInteger {
 {
     delCellAlertView.delegate = nil;
 }
+
+
 
 @end
