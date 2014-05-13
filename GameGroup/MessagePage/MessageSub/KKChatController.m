@@ -697,14 +697,14 @@ UINavigationControllerDelegate>
         _kkChatAddView.frame = CGRectMake(0,
                                           self.view.frame.size.height-253,
                                           320,
-                                          253);
+                                          200);
         _kkChatAddView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
-        NSArray *kkChatButtonsTitle = @[@"相机",@"相册"];
+        NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         
         for (int i = 0; i < 2; i++) {
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = i;
-            button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 60, 100);
+            button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 90, 125);
             //            button.backgroundColor = [UIColor greenColor];
             [button addTarget:self
                        action:@selector(kkChatAddViewButtonsClick:)
@@ -722,7 +722,7 @@ UINavigationControllerDelegate>
             [button setImageEdgeInsets:UIEdgeInsetsMake(15, 10, 40, 10)];
             [button setTitle:[kkChatButtonsTitle objectAtIndex:i]
                     forState:UIControlStateNormal];
-            [button setTitleEdgeInsets:UIEdgeInsetsMake(70, -97, 10, 10)];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(80, -80, 10, 10)];
             [_kkChatAddView addSubview:button];
             
         }
