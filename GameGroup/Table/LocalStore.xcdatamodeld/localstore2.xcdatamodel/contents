@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13A603" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="DSAttentionNameIndex" representedClassName="DSAttentionNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -18,6 +18,23 @@
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
+        <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unRead" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSCommonMsgs" representedClassName="DSCommonMsgs" syncable="YES">
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
@@ -25,6 +42,7 @@
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
@@ -48,6 +66,7 @@
     <entity name="DSFansNameIndex" representedClassName="DSFansNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSFriendCircle" syncable="YES"/>
     <entity name="DSFriends" representedClassName="DSFriends" syncable="YES">
         <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
@@ -121,12 +140,24 @@
         <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sendtime" optional="YES" attributeType="Date" syncable="YES"/>
     </entity>
+    <entity name="DSOfflineComments" representedClassName="DSOfflineComments" syncable="YES">
+        <attribute name="comments" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destCommentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destUserid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSOfflineZan" representedClassName="DSOfflineZan" syncable="YES">
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSOtherMsgs" representedClassName="DSOtherMsgs" syncable="YES">
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="myTitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sendTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="temp" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSReceivedHellos" representedClassName="DSReceivedHellos" syncable="YES">
         <attribute name="acceptStatus" optional="YES" attributeType="String" syncable="YES"/>
@@ -143,7 +174,7 @@
         <attribute name="fromStr" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="sendTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="recommendReason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
@@ -153,6 +184,7 @@
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sayHiType" optional="YES" attributeType="String" defaultValueString="1" syncable="YES"/>
         <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senderimg" optional="YES" attributeType="String" syncable="YES"/>
@@ -194,24 +226,26 @@
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="Entity" syncable="YES"/>
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
-        <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="195"/>
+        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
+        <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
         <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
+        <element name="DSFriendCircle" positionX="-81" positionY="-45" width="128" height="45"/>
         <element name="DSFriends" positionX="252" positionY="54" width="128" height="390"/>
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
         <element name="DSNewsMsgs" positionX="-18" positionY="234" width="128" height="118"/>
-        <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="120"/>
+        <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
+        <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
+        <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
-        <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="163"/>
-        <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="240"/>
+        <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="165"/>
+        <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="255"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="405"/>
-        <element name="Entity" positionX="-288" positionY="423" width="128" height="45"/>
     </elements>
 </model>
