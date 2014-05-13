@@ -20,7 +20,6 @@
 @property (nonatomic, retain) UILabel *commentContLabel;
 @property (nonatomic,strong)UILabel *nickNameLabel;
 
--(void)refreshsCell;
 //显示可点击的呢称
 -(void)showNickNameButton:(NSString *)nickName withSize:(CGSize)commentstrSize;
 + (CGSize)getCellHeigthWithStr:(NSString*)contStr;

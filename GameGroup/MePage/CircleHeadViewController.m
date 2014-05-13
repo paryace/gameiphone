@@ -103,8 +103,7 @@ typedef enum : NSUInteger {
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor blackColor];
-    
+    self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -138,6 +137,7 @@ typedef enum : NSUInteger {
     topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 370)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
+    
     topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]) {
         topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]];
@@ -145,6 +145,7 @@ typedef enum : NSUInteger {
         topImgaeView.image = KUIImage(@"ceshibg.jpg");
     }
     topImgaeView.userInteractionEnabled =YES;
+    topImgaeView.backgroundColor = [UIColor darkGrayColor];
     [topImgaeView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [topVIew addSubview:topImgaeView];
     
@@ -276,8 +277,8 @@ typedef enum : NSUInteger {
     
     m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.view addSubview:m_loginActivity];
-    m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
-    m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
+    m_loginActivity.frame = CGRectMake(110, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(110, KISHighVersion_7?42:22);
     m_loginActivity.color = [UIColor whiteColor];
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
     // [m_loginActivity startAnimating];

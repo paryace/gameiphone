@@ -30,7 +30,7 @@
         self.tagImageView.image = KUIImage(@"icon_nearby");
         [self.lestView addSubview:self.tagImageView];
         
-        self.distanceLabel = [[UILabel alloc]initWithFrame:CGRectMake(16, 0, 47, 15)];
+        self.distanceLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, 47, 15)];
         self.distanceLabel.text = @"0.05km";
         self.distanceLabel.font = [UIFont systemFontOfSize:10];
         self.distanceLabel.textColor = [UIColor whiteColor];
