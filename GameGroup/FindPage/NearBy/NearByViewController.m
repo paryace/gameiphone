@@ -188,6 +188,7 @@
         [m_header endRefreshing];
         [m_footer endRefreshing];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        isGetNetSuccess =YES;
         [m_loadImageView stopAnimating];
         menuButton.userInteractionEnabled = YES;
 

@@ -695,10 +695,11 @@ UINavigationControllerDelegate>
     if (!_kkChatAddView) {
         _kkChatAddView = [[UIView alloc] init];
         _kkChatAddView.frame = CGRectMake(0,
-                                          self.view.frame.size.height-253,
+                                          self.view.frame.size.height-125,
                                           320,
-                                          200);
-        _kkChatAddView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
+                                          125);
+//        _kkChatAddView.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
+        _kkChatAddView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatMorebg.png"]];
         NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         
         for (int i = 0; i < 2; i++) {
@@ -1414,16 +1415,16 @@ UINavigationControllerDelegate>
         {
             [self.textView resignFirstResponder];
             self.inPutView.frame = CGRectMake(0,
-                                              self.view.frame.size.height-227-self.inPutView.frame.size.height,
+                                              self.view.frame.size.height-125-self.inPutView.frame.size.height,
                                               320,
                                               self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
             self.kkChatAddView.frame = CGRectMake(0,
-                                                  self.view.frame.size.height-253,
+                                                  self.view.frame.size.height-125,
                                                   320,
-                                                  253);
-            [self autoMovekeyBoard:253];
+                                                  125);
+            [self autoMovekeyBoard:125];
             
             
         }

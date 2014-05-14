@@ -245,15 +245,15 @@ typedef enum : NSUInteger {
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
     }
-//    if([self.textView isFirstResponder]){
-//        [self.textView resignFirstResponder];
-//    }
-//    if(self.theEmojiView.hidden == NO){
-//        self.theEmojiView.hidden = YES;
-//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-//        self.commentInputType = CommentInputTypeKeyboard;
-//        senderBnt.selected = NO;
-//    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
+    }
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -368,6 +368,8 @@ typedef enum : NSUInteger {
     
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NewNearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
+        isSaveHcTopImg = YES;
+        isSaveHcListInfo = YES;
     [self getInfoWithNet];
     [self getTopImageFromNet];
     }
@@ -879,23 +881,22 @@ typedef enum : NSUInteger {
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    if([self keyboardIsVisible]==YES){
-        [self.textView resignFirstResponder];
-        return ;
-    }
-    if(self.theEmojiView.hidden == NO){
-        self.theEmojiView.hidden = YES;
-        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-        self.commentInputType = CommentInputTypeKeyboard;
-        senderBnt.selected = NO;
-        return ;
-    }
-    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
-    once.messageid =KISDictionaryHaveKey(dic, @"id");
-    [self.navigationController pushViewController:once animated:YES];
+//    if([self keyboardIsVisible]==YES){
+//        [self.textView resignFirstResponder];
+//        return ;
+//    }
+//    if(self.theEmojiView.hidden == NO){
+//        self.theEmojiView.hidden = YES;
+//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+//        self.commentInputType = CommentInputTypeKeyboard;
+//        senderBnt.selected = NO;
+//        return ;
+//    }
+//    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+//    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
+//    once.messageid =KISDictionaryHaveKey(dic, @"id");
+//    [self.navigationController pushViewController:once animated:YES];
 
 }
 
@@ -1029,8 +1030,13 @@ typedef enum : NSUInteger {
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
+//        isSaveHcListInfo = YES;
+//        [self getInfoWithNet];
+        
+        isSaveHcTopImg = YES;
         isSaveHcListInfo = YES;
         [self getInfoWithNet];
+        [self getTopImageFromNet];
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
     };
@@ -1454,7 +1460,6 @@ typedef enum : NSUInteger {
     [commentUser setObject:@"" forKey:@"userid"];
     [commentUser setObject:@"" forKey:@"username"];
     
-    
     for (NSMutableDictionary *dic in m_dataArray) {
         if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
             
@@ -1481,8 +1486,9 @@ typedef enum : NSUInteger {
                 if (commentNum<1) {
                     [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+30) forKey:@"cellHieght"];
                 }
+                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+                [m_dataArray writeToFile:filePath atomically:YES];
                 [m_myTableView reloadData];
-                
                 //请求网络点赞
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
             }else{//假如是已经赞的状态
@@ -1500,6 +1506,8 @@ typedef enum : NSUInteger {
                 if (commentNum==1) {
                     [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-30) forKey:@"cellHieght"];
                 }
+                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+                [m_dataArray writeToFile:filePath atomically:YES];
                 [m_myTableView reloadData];
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
