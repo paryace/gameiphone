@@ -103,7 +103,7 @@ typedef enum : NSUInteger {
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
+//    self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -130,9 +130,9 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-    if (KISHighVersion_7) {
-        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-    }
+//    if (KISHighVersion_7) {
+//        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+//    }
 
 //    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     [self.view addSubview:m_myTableView];
@@ -553,6 +553,12 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
+        
+        self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
+        if (KISHighVersion_7) {
+            m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+        }
+        
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
             if ([KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch")intValue]==1) {
