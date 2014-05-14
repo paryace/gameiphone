@@ -77,7 +77,7 @@
     m_myTableView.tableHeaderView = topVIew;
     topImgaeView = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
 //    [topImgaeView addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
-    topImgaeView.backgroundColor = [UIColor darkGrayColor];
+    topImgaeView.backgroundColor = [UIColor blackColor];
     
     [topVIew addSubview:topImgaeView];
     

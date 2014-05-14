@@ -237,7 +237,7 @@
 
             });
         }
-        else if(112 == alertView.tag)
+        else if(112 == alertView.tag)   //退出登陆
         {
             [self loginOutNet];
         }else if(111==alertView.tag)
