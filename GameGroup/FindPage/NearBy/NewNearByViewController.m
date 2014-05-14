@@ -15,6 +15,11 @@
 #import "OnceDynamicViewController.h"
 #import "ReplyViewController.h"
 #import "NearByViewController.h"
+typedef enum : NSUInteger {
+    CommentInputTypeKeyboard,
+    CommentInputTypeEmoji,
+} CommentInputType;
+
 @interface NewNearByViewController ()
 {
     UICollectionView *m_photoCollectionView;
@@ -40,7 +45,30 @@
     
     NSString *titleStr;
     UIActivityIndicatorView *m_loginActivity;
+    
+    NSMutableArray *commentArray;
+    NewNearByCell *openMenuBtn;
+    UIView *toolView;
+    UIView* tool;
+    UIView *inPutView;
+    NSString *commentMsgId;
+    NSString *destuserId;
+    NSString *destMsgId;
+    BOOL isComeBackComment;
+    UITapGestureRecognizer *hidenMenuTap;
+    NSString *methodStr;
+    UIButton *senderBnt;
+    NSMutableDictionary *cellhightarray;//存放每个Cell的高度
+    NSMutableDictionary *commentOffLineDict;
+    NSMutableDictionary *delcommentDic;
+    float offer;
+    int height;
+    
+
 }
+@property (nonatomic, assign) CommentInputType commentInputType;
+@property (nonatomic, strong) EmojiView *theEmojiView;
+
 @end
 
 @implementation NewNearByViewController
@@ -52,6 +80,22 @@
         // Custom initialization
     }
     return self;
+}
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:Nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"mydynamicmsg_wx" object:nil];
+    [super viewWillDisappear:animated];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showAboutMePage:) name:@"mydynamicmsg_wx" object:nil];
 }
 
 - (void)viewDidLoad
@@ -96,8 +140,11 @@
     m_dataArray = [NSMutableArray new];
     headImgArray =[NSMutableArray array];
     wxSDArray = [NSMutableArray array];
-    
-    
+    commentArray = [NSMutableArray array];
+    commentOffLineDict = [NSMutableDictionary dictionary];
+    cellhightarray = [NSMutableDictionary dictionary];
+    delcommentDic = [NSMutableDictionary dictionary];
+
     m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.view addSubview:m_loginActivity];
     [self changeActivityPositionWithTitle:titleLabel.text];
@@ -186,12 +233,76 @@
     }
     
     [self getLocationForNet];
-    
+    [self buildcommentView];
 
     citydongtaiStr = @"附近的动态";
     // Do any additional setup after loading the view.
     
 }
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    if (openMenuBtn.menuImageView.hidden==NO) {
+        openMenuBtn.menuImageView.hidden =YES;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
+    }
+}
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
+-(void)buildcommentView
+{
+    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, 320, 50)];
+    [self.view addSubview:inPutView];
+    
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
+    self.textView.isScrollable = NO;
+    self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+    
+	self.textView.minNumberOfLines = 1;
+	self.textView.maxNumberOfLines = 6;
+	self.textView.returnKeyType = UIReturnKeyDone; //just as an example
+	self.textView.font = [UIFont systemFontOfSize:15.0f];
+	self.textView.delegate = self;
+    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
+    self.textView.backgroundColor = [UIColor clearColor];
+    
+    UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
+    UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+    entryImageView.frame = CGRectMake(10, 7, 240, 35);
+    entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
+    UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+    imageView.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+    // view hierachy
+    [inPutView addSubview:imageView];
+    [inPutView addSubview:entryImageView];
+    [inPutView addSubview:self.textView];
+    
+    senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
+    [senderBnt setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [senderBnt setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [senderBnt addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
+    senderBnt.frame = CGRectMake(260, 0, 50, 50);
+    [inPutView bringSubviewToFront:senderBnt];
+    
+    [inPutView addSubview:senderBnt];
+}
+
 
 
 - (void)menuButtonClick:(UIButton *)sender
@@ -214,6 +325,16 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (actionSheet.tag == 888888) {
+        if (buttonIndex==0) {
+            
+            [self delcomment];
+        }else{
+            return;
+        }
+ 
+    }else{
+    
     if (buttonIndex == actionSheet.cancelButtonIndex) {
         return;
     }
@@ -241,6 +362,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self getInfoWithNet];
     [self getTopImageFromNet];
+    }
 }
 
 
@@ -551,40 +673,47 @@
     cell.backgroundColor= [UIColor whiteColor];
     cell.myCellDelegate = self;
     cell.tag = indexPath.row;
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     
-    if ([KISDictionaryHaveKey(dict, @"isZan")intValue] ==1) {
-        [cell.zanButton setBackgroundImage:KUIImage(@"zan_cancle_nearBy") forState:UIControlStateNormal];
-   //     [cell.zanButton setBackgroundImage:KUIImage(@"cancle_zan_click") forState:UIControlStateNormal];
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
+        cell.headImgBtn.imageURL = nil;
     }else{
-        [cell.zanButton setBackgroundImage:KUIImage(@"NearByZan") forState:UIControlStateNormal];
-//        [cell.zanButton setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
     }
-    
-    
-    
-    cell.nickNameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
-    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
-
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
-    cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
-
-    if (([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"])&&![KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        cell.focusButton.hidden = NO;
-        if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]) {
-            [cell.focusButton setBackgroundImage:KUIImage(@"guanzhu") forState:UIControlStateNormal];
+    //判断赞按钮状态显示相应的图标
+    UIButton *button  = cell.zanBtn;
+    NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
+    if (isZan !=nil ){
+        if([isZan intValue]==0){
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_click"] forState:UIControlStateHighlighted];
         }else{
-           [cell.focusButton setBackgroundImage:KUIImage(@"NearByAddFriend")forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
         }
-    }else{
-        cell.focusButton.hidden = YES;
     }
     
-    NSString *urlLink = KISDictionaryHaveKey(dict, @"urlLink");
+    
+    
+    cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
+    //cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
+    cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
+    
+    //计算时间
+    NSString *time;
+    if(![[dict allKeys]containsObject:@"MessageTime"]){
+        time = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]];
+    }
+    else
+    {
+        time =KISDictionaryHaveKey(dict, @"MessageTime");
+    }
+    cell.timeLabel.text = time;
     
     //开始正文布局
+    NSString *urlLink = KISDictionaryHaveKey(dict, @"urlLink");
     //动态
-    
     if ([urlLink isEqualToString:@" "]||[urlLink isEqualToString:@""]||urlLink ==nil) {
         cell.shareView.hidden = YES;
         cell.shareInfoLabel.hidden = YES;
@@ -594,16 +723,23 @@
         //动态的高度
         float height1 = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
         cell.titleLabel.frame = CGRectMake(60, 30, 250, height1);
-        m_currmagY += height1;
+        m_currmagY += height1 + 5;
         
         
         //无图动态
         if ([KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
             cell.photoCollectionView.hidden =YES;
             
-            cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
-            cell.zanButton.frame = CGRectMake(180, m_currmagY+14, 40, 22);
-            cell.commentBtn.frame = CGRectMake(260, m_currmagY+14, 40, 22);
+            cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
+            cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
+            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+                cell.delBtn.hidden =NO;
+                cell.delBtn.frame = CGRectMake(190,m_currmagY+11,50, 30);
+                
+            }else{
+                cell.delBtn.hidden =YES;
+            }
+            
         }
         //有图动态
         else{
@@ -612,7 +748,11 @@
             cell.photoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
+            if (cell.photoArray.count<4) {
+                cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, cell.photoArray.count *80,imgHeight);
+            }else{
             cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
+            }
             m_currmagY += imgHeight;
             
             CGFloat paddingY = 2;
@@ -621,11 +761,18 @@
             cell.layout.minimumLineSpacing = paddingY;
             
             [cell.photoCollectionView reloadData];
-            cell.timeLabel.frame = CGRectMake(60,m_currmagY, 80, 30);
-            cell.zanButton.frame = CGRectMake(180, m_currmagY+5, 40, 22);
-            cell.commentBtn.frame = CGRectMake(260, m_currmagY+5, 40, 22);
+            cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
+            cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
+            
             //删除按钮 - 自己的文章
+            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+                cell.delBtn.hidden =NO;
+                cell.delBtn.frame = CGRectMake(150,m_currmagY+1,50, 30);
+                
+            }else{
+                cell.delBtn.hidden =YES;
             }
+        }
         
         m_currmagY=cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
     }
@@ -644,7 +791,7 @@
         cell.titleLabel.frame = CGRectMake(60, 30, 250, titleLabelHeight);
         cell.shareView.frame = CGRectMake(60, titleLabelHeight+35, 250, 50);
         //titleLabelHeight +=5;
-        m_currmagY += titleLabelHeight +50;
+        m_currmagY += titleLabelHeight+50 ;
         
         //去除掉首尾的空白字符和换行字符
         NSString *str = KISDictionaryHaveKey(dict, @"msg");
@@ -670,12 +817,68 @@
             cell.shareInfoLabel.numberOfLines = 2;
         }
         
-        cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 80, 30);
-        cell.zanButton.frame = CGRectMake(180, m_currmagY+15, 40, 22);
-        cell.commentBtn.frame = CGRectMake(260, m_currmagY+15, 40, 22);
-
+        cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
+        cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
+        
+        //删除按钮 - 如果是自己发表的文章
+        if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+            cell.delBtn.hidden =NO;
+            cell.delBtn.frame = CGRectMake(190,m_currmagY+11,50, 30);
+            
+        }else{
+            cell.delBtn.hidden =YES;
+        }
         m_currmagY  = cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
     }
+    
+    // 赞，取最后一个用户的昵称显示
+    if ([KISDictionaryHaveKey(dict, @"zanNum")intValue]!=0) {
+        NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
+        if (array.count>0){ //以前的数据有些没有zanlist
+            cell.zanView.frame = CGRectMake(59, m_currmagY, 251, 25);
+            
+            NSString *zanNickName=KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
+            
+            cell.zanView.hidden = NO;
+            cell.zanNameLabel.text = zanNickName;
+            CGSize size =[zanNickName sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+            cell.zanNameLabel.frame = CGRectMake(15, 0, size.width+5, 30);
+            cell.zanLabel.text = [NSString stringWithFormat:@"等%@人都觉得赞",KISDictionaryHaveKey(dict,@"zanNum")];
+            cell.zanLabel.frame  = CGRectMake(20+size.width, 0, 225-15-size.width, 30);
+            m_currmagY +=cell.zanView.frame.size.height;
+        }
+        else
+        {
+            cell.zanView.hidden = YES;
+        }
+        
+    }else{
+        cell.zanView.hidden = YES;
+    }
+    
+    // 评论
+    commentArray =KISDictionaryHaveKey(dict, @"commentList");
+    cell.commentArray = commentArray;
+    cell.commentTabelView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
+    [cell.commentTabelView reloadData];
+    
+    float commHieght = [KISDictionaryHaveKey(dict, @"commentListHieght") floatValue];
+    
+    cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght);
+    
+    m_currmagY+= commHieght;
+    
+    
+    if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
+        cell.commentMoreBtn.hidden = NO;
+        cell.commentMoreBtn.frame = CGRectMake(60, m_currmagY, 250, 20);
+        [cell.commentMoreBtn setTitle:[NSString stringWithFormat:@"查看全部%@条评论",KISDictionaryHaveKey(dict, @"commentNum")] forState:UIControlStateNormal];
+    }else{
+        cell.commentMoreBtn.hidden = YES;
+        cell.commentMoreBtn.frame = CGRectZero;
+    }
+    
+    
     return cell;
   
 }
@@ -882,7 +1085,6 @@
     test.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
     [self.navigationController pushViewController: test animated:YES];
 }
-
 #pragma mark Content分析器
 - (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
@@ -909,7 +1111,8 @@
             str = [UILabel getStr:str];
             CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
             [contentDict setObject:@(size.height) forKey:@"titleLabelHieght"];
-            cellHeight += size.height;
+            cellHeight += size.height +5 ;  //+5为了不和下面太紧
+            
             //图片
             if([[contentDict allKeys]containsObject:@"imgHieght"] &&!reAnalyzer)
             {
@@ -951,31 +1154,87 @@
                     cellHeight +=imgViewHeight;
                 }
             }
-
         }
         else {
             //分享的链接 URL
+            //NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
             NSString *strTitle = KISDictionaryHaveKey(contentDict, @"title");
-            NSString *strMsg = KISDictionaryHaveKey(contentDict, @"msg");
             NSLog(@"strTitle:%@",strTitle);
-            NSLog(@"strMsg:%@",strMsg);
             CGSize size1 = [strTitle sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            NSLog(@"heightfloot:%f",size1.height);
             NSNumber* titleLabelHieght = [NSNumber numberWithFloat:size1.height];
             [contentDict setObject:titleLabelHieght forKey:@"titleLabelHieght"];
-            cellHeight += size1.height + 50;
+            
+            cellHeight += size1.height  +50 +5 ;  //+5为了不和下面太紧
         }
     }
+    
+    
     
     //时间label, 删除按钮与btn_more  50
     cellHeight += 50;
     
+    //赞label
+    if ([KISDictionaryHaveKey(contentDict, @"zanNum")intValue]!=0)
+    {
+        NSArray *array = KISDictionaryHaveKey(contentDict, @"zanList");
+        if (array.count>0){ //以前的数据有些没有zanlist
+            cellHeight +=30;
+        }
+    }
+    
+    //评论table
+    if ([[contentDict allKeys]containsObject:@"commentListHieght"] &&!reAnalyzer) {
+        cellHeight +=[KISDictionaryHaveKey(contentDict, @"commentListHieght") floatValue];
+    }
+    else{
+        float commHieght = 0.0f;
+        NSArray *commentsArray =KISDictionaryHaveKey(contentDict, @"commentList");
+        for (int i =0; i<commentsArray.count; i++) {
+            NSMutableDictionary *dic = [commentsArray objectAtIndex:i];
+            //判断是否是回复某人的评论
+            if([[dic allKeys]containsObject:@"commentCellHieght"] &&!reAnalyzer){
+                float commentCellHeight = [KISDictionaryHaveKey(dic, @"commentCellHieght") floatValue];
+                commHieght +=commentCellHeight;
+            }
+            else{   //如果没算高度， 算出高度，存起来
+                NSString *str ;
+                if ([[dic allKeys]containsObject:@"commentStr"] &&!reAnalyzer) {
+                    str =KISDictionaryHaveKey(dic, @"commentStr");
+                }
+                else{
+                    if ([[dic allKeys]containsObject:@"destUser"]) {
+                        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                    }else{
+                        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                    }
+                    str = [UILabel getStr:str];
+                    [dic setObject:str forKey:@"commentStr"];
+                }
+                
+                //计算ceommentCell 的高度
+                CGSize size = [str sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+                float height1= size.height+5;
+                [dic setObject:@(height1) forKey:@"commentCellHieght"];
+                commHieght += height1;
+            }
+        }
+        [contentDict setObject:@(commHieght) forKey:@"commentListHieght"];
+        cellHeight += commHieght;
+    }
+    
     //查看更多评论label
+    if ([KISDictionaryHaveKey(contentDict, @"commentNum")intValue]>7) {
+        cellHeight += 20;
+    }
     [contentDict setObject:@(cellHeight) forKey:@"cellHieght"];
     
     bool Analyzed = YES;
     [contentDict setObject:@(Analyzed) forKey:@"Analyzed"];
+    
     return contentDict;
 }
+
 
 -(void)changeShiptypeWithCell:(NewNearByCell *)myCell
 {
@@ -1141,6 +1400,560 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark ---cell delegate  openMenuCell
+- (void)openMenuCell:(NewNearByCell*)myCell
+{
+    if(openMenuBtn) //如果有打开的cell
+    {
+        //关闭它
+        NewNearByCell* cell = openMenuBtn;
+        cell.menuImageView.hidden = YES;
+        if (openMenuBtn.tag == myCell.tag) {    //如果打开的是自己
+            openMenuBtn=nil;
+            return;
+        }
+    }
+    [myCell.contentView bringSubviewToFront:myCell.menuImageView];
+    [myCell.contentView  becomeFirstResponder];
+    myCell.menuImageView.hidden = NO;
+    openMenuBtn=myCell;}
+#pragma mark ---cell delegate  commentAndZan
+//评论button方法
+-(void)pinglunWithCircle:(NewNearByCell *)myCell
+{
+    self.textView.text = nil;
+    self.textView.placeholder= nil;
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
+    isComeBackComment = NO;
+    commentMsgId =KISDictionaryHaveKey(dic, @"id");
+    myCell.menuImageView.hidden = YES;
+    [self.textView becomeFirstResponder];
+    [self keyboardLocation:myCell];
+}
+#pragma mark ---评论赞 点击方法
+-(void)zanWithCircle:(NewNearByCell *)myCell
+{
+    NSLog(@"赞");
+    NSDictionary *zanDic= [m_dataArray objectAtIndex:myCell.tag];
+    myCell.menuImageView.hidden = YES;
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    [commentUser setObject:@"" forKey:@"img"];
+    [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
+    [commentUser setObject:@"0" forKey:@"superstar"];
+    [commentUser setObject:@"" forKey:@"userid"];
+    [commentUser setObject:@"" forKey:@"username"];
+    
+    
+    for (NSMutableDictionary *dic in m_dataArray) {
+        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[KISDictionaryHaveKey(zanDic, @"id") intValue]) {
+            
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"zanList");
+            int commentNum  = [KISDictionaryHaveKey(dic, @"zanNum")intValue];
+            NSString *isZan=KISDictionaryHaveKey(dic, @"isZan");
+            NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"),@"userid");
+            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+                [self showAlertViewWithTitle:@"提示" message:@"您不能对自己进行赞" buttonTitle:@"确定"];
+                return;
+            }
+            if ([isZan intValue]==0) {//假如是未赞状态
+                if (commentNum<=0) {
+                    float temphight=[[cellhightarray objectForKey:KISDictionaryHaveKey(zanDic, @"id")]floatValue];
+                    temphight+=30;
+                    NSNumber *number = [NSNumber numberWithFloat:temphight];
+                    [cellhightarray removeObjectForKey:KISDictionaryHaveKey(zanDic, @"id")];
+                    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(zanDic, @"id")];
+                }
+                [arr insertObject:commentUser atIndex:0];
+                [dic setValue:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"zanNum"];
+                [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
+                [self showMessageWindowWithContent:@"赞已成功" imageType:0];
+                if (commentNum<1) {
+                    [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+30) forKey:@"cellHieght"];
+                }
+                [m_myTableView reloadData];
+                
+                //请求网络点赞
+                [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
+            }else{//假如是已经赞的状态
+                if (commentNum==1) {
+                    float temphight=[[cellhightarray objectForKey:KISDictionaryHaveKey(zanDic, @"id")]floatValue];
+                    temphight-=30;
+                    NSNumber *number = [NSNumber numberWithFloat:temphight];
+                    [cellhightarray removeObjectForKey:KISDictionaryHaveKey(zanDic, @"id")];
+                    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(zanDic, @"id")];
+                }
+                [arr removeObject:commentUser];
+                [dic setValue:[NSString stringWithFormat:@"%d",commentNum-1] forKey:@"zanNum"];
+                [dic setValue:[NSString stringWithFormat:@"%d",0] forKey:@"isZan"];
+                [self showMessageWindowWithContent:@"已取消" imageType:0];
+                if (commentNum==1) {
+                    [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-30) forKey:@"cellHieght"];
+                }
+                [m_myTableView reloadData];
+                //请求网络取消
+                [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
+            }
+            if (myCell.tag<20) {
+                [self saveinfoToUserDefaults:m_dataArray];
+            }
+            
+        }
+    }
+}
+#pragma mark ---cell delegate  commentAndZan
+
+- (void)handleNickNameButton_HeadCell:(NewNearByCell*)cell withIndexPathRow:(NSInteger)row
+{
+    TestViewController *testVC = [[TestViewController alloc]init];
+    NSDictionary *dic = [m_dataArray objectAtIndex:cell.tag];
+    NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
+    if ( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:@""]) {
+        return;
+    }
+    NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
+    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    testVC.userId =userid;
+    testVC.nickName = nickName;
+    testVC.viewType = VIEW_TYPE_STRANGER1;
+    [self.navigationController pushViewController:testVC animated:YES];
+}
+
+-(void)tapZanNickNameWithCell:(NewNearByCell *)myCell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
+    NSDictionary *zanDic  = [KISDictionaryHaveKey(dic,@"zanList")objectAtIndex:0];
+    TestViewController *testVC = [[TestViewController alloc]init];
+    NSString *userid =KISDictionaryHaveKey(zanDic, @"userid");
+    NSString *nickName = KISDictionaryHaveKey(zanDic, @"nickname");
+    testVC.userId =userid;
+    testVC.nickName = nickName;
+    [self.navigationController pushViewController:testVC animated:YES];
+    
+}
+
+
+#pragma mark-------
+#pragma mark ---发送评论
+-(void)updateComment
+{
+    NSLog(@"commentView-->%@",self.textView.text);
+    
+    if (self.textView.text.length<1) {
+        [self showMessageWithContent:@"评论不能回复空内容" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    if([self.textView isFirstResponder]){
+        [self.textView resignFirstResponder];
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
+    }
+    
+    //离线评论
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    [commentUser setObject:@"" forKey:@"img"];
+    [commentUser setObject:nickName forKey:@"nickname"];
+    [commentUser setObject:@"0" forKey:@"superstar"];
+    [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
+    [commentUser setObject:@"" forKey:@"username"];
+    NSString* comment = self.textView.text;
+    
+    if (self.textView.placeholder!=nil) {
+        NSMutableDictionary *destUser = [NSMutableDictionary dictionary];
+        [destUser setObject:KISDictionaryHaveKey(commentOffLineDict, @"id") forKey:@"id"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"nickname") forKey:@"nickname"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"userid") forKey:@"userid"];
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",destUser,@"destUser", nil];
+    }else{
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght", nil];
+    }
+    
+    //将评论添加到数组里、
+    int i = -1;
+    for (int j = 0;j<m_dataArray.count;j++) {
+        NSMutableDictionary *dic = [m_dataArray objectAtIndex:j];
+        if ([KISDictionaryHaveKey(dic, @"id") intValue]==[commentMsgId intValue]) {
+            //添加赞数
+            int commentNum  = [KISDictionaryHaveKey(dic, @"commentNum")intValue];
+            [dic setObject:[NSString stringWithFormat:@"%d",commentNum+1] forKey:@"commentNum"];
+            NSMutableArray *arr = KISDictionaryHaveKey(dic, @"commentList");
+            [arr insertObject:dict atIndex:0];
+            dic = [self contentAnalyzer:dic withReAnalyzer:YES];    //分析器强制更新这一条
+            i = [m_dataArray indexOfObject:dic];
+        }
+    }
+    if (i>=0&&i<20) {
+        [self saveinfoToUserDefaults:m_dataArray];
+    }
+    [self showMessageWindowWithContent:@"评论成功" imageType:0];
+    [m_myTableView reloadData];
+    //执行提交评论操作
+    [self postCommentWithMsgId:commentMsgId destUserid:destuserId destCommentId:destMsgId comment:self.textView.text uuid:uuid];
+    [self.textView resignFirstResponder];
+    commentMsgId =nil;
+    destuserId = nil;
+    destMsgId = nil;
+}
+
+//删除评论
+-(void)delcomment
+{
+    
+    NSMutableDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
+    NSMutableArray *arr = [dic objectForKey:@"commentList"];
+    NSString *msgId = KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"id");
+    [NSCharacterSet decimalDigitCharacterSet];
+    
+    
+    hud.labelText = @"删除中...";
+    [hud show:YES];
+    
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgId forKey:@"commentId"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"195" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        
+        [dic setObject:@([KISDictionaryHaveKey(dic, @"commentListHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"commentListHieght"];
+        
+        [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"cellHieght"];
+        
+        [cellhightarray removeObjectForKey:KISDictionaryHaveKey(dic, @"id")];
+        [self showMessageWindowWithContent:@"删除成功" imageType:0];
+        [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
+        [m_myTableView reloadData];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+}
+
+
+-(void)saveinfoToUserDefaults:(NSMutableArray *)array
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        NSArray *clearArray = [NSArray array];
+        [clearArray writeToFile:path atomically:YES];
+        [array writeToFile:path atomically:YES];
+    }else{
+        [array writeToFile:path atomically:YES];
+    }
+}
+#pragma mark ---tableviewdelegate ----点击自己发的评论-删除  点击他人评论 回复
+//点击删除或者点击回复某人的评论
+- (void)editCommentOfYouWithCircle:(NewNearByCell *)mycell withIndexPath:(NSInteger)row
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag];
+    NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
+    //点击的是自己的评论，弹出删除菜单
+    if( [KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        
+        NSString *msgid =[NSString stringWithFormat:@"%@", KISDictionaryHaveKey(dict, @"id")];
+        if ([msgid isEqualToString:@""]||[msgid isEqualToString:@" "]) {
+            return;
+        }
+        
+        
+        UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
+        act.tag = 888888;
+        
+        [delcommentDic removeAllObjects];
+        [delcommentDic setObject:@(mycell.tag) forKey:@"mycell"];
+        [delcommentDic setObject:@(row) forKey:@"row"];
+        [act showInView:self.view];
+    }else{//点击的是别人的评论，弹出评论框
+        self.textView.text = nil;
+        self.textView.placeholder= nil;
+        [self.textView becomeFirstResponder];
+        [self keyboardLocation:mycell];
+        isComeBackComment = YES;
+        NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag];
+        commentMsgId =KISDictionaryHaveKey(dic, @"id");
+        NSArray *array = [dic objectForKey:@"commentList"];
+        NSDictionary *dict = [array objectAtIndex:row];
+        //  self.textView.placeholder = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") ;
+        NSString* nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+        self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
+        self.textView.placeholderColor = [UIColor grayColor];
+        
+        //将对方信息保存在临时变量
+        [commentOffLineDict setDictionary:dict];
+        destMsgId =KISDictionaryHaveKey(dict, @"id");
+        destuserId = KISDictionaryHaveKey(KISDictionaryHaveKey(dict,@"commentUser"), @"userid");
+    }
+}
+//tableView定位
+-(void)keyboardLocation:(NewNearByCell *)mycell
+{
+    for (int i=0; i<(mycell.tag+1); i++) {
+        NSDictionary *dict =[m_dataArray objectAtIndex:i];
+        offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
+    }
+    if(iPhone5){
+        offer+=(300-height-15);
+    }else{
+        offer+=(300-height+65);
+    }
+    [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
+    offer=0;
+}
+#pragma mark --- clickseeBigImage
+
+
+//上传评论
+-(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
+{
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgid forKey:@"messageId"];
+    if (isComeBackComment ==YES) {
+        [paramDic setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
+        [paramDic setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
+    }
+    [paramDic setObject:comment forKey:@"comment"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"186" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    //如果没有网，将数据保存到数据库。。。。
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:msgid forKey:@"msgId"];
+        [dict setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
+        [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
+        [dict setObject:comment forKey:@"comments"];
+        [dict setObject:uuid forKey:@"uuid"];
+        [DataStoreManager saveCommentsWithDic:dict];
+        return;
+    }
+    else{
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            for (int i = 0; i <m_dataArray.count; i++) {
+                NSDictionary *dic = [m_dataArray objectAtIndex:i];
+                if ([KISDictionaryHaveKey(dic, @"id")intValue]==[msgid intValue]) {
+                    NSArray *array = [dic objectForKey:@"commentList"];
+                    for (int i = 0; i < array.count; i++) {
+                        NSMutableDictionary *commDic = (NSMutableDictionary *)[array objectAtIndex:i];
+                        if ([[commDic allKeys]containsObject:@"uuid"]&&[[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(commDic, @"uuid")]isEqualToString:uuid]) {
+                            [commDic setObject:KISDictionaryHaveKey(responseObject, @"id") forKey:@"id"];
+                        }
+                    }
+                }
+            }
+            [m_myTableView reloadData];
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+        }];
+    }
+    
+    [self.textView resignFirstResponder];
+    self.textView.text = nil;
+    self.textView.placeholder= nil;
+    
+}
+
+#pragma mark----
+#pragma mark ----查看全部评论
+-(void)enterCommentPageWithCell:(NewNearByCell *)myCell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
+    ReplyViewController *reply = [[ReplyViewController alloc]init];
+    reply.messageid = KISDictionaryHaveKey(dic, @"id");
+    reply.isHaveArticle = YES;
+    [self.navigationController pushViewController:reply animated:YES];
+}
+
+
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    /*
+     Reduce the size of the text view so that it's not obscured by the keyboard.
+     Animate the resize so that it's in sync with the appearance of the keyboard.
+     */
+    self.theEmojiView.hidden = YES;
+    self.commentInputType = CommentInputTypeKeyboard;
+    senderBnt.selected = NO;
+    NSDictionary *userInfo = [notification userInfo];
+    
+    // Get the origin of the keyboard when it's displayed.
+    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    
+    // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
+    CGRect keyboardRect = [aValue CGRectValue];
+    
+    // Get the duration of the animation.
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    
+    // Animate the resize of the text view's frame in sync with the keyboard's appearance.
+    [self autoMovekeyBoard:keyboardRect.size.height];
+    height = keyboardRect.size.height;
+}
+
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    
+    NSDictionary* userInfo = [notification userInfo];
+    
+    /*
+     Restore the size of the text view (fill self's view).
+     Animate the resize so that it's in sync with the disappearance of the keyboard.
+     */
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    [self.view bringSubviewToFront:self.textView];
+    [self autoMovekeyBoard:-inPutView.bounds.size.height];
+}
+-(void) autoMovekeyBoard: (float) h{
+    
+    //    [UIView beginAnimations:nil context:nil];
+    //    [UIView setAnimationDuration:0.2];
+	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
+    
+    CGRect containerFrame = inPutView.frame;
+    containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
+	// animations settings
+    
+	// set views with new info
+	inPutView.frame = containerFrame;
+}
+#pragma mark 输入
+#pragma mark HPExpandingTextView delegate
+//改变键盘高度
+//改变键盘高度
+- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
+{
+    float diff = (growingTextView.frame.size.height - height);
+	CGRect r = inPutView.frame;
+    r.size.height -= diff;
+    r.origin.y += diff;
+	inPutView.frame = r;
+}
+//评论按钮
+-(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
+{
+    [self updateComment];
+    return YES;
+}
+//手势代理的方法，解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if ([touch.view isKindOfClass:[UIButton class]]||[touch.view isKindOfClass:[UIScrollView class]])
+    {
+        return NO;
+    }
+    return YES;
+}
+
+
+#pragma mark - Views
+//表情按钮
+- (EmojiView *)theEmojiView{
+    if (!_theEmojiView) {
+        _theEmojiView = [[EmojiView alloc]
+                         initWithFrame:CGRectMake(0,
+                                                  self.view.frame.size.height-253,
+                                                  320,
+                                                  253)
+                         WithSendBtn:YES];
+        _theEmojiView.delegate = self;
+    }
+    return _theEmojiView;
+}
+//点击添加表情按钮
+-(void)emojiBtnClicked:(UIButton *)sender
+{
+    sender.selected = !sender.selected;
+    if (self.commentInputType != CommentInputTypeEmoji) {//点击切到表情
+        [self showEmojiScrollView];
+    }else{//点击切回键盘
+        [self showKeyboardView];
+        
+    }
+}
+//显示键盘
+-(void)showKeyboardView
+{
+    [self.textView becomeFirstResponder];
+    self.commentInputType = CommentInputTypeKeyboard;
+    self.theEmojiView.hidden = YES;
+}
+//显示表情布局
+-(void)showEmojiScrollView
+{
+    self.commentInputType = CommentInputTypeEmoji;
+    [self.textView resignFirstResponder];
+    self.theEmojiView.hidden = NO;
+    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+    [self autoMovekeyBoard:253];
+}
+
+//删除表情
+-(void)deleteEmojiStr
+{
+    if (self.textView.text.length>=1) {
+        if ([self.textView.text hasSuffix:@"] "] && [self.textView.text length] >= 5) {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-5)];
+        }
+        else
+        {
+            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+        }
+    }
+}
+//发送表情
+-(void)emojiSendBtnDo
+{
+    
+    [self updateComment];
+}
+//选择表情
+-(NSString *)selectedEmoji:(NSString *)ssss
+{
+	if (self.textView.text == nil) {
+		self.textView.text = ssss;
+	}
+	else {
+		self.textView.text = [self.textView.text stringByAppendingString:ssss];
+	}
+    return 0;
+}
+
+
 
 
 //根据标题的长度更改UIActivity的位置

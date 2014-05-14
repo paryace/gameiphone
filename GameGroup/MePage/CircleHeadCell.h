@@ -35,7 +35,6 @@
 @property(nonatomic,strong)NSArray *collArray;//图片数组
 @property(nonatomic,strong)NSArray *commentArray;
 @property(nonatomic,strong)NSArray *zanArray;
-@property(nonatomic,strong)EGOImageView *oneImageView;
 @property(nonatomic,strong)UITableView *commentTabelView;
 @property(nonatomic,strong)UIButton *delBtn;
 @property(nonatomic,strong)UIButton *zanBtn;
