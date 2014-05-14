@@ -78,6 +78,7 @@
         }
     }else
     titleLabel.text = titleStr;
+    
 
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = [UIFont boldSystemFontOfSize:20];
@@ -98,12 +99,13 @@
     
     m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.view addSubview:m_loginActivity];
-    m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
-    m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
+    [self changeActivityPositionWithTitle:titleLabel.text];
+    //m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
+    //m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
     m_loginActivity.color = [UIColor whiteColor];
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
    // [m_loginActivity startAnimating];
-
+    
     
     
     
@@ -124,21 +126,7 @@
     CGFloat paddingX = 2;
     m_layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
     m_layout.minimumLineSpacing = paddingY;
-    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, 320, 245) collectionViewLayout:m_layout];
-    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-    m_photoCollectionView.scrollEnabled = NO;
-    m_photoCollectionView.delegate = self;
-    m_photoCollectionView.dataSource = self;
-    [m_photoCollectionView registerClass:[NearByPhotoCell class] forCellWithReuseIdentifier:@"ImageCell"];
-    m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-    m_myTableView.tableHeaderView = m_photoCollectionView;
-    
-//    hud = [[MBProgressHUD alloc]initWithView:self.view];
-//    hud.labelText = @"获取中...";
-//    [self.view addSubview:hud];
-    
-    [self addheadView];
-    [self addFootView];
+    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, 320, 83) collectionViewLayout:m_layout];
     
     NSFileManager *fileManager =[NSFileManager defaultManager];
     NSString *path  =[RootDocPath stringByAppendingString:@"/HC_NearByTopImg"];
@@ -148,17 +136,60 @@
         headImgArray= [NSMutableArray arrayWithContentsOfFile:path];
     }
     
-    NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+    //计算上半部分的高度
+    if (headImgArray.count<1) {
+        m_photoCollectionView.frame = CGRectMake(0, 0, 320, 0);
+    }
+    else if(headImgArray.count>0&&headImgArray.count<5)
+    {
+        m_photoCollectionView.frame = CGRectMake(0, 0, 320, 81);
+    }
+    else if (headImgArray.count>4&&headImgArray.count<9)
+    {
+        m_photoCollectionView.frame = CGRectMake(0, 0, 320,160);
+    }
+    else if(headImgArray.count>8&&headImgArray.count<13)
+    {
+        m_photoCollectionView.frame = CGRectMake(0, 0, 320, 239);
+    }
+    else{
+        m_photoCollectionView.frame = CGRectMake(0, 0, 320, 334);
+    }
+    
+
+    
+
+    //m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    m_photoCollectionView.scrollEnabled = NO;
+    m_photoCollectionView.delegate = self;
+    m_photoCollectionView.dataSource = self;
+    [m_photoCollectionView registerClass:[NearByPhotoCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    
+    
+    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    m_myTableView.tableHeaderView = m_photoCollectionView;
+    
+//    hud = [[MBProgressHUD alloc]initWithView:self.view];
+//    hud.labelText = @"获取中...";
+//    [self.view addSubview:hud];
+    
+    [self addheadView];
+    [self addFootView];
+    
+      NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
     BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
     NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
     if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
         array= [NSMutableArray arrayWithContentsOfFile:path1];
     }
+    
     [self getLocationForNet];
     
 
     citydongtaiStr = @"附近的动态";
     // Do any additional setup after loading the view.
+    
 }
 
 
@@ -202,6 +233,7 @@
         titleLabel.text = titleStr;
         m_searchType = 2;
     }
+    [self changeActivityPositionWithTitle:titleLabel.text];
     
     
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NewNearByKey];
@@ -282,11 +314,11 @@
             }
             else if(headImgArray.count>0&&headImgArray.count<5)
             {
-                m_photoCollectionView.frame = CGRectMake(0, 0, 320, 83);
+                m_photoCollectionView.frame = CGRectMake(0, 0, 320, 81);
             }
             else if (headImgArray.count>4&&headImgArray.count<9)
             {
-                m_photoCollectionView.frame = CGRectMake(0, 0, 320,170);
+                m_photoCollectionView.frame = CGRectMake(0, 0, 320,160);
             }
             else if(headImgArray.count>8&&headImgArray.count<13)
             {
@@ -460,7 +492,7 @@
         cell.lestView.hidden = NO;
     }
     
-    NSString *distrance =KISDictionaryHaveKey(dict, @"updateUserLocationDate");
+    NSString *distrance =KISDictionaryHaveKey(dict, @"distance");
     double dis = [distrance doubleValue];
     double gongLi = dis/1000;
     
@@ -469,7 +501,12 @@
         allStr =@"未知";
     }
     else
-        allStr = [NSString stringWithFormat:@"%f",gongLi];
+    {
+        if(gongLi>999)
+            allStr = [NSString stringWithFormat:@"%.0fkm",gongLi];
+        else
+            allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
+    }
     cell.distanceLabel.text = allStr;
     
     return cell;
@@ -493,6 +530,13 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (array.count>0) {
+        m_myTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
+    }
+    else
+    {
+        m_myTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+    }
     return array.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -719,6 +763,7 @@
    }else{
        titleLabel.text = titleStr;
    }
+    [self changeActivityPositionWithTitle:titleLabel.text];
     citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(dic,@"city")];
     m_currPageCount =0;
     [self getInfoWithNet];
@@ -1081,6 +1126,22 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+//根据标题的长度更改UIActivity的位置
+-(void)changeActivityPositionWithTitle:(NSString *)title
+{
+    CGSize size = [title sizeWithFont:titleLabel.font constrainedToSize:CGSizeMake(220, 30)];
+    //文字的左起位置
+    float title_left_x = 160 - size.width/2;
+    if (title_left_x<50) {  //不会超过左边界
+        title_left_x = 50;
+    }
+    //UIActivity的位置
+    m_loginActivity.frame = CGRectMake(title_left_x-20, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(title_left_x-20, KISHighVersion_7?42:22);
+    
 }
 
 /*

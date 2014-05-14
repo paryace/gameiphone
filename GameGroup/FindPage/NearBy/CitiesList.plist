@@ -463,6 +463,34 @@
 	<array>
 		<dict>
 			<key>city</key>
+			<string>长沙</string>
+			<key>cityCode</key>
+			<real>158</real>
+			<key>latitude</key>
+			<real>28.213478</real>
+			<key>longitude</key>
+			<real>112.979353</real>
+			<key>pinyin</key>
+			<string>zhangsha</string>
+			<key>type</key>
+			<string>city</string>
+		</dict>
+		<dict>
+			<key>city</key>
+			<string>长春</string>
+			<key>cityCode</key>
+			<real>53</real>
+			<key>latitude</key>
+			<real>43.898338</real>
+			<key>longitude</key>
+			<real>125.313642</real>
+			<key>pinyin</key>
+			<string>zhangchun</string>
+			<key>type</key>
+			<string>city</string>
+		</dict>
+		<dict>
+			<key>city</key>
 			<string>沧州</string>
 			<key>cityCode</key>
 			<real>149</real>
@@ -4384,20 +4412,6 @@
 		</dict>
 		<dict>
 			<key>city</key>
-			<string>长春</string>
-			<key>cityCode</key>
-			<real>53</real>
-			<key>latitude</key>
-			<real>43.898338</real>
-			<key>longitude</key>
-			<real>125.313642</real>
-			<key>pinyin</key>
-			<string>zhangchun</string>
-			<key>type</key>
-			<string>city</string>
-		</dict>
-		<dict>
-			<key>city</key>
 			<string>张家界</string>
 			<key>cityCode</key>
 			<real>312</real>
@@ -4421,20 +4435,6 @@
 			<real>114.893782</real>
 			<key>pinyin</key>
 			<string>zhangjiakou</string>
-			<key>type</key>
-			<string>city</string>
-		</dict>
-		<dict>
-			<key>city</key>
-			<string>长沙</string>
-			<key>cityCode</key>
-			<real>158</real>
-			<key>latitude</key>
-			<real>28.213478</real>
-			<key>longitude</key>
-			<real>112.979353</real>
-			<key>pinyin</key>
-			<string>zhangsha</string>
 			<key>type</key>
 			<string>city</string>
 		</dict>

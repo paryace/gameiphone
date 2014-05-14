@@ -224,7 +224,7 @@
 
     float cellHeight = [KISDictionaryHaveKey(dict, @"commentCellHieght") floatValue];
     cell .nickNameLabel.frame = CGRectMake(5, 0, 100, 19.316);
-    cell.nickNameLabel.text = [cell.comNickNameStr stringByAppendingString:@":"];
+    cell.nickNameLabel.text = cell.comNickNameStr;
     cell.commentContLabel.frame = CGRectMake(5, 0, 245, cellHeight);
     return cell;
 }
