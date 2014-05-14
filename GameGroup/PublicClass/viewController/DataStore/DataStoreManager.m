@@ -298,7 +298,7 @@
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
-                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = @"sys00000011";
             thumbMsgs.senderNickname = @"每日一闻";
             thumbMsgs.msgContent = msgContent;
@@ -309,7 +309,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
-            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
 
         }];
     }
