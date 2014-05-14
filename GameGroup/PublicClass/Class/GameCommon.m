@@ -594,6 +594,7 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FansCount];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:NearByKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"isGetNearByDataByNet"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"topImageData_wx"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_buttonTitleOfPage"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_buttonTitleOfPage"];

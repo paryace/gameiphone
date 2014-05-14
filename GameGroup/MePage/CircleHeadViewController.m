@@ -144,13 +144,14 @@ typedef enum : NSUInteger {
     m_myTableView.tableHeaderView = topVIew;
     
     topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
+    topImgaeView.backgroundColor = [UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]) {
         topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]];
     }else{
-        topImgaeView.image = KUIImage(@"ceshibg.jpg");
+        topImgaeView.image = nil;
     }
     topImgaeView.userInteractionEnabled =YES;
-    topImgaeView.backgroundColor = [UIColor darkGrayColor];
+    
     [topImgaeView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [topVIew addSubview:topImgaeView];
     
