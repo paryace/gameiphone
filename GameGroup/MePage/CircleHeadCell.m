@@ -19,7 +19,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        
+        self.backgroundColor = [UIColor whiteColor];
          self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
     
@@ -34,11 +34,13 @@
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.titleLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
         self.timeLabel.textColor =[UIColor grayColor];
+        self.timeLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.timeLabel];
         
         self.delBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 50, 30)];
@@ -107,6 +109,7 @@
         
         self.zanLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100, 30)];
         self.zanLabel.textColor = [UIColor grayColor];
+        self.zanLabel.backgroundColor =[UIColor clearColor];
         self.zanLabel.font = [UIFont boldSystemFontOfSize:12];
         [self.zanView addSubview:self.zanLabel];
     
