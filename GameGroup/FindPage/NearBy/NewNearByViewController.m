@@ -767,6 +767,8 @@
     [self changeActivityPositionWithTitle:titleLabel.text];
     citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(dic,@"city")];
     m_currPageCount =0;
+    isSaveHcTopImg = YES;
+    isSaveHcListInfo = YES;
     [self getInfoWithNet];
     [self getTopImageFromNet];
 }
@@ -816,6 +818,7 @@
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
+        isSaveHcListInfo = YES;
         [self getInfoWithNet];
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
