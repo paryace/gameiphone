@@ -64,6 +64,7 @@
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleStr = @"附近";
+    cityCode = @"";
     if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
         NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
         if ([type isEqualToString:@"0"]) {
@@ -999,13 +1000,16 @@
         {
             [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
-        
         for (int i = 0 ;i<m_dataArray.count;i++) {
-            if ([KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:i], @"user"), @"userid")isEqualToString:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")]) {
-                [[m_dataArray objectAtIndex:i] setObject:KISDictionaryHaveKey(responseObject, @"shiptype") forKey:@"shiptype"];
+            NSMutableDictionary *dicTemp = [m_dataArray objectAtIndex:i];
+            NSMutableDictionary *dicUser =KISDictionaryHaveKey(dicTemp, @"user");
+            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dicTemp, @"user"), @"userid")isEqualToString:
+                 KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid")]) {
+                
+                [dicUser setObject:KISDictionaryHaveKey(responseObject, @"shiptype") forKey:@"shiptype"];
+                [m_dataArray replaceObjectAtIndex:i withObject:dicTemp];
             }
         }
-        
         [wxSDArray removeAllObjects];
         [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
         
