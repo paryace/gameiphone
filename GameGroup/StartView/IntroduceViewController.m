@@ -14,8 +14,9 @@
 {
     UIScrollView*   m_myScrollView;
     NSTimer*        m_timer;
-    
     NSInteger       m_currentPage;//当前页码
+    UIButton* loginButton;
+    UIButton* registerButton;
     
     float           diffH;
 }
@@ -62,42 +63,51 @@
 
     diffH = [GameCommon diffHeight:self];
 
-//    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth - ((diffH == 0) ? 20 : 0))];
+    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth - ((diffH == 0) ? 20 : 0))];
 
-    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
+   // m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
     m_myScrollView.backgroundColor =[UIColor greenColor];
     NSLog(@"%@", NSStringFromCGRect(m_myScrollView.frame));
     m_myScrollView.backgroundColor = [UIColor clearColor];
-    for (int i = 0; i < 5; i++) {   //4张图循环5次
+    
+   
+    for (int i = 0; i < kMAXPAGE+2; i++) {   //5张图循环6次
         UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, m_myScrollView.bounds.size.height)];
-        UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
+       // UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
         
-        
+        //第一张图是最后一张
+        int page;
+        if (i==0)
+            page= kMAXPAGE; //第一页放最后一张
+        else if (i>kMAXPAGE)
+            page =1;    //最后一张放第一张
+        else
+            page = i;
         if (iPhone5) {
-            dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 455);
-            NSString* imageName = [NSString stringWithFormat:@"second_%d", i+1];
-            NSString *imgName = [NSString stringWithFormat:@"second_1%d",i+1];
+          //  dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 455);
+            NSString* imageName = [NSString stringWithFormat:@"second_%d.jpg", page];
+          //  NSString *imgName = [NSString stringWithFormat:@"second_1%d.png ",page];
             bgImage.image = KUIImage(imageName);
-            dianImage.image = KUIImage(imgName);
+        //    dianImage.image = KUIImage(imgName);
         }else{
-            dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 383);
-            NSString* imageName = [NSString stringWithFormat:@"first_%d", i+1];
-            NSString *imgName = [NSString stringWithFormat:@"first_1%d",i+1];
+         //   dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 383);
+            NSString* imageName = [NSString stringWithFormat:@"first_%d.jpg", page];
+           // NSString *imgName = [NSString stringWithFormat:@"first_1%d",i+1];
 
             bgImage.image = KUIImage(imageName);
-            dianImage.image = KUIImage(imgName);
+         //   dianImage.image = KUIImage(imgName);
         }
         
        // }
-        bgImage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin;
+       // bgImage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin;
         [m_myScrollView addSubview:bgImage];
-        [m_myScrollView addSubview:dianImage];
+      //  [m_myScrollView addSubview:dianImage];
     }
     m_myScrollView.pagingEnabled = YES;
     m_myScrollView.scrollEnabled = YES;
-    m_myScrollView.contentSize = CGSizeMake(320 * 4, 0);
+    m_myScrollView.contentSize = CGSizeMake(320 * (kMAXPAGE+2), 0);    //5张图但是需要6ge
 
-    
+    m_myScrollView.contentOffset = CGPointMake(320, 0); //从第二张开始
     
     m_myScrollView.showsHorizontalScrollIndicator = NO;
     m_myScrollView.showsVerticalScrollIndicator = NO;
@@ -108,44 +118,32 @@
     
     m_currentPage = 0;
     
-    UIButton* loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 60, 120, 35)];
+    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45, 120, 35)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
    
     
-    UIButton* registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 60, 120, 35)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 45, 120, 35)];
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"second_login_click") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"second_regist_click") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateHighlighted];
 
     }
     else{
-        [loginButton setBackgroundImage:KUIImage(@"first_login_normnal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"first_login_click") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateNormal];
+        [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"first_regist_click") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateHighlighted];
 
     }
 
     [registerButton addTarget:self action:@selector(registerButtonClick:) forControlEvents:UIControlEventTouchUpInside];
      [self.view addSubview:loginButton];
     [self.view addSubview:registerButton];
-}
-- (void)refreshLeftTime
-{
-//    CGRect newRect;
-    
-    if (m_currentPage == 4) {//最后一页
-        m_myScrollView.contentOffset = CGPointMake(320, 0);
-        m_currentPage = 1;
-    }
-    else
-    {
-        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage + 1), 0);
-        m_currentPage++;
-    }
+    loginButton.hidden = YES;
+    registerButton.hidden = YES;
 }
 
 #pragma mark button click
@@ -171,39 +169,49 @@
     //[m_pageController setCurrentPage:offsetofScrollView.x / self.scroll.frame.size.width];
     
 	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
-	
-    NSLog(@"page: %d",page);
-    if(0 == page || 5 == page)
-	{
-        CGRect rect;
-        if (0 == page)
-        {
-            rect = CGRectMake(4 * m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-            m_currentPage = 4;
-        }
-        else
-        {
-            rect = CGRectMake(m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-            m_currentPage = 1;
-        }
-        [m_myScrollView scrollRectToVisible:rect animated:NO];
-    }
-    else
+
+        loginButton.hidden = NO;
+        registerButton.hidden = NO;
+    
+    if( page ==0)
     {
-        CGRect rect = CGRectMake(page * m_myScrollView.bounds.size.width, 0,
-                                 m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-        [m_myScrollView scrollRectToVisible:rect animated:NO];
-        m_currentPage = page;
+        m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE, 0);
     }
-    if (m_currentPage == 4) {//最后一页
-        m_myScrollView.contentOffset = CGPointMake(0, 0);
-        m_currentPage = 0;
-    }
-    else
+    else if (page==(kMAXPAGE+1))
     {
-        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage), 0);
-        m_currentPage++;
+        m_myScrollView.contentOffset = CGPointMake(320, 0);
     }
+//    if(0 == page || 5 == page)
+//	{
+//        CGRect rect;
+//        if (0 == page)
+//        {
+//            rect = CGRectMake(4 * m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+//            m_currentPage = 4;
+//        }
+//        else
+//        {
+//            rect = CGRectMake(m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+//            m_currentPage = 1;
+//        }
+//        [m_myScrollView scrollRectToVisible:rect animated:NO];
+//    }
+//    else
+//    {
+//        CGRect rect = CGRectMake(page * m_myScrollView.bounds.size.width, 0,
+//                                 m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+//        [m_myScrollView scrollRectToVisible:rect animated:NO];
+//        m_currentPage = page;
+//    }
+//    if (m_currentPage == 4) {//最后一页
+//        m_myScrollView.contentOffset = CGPointMake(0, 0);
+//        m_currentPage = 0;
+//    }
+//    else
+//    {
+//        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage), 0);
+//        m_currentPage++;
+//    }
 
 //    NSLog(@"m_currentPage: %d",m_currentPage);
 //    if (m_currentPage == 4) {//最后一页

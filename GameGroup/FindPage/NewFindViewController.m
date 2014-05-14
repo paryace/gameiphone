@@ -30,11 +30,11 @@
 @interface NewFindViewController ()
 {
     EGOImageButton    *m_dynamicBtn;//动态
-    UIButton    *m_nearByBtn;//附近
+    UIButton    *m_newPhoneBtn;
     UIButton    *m_samerealmBtn;//同F
-    UIButton    *m_phoneBtn;//通讯录
+    UIButton    *m_newMeetBtn;
     UIButton    *m_girlBtn;//魔女榜
-    UIButton    *m_meetBtn;//邂逅
+    UIButton    *m_newNearbyBtn;//邂逅
     UIButton    *m_activateBtn;
     HostInfo    *hostInfo;
     UIImageView *m_notibgInfoImageView; //与我相关红点
@@ -200,21 +200,21 @@
 
 #pragma mark ----- 具体未做判定  账号是否激活
     
-    m_meetBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 102, 102) center:self.view.center backgroundNormalImage:@"trevi_fountain_pressed" backgroundHighlightImage:@"trevi_fountain_normal" setTitle:nil nextImage:nil nextImage:nil];
+    m_newNearbyBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 102, 102) center:self.view.center backgroundNormalImage:@"new_nearby_pressed" backgroundHighlightImage:@"new_nearby_normal" setTitle:nil nextImage:nil nextImage:nil];
     //109 189
     
    // NSLog(@"self.view.center%@",self.view.center);
-    m_meetBtn.layer.masksToBounds = YES;
-    m_meetBtn.layer.cornerRadius = 51;
+    m_newNearbyBtn.layer.masksToBounds = YES;
+    m_newNearbyBtn.layer.cornerRadius = 51;
 
-    [m_meetBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:m_meetBtn];
+    [m_newNearbyBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_newNearbyBtn];
     
     
     
     
     m_dynamicBtn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, 0, 59, 59)];
-    m_dynamicBtn.center =CGPointMake(m_meetBtn.center.x-49, m_meetBtn.center.y-125);
+    m_dynamicBtn.center =CGPointMake(m_newNearbyBtn.center.x-49, m_newNearbyBtn.center.y-125);
     m_dynamicBtn.placeholderImage = KUIImage(@"people_man");
     
     if (_friendImgStr ==nil) {
@@ -235,14 +235,14 @@
    
     //红点 - 朋友圈
     m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(123, 70+startX, 15, 15)];
-    m_notibgCircleNewsImageView.center =CGPointMake(m_meetBtn.center.x-25, m_meetBtn.center.y-140);
+    m_notibgCircleNewsImageView.center =CGPointMake(m_newNearbyBtn.center.x-25, m_newNearbyBtn.center.y-140);
     [self.view bringSubviewToFront:m_notibgCircleNewsImageView];
     [m_notibgCircleNewsImageView setImage:[UIImage imageNamed:@"redpot.png"]];
     [self.view addSubview:m_notibgCircleNewsImageView];
     m_notibgCircleNewsImageView.hidden = YES;
     //红点 - 与我相关
     m_notibgInfoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(123, 70+startX, 18, 18)];
-     m_notibgInfoImageView.center =CGPointMake(m_meetBtn.center.x-25, m_meetBtn.center.y-140);
+     m_notibgInfoImageView.center =CGPointMake(m_newNearbyBtn.center.x-25, m_newNearbyBtn.center.y-140);
     [self.view bringSubviewToFront:m_notibgInfoImageView];
     [m_notibgInfoImageView setImage:[UIImage imageNamed:@"redCB.png"]];
     [self.view addSubview:m_notibgInfoImageView];
@@ -292,7 +292,7 @@
     
     //-----小红点-----
 //    m_notibgInfoImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
-//    m_notibgInfoImageView.center =CGPointMake(m_meetBtn.center.x-22, m_meetBtn.center.y-140);
+//    m_notibgInfoImageView.center =CGPointMake(m_newNearbyBtn.center.x-22, m_newNearbyBtn.center.y-140);
 //    m_notibgInfoImageView.image = KUIImage(@"new_num_bg");
 //    [self.view addSubview:m_notibgInfoImageView];
 //    
@@ -304,7 +304,7 @@
     
     
     UILabel *friendLb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 53, 16)];
-    friendLb.center = CGPointMake(m_meetBtn.center.x-45, m_meetBtn.center.y-80);
+    friendLb.center = CGPointMake(m_newNearbyBtn.center.x-45, m_newNearbyBtn.center.y-80);
     friendLb.text = @"朋友圈";
     [friendLb setBackgroundColor:[UIColor colorWithPatternImage:KUIImage(@"friendtext")]];
     friendLb.font = [UIFont systemFontOfSize:12];
@@ -316,16 +316,16 @@
     
     
     
-    m_nearByBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 41, 41) center:CGPointMake(m_meetBtn.center.x+78, m_meetBtn.center.y-52) backgroundNormalImage:@"new_nearby_pressed" backgroundHighlightImage:@"new_nearby_normal" setTitle:nil nextImage:nil nextImage:nil];
-    m_nearByBtn.layer.masksToBounds = YES;
-    m_nearByBtn.layer.cornerRadius = 41/2;
+    m_newPhoneBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 41, 41) center:CGPointMake(m_newNearbyBtn.center.x+78, m_newNearbyBtn.center.y-52) backgroundNormalImage:@"new_address_pressed" backgroundHighlightImage:@"new_address_normal" setTitle:nil nextImage:nil nextImage:nil];
+    m_newPhoneBtn.layer.masksToBounds = YES;
+    m_newPhoneBtn.layer.cornerRadius = 41/2;
 
-    [m_nearByBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
+    [m_newPhoneBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
 
-    [self.view addSubview:m_nearByBtn];
+    [self.view addSubview:m_newPhoneBtn];
     
     
-    m_samerealmBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 41, 41) center:CGPointMake(m_meetBtn.center.x-101,m_meetBtn.center.y-26) backgroundNormalImage:@"new_tongfu_pressed" backgroundHighlightImage:@"new_tongfu_normal" setTitle:nil nextImage:@"nil" nextImage:@"nil"];
+    m_samerealmBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 41, 41) center:CGPointMake(m_newNearbyBtn.center.x-101,m_newNearbyBtn.center.y-26) backgroundNormalImage:@"new_tongfu_pressed" backgroundHighlightImage:@"new_tongfu_normal" setTitle:nil nextImage:@"nil" nextImage:@"nil"];
     m_samerealmBtn.layer.masksToBounds = YES;
     m_samerealmBtn.layer.cornerRadius = 41/2;
 
@@ -333,7 +333,7 @@
 
     [self.view addSubview:m_samerealmBtn];
         
-    m_girlBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 56, 56) center:CGPointMake(m_meetBtn.center.x+98,m_meetBtn.center.y+71) backgroundNormalImage:@"new_monv_pressed" backgroundHighlightImage:@"new_monv_normal" setTitle:nil nextImage:nil nextImage:nil];
+    m_girlBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 56, 56) center:CGPointMake(m_newNearbyBtn.center.x+98,m_newNearbyBtn.center.y+71) backgroundNormalImage:@"new_monv_pressed" backgroundHighlightImage:@"new_monv_normal" setTitle:nil nextImage:nil nextImage:nil];
     m_girlBtn.layer.masksToBounds = YES;
     m_girlBtn.layer.cornerRadius = 56/2;
 
@@ -342,13 +342,13 @@
     [self.view addSubview:m_girlBtn];
     
     
-    m_phoneBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 65, 65) center:CGPointMake(m_meetBtn.center.x-69,m_meetBtn.center.y+114) backgroundNormalImage:@"new_address_pressed" backgroundHighlightImage:@"new_address_normal" setTitle:nil nextImage:nil nextImage:nil];
-    m_phoneBtn.layer.masksToBounds = YES;
-    m_phoneBtn.layer.cornerRadius = 65/2;
+    m_newMeetBtn = [FinderView setButtonWithFrame:CGRectMake(0, 0, 65, 65) center:CGPointMake(m_newNearbyBtn.center.x-69,m_newNearbyBtn.center.y+114) backgroundNormalImage:@"trevi_fountain_pressed" backgroundHighlightImage:@"trevi_fountain_normal" setTitle:nil nextImage:nil nextImage:nil];
+    m_newMeetBtn.layer.masksToBounds = YES;
+    m_newMeetBtn.layer.cornerRadius = 65/2;
 
-    [m_phoneBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
+    [m_newMeetBtn addTarget:self action:@selector(didClickenterMeet:) forControlEvents:UIControlEventTouchUpInside];
 
-    [self.view addSubview:m_phoneBtn];
+    [self.view addSubview:m_newMeetBtn];
 
     
     
@@ -360,7 +360,7 @@
 {
     NSLog(@"点击");
     
-    if (sender ==m_meetBtn) {
+    if (sender ==m_newMeetBtn) {  //许愿
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         EncoXHViewController *enco = [[EncoXHViewController alloc]init];
         [self.navigationController pushViewController:enco animated:YES];
@@ -397,7 +397,7 @@
         MagicGirlViewController *maVC = [[MagicGirlViewController alloc]init];
         [self.navigationController pushViewController:maVC animated:YES];
     }
-    if (sender ==m_nearByBtn) {
+    if (sender ==m_newNearbyBtn ) {//附近
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         NewNearByViewController* VC = [[NewNearByViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
@@ -409,7 +409,7 @@
         [self.navigationController pushViewController:realmsVC animated:YES];
 
     }
-    if (sender ==m_phoneBtn) {
+    if (sender == m_newPhoneBtn  ) {
         NSLog(@"手机通讯录");
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];

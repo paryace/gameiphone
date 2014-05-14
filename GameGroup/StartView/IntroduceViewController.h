@@ -11,3 +11,5 @@
 @interface IntroduceViewController : UIViewController<UIScrollViewDelegate>
 @property (nonatomic,retain) id <RegisterViewControllerDelegate>delegate;
 @end
+
+#define kMAXPAGE  5//启动页数
