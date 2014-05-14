@@ -215,9 +215,9 @@ typedef enum : NSUInteger {
     [m_photoCollectionView registerClass:[NearByPhotoCell class] forCellWithReuseIdentifier:@"ImageCell"];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     
-//    if (KISHighVersion_7) {
-//        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-//    }
+    if (KISHighVersion_7) {
+        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    }
     m_myTableView.tableHeaderView = m_photoCollectionView;
     
     [self addheadView];
@@ -492,6 +492,22 @@ typedef enum : NSUInteger {
 
 }
 
+-(void)setTitleText:(NSString*)gender
+{
+    if (gender) {
+        if ([gender isEqualToString:@"0"]) {
+            titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
+        }
+        else if ([gender isEqualToString:@"1"])
+        {
+            titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
+        }else
+        {
+            titleLabel.text = titleStr;
+        }
+    }else
+        titleLabel.text = titleStr;
+}
 -(void)getInfoWithNet
 {
     [hud show:YES];
@@ -507,6 +523,7 @@ typedef enum : NSUInteger {
     if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
         if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
             NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+            [self setTitleText:type];
             if ([type isEqualToString:@"0"]) {
                 [paramDic setObject:@"0" forKey:@"gender"];
             }
@@ -529,9 +546,9 @@ typedef enum : NSUInteger {
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
 //        if ([responseObject isKindOfClass:[NSArray class]]) {
-        if (KISHighVersion_7) {
-            m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-        }
+//        if (KISHighVersion_7) {
+//            m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+//        }
             if (m_currPageCount ==0) {
                 [m_dataArray removeAllObjects];
                 if ([responseObject isKindOfClass:[NSArray class]]) {
