@@ -214,13 +214,10 @@ typedef enum : NSUInteger {
     [m_photoCollectionView registerClass:[NearByPhotoCell class] forCellWithReuseIdentifier:@"ImageCell"];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     
-    
-    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    if (KISHighVersion_7) {
+        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    }
     m_myTableView.tableHeaderView = m_photoCollectionView;
-    
-//    hud = [[MBProgressHUD alloc]initWithView:self.view];
-//    hud.labelText = @"获取中...";
-//    [self.view addSubview:hud];
     
     [self addheadView];
     [self addFootView];
@@ -231,6 +228,10 @@ typedef enum : NSUInteger {
     if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
         m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
     }
+    [self.view addSubview:self.theEmojiView];
+    self.theEmojiView.hidden = YES;
+    
+
     
     [self getLocationForNet];
     [self buildcommentView];
@@ -261,6 +262,12 @@ typedef enum : NSUInteger {
 {
     inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, 320, 50)];
     [self.view addSubview:inPutView];
+    
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
+    [self.view addGestureRecognizer:tapGr];
+
     
     self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
     self.textView.isScrollable = NO;
@@ -673,6 +680,7 @@ typedef enum : NSUInteger {
     cell.backgroundColor= [UIColor whiteColor];
     cell.myCellDelegate = self;
     cell.tag = indexPath.row;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
@@ -732,14 +740,8 @@ typedef enum : NSUInteger {
             
             cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
-            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-                cell.delBtn.hidden =NO;
-                cell.delBtn.frame = CGRectMake(190,m_currmagY+11,50, 30);
-                
-            }else{
-                cell.delBtn.hidden =YES;
-            }
-            
+            cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
+
         }
         //有图动态
         else{
@@ -763,15 +765,8 @@ typedef enum : NSUInteger {
             [cell.photoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
-            
-            //删除按钮 - 自己的文章
-            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-                cell.delBtn.hidden =NO;
-                cell.delBtn.frame = CGRectMake(150,m_currmagY+1,50, 30);
-                
-            }else{
-                cell.delBtn.hidden =YES;
-            }
+            cell.jubaoBtn.frame = CGRectMake(150, m_currmagY, 60, 30);
+
         }
         
         m_currmagY=cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
@@ -819,15 +814,7 @@ typedef enum : NSUInteger {
         
         cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
         cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
-        
-        //删除按钮 - 如果是自己发表的文章
-        if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-            cell.delBtn.hidden =NO;
-            cell.delBtn.frame = CGRectMake(190,m_currmagY+11,50, 30);
-            
-        }else{
-            cell.delBtn.hidden =YES;
-        }
+        cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
         m_currmagY  = cell.timeLabel.frame.origin.y + cell.timeLabel.frame.size.height;
     }
     
@@ -884,11 +871,11 @@ typedef enum : NSUInteger {
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
-    once.messageid =KISDictionaryHaveKey(dic, @"id");
-    [self.navigationController pushViewController:once animated:YES];
+//    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+//    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
+//    once.messageid =KISDictionaryHaveKey(dic, @"id");
+//    [self.navigationController pushViewController:once animated:YES];
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -1952,9 +1939,42 @@ typedef enum : NSUInteger {
 	}
     return 0;
 }
+#pragma mark --举报
+-(void)jubaoThisInfoWithCell:(NewNearByCell*)myCell
+{
+    NSDictionary *dic =[m_dataArray objectAtIndex:myCell.tag];
+ 
+    UIAlertView *jubaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认举报这条动态么？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"举报", nil];
+    
+    jubaoAlert.tag = myCell.tag;
+    [jubaoAlert show];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex ==1) {
+        hud.labelText = @"举报中...";
+        [hud show:YES];
+        NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 的文章含不良内容，请尽快处理！", KISDictionaryHaveKey([m_dataArray objectAtIndex:alertView.tag],@"id")];
+        NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",KISDictionaryHaveKey([m_dataArray objectAtIndex:alertView.tag],@"id"),@"id",@"dynamic",@"type",nil];
+        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [postDict setObject:@"155" forKey:@"method"];
+        [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+        [postDict setObject:dic forKey:@"params"];
+        
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [hud hide:YES];
+            [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }}}];
 
-
-
+    }
+}
 
 //根据标题的长度更改UIActivity的位置
 -(void)changeActivityPositionWithTitle:(NSString *)title

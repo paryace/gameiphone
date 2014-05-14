@@ -55,9 +55,12 @@
     m_myTableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    if (KISHighVersion_7) {
+        m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    }
     m_myTableView.sectionIndexMinimumDisplayRowCount = 20;
-  //  mTableView.sectionIndexTrackingBackgroundColor = [UIColor greenColor];
+    
+   // mTableView.sectionIndexTrackingBackgroundColor = [UIColor greenColor];
     [self.view addSubview:m_myTableView];
     
     UIImageView *topImageView = [[UIImageView alloc]initWithImage:KUIImage(@"city_top.jpg")];

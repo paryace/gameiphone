@@ -18,6 +18,7 @@
     if (self) {
         // Initialization code
         
+        self.backgroundColor =[ UIColor whiteColor];
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
         [self.headImgBtn addTarget:self action:@selector(enterPersonPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -39,13 +40,26 @@
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.numberOfLines=0;
         [self.contentView addSubview:self.titleLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 100, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
         self.timeLabel.textColor =[UIColor grayColor];
+        self.timeLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.timeLabel];
+        
+        self.jubaoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.jubaoBtn.frame = CGRectMake(0, 0, 60, 30);
+        [self.jubaoBtn setTitle:@"举报" forState:UIControlStateNormal];
+        [self.jubaoBtn setTitleColor: UIColorFromRGBA(0x455ca8, 1)forState:UIControlStateNormal];
+        self.jubaoBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        [self.jubaoBtn addTarget:self action:@selector(jubaoThisInfo:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:self.jubaoBtn];
+        
+        
+        
         
         self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
@@ -352,6 +366,15 @@
     }
     
 }
+-(void)jubaoThisInfo:(id)sender
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(jubaoThisInfoWithCell:)]) {
+        [self.myCellDelegate jubaoThisInfoWithCell:self];
+    }
+}
+
+
+
 - (void)awakeFromNib
 {
     // Initialization code

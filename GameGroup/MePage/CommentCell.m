@@ -19,14 +19,14 @@
     if (self) {
         self.nicknameButton = [[UIButton alloc]initWithFrame:CGRectMake(5,0, 100, 16)];
         self.nicknameButton.titleLabel.textColor =  UIColorFromRGBA(0x455ca8, 1);
-     //   self.nicknameButton.titleLabel.textColor =  [UIColor redColor];
+        self.nicknameButton.backgroundColor =  [UIColor clearColor];
         [self.contentView addSubview:self.nicknameButton];
         self.nicknameButton.hidden = YES;
         
 
         
         self.commentContLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
-        self.commentContLabel.font = [UIFont boldSystemFontOfSize:12];
+        self.commentContLabel.font = [UIFont systemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
         self.commentContLabel.backgroundColor = [UIColor clearColor];
         self.commentContLabel.textColor = [UIColor grayColor];
@@ -36,7 +36,7 @@
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:12];
         self.nickNameLabel.numberOfLines = 0;
-        self.nicknameButton.backgroundColor = [UIColor clearColor];
+        self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.textAlignment=NSTextAlignmentLeft;
         [self.contentView addSubview:self.nickNameLabel];

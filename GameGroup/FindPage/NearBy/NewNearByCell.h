@@ -35,7 +35,7 @@
 @property(nonatomic,strong)NSArray *commentArray;
 @property(nonatomic,strong)NSArray *zanArray;
 @property(nonatomic,strong)UITableView *commentTabelView;
-@property(nonatomic,strong)UIButton *delBtn;
+@property(nonatomic,strong)UIButton *jubaoBtn;
 @property(nonatomic,strong)UIButton *zanBtn;
 @property(nonatomic,assign)NSInteger  commentCount;
 @property(nonatomic,strong)UIButton *commentMoreBtn;
@@ -93,6 +93,6 @@
 
 -(void)delCellWithCell:(NewNearByCell*)myCell;
 
-
+-(void)jubaoThisInfoWithCell:(NewNearByCell*)myCell;
 
 @end

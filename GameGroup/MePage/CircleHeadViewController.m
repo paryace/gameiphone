@@ -130,7 +130,11 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    if (KISHighVersion_7) {
+        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    }
+
+//    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     [self.view addSubview:m_myTableView];
     
     //顶部图片
