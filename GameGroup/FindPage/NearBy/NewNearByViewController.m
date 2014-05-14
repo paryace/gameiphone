@@ -1382,16 +1382,10 @@ typedef enum : NSUInteger {
     [dict setObject:@"185" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
-    
-    
-    
-    
     if (app.reach.currentReachabilityStatus ==NotReachable) {
-//        NSString* uuid = [[GameCommon shareGameCommon] uuid];
-//        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-//                             msgid,@"msgId",
-//                             uuid,@"uuid",nil];
-//        [DataStoreManager saveOfflineZanWithDic:dic];
+        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:msgid,@"msgId",uuid,@"uuid",nil];
+        [DataStoreManager saveOfflineZanWithDic:dic];
     }
     else{
         
@@ -1486,8 +1480,6 @@ typedef enum : NSUInteger {
                 if (commentNum<1) {
                     [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+30) forKey:@"cellHieght"];
                 }
-                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
-                [m_dataArray writeToFile:filePath atomically:YES];
                 [m_myTableView reloadData];
                 //请求网络点赞
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:YES];
@@ -1506,8 +1498,6 @@ typedef enum : NSUInteger {
                 if (commentNum==1) {
                     [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-30) forKey:@"cellHieght"];
                 }
-                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
-                [m_dataArray writeToFile:filePath atomically:YES];
                 [m_myTableView reloadData];
                 //请求网络取消
                 [self postZanWithMsgId:KISDictionaryHaveKey(zanDic, @"id") IsZan:NO];
@@ -1610,6 +1600,7 @@ typedef enum : NSUInteger {
     if (i>=0&&i<20) {
         [self saveinfoToUserDefaults:m_dataArray];
     }
+    
     [self showMessageWindowWithContent:@"评论成功" imageType:0];
     [m_myTableView reloadData];
     //执行提交评论操作
@@ -1670,7 +1661,7 @@ typedef enum : NSUInteger {
 -(void)saveinfoToUserDefaults:(NSMutableArray *)array
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+    NSString *path = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
     NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
     
