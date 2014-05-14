@@ -781,7 +781,7 @@
                 dUser.refreshTime = refreshTime;
                 dUser.distance = [NSNumber numberWithDouble:distance];
                 
-                NSString* pinYin = [alias isEqualToString:@""] ? nickName : alias;
+                NSString* pinYin =(alias==nil||[alias isEqualToString:@""])? nickName : alias;
                 NSString * nameIndex;
                 NSString * nameKey;
                 if (nickName.length>=1) {
@@ -1595,6 +1595,9 @@ return @"";
 #pragma mark -
 +(NSString *)convertChineseToPinYin:(NSString *)chineseName
 {
+    if (chineseName==nil||[chineseName isEqualToString:@""]) {
+        return  @"";
+    }
     NSMutableString * theName = [NSMutableString stringWithString:chineseName];
     CFRange range = CFRangeMake(0, theName.length);
     CFStringTransform((CFMutableStringRef)theName, &range, kCFStringTransformToLatin, NO);
