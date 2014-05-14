@@ -108,8 +108,6 @@ typedef enum : NSUInteger {
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
-    commentOffLineDict = [NSMutableDictionary dictionary];
-    cellhightarray = [NSMutableDictionary dictionary];
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     height=216;
     
@@ -120,6 +118,9 @@ typedef enum : NSUInteger {
     
     commentArray = [NSMutableArray array];
     delcommentDic = [NSMutableDictionary dictionary];
+    commentOffLineDict = [NSMutableDictionary dictionary];
+    cellhightarray = [NSMutableDictionary dictionary];
+
     m_currPageCount = 0;
     methodStr = @"1";
     //判断是否是回复某人的评论

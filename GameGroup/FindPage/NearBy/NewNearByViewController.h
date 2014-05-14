@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "NewNearByCell.h"
 #import "CityViewController.h"
-
+#import "HPGrowingTextView.h"
 @interface NewNearByViewController : BaseViewController
 <UICollectionViewDataSource,
 UICollectionViewDelegate,
@@ -18,7 +18,9 @@ UITableViewDelegate,
 UIAlertViewDelegate,
 NewNearByCellDelegate,
 CityDelegate,
-UIActionSheetDelegate
+UIActionSheetDelegate,
+HPGrowingTextViewDelegate
 >
+@property(nonatomic,strong)HPGrowingTextView *textView;
 
 @end
