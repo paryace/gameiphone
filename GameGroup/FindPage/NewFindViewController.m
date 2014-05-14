@@ -258,17 +258,37 @@
     
 
     
+//    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
+//    {
+//        m_notibgInfoImageView.hidden = NO;
+//        if (friendDunamicmsgCount > 99) {
+//            lb.text = @"99";
+//        }
+//        else
+//            lb.text =[NSString stringWithFormat:@"%d",friendDunamicmsgCount] ;
+//    }
+
     if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
     {
-        m_notibgInfoImageView.hidden = NO;
-        if (friendDunamicmsgCount > 99) {
-            lb.text = @"99";
+        NSLog(@"-------->>>%d",friendDunamicmsgCount);
+        if(m_notibgInfoImageView.hidden)
+        {
+            m_notibgCircleNewsImageView.hidden = NO;
+        }
+        else{
+            m_notibgCircleNewsImageView.hidden = YES;
+        }
+    }
+    //显示数字
+    if (myDunamicmsgCount && myDunamicmsgCount !=0)
+    {
+        m_notibgInfoImageView.hidden = NO;  //数字
+        if (myDunamicmsgCount > 99) {
+            lb.text = @"99+";
         }
         else
-            lb.text =[NSString stringWithFormat:@"%d",friendDunamicmsgCount] ;
+            lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
     }
-
-
     
     //-----小红点-----
 //    m_notibgInfoImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
