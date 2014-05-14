@@ -28,6 +28,7 @@
         self.commentContLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
         self.commentContLabel.font = [UIFont boldSystemFontOfSize:12];
         self.commentContLabel.numberOfLines = 0;
+        self.commentContLabel.backgroundColor = [UIColor clearColor];
         self.commentContLabel.textColor = [UIColor grayColor];
         self.commentContLabel.textAlignment=NSTextAlignmentLeft;
         [self.contentView addSubview:self.commentContLabel];
@@ -35,6 +36,7 @@
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 0, 100,30)];
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:12];
         self.nickNameLabel.numberOfLines = 0;
+        self.nicknameButton.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.textAlignment=NSTextAlignmentLeft;
         [self.contentView addSubview:self.nickNameLabel];

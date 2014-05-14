@@ -548,7 +548,7 @@
         cell = [[NewNearByCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     float m_currmagY =0;
-
+    cell.backgroundColor= [UIColor whiteColor];
     cell.myCellDelegate = self;
     cell.tag = indexPath.row;
     NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
