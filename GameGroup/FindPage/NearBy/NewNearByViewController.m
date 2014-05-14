@@ -1432,6 +1432,7 @@ typedef enum : NSUInteger {
 //评论button方法
 -(void)pinglunWithCircle:(NewNearByCell *)myCell
 {
+    destuserId=@"";
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
@@ -1727,6 +1728,18 @@ typedef enum : NSUInteger {
         offer+=(280-height-23);
     }else{
         offer+=(280-height+65);
+    }
+    
+    if (headImgArray.count<1) {
+        offer-=240;
+    }
+    else if(headImgArray.count>0&&headImgArray.count<=4)
+    {
+        offer-=160;
+    }
+    else if(headImgArray.count>4&&headImgArray.count<=8)
+    {
+        offer-=80;
     }
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
     offer=0;

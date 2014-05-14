@@ -705,7 +705,7 @@ UINavigationControllerDelegate>
         for (int i = 0; i < 2; i++) {
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = i;
-            button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 90, 125);
+            button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 70, 105);
             //            button.backgroundColor = [UIColor greenColor];
             [button addTarget:self
                        action:@selector(kkChatAddViewButtonsClick:)
@@ -723,7 +723,8 @@ UINavigationControllerDelegate>
             [button setImageEdgeInsets:UIEdgeInsetsMake(15, 10, 40, 10)];
             [button setTitle:[kkChatButtonsTitle objectAtIndex:i]
                     forState:UIControlStateNormal];
-            [button setTitleEdgeInsets:UIEdgeInsetsMake(80, -80, 10, 10)];
+             button.titleLabel.font = [UIFont systemFontOfSize:14];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(70, -80, 10, 10)];
             [_kkChatAddView addSubview:button];
             
         }

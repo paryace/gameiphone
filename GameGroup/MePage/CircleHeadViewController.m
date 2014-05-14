@@ -1212,6 +1212,7 @@ typedef enum : NSUInteger {
 //评论button方法
 -(void)pinglunWithCircle:(CircleHeadCell *)myCell
 {
+    destuserId=@"";
     self.textView.text = nil;
     self.textView.placeholder= nil;
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag-100];
