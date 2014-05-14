@@ -68,21 +68,21 @@
     m_myScrollView.backgroundColor =[UIColor greenColor];
     NSLog(@"%@", NSStringFromCGRect(m_myScrollView.frame));
     m_myScrollView.backgroundColor = [UIColor clearColor];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, m_myScrollView.bounds.size.height)];
         UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
         
         
         if (iPhone5) {
             dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 455);
-            NSString* imageName = [NSString stringWithFormat:@"second_%d", i+1];
-            NSString *imgName = [NSString stringWithFormat:@"second_1%d",i+1];
+            NSString* imageName = [NSString stringWithFormat:@"second_%d.jpg", i+1];
+            NSString *imgName = [NSString stringWithFormat:@"second_1%d.jpg",i+1];
             bgImage.image = KUIImage(imageName);
             dianImage.image = KUIImage(imgName);
         }else{
             dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 383);
-            NSString* imageName = [NSString stringWithFormat:@"first_%d", i+1];
-            NSString *imgName = [NSString stringWithFormat:@"first_1%d",i+1];
+            NSString* imageName = [NSString stringWithFormat:@"first_%d.jpg", i+1];
+            NSString *imgName = [NSString stringWithFormat:@"first_1%d.jpg",i+1];
 
             bgImage.image = KUIImage(imageName);
             dianImage.image = KUIImage(imgName);
@@ -94,6 +94,7 @@
         [m_myScrollView addSubview:dianImage];
     }
     m_myScrollView.pagingEnabled = YES;
+    
     m_myScrollView.scrollEnabled = YES;
     m_myScrollView.contentSize = CGSizeMake(320 * 4, 0);
 
@@ -116,16 +117,16 @@
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"second_login_click") forState:UIControlStateHighlighted];
+//        [loginButton setBackgroundImage:KUIImage(@"second_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"second_regist_click") forState:UIControlStateHighlighted];
+//        [registerButton setBackgroundImage:KUIImage(@"second_regist_click") forState:UIControlStateHighlighted];
 
     }
     else{
         [loginButton setBackgroundImage:KUIImage(@"first_login_normnal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"first_login_click") forState:UIControlStateHighlighted];
+//        [loginButton setBackgroundImage:KUIImage(@"first_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"first_regist_click") forState:UIControlStateHighlighted];
+//        [registerButton setBackgroundImage:KUIImage(@"first_regist_click") forState:UIControlStateHighlighted];
 
     }
 
@@ -133,19 +134,19 @@
      [self.view addSubview:loginButton];
     [self.view addSubview:registerButton];
 }
-- (void)refreshLeftTime
-{
-//    CGRect newRect;
-    if (m_currentPage == 4) {//最后一页
-        m_myScrollView.contentOffset = CGPointMake(320, 0);
-        m_currentPage = 1;
-    }
-    else
-    {
-        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage + 1), 0);
-        m_currentPage++;
-    }
-}
+//- (void)refreshLeftTime
+//{
+////    CGRect newRect;
+//    if (m_currentPage == 5) {//最后一页
+//        m_myScrollView.contentOffset = CGPointMake(320, 0);
+//        m_currentPage = 1;
+//    }
+//    else
+//    {
+//        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage + 1), 0);
+//        m_currentPage++;
+//    }
+//}
 
 #pragma mark button click
 - (void)loginButtonClick:(id)sender
@@ -164,12 +165,11 @@
 #pragma mark scrollView 手动划
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-	//CGPoint offsetofScrollView = scrollView.contentOffset;
-    
-    //[m_pageController setCurrentPage:offsetofScrollView.x / self.scroll.frame.size.width];
-    
+//	CGPoint offsetofScrollView = scrollView.contentOffset;
+//    
+//    //[m_pageController setCurrentPage:offsetofScrollView.x / self.scroll.frame.size.width];
+//
 //	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
-//	
 //    if(0 == page || 5 == page)
 //	{
 //        CGRect rect;
