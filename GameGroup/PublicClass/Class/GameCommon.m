@@ -72,16 +72,8 @@ static GameCommon *my_gameCommon = NULL;
 
 + (NSString*)getNewStringWithId:(id)oldString//剔除json里的空格字段
 {
-    if (oldString) {
-        oldString = [NSString stringWithFormat:@"%@", oldString];
-        if(![oldString isEqualToString:@" "])
-            return oldString;
-        else
-            return @"";
-    }
-    else{
-        return @"";
-    }
+    return  [[oldString description] stringByTrimmingCharactersInSet:
+             [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
 #pragma mark - 汉字转为拼音

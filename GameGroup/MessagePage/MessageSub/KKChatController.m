@@ -1139,26 +1139,8 @@ UINavigationControllerDelegate>
     NSLog(@"%d",sender.tag);
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
-        case 0: //拍照
-        {
-            if (imagePicker==nil) {
-                imagePicker=[[UIImagePickerController alloc]init];
-                imagePicker.delegate = self;
-                imagePicker.allowsEditing = NO;
-            }
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-                [self presentViewController:imagePicker animated:YES completion:^{
-                    
-                }];
-            }
-            else {
-                UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
-                [cameraAlert show];
-            }
-        }
-            break;
-        case 1: //相册
+
+        case 0: //相册
         {
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
@@ -1183,7 +1165,25 @@ UINavigationControllerDelegate>
             
         }
             break;
-            
+        case 1: //拍照
+        {
+            if (imagePicker==nil) {
+                imagePicker=[[UIImagePickerController alloc]init];
+                imagePicker.delegate = self;
+                imagePicker.allowsEditing = NO;
+            }
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                [self presentViewController:imagePicker animated:YES completion:^{
+                    
+                }];
+            }
+            else {
+                UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
+                [cameraAlert show];
+            }
+        }
+            break;
         default:
             break;
     }
@@ -2066,7 +2066,7 @@ UINavigationControllerDelegate>
 {
     NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
-    NSString *thumb = KISDictionaryHaveKey(payloads, @"thumb");
+    NSString *thumb = KISDictionaryHaveKey(payloads, @"title");
     if ([self isReUploadImage:thumb]==YES) {//如果已经成功 ，把message再发一遍
         if (imageUrl.length==0)
         {

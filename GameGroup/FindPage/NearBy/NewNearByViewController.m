@@ -360,37 +360,41 @@
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:@"1" forKey:@"gameid"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
-        if ([responseObject isKindOfClass:[NSArray class]]) {
+//        if ([responseObject isKindOfClass:[NSArray class]]) {
             if (m_currPageCount ==0) {
                 [array removeAllObjects];
-                [array addObjectsFromArray:responseObject];
-                for (int i =0; i <array.count; i++) {
-                    array[i] = [self contentAnalyzer:array[i] withReAnalyzer:NO];
-                }
+                if ([responseObject isKindOfClass:[NSArray class]]) {
+                    [array addObjectsFromArray:responseObject];
+                    for (int i =0; i <array.count; i++) {
+                        array[i] = [self contentAnalyzer:array[i] withReAnalyzer:NO];
+                    }
                 
                 
-                if (isSaveHcListInfo) {
-                    NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
-                    [array writeToFile:filePath atomically:YES];
-                    isSaveHcListInfo = NO;
+                    if (isSaveHcListInfo) {
+                        NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+                        [array writeToFile:filePath atomically:YES];
+                        isSaveHcListInfo = NO;
+                    }
                 }
-
                 
             }else{
-                NSMutableArray *arr  = [NSMutableArray array];
-                NSArray *arrays = [NSArray arrayWithArray:responseObject];
-                for (int i =0; i<arrays.count; i++) {
-                    [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
+                if ([responseObject isKindOfClass:[NSArray class]]) {
+                    NSMutableArray *arr  = [NSMutableArray array];
+                    NSArray *arrays = [NSArray arrayWithArray:responseObject];
+                    for (int i =0; i<arrays.count; i++) {
+                        [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
+                    }
+                    [array addObjectsFromArray:arr];
                 }
-                [array addObjectsFromArray:arr];
             }
             m_currPageCount ++;
             [m_myTableView reloadData];
             [m_footer endRefreshing];
             [m_header endRefreshing];
-        }
+//        }
         [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loginActivity stopAnimating];
