@@ -12,9 +12,9 @@
 {
     NSMutableArray *m_dataArray;
     NSArray *m_sectionHeadsKeys;
-    NSDictionary *m_mianDict;
+    NSMutableDictionary *m_mianDict;
     UIActivityIndicatorView *m_loginActivity;
-
+    UITableView *m_myTableView;
 }
 @end
 
@@ -43,29 +43,29 @@
 
     
     
-    m_mianDict = [NSDictionary dictionary];
+    m_mianDict = [NSMutableDictionary new];
     NSString *path = [[NSBundle mainBundle]pathForResource:@"CitiesList" ofType:@"plist"];
     m_mianDict  = [NSDictionary dictionaryWithContentsOfFile:path];
     m_sectionHeadsKeys =[NSArray array];
     
     m_sectionHeadsKeys = [m_mianDict allKeys];
    m_sectionHeadsKeys = [m_sectionHeadsKeys sortedArrayUsingSelector:@selector(compare:)];
-
+ 
     
-    UITableView *mTableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
-    mTableView.delegate = self;
-    mTableView.dataSource = self;
-    mTableView.sectionIndexBackgroundColor = [UIColor clearColor];
-    mTableView.sectionIndexMinimumDisplayRowCount = 20;
+    m_myTableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    m_myTableView.delegate = self;
+    m_myTableView.dataSource = self;
+    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    m_myTableView.sectionIndexMinimumDisplayRowCount = 20;
   //  mTableView.sectionIndexTrackingBackgroundColor = [UIColor greenColor];
-    [self.view addSubview:mTableView];
+    [self.view addSubview:m_myTableView];
     
     UIImageView *topImageView = [[UIImageView alloc]initWithImage:KUIImage(@"city_top.jpg")];
     topImageView.frame = CGRectMake(0, 0, 320, 200);
     topImageView.userInteractionEnabled = YES;
     [topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(randomCity:)]];
-    mTableView.tableHeaderView = topImageView;
-    
+    m_myTableView.tableHeaderView = topImageView;
+    [self getRemenForNet];
 }
 
 -(void)getRemenForNet
@@ -78,9 +78,26 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
+        NSMutableArray *customArray = [NSMutableArray array];
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            for (NSDictionary *dic in responseObject) {
+                NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+                [dict setObject:KISDictionaryHaveKey(dic, @"cityName") forKey:@"city"];
+                [dict setObject:KISDictionaryHaveKey(dic, @"cityCode") forKey:@"cityCode"];
+                [dict setObject:[self convertChineseToPinYin:KISDictionaryHaveKey(dic, @"cityName")] forKey:@"pinyin"];
+                [customArray addObject:dict];
+                
+            }
+           // NSMutableArray *arr = [m_mianDict objectForKey:[m_sectionHeadsKeys objectAtIndex:0]];
+            //[arr removeAllObjects];
+            [m_mianDict setObject:customArray forKey:@"#"];
+            [m_myTableView reloadData];
+        }
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
+            
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -91,6 +108,16 @@
         [hud hide:YES];
     }];
 
+}
+-(NSString *)convertChineseToPinYin:(NSString *)chineseName
+{
+    NSMutableString * theName = [NSMutableString stringWithString:chineseName];
+    CFRange range = CFRangeMake(0, theName.length);
+    CFStringTransform((CFMutableStringRef)theName, &range, kCFStringTransformToLatin, NO);
+    range = CFRangeMake(0, theName.length);
+    CFStringTransform((CFMutableStringRef)theName, &range, kCFStringTransformStripCombiningMarks, NO);
+    NSString * dd = [theName stringByReplacingOccurrencesOfString:@" " withString:@""];
+    return dd;
 }
 
 -(void)randomCity:(id)sender
