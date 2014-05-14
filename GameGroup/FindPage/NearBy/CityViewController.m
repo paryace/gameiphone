@@ -45,7 +45,7 @@
     
     m_mianDict = [NSMutableDictionary new];
     NSString *path = [[NSBundle mainBundle]pathForResource:@"CitiesList" ofType:@"plist"];
-    m_mianDict  = [NSDictionary dictionaryWithContentsOfFile:path];
+    m_mianDict  = [NSMutableDictionary dictionaryWithContentsOfFile:path];
     m_sectionHeadsKeys =[NSArray array];
     
     m_sectionHeadsKeys = [m_mianDict allKeys];
@@ -176,7 +176,6 @@
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
-
 
 - (void)didReceiveMemoryWarning
 {

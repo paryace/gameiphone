@@ -22,7 +22,7 @@
     MJRefreshFooterView *m_footer;
     UITableView *m_myTableView;
     UICollectionViewFlowLayout *m_layout;
-    NSMutableArray *array;
+    NSMutableArray *m_dataArray;
     NSMutableArray *headImgArray;
     NSString *sexStr ;
     AppDelegate *app;
@@ -92,7 +92,7 @@
     
     [menuButton addTarget:self action:@selector(menuButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     m_currPageCount = 0;
-    array = [NSMutableArray array];
+    m_dataArray = [NSMutableArray new];
     headImgArray =[NSMutableArray array];
     wxSDArray = [NSMutableArray array];
     
@@ -181,7 +181,7 @@
     BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
     NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
     if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-        array= [NSMutableArray arrayWithContentsOfFile:path1];
+        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
     }
     
     [self getLocationForNet];
@@ -397,17 +397,17 @@
         [m_loginActivity stopAnimating];
 //        if ([responseObject isKindOfClass:[NSArray class]]) {
             if (m_currPageCount ==0) {
-                [array removeAllObjects];
+                [m_dataArray removeAllObjects];
                 if ([responseObject isKindOfClass:[NSArray class]]) {
-                    [array addObjectsFromArray:responseObject];
-                    for (int i =0; i <array.count; i++) {
-                        array[i] = [self contentAnalyzer:array[i] withReAnalyzer:NO];
+                    [m_dataArray addObjectsFromArray:responseObject];
+                    for (int i =0; i <m_dataArray.count; i++) {
+                        m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
                     }
                 
                 
                     if (isSaveHcListInfo) {
                         NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
-                        [array writeToFile:filePath atomically:YES];
+                        [m_dataArray writeToFile:filePath atomically:YES];
                         isSaveHcListInfo = NO;
                     }
                 }
@@ -419,7 +419,7 @@
                     for (int i =0; i<arrays.count; i++) {
                         [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
                     }
-                    [array addObjectsFromArray:arr];
+                    [m_dataArray addObjectsFromArray:arr];
                 }
             }
             m_currPageCount ++;
@@ -530,14 +530,14 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (array.count>0) {
+    if (m_dataArray.count>0) {
         m_myTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
     }
     else
     {
         m_myTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     }
-    return array.count;
+    return m_dataArray.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -550,7 +550,7 @@
 
     cell.myCellDelegate = self;
     cell.tag = indexPath.row;
-    NSDictionary *dict = [array objectAtIndex:indexPath.row];
+    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     
     if ([KISDictionaryHaveKey(dict, @"isZan")intValue] ==1) {
         [cell.zanButton setBackgroundImage:KUIImage(@"zan_cancle_nearBy") forState:UIControlStateNormal];
@@ -681,7 +681,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = [array objectAtIndex:indexPath.row];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
     once.messageid =KISDictionaryHaveKey(dic, @"id");
     [self.navigationController pushViewController:once animated:YES];
@@ -723,7 +723,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //用分析器初始化m_dataArray
-    NSMutableDictionary *dict =[array objectAtIndex:indexPath.row];
+    NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
     [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
     
@@ -845,7 +845,7 @@
 - (void)bigImgWithCircle:(NewNearByCell*)myCell WithIndexPath:(NSInteger)row
 {
     NSLog(@"点击查看大图");
-    NSDictionary *dict = [array objectAtIndex:myCell.tag];
+    NSDictionary *dict = [m_dataArray objectAtIndex:myCell.tag];
     NSArray *array1 = [NSArray  array];
     
     NSString *imgStr =KISDictionaryHaveKey(dict, @"img");
@@ -872,7 +872,7 @@
 
 -(void)enterPersonPageWithCell:(NewNearByCell *)myCell
 {
-    NSDictionary *dic = [array objectAtIndex:myCell.tag];
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     TestViewController *test = [[TestViewController alloc]init];
     test.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic,@"user"), @"userid");
     test.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
@@ -976,7 +976,7 @@
 -(void)changeShiptypeWithCell:(NewNearByCell *)myCell
 {
     
-    NSDictionary *dic = [array objectAtIndex:myCell.tag];
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
@@ -997,16 +997,23 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
-            [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([array objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        }
+        
+        for (int i = 0 ;i<m_dataArray.count;i++) {
+            if ([KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:i], @"user"), @"userid")isEqualToString:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")]) {
+                [[m_dataArray objectAtIndex:i] setObject:KISDictionaryHaveKey(responseObject, @"shiptype") forKey:@"shiptype"];
+            }
         }
         
         [wxSDArray removeAllObjects];
         [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
         
-        if (![wxSDArray containsObject:KISDictionaryHaveKey(KISDictionaryHaveKey([array objectAtIndex:myCell.tag], @"user"), @"userid")]) {
-            [self getSayHelloWithID:KISDictionaryHaveKey(KISDictionaryHaveKey([array objectAtIndex:myCell.tag], @"user"), @"userid")];
+        if (![wxSDArray containsObject:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")]) {
+            [self getSayHelloWithID:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")];
         }
         myCell.focusButton.hidden =YES;
+        [m_myTableView reloadData];
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1049,7 +1056,7 @@
 
 -(void)didClickToComment:(NewNearByCell *)myCell
 {
-    NSDictionary *dic = [array objectAtIndex:myCell.tag];
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     ReplyViewController *rep = [[ReplyViewController alloc]init];
     rep.messageid = KISDictionaryHaveKey(dic,@"id");
     [self.navigationController pushViewController:rep animated:YES];
@@ -1058,7 +1065,7 @@
 
 -(void)didClickToZan:(NewNearByCell *)myCell
 {
-    NSMutableDictionary *dic = [array objectAtIndex:myCell.tag];
+    NSMutableDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:[DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]] forKey:@"nickname"];
