@@ -757,11 +757,11 @@ typedef enum : NSUInteger {
             cell.photoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
-            if (cell.photoArray.count<4) {
-                cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, cell.photoArray.count *80,imgHeight);
-            }else{
+//            if (cell.photoArray.count<4) {
+//                cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, cell.photoArray.count *80,imgHeight);
+//            }else{
             cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
-            }
+//            }
             m_currmagY += imgHeight;
             
             CGFloat paddingY = 2;

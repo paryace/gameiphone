@@ -181,7 +181,7 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.photoArray objectAtIndex:indexPath.row];
-    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/100/100"];
+    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
     NSURL *urls;
     urls = [NSURL URLWithString:address];
     cell.imageView.imageURL =urls;
