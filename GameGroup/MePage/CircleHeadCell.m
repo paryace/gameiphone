@@ -28,7 +28,7 @@
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 8, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
-        self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
+        self.nickNameLabel.font = [UIFont systemFontOfSize:12];
         [self.contentView addSubview:self.nickNameLabel];
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
@@ -223,10 +223,12 @@
     cell.commentContLabel.text = str;
     
     //创建昵称的隐形按钮
-    [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
+    //[cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
 
     float cellHeight = [KISDictionaryHaveKey(dict, @"commentCellHieght") floatValue];
-    cell .nickNameLabel.frame = CGRectMake(5, 0, 100, 19.316);
+    CGSize matchSize = [cell.comNickNameStr sizeWithFont:cell.commentContLabel.font];
+    cell.nickNameLabel.frame = CGRectMake(5, 3, matchSize.width+5.0, matchSize.height);
+    cell.nickNameLabel.font = cell.commentContLabel.font;
     cell.nickNameLabel.text = cell.comNickNameStr;
     cell.commentContLabel.frame = CGRectMake(5, 0, 245, cellHeight);
     return cell;

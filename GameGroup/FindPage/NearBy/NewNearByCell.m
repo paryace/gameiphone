@@ -240,10 +240,12 @@
     cell.commentContLabel.text = str;
     
     //创建昵称的隐形按钮
-    [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
+   // [cell showNickNameButton:cell.comNickNameStr withSize:cell.commentContLabel.frame.size];
     
     float cellHeight = [KISDictionaryHaveKey(dict, @"commentCellHieght") floatValue];
-    cell .nickNameLabel.frame = CGRectMake(5, 0, 100, 19.316);
+    CGSize matchSize = [cell.comNickNameStr sizeWithFont:cell.commentContLabel.font];
+    cell.nickNameLabel.frame = CGRectMake(5, 3, matchSize.width+5.0, matchSize.height);
+    cell.nickNameLabel.font = cell.commentContLabel.font;
     cell.nickNameLabel.text = cell.comNickNameStr;
     cell.commentContLabel.frame = CGRectMake(5, 0, 245, cellHeight);
     return cell;
