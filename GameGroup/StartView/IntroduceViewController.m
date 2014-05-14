@@ -68,7 +68,7 @@
     m_myScrollView.backgroundColor =[UIColor greenColor];
     NSLog(@"%@", NSStringFromCGRect(m_myScrollView.frame));
     m_myScrollView.backgroundColor = [UIColor clearColor];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {   //4张图循环5次
         UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, m_myScrollView.bounds.size.height)];
         UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
         
@@ -106,7 +106,7 @@
     m_myScrollView.bounces = NO;
     [self.view addSubview:m_myScrollView];
     
-   // m_currentPage = 1;
+    m_currentPage = 0;
     
     UIButton* loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 60, 120, 35)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -136,6 +136,7 @@
 - (void)refreshLeftTime
 {
 //    CGRect newRect;
+    
     if (m_currentPage == 4) {//最后一页
         m_myScrollView.contentOffset = CGPointMake(320, 0);
         m_currentPage = 1;
@@ -164,33 +165,55 @@
 #pragma mark scrollView 手动划
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-	//CGPoint offsetofScrollView = scrollView.contentOffset;
+  
+	CGPoint offsetofScrollView = scrollView.contentOffset;
     
     //[m_pageController setCurrentPage:offsetofScrollView.x / self.scroll.frame.size.width];
     
-//	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
-//	
-//    if(0 == page || 5 == page)
-//	{
-//        CGRect rect;
-//        if (0 == page)
-//        {
-//            rect = CGRectMake(4 * m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//            m_currentPage = 4;
-//        }
-//        else
-//        {
-//            rect = CGRectMake(m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//            m_currentPage = 1;
-//        }
-//        [m_myScrollView scrollRectToVisible:rect animated:NO];
+	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
+	
+    NSLog(@"page: %d",page);
+    if(0 == page || 5 == page)
+	{
+        CGRect rect;
+        if (0 == page)
+        {
+            rect = CGRectMake(4 * m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+            m_currentPage = 4;
+        }
+        else
+        {
+            rect = CGRectMake(m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+            m_currentPage = 1;
+        }
+        [m_myScrollView scrollRectToVisible:rect animated:NO];
+    }
+    else
+    {
+        CGRect rect = CGRectMake(page * m_myScrollView.bounds.size.width, 0,
+                                 m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
+        [m_myScrollView scrollRectToVisible:rect animated:NO];
+        m_currentPage = page;
+    }
+    if (m_currentPage == 4) {//最后一页
+        m_myScrollView.contentOffset = CGPointMake(0, 0);
+        m_currentPage = 0;
+    }
+    else
+    {
+        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage), 0);
+        m_currentPage++;
+    }
+
+//    NSLog(@"m_currentPage: %d",m_currentPage);
+//    if (m_currentPage == 4) {//最后一页
+//        m_myScrollView.contentOffset = CGPointMake(320, 0);
+//        m_currentPage = 1;
 //    }
 //    else
 //    {
-//        CGRect rect = CGRectMake(page * m_myScrollView.bounds.size.width, 0,
-//                                 m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//        [m_myScrollView scrollRectToVisible:rect animated:NO];
-//        m_currentPage = page;
+//        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage + 1), 0);
+//        m_currentPage++;
 //    }
 }
 
