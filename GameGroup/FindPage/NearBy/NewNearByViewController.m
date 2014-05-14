@@ -63,6 +63,7 @@ typedef enum : NSUInteger {
     NSMutableDictionary *delcommentDic;
     float offer;
     int height;
+    BOOL _keyboardIsVisible;
     
 
 }
@@ -244,15 +245,15 @@ typedef enum : NSUInteger {
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
     }
-    if([self.textView isFirstResponder]){
-        [self.textView resignFirstResponder];
-    }
-    if(self.theEmojiView.hidden == NO){
-        self.theEmojiView.hidden = YES;
-        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-        self.commentInputType = CommentInputTypeKeyboard;
-        senderBnt.selected = NO;
-    }
+//    if([self.textView isFirstResponder]){
+//        [self.textView resignFirstResponder];
+//    }
+//    if(self.theEmojiView.hidden == NO){
+//        self.theEmojiView.hidden = YES;
+//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+//        self.commentInputType = CommentInputTypeKeyboard;
+//        senderBnt.selected = NO;
+//    }
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -683,6 +684,12 @@ typedef enum : NSUInteger {
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
+        cell.focusButton.hidden=NO;
+    }else
+    {
+        cell.focusButton.hidden=YES;
+    }
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
         cell.headImgBtn.imageURL = nil;
     }else{
@@ -869,13 +876,27 @@ typedef enum : NSUInteger {
     return cell;
   
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-//    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
-//    once.messageid =KISDictionaryHaveKey(dic, @"id");
-//    [self.navigationController pushViewController:once animated:YES];
+    
+    if([self keyboardIsVisible]==YES){
+        [self.textView resignFirstResponder];
+        return ;
+    }
+    if(self.theEmojiView.hidden == NO){
+        self.theEmojiView.hidden = YES;
+        [self autoMovekeyBoard:-inPutView.bounds.size.height];
+        self.commentInputType = CommentInputTypeKeyboard;
+        senderBnt.selected = NO;
+        return ;
+    }
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
+    once.messageid =KISDictionaryHaveKey(dic, @"id");
+    [self.navigationController pushViewController:once animated:YES];
+
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -919,8 +940,8 @@ typedef enum : NSUInteger {
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
     
     //以动态id为键存放每个cell的高度到集合里
-  //  NSNumber *number = [NSNumber numberWithFloat:currnetY];
-  //  [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];
+    NSNumber *number = [NSNumber numberWithFloat:currnetY];
+    [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];
     return currnetY;
 }
 
@@ -1254,8 +1275,10 @@ typedef enum : NSUInteger {
             NSMutableDictionary *dicUser =KISDictionaryHaveKey(dicTemp, @"user");
             if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dicTemp, @"user"), @"userid")isEqualToString:
                  KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid")]) {
+                NSLog(@"前user--%@",dicUser);
                 
                 [dicUser setObject:KISDictionaryHaveKey(responseObject, @"shiptype") forKey:@"shiptype"];
+                 NSLog(@"后user--%@",dicUser);
                 [m_dataArray replaceObjectAtIndex:i withObject:dicTemp];
             }
         }
@@ -1702,9 +1725,9 @@ typedef enum : NSUInteger {
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
     if(iPhone5){
-        offer+=(300-height-15);
+        offer+=(280-height-23);
     }else{
-        offer+=(300-height+65);
+        offer+=(280-height+65);
     }
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
     offer=0;
@@ -1809,6 +1832,7 @@ typedef enum : NSUInteger {
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
     height = keyboardRect.size.height;
+    [self keyboardDidShow];
 }
 
 
@@ -1825,6 +1849,7 @@ typedef enum : NSUInteger {
     [animationDurationValue getValue:&animationDuration];
     [self.view bringSubviewToFront:self.textView];
     [self autoMovekeyBoard:-inPutView.bounds.size.height];
+    [self keyboardDidHide];
 }
 -(void) autoMovekeyBoard: (float) h{
     
@@ -1838,6 +1863,20 @@ typedef enum : NSUInteger {
     
 	// set views with new info
 	inPutView.frame = containerFrame;
+}
+- (void)keyboardDidShow
+{
+    _keyboardIsVisible = YES;
+}
+
+- (void)keyboardDidHide
+{
+    _keyboardIsVisible = NO;
+}
+
+- (BOOL)keyboardIsVisible
+{
+    return _keyboardIsVisible;
 }
 #pragma mark 输入
 #pragma mark HPExpandingTextView delegate
