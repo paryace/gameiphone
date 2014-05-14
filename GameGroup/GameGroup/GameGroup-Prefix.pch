@@ -46,8 +46,6 @@
 #define BaseHelpUrl @"http://58.83.193.120/faq/"
 
 
-//#define NewBaseImageUrl @"http://114.215.109.110/"//最新获取图片地址
-
 
 
 //#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试

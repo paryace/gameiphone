@@ -53,6 +53,9 @@
     banbenView.font = [UIFont systemFontOfSize:16];
     [topVIew addSubview:banbenView];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.delegate = self;
+    hud.labelText = @"清理中...";
+    hud.mode = MBProgressHUDModeDeterminate;
     [self.view addSubview:hud];
     
     
@@ -216,29 +219,23 @@
 {
     if (buttonIndex != alertView.cancelButtonIndex) {
         if (110 == alertView.tag) {
-            hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-            [self.navigationController.view addSubview:hud];
-            hud.delegate = self;
-            hud.labelText = @"清理中...";
-            hud.mode = MBProgressHUDModeDeterminate;
             [hud showWhileExecuting:@selector(myProgressTask) onTarget:self withObject:nil animated:YES];
+            dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+            dispatch_async(queue, ^{
+                [[EGOCache globalCache] clearCache];
+                // Set determinate mode
+                // myProgressTask uses the HUD instance to update progress
+                NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)objectAtIndex:0];
+                NSFileManager *fm = [NSFileManager defaultManager];
+                NSDirectoryEnumerator *e = [fm enumeratorAtPath:cache];
+                NSString *fileName = nil;
+                while (fileName = [e nextObject]) {
+                    NSError *error = nil;
+                    NSString *filePath = [cache stringByAppendingPathComponent:fileName];
+                    [fm removeItemAtPath:filePath error:&error];
+                }
 
-            [[EGOCache globalCache] clearCache];
-            
-            // Set determinate mode
-            
-            
-            // myProgressTask uses the HUD instance to update progress
-            
-            NSString *cache = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)objectAtIndex:0];
-            NSFileManager *fm = [NSFileManager defaultManager];
-            NSDirectoryEnumerator *e = [fm enumeratorAtPath:cache];
-            NSString *fileName = nil;
-            while (fileName = [e nextObject]) {
-                NSError *error = nil;
-                NSString *filePath = [cache stringByAppendingPathComponent:fileName];
-                [fm removeItemAtPath:filePath error:&error];
-            }
+            });
         }
         else if(112 == alertView.tag)
         {
@@ -291,7 +288,6 @@
 		hud.progress = progress;
 		usleep(50000);
 	}
-    
 }
 
 

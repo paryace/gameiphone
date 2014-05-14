@@ -561,6 +561,7 @@
                 
                 if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100041"]) {
                     isWXCeiling =NO;
+                    sayHelloBtn.enabled = NO;
                 }
                 
                 
