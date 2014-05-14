@@ -125,7 +125,7 @@
     {
         m_notibgInfoImageView.hidden = NO;  //数字
         if (myDunamicmsgCount > 99) {
-            lb.text = @"99";
+            lb.text = @"99+";
         }
         else
             lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;

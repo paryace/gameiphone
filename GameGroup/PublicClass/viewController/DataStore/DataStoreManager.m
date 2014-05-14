@@ -147,7 +147,7 @@
             commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
             commonMsg.messageuuid = msgId;
             commonMsg.status = @"1";//已发送
-            commonMsg.receiveTime=[GameCommon getCurrentTime];
+            commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             
@@ -180,7 +180,7 @@
                     thumbMsgs.messageuuid = @"wx123";
                     thumbMsgs.status = @"1";//已发送
                     thumbMsgs.sayHiType = @"1";
-                    thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+                    thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
                 }
             
         }];
@@ -213,7 +213,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
-            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
     }
     else if([sendertype isEqualToString:SAYHELLOS])//关注 或取消关注
@@ -258,7 +258,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
-            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
     }
     else if([sendertype isEqualToString:RECOMMENDFRIEND])//推荐好友
@@ -279,7 +279,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
-            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
 
         }];
     }
@@ -338,7 +338,7 @@
         commonMsg.payload = KISDictionaryHaveKey(message, @"payload");//动态 消息json
         commonMsg.messageuuid = messageuuid;
         commonMsg.status = @"2";//发送中
-        commonMsg.receiveTime=[GameCommon getCurrentTime];
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -384,7 +384,7 @@
         commonMsg.payload = KISDictionaryHaveKey(message, @"payload");//动态 消息json
         commonMsg.messageuuid = messageuuid;
         commonMsg.status = @"2";//发送中
-        commonMsg.receiveTime=[GameCommon getCurrentTime];
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
 
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
         
@@ -403,7 +403,7 @@
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
         thumbMsgs.status = @"2";//发送中
-        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
 
