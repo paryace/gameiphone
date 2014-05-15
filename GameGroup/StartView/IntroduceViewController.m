@@ -63,7 +63,7 @@
 
     diffH = [GameCommon diffHeight:self];
 
-    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth - ((diffH == 0) ? 20 : 0))];
+    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?-20:0, 320, kScreenHeigth - ((diffH == 0) ? 20 : 0))];
 
    // m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
     m_myScrollView.backgroundColor =[UIColor greenColor];
@@ -72,7 +72,7 @@
     
    
     for (int i = 0; i < kMAXPAGE+2; i++) {   //5张图循环6次
-        UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, m_myScrollView.bounds.size.height)];
+        UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, KISHighVersion_7?-20:0, 320, m_myScrollView.bounds.size.height)];
        // UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
         
         //第一张图是最后一张
@@ -118,11 +118,11 @@
     
     m_currentPage = 0;
     
-    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45, 120, 35)];
+    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?10:0), 120, 35)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
    
     
-    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 45, 120, 35)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 45-(KISHighVersion_7?10:0), 120, 35)];
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
@@ -175,11 +175,11 @@
     
     if( page ==0)
     {
-        m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE, 0);
+        m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE, KISHighVersion_7?-20:0);
     }
     else if (page==(kMAXPAGE+1))
     {
-        m_myScrollView.contentOffset = CGPointMake(320, 0);
+        m_myScrollView.contentOffset = CGPointMake(320, KISHighVersion_7?-20:0);
     }
 //    if(0 == page || 5 == page)
 //	{
