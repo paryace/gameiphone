@@ -203,6 +203,7 @@
     UILabel *tishiLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, CGRectGetMidY(step1Button.frame)+15, 300, 50)];
     tishiLabel.text = @"输入您的手机号码,免费注册陌游,陌游不会在任何地方泄露您的手机号码";
     tishiLabel.textColor = [UIColor grayColor];
+    tishiLabel.backgroundColor = [UIColor clearColor];
     tishiLabel.font = [UIFont systemFontOfSize:12];
     tishiLabel.numberOfLines= 2;
     [m_step1Scroll addSubview:tishiLabel];

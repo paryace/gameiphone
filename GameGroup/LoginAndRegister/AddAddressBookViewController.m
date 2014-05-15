@@ -65,6 +65,7 @@
     UILabel * label = [[UILabel alloc]initWithFrame:CGRectMake(35, 270, 249, 100)];
     label.textColor = [UIColor grayColor];
     label.numberOfLines = 0;
+    label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont systemFontOfSize:12];
     label.text = @"陌游将请求访问你的手机通讯录,帮您找到已经在陌游的好友.\n\n请放心,您的信息仅用于查找好友,所有信息会被加密并安全保存,防止被不正当使用.";
     [self.view addSubview:label];

@@ -350,6 +350,7 @@
     UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 30)];
     topLabel.numberOfLines = 2;
     topLabel.font = [UIFont boldSystemFontOfSize:15.0];
+    topLabel.backgroundColor = [UIColor clearColor];
     topLabel.textColor = kColorWithRGB(103.0, 103.0, 103.0, 1.0);
     topLabel.text = @"请输入新密码";
     [m_newPasswordView addSubview:topLabel];
@@ -399,6 +400,7 @@
     UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 120, 300, 30)];
     bottomLabel.font = [UIFont boldSystemFontOfSize:13.5];
     bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
+    bottomLabel.backgroundColor = [UIColor clearColor];
     bottomLabel.text = @"密码长度最少6位，为保证安全性，不要过于简单";
     [m_newPasswordView addSubview:bottomLabel];
     
