@@ -264,7 +264,10 @@
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:bTitle otherButtonTitles:nil];
     alert.tag = 99999;
+    if(alert)
+    {
     [alert show];
+    }
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{

@@ -939,6 +939,7 @@ typedef enum : NSUInteger {
     button.titleLabel.font = [UIFont systemFontOfSize:12];
     [button addTarget:self action:@selector(enterCitisePage:) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [button setBackgroundColor:[UIColor clearColor]];
     [view addSubview:button];
     
     UIView  * underView = [[UIView alloc]initWithFrame:CGRectMake(0, 39, 320, 1)];

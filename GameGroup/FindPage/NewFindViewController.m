@@ -182,7 +182,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"发现" withBackButton:NO];
-    self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    //self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     self.view.backgroundColor = [UIColor whiteColor];
 
     

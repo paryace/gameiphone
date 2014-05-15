@@ -29,6 +29,7 @@
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:14];
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.numberOfLines=0;
         [self addSubview:self.titleLabel];
         
@@ -51,6 +52,7 @@
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, CGRectGetMidY(self.titleLabel.frame)+20, 170, 20)];
         self.timeLabel.font = [UIFont systemFontOfSize:11];
         self.timeLabel.textColor = [UIColor grayColor];
+        self.timeLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.timeLabel];
         
     }

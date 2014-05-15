@@ -62,7 +62,10 @@
     UIFont *font = self.commentContLabel.font;
     CGSize matchSize = [nickName sizeWithFont:font];
     //CGSize matchSize = commentstrSize;
-    CGRect matchFrame = CGRectMake(2,5, matchSize.width + 6.0f, matchSize.height);
+    CGRect matchFrame = CGRectMake(5,3, matchSize.width + 6.0f, matchSize.height);
+    self.nicknameButton.titleLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
+    self.nicknameButton.backgroundColor = [UIColor clearColor];
+    self.nicknameButton.titleLabel.text = nickName;
     [self.nicknameButton setFrame:matchFrame];
 	[self.nicknameButton.titleLabel setFont:font];
     [self.nicknameButton.titleLabel setTextColor:[UIColor clearColor]];
@@ -70,7 +73,10 @@
 	[self.nicknameButton.titleLabel setLineBreakMode:[self.commentContLabel lineBreakMode]];
 	[self.nicknameButton addTarget:self action:@selector(handleNickNameButton:) forControlEvents:UIControlEventTouchUpInside];
     self.nicknameButton.hidden = NO;
-    
+    //CGSize matchSize = [cell.comNickNameStr sizeWithFont:cell.commentContLabel.font];
+    // cell.nickNameLabel.frame = CGRectMake(5, 3, matchSize.width+5.0, matchSize.height);
+    //  cell.nickNameLabel.font = cell.commentContLabel.font;
+    // cell.nickNameLabel.text = cell.comNickNameStr;
     
     
     
