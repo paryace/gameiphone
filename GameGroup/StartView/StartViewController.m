@@ -22,6 +22,7 @@
 #import "TempData.h"
 
 #import "MLNavigationController.h"
+#import "NewFriendPageController.h"
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -75,7 +76,7 @@
         UINavigationController* navigationController_First = [[UINavigationController alloc] initWithRootViewController:fist];
         navigationController_First.navigationBarHidden = YES;
 //好友页面
-        FriendPageViewController* second = [[FriendPageViewController alloc] init];
+        NewFriendPageController* second = [[NewFriendPageController alloc] init];
         second.hidesBottomBarWhenPushed = YES;
         UINavigationController* navigationController_Second = [[UINavigationController alloc] initWithRootViewController:second];
         navigationController_Second.navigationBarHidden = YES;
