@@ -142,4 +142,6 @@
 +(void)cleanOtherMsg;
 +(void)deleteOtherMsgWithUUID:(NSString *)uuid;
 
++(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype;
+
 @end

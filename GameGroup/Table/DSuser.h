@@ -36,6 +36,7 @@
 @property (nonatomic, retain) NSString * starSign;//星座
 @property (nonatomic, retain) NSString * superremark;//V认证描述
 @property (nonatomic, retain) NSString * superstar;//V认证
+@property (nonatomic, retain) NSString * gameids;//V认证
 @end
 
 

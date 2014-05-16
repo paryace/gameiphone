@@ -35,6 +35,7 @@
 @dynamic starSign;
 @dynamic superremark;
 @dynamic superstar;
+@dynamic gameids;
 
 
 @end

@@ -33,7 +33,7 @@
         [bgV addSubview:self.nameLabel];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
 
-        self.gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(180, 26, 30, 30)];
+        self.gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(320-50, 26, 20, 20)];
         self.gameImg_one.backgroundColor = [UIColor clearColor];
         [bgV addSubview:self.gameImg_one];
         
