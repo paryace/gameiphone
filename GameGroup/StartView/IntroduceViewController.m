@@ -170,9 +170,13 @@
     
 	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
 
+    if(page==0||page==1||page==kMAXPAGE||page==kMAXPAGE+1){
+        loginButton.hidden = YES;
+        registerButton.hidden = YES;
+    }else{
         loginButton.hidden = NO;
         registerButton.hidden = NO;
-    
+    }
     if( page ==0)
     {
         m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE, KISHighVersion_7?-20:0);
