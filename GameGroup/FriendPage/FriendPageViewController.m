@@ -12,6 +12,7 @@
 //#import "ContactsCell.h"
 #import "PersonTableCell.h"
 #import "MJRefresh.h"
+#import "NearFriendsViewController.h"
 #define kSegmentFrinds    (0)
 #define kSegmentAttention (1)
 #define kSegmentFans      (2)
@@ -609,8 +610,11 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     
-    AddContactViewController * addV = [[AddContactViewController alloc] init];
-    [self.navigationController pushViewController:addV animated:YES];
+//    AddContactViewController * addV = [[AddContactViewController alloc] init];
+//    [self.navigationController pushViewController:addV animated:YES];
+    
+    NearFriendsViewController *nearF = [[NearFriendsViewController alloc]init];
+    [self.navigationController pushViewController:nearF animated:YES];
 }
 
 #pragma mark 更改排序方式

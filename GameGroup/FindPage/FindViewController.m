@@ -166,7 +166,7 @@
     imgV.image = KUIImage(@"bg.jpg");
     }
     imgV.userInteractionEnabled = YES;
-    [imgV addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
+    [imgV addGestureRecognizer:[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [self.view addSubview:imgV];
     
     
@@ -191,13 +191,12 @@
     
     UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 44, 320, 20)];
     textLabel.text = @"选择游戏 开始您的游戏社交";
-    textLabel.textColor = [UIColor whiteColor];
+    textLabel.textColor = UIColorFromRGBA(0xf3f3f3, 1);
     textLabel.textAlignment = NSTextAlignmentCenter;
     textLabel.backgroundColor =[ UIColor clearColor];
-    textLabel.font = [UIFont boldSystemFontOfSize:17];
+    textLabel.font = [UIFont boldSystemFontOfSize:14];
     [topView addSubview:textLabel];
     
-    [self buildMenuButton];
     
     menuButotn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 44, 44)];
     menuButotn.center = CGPointMake(160, KISHighVersion_7?110:90);
@@ -212,9 +211,9 @@
 
     [self.view addSubview:bottomView];
     
-    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 0, 80, 24)];
+    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 4, 80, 24)];
     bottomTitleLabel.backgroundColor = [UIColor clearColor];
-    bottomTitleLabel.font = [UIFont boldSystemFontOfSize:20];
+    bottomTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     bottomTitleLabel.text  = @"朋友圈";
     bottomTitleLabel.textColor = [UIColor whiteColor];
     bottomTitleLabel.textAlignment = NSTextAlignmentLeft;
@@ -222,17 +221,18 @@
     [bottomView addSubview:bottomTitleLabel];
     
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
-    iconImageView.image = KUIImage(@"circleIcon.jpg");
+    iconImageView.image = KUIImage(@"circleIcon");
    // iconImageView.backgroundColor =[ UIColor clearColor];
     [bottomView addSubview:iconImageView];
     
     
     
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 20, 120, 20)];
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 120, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentLeft;
-    commentLabel.textColor = [UIColor whiteColor];
-    commentLabel.font = [UIFont systemFontOfSize:16];
+    commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
+    commentLabel.font = [UIFont systemFontOfSize:11];
+    commentLabel.text = @"没有新的的消息";
     [bottomView addSubview:commentLabel];
     
     headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
@@ -264,6 +264,7 @@
     [lb setTextColor:[UIColor whiteColor]];
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
+    [self buildMenuButton];
 
     
 }
@@ -354,41 +355,27 @@
 {
     
     if (sameRealmBtn.hidden ==YES) {
-        sameRealmBtn.hidden = NO;
         nearByBtn.hidden = NO;
-        moGirlBtn.hidden = NO;
-        encoBtn.hidden = NO;
-   
+
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.4];
 
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"]) {
             NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"];
-            nearByBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+            if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
+                nearByBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
+            }else{
+                nearByBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+            }
         }else{
             nearByBtn.center = CGPointMake(80, 300);
         }
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"]) {
-            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"];
-            moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }else{
-            moGirlBtn.center = CGPointMake(240, 150);
-        }
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"]) {
-            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"];
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }else{
-            sameRealmBtn.center = CGPointMake(80, 150);
-        }
-        
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"]) {
-            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"];
-            encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }else{
-            encoBtn.center = CGPointMake(240, 300);
-        }
-
         [UIView commitAnimations];
+        [self performSelector:@selector(showSamerealm:) withObject:nil afterDelay:0.15];
+        [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
+        [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
+        
+
     }else{
         sameRealmBtn.hidden = YES;
         nearByBtn.hidden = YES;
@@ -403,6 +390,69 @@
         encoBtn.center = CGPointMake(160, KISHighVersion_7?110:90);
         [UIView commitAnimations];
     }
+}
+
+-(void)showSamerealm:(id)sender
+{
+    sameRealmBtn.hidden = NO;
+
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"];
+        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
+        }else{
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        sameRealmBtn.center = CGPointMake(80, 150);
+    }
+    [UIView commitAnimations];
+
+}
+
+-(void)showMoGirl:(id)sender
+{
+    moGirlBtn.hidden = NO;
+
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"];
+        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
+        }else{
+        moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        moGirlBtn.center = CGPointMake(240, 150);
+    }
+    [UIView commitAnimations];
+
+
+}
+-(void)showEnco:(id)sender
+{
+    encoBtn.hidden = NO;
+
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"];
+        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
+            encoBtn.center = CGPointMake([centerArray[0]floatValue], self.view.bounds.size.height-110);
+        }else{
+        encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        encoBtn.center = CGPointMake(240, 300);
+    }
+    [UIView commitAnimations];
+
 }
 
 -(void)enterOtherPage:(UIButton *)sender
@@ -472,11 +522,13 @@
 
 }
 #pragma mark --改变顶部图片
--(void)changeTopImage:(UITapGestureRecognizer*)sender
+-(void)changeTopImage:(UILongPressGestureRecognizer*)sender
 {
-    UIActionSheet *acs = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"相册" otherButtonTitles:@"相机", nil];
-    acs.tag =9999999;
-    [acs showInView:self.view];
+    if (sender.state ==UIGestureRecognizerStateBegan) {
+        UIActionSheet *acs = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"相册" otherButtonTitles:@"相机", nil];
+        acs.tag =9999999;
+        [acs showInView:self.view];
+    }
     
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

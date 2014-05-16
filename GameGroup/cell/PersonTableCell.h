@@ -25,6 +25,8 @@
 
 @property (strong,nonatomic) UILabel* timeLabel;
 
+
+@property (nonatomic,strong)UILabel *shiptypeLabel;
 - (void)refreshCell;
 
 @end

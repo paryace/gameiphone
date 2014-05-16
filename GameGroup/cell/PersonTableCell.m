@@ -42,6 +42,15 @@
         [bgV addSubview:self.timeLabel];
         [self.timeLabel setBackgroundColor:[UIColor clearColor]];
         
+        
+        self.shiptypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(170, 30, 130, 20)];
+        self.shiptypeLabel.textColor = kColorWithRGB(102, 102, 102, 1.0);
+        self.shiptypeLabel.textAlignment = NSTextAlignmentRight;
+        self.shiptypeLabel.font = [UIFont systemFontOfSize:12];
+        self.shiptypeLabel.backgroundColor = [UIColor clearColor];
+        [bgV addSubview:self.shiptypeLabel];
+        
+        
 //        self.sexBg = [[UIImageView alloc] initWithFrame:CGRectMake(80, 25, 50, 20)];
 //        self.sexBg.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
 //        [bgV addSubview:self.sexBg];
