@@ -997,9 +997,6 @@
         
     }
 }
-
-
-
 +(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype
 {
     
@@ -1058,6 +1055,7 @@
     }
     return theDict;
 }
+
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId
 {
     if (userId) {

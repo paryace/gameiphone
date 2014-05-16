@@ -49,7 +49,7 @@
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
-    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+//    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
     
@@ -73,7 +73,7 @@
 - (UIView *)topView{
     if (!_topView) {
         _topView = [[UIView alloc] init];
-        _topView.frame = CGRectMake(0,0,320,83);
+        _topView.frame = CGRectMake(0,0,320,60);
         _topView.backgroundColor = [UIColor blackColor];
         NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机通讯录",@"添加好友"];
         for (int i = 0; i < 4; i++) {
@@ -82,20 +82,20 @@
             button.frame = CGRectMake(i*80, 0, 80, 60);
             [button addTarget:self action:@selector(topBtnAction:)
              forControlEvents:UIControlEventTouchUpInside];
-            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"circleIcon"]]
+            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",i+1]]
                     forState:UIControlStateNormal];
-            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"circleIcon"]]
+            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",i+1]]
                     forState:UIControlStateHighlighted];
-            [button setImageEdgeInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
+            [button setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
             [_topView addSubview:button];
             UILabel *titleLable = [[UILabel alloc] init];
             CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
             CGFloat textWidth = textSize.width;
-            titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),62, 80 ,20);
+            titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
             titleLable.font = [UIFont systemFontOfSize:12];
             titleLable.textColor=[UIColor whiteColor];
+            titleLable.backgroundColor=[UIColor clearColor];
             titleLable.text=[topTitle objectAtIndex:i];
-            
             [_topView addSubview:titleLable];
            
         }
@@ -313,23 +313,19 @@
     NSString *string  = [fansNum stringByAppendingString:@"位粉丝"];
     fansLable.text=string;
     CGSize textSize =[string sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-    fansLable.frame=CGRectMake(((80-textSize.width)/2),62, 80 ,20);
+    fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
 //查库
 -(void) getFriendDateFromDataSore
 {
     m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1"];//所有朋友
-    
-    
     m_sectionArray_friend = [DataStoreManager querySections];
     [m_sectionIndexArray_friend removeAllObjects];
     for (int i = 0; i < m_sectionArray_friend.count; i++) {
         NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
-        NSLog(@"%@",str);
         [m_sectionIndexArray_friend addObject:str];
     }
 }
-
 - (void)addHeader
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
