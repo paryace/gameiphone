@@ -149,7 +149,6 @@ typedef enum : NSUInteger {
         topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]];
     }else{
         topImgaeView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-//        topImgaeView.image = KUIImage(@"ceshibg.jpg");
     }
     topImgaeView.userInteractionEnabled =YES;
     

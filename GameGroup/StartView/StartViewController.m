@@ -11,7 +11,7 @@
 #import "IntroduceViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "NewFindViewController.h"
+#import "FindViewController.h"
 #import "MePageViewController.h"
 #import "NewFindViewController.h"
 
@@ -80,7 +80,7 @@
         UINavigationController* navigationController_Second = [[UINavigationController alloc] initWithRootViewController:second];
         navigationController_Second.navigationBarHidden = YES;
 //发现页面
-        NewFindViewController* third = [[NewFindViewController alloc] init];
+        FindViewController* third = [[FindViewController alloc] init];
         third.hidesBottomBarWhenPushed = YES;
         UINavigationController* navigationController_Third = [[UINavigationController alloc] initWithRootViewController:third];
         navigationController_Third.navigationBarHidden = YES;

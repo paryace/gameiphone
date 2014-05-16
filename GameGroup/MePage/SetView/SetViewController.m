@@ -20,6 +20,9 @@
 {
     UITableView*  m_myTableView;
     BOOL isOver;
+    UIAlertView * huancunAlert;
+    UIAlertView * upDataAlert;
+    UIAlertView * loyOutalert;
 }
 @end
 
@@ -163,18 +166,18 @@
         {
             if (indexPath.row ==0)
             {
-                UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要清除所有的缓存吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"清除", nil];
-                alert.tag = 110;
-                [alert show];
+                huancunAlert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要清除所有的缓存吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"清除", nil];
+                huancunAlert.tag = 110;
+                [huancunAlert show];
             }
             else if (indexPath.row ==1)
             {
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"IOSURL"]==nil) {
                     [self showAlertViewWithTitle:nil message:@"您已经是最新版本了" buttonTitle:@"确定"];
                 }else{
-                    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-                    alert.tag = 111;
-                    [alert show];
+                    upDataAlert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+                    upDataAlert.tag = 111;
+                    [upDataAlert show];
                 }
                 
             }
@@ -206,9 +209,9 @@
 
         case 2:
         {
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要退出登陆吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-            alert.tag = 112;
-            [alert show];
+            loyOutalert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要退出登陆吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            loyOutalert.tag = 112;
+            [loyOutalert show];
         } break;
         default:
             break;
@@ -290,7 +293,13 @@
 	}
 }
 
-
+-(void)dealloc
+{
+    upDataAlert.delegate = nil;
+    huancunAlert.delegate = nil;
+    loyOutalert.delegate = nil;
+    
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

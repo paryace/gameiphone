@@ -20,6 +20,8 @@
 #import "ActivateViewController.h"
 #import "EGOImageButton.h"
 
+#import "FindViewController.h"
+
 #import "HostInfo.h"
 #import "FindSubView.h"
 #import "FinderView.h"
@@ -184,6 +186,8 @@
     [self setTopViewWithTitle:@"发现" withBackButton:NO];
     //self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     self.view.backgroundColor = [UIColor whiteColor];
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+
 
     
     UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 162, 191)];
@@ -354,7 +358,6 @@
     
 	// Do any additional setup after loading the view.
 }
-
 
 -(void)didClickenterMeet:(UIButton *)sender
 {
