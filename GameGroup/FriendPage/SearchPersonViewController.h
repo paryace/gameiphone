@@ -18,7 +18,7 @@ typedef enum
     SEARCH_TYPE_NICKNAME,//陌游昵称
 }SearchViewType;
 
-@interface SearchPersonViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, SearchRoleDelegate>
+@interface SearchPersonViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, SearchRoleDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 
 @property (nonatomic, assign)SearchViewType viewType;
 

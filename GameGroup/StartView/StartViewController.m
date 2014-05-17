@@ -103,25 +103,58 @@
 -(void)firtOpen
 {
     NSMutableDictionary * paramsDic = [NSMutableDictionary dictionary];
+    NSFileManager *fileManager =[NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/HC_NearByTopImg"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+     NSMutableDictionary*   openData= [NSMutableDictionary dictionaryWithContentsOfFile:path];
+        [paramsDic setObject:KISDictionaryHaveKey(openData, @"gamelist_millis") forKey:@"gamelist_millis"];
+    }else{
+        [paramsDic setObject:@"" forKey:@"gamelist_millis"];
+    }
+
+    
+    
+    
+    
+    
     if ([[NSUserDefaults standardUserDefaults] objectForKey:kOpenData]) {
         NSDictionary* tempDic = [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData];
         [paramsDic setObject:KISDictionaryHaveKey(tempDic, @"gamelist_millis") forKey:@"gamelist_millis"];
-        [paramsDic setObject:KISDictionaryHaveKey(tempDic, @"wow_realms_millis") forKey:@"wow_realms_millis"];
-        [paramsDic setObject:KISDictionaryHaveKey(tempDic, @"wow_characterclasses_millis") forKey:@"wow_characterclasses_millis"];
     }
     else
     {
         [paramsDic setObject:@"" forKey:@"gamelist_millis"];
-        [paramsDic setObject:@"" forKey:@"wow_realms_millis"];
-        [paramsDic setObject:@"" forKey:@"wow_characterclasses_millis"];
     }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramsDic forKey:@"params"];
-    [postDict setObject:@"142" forKey:@"method"];
+    [postDict setObject:@"203" forKey:@"method"];
   
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
+        /*
+         clientUpdate = 0;//版本是否升级
+         gamelist =         (
+         {
+         gameInfoMills = 1400211385840;//版本时间
+         id = 1;
+         img = " ";
+         name = "\U9b54\U517d\U4e16\U754c";
+         },
+         {
+         gameInfoMills = 1400211385006;//版本时间
+         id = 2;
+         img = " ";
+         name = "\U82f1\U96c4\U8054\U76df";
+         }
+         );
+         "gamelist_millis" = 1398485326397;
+         "gamelist_update" = 1;
+         registerNeedMsg = 0;
+         tokenValid = 0;
+         */
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 
@@ -143,29 +176,92 @@
     {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
     }
-    NSMutableDictionary* openData = [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] ? [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] : [NSMutableDictionary dictionaryWithCapacity:1];
-    if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
-        [openData setObject:KISDictionaryHaveKey(dict, @"gamelist") forKey:@"gamelist"];
-        [openData setObject:KISDictionaryHaveKey(dict, @"gamelist_millis") forKey:@"gamelist_millis"];
-    }
-    if ([KISDictionaryHaveKey(dict, @"wow_characterclasses_update") boolValue]) {
-        [openData setObject:KISDictionaryHaveKey(dict, @"wow_characterclasses") forKey:@"wow_characterclasses"];
-        [openData setObject:KISDictionaryHaveKey(dict, @"wow_characterclasses_millis") forKey:@"wow_characterclasses_millis"];
-    }
-    if ([KISDictionaryHaveKey(dict, @"wow_realms_update") boolValue]) {
-        [openData setObject:KISDictionaryHaveKey(dict, @"wow_realms") forKey:@"wow_realms"];
-        [openData setObject:KISDictionaryHaveKey(dict, @"wow_realms_millis") forKey:@"wow_realms_millis"];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:openData forKey:kOpenData];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+
     
-    if ([KISDictionaryHaveKey(openData, @"wow_realms") isKindOfClass:[NSDictionary class]]) {//注册服务器数据
-        [[GameCommon shareGameCommon].wow_realms addEntriesFromDictionary:KISDictionaryHaveKey(openData, @"wow_realms")];
+    NSMutableDictionary* openData = [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] ? [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] : [NSMutableDictionary dictionaryWithCapacity:1];
+    
+    if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
+        
+        
+        //本地开机数据和网络获取开机数据相互遍历 判断是否需要更新
+        if ([[openData allKeys]containsObject:@"gamelist"]) {
+            NSArray *array = KISDictionaryHaveKey(openData, @"gamelist");
+            NSArray *newArray = KISDictionaryHaveKey(dict, @"gamelist");
+
+            for (int i =  0; i<array.count; i++) {
+                for (int j = 0; j<newArray.count; j++) {
+                    NSDictionary *dic = array[i];
+                    NSDictionary *temDic = newArray[i];
+                    if ([KISDictionaryHaveKey(dic,@"id")intValue]==[KISDictionaryHaveKey(temDic, @"id")intValue]&&[KISDictionaryHaveKey(dic, @"gameInfoMills")longLongValue]==KISDictionaryHaveKey(temDic, @"gameInfoMills")) {
+                        [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id")];
+                    }
+                    else if (![[dic allKeys]containsObject:KISDictionaryHaveKey(temDic, @"id")]){
+                        [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id")];
+                    }
+                }
+            }
+            
+        }else{
+            
+            //第一次登陆 无本地数据
+            NSArray *array = KISDictionaryHaveKey(dict, @"gamelist");
+            for (int i =0; i<array.count; i++) {
+                NSDictionary *dic = array[i];
+                [self getGameInfoWithGameID:KISDictionaryHaveKey(dic, @"id")];
+            }
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:dict forKey:kOpenData];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
     }
-    if ([KISDictionaryHaveKey(openData, @"wow_characterclasses") isKindOfClass:[NSArray class]]) {
-        [[GameCommon shareGameCommon].wow_clazzs addObjectsFromArray:KISDictionaryHaveKey(openData, @"wow_characterclasses")];
-    }
+    
 }
+
+#pragma mark ----更新游戏数据、、wow服务器等
+-(void)getGameInfoWithGameID:(NSString *)gameId
+{
+    NSMutableDictionary * paramsDic = [NSMutableDictionary dictionary];
+    [paramsDic setObject:gameId forKey:@"gameid"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramsDic forKey:@"params"];
+    [postDict setObject:@"216" forKey:@"method"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        NSLog(@"res -----> %@",responseObject);
+        
+        /*
+         params 是需要输入的内容
+         info是需要选择的内容
+         
+         
+         gameName,//游戏名称
+         searchParams,//查找这个游戏角色所需要的参数
+         gameid,//
+         bindParams,//绑定游戏角色需要上传的参数
+         bindInfo,//绑定角色是需要的特殊参数----》>需要选择的参数
+         commonParams,
+         version,//开机返回信息的格式版本号
+         commonInfo,//数据
+         searchInfo//查找角色的时候需要的参数
+         searchParams//
+         */
+      //  [self openSuccessWithInfo:responseObject From:@"firstOpen"];
+        
+        //把获取的数据根据游戏id保存本地
+
+        
+        NSString *gameid = KISDictionaryHaveKey(responseObject, @"gameid");
+        NSString *filePath = [RootDocPath stringByAppendingString:@"/openInfo"];
+        [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@",gameid]] atomically:YES];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+
+}
+
+
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

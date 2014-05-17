@@ -37,7 +37,7 @@
 
     UIScrollView* m_step2Scroll;
     UITextField*  m_gameNameText;
-//    UIPickerView* m_gameNamePick;
+    UIPickerView* m_gameNamePick;
     UITextField*  m_serverNameText;
     UITextField*  m_roleNameText;
     
@@ -54,6 +54,10 @@
     UIButton*     m_sexWomanButton;
     
     UIScrollView* m_step4Scroll;
+    
+    NSMutableArray *gameInfoArray;
+    
+    NSString * gameNum;
 }
 @property(nonatomic,retain)NSString *imgID;
 @end
@@ -104,6 +108,10 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"获取中...";
+    
+    
+    gameInfoArray = [NSMutableArray new];
+    gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
 }
 
 - (void)setMainView
@@ -572,25 +580,39 @@
     m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60, 180, 40)];
     m_gameNameText.returnKeyType = UIReturnKeyDone;
     m_gameNameText.delegate = self;
-    m_gameNameText.text = @"魔兽世界";
+   // m_gameNameText.text = @"魔兽世界";
     m_gameNameText.textAlignment = NSTextAlignmentRight;
     m_gameNameText.font = [UIFont boldSystemFontOfSize:15.0];
     m_gameNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     m_gameNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [m_step2Scroll addSubview:m_gameNameText];
     
-//    m_gameNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-//    m_gameNamePick.dataSource = self;
-//    m_gameNamePick.delegate = self;
-//    m_gameNamePick.showsSelectionIndicator = YES;
-//    m_gameNameText.inputView = m_gameNamePick;//点击弹出的是pickview
-//    
-//    UIToolbar* toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-//    toolbar.tintColor = [UIColor blackColor];
-//    UIBarButtonItem*rb = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectGameNameOK)];
-//    rb.tintColor = [UIColor blackColor];
-//    toolbar.items = @[rb];
-//    m_gameNameText.inputAccessoryView = toolbar;//跟着pickview上移
+//  UIPickerView *  m_clazzNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+//    m_clazzNamePick.dataSource = self;
+//    m_clazzNamePick.delegate = self;
+//    m_clazzNamePick.showsSelectionIndicator = YES;
+//    m_gameNameText.inputView = m_clazzNamePick;//点击弹出的是pickview
+//
+//    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+//    toolbar_server.tintColor = [UIColor blackColor];
+//    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectClazzNameOK)];
+//    rb_server.tintColor = [UIColor blackColor];
+//    toolbar_server.items = @[rb_server];
+//    m_gameNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
+//
+    
+    m_gameNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+    m_gameNamePick.dataSource = self;
+    m_gameNamePick.delegate = self;
+    m_gameNamePick.showsSelectionIndicator = YES;
+    m_gameNameText.inputView = m_gameNamePick;//点击弹出的是pickview
+    
+    UIToolbar* toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectGameNameOK)];
+    rb.tintColor = [UIColor blackColor];
+    toolbar.items = @[rb];
+    m_gameNameText.inputAccessoryView = toolbar;//跟着pickview上移
     
     m_serverNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 100, 180, 40)];
     m_serverNameText.delegate = self;
@@ -644,11 +666,22 @@
     [step3Button addTarget:self action:@selector(jump3ButtonOK) forControlEvents:UIControlEventTouchUpInside];
     [m_step2Scroll addSubview:step3Button];
 }
+- (void)selectClazzNameOK
+{
+    [m_gameNameText resignFirstResponder];
+    if ([gameInfoArray count] != 0) {
+        m_gameNameText.text = [gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
+    }
+    else
+        m_gameNameText.text = @"";
+    //m_clazzNamePick =nil;
+}
 
 - (void)realmSelectClick:(id)sender
 {
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
+    realmVC.gameNum =[NSString stringWithFormat:@"%@",gameNum];
     [self.navigationController pushViewController:realmVC animated:YES];
 }
 
@@ -656,19 +689,6 @@
 {
     m_serverNameText.text = name;
 }
-
-//- (void)selectGameNameOK
-//{
-//    
-//}
-
-//- (void)selectServerNameOK
-//{
-//    [m_serverNameText resignFirstResponder];
-//    NSString* fenQu = [[[GameCommon shareGameCommon].wow_realms allKeys] objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
-//    NSString* fuName = [[[GameCommon shareGameCommon].wow_realms objectForKey:fenQu] objectAtIndex:[m_serverNamePick selectedRowInComponent:1]];
-//    m_serverNameText.text = [NSString stringWithFormat:@"%@ %@", fenQu, fuName];
-//}
 
 - (void)step2ButtonOK:(id)sender
 {
@@ -686,8 +706,11 @@
 //    NSString* fenQu = [[[GameCommon shareGameCommon].wow_realms allKeys] objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
 //    NSString* fuName = [[[GameCommon shareGameCommon].wow_realms objectForKey:fenQu] objectAtIndex:[m_serverNamePick selectedRowInComponent:1]];
   
+    NSArray *array = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    
+    
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-    [params setObject:@"1" forKey:@"gameid"];
+    [params setObject:KISDictionaryHaveKey([array objectAtIndex:[gameNum intValue]], @"id") forKey:@"gameid"];
     [params setObject:m_serverNameText.text forKey:@"gamerealm"];
     [params setObject:m_roleNameText.text forKey:@"gamename"];
 
@@ -1231,45 +1254,31 @@
 {
     
 }
-//#pragma mark 选择器
-//- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-//{
-//    return 2;
-//}
-//- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-//{
-//    if (component == 0) {
-//        return ([[[GameCommon shareGameCommon].wow_realms allKeys] count]);
-//    }
-//    else if(component == 1)
-//    {
-//        return [m_realmsArray count];
-//    }
-//    return 0;
-//}
-//
-//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-//{
-//    if (component == 0) {
-//        return ([[[GameCommon shareGameCommon].wow_realms allKeys] objectAtIndex:row]);
-//    }
-//    else if(component == 1)
-//    {
-//        return [m_realmsArray objectAtIndex:row];
-//    }
-//    return @"";
-//    
-//}
-//- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-//{
-//    if (pickerView == m_serverNamePick) {
-//        if (component == 0) {
-//            NSString* key = [[[GameCommon shareGameCommon].wow_realms allKeys] objectAtIndex:row];
-//            m_realmsArray = [[GameCommon shareGameCommon].wow_realms objectForKey:key];
-//            [m_serverNamePick reloadComponent:1];
-//        }
-//    }
-//}
+#pragma mark 选择器
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return gameInfoArray.count;
+}
+
+- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+{
+    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+    return title;
+    
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+
+//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+//    gameNum = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"id");
+//    m_gameNameText.text =title;
+//    [m_gameNameText resignFirstResponder];
+    
+}
 
 
 #pragma mark textField and touch delegate
@@ -1320,14 +1329,14 @@
     return YES;
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    if (textField == m_gameNameText) {
-        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
-        return NO;
-    }
-    return YES;
-}
+//- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+//{
+//    if (textField == m_gameNameText) {
+//        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
+//        return NO;
+//    }
+//    return YES;
+//}
 
 #pragma mark 手势
 - (void)tapClick:(id)sender

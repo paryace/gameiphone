@@ -47,7 +47,7 @@
     }
     else
     {
-        [self firtOpen];
+       // [self firtOpen];
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
@@ -56,6 +56,7 @@
 }
 
 #pragma mark 开机联网
+/*
 -(void)firtOpen
 {
     [hud show:YES];
@@ -114,7 +115,7 @@
         }
     }];
 }
-
+*/
 - (void)setMainView
 {
     UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, startX + 20, 300, 40)];
@@ -254,6 +255,7 @@
     [self.view addSubview:bottomLabel];
 }
 
+
 - (void)realmSelectClick:(id)sender
 {
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
@@ -268,9 +270,9 @@
 
 - (void)selectClazzNameOK
 {
-    [m_clazzNameText resignFirstResponder];
+    [m_gameNameText resignFirstResponder];
     if ([m_clazzNameArray count] != 0) {
-        m_clazzNameText.text = [m_clazzNameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]];
+        m_gameNameText.text = [m_clazzNameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]];
     }
     else
         m_clazzNameText.text = @"";

@@ -108,7 +108,7 @@
     }
     cell.nameLabel.text = [dict objectForKey:@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
-    cell.distLabel.text = [KISDictionaryHaveKey(dict, @"title") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(dict, @"title");
+    cell.distLabel.text = [KISDictionaryHaveKey(dict, @"titleName") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(dict, @"titleName");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(dict, @"rarenum") integerValue]];
     
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"distance")]];

@@ -30,25 +30,38 @@
     m_realmsDic = [[NSMutableDictionary alloc] initWithCapacity:1];
     m_realmsIndexArray = [[NSArray alloc] init];
     
-    if ([[[GameCommon shareGameCommon].wow_realms allKeys] count] != 0) {
-        [m_realmsDic addEntriesFromDictionary:[GameCommon shareGameCommon].wow_realms];
-        
-        m_realmsIndexArray = [[m_realmsDic allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    }
-    else
-    {
-        hud = [[MBProgressHUD alloc] initWithView:self.view];
-        [self.view addSubview:hud];
-        hud.labelText = @"查询中...";
-        
-        [self firtOpen];
-    }
+//    if ([[[GameCommon shareGameCommon].wow_realms allKeys] count] != 0) {
+//        [m_realmsDic addEntriesFromDictionary:[GameCommon shareGameCommon].wow_realms];
+//        
+//        m_realmsIndexArray = [[m_realmsDic allKeys] sortedArrayUsingSelector:@selector(compare:)];
+//    }
+//    else
+//    {
+//        hud = [[MBProgressHUD alloc] initWithView:self.view];
+//        [self.view addSubview:hud];
+//        hud.labelText = @"查询中...";
+//        
+//       // [self firtOpen];
+//    }
     
+//    NSMutableDictionary* openData;
+//    NSFileManager *fileManager =[NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:[NSString stringWithFormat:@"/openInfogameid_%@",self.gameNum]];
+//    BOOL isTrue = [fileManager fileExistsAtPath:];
+//    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+//    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        NSDictionary *dict= [NSMutableDictionary dictionaryWithContentsOfFile:path];
+    m_realmsDic = [[KISDictionaryHaveKey(dict, @"commonInfo")objectAtIndex:0]objectForKey:@"value"];
+    
+    
+    NSLog(@"%@gameid_%@",path,self.gameNum);
+    m_realmsIndexArray = [[m_realmsDic allKeys] sortedArrayUsingSelector:@selector(compare:)];
     m_realmsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_realmsTableView.delegate = self;
     m_realmsTableView.dataSource = self;
     [self.view addSubview:m_realmsTableView];
 }
+/*
 #pragma mark 开机联网
 -(void)firtOpen
 {
@@ -56,13 +69,13 @@
     NSMutableDictionary * paramsDic = [NSMutableDictionary dictionary];
   
     [paramsDic setObject:@"" forKey:@"gamelist_millis"];
-    [paramsDic setObject:@"" forKey:@"wow_realms_millis"];
-    [paramsDic setObject:@"" forKey:@"wow_characterclasses_millis"];
+//    [paramsDic setObject:@"" forKey:@"wow_realms_millis"];
+//    [paramsDic setObject:@"" forKey:@"wow_characterclasses_millis"];
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramsDic forKey:@"params"];
-    [postDict setObject:@"142" forKey:@"method"];
+    [postDict setObject:@"203" forKey:@"method"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide: YES];
@@ -106,7 +119,7 @@
         }
     }];
 }
-
+*/
 #pragma mark 表格
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -135,7 +148,7 @@
     NSDictionary* dic = [[m_realmsDic objectForKey:[m_realmsIndexArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     
     if ([dic isKindOfClass:[NSDictionary class]]) {
-        cell.textLabel.text = KISDictionaryHaveKey(dic, @"name");
+        cell.textLabel.text = KISDictionaryHaveKey(dic, @"value");
     }
     cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
 
