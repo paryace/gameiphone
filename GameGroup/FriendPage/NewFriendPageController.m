@@ -270,7 +270,6 @@
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
                         [hud hide:YES];
-                        [m_Friendheader endRefreshing];
                 }];
 }
 //保存用户列表信息
@@ -278,6 +277,8 @@
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
+        [DataStoreManager deleteAllUserWithShipType:@"1"];
+        [DataStoreManager deleteAllUserWithShipType:@"2"];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
             [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
