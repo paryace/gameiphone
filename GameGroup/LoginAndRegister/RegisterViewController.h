@@ -14,7 +14,18 @@
 -(void)RegisterViewControllerFinishRegister;
 
 @end
-@interface RegisterViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, UIAlertViewDelegate, SearchRoleDelegate, UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIGestureRecognizerDelegate>
+@interface RegisterViewController : BaseViewController
+<UITextFieldDelegate,
+RealmSelectDelegate,
+UIAlertViewDelegate,
+SearchRoleDelegate,
+UIActionSheetDelegate,
+UIImagePickerControllerDelegate,
+UINavigationControllerDelegate,
+UIGestureRecognizerDelegate,
+UIPickerViewDataSource,
+UIPickerViewDelegate
+>
 @property (nonatomic,retain) id <RegisterViewControllerDelegate>delegate;
 
 @end

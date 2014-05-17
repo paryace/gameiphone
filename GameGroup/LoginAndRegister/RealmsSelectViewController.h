@@ -16,4 +16,5 @@
 
 @interface RealmsSelectViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 @property(nonatomic, assign)id<RealmSelectDelegate> realmSelectDelegate;
+@property(nonatomic,copy)NSString *gameNum;
 @end

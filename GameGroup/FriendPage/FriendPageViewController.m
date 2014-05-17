@@ -16,7 +16,7 @@
 #define kSegmentFrinds    (0)
 #define kSegmentAttention (1)
 #define kSegmentFans      (2)
-
+#import "AddFriendsViewController.h"
 @interface FriendPageViewController ()
 {
     UILabel*   titleLabel;
@@ -610,11 +610,15 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     
-//    AddContactViewController * addV = [[AddContactViewController alloc] init];
-//    [self.navigationController pushViewController:addV animated:YES];
+    AddContactViewController * addV = [[AddContactViewController alloc] init];
+    [self.navigationController pushViewController:addV animated:YES];
     
-    NearFriendsViewController *nearF = [[NearFriendsViewController alloc]init];
-    [self.navigationController pushViewController:nearF animated:YES];
+ //   NearFriendsViewController *nearF = [[NearFriendsViewController alloc]init];
+   // [self.navigationController pushViewController:nearF animated:YES];
+    
+    
+//    AddFriendsViewController *aadf = [[AddFriendsViewController alloc]init];
+//    [self.navigationController pushViewController:aadf animated:YES];
 }
 
 #pragma mark 更改排序方式
