@@ -36,7 +36,12 @@
     }
     return self;
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [[Custom_tabbar showTabBar] hideTabBar:NO];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
