@@ -36,12 +36,10 @@
     }
     return self;
 }
-- (void)viewWillAppear:(BOOL)animated
+-(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-    
 }
 - (void)viewDidLoad
 {
@@ -69,10 +67,9 @@
     [self getFriendDateFromDataSore];
     [m_myTableView reloadData];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-        [m_Friendheader beginRefreshing];
-    }else{
-        [self getFriendListFromNet];
+        [hud hide:NO];
     }
+    [self getFriendListFromNet];
     self.view.backgroundColor=[UIColor blackColor];
 }
 
@@ -159,7 +156,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70;
+    return 60;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -181,7 +178,7 @@
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];//
     }
     
-    if ([KISDictionaryHaveKey(tempDict, @"gender")intValue]==0)
+    if ([KISDictionaryHaveKey(tempDict, @"sex")intValue]==0)
     {
         cell.sexImg.image = KUIImage(@"gender_boy");
     }else
@@ -200,9 +197,9 @@
     }
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
-    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
-    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"titleName");
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
+    NSString *titleName=KISDictionaryHaveKey(tempDict, @"achievement");
+    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
     
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
@@ -227,7 +224,6 @@
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"sex");
     
     detailVC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] ;
-    
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
@@ -245,9 +241,6 @@
     detailVC.isChatPage = NO;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
-
-
-
 //返回索引的字母
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
@@ -261,8 +254,6 @@
    return m_sectionIndexArray_friend;
 }
 
-
-
 #pragma mark 请求数据
 - (void)getFriendListFromNet
 {
@@ -273,27 +264,24 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     [hud hide:YES];
-                    [self parseFriendsList:responseObject];
+                    [self saveFriendsList:responseObject];
+                    [self getFriendDateFromDataSore];
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
                         [hud hide:YES];
-                        [m_Friendheader endRefreshing];
                 }];
 }
-//解析
--(void)parseFriendsList:(id)responseObject
+//保存用户列表信息
+-(void)saveFriendsList:(id)responseObject
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
+        [DataStoreManager deleteAllUserWithShipType:@"1"];
+        [DataStoreManager deleteAllUserWithShipType:@"2"];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
-            
             fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
             [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            
-            
-            
             NSDictionary* resultArray = [responseObject objectForKey:@"contacts"];
             NSArray* keyArr = [resultArray allKeys];
             for (NSString* key in keyArr) {
@@ -303,12 +291,24 @@
                 }
             }
         }
-        [self getFriendDateFromDataSore];
+    });
+}
+
+//查询用户列表
+-(void) getFriendDateFromDataSore
+{
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
+    dispatch_async(queue, ^{
+        m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1" ShipType2:@"2"];//所有朋友
+        m_sectionArray_friend = [DataStoreManager newQuerySections:@"2" ShipType2:@"2"];
+        [m_sectionIndexArray_friend removeAllObjects];
+        for (int i = 0; i < m_sectionArray_friend.count; i++) {
+            NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
+            [m_sectionIndexArray_friend addObject:str];
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setFansNum];
-            [hud hide:YES];
             [m_myTableView reloadData];
-            [m_Friendheader endRefreshing];
         });
     });
 }
@@ -331,27 +331,6 @@
     CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
-//查库
--(void) getFriendDateFromDataSore
-{
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-    dispatch_async(queue, ^{
-        m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1" ShipType2:@"2"];//所有朋友
-        
-        
-        
-        m_sectionArray_friend = [DataStoreManager querySections];
-        [m_sectionIndexArray_friend removeAllObjects];
-        for (int i = 0; i < m_sectionArray_friend.count; i++) {
-            NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
-            [m_sectionIndexArray_friend addObject:str];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-        });
-    });
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
