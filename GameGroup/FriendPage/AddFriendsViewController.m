@@ -8,7 +8,7 @@
 
 #import "AddFriendsViewController.h"
 #import "SearchResultViewController.h"
-#import "SearchPersonViewController.h"
+#import "SearchJSViewController.h"
 @interface AddFriendsViewController ()
 {
     UITextField * searchContent;
@@ -83,7 +83,6 @@
     tableview.dataSource = self;
     [self.view addSubview:tableview];
     
-    
 }
 - (void)okButtonClick:(id)sender
 {
@@ -119,11 +118,11 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-        SearchPersonViewController *searchp = [[SearchPersonViewController alloc]init];
+        SearchJSViewController *searchp = [[SearchJSViewController alloc]init];
     if (indexPath.row ==0) {
-        searchp.viewType = SEARCH_TYPE_ROLE;
+        searchp.myViewType = SEARCH_TYPE_ROLE;
     }else{
-        
+        searchp.myViewType = SEARCH_TYPE_FORCES;
     }
 
         [self.navigationController pushViewController:searchp animated:YES];

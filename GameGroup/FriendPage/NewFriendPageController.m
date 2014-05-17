@@ -14,7 +14,7 @@
 #import "FunsOfOtherViewController.h"
 #import "NearFriendsViewController.h"
 #import "TestViewController.h"
-
+#import "AddFriendsViewController.h"
 @interface NewFriendPageController (){
     UITableView*  m_myTableView;
     MJRefreshHeaderView *m_Friendheader;
@@ -40,7 +40,6 @@
 {
     [super viewWillAppear:animated];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-    
     [self getFriendDateFromDataSore];
     [m_myTableView reloadData];
     [self getFriendListFromNet];
@@ -71,8 +70,6 @@
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [hud hide:NO];
     }
-    
-    
     self.view.backgroundColor=[UIColor blackColor];
 }
 
@@ -134,7 +131,7 @@
             break;
         case 3:
         {
-            AddContactViewController * addV = [[AddContactViewController alloc] init];
+            AddFriendsViewController * addV = [[AddFriendsViewController alloc] init];
             [self.navigationController pushViewController:addV animated:YES];
 
         }

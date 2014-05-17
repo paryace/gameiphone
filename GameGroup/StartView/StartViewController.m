@@ -252,9 +252,8 @@
         //把获取的数据根据游戏id保存本地
 
         
-        NSString *gameid = KISDictionaryHaveKey(responseObject, @"gameid");
         NSString *filePath = [RootDocPath stringByAppendingString:@"/openInfo"];
-        [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@",gameid]] atomically:YES];
+        [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@",gameId]] atomically:YES];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
