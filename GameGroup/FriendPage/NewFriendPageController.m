@@ -42,20 +42,24 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"通讯录" withBackButton:NO];
 
+    
+    
     m_friendDict = [NSMutableDictionary dictionary];
     m_sectionArray_friend = [NSMutableArray array];
     m_sectionIndexArray_friend = [NSMutableArray array];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    
+     [self.view addSubview:self.topView];
+    
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+60, 320, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
 //    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
     
-    m_myTableView.tableHeaderView = self.topView;
-    [self addHeader];
-    
+//    m_myTableView.tableHeaderView = self.topView;
+
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
@@ -73,7 +77,7 @@
 - (UIView *)topView{
     if (!_topView) {
         _topView = [[UIView alloc] init];
-        _topView.frame = CGRectMake(0,0,320,60);
+        _topView.frame = CGRectMake(0,startX,320,60);
         _topView.backgroundColor = [UIColor blackColor];
         NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机通讯录",@"添加好友"];
         for (int i = 0; i < 4; i++) {
@@ -308,11 +312,17 @@
 //设置粉丝数量
 -(void)setFansNum
 {
+    NSString *fanstr;
+    int intfans = [fansNum intValue];
+    if (intfans>9999) {
+        fanstr=[fansNum stringByAppendingString:@"粉"];
+    }else{
+        fanstr=[fansNum stringByAppendingString:@"位粉丝"];
+    }
     NSArray *viewArray=[[self topView] subviews];
     UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];
-    NSString *string  = [fansNum stringByAppendingString:@"位粉丝"];
-    fansLable.text=string;
-    CGSize textSize =[string sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+    fansLable.text=fanstr;
+    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
 //查库
@@ -326,25 +336,7 @@
         [m_sectionIndexArray_friend addObject:str];
     }
 }
-- (void)addHeader
-{
-    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    CGRect headerRect = header.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    header.arrowImage.frame = headerRect;
-    header.activityView.center = header.arrowImage.center;
-    header.scrollView = m_myTableView;
-    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        [self getFriendListFromNet];
-    };
-    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
-        
-    };
-    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-        
-    };
-    m_Friendheader = header;
-}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
