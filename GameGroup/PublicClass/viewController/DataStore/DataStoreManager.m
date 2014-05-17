@@ -713,7 +713,7 @@
     NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];
     NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];
     NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为明星用户
-     NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"title"]];
+    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];
     
     
     NSString * titleObj = @"";
