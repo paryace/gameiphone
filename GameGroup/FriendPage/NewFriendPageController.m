@@ -16,7 +16,7 @@
 #import "TestViewController.h"
 
 @interface NewFriendPageController (){
-     UITableView*  m_myTableView;
+    UITableView*  m_myTableView;
     MJRefreshHeaderView *m_Friendheader;
     NSMutableDictionary * m_friendDict;
     NSMutableArray * m_sectionArray_friend;
@@ -48,18 +48,15 @@
     m_sectionArray_friend = [NSMutableArray array];
     m_sectionIndexArray_friend = [NSMutableArray array];
     
-    
-     [self.view addSubview:self.topView];
-    
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+60, 320, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
-//    m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    if(KISHighVersion_7){
+        m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    }
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
+    m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
-    
-//    m_myTableView.tableHeaderView = self.topView;
-
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
@@ -77,7 +74,7 @@
 - (UIView *)topView{
     if (!_topView) {
         _topView = [[UIView alloc] init];
-        _topView.frame = CGRectMake(0,startX,320,60);
+        _topView.frame = CGRectMake(0,0,320,60);
         _topView.backgroundColor = [UIColor blackColor];
         NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机通讯录",@"添加好友"];
         for (int i = 0; i < 4; i++) {
@@ -96,8 +93,8 @@
             CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
             CGFloat textWidth = textSize.width;
             titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
-            titleLable.font = [UIFont systemFontOfSize:12];
-            titleLable.textColor=[UIColor whiteColor];
+            titleLable.font = [UIFont systemFontOfSize:11];
+            titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
             titleLable.backgroundColor=[UIColor clearColor];
             titleLable.text=[topTitle objectAtIndex:i];
             [_topView addSubview:titleLable];
@@ -108,7 +105,6 @@
 }
 
 - (void)topBtnAction:(UIButton *)sender{
-    NSLog(@"tab-->>%d",sender.tag);
     switch (sender.tag) {
         case 0:
         {
@@ -152,7 +148,7 @@
     if (m_sectionArray_friend==nil||[m_sectionArray_friend count]==0||section>[m_sectionArray_friend count]) {
         return 0;
     }
-    return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];//0 为index 1为nameKey数组
+    return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -162,9 +158,6 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"section--%d",indexPath.section);
-    NSLog(@"row--%d",indexPath.row);
-    
     static NSString * stringCell3 = @"cell";
     NewPersonalTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
     if (!cell) {
@@ -174,14 +167,12 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary * tempDict;
    tempDict= [m_friendDict objectForKey:[[[m_sectionArray_friend objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
-    NSLog(@"tempDict___%@",tempDict);
-   
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];//
     }
     else
     {
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];//
     }
     
     if ([KISDictionaryHaveKey(tempDict, @"gender")intValue]==0)
@@ -233,7 +224,6 @@
     
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
-    NSLog(@"vc.VC.constellationStr%@",detailVC.constellationStr);
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
     detailVC.nickName = KISDictionaryHaveKey(tempDict, @"displayName");
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
@@ -290,7 +280,14 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            
             fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
+            [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            
+            
             NSDictionary* resultArray = [responseObject objectForKey:@"contacts"];
             NSArray* keyArr = [resultArray allKeys];
             for (NSString* key in keyArr) {
@@ -312,6 +309,9 @@
 //设置粉丝数量
 -(void)setFansNum
 {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:FansCount]) {
+        fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:FansCount];
+    }
     NSString *fanstr;
     int intfans = [fansNum intValue];
     if (intfans>9999) {
@@ -322,19 +322,28 @@
     NSArray *viewArray=[[self topView] subviews];
     UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];
     fansLable.text=fanstr;
-    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
 //查库
 -(void) getFriendDateFromDataSore
 {
-    m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1"];//所有朋友
-    m_sectionArray_friend = [DataStoreManager querySections];
-    [m_sectionIndexArray_friend removeAllObjects];
-    for (int i = 0; i < m_sectionArray_friend.count; i++) {
-        NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
-        [m_sectionIndexArray_friend addObject:str];
-    }
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_async(queue, ^{
+        m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1" ShipType2:@"2"];//所有朋友
+        
+        
+        
+        m_sectionArray_friend = [DataStoreManager querySections];
+        [m_sectionIndexArray_friend removeAllObjects];
+        for (int i = 0; i < m_sectionArray_friend.count; i++) {
+            NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
+            [m_sectionIndexArray_friend addObject:str];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+        });
+    });
 }
 
 - (void)didReceiveMemoryWarning

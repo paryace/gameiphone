@@ -997,7 +997,7 @@
         
     }
 }
-+(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype
++(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype ShipType2:(NSString*) shiptype2
 {
     
     NSArray * array = [DSuser MR_findAll];
@@ -1005,7 +1005,7 @@
 
     for (int i =0;i<array.count;i++) {
         DSuser *dUser = [array objectAtIndex:i];
-        if ([dUser.shiptype isEqualToString:shiptype]) {
+        if ([dUser.shiptype isEqualToString:shiptype]||[dUser.shiptype isEqualToString:shiptype2]) {
             NSString * nameK = [dUser nameKey];
             NSString * userName = [dUser userName];
             NSString * userid = [dUser userId];
@@ -1048,7 +1048,6 @@
                     [friendDict setObject:remarkName forKey:@"displayName"];
                 }
                 [theDict setObject:friendDict forKey:nameK];
-                NSLog(@"thedict---%@",nameK);
             }
 
         }
@@ -1525,16 +1524,7 @@ return @"";
 +(NSMutableArray *)querySections
 {
     NSMutableArray * sectionArray = [NSMutableArray array];
-    
-    
-    
-    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
-    NSMutableArray * nameIndexArray = [NSMutableArray array];
-    for (int i = 0; i<nameIndexArray2.count; i++) {
-        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
-        [nameIndexArray addObject:di.index];//+,M
-    }
-    [nameIndexArray sortUsingSelector:@selector(compare:)];
+    NSMutableArray * nameIndexArray = [self queryNameIndex];
     for (int i = 0; i<nameIndexArray.count; i++) {
         NSMutableArray * array = [NSMutableArray array];
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
@@ -1544,11 +1534,9 @@ return @"";
             NSString * shipType = [[fri objectAtIndex:i]shiptype];
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&[shipType isEqualToString:@"1"]) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:@"1"]||[shipType isEqualToString:@"2"])) {
                 [nameKeyArray addObject:nameK];
             }
-        
         }
         [array addObject:[nameIndexArray objectAtIndex:i]];//M
         [array addObject:nameKeyArray];//数组（Marss+Marss）
@@ -1556,6 +1544,18 @@ return @"";
     }
     return sectionArray;
 
+}
+
++(NSMutableArray *)queryNameIndex
+{
+    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
+    NSMutableArray * nameIndexArray = [NSMutableArray array];
+    for (int i = 0; i<nameIndexArray2.count; i++) {
+        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
+        [nameIndexArray addObject:di.index];
+    }
+    [nameIndexArray sortUsingSelector:@selector(compare:)];
+    return nameIndexArray;
 }
 
 + (void)saveFriendRemarkName:(NSString*)remarkName userid:(NSString *)userid
