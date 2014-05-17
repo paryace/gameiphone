@@ -41,14 +41,15 @@
     [super viewWillAppear:animated];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     
+    [self getFriendDateFromDataSore];
+    [m_myTableView reloadData];
+    [self getFriendListFromNet];
 }
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"通讯录" withBackButton:NO];
 
-    
-    
     m_friendDict = [NSMutableDictionary dictionary];
     m_sectionArray_friend = [NSMutableArray array];
     m_sectionIndexArray_friend = [NSMutableArray array];
@@ -62,15 +63,16 @@
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
+    
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-    [self getFriendDateFromDataSore];
-    [m_myTableView reloadData];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [hud hide:NO];
     }
-    [self getFriendListFromNet];
+    
+    
     self.view.backgroundColor=[UIColor blackColor];
 }
 

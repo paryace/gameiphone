@@ -1543,6 +1543,7 @@ return @"";
     return sectionArray;
 
 }
+
 +(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
 {
     NSMutableArray * sectionArray = [NSMutableArray array];
