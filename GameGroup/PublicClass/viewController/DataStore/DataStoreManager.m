@@ -714,8 +714,6 @@
     NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];
     NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为明星用户
     NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];
-    
-    
     NSString * titleObj = @"";
     NSString * titleObjLevel = @"";
     NSDictionary* titleDic = KISDictionaryHaveKey(userInfo, @"title");
@@ -1521,7 +1519,7 @@ return @"";
         return NO;
 }
 
-+(NSMutableArray *)querySections
++(NSMutableArray *)querySections:(NSString*)shipType ShipType2:(NSString*)shipType2
 {
     NSMutableArray * sectionArray = [NSMutableArray array];
     NSMutableArray * nameIndexArray = [self queryNameIndex];
@@ -1534,7 +1532,7 @@ return @"";
             NSString * shipType = [[fri objectAtIndex:i]shiptype];
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:@"1"]||[shipType isEqualToString:@"2"])) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
                 [nameKeyArray addObject:nameK];
             }
         }
@@ -1544,6 +1542,30 @@ return @"";
     }
     return sectionArray;
 
+}
++(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
+{
+    NSMutableArray * sectionArray = [NSMutableArray array];
+    NSMutableArray * nameIndexArray = [self queryNameIndex];
+    for (int i = 0; i<nameIndexArray.count; i++) {
+        NSMutableArray * array = [NSMutableArray array];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
+        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
+        NSMutableArray * nameKeyArray = [NSMutableArray array];
+        for (int i = 0; i<fri.count; i++) {
+            NSString * shipType = [[fri objectAtIndex:i]shiptype];
+            NSString * thename = [[fri objectAtIndex:i]userId];
+            NSString * nameK = [[fri objectAtIndex:i]nameKey];
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
+                [nameKeyArray addObject:nameK];
+            }
+        }
+        [array addObject:[nameIndexArray objectAtIndex:i]];//M
+        [array addObject:nameKeyArray];//数组（Marss+Marss）
+        [sectionArray addObject:array];
+    }
+    return sectionArray;
+    
 }
 
 +(NSMutableArray *)queryNameIndex

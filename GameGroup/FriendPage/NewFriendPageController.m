@@ -68,10 +68,9 @@
     [self getFriendDateFromDataSore];
     [m_myTableView reloadData];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-        [m_Friendheader beginRefreshing];
-    }else{
-        [self getFriendListFromNet];
+        [hud hide:NO];
     }
+    [self getFriendListFromNet];
     self.view.backgroundColor=[UIColor blackColor];
 }
 
@@ -81,7 +80,7 @@
         _topView = [[UIView alloc] init];
         _topView.frame = CGRectMake(0,0,320,60);
         _topView.backgroundColor = [UIColor blackColor];
-        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机联系人",@"添加好友"];
+        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机通讯录",@"添加好友"];
         for (int i = 0; i < 4; i++) {
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = i;
@@ -226,7 +225,6 @@
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"sex");
     
     detailVC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] ;
-    
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
@@ -244,9 +242,6 @@
     detailVC.isChatPage = NO;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
-
-
-
 //返回索引的字母
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
@@ -260,8 +255,6 @@
    return m_sectionIndexArray_friend;
 }
 
-
-
 #pragma mark 请求数据
 - (void)getFriendListFromNet
 {
@@ -272,17 +265,18 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     [hud hide:YES];
-                    [self parseFriendsList:responseObject];
+                    [self saveFriendsList:responseObject];
+                    [self getFriendDateFromDataSore];
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
                         [hud hide:YES];
                         [m_Friendheader endRefreshing];
                 }];
 }
-//解析
--(void)parseFriendsList:(id)responseObject
+//保存用户列表信息
+-(void)saveFriendsList:(id)responseObject
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
@@ -297,29 +291,23 @@
                 }
             }
         }
-        [self getFriendDateFromDataSore];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setFansNum];
-            [hud hide:YES];
-            [m_myTableView reloadData];
-            [m_Friendheader endRefreshing];
-        });
     });
 }
 
-//查库
+//查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1" ShipType2:@"2"];//所有朋友
-        m_sectionArray_friend = [DataStoreManager querySections];
+        m_sectionArray_friend = [DataStoreManager newQuerySections:@"2" ShipType2:@"2"];
         [m_sectionIndexArray_friend removeAllObjects];
         for (int i = 0; i < m_sectionArray_friend.count; i++) {
             NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
             [m_sectionIndexArray_friend addObject:str];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
+            [self setFansNum];
             [m_myTableView reloadData];
         });
     });
