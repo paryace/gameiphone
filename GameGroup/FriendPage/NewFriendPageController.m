@@ -270,11 +270,12 @@
                         NSDictionary* result = [responseObject objectForKey:@"contacts"];
                         NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
                         [keys sortUsingSelector:@selector(compare:)];
+                        keyArr = keys;
+                        resultArray = result;
+                        [m_myTableView reloadData];
+                        
                         //保存
                         [self saveFriendsList:result Keys:keys];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [self getFriendDateFromDataSore];
-                        });
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
