@@ -938,7 +938,6 @@
                     DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
                     if (!dFname)
                         dFname = [DSNameIndex MR_createInContext:localContext];
-                    
                     dFname.index = nameIndex?nameIndex:@"";
                     return ;
                 }

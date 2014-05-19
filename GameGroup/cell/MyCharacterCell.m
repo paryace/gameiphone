@@ -36,7 +36,7 @@
         self.gameImg.backgroundColor = [UIColor clearColor];
         [myView addSubview:self.gameImg];
                 
-        self.realmLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 30, 100, 20)];
+        self.realmLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 30, 120, 20)];
         self.realmLabel.backgroundColor = [UIColor clearColor];
         self.realmLabel.textColor = kColorWithRGB(102, 102, 102, 1.0) ;
         self.realmLabel.font = [UIFont boldSystemFontOfSize:14.0];

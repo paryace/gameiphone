@@ -55,7 +55,7 @@
     resultArray =[NSDictionary dictionary];
     keyArr=[NSArray array];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
     if(KISHighVersion_7){
@@ -179,9 +179,7 @@
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
     NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
-    NSLog(@"imageid--->>%@",iamgeId);
     NSURL *url=[self getHeadImageUrl:iamgeId];
-    NSLog(@"url--%@",url);
     cell.headImageV.imageURL = url;
     
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
@@ -204,7 +202,7 @@
         return nil;
     }else{
         if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80"]];
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
         }else{
             return  nil;
         }
@@ -274,7 +272,9 @@
                         [keys sortUsingSelector:@selector(compare:)];
                         //保存
                         [self saveFriendsList:result Keys:keys];
-                        [self getFriendDateFromDataSore];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self getFriendDateFromDataSore];
+                        });
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {

@@ -59,10 +59,9 @@
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstIntoMePage];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
         [self getUserInfoByNet];
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
 }
 
 
@@ -83,7 +82,6 @@
     hud.labelText = @"查询中...";
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
         [self getUserInfoByNet];
     }
 }
@@ -777,7 +775,8 @@
         if ([characterArray count]>0){
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
-            VC.characterId = gameId;
+            NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
+            VC.characterId = chatId;
             VC.gameId = gameId;
             VC.myViewType = CHARA_INFO_MYSELF;
             [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
