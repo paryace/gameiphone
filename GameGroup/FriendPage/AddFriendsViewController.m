@@ -111,7 +111,7 @@
     UITableViewCell *cell =[[ UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     
     NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild", nil];
-    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 0, 40, 40)];
+    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 30, 30)];
     iconImageView.image = KUIImage(array[indexPath.row]);
     [cell.contentView addSubview:iconImageView];
     
