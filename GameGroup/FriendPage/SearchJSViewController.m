@@ -8,6 +8,7 @@
 
 #import "SearchJSViewController.h"
 #import "SearchRoleViewController.h"
+#import "SearchWithGameViewController.h"
 @interface SearchJSViewController ()
 {
     UIScrollView *m_roleView;
@@ -193,6 +194,9 @@
         
         table_label_three.text = [[sarchArray objectAtIndex:0] objectForKey:@"name"];
         m_roleNameText.placeholder =[[sarchArray objectAtIndex:0] objectForKey:@"tip"];
+        
+        NSLog(@"----%@-----%@",m_roleNameText.placeholder,searchContent.placeholder);
+        
     }
     else
         m_gameNameText.text = @"";
@@ -200,6 +204,11 @@
 }
 - (void)realmSelectClick:(id)sender
 {
+    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
     realmVC.gameNum = [[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]]objectForKey:@"id"];
@@ -239,51 +248,67 @@
         [self showAlertViewWithTitle:@"提示" message:@"请把搜索内容填写完整！" buttonTitle:@"确定"];
         return;
     }
-    NSDictionary *dic = [gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
-    NSArray *sarchArray ;
     
+    NSDictionary *dic = [gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
+    
+    NSArray *roleArray = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"gameParams"), @"commonParams");
+
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        
         NSArray* sarchArray =[[dic objectForKey:@"gameParams" ] objectForKey:@"searchCharacterParams"];
 
+        
+        
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+        
+        [tempDic setObject:searchContent.text forKey:KISDictionaryHaveKey(roleArray[0], @"param")];
+        [tempDic setObject:KISDictionaryHaveKey(dic,@"id") forKey:@"gameid"];
+        [tempDic setObject:m_roleNameText.text  forKey:KISDictionaryHaveKey([sarchArray objectAtIndex:0], @"param")];
+        
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [postDict setObject:@"215" forKey:@"method"];
         [postDict setObject:tempDic forKey:@"params"];
         [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
-                              success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                  [hud hide:YES];
-                              }
-                              failure:^(AFHTTPRequestOperation *operation, id error) {
-                                  [hud hide:YES];
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            
+            SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
+            
+            secGame.dataDic = responseObject;
+            
+            [self.navigationController pushViewController:secGame animated:YES];
+            
+            [hud hide:YES];
+            }
+            failure:^(AFHTTPRequestOperation *operation, id error) {
+            [hud hide:YES];
                               }];
     }else{
-        NSArray* sarchArray =[[dic objectForKey:@"gameParams" ] objectForKey:@"searchOrganizationParams"];
+    NSArray* sarchArray =[[dic objectForKey:@"gameParams" ] objectForKey:@"searchOrganizationParams"];
 
-        
-        NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
+    NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [tempDic1 setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"gameid"];
+    [tempDic1 setObject: searchContent.text forKey:KISDictionaryHaveKey(roleArray[0], @"param")];
+    [tempDic1 setObject:m_roleNameText.text forKey:KISDictionaryHaveKey(sarchArray[0], @"param")];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"217" forKey:@"method"];
-        [postDict setObject:tempDic forKey:@"params"];
+    [postDict setObject:tempDic1 forKey:@"params"];
 
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
-                          success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                              [hud hide:YES];
-                          }
-                          failure:^(AFHTTPRequestOperation *operation, id error) {
-                              [hud hide:YES];
-                          }];
-
-    }
-        SearchResultViewController *SV = [[SearchResultViewController alloc]init];
-        SV.nickNameList =searchContent.text;
-        [self.navigationController pushViewController:SV animated:YES];
         
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [hud hide:YES];
+            SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
+            secGame.dataDic = responseObject;
+            [self.navigationController pushViewController:secGame animated:YES];
+        }
+    failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+    }];
+    }
 }
-
 #pragma mark 选择器
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {

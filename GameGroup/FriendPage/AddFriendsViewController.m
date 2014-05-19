@@ -95,6 +95,8 @@
     }
         SearchResultViewController *SV = [[SearchResultViewController alloc]init];
         SV.nickNameList =searchContent.text;
+//        SV.myViewType = SearchResult_FromNet;
+
         [self.navigationController pushViewController:SV animated:YES];
 }
 

@@ -9,7 +9,6 @@
 #import "BaseViewController.h"
 #import "SearchRoleViewController.h"
 #import "RealmsSelectViewController.h"
-#import "SearchResultViewController.h"
 typedef enum
 {
     SEARCH_TYPE_ROLE=0,

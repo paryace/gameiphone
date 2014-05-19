@@ -84,11 +84,11 @@
     NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
     NSMutableDictionary *postDict = [[NSMutableDictionary alloc]init];
     
-    [paramDict setObject:self.nickNameList forKey:@"nickname"];
+    [paramDict setObject:self.nickNameList forKey:@"argument"];
     [paramDict setObject:[NSString stringWithFormat:@"%d", m_pageNum] forKey:@"pageIndex"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon]getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"150" forKey:@"method"];
+    [postDict setObject:@"214" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [hud show:YES];
