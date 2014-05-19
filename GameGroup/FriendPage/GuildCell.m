@@ -19,14 +19,14 @@
         self.gameImageView.image = KUIImage(@"wow");
         [self.contentView addSubview:self.gameImageView];
         
-        self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 250, 40)];
+        self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
         self.guildLabel.textAlignment = NSTextAlignmentLeft;
         self.guildLabel.font = [UIFont boldSystemFontOfSize:15];
         self.guildLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.guildLabel];
         
         
-        self.guildsNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 55, 250, 20)];
+        self.guildsNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 30, 250, 20)];
         self.guildsNumLabel.font = [UIFont systemFontOfSize:12];
         self.guildsNumLabel.textColor = [UIColor grayColor];
         self.guildsNumLabel.backgroundColor = [UIColor clearColor];

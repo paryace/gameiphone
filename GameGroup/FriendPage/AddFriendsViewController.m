@@ -62,14 +62,14 @@
     searchContent.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:searchContent];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110 + startX, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:okButton];
+//    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110 + startX, 300, 40)];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
+//    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    okButton.backgroundColor = [UIColor clearColor];
+//    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:okButton];
     
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
@@ -78,9 +78,10 @@
 
     // Do any additional setup after loading the view.
     
-    UITableView *tableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 180+startX, 320, 80)];
+    UITableView *tableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 180+startX, 320, 88)];
     tableview.delegate = self;
     tableview.dataSource = self;
+    tableview.rowHeight = 44;
     [self.view addSubview:tableview];
     
 }
@@ -108,7 +109,10 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell =[[ UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    
+    NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild", nil];
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 0, 40, 40)];
+    iconImageView.image = KUIImage(array[indexPath.row]);
     [cell.contentView addSubview:iconImageView];
     
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 0, 200, 40)];
@@ -120,14 +124,21 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
         SearchJSViewController *searchp = [[SearchJSViewController alloc]init];
     if (indexPath.row ==0) {
         searchp.myViewType = SEARCH_TYPE_ROLE;
     }else{
         searchp.myViewType = SEARCH_TYPE_FORCES;
     }
+    [self.navigationController pushViewController:searchp animated:YES];
+}
 
-        [self.navigationController pushViewController:searchp animated:YES];
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [self okButtonClick:nil];
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning

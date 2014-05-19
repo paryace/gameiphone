@@ -9,10 +9,10 @@
 #import "BaseViewController.h"
 typedef enum
 {
-   COME_GUILD,
+   COME_GUILD=0,
     COME_ROLE,
 }MYINFOTYPE;
 @interface SearchWithGameViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
-@property(nonatomic,assign)MYINFOTYPE *myInfoType;
+@property(nonatomic,assign)MYINFOTYPE myInfoType;
 @property(nonatomic,assign)NSMutableDictionary *dataDic;
 @end

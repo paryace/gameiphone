@@ -7,7 +7,7 @@
 //
 
 #import "AddCharacterViewController.h"
-
+#import "EGOImageView.h"
 @interface AddCharacterViewController ()
 {
     UITextField*  m_gameNameText;
@@ -15,7 +15,13 @@
     UITextField*  m_roleNameText;
     UIAlertView* alertView1;
     BOOL          isRefresh;//从认证界面成功后  直接提交
+    UIPickerView *m_serverNamePick;
+    EGOImageView* gameImg;
+    NSArray *gameInfoArray;
+    UILabel* table_label_two;
+    UILabel * table_label_three;
 }
+
 @end
 
 @implementation AddCharacterViewController
@@ -58,6 +64,12 @@
             break;
     }
     
+    
+    
+    gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+
+    
+    
     [self setMainView];
 }
 
@@ -89,31 +101,46 @@
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:table_label_one];
     
-    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 61, 80, 38)];
-    table_label_two.text = @"所在服务器";
+    table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 61, 80, 38)];
     table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:table_label_two];
     
-    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 101, 80, 38)];
-    table_label_three.text = @"角色名";
+    table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 101, 80, 38)];
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:table_label_three];
     
-    UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(190, startX + 31, 18, 18)];
-    gameImg.image = KUIImage(@"wow");
+    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(190, startX + 31, 18, 18)];
     [self.view addSubview:gameImg];
 
     m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, startX + 20, 180, 40)];
     m_gameNameText.returnKeyType = UIReturnKeyDone;
     m_gameNameText.delegate = self;
-    m_gameNameText.text = @"魔兽世界";
+  //  m_gameNameText.text = @"魔兽世界";
     m_gameNameText.textAlignment = NSTextAlignmentRight;
     m_gameNameText.font = [UIFont boldSystemFontOfSize:15.0];
     m_gameNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     m_gameNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:m_gameNameText];
+    
+    m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+    m_serverNamePick.dataSource = self;
+    m_serverNamePick.delegate = self;
+    m_serverNamePick.showsSelectionIndicator = YES;
+    m_gameNameText.inputView = m_serverNamePick;//点击弹出的是pickview
+    
+    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar_server.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar_server.items = @[rb_server];
+    m_gameNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
+
+    
+    
+    
+    
     
     m_realmText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60 + startX, 180, 40)];
     m_realmText.returnKeyType = UIReturnKeyDone;
@@ -161,18 +188,18 @@
     [self.view addSubview:okButton];
     
     
-    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX + 205, 300, 40)];
-    bottomLabel.numberOfLines = 2;
-    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
-    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
-    bottomLabel.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:bottomLabel];
+//    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX + 205, 300, 40)];
+//    bottomLabel.numberOfLines = 2;
+//    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
+//    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
+//    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
+//    bottomLabel.backgroundColor = [UIColor clearColor];
+//    [self.view addSubview:bottomLabel];
     
-    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, startX + 227, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
-    searchBtn.backgroundColor = [UIColor clearColor];
-    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:searchBtn];
+//    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, startX + 227, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
+//    searchBtn.backgroundColor = [UIColor clearColor];
+//    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:searchBtn];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
@@ -181,8 +208,13 @@
 
 - (void)realmSelectClick:(id)sender
 {
+    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
+    realmVC.gameNum = [[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]]objectForKey:@"id"];
     [self.navigationController pushViewController:realmVC animated:YES];
 }
 
@@ -214,6 +246,30 @@
         default:
             break;
     }
+}
+- (void)selectServerNameOK
+{
+    [m_gameNameText resignFirstResponder];
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
+        
+        m_gameNameText.text = [dict objectForKey:@"name"];
+        
+        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[dict objectForKey:@"img"]]];
+        table_label_two.hidden = NO;
+        table_label_three.hidden = NO;
+        NSArray *sarchArray ;
+        sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"bindCharacterParams"];
+        table_label_two.text = [[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"] objectAtIndex:0]objectForKey:@"name"];
+        m_roleNameText.placeholder =[[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]objectAtIndex:0] objectForKey:@"tip"];
+        
+        table_label_three.text = [[sarchArray objectAtIndex:0] objectForKey:@"name"];
+        m_roleNameText.placeholder =[[sarchArray objectAtIndex:0] objectForKey:@"tip"];
+        
+    }
+    else
+        m_gameNameText.text = @"";
+    //m_clazzNamePick =nil;
 }
 
 - (void)addCharacterByNet
@@ -357,17 +413,35 @@
     [textField resignFirstResponder];
     return YES;
 }
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+#pragma mark 选择器
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-    if (textField == m_gameNameText) {
-//        if (self.viewType == CHA_TYPE_Add) {
-        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
-//        }
-        return NO;
-    }
-    return YES;
+    return 1;
 }
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return gameInfoArray.count;
+}
+
+- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+{
+    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+    return title;
+    
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    
+    //    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+    //    gameNum = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"id");
+    //    m_gameNameText.text =title;
+    //    [m_gameNameText resignFirstResponder];
+    
+}
+
+
+#pragma mark textField
+
 
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {

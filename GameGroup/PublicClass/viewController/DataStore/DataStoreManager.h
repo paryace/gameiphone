@@ -148,4 +148,8 @@
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(NSMutableArray *)queryNameIndex;
 
+
+
++(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
+
 @end
