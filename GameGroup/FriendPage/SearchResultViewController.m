@@ -96,9 +96,9 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
             if (m_pageNum ==0) {
-                m_titleLabel.text = [NSString stringWithFormat:@"查询结果(%@)",KISDictionaryHaveKey(responseObject,@"totalResults")];
+//                m_titleLabel.text = [NSString stringWithFormat:@"查询结果(%@)",KISDictionaryHaveKey(responseObject,@"totalResults")];
                 [m_tabelData removeAllObjects];
-                [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
+                [m_tabelData addObjectsFromArray:responseObject];
             }
             else{
                 
@@ -213,7 +213,7 @@
     NSDictionary* recDict = [m_tabelData objectAtIndex:indexPath.row];
 
     TestViewController *VC = [[TestViewController alloc]init];
-    VC.userId = KISDictionaryHaveKey(recDict, @"id");
+    VC.userId = KISDictionaryHaveKey(recDict, @"userid");
     VC.nickName = KISDictionaryHaveKey(recDict, @"nickname");
     
     

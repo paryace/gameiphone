@@ -78,10 +78,13 @@
 
     // Do any additional setup after loading the view.
     
-    UITableView *tableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 180+startX, 320, 88)];
+    UITableView *tableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 88)];
     tableview.delegate = self;
     tableview.dataSource = self;
     tableview.rowHeight = 44;
+    tableview.bounces =NO;
+    tableview.scrollEnabled = NO;
+
     [self.view addSubview:tableview];
     
 }
@@ -111,9 +114,15 @@
     UITableViewCell *cell =[[ UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     
     NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild", nil];
-    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 30, 30)];
+    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 24, 24)];
     iconImageView.image = KUIImage(array[indexPath.row]);
     [cell.contentView addSubview:iconImageView];
+    
+    
+    UIImageView *rightView = [[UIImageView alloc]initWithFrame:CGRectMake(300, 14, 8, 12)];
+    rightView.image = KUIImage(@"right_arrow");
+    [cell.contentView addSubview:rightView];
+    
     
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 0, 200, 40)];
     titleLabel.font = [UIFont systemFontOfSize:14];

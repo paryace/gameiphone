@@ -286,7 +286,12 @@
             
             
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
-            
+            int i = [KISDictionaryHaveKey(responseObject, @"characterTotalNum")intValue];
+            if (i==0) {
+                [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
+                return ;
+            }
+
             secGame.dataDic = responseObject;
             secGame.myInfoType = COME_ROLE;
             [self.navigationController pushViewController:secGame animated:YES];
@@ -313,6 +318,12 @@
         [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
+            
+            int i = [KISDictionaryHaveKey(responseObject, @"characterTotalNum")intValue];
+            if (i==0) {
+            [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
+                return ;
+            }
             secGame.dataDic = responseObject;
             secGame.myInfoType = COME_GUILD;
             [self.navigationController pushViewController:secGame animated:YES];
@@ -360,14 +371,14 @@
     return YES;
 }
 
-//- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-//{
-//    if (textField == m_gameNameText) {
-//        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
-//        return NO;
-//    }
-//    return YES;
-//}
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField == m_roleNameText&&(m_gameNameText.text ==nil||[m_gameNameText.text isEqualToString:@""]||[m_gameNameText.text isEqualToString:NULL])) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return NO;
+    }
+    return YES;
+}
 #pragma mark 手势
 - (void)tapTopViewClick:(id)sender
 {
