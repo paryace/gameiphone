@@ -513,12 +513,12 @@
             }
             else
             {
-                if (!img ||[img isEqualToString:@""]) {//1~11
-                    cell.heardImg.imageURL=nil;
-//                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_0.png"]];
+                if (!img ||[img isEqualToString:@""]||[img isEqualToString:@" "]) {//1~11
+//                    cell.heardImg.imageURL=nil;
+                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_0.png"]];
                 }
                 else
-                    cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/81"]];
+                    cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];
                 
                 
                 cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
