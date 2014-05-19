@@ -771,7 +771,7 @@
         {
 //            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:[KISDictionaryHaveKey(characterDic, @"realm") stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:KISDictionaryHaveKey(characterDic, @"clazz") auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
             
-            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[v1 stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",v3] img:img auth:[GameCommon getNewStringWithId:auth] Pro:v2];
+            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[[realm stringByAppendingString:@" "] stringByAppendingString:v1] pveScore:[NSString stringWithFormat:@"%@",v3] img:img auth:[GameCommon getNewStringWithId:auth] Pro:v2];
             
             
             

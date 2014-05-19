@@ -522,7 +522,7 @@
                     cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];
                 
                 
-                cell.realmLabel.text = [v1 stringByAppendingString:realm];
+                cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
             }
             if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
                 cell.authBg.hidden = NO;

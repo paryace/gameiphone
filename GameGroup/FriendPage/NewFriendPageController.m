@@ -178,13 +178,14 @@
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
-
+    NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
+    NSLog(@"imageid--->>%@",iamgeId);
+    NSURL *url=[self getHeadImageUrl:iamgeId];
+    NSLog(@"url--%@",url);
+    cell.headImageV.imageURL = url;
+    
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.sexImg.image =KUIImage(genderimage);
-    
-    
-    NSURL *url=[self getHeadImageUrl:KISDictionaryHaveKey(tempDict, @"img")];
-    cell.headImageV.imageURL = url;
     
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
