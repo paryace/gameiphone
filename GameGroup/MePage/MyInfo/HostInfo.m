@@ -70,6 +70,8 @@
         self.achievementArray = KISDictionaryHaveKey(info, @"title");//头衔
         
         self.state = KISDictionaryHaveKey(info, @"latestDynamicMsg");//动态
+        
+        self.charactersArr=KISDictionaryHaveKey(info, @"characters");//新角色
 
 //获取游戏角色列表
         //NSDictionary *charaDic = KISDictionaryHaveKey(info, @"dynamicmsg");
@@ -123,7 +125,7 @@
         self.clazzId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"clazz")];
         
         self.userName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"username")];
-        self.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"id")];
+        self.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"userid")];
         self.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"nickname")];
         self.telNumber = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"phoneNumber")];
         self.gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"gender")];

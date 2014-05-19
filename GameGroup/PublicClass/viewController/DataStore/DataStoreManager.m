@@ -703,140 +703,263 @@
     }
 }
 
-#pragma mark -存储所有人的列表信息
-+(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
+//#pragma mark -存储所有人的列表信息  （旧）
+//+(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
+//{
+//    NSString * alias = [GameCommon getNewStringWithId:[userInfo objectForKey:@"alias"]];//别名
+//    NSString * gameids = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gameids"]];
+//    NSString * gender = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gender"]];
+//    NSString * headImgID = [GameCommon getNewStringWithId:[userInfo objectForKey:@"img"]];
+//    NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];
+//    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];
+//    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为明星用户
+//    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];
+//    
+//    
+//    NSString * titleObj = @"";
+//    NSString * titleObjLevel = @"";
+//    NSDictionary* titleDic = KISDictionaryHaveKey(userInfo, @"title");
+//    if ([titleDic isKindOfClass:[NSDictionary class]]) {
+//        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
+//        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
+//    }
+//    else
+//    {
+//        if (title.length>0) {
+//            titleObj=title;
+//        }else{
+//            titleObj=@"暂无头衔";
+//        }
+//        if (rarenum.length>0) {
+//            titleObjLevel=rarenum;
+//        }else{
+//            titleObjLevel=@"6";
+//        }
+//    }
+//    
+//    NSString * userId = [GameCommon getNewStringWithId:[userInfo objectForKey:@"userid"]];
+//    NSString * myUserName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"username"]];
+//    
+//    NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];
+//    BOOL action;
+//    if ([[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]]intValue] == 2) {
+//        action =YES;
+//    }else{
+//        action =NO;
+//    }
+//    NSString * signature = [GameCommon getNewStringWithId:[userInfo objectForKey:@"signature"]];
+//    NSString * age = [GameCommon getNewStringWithId:[userInfo objectForKey:@"age"]];
+//    NSString * achievement = [GameCommon getNewStringWithId:[userInfo objectForKey:@"achievement"]];
+//    NSString * starSign = [GameCommon getNewStringWithId:[userInfo objectForKey:@"constellation"]];
+//    NSString * hobby = [GameCommon getNewStringWithId:[userInfo objectForKey:@"remark"]];
+//    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthdate"]];
+//    NSString * createTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"createTime"]];
+//    NSString * refreshTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"updateUserLocationDate"]];
+//    double distance = [KISDictionaryHaveKey(userInfo, @"distance") doubleValue];
+//    if (distance == -1) {//若没有距离赋最大值
+//        distance = 9999000;
+//    }
+//    NSString * superremark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superremark")];
+//    
+//    
+//    if (userId) {
+//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+//            
+//            
+//            DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
+//            if (!dUser)
+//                dUser = [DSuser MR_createInContext:localContext];
+//            
+//            
+//            dUser.userName = myUserName;
+//            dUser.nickName = nickName?(nickName.length>1?nickName:[nickName stringByAppendingString:@" "]):@"";
+//            dUser.action = [NSNumber numberWithBool:action];
+//            dUser.gender = gender?gender:@"";
+//            dUser.userId = userId?userId:@"";
+//            dUser.headImgID = headImgID?headImgID:@"";
+//            dUser.signature = signature?signature:@"";
+//            dUser.age = age?age:@"";
+//            dUser.backgroundImg = background;
+//            dUser.achievement = achievement?achievement:@"";
+//            
+//            dUser.starSign = starSign?starSign:@"";
+//            dUser.hobby = hobby?hobby:@"";
+//            dUser.birthday = birthday?birthday:@"";
+//            dUser.createTime = createTime?createTime:@"";
+//            dUser.remarkName = alias?alias:@"";
+//            
+//            dUser.superstar = superstar?superstar:@"";
+//            dUser.superremark = superremark?superremark:@"";
+//            dUser.shiptype = shiptype?shiptype:@"";
+//            dUser.achievement = titleObj;
+//            dUser.achievementLevel = titleObjLevel;
+//            dUser.refreshTime = refreshTime;
+//            dUser.distance = [NSNumber numberWithDouble:distance];
+//            dUser.gameids =gameids;
+//            
+//            NSString* pinYin =(alias==nil||[alias isEqualToString:@""])? nickName : alias;
+//            NSString * nameIndex;
+//            NSString * nameKey;
+//            if (nickName.length>=1) {
+//                nameKey = [[DataStoreManager convertChineseToPinYin:pinYin] stringByAppendingFormat:@"+%@",pinYin];
+//                nameKey = [nameKey stringByAppendingFormat:@"%@", userId];
+//                dUser.nameKey = nameKey;
+//                nameIndex = [[nameKey substringToIndex:1] uppercaseString];
+//                dUser.nameIndex = nameIndex;
+//            }
+//            
+//            
+//            if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&nickName.length>=1) {
+//                
+//                if ([dUser.shiptype isEqualToString:@"1"]) {
+//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+//                    DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
+//                    if (!dFname)
+//                        dFname = [DSNameIndex MR_createInContext:localContext];
+//                    
+//                    dFname.index = nameIndex;
+//                    return ;
+//                }
+//                if([dUser.shiptype isEqualToString:@"2"])
+//                {
+//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+//                    DSAttentionNameIndex * dFname = [DSAttentionNameIndex MR_findFirstWithPredicate:predicate2];
+//                    if (!dFname)
+//                        dFname = [DSAttentionNameIndex MR_createInContext:localContext];
+//                    
+//                    dFname.index = nameIndex;
+//                    return ;
+//                }
+//                if([dUser.shiptype isEqualToString:@"2"])
+//                {
+//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+//                    DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
+//                    if (!dFname)
+//                        dFname = [DSFansNameIndex MR_createInContext:localContext];
+//                    
+//                    dFname.index = nameIndex;
+//                    return ;
+//                }
+//                
+//            }
+//        }];
+//    }
+//}
+
+
+
+#pragma mark-存储所有人的列表信息 (新)
++(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-    NSString * alias = [GameCommon getNewStringWithId:[userInfo objectForKey:@"alias"]];//别名
-    NSString * gameids = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gameids"]];
-    NSString * gender = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gender"]];
-    NSString * headImgID = [GameCommon getNewStringWithId:[userInfo objectForKey:@"img"]];
-    NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];
-    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];
-    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为明星用户
-    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];
-    NSString * titleObj = @"";
-    NSString * titleObjLevel = @"";
-    NSDictionary* titleDic = KISDictionaryHaveKey(userInfo, @"title");
-    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
-        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
-    }
-    else
-    {
-        if (title.length>0) {
-            titleObj=title;
-        }else{
-            titleObj=@"暂无头衔";
-        }
-        if (rarenum.length>0) {
-            titleObjLevel=rarenum;
-        }else{
-            titleObjLevel=@"6";
-        }
-    }
-    
-    NSString * userId = [GameCommon getNewStringWithId:[userInfo objectForKey:@"userid"]];
-    NSString * myUserName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"username"]];
-    
-    NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];
-    BOOL action;
-    if ([[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]]intValue] == 2) {
+    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
+    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
+    NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];
+    BOOL action;//是否激活
+    if ([actionStr intValue] == 2) {
         action =YES;
     }else{
         action =NO;
     }
-    NSString * signature = [GameCommon getNewStringWithId:[userInfo objectForKey:@"signature"]];
-    NSString * age = [GameCommon getNewStringWithId:[userInfo objectForKey:@"age"]];
-    NSString * achievement = [GameCommon getNewStringWithId:[userInfo objectForKey:@"achievement"]];
-    NSString * starSign = [GameCommon getNewStringWithId:[userInfo objectForKey:@"constellation"]];
-    NSString * hobby = [GameCommon getNewStringWithId:[userInfo objectForKey:@"remark"]];
-    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthdate"]];
-    NSString * createTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"createTime"]];
-    NSString * refreshTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"updateUserLocationDate"]];
-    double distance = [KISDictionaryHaveKey(userInfo, @"distance") doubleValue];
+    NSString * age = [GameCommon getNewStringWithId:[userInfo objectForKey:@"age"]];//年龄
+    NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];//动态页面背景图
+    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthdate"]];//生日
+    NSString * createTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"createTime"]];//创建时间
+    double distance = [KISDictionaryHaveKey(userInfo, @"distance") doubleValue];//距离
     if (distance == -1) {//若没有距离赋最大值
         distance = 9999000;
     }
-    NSString * superremark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superremark")];
+    NSString * gameids = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gameids"]];//游戏Id
+    NSString * gender = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gender"]];//性别
+    NSString * headImgID = [GameCommon getNewStringWithId:[userInfo objectForKey:@"img"]];//头像
+    NSString * hobby = [GameCommon getNewStringWithId:[userInfo objectForKey:@"remark"]];//个人标签
+    NSString * myUserName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"username"]];//用户名（手机号）
+    NSString * refreshTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"updateUserLocationDate"]];//更新时间
+    NSString * alias = [GameCommon getNewStringWithId:[userInfo objectForKey:@"alias"]];//备注
+    NSString * signature = [GameCommon getNewStringWithId:[userInfo objectForKey:@"signature"]];//个性签名
+    NSString * starSign = [GameCommon getNewStringWithId:[userInfo objectForKey:@"constellation"]];//星座
+    NSString * superremark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superremark")];//加V说明
+    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为加V用户
+    NSString * userId = [GameCommon getNewStringWithId:[userInfo objectForKey:@"userid"]];//用户Id
+    NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];//昵称
+    NSString * nameIdx=[GameCommon getNewStringWithId:[userInfo objectForKey:@"nameIndex"]];
     
-    
+    NSString* pinYin =(alias==nil||[alias isEqualToString:@""])? nickName : alias;
+    NSString * nameIndex;
+    NSString * nameKey;
+    if (nickName.length>=1) {
+        nameKey = [[DataStoreManager convertChineseToPinYin:pinYin] stringByAppendingFormat:@"+%@",pinYin];
+        nameKey = [nameKey stringByAppendingFormat:@"%@", userId];
+        if (nameIdx && ![nameIdx isEqualToString:@""]) {
+            nameIndex=nameIdx;
+        }else{
+            nameIndex = [[nameKey substringToIndex:1] uppercaseString];
+        }
+    }
+
     if (userId) {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
-            
-            
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
             if (!dUser)
                 dUser = [DSuser MR_createInContext:localContext];
             
             
-            dUser.userName = myUserName;
-            dUser.nickName = nickName?(nickName.length>1?nickName:[nickName stringByAppendingString:@" "]):@"";
+            dUser.achievement = title?title:@"";
+            dUser.achievementLevel = rarenum?rarenum:@"";
             dUser.action = [NSNumber numberWithBool:action];
-            dUser.gender = gender?gender:@"";
-            dUser.userId = userId?userId:@"";
-            dUser.headImgID = headImgID?headImgID:@"";
-            dUser.signature = signature?signature:@"";
             dUser.age = age?age:@"";
             dUser.backgroundImg = background;
-            dUser.achievement = achievement?achievement:@"";
-            
-            dUser.starSign = starSign?starSign:@"";
-            dUser.hobby = hobby?hobby:@"";
             dUser.birthday = birthday?birthday:@"";
             dUser.createTime = createTime?createTime:@"";
-            dUser.remarkName = alias?alias:@"";
-            
-            dUser.superstar = superstar?superstar:@"";
-            dUser.superremark = superremark?superremark:@"";
-            dUser.shiptype = shiptype?shiptype:@"";
-            dUser.achievement = titleObj;
-            dUser.achievementLevel = titleObjLevel;
-            dUser.refreshTime = refreshTime;
             dUser.distance = [NSNumber numberWithDouble:distance];
-            dUser.gameids =gameids;
-            
-            NSString* pinYin =(alias==nil||[alias isEqualToString:@""])? nickName : alias;
-            NSString * nameIndex;
-            NSString * nameKey;
-            if (nickName.length>=1) {
-                nameKey = [[DataStoreManager convertChineseToPinYin:pinYin] stringByAppendingFormat:@"+%@",pinYin];
-                nameKey = [nameKey stringByAppendingFormat:@"%@", userId];
-                dUser.nameKey = nameKey;
-                nameIndex = [[nameKey substringToIndex:1] uppercaseString];
-                dUser.nameIndex = nameIndex;
-            }
-            
+            dUser.gameids =gameids?gameids:@"";
+            dUser.gender = gender?gender:@"";
+            dUser.headImgID = headImgID?headImgID:@"";
+            dUser.hobby = hobby?hobby:@"";
+            dUser.nameIndex = nameIndex?nameIndex:@"";
+            dUser.nameKey = nameKey?nameKey:@"";
+            dUser.nickName = nickName?(nickName.length>1?nickName:[nickName stringByAppendingString:@" "]):@"";
+            dUser.phoneNumber = myUserName?myUserName:@"";
+            dUser.refreshTime = refreshTime;
+            dUser.remarkName = alias?alias:@"";
+            dUser.shiptype = shiptype?shiptype:@"";
+            dUser.signature = signature?signature:@"";
+            dUser.starSign = starSign?starSign:@"";
+            dUser.superremark = superremark?superremark:@"";
+            dUser.superstar = superstar?superstar:@"";
+            dUser.userId = userId?userId:@"";
+            dUser.userName = myUserName?myUserName:@"";
             
             if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&nickName.length>=1) {
                 
-                if ([dUser.shiptype isEqualToString:@"1"]) {
+                if ([dUser.shiptype isEqualToString:@"1"]||[dUser.shiptype isEqualToString:@"2"]) {
                     NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                     DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
                     if (!dFname)
                         dFname = [DSNameIndex MR_createInContext:localContext];
                     
-                    dFname.index = nameIndex;
+                    dFname.index = nameIndex?nameIndex:@"";
                     return ;
                 }
-                if([dUser.shiptype isEqualToString:@"2"])
-                {
-                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-                    DSAttentionNameIndex * dFname = [DSAttentionNameIndex MR_findFirstWithPredicate:predicate2];
-                    if (!dFname)
-                        dFname = [DSAttentionNameIndex MR_createInContext:localContext];
-                    
-                    dFname.index = nameIndex;
-                    return ;
-                }
-                if([dUser.shiptype isEqualToString:@"2"])
+//                if([dUser.shiptype isEqualToString:@"2"])
+//                {
+//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+//                    DSAttentionNameIndex * dFname = [DSAttentionNameIndex MR_findFirstWithPredicate:predicate2];
+//                    if (!dFname)
+//                        dFname = [DSAttentionNameIndex MR_createInContext:localContext];
+//                    
+//                    dFname.index = nameIndex?nameIndex:@"";
+//                    return ;
+//                }
+                if([dUser.shiptype isEqualToString:@"3"])
                 {
                     NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                     DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
                     if (!dFname)
                         dFname = [DSFansNameIndex MR_createInContext:localContext];
                     
-                    dFname.index = nameIndex;
+                    dFname.index = nameIndex?nameIndex:@"";
                     return ;
                 }
                 
@@ -986,11 +1109,9 @@
                 [friendDict setObject:[NSString stringWithFormat:@"%.f", distance] forKey:@"distance"];
                 
                 [theDict setObject:friendDict forKey:nameK];
-                NSLog(@"thedict---%@",nameK);
                 
             }
         }
-         NSLog(@"thedictallKeys---%@",[theDict allKeys]);
         return theDict;
         
     }
@@ -1262,7 +1383,6 @@ return @"";
         NSString * achievementLevel = [[fri objectAtIndex:i] achievementLevel];//头衔
         NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
         double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
-        NSLog(@"昵称：%@ 距离：%.f",nickName, distance);
         if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             NSMutableDictionary * theDict = [NSMutableDictionary dictionary];
             [theDict setObject:userName forKey:@"username"];
@@ -1519,7 +1639,7 @@ return @"";
         return NO;
 }
 
-+(NSMutableArray *)querySections:(NSString*)shipType ShipType2:(NSString*)shipType2
++(NSMutableArray *)querySections
 {
     NSMutableArray * sectionArray = [NSMutableArray array];
     NSMutableArray * nameIndexArray = [self queryNameIndex];
@@ -1532,7 +1652,7 @@ return @"";
             NSString * shipType = [[fri objectAtIndex:i]shiptype];
             NSString * thename = [[fri objectAtIndex:i]userId];
             NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
+            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:@"1"])) {
                 [nameKeyArray addObject:nameK];
             }
         }
@@ -1544,31 +1664,33 @@ return @"";
 
 }
 
-+(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
-{
-    NSMutableArray * sectionArray = [NSMutableArray array];
-    NSMutableArray * nameIndexArray = [self queryNameIndex];
-    for (int i = 0; i<nameIndexArray.count; i++) {
-        NSMutableArray * array = [NSMutableArray array];
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
-        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
-        NSMutableArray * nameKeyArray = [NSMutableArray array];
-        for (int i = 0; i<fri.count; i++) {
-            NSString * shipType = [[fri objectAtIndex:i]shiptype];
-            NSString * thename = [[fri objectAtIndex:i]userId];
-            NSString * nameK = [[fri objectAtIndex:i]nameKey];
-            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
-                [nameKeyArray addObject:nameK];
-            }
-        }
-        [array addObject:[nameIndexArray objectAtIndex:i]];//M
-        [array addObject:nameKeyArray];//数组（Marss+Marss）
-        [sectionArray addObject:array];
-    }
-    return sectionArray;
-    
-}
+//+(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
+//{
+//    NSMutableArray * sectionArray = [NSMutableArray array];
+//    NSMutableArray * nameIndexArray = [self queryNameIndex];
+//    for (int i = 0; i<nameIndexArray.count; i++) {
+//        NSMutableArray * array = [NSMutableArray array];
+//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
+//        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
+//        NSMutableArray * nameKeyArray = [NSMutableArray array];
+//        for (int i = 0; i<fri.count; i++) {
+//            NSString * shipType = [[fri objectAtIndex:i]shiptype];
+//            NSString * thename = [[fri objectAtIndex:i]userId];
+//            NSString * nameK = [[fri objectAtIndex:i]nameKey];
+//            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
+//                [nameKeyArray addObject:nameK];
+//            }
+//        }
+//        [array addObject:[nameIndexArray objectAtIndex:i]];//M
+//        [array addObject:nameKeyArray];//数组（Marss+Marss）
+//        [sectionArray addObject:array];
+//    }
+//    return sectionArray;
+//    
+//}
+//
 
+//
 +(NSMutableArray *)queryNameIndex
 {
     NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
@@ -1580,6 +1702,63 @@ return @"";
     [nameIndexArray sortUsingSelector:@selector(compare:)];
     return nameIndexArray;
 }
+//---------------------------------------
+//查询好友
++(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
+{
+    NSMutableDictionary *userInfo=[[NSMutableDictionary alloc]init];
+    NSMutableDictionary *userList=[[NSMutableDictionary alloc]init];
+    NSMutableArray * nameIndexArray = [NSMutableArray array];
+    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
+    for (int i = 0; i<nameIndexArray2.count; i++) {
+        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
+        [nameIndexArray addObject:di.index];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
+        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
+        NSMutableArray * usersarray= [NSMutableArray array];
+        
+        for (int i = 0; i<fri.count; i++) {
+             NSString * shipType = [[fri objectAtIndex:i]shiptype];
+            if ([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2]) {
+                NSMutableDictionary *user= [self getUserDictionary:[fri objectAtIndex:i]];
+                [usersarray addObject:user];
+            }
+        }
+        [userList setValue:usersarray forKey:[di index]];
+    }
+    [nameIndexArray sortUsingSelector:@selector(compare:)];
+    [userInfo setObject:nameIndexArray forKey:@"nameKey"];
+    [userInfo setObject:userList forKey:@"userList"];
+    return userInfo;
+}
+
++(NSMutableDictionary *)getUserDictionary:(id)dbUser
+{
+    NSMutableDictionary *user=[[NSMutableDictionary alloc]init];
+    [user setObject:[dbUser userName]?[dbUser userName]:@"" forKey:@"username"];
+    [user setObject:[dbUser userId]?[dbUser userId]:@"" forKey:@"userid"];
+    [user setObject:[dbUser nickName]?[dbUser nickName]:@"" forKey:@"nickname"];
+    [user setObject:[dbUser headImgID]?[dbUser headImgID]:@"" forKey:@"img"];
+    [user setObject:[dbUser age]?[dbUser age]:@"" forKey:@"age"];
+    [user setObject:[dbUser gender]?[dbUser gender]:@"" forKey:@"gender"];
+    [user setObject:[dbUser achievement]?[dbUser achievement]:@"" forKey:@"titleName"];
+    [user setObject:[dbUser achievementLevel]?[dbUser achievementLevel]:@"" forKey:@"rarenum"];
+    [user setObject:[dbUser refreshTime]?[dbUser refreshTime]:@"" forKey:@"updateUserLocationDate"];
+    [user setObject:[dbUser distance]?[dbUser distance]:@"" forKey:@"distance"];
+    [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
+    if (![dbUser remarkName] || [[dbUser remarkName] isEqualToString:@""]) {
+        if(![dbUser nickName] || [[dbUser nickName] isEqualToString:@""]){
+            [user setObject:@"" forKey:@"alias"];
+            
+        }else{
+            [user setObject:[dbUser nickName] forKey:@"alias"];
+        }
+    }else{
+        [user setObject:[dbUser remarkName] forKey:@"alias"];
+    }
+    return user;
+}
+//---------------------------------------
 
 + (void)saveFriendRemarkName:(NSString*)remarkName userid:(NSString *)userid
 {

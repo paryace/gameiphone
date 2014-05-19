@@ -187,7 +187,7 @@
         
         [app.xmppHelper connect];
         
-        [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
+        [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
         
         [[UserManager singleton]getSayHiUserId];//获取打招呼id

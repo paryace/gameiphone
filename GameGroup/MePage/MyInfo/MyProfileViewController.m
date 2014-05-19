@@ -831,7 +831,7 @@
 
         NSLog(@"%@", responseObject);
         
-        [DataStoreManager saveAllUserWithUserManagerList:responseObject withshiptype:@"5"];
+        [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"5"];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

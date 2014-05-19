@@ -341,7 +341,8 @@
     }
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
+//    [postDict setObject:@"106" forKey:@"method"];
+        [postDict setObject:@"201" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
  
     [hud show:YES];
@@ -369,7 +370,7 @@
 //        }else{
 //        }
 
-        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        [DataStoreManager newSaveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
         
         if ([hostInfo.relation isEqualToString:@"1"]) {

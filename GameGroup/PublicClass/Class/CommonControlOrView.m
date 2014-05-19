@@ -144,27 +144,39 @@
 }
 
 //我的角色
-+ (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString *)auth
++ (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString *)auth Pro:(NSString*)pro
 {
     UIView* myView = [[UIView alloc] init];
     
-    UIImageView* heardImg = [[UIImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
+//    UIImageView* heardImg = [[UIImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
+//    heardImg.backgroundColor = [UIColor clearColor];
+//    int imageId = [image intValue];
+//    if (imageId > 0 && imageId < 12) {//1~11
+//        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+//    }
+//    else
+//        heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+
+    
+    
+    EGOImageView* heardImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     heardImg.backgroundColor = [UIColor clearColor];
-    int imageId = [image intValue];
-    if (imageId > 0 && imageId < 12) {//1~11
-        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+    if (!image ||[image isEqualToString:@""]) {//1~11
+        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_0.png"]];
     }
     else
-        heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-    [myView addSubview:heardImg];
+        heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];
+
     
+    
+    [myView addSubview:heardImg];
     UILabel* oneLabel =  [CommonControlOrView setLabelWithFrame:CGRectMake(55, 5, 120, 20) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont boldSystemFontOfSize:15.0] text:text textAlignment:NSTextAlignmentLeft];
     [myView addSubview:oneLabel];
-    
+    //---
     UIImageView* gameIg = [[UIImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
     gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
     [myView addSubview:gameIg];
-    
+    //---
     UILabel* twoLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(75, 30, 100, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:14.0] text:realm textAlignment:NSTextAlignmentLeft];
     [myView addSubview:twoLabel];
     
@@ -185,7 +197,7 @@
     pveTitle.textColor = UIColorFromRGBA(0xa7a7a7,1.0);
     pveTitle.textAlignment = NSTextAlignmentCenter;
     pveTitle.font = [UIFont boldSystemFontOfSize:13.0];
-    pveTitle.text = @"战斗力";
+    pveTitle.text = pro;
     pveTitle.backgroundColor = [UIColor clearColor];
     [myView addSubview:pveTitle];
     UIImageView* authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];

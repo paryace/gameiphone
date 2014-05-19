@@ -10,18 +10,18 @@
 
 @interface HostInfo : NSObject
 
-@property (strong,nonatomic) NSDictionary* infoDic;
-@property (strong,nonatomic) NSString * userName;
-@property (strong,nonatomic) NSString * userId;
-@property (strong,nonatomic) NSString * nickName;
+@property (strong,nonatomic) NSDictionary* infoDic;//
+@property (strong,nonatomic) NSString * userName;//用户名（手机号）
+@property (strong,nonatomic) NSString * userId;//用户id
+@property (strong,nonatomic) NSString * nickName;//昵称
 @property (assign,nonatomic) BOOL  active;//激活状态
-@property (strong,nonatomic) NSString * telNumber;
-@property (strong,nonatomic) NSString * gender;
-@property (strong,nonatomic) NSString * age;
-@property (strong,nonatomic) NSString * birthdate;
+@property (strong,nonatomic) NSString * telNumber;//电话号码
+@property (strong,nonatomic) NSString * gender;//性别
+@property (strong,nonatomic) NSString * age;//年龄
+@property (strong,nonatomic) NSString * birthdate;//生日
 @property (strong,nonatomic) NSString * characterid;//游戏角色ID
 @property (strong,nonatomic) NSString * signature;
-@property (strong,nonatomic) NSString * hobby;
+@property (strong,nonatomic) NSString * hobby;//爱好
 @property (strong,nonatomic) NSString * region;
 @property (strong,nonatomic) NSString * latitude;//位置
 @property (strong,nonatomic) NSString * longitude;
@@ -40,13 +40,16 @@
 @property (strong,nonatomic) NSString * headImgStr;//我 里面的头像数组
 @property (strong,nonatomic) NSArray * headImgArray;
 
-@property (strong,nonatomic) NSString* backgroundImg;
+@property (strong,nonatomic) NSString* backgroundImg;//动态页面的背景图
 
 @property (strong,nonatomic) NSMutableArray* achievementArray;//头衔
 
 @property (strong,nonatomic) NSString* starSign;//星座
 @property (strong,nonatomic) NSString* alias;//别名
 @property (strong, nonatomic) NSDictionary* characters;//角色
+
+@property (strong, nonatomic) NSMutableArray* charactersArr;//新的角色
+
 
 - (id)initWithHostInfo:(NSDictionary*)info;
 @end

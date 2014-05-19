@@ -77,33 +77,88 @@ static UserManager *userManager = NULL;
     [paramDict setObject:userId forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
-//    [postDict setObject:@"201" forKey:@"method"];
+//    [postDict setObject:@"106" forKey:@"method"];//旧接口
+    [postDict setObject:@"201" forKey:@"method"];//新接口
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        [self saveUserInfo:responseObject UserId:userId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
+    }];
+}
+
+
+////保存用户信息  旧接口
+//-(void)saveUserInfo:(id)responseObject UserId:(NSString*)userId
+//{
+//    dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
+//    dispatch_async(queue, ^{
+//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
+//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
+//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+//            [recDict setObject:titleDictionary forKey:@"title"];
+//        }
+//        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
+//        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
+//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        }else{
+//            [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
+//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        }
+//        
+//        [self updateMsgInfo:recDict];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
+//        });
+//    });
+//}
+
+
+
+
+//保存用户信息  新接口
+-(void)saveUserInfo:(id)responseObject UserId:(NSString*)userId
+{
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
+    dispatch_async(queue, ^{
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
         if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-            [recDict setObject:[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0] forKey:@"title"];
+            
+            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
+            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
+            [recDict setObject:titleObj forKey:@"titleName"];
+            [recDict setObject:titleObjLevel forKey:@"rarenum"];
         }
         //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
         if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
-            [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }else{
             [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
-            [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
-
-            [DataStoreManager storeThumbMsgUser:userId nickName:KISDictionaryHaveKey(recDict, @"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
-
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    
-     [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
-    }];
+        
+        [self updateMsgInfo:recDict];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
+        });
+    });
 }
+
+
+//更新消息表
+-(void)updateMsgInfo:(NSMutableDictionary*) userDict
+{
+    NSString * nickName=KISDictionaryHaveKey(userDict, @"nickname");
+    NSString * userImg=KISDictionaryHaveKey(userDict,@"img");
+    NSString * userId=KISDictionaryHaveKey(userDict,@"id");
+    [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];
+}
+
+
+
+
 -(void)getSayHiUserId
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

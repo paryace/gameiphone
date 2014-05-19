@@ -92,7 +92,8 @@
     [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
+//    [postDict setObject:@"106" forKey:@"method"];
+    [postDict setObject:@"201" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     if (!m_hostInfo) {
@@ -106,7 +107,7 @@
 
             [m_myTableView reloadData];
             
-            [DataStoreManager saveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -245,8 +246,12 @@
         } break;
         case 2:
         {
-            if ([KISDictionaryHaveKey(m_hostInfo.characters, @"1") isKindOfClass:[NSArray class]]) {
-                return [KISDictionaryHaveKey(m_hostInfo.characters, @"1") count];//角色
+//            if ([KISDictionaryHaveKey(m_hostInfo.characters, @"1") isKindOfClass:[NSArray class]]) {
+//                return [KISDictionaryHaveKey(m_hostInfo.characters, @"1") count];//角色
+//            }
+            
+            if ([m_hostInfo.charactersArr count] != 0) {
+                return [m_hostInfo.charactersArr count];//角色
             }
             return 1;
         }break;
@@ -423,14 +428,18 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
 
-        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
+//        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界 旧的
+        
+        NSMutableArray* characterArray = m_hostInfo.charactersArr;//魔兽世界 新的
+        
+        
         [[NSUserDefaults standardUserDefaults]setObject:characterArray forKey:@"CharacterArrayOfAllForYou"];
         
         
-        if (![characterArray isKindOfClass:[NSArray class]]) {
-            
-//            cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-//            cell.nameLabel.text = @"暂无角色";
+//        if (![characterArray isKindOfClass:[NSArray class]]) {
+            if ([characterArray count]<=0) {
+//          cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+//          cell.nameLabel.text = @"暂无角色";
             cell.heardImg.hidden = YES;
             cell.authBg.hidden = YES;
             cell.nameLabel.hidden = YES;
@@ -534,8 +543,12 @@
 
 - (void)CellOneButtonClick:(NSInteger)rowIndex
 {
-    NSMutableArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
-    if (![characterArray isKindOfClass:[NSArray class]]) {
+//    NSMutableArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
+//    if (![characterArray isKindOfClass:[NSArray class]]) {
+//        return;
+//    }
+    
+    if ([m_hostInfo.charactersArr count]>0) {
         return;
     }
     m_refreshCharaIndex = rowIndex;
@@ -550,7 +563,10 @@
 {
     if (alertView.tag == 112) {
         if (buttonIndex != alertView.cancelButtonIndex) {
-            NSMutableArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
+//            NSMutableArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
+            NSMutableArray* characterArray =m_hostInfo.charactersArr;//魔兽世界
+            
+            
             NSDictionary* tempDic = [characterArray objectAtIndex:m_refreshCharaIndex];
             if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
             {
@@ -700,8 +716,17 @@
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
         CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
-        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
-        if (![characterArray isKindOfClass:[NSArray class]]){
+//        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
+//        if (![characterArray isKindOfClass:[NSArray class]]){
+//            CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
+//            characterVC.isFromMeet =NO;
+//            
+//            [self.navigationController pushViewController:characterVC animated:YES];
+//            NSLog(@"添加角色");
+//        }
+        
+         NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
+        if ([characterArray count]>0){
             CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
             characterVC.isFromMeet =NO;
             

@@ -381,20 +381,20 @@
 
 -(void)parseFriendsList:(id)friendsList withType:(NSString *)shiptype
 {
-    [DataStoreManager deleteAllUserWithShipType:@"1"];//先清，在存
+//    [DataStoreManager deleteAllUserWithShipType:@"1"];//先清，在存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([friendsList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [friendsList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [friendsList objectForKey:key]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
                 }
             }
         }
         else if([friendsList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in friendsList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
             };
         }
         [self getFriendDateFromDataSore];//从数据库取数据显示
@@ -447,20 +447,20 @@
 
 -(void)parseAttentionsList:(id)attentionList withshiptype:(NSString *)shiptype
 {
-    [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
+//    [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
     dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
     dispatch_async(queue, ^{
         if ([attentionList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [attentionList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [attentionList objectForKey:key]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
+                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"2"];
                 }
             }
         }
         else if([attentionList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in attentionList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"2"];
+                [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"2"];
             }
         }
         [self setAttentionDateFromDataSore];
@@ -528,14 +528,14 @@
     dispatch_async(queue, ^{
         if([fansList isKindOfClass:[NSArray class]]){
             for (NSDictionary * dict in fansList) {
-                [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
         else if ([fansList isKindOfClass:[NSDictionary class]]) {
             NSArray* keyArr = [fansList allKeys];
             for (NSString* key in keyArr) {
                 for (NSMutableDictionary * dict in [fansList objectForKey:key]) {
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:@"3"];
+                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
                 }
             }
         }

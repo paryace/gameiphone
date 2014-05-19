@@ -168,7 +168,7 @@
         [hud hide:YES];
         NSLog(@"%@", responseObject);
         
-        [DataStoreManager saveAllUserWithUserManagerList:responseObject withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

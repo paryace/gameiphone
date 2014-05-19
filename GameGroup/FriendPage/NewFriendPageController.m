@@ -16,42 +16,46 @@
 #import "TestViewController.h"
 #import "AddFriendsViewController.h"
 @interface NewFriendPageController (){
+    
+    NSDictionary* resultArray;//数据集合
+    NSArray* keyArr;//字母集合
+    
     UITableView*  m_myTableView;
     MJRefreshHeaderView *m_Friendheader;
-    NSMutableDictionary * m_friendDict;
-    NSMutableArray * m_sectionArray_friend;
-    NSMutableArray * m_sectionIndexArray_friend;
     NSString *fansNum;
-    
 }
 @property (nonatomic, strong) UIView *topView;
 @end
 
 @implementation NewFriendPageController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-    }
-    return self;
-}
--(void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    if (![[TempData sharedInstance] isHaveLogin]) {
+        [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
+        return;
+    }
+}
+
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     [self getFriendDateFromDataSore];
     [m_myTableView reloadData];
     [self getFriendListFromNet];
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"通讯录" withBackButton:NO];
-
-    m_friendDict = [NSMutableDictionary dictionary];
-    m_sectionArray_friend = [NSMutableArray array];
-    m_sectionIndexArray_friend = [NSMutableArray array];
+    
+    resultArray =[NSDictionary dictionary];
+    keyArr=[NSArray array];
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
@@ -71,8 +75,8 @@
         [hud hide:NO];
     }
     self.view.backgroundColor=[UIColor blackColor];
+    
 }
-
 
 - (UIView *)topView{
     if (!_topView) {
@@ -111,6 +115,7 @@
     switch (sender.tag) {
         case 0:
         {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             NSString *userid=[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
             FunsOfOtherViewController *fans = [[FunsOfOtherViewController alloc]init];
             fans.userId = userid;
@@ -119,18 +124,21 @@
             break;
         case 1:
         {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             NearFriendsViewController *addVC = [[NearFriendsViewController alloc]init];
             [self.navigationController pushViewController:addVC animated:YES];
         }
             break;
         case 2:
         {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];
             [self.navigationController pushViewController:addVC animated:YES];
         }
             break;
         case 3:
         {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             AddFriendsViewController * addV = [[AddFriendsViewController alloc] init];
             [self.navigationController pushViewController:addV animated:YES];
 
@@ -143,15 +151,12 @@
 //返回组的数量
 #pragma mark 表格
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return m_sectionIndexArray_friend.count;
+    return  keyArr.count;
 }
 //返回每个组里面的数据条数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (m_sectionArray_friend==nil||[m_sectionArray_friend count]==0||section>[m_sectionArray_friend count]) {
-        return 0;
-    }
-    return [[[m_sectionArray_friend objectAtIndex:section] objectAtIndex:1] count];
+    return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -168,90 +173,85 @@
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    NSDictionary * tempDict;
-   tempDict= [m_friendDict objectForKey:[[[m_sectionArray_friend objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];//
-    }
-    else
-    {
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];//
-    }
+    NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     
-    if ([KISDictionaryHaveKey(tempDict, @"sex")intValue]==0)
-    {
-        cell.sexImg.image = KUIImage(@"gender_boy");
-    }else
-    {
-        cell.sexImg.image = KUIImage(@"gender_girl");
-    }
     
-    if ([KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "]) {
-        cell.headImageV.imageURL = nil;
-    }else{
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]) {
-            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] stringByAppendingString:@"/80"]];
-        }else{
-            cell.headImageV.imageURL = nil;
-        }
-    }
+    NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+    cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
+
+    NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+    cell.sexImg.image =KUIImage(genderimage);
+    
+    
+    NSURL *url=[self getHeadImageUrl:KISDictionaryHaveKey(tempDict, @"img")];
+    cell.headImageV.imageURL = url;
+    
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     cell.gameImg_one.image = KUIImage(@"wow");
-    NSString *titleName=KISDictionaryHaveKey(tempDict, @"achievement");
+    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
-    
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
     cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
     return cell;
 }
-
-
+//头像地址
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80"]];
+        }else{
+            return  nil;
+        }
+    }
+}
+//头像默认图片
+-(NSString*)headPlaceholderImage:(NSString*)gender
+{
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        return @"people_man.png";
+    }
+    else
+    {
+        return @"people_woman.png";//
+    }
+}
+//性别图标
+-(NSString*)genderImage:(NSString*)gender
+{
+    if ([gender intValue]==0)
+    {
+       return @"gender_boy";
+    }else
+    {
+        return @"gender_girl";
+    }
+}
+//点击Table进入个人详情
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary * tempDict;
     [[Custom_tabbar showTabBar] hideTabBar:YES];
+    NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     TestViewController *detailVC = [[TestViewController alloc]init];
-    
-    
-    tempDict = [m_friendDict objectForKey:[[[m_sectionArray_friend objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
-    detailVC.viewType = VIEW_TYPE_FriendPage1;
-
-    detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
-    detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel") ;
-    detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"sex");
-    
-    detailVC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] ;
-    detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
-    detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
-    detailVC.nickName = KISDictionaryHaveKey(tempDict, @"displayName");
-    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
-    detailVC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")];
-    detailVC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"createTime")];
-    if([KISDictionaryHaveKey(tempDict, @"active")intValue]==2){
-        detailVC.isActiveAc =YES;
-    }
-    else{
-        detailVC.isActiveAc =NO;
-    }
-    
-    detailVC.isChatPage = NO;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 //返回索引的字母
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-  NSString * keyName= [m_sectionIndexArray_friend objectAtIndex:section];
+    NSString * keyName =[keyArr objectAtIndex:section];
     return keyName;
 }
 // 返回索引列表的集合
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-   return m_sectionIndexArray_friend;
+    return keyArr;
 }
 
 #pragma mark 请求数据
@@ -264,31 +264,37 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     [hud hide:YES];
-                    [self saveFriendsList:responseObject];
-                    [self getFriendDateFromDataSore];
+                    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                        fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
+                        [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        NSDictionary* result = [responseObject objectForKey:@"contacts"];
+                        NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
+                        [keys sortUsingSelector:@selector(compare:)];
+                        
+                        resultArray =result;
+                        keyArr = keys;
+                        [self setFansNum];
+                        [m_myTableView reloadData];
+                        //保存
+                        [self saveFriendsList:result Keys:keys];
+                    }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
                         [hud hide:YES];
                 }];
 }
 //保存用户列表信息
--(void)saveFriendsList:(id)responseObject
+-(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
-        [DataStoreManager deleteAllUserWithShipType:@"1"];
-        [DataStoreManager deleteAllUserWithShipType:@"2"];
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
-            [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            NSDictionary* resultArray = [responseObject objectForKey:@"contacts"];
-            NSArray* keyArr = [resultArray allKeys];
-            for (NSString* key in keyArr) {
-                for (NSMutableDictionary * dict in [resultArray objectForKey:key]) {
-                    NSString *shiptype=[dict objectForKey:@"shiptype"];
-                    [DataStoreManager saveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                }
+        for (int i=0; i<[keys count]; i++) {
+            NSString *key=[keys objectAtIndex:i];
+            for (NSMutableDictionary * dict in [result objectForKey:key]) {
+                [dict setObject:key forKey:@"nameIndex"];
+                NSString *shiptype=[dict objectForKey:@"shiptype"];
+                [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
             }
         }
     });
@@ -299,13 +305,9 @@
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
-        m_friendDict = [DataStoreManager newQueryAllUserManagerWithshipType:@"1" ShipType2:@"2"];//所有朋友
-        m_sectionArray_friend = [DataStoreManager newQuerySections:@"2" ShipType2:@"2"];
-        [m_sectionIndexArray_friend removeAllObjects];
-        for (int i = 0; i < m_sectionArray_friend.count; i++) {
-            NSString * str=[[m_sectionArray_friend objectAtIndex:i] objectAtIndex:0];
-            [m_sectionIndexArray_friend addObject:str];
-        }
+        NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+        keyArr = [userinfo objectForKey:@"nameKey"];
+        resultArray = [userinfo objectForKey:@"userList"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setFansNum];
             [m_myTableView reloadData];

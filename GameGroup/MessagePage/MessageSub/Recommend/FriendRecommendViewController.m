@@ -261,7 +261,8 @@
 
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"106" forKey:@"method"];
+//    [postDict setObject:@"106" forKey:@"method"]; 
+    [postDict setObject:@"201" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
 
     [hud show:YES];
@@ -275,12 +276,12 @@
         
         if ([recDict isKindOfClass:[NSDictionary class]]) {
             if (type == 2) {//关注
-                [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+                [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
             }
             else if (type == 1)
             {
-                [DataStoreManager saveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+                [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
             }
         }

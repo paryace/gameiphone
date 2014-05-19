@@ -24,7 +24,7 @@
 
 
 //我的角色
-+ (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString*)auth;
++ (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString*)auth Pro:(NSString*)pro;
 
 //我的头衔
 + (UIView*)setMyTitleObjWithImage:(NSString*)imageName titleName:(NSString*)titleName rarenum:(NSString*)rarenum showCurrent:(BOOL)isNoShow

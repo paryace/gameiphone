@@ -68,6 +68,9 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:YES];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
+    
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
@@ -82,13 +85,7 @@
     else//没有详情 请求
     {
         if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]) {//有值 查找用户
-            //将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
-            NSMutableData *data= [NSMutableData data];
-            NSDictionary *dic = [NSDictionary dictionary];
-            data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-            NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-            dic = [unarchiver decodeObjectForKey: @"getDatat"];
-            [unarchiver finishDecoding];
+            NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
             self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
             [self setInfoViewType:self.hostInfo];
             [self setBottomView];
@@ -101,9 +98,54 @@
             [[UserManager singleton]requestUserFromNet:self.userId];
         }
     }
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
+}
+//从缓存获取用户信息
+-(NSDictionary*)getUserInfo:(NSString*)userId
+{
+    NSMutableData *data= [NSMutableData data];//将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
+    NSDictionary *dic = [NSDictionary dictionary];
+    data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    dic = [unarchiver decodeObjectForKey: @"getDatat"];
+    [unarchiver finishDecoding];
+    return  dic;
+}
+
+//保存用户信息到缓存
+-(void)saveUserInfo:(NSString*)userId UserInfo:(NSDictionary*) userInfodictionary
+{
+    NSMutableData *data= [[NSMutableData alloc]init]; //将获取到的数据转换成NSData类型保存到nsuserdefaults中
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:userInfodictionary forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+}
+//用户信息获取成功接收到的广播
+-(void)getInfoFromUserManager:(NSNotification *)notification
+{
+    if (![[[notification.userInfo objectForKey:@"user"] objectForKey:@"userid"]isEqualToString:self.userId])
+    {
+        return;
+    }
+    NSDictionary *dictionary = notification.userInfo;
+    [self saveUserInfo:self.userId UserInfo:dictionary];//保存
+    NSArray *views = [self.view subviews];
+    for(UIView* view in views)
+    {
+        [view removeFromSuperview];
+    }
+    [self setTopViewWithTitle:@"" withBackButton:YES];
+    self.hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+    [self setInfoViewType:self.hostInfo];
+    [self setBottomView];//设置底部按钮
+    //重新设置标题
+    m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
+    [self buildMainView];
+}
+//用户信息获取失败接收到的广播
+-(void)getInfoFromUserManagerFail
+{
+    NSLog(@"获取失败");
 }
 -(void)setInfoViewType:(HostInfo*)hostInfo
 {
@@ -127,58 +169,6 @@
         self.viewType = VIEW_TYPE_STRANGER1;
     }
 }
-
--(void)getInfoFromUserManager:(NSNotification *)notification
-{
-    
-    if (![[[notification.userInfo objectForKey:@"user"] objectForKey:@"id"]isEqualToString:self.userId])
-    {
-        return;
-    }
-    NSDictionary *dictionary = notification.userInfo;
-    //将获取到的数据转换成NSData类型保存到nsuserdefaults中
-    
-    NSMutableData *data= [[NSMutableData alloc]init];
-    
-    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-    
-    [archiver encodeObject:dictionary forKey: @"getDatat"];
-    
-    [archiver finishEncoding];
-    
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
-    NSLog(@"self.userid%@",self.userId);
-    NSArray *views = [self.view subviews];
-    
-    for(UIView* view in views)
-    {
-        [view removeFromSuperview];
-    }
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    self.hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
-    [self setInfoViewType:self.hostInfo];
-    [self setBottomView];
-    
-    m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
-    NSLog(@"m_titlelabel%@",m_titleLabel.text);
-    if (self.hostInfo.achievementArray && [self.hostInfo.achievementArray count] != 0) {
-        NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
-        [dic addEntriesFromDictionary:self.hostInfo.infoDic];
-        [dic setObject:[self.hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-        [DataStoreManager saveAllUserWithUserManagerList:dic withshiptype:self.hostInfo.relation];
-    }
-    else{
-        [DataStoreManager saveAllUserWithUserManagerList:self.hostInfo.infoDic withshiptype:self.hostInfo.relation];
-    }
-    [self buildMainView];
-}
-
-
--(void)getInfoFromUserManagerFail
-{
-    NSLog(@"获取失败");
-}
-
 -(void)buildInitialize
 {
     UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -742,22 +732,49 @@
     
     m_currentStartY += 30;
     
-    NSArray* charactersArr = KISDictionaryHaveKey(self.hostInfo.characters, @"1");
+//    NSArray* charactersArr = KISDictionaryHaveKey(self.hostInfo.characters, @"1");
+    
+     NSArray * charactersArr = self.hostInfo.charactersArr;
+    
     if (![charactersArr isKindOfClass:[NSArray class]]) {
         return;
     }
     for (int i = 0; i < [charactersArr count]; i++) {
         NSDictionary* characterDic = [charactersArr objectAtIndex:i];
-        NSString* realm = [KISDictionaryHaveKey(characterDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(characterDic, @"raceObj"), @"sidename") : @"";
-        if ([KISDictionaryHaveKey(characterDic, @"failedmsg")intValue ]==404)//角色不存在
+        
+        
+        
+        
+//        NSString* realm = [KISDictionaryHaveKey(characterDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(characterDic, @"raceObj"), @"sidename") : @"";
+       NSString* realm =  KISDictionaryHaveKey(characterDic, @"realm");//服务器
+       NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"gameid")];//游戏Id
+        NSString* v1=KISDictionaryHaveKey(characterDic, @"value1");//部落
+        NSString* v2=KISDictionaryHaveKey(characterDic, @"value2");//战斗力
+        NSString* v3=KISDictionaryHaveKey(characterDic, @"value3");//战斗力数
+        NSString* auth=KISDictionaryHaveKey(characterDic, @"auth");
+        NSString* name=KISDictionaryHaveKey(characterDic, @"name");
+        NSString* failedmsg=KISDictionaryHaveKey(characterDic, @"failedmsg");
+        NSString* img=KISDictionaryHaveKey(characterDic, @"img");//角色图标
+        
+        if ([failedmsg intValue ]==404)//角色不存在
         {
-            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:@"0" auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
+//            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:@"0" auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
+//            myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
+//            [m_myScrollView addSubview:myCharacter];
+            
+            
+            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:[GameCommon getNewStringWithId:auth] Pro:v2];
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
         }
         else
         {
-            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:[KISDictionaryHaveKey(characterDic, @"realm") stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:KISDictionaryHaveKey(characterDic, @"clazz") auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
+//            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:[KISDictionaryHaveKey(characterDic, @"realm") stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:KISDictionaryHaveKey(characterDic, @"clazz") auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
+            
+            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[v1 stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",v3] img:img auth:[GameCommon getNewStringWithId:auth] Pro:v2];
+            
+            
+            
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
             
@@ -771,24 +788,21 @@
             
             
             
-            //            [myCharacter setTag:i+1000];
-            //            [myCharacter addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapMyCharacter:)]];
+            //[myCharacter setTag:i+1000];
+            //[myCharacter addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapMyCharacter:)]];
         }
         m_currentStartY += 60;
         [self setOneLineWithY:m_currentStartY];
     }
 }
 
-
+//点击角色
 -(void)tapMyCharacter:(UIButton *)sender
 {
-    
     NSLog(@"点击角色%d",sender.tag);
-    
     CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
-    
-    NSArray* characterArray = KISDictionaryHaveKey(self.hostInfo.characters, @"1");//魔兽世界
-    
+//  NSArray* characterArray = KISDictionaryHaveKey(self.hostInfo.characters, @"1");//魔兽世界
+    NSArray* characterArray = self.hostInfo.charactersArr;
     if ([characterArray isKindOfClass:[NSArray class]]){
         NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
         CVC.characterId = KISDictionaryHaveKey(dic, @"id");
@@ -844,7 +858,7 @@
 
 
 
-
+//点击头衔
 - (void)titleObjSelectClick:(UIButton*)selectBut
 {
     TitleObjDetailViewController* detailVC = [[TitleObjDetailViewController alloc] init];
