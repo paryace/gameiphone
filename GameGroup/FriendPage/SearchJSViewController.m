@@ -9,6 +9,8 @@
 #import "SearchJSViewController.h"
 #import "SearchRoleViewController.h"
 #import "SearchWithGameViewController.h"
+#import "HelpViewController.h"
+#import "EGOImageView.h"
 @interface SearchJSViewController ()
 {
     UIScrollView *m_roleView;
@@ -17,7 +19,7 @@
     UITextField *m_roleNameText;
     UIPickerView *m_serverNamePick;
     NSMutableArray *gameInfoArray;
-    UIImageView* gameImg;
+    EGOImageView* gameImg;
     UILabel* table_label_two;
     UILabel* table_label_three;
 }
@@ -42,6 +44,8 @@
     }else{
         [self setTopViewWithTitle:@"搜索游戏组织" withBackButton:YES];
     }
+    
+    
     m_roleView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_roleView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_roleView];
@@ -94,7 +98,7 @@
     table_label_three.hidden = YES;
     
     
-    gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(180, 31, 18, 18)];
+    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(180, 31, 18, 18)];
     [m_roleView addSubview:gameImg];
     
     m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 20, 180, 40)];
@@ -145,27 +149,27 @@
     m_roleNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [m_roleView addSubview:m_roleNameText];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_roleView addSubview:okButton];
+//    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
+//    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    okButton.backgroundColor = [UIColor clearColor];
+//    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [m_roleView addSubview:okButton];
     
-    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 205, 300, 40)];
-    bottomLabel.numberOfLines = 2;
-    bottomLabel.backgroundColor = [UIColor clearColor];
-    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
-    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
-    [m_roleView addSubview:bottomLabel];
-    
-    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 227, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
-    searchBtn.backgroundColor = [UIColor clearColor];
-    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_roleView addSubview:searchBtn];
+//    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 205, 300, 40)];
+//    bottomLabel.numberOfLines = 2;
+//    bottomLabel.backgroundColor = [UIColor clearColor];
+//    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
+//    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
+//    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
+//    [m_roleView addSubview:bottomLabel];
+//    
+//    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 227, 70, 15) title:@"查找不到?" fontSize:Nil textColor:nil bgImage:KUIImage(@"") HighImage:KUIImage(@"") selectImage:nil];
+//    searchBtn.backgroundColor = [UIColor clearColor];
+//    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [m_roleView addSubview:searchBtn];
     
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
@@ -180,7 +184,7 @@
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
         m_gameNameText.text = [dict objectForKey:@"name"];
         
-        gameImg.image = KUIImage([dict objectForKey:@"img"]);
+        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[dict objectForKey:@"img"]]];
         table_label_two.hidden = NO;
         table_label_three.hidden = NO;
         NSArray *sarchArray ;
@@ -222,10 +226,18 @@
 #pragma mark 角色查找
 - (void)searchButtonClick:(id)semder
 {
-    SearchRoleViewController* searchVC = [[SearchRoleViewController alloc] init];
-    searchVC.searchDelegate = self;
-    searchVC.getRealmName = searchContent.text;
-    [self.navigationController pushViewController:searchVC animated:YES];
+//    SearchRoleViewController* searchVC = [[SearchRoleViewController alloc] init];
+//    searchVC.searchDelegate = self;
+//    searchVC.getRealmName = searchContent.text;
+//    [self.navigationController pushViewController:searchVC animated:YES];
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        helpVC.myUrl = @"content.html?4";
+    }else{
+        helpVC.myUrl = @"content.html?4";
+    }
+    [self.navigationController pushViewController:helpVC animated:YES];
+
 }
 
 - (void)searchRoleSuccess:(NSString*)roleName realm:(NSString*)realm
@@ -276,7 +288,7 @@
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
             
             secGame.dataDic = responseObject;
-            
+            secGame.myInfoType = COME_ROLE;
             [self.navigationController pushViewController:secGame animated:YES];
             
             [hud hide:YES];
@@ -302,6 +314,7 @@
             [hud hide:YES];
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
             secGame.dataDic = responseObject;
+            secGame.myInfoType = COME_GUILD;
             [self.navigationController pushViewController:secGame animated:YES];
         }
     failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -339,6 +352,10 @@
 #pragma mark textField
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    if (textField ==m_roleNameText) {
+        [self okButtonClick:nil];
+    }
+    
     [textField resignFirstResponder];
     return YES;
 }

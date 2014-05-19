@@ -17,6 +17,7 @@
 #import "ReconnectMessage.h"
 #import "UserManager.h"
 #import "HelpViewController.h"
+#import "EGOImageView.h"
 @interface RegisterViewController ()
 {
     UILabel*     m_titleLabel;
@@ -56,8 +57,11 @@
     UIScrollView* m_step4Scroll;
     
     NSMutableArray *gameInfoArray;
-    
+    EGOImageView* gameImg;
     NSString * gameNum;
+    
+    UILabel* table_label_two1;
+    UILabel* table_label_three1;
 }
 @property(nonatomic,retain)NSString *imgID;
 @end
@@ -521,18 +525,18 @@
     topLabel.text = @"如果您拥有多名角色，请先绑定最主要的，其他游戏角色可在注册完成之后，在设置面板中添加";
     [m_step2Scroll addSubview:topLabel];
     
-    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
-    bottomLabel.numberOfLines = 2;
-    bottomLabel.backgroundColor = [UIColor clearColor];
-    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
-    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
-    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
-    [m_step2Scroll addSubview:bottomLabel];
-    
-    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 202, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
-    searchBtn.backgroundColor = [UIColor clearColor];
-    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_step2Scroll addSubview:searchBtn];
+//    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
+//    bottomLabel.numberOfLines = 2;
+//    bottomLabel.backgroundColor = [UIColor clearColor];
+//    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
+//    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
+//    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
+//    [m_step2Scroll addSubview:bottomLabel];
+//    
+//    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 202, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
+//    searchBtn.backgroundColor = [UIColor clearColor];
+//    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [m_step2Scroll addSubview:searchBtn];
     
     UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 300, 40)];
     table_top.image = KUIImage(@"table_top");
@@ -561,20 +565,20 @@
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
     [m_step2Scroll addSubview:table_label_one];
     
-    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 101, 80, 38)];
-    table_label_two.text = @"所在服务器";
-    table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_two];
+    table_label_two1 = [[UILabel alloc] initWithFrame:CGRectMake(20, 101, 80, 38)];
+//    table_label_two.text = @"所在服务器";
+    table_label_two1.textColor = kColorWithRGB(102, 102, 102, 1.0);
+    table_label_two1.font = [UIFont boldSystemFontOfSize:15.0];
+    [m_step2Scroll addSubview:table_label_two1];
     
-    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 141, 80, 38)];
-    table_label_three.text = @"角色名";
-    table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_three];
+    table_label_three1 = [[UILabel alloc] initWithFrame:CGRectMake(20, 141, 80, 38)];
+//    table_label_three.text = @"角色名";
+    table_label_three1.textColor = kColorWithRGB(102, 102, 102, 1.0);
+    table_label_three1.font = [UIFont boldSystemFontOfSize:15.0];
+    [m_step2Scroll addSubview:table_label_three1];
     
-    UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(190, 60+11, 18, 18)];
-    gameImg.image = KUIImage(@"wow");
+    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(190, 60+11, 18, 18)];
+//    gameImg.image = KUIImage(@"wow");
     [m_step2Scroll addSubview:gameImg];
     
     m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60, 180, 40)];
@@ -666,22 +670,40 @@
     [step3Button addTarget:self action:@selector(jump3ButtonOK) forControlEvents:UIControlEventTouchUpInside];
     [m_step2Scroll addSubview:step3Button];
 }
-- (void)selectClazzNameOK
+- (void)selectGameNameOK
 {
     [m_gameNameText resignFirstResponder];
     if ([gameInfoArray count] != 0) {
-        m_gameNameText.text = [gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
+        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
+        
+        m_gameNameText.text = [dict objectForKey:@"name"];
+        
+        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[dict objectForKey:@"img"]]];
+        table_label_two1.hidden = NO;
+        table_label_three1.hidden = NO;
+        NSArray *sarchArray ;
+        sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"bindCharacterParams"];
+        table_label_two1.text = [[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"] objectAtIndex:0]objectForKey:@"name"];
+        m_roleNameText.placeholder =[[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]objectAtIndex:0] objectForKey:@"tip"];
+        
+        table_label_three1.text = [[sarchArray objectAtIndex:0] objectForKey:@"name"];
+        m_roleNameText.placeholder =[[sarchArray objectAtIndex:0] objectForKey:@"tip"];
+        
     }
     else
         m_gameNameText.text = @"";
     //m_clazzNamePick =nil;
 }
-
 - (void)realmSelectClick:(id)sender
 {
+    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+    
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
-    realmVC.gameNum =[NSString stringWithFormat:@"%@",gameNum];
+    realmVC.gameNum = [[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]]objectForKey:@"id"];
     [self.navigationController pushViewController:realmVC animated:YES];
 }
 

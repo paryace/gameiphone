@@ -16,6 +16,6 @@ typedef enum
 }SearchViewType;
 
 
-@interface SearchJSViewController : BaseViewController<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,SearchRoleDelegate,RealmSelectDelegate>
-@property(nonatomic,assign)SearchViewType *myViewType;
+@interface SearchJSViewController : BaseViewController<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,SearchRoleDelegate,RealmSelectDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+@property(nonatomic,assign)SearchViewType myViewType;
 @end

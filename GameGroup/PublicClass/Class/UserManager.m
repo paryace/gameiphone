@@ -88,35 +88,6 @@ static UserManager *userManager = NULL;
     }];
 }
 
-
-////保存用户信息  旧接口
-//-(void)saveUserInfo:(id)responseObject UserId:(NSString*)userId
-//{
-//    dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
-//    dispatch_async(queue, ^{
-//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-//            [recDict setObject:titleDictionary forKey:@"title"];
-//        }
-//        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
-//        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
-//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-//        }else{
-//            [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
-//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-//        }
-//        
-//        [self updateMsgInfo:recDict];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
-//        });
-//    });
-//}
-
-
-
-
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject UserId:(NSString*)userId
 {
@@ -138,6 +109,8 @@ static UserManager *userManager = NULL;
             [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
             [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
+        
+        [DataStoreManager updateRecommendImgAndNickNameWithUser:KISDictionaryHaveKey(recDict,@"id") nickName:KISDictionaryHaveKey(recDict,@"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
         
         [self updateMsgInfo:recDict];
         dispatch_async(dispatch_get_main_queue(), ^{

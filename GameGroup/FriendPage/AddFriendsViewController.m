@@ -62,14 +62,14 @@
     searchContent.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:searchContent];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110 + startX, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:okButton];
+//    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110 + startX, 300, 40)];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
+//    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    okButton.backgroundColor = [UIColor clearColor];
+//    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:okButton];
     
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
@@ -128,6 +128,12 @@
     }
 
         [self.navigationController pushViewController:searchp animated:YES];
+}
+
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [self okButtonClick:nil];
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning

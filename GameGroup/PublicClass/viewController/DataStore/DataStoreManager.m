@@ -2423,6 +2423,18 @@ return @"";
     }];
 }
 
++(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
+        if (Recommend)
+        {
+            Recommend.nickName = nickName;
+            Recommend.headImgID = img;
+        }
+    }];
+}
 #pragma mark 头衔、角色、战斗力等消息
 //@dynamic messageuuid;
 //@dynamic msgContent;
