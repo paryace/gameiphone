@@ -14,11 +14,9 @@
     UITextField*  m_realmText;
     
     UITextField*  m_guildNameText;
-    UITextField*  m_clazzNameText;
     UIPickerView* m_clazzNamePick;
 
-    NSMutableArray* m_clazzArray;//职业数组
-    NSMutableArray* m_clazzNameArray;
+    NSMutableArray* m_gameArray;//职业数组
 
     
 }
@@ -34,25 +32,10 @@
 
     [self setTopViewWithTitle:@"查找角色" withBackButton:YES];
     
-    m_clazzArray = [[NSMutableArray alloc] init];
-    m_clazzNameArray = [[NSMutableArray alloc] init];
-    
-    if ([[GameCommon shareGameCommon].wow_clazzs count] != 0) {
-        [m_clazzArray addObjectsFromArray:[GameCommon shareGameCommon].wow_clazzs];
-        for (NSDictionary* tempDic in m_clazzArray) {
-            [m_clazzNameArray addObject:KISDictionaryHaveKey(tempDic, @"name")];
-        }
-        
-        [self setMainView];
-    }
-    else
-    {
-       // [self firtOpen];
-    }
-    hud = [[MBProgressHUD alloc] initWithView:self.view];
-    [self.view addSubview:hud];
-    hud.labelText = @"请求中...";
-    [self.view bringSubviewToFront:hud];
+    m_gameArray = [[NSMutableArray alloc] init];
+    m_gameArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+
+    [self setMainView];
 }
 
 - (void)setMainView
@@ -74,16 +57,16 @@
     [self.view addSubview:table_arrow_two];
     
     UIImageView* table_middle_two = [[UIImageView alloc] initWithFrame:CGRectMake(10, startX + 100, 300, 40)];
-    table_middle_two.image = KUIImage(@"table_middle");
+    table_middle_two.image = KUIImage(@"table_bottom");
     [self.view addSubview:table_middle_two];
+//
+//    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, startX + 140, 300, 40)];
+//    table_bottom.image = KUIImage(@"table_bottom");
+//    [self.view addSubview:table_bottom];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, startX + 140, 300, 40)];
-    table_bottom.image = KUIImage(@"table_bottom");
-    [self.view addSubview:table_bottom];
-    
-    UIImageView* table_arrow_three = [[UIImageView alloc] initWithFrame:CGRectMake(290, startX + 156, 12, 8)];
-    table_arrow_three.image = KUIImage(@"arrow_bottom");
-    [self.view addSubview:table_arrow_three];
+//    UIImageView* table_arrow_three = [[UIImageView alloc] initWithFrame:CGRectMake(290, startX + 156, 12, 8)];
+//    table_arrow_three.image = KUIImage(@"arrow_bottom");
+//    [self.view addSubview:table_arrow_three];
     
     UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 21, 100, 38)];
     table_label_one.text = @"选择游戏";
@@ -103,25 +86,34 @@
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:table_label_three];
     
-    UILabel* table_label_four = [[UILabel alloc] initWithFrame:CGRectMake(20, startX + 141, 80, 38)];
-    table_label_four.text = @"职业";
-    table_label_four.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_four.font = [UIFont boldSystemFontOfSize:15.0];
-    [self.view addSubview:table_label_four];
     
-    UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(190, startX + 31, 18, 18)];
-    gameImg.image = KUIImage(@"wow");
-    [self.view addSubview:gameImg];
+//    UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(190, startX + 31, 18, 18)];
+//    gameImg.image = KUIImage(@"wow");
+//    [self.view addSubview:gameImg];
     
     m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, startX + 20, 180, 40)];
     m_gameNameText.returnKeyType = UIReturnKeyDone;
     m_gameNameText.delegate = self;
-    m_gameNameText.text = @"魔兽世界";
+ //   m_gameNameText.text = @"魔兽世界";
     m_gameNameText.textAlignment = NSTextAlignmentRight;
     m_gameNameText.font = [UIFont boldSystemFontOfSize:15.0];
     m_gameNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     m_gameNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:m_gameNameText];
+    
+    m_clazzNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+    m_clazzNamePick.dataSource = self;
+    m_clazzNamePick.delegate = self;
+    m_clazzNamePick.showsSelectionIndicator = YES;
+    m_gameNameText.inputView = m_clazzNamePick;//点击弹出的是pickview
+    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar_server.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectClazzNameOK)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar_server.items = @[rb_server];
+    m_gameNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
+
+    
     
     m_realmText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60 + startX, 180, 40)];
     m_realmText.returnKeyType = UIReturnKeyDone;
@@ -147,20 +139,15 @@
     m_guildNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:m_guildNameText];
     
-    m_clazzNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, startX + 140, 180, 40)];
-    m_clazzNameText.returnKeyType = UIReturnKeyDone;
-    m_clazzNameText.delegate = self;
-    m_clazzNameText.textAlignment = NSTextAlignmentRight;
-    m_clazzNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_clazzNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_clazzNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [self.view addSubview:m_clazzNameText];
+//    m_clazzNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, startX + 140, 180, 40)];
+//    m_clazzNameText.returnKeyType = UIReturnKeyDone;
+//    m_clazzNameText.delegate = self;
+//    m_clazzNameText.textAlignment = NSTextAlignmentRight;
+//    m_clazzNameText.font = [UIFont boldSystemFontOfSize:15.0];
+//    m_clazzNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+//    m_clazzNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
+//    [self.view addSubview:m_clazzNameText];
     
-    m_clazzNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-    m_clazzNamePick.dataSource = self;
-    m_clazzNamePick.delegate = self;
-    m_clazzNamePick.showsSelectionIndicator = YES;
-    m_clazzNameText.inputView = m_clazzNamePick;//点击弹出的是pickview
     
 //    m_clazzNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-200, 320, 200)];
 //    m_clazzNamePick.dataSource = self;
@@ -170,12 +157,6 @@
 //    [self.view.window addSubview:m_clazzNamePick];
 //    
     
-    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar_server.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectClazzNameOK)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar_server.items = @[rb_server];
-    m_clazzNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
     
     UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, startX + 200, 300, 40)];
     [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
@@ -197,8 +178,13 @@
 
 - (void)realmSelectClick:(id)sender
 {
+    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
+    realmVC.gameNum =[[m_gameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]] objectForKey:@"id"];
     [self.navigationController pushViewController:realmVC animated:YES];
 }
 
@@ -210,17 +196,17 @@
 - (void)selectClazzNameOK
 {
     [m_gameNameText resignFirstResponder];
-    if ([m_clazzNameArray count] != 0) {
-        m_gameNameText.text = [m_clazzNameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]];
+    if ([m_gameArray count] != 0) {
+        m_gameNameText.text = KISDictionaryHaveKey([m_gameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]], @"name");
     }
     else
-        m_clazzNameText.text = @"";
+        m_gameNameText.text = @"";
     //m_clazzNamePick =nil;
 }
 
 - (void)okButtonClick:(id)sender
 {
-    [m_clazzNameText resignFirstResponder];
+    [m_gameNameText resignFirstResponder];
     [m_guildNameText resignFirstResponder];
     
     if (KISEmptyOrEnter(m_realmText.text)) {
@@ -231,31 +217,26 @@
         [self showAlertViewWithTitle:@"提示" message:@"请输入公会名" buttonTitle:@"确定"];
         return;
     }
-    if (KISEmptyOrEnter(m_clazzNameText.text)) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择职业" buttonTitle:@"确定"];
+    if (KISEmptyOrEnter(m_gameNameText.text)) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"确定"];
         return;
     }
     
-//    if (m_clazzNamePick !=nil) {
-//        NSLog(@"123");
-//        m_clazzNamePick =nil;
-//        return;
-//    }
-    NSLog(@"picker%@",m_clazzNamePick);
-    
-    NSString* clazzId = [[m_clazzArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]] objectForKey:@"id"];
+    NSDictionary *dic = [[m_gameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]] objectForKey:@"gameParams"];
+    NSArray *commonParams = KISDictionaryHaveKey(dic, @"commonParams");
+    NSArray *searchOrganizationParams = KISDictionaryHaveKey(dic, @"searchOrganizationParams");
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-    [params setObject:@"1" forKey:@"gameid"];
-    [params setObject:m_realmText.text forKey:@"realm"];
-    [params setObject:m_guildNameText.text forKey:@"guild"];
-    [params setObject:clazzId forKey:@"classid"];
+    
+    [params setObject:KISDictionaryHaveKey([m_gameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]], @"id") forKey:@"gameid"];
+    [params setObject:m_realmText.text forKey:KISDictionaryHaveKey(commonParams[0], @"param")];
+    [params setObject:m_guildNameText.text forKey:KISDictionaryHaveKey(searchOrganizationParams[0],@"param")];
 
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];
-    [body setObject:@"122" forKey:@"method"];
-//    [body setObject:@"D8AE3A8AE4634E799029AF2BFB5B13DD" forKey:@"token"];
+    [body setObject:@"217" forKey:@"method"];
+    [body setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -300,18 +281,18 @@
 }
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    return [m_clazzNameArray count];
+    return [m_gameArray count];
 }
 
 - (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
 {
-    return [m_clazzNameArray objectAtIndex:row];
+    return KISDictionaryHaveKey([m_gameArray objectAtIndex:row], @"name");
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
     if (pickerView == m_clazzNamePick) {
-        m_clazzNameText.text = [m_clazzNameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]];
+        m_gameNameText.text = KISDictionaryHaveKey([m_gameArray objectAtIndex:[m_clazzNamePick selectedRowInComponent:0]], @"name");
 
     }
 }
@@ -322,21 +303,20 @@
     return YES;
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    if (textField == m_gameNameText) {
-        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
-        return NO;
-    }
-    return YES;
-}
+//- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+//{
+//    if (textField == m_gameNameText) {
+//        [self showAlertViewWithTitle:@"提示" message:@"暂不支持其他游戏" buttonTitle:@"确定"];
+//        return NO;
+//    }
+//    return YES;
+//}
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [m_gameNameText resignFirstResponder];
     [m_realmText resignFirstResponder];
     [m_guildNameText resignFirstResponder];
-    [m_clazzNameText resignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
