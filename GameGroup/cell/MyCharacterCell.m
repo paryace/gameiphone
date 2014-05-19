@@ -7,6 +7,7 @@
 //
 
 #import "MyCharacterCell.h"
+#import "EGOImageView.h"
 
 @implementation MyCharacterCell
 
@@ -16,15 +17,8 @@
     if (self) {
         UIView* myView = [[UIView alloc] init];
 
-        self.heardImg = [[UIImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
+        self.heardImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
         self.heardImg.backgroundColor = [UIColor clearColor];
-//        int imageId = [image intValue];
-//        if (imageId > 0 && imageId < 12) {//1~11
-//            heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-//        }
-//        else
-//            heardImg.image = nil;
-        
         [myView addSubview:self.heardImg];
         
         self.authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];

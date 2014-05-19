@@ -457,38 +457,80 @@
             cell.realmLabel.hidden = NO;
             cell.gameImg.hidden = NO;
             cell.pveLabel.hidden = NO;
+            cell.noCharacterLabel.hidden = YES;
             NSDictionary* tempDic = [characterArray objectAtIndex:indexPath.row];
-            if ([KISDictionaryHaveKey(tempDic, @"failedmsg")intValue] ==404)//角色不存在
+            
+//            if ([KISDictionaryHaveKey(tempDic, @"failedmsg")intValue] ==404)//角色不存在
+//            {
+//                cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+//                cell.realmLabel.text = @"角色不存在";
+//            }
+//            else
+//            {
+//                int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
+//                if (imageId > 0 && imageId < 12) {//1~11
+//                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+//                }
+//                else
+//                    cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+//                NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
+//                cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
+//            }
+//            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+//                cell.authBg.hidden = NO;
+//                cell.authBg.image= KUIImage(@"chara_auth_1");
+//            }
+//            else
+//            {
+//                cell.authBg.hidden = NO;
+//                 cell.authBg.image= KUIImage(@"chara_auth_2");
+//            }
+//            cell.rowIndex = indexPath.row;
+//            cell.myDelegate = self;
+//            cell.gameImg.image = KUIImage(@"wow");
+//            cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"name");
+//            cell.pveLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"pveScore")];
+//            cell.noCharacterLabel.hidden = YES;
+            NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
+            NSString* v1=KISDictionaryHaveKey(tempDic, @"value1");//部落
+            NSString* v2=KISDictionaryHaveKey(tempDic, @"value2");//战斗力
+            NSString* v3=KISDictionaryHaveKey(tempDic, @"value3");//战斗力数
+            NSString* auth=KISDictionaryHaveKey(tempDic, @"auth");
+            NSString* name=KISDictionaryHaveKey(tempDic, @"name");
+            NSString* failedmsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
+            NSString* img=KISDictionaryHaveKey(tempDic, @"img");//角色图标
+            
+            if ([failedmsg intValue] ==404)//角色不存在
             {
                 cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
                 cell.realmLabel.text = @"角色不存在";
             }
             else
             {
-                int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-                if (imageId > 0 && imageId < 12) {//1~11
-                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+                if (!img ||[img isEqualToString:@""]) {//1~11
+                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_0.png"]];
                 }
                 else
-                    cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-                NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
-                cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
+                    cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];
+                
+                
+                cell.realmLabel.text = [v1 stringByAppendingString:realm];
             }
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+            if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
                 cell.authBg.hidden = NO;
                 cell.authBg.image= KUIImage(@"chara_auth_1");
             }
             else
             {
                 cell.authBg.hidden = NO;
-                 cell.authBg.image= KUIImage(@"chara_auth_2");
+                cell.authBg.image= KUIImage(@"chara_auth_2");
             }
             cell.rowIndex = indexPath.row;
             cell.myDelegate = self;
             cell.gameImg.image = KUIImage(@"wow");
-            cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"name");
-            cell.pveLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"pveScore")];
-            cell.noCharacterLabel.hidden = YES;
+            cell.nameLabel.text = name;
+            cell.pveLabel.text = [GameCommon getNewStringWithId:v3];
+            cell.noCharacterLabel.text=v2;
             return cell;
         }
     }
@@ -736,11 +778,11 @@
         else
         {
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
-            VC.characterId = KISDictionaryHaveKey(dic, @"id");
-            VC.gameId = @"1";
+            NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
+            VC.characterId = gameId;
+            VC.gameId = gameId;
             VC.myViewType = CHARA_INFO_MYSELF;
             [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
-            
             [self.navigationController pushViewController:VC animated:YES];
             NSLog(@"角色详情");
         }

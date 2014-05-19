@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EGOImageView.h"
 
 @interface MyCharacterCell : UITableViewCell
 
 @property(nonatomic,assign)id<CellButtonClickDelegate> myDelegate;
-@property(strong,nonatomic)UIImageView* heardImg;
+@property(strong,nonatomic)EGOImageView* heardImg;
 @property(strong,nonatomic)UIImageView* authBg;
 @property(strong,nonatomic)UILabel* nameLabel;
 @property(strong,nonatomic)UILabel* realmLabel;
