@@ -272,12 +272,13 @@
                         NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
                         [keys sortUsingSelector:@selector(compare:)];
                         
-                        resultArray =result;
-                        keyArr = keys;
-                        [self setFansNum];
-                        [m_myTableView reloadData];
+//                        resultArray =result;
+//                        keyArr = keys;
+//                        [self setFansNum];
+//                        [m_myTableView reloadData];
                         //保存
                         [self saveFriendsList:result Keys:keys];
+                        [self getFriendDateFromDataSore];
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -317,15 +318,17 @@
 //设置粉丝数量
 -(void)setFansNum
 {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:FansCount]) {
-        fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:FansCount];
-    }
+    fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:FansCount];
     NSString *fanstr;
-    int intfans = [fansNum intValue];
-    if (intfans>9999) {
-        fanstr=[fansNum stringByAppendingString:@"粉"];
-    }else{
-        fanstr=[fansNum stringByAppendingString:@"位粉丝"];
+    if (!fansNum||[fansNum isEqualToString:@""]) {
+        fanstr=[fansNum stringByAppendingString:@"粉丝"];
+    }else {
+        int intfans = [fansNum intValue];
+        if (intfans>9999) {
+            fanstr=[fansNum stringByAppendingString:@"粉"];
+        }else{
+            fanstr=[fansNum stringByAppendingString:@"位粉丝"];
+        }
     }
     NSArray *viewArray=[[self topView] subviews];
     UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];

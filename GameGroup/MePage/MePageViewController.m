@@ -756,7 +756,6 @@
     else if(indexPath.section == 2)
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        
         CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
 //        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
 //        if (![characterArray isKindOfClass:[NSArray class]]){
@@ -766,17 +765,8 @@
 //            [self.navigationController pushViewController:characterVC animated:YES];
 //            NSLog(@"添加角色");
 //        }
-        
          NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
         if ([characterArray count]>0){
-            CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
-            characterVC.isFromMeet =NO;
-            
-            [self.navigationController pushViewController:characterVC animated:YES];
-            NSLog(@"添加角色");
-        }
-        else
-        {
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
             VC.characterId = gameId;
@@ -786,12 +776,18 @@
             [self.navigationController pushViewController:VC animated:YES];
             NSLog(@"角色详情");
         }
+        else
+        {
+            CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
+            characterVC.isFromMeet =NO;
+            [self.navigationController pushViewController:characterVC animated:YES];
+            NSLog(@"添加角色");
+        }
     }
     else if(indexPath.section == 3)//头衔
     {
         if (m_hostInfo.achievementArray && [m_hostInfo.achievementArray count] != 0) {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
-            
             TitleObjDetailViewController* detailVC = [[TitleObjDetailViewController alloc] init];
             detailVC.titleObjArray = m_hostInfo.achievementArray;
             detailVC.showIndex = indexPath.row;
@@ -802,9 +798,8 @@
     else if(indexPath.section == 4)
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-
-            SetViewController* VC = [[SetViewController alloc] init];
-            [self.navigationController pushViewController:VC animated:YES];
+        SetViewController* VC = [[SetViewController alloc] init];
+        [self.navigationController pushViewController:VC animated:YES];
     }
 }
 

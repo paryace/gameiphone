@@ -1689,19 +1689,18 @@ return @"";
 //    
 //}
 //
-
 //
-+(NSMutableArray *)queryNameIndex
-{
-    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
-    NSMutableArray * nameIndexArray = [NSMutableArray array];
-    for (int i = 0; i<nameIndexArray2.count; i++) {
-        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
-        [nameIndexArray addObject:di.index];
-    }
-    [nameIndexArray sortUsingSelector:@selector(compare:)];
-    return nameIndexArray;
-}
+//+(NSMutableArray *)queryNameIndex
+//{
+//    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
+//    NSMutableArray * nameIndexArray = [NSMutableArray array];
+//    for (int i = 0; i<nameIndexArray2.count; i++) {
+//        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
+//        [nameIndexArray addObject:di.index];
+//    }
+//    [nameIndexArray sortUsingSelector:@selector(compare:)];
+//    return nameIndexArray;
+//}
 //---------------------------------------
 //查询好友
 +(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
@@ -1712,11 +1711,11 @@ return @"";
     NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
     for (int i = 0; i<nameIndexArray2.count; i++) {
         DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
-        [nameIndexArray addObject:di.index];
+        NSString * nameIndex=di.index;
+        [nameIndexArray addObject:nameIndex];
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
         NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
         NSMutableArray * usersarray= [NSMutableArray array];
-        
         for (int i = 0; i<fri.count; i++) {
              NSString * shipType = [[fri objectAtIndex:i]shiptype];
             if ([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2]) {
@@ -1724,7 +1723,7 @@ return @"";
                 [usersarray addObject:user];
             }
         }
-        [userList setValue:usersarray forKey:[di index]];
+        [userList setValue:usersarray forKey:nameIndex];
     }
     [nameIndexArray sortUsingSelector:@selector(compare:)];
     [userInfo setObject:nameIndexArray forKey:@"nameKey"];
