@@ -94,8 +94,10 @@ static UserManager *userManager = NULL;
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
     dispatch_async(queue, ^{
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
+        
+         [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:KISDictionaryHaveKey(recDict,@"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
+        
         if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-            
             NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
             NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
             NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
@@ -110,7 +112,7 @@ static UserManager *userManager = NULL;
             [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
         
-        [DataStoreManager updateRecommendImgAndNickNameWithUser:KISDictionaryHaveKey(recDict,@"id") nickName:KISDictionaryHaveKey(recDict,@"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
+
         
         [self updateMsgInfo:recDict];
         dispatch_async(dispatch_get_main_queue(), ^{

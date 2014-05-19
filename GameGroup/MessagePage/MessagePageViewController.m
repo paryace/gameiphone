@@ -373,7 +373,7 @@
         if ([[[allMsgArray objectAtIndex:indexPath.row] senderimg]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
             theUrl =nil;
         }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]senderimg]]]];
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]senderimg]]]];
         }
         cell.headImageV.imageURL = theUrl;
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
