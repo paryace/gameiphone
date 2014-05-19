@@ -863,7 +863,7 @@
     }
     NSString * age = [GameCommon getNewStringWithId:[userInfo objectForKey:@"age"]];//年龄
     NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];//动态页面背景图
-    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthdate"]];//生日
+    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthday"]];//生日
     NSString * createTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"createTime"]];//创建时间
     double distance = [KISDictionaryHaveKey(userInfo, @"distance") doubleValue];//距离
     if (distance == -1) {//若没有距离赋最大值
@@ -1712,8 +1712,7 @@ return @"";
     for (int i = 0; i<nameIndexArray2.count; i++) {
         DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
         NSString * nameIndex=di.index;
-        [nameIndexArray addObject:nameIndex];
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",nameIndex];
         NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
         NSMutableArray * usersarray= [NSMutableArray array];
         for (int i = 0; i<fri.count; i++) {
@@ -1723,7 +1722,10 @@ return @"";
                 [usersarray addObject:user];
             }
         }
-        [userList setValue:usersarray forKey:nameIndex];
+        if (usersarray&&[usersarray count]>0) {
+            [nameIndexArray addObject:nameIndex];
+            [userList setValue:usersarray forKey:nameIndex];
+        }
     }
     [nameIndexArray sortUsingSelector:@selector(compare:)];
     [userInfo setObject:nameIndexArray forKey:@"nameKey"];

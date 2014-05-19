@@ -41,7 +41,8 @@
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
     }];
-    m_titleLabel.text = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    
+    m_titleLabel.text = self.hostInfo.nickName;
     
     if ([self.headImgArray count] == 0) {
         [self getHead:self.hostInfo.headImgID];//相册 小图_大图,

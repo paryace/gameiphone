@@ -32,21 +32,19 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-}
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self getFriendDateFromDataSore];
+        [m_myTableView reloadData];
+        [self getFriendListFromNet];
+    }
 
-
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self getFriendDateFromDataSore];
-    [m_myTableView reloadData];
-    [self getFriendListFromNet];
 }
 
 - (void)viewDidLoad
@@ -66,16 +64,18 @@
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
-    
-    
-    hud = [[MBProgressHUD alloc] initWithView:self.view];
-    [self.view addSubview:hud];
-    hud.labelText = @"查询中...";
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-        [hud hide:NO];
-    }
     self.view.backgroundColor=[UIColor blackColor];
-    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+        [self getFriendDateFromDataSore];
+        [m_myTableView reloadData];
+        if (!keyArr||[keyArr count]==0) {
+            hud = [[MBProgressHUD alloc] initWithView:self.view];
+            [self.view addSubview:hud];
+            hud.labelText = @"查询中...";
+            hud.hidden=NO;
+        }
+        [self getFriendListFromNet];
+    }
 }
 
 - (UIView *)topView{
@@ -266,16 +266,11 @@
                     [hud hide:YES];
                     if ([responseObject isKindOfClass:[NSDictionary class]]) {
                         fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
-                        [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:FansCount];
+                        [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
                         [[NSUserDefaults standardUserDefaults] synchronize];
                         NSDictionary* result = [responseObject objectForKey:@"contacts"];
                         NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
                         [keys sortUsingSelector:@selector(compare:)];
-                        
-//                        resultArray =result;
-//                        keyArr = keys;
-//                        [self setFansNum];
-//                        [m_myTableView reloadData];
                         //保存
                         [self saveFriendsList:result Keys:keys];
                         [self getFriendDateFromDataSore];
@@ -318,10 +313,10 @@
 //设置粉丝数量
 -(void)setFansNum
 {
-    fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:FansCount];
+    fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     NSString *fanstr;
-    if (!fansNum||[fansNum isEqualToString:@""]) {
-        fanstr=[fansNum stringByAppendingString:@"粉丝"];
+    if (fansNum==nil||[fansNum isEqualToString:@""]) {
+        fanstr=@"粉丝";
     }else {
         int intfans = [fansNum intValue];
         if (intfans>9999) {
