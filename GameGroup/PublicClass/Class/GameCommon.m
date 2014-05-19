@@ -591,6 +591,7 @@ static GameCommon *my_gameCommon = NULL;
 + (void)loginOut
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:isFirstOpen];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:isFirstIntoMePage];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:FansCount];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:NearByKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"isGetNearByDataByNet"];

@@ -56,9 +56,13 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
-
-    [self getUserInfoByNet];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstIntoMePage];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
+        [self getUserInfoByNet];
+    }
 }
 
 
@@ -72,12 +76,16 @@
     m_myTableView.dataSource = self;
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
-//    m_myTableView.contentOffset = CGPointMake(0, 1000);
     [self.view addSubview:m_myTableView];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
+        [self getUserInfoByNet];
+    }
 }
 -(void)reloadTableView:(id)sender
 {
