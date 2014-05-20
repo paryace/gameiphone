@@ -54,6 +54,15 @@ static GameCommon *my_gameCommon = NULL;
 	}
 	return my_gameCommon;
 }
+//+(NSString*)getGameIconWithGameId:(NSString*)gameId
+//{
+//    if ([gameId isEqualToString:@"1"]) {
+//        return @"";
+//    }else if ([gameId isEqualToString:@"2"]){
+//        return @"";
+//    }
+//    return @"";
+//}
 
 +(float)diffHeight:(UIViewController *)controller
 {

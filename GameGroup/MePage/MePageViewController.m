@@ -465,13 +465,13 @@
             
             if ([failedmsg intValue] ==404)//角色不存在
             {
-                cell.heardImg.image = [UIImage imageNamed:@"clazz_00.png"];
+                cell.heardImg.image = [UIImage imageNamed:@"clazz_icon.png"];
                 cell.realmLabel.text = @"角色不存在";
             }
             else
             {
                 if (!img ||[img isEqualToString:@""]||[img isEqualToString:@" "]) {
-                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_00.png"]];
+                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
                 }
                 else
                     cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];

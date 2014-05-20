@@ -297,7 +297,14 @@
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
-                        [hud hide:YES];
+                    if ([error isKindOfClass:[NSDictionary class]]) {
+                        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                        {
+                            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                            [alert show];
+                        }
+                    }
+                    [hud hide:YES];
                 }];
 }
 //保存用户列表信息
@@ -305,6 +312,8 @@
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
+//        [DataStoreManager deleteAllUserWithShipType:@"1"];
+//        [DataStoreManager deleteAllUserWithShipType:@"2"];
         for (int i=0; i<[keys count]; i++) {
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * dict in [result objectForKey:key]) {

@@ -147,22 +147,10 @@
 + (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString *)auth Pro:(NSString*)pro
 {
     UIView* myView = [[UIView alloc] init];
-    
-//    UIImageView* heardImg = [[UIImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
-//    heardImg.backgroundColor = [UIColor clearColor];
-//    int imageId = [image intValue];
-//    if (imageId > 0 && imageId < 12) {//1~11
-//        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-//    }
-//    else
-//        heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-
-    
-    
     EGOImageView* heardImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     heardImg.backgroundColor = [UIColor clearColor];
     if (!image ||[image isEqualToString:@""]||[image isEqualToString:@" "]) {
-        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_00.png"]];
+        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
     }
     else{
         heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];

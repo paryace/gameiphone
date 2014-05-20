@@ -985,9 +985,6 @@
     }
 }
 
-
-
-
 +(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
