@@ -133,10 +133,13 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    
+    NSURL * theUrl;
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-
-    NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row]senderimg]]]];
+    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
+        theUrl = nil;
+    }else{
+    theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row]senderimg]]]];
+    }
     if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{

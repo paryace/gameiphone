@@ -36,11 +36,20 @@
     
     //数据初始化
     m_dataArray = [NSMutableArray array];
+    NSFileManager *fileManager =[NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/nearFriendsList"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path];
+    }
+
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
+    
     [self getInfoWithNet];
     
     // Do any additional setup after loading the view.
@@ -62,12 +71,21 @@
                               if ([responseObject isKindOfClass:[NSArray class]]) {
                                   [m_dataArray removeAllObjects];
                                   [m_dataArray addObjectsFromArray:responseObject];
+                                  
+                                  NSString *filePath  =[RootDocPath stringByAppendingString:@"/nearFriendsList"];
+                                  [m_dataArray writeToFile:filePath atomically:YES];
                               }
                               [m_myTableView reloadData];
                           } failure:^(AFHTTPRequestOperation *operation, id error) {
-                              
+                              if ([error isKindOfClass:[NSDictionary class]]) {
+                                  if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                                  {
+                                      UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                      [alert show];
+                                  }
+                              }
+   
                           }];
-
 }
 
 

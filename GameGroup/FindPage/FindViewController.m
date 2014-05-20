@@ -99,6 +99,7 @@
         }
         else
             lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
+        commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",myDunamicmsgCount];
     }
     
     
@@ -142,7 +143,7 @@
         //            lb.text = @"99";
         //        }
         //        else
-        //            lb.text =[NSString stringWithFormat:@"%d",friendDunamicmsgCount] ;
+      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
     }
 }
 
@@ -157,7 +158,7 @@
     
     
     //初始化背景图片 并且添加点击换图方法
-    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
+    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"]) {
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
@@ -232,7 +233,7 @@
     commentLabel.textAlignment = NSTextAlignmentLeft;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
-    commentLabel.text = @"没有新的的消息";
+//    commentLabel.text = @"没有新的的消息";
     [bottomView addSubview:commentLabel];
     
     headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
@@ -515,7 +516,7 @@
     m_notibgCircleNewsImageView.hidden = YES;
     friendDunamicmsgCount =0;
     myDunamicmsgCount =0;
-    
+    commentLabel.text = @"暂无新的动态";
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
     
