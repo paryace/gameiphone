@@ -39,6 +39,10 @@ typedef enum
 @property(nonatomic,copy)NSString *createTimeStr;
 @property(nonatomic,assign)BOOL isActiveAc;//是否激活
 @property(nonatomic,assign)NSInteger  testRow;
+
+
+@property(nonatomic, assign)BOOL          isFansPage;
+@property(nonatomic,assign)NSInteger  fansTestRow;
 @end
 
 @protocol testViewDelegate <NSObject>

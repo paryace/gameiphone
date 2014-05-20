@@ -164,8 +164,9 @@
     if (!image ||[image isEqualToString:@""]||[image isEqualToString:@" "]) {
         heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_00.png"]];
     }
-    else
+    else{
         heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];
+    }
 
     
     
@@ -177,7 +178,7 @@
     gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
     [myView addSubview:gameIg];
     //---
-    UILabel* twoLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(75, 30, 100, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:14.0] text:realm textAlignment:NSTextAlignmentLeft];
+    UILabel* twoLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(75, 30, 130, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:14.0] text:realm textAlignment:NSTextAlignmentLeft];
     [myView addSubview:twoLabel];
     
     UILabel* lineLabel = [[UILabel alloc] initWithFrame:CGRectMake(200, 10, 1, 40)];

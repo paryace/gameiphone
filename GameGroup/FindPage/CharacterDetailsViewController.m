@@ -251,13 +251,12 @@
             m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
             
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-            if (m_charaInfo.thumbnail) {
-                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",m_charaInfo.thumbnail]];
-            }else{
+            NSString *charaInfoImageId=m_charaInfo.thumbnail;
+            if ( charaInfoImageId || [charaInfoImageId isEqualToString:@""]||[charaInfoImageId isEqualToString:@" "]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
+            }else{
+                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",m_charaInfo.thumbnail]];
             }
-            
-            
             
             if ([[KISDictionaryHaveKey(responseObject, @"ranking") allKeys] containsObject:@"rankingtime"]) {
 //                NSString *changeBtnTitle =[NSString stringWithFormat:@"上次更新时间：%@",[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rankingtime")]]];

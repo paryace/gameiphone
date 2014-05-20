@@ -18,6 +18,8 @@
 #import "MyFansPageViewController.h"
 @interface NewFriendPageController (){
     
+    UILabel*        m_titleLabel;
+    
     NSDictionary* resultArray;//数据集合
     NSArray* keyArr;//字母集合
     
@@ -53,10 +55,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"通讯录" withBackButton:NO];
+    [self setTopViewWithTitle:@"" withBackButton:NO];
     
     resultArray =[NSDictionary dictionary];
     keyArr=[NSArray array];
+    
+    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
+    m_titleLabel.textColor = [UIColor whiteColor];
+    m_titleLabel.backgroundColor = [UIColor clearColor];
+    m_titleLabel.text = @"联系人";
+    m_titleLabel.textAlignment = NSTextAlignmentCenter;
+    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.view addSubview:m_titleLabel];
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
@@ -281,7 +291,7 @@
                         keyArr = keys;
                         resultArray = result;
                         [m_myTableView reloadData];
-                        
+                        [self setFansNum];
                         //保存
                         [self saveFriendsList:result Keys:keys];
                     }
@@ -320,9 +330,22 @@
         });
     });
 }
+
+//刷新title
+-(void)refreTitle
+{
+    int count=0;
+    for (int i=0; i<keyArr.count; i++) {
+        count+=[[resultArray objectForKey:[keyArr objectAtIndex:i]] count];
+    }
+    m_titleLabel.text = [[@"联系人(" stringByAppendingString:[NSString stringWithFormat: @"%d",count]] stringByAppendingString:@")"];
+}
+
 //设置粉丝数量
 -(void)setFansNum
 {
+    [self refreTitle];
+    
     fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     NSString *fanstr;
     if (fansNum==nil||[fansNum isEqualToString:@""]) {

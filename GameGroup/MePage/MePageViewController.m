@@ -110,9 +110,7 @@
         NSLog(@"responseObject%@", responseObject);
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
-
             [m_myTableView reloadData];
-            
             [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {

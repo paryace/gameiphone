@@ -13,6 +13,7 @@
 
 @interface MyFansPageViewController ()
 {
+    UILabel*        m_titleLabel;
     UITableView * m_myFansTableView;
     NSMutableDictionary*  m_sortTypeDic;
     NSMutableArray * m_otherSortFansArray;
@@ -33,19 +34,26 @@
     }
     return self;
 }
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"粉丝" withBackButton:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
+    [self setTopViewWithTitle:@"" withBackButton:YES];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadFansList:) name:kReloadFansKey object:nil];
     
     m_sortTypeDic= [NSMutableDictionary dictionary];
     m_otherSortFansArray = [NSMutableArray array];
     m_currentPage=0;
     m_allcurrentPage =0;
     
+    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
+    m_titleLabel.textColor = [UIColor whiteColor];
+    m_titleLabel.backgroundColor = [UIColor clearColor];
+    m_titleLabel.text = @"粉丝";
+    m_titleLabel.textAlignment = NSTextAlignmentCenter;
+    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.view addSubview:m_titleLabel];
     m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
@@ -54,10 +62,16 @@
     [self addFooter];
     [self addHeader];
 }
-#pragma mark 刷新表格
-- (void)reloadContentList:(NSNotification*)notification
+
+- (void)reloadFansList:(NSNotification*)notification
 {
-    [self getFansList];
+    NSString *fansTabIndex=notification.object?notification.object:@"0";
+    NSInteger fansInteger=[fansTabIndex intValue];
+    if (fansInteger>=0&&fansInteger< m_otherSortFansArray.count) {
+        [m_otherSortFansArray removeObjectAtIndex:fansInteger];
+        [self refreTitle];
+    }
+    [m_myFansTableView reloadData];
 }
 #pragma mark -粉丝列表 只有距离排序
 - (void)getFansBySort
@@ -146,8 +160,15 @@
         m_otherSortFansArray = [DataStoreManager newQueryAllFansWithOtherSortType:@"3"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myFansTableView reloadData];
+            [self refreTitle];
         });
     });
+}
+//
+-(void)refreTitle
+{
+    NSString *fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    m_titleLabel.text = [[@"粉丝(" stringByAppendingString:fansNum] stringByAppendingString:@")"];
 }
 
 -(NSMutableDictionary*)getTitleInfo:(NSDictionary*)titleDic
@@ -254,6 +275,8 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     TestViewController *detailVC = [[TestViewController alloc]init];
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"id");
+    detailVC.fansTestRow = indexPath.row;
+    detailVC.isFansPage = YES;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 

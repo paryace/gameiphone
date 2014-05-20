@@ -1085,8 +1085,11 @@
         
         //[GameCommon shareGameCommon].fansTableChanged = YES;
 //        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+        if (self.isFansPage) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
+        }else{
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+        }
         [[GameCommon shareGameCommon] fansCountChanged:NO];
         
         
@@ -1283,8 +1286,7 @@
                 [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
                 DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
                 [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
-
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 [self.navigationController popViewControllerAnimated:YES];
                 
             } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1389,6 +1391,7 @@
         {
             NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
             [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
         
         if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {

@@ -372,10 +372,11 @@
     else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
     {
         NSURL * theUrl;
-        if ([[[allMsgArray objectAtIndex:indexPath.row] senderimg]isEqualToString:@""]||[[[allMsgArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
+        NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
+        if (!sendImageId||[sendImageId isEqualToString:@""]||[sendImageId isEqualToString:@" "]) {
             theUrl =nil;
         }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:[[allMsgArray objectAtIndex:indexPath.row]senderimg]]]];
+            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:sendImageId]]];
         }
         cell.headImageV.imageURL = theUrl;
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];

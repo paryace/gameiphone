@@ -191,7 +191,7 @@
             for (int i =  0; i<array.count; i++) {
                 for (int j = 0; j<newArray.count; j++) {
                     NSDictionary *dic = array[i];
-                    NSDictionary *temDic = newArray[i];
+                    NSDictionary *temDic = newArray[j];
                     if ([KISDictionaryHaveKey(dic,@"id")intValue]==[KISDictionaryHaveKey(temDic, @"id")intValue]&&[KISDictionaryHaveKey(dic, @"gameInfoMills")longLongValue]==KISDictionaryHaveKey(temDic, @"gameInfoMills")) {
                         [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id")];
                     }
