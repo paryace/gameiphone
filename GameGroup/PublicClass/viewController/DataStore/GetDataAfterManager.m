@@ -258,7 +258,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 
     if ([shiptype isEqualToString:@"2"]) {//移到关注表
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     }
     else if ([shiptype isEqualToString:@"unkown"])

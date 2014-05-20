@@ -1078,12 +1078,13 @@
         delFriendBtn.userInteractionEnabled = YES;
         attentionBtn.userInteractionEnabled = YES;
         attentionOffBtn.userInteractionEnabled = YES;
-
-        [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:@"1"];
+        [self refreFansNum:@"1"];
+        NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+        [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:shipType];
         
         
-        //        [GameCommon shareGameCommon].fansTableChanged = YES;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+        //[GameCommon shareGameCommon].fansTableChanged = YES;
+//        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
 
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
         [[GameCommon shareGameCommon] fansCountChanged:NO];
@@ -1153,7 +1154,34 @@
     alter.tag = 234;
     [alter show];
 }
-
+//
+-(void)refreFansNum:(NSString*)type
+{
+    NSString *fansNumFileName=[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    NSString *fansStr=[[NSUserDefaults standardUserDefaults] objectForKey:fansNumFileName];
+    NSInteger fansInteger = 0;
+   
+    if ([type isEqualToString:@"0"]) {//删除好友
+        
+        if(!fansStr||[fansStr isEqualToString:@""]){
+            fansInteger=0;
+        }else{
+            fansInteger= [fansStr intValue];
+            fansInteger++;
+        }
+    }else{//添加好友
+        if(!fansStr||[fansStr isEqualToString:@""]){
+            fansInteger=0;
+        }else{
+            fansInteger= [fansStr intValue];
+            if (fansInteger>0) {
+                fansInteger--;
+            }
+        }
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat: @"%d",fansInteger] forKey:fansNumFileName];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     [self DetectNetwork];
@@ -1186,9 +1214,10 @@
                 delFriendBtn.userInteractionEnabled = YES;
                 attentionBtn.userInteractionEnabled = YES;
                 attentionOffBtn.userInteractionEnabled = YES;
-
-                //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
-                [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+                [self refreFansNum:@"0"];
+                NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+                //[DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
+                [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:shipType];
                 DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
                 [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
 
@@ -1246,21 +1275,16 @@
                 attentionBtn.userInteractionEnabled = YES;
                 attentionOffBtn.userInteractionEnabled = YES;
                 [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
-
-                //                [DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];
-                
-                ////////////////////////
-                
+                //[DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];
                 if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
                     [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
                 }
-                
-                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+                NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
                 DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
                 [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-                
                 [self.navigationController popViewControllerAnimated:YES];
                 
             } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -1307,7 +1331,6 @@
         }
     }
 }
-
 - (void)startChat:(id)sender
 {
     //    [self.navigationController popToRootViewControllerAnimated:NO];
@@ -1346,7 +1369,6 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
     [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-    NSLog(@"self.hostInfo.userId%@",self.hostInfo.userId);
     [paramDict setObject:@"1" forKey:@"type"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -1357,7 +1379,6 @@
     
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"dicresponseObject%@",responseObject);
         [hud2 hide:YES];
         addFriendBtn.userInteractionEnabled = YES;
         delFriendBtn.userInteractionEnabled = YES;
@@ -1366,7 +1387,8 @@
 
         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
-            [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+            [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
         }
         
         if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {

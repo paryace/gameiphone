@@ -969,16 +969,6 @@
                     dFname.index = nameIndex?nameIndex:@"";
                     return ;
                 }
-//                if([dUser.shiptype isEqualToString:@"2"])
-//                {
-//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-//                    DSAttentionNameIndex * dFname = [DSAttentionNameIndex MR_findFirstWithPredicate:predicate2];
-//                    if (!dFname)
-//                        dFname = [DSAttentionNameIndex MR_createInContext:localContext];
-//                    
-//                    dFname.index = nameIndex?nameIndex:@"";
-//                    return ;
-//                }
                 if([dUser.shiptype isEqualToString:@"3"])
                 {
                     NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
@@ -1267,7 +1257,7 @@ return @"";
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {
         dUser.shiptype = type;
-        }
+    }
     //[self cleanIndexWithNameIndex:dUser.nameIndex withType:type];
 }
 
@@ -1743,8 +1733,8 @@ return @"";
         NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
         NSMutableArray * usersarray= [NSMutableArray array];
         for (int i = 0; i<fri.count; i++) {
-             NSString * shipType = [[fri objectAtIndex:i]shiptype];
-            if ([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2]) {
+             NSString * shipT = [[fri objectAtIndex:i]shiptype];
+            if ([shipT isEqualToString:shipType]||[shipT isEqualToString:shipType2]) {
                 NSMutableDictionary *user= [self getUserDictionary:[fri objectAtIndex:i]];
                 [usersarray addObject:user];
             }
@@ -1774,6 +1764,7 @@ return @"";
     [user setObject:[dbUser refreshTime]?[dbUser refreshTime]:@"" forKey:@"updateUserLocationDate"];
     [user setObject:[dbUser distance]?[dbUser distance]:@"" forKey:@"distance"];
     [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
+    [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shipType"];
     if (![dbUser remarkName] || [[dbUser remarkName] isEqualToString:@""]) {
         if(![dbUser nickName] || [[dbUser nickName] isEqualToString:@""]){
             [user setObject:@"" forKey:@"alias"];
@@ -1787,7 +1778,23 @@ return @"";
     return user;
 }
 //---------------------------------------
-
+//粉丝列表（新）
+//---------------------------------------
++(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType
+{
+    NSMutableArray * theArr = [NSMutableArray array];
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shipType];
+        NSArray * users = [DSuser MR_findAllWithPredicate:predicate];
+        for (int i = 0; i <users.count; i++) {
+            DSuser *dUser = [users objectAtIndex:i];
+            NSMutableDictionary *user= [self getUserDictionary:dUser];
+            [theArr addObject:user];
+        }
+    }];
+    return theArr;
+}
+//----------------------------------------
 + (void)saveFriendRemarkName:(NSString*)remarkName userid:(NSString *)userid
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {

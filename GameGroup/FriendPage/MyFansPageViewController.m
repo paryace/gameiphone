@@ -1,0 +1,310 @@
+//
+//  MyFansPageViewController.m
+//  GameGroup
+//
+//  Created by Apple on 14-5-20.
+//  Copyright (c) 2014年 Swallow. All rights reserved.
+//
+
+#import "MyFansPageViewController.h"
+#import "PersonTableCell.h"
+#import "TestViewController.h"
+#import "MJRefresh.h"
+
+@interface MyFansPageViewController ()
+{
+    UITableView * m_myFansTableView;
+    NSMutableDictionary*  m_sortTypeDic;
+    NSMutableArray * m_otherSortFansArray;
+    NSInteger        m_currentPage;
+    NSInteger        m_allcurrentPage;
+    MJRefreshHeaderView *m_fansheader;
+    MJRefreshFooterView *m_fansfooter;
+    
+}
+@end
+
+@implementation MyFansPageViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    [self setTopViewWithTitle:@"粉丝" withBackButton:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
+    
+    m_sortTypeDic= [NSMutableDictionary dictionary];
+    m_otherSortFansArray = [NSMutableArray array];
+    m_currentPage=0;
+    m_allcurrentPage =0;
+    
+    m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_myFansTableView.dataSource = self;
+    m_myFansTableView.delegate = self;
+    [self.view addSubview:m_myFansTableView];
+    [self getFansList];
+    [self addFooter];
+    [self addHeader];
+}
+#pragma mark 刷新表格
+- (void)reloadContentList:(NSNotification*)notification
+{
+    [self getFansList];
+}
+#pragma mark -粉丝列表 只有距离排序
+- (void)getFansBySort
+{
+    [hud show:YES];
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.userId forKey:@"userid"];
+    [paramDict setObject:@"3" forKey:@"shiptype"];
+    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
+    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:[NSString stringWithFormat:@"%d", m_currentPage] forKey:@"pageIndex"];
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"111" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            
+            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
+                return;
+            }
+            
+            if (m_currentPage == 0) {//默认展示存储的
+                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue];
+                [self refreFansNum:m_allcurrentPage];
+                NSMutableArray *fans=KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users");
+                m_otherSortFansArray=fans;
+                [self endLoad];
+                
+                [self saveFansList:fans];
+            }
+            else{
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"3")];
+                [self endLoad];
+            }
+            m_currentPage ++;//从0开始
+            
+        }else{
+            
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [self endLoad];
+        
+    }];
+}
+-(void)refreFansNum:(NSInteger)fansInteger
+{
+    NSString *fansNum=[NSString stringWithFormat: @"%d",fansInteger];
+    [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)endLoad
+{
+    [m_myFansTableView reloadData];
+    [m_fansheader endRefreshing];
+    [m_fansfooter endRefreshing];
+}
+
+-(void)saveFansList:(NSMutableArray*)result
+{
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_async(queue, ^{
+        for (NSDictionary * dict in result) {
+            [dict setValue:[[self getTitleInfo:dict] objectForKey:@"titleName"] forKey:@"titleName"];
+            [dict setValue:[[self getTitleInfo:dict] objectForKey:@"rarenum"]forKey:@"rarenum"];
+            [dict setValue:[dict objectForKey:@"id"] forKey:@"userid"];
+            [dict setValue:[dict objectForKey:@"birthdate"] forKey:@"birthday"];
+            [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
+        }
+    });
+}
+-(void)getFansList
+{
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+    dispatch_async(queue, ^{
+        m_otherSortFansArray = [DataStoreManager newQueryAllFansWithOtherSortType:@"3"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myFansTableView reloadData];
+        });
+    });
+}
+
+-(NSMutableDictionary*)getTitleInfo:(NSDictionary*)titleDic
+{
+    
+    NSMutableDictionary *titled=[[NSMutableDictionary alloc]init];
+    NSString * titleObj = @"";
+    NSString * titleObjLevel = @"";
+    NSDictionary* titleD = KISDictionaryHaveKey(titleDic, @"title");
+    if ([titleD isKindOfClass:[NSDictionary class]]) {
+        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleD, @"titleObj"), @"title");
+        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleDic, @"rarenum")];
+    }
+    else
+    {
+        titleObj = @"暂无头衔";
+        titleObjLevel = @"6";
+    }
+    [titled setObject:titleObj forKey:@"titleName"];
+    [titled setObject:titleObjLevel forKey:@"rarenum"];
+    return titled;
+}
+
+#pragma mark 表格
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [m_otherSortFansArray count];
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString * stringCell3 = @"cell";
+    PersonTableCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
+    if (!cell) {
+        cell = [[PersonTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    NSDictionary * tempDict;
+    
+    tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+        cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
+        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+    }
+    else
+    {
+        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+        cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
+        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+    }
+    
+    NSString * fruits = KISDictionaryHaveKey(tempDict, @"img");
+    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
+        cell.headImageV.imageURL =nil;
+    }else{
+        NSArray  * array= [fruits componentsSeparatedByString:@","];
+        NSString* headURL;
+        if (array.count>0) {
+            headURL = [array objectAtIndex:0];
+            cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[GameCommon getNewStringWithId:headURL] stringByAppendingString:@"/80"]]];
+        }else
+        {
+            cell.headImageV.imageURL =nil;
+        }
+    }
+    cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
+    cell.gameImg_one.image = KUIImage(@"wow");
+    
+    NSString * titleObj = @"";
+    NSString * titleObjLevel = @"";
+    NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
+    if ([titleDic isKindOfClass:[NSDictionary class]]) {
+        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
+        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
+    }
+    else
+    {
+        titleObj = @"暂无头衔";
+        titleObjLevel = @"6";
+    }
+    
+    cell.distLabel.text = titleObj;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[titleObjLevel intValue]];
+    
+    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
+    
+    
+    [cell refreshCell];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    [m_myFansTableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary * tempDict= [m_otherSortFansArray objectAtIndex:indexPath.row];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    TestViewController *detailVC = [[TestViewController alloc]init];
+    detailVC.userId = KISDictionaryHaveKey(tempDict, @"id");
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
+
+
+
+- (void)addFooter
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    
+    footer.scrollView = m_myFansTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        if (m_otherSortFansArray.count<m_allcurrentPage) {
+            NSLog(@"加载更多");
+            [self getFansBySort];
+        }else{
+            [m_fansfooter endRefreshing];
+        }
+    };
+    m_fansfooter = footer;
+    
+}
+- (void)addHeader
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    
+    header.scrollView = m_myFansTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currentPage = 0;
+        [self getFansBySort];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+        
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+    [header beginRefreshing];
+    m_fansheader = header;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+@end

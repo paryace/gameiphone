@@ -15,6 +15,7 @@
 #import "NearFriendsViewController.h"
 #import "TestViewController.h"
 #import "AddFriendsViewController.h"
+#import "MyFansPageViewController.h"
 @interface NewFriendPageController (){
     
     NSDictionary* resultArray;//数据集合
@@ -37,9 +38,11 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
+    [self setFansNum];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendDateFromDataSore];
         [m_myTableView reloadData];
         [self getFriendListFromNet];
@@ -66,6 +69,7 @@
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendDateFromDataSore];
         [m_myTableView reloadData];
         if (!keyArr||[keyArr count]==0) {
@@ -77,7 +81,11 @@
         [self getFriendListFromNet];
     }
 }
-
+#pragma mark 刷新表格
+- (void)reloadContentList:(NSNotification*)notification
+{
+    [self getFriendDateFromDataSore];
+}
 - (UIView *)topView{
     if (!_topView) {
         _topView = [[UIView alloc] init];
@@ -117,7 +125,7 @@
         {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
             NSString *userid=[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-            FunsOfOtherViewController *fans = [[FunsOfOtherViewController alloc]init];
+            MyFansPageViewController *fans = [[MyFansPageViewController alloc]init];
             fans.userId = userid;
             [self.navigationController pushViewController:fans animated:YES];
         }

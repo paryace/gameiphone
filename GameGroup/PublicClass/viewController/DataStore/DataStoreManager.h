@@ -147,6 +147,7 @@
 +(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2;//取出好友和关注的字母
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(NSMutableArray *)queryNameIndex;
++(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType;
 
 
 
@@ -154,5 +155,6 @@
 
 +(void)deleteAllDSCommonMsgs;
 +(void)deleteMsgByMsgType:(NSString *)msgType;
+
 
 @end

@@ -230,9 +230,7 @@
         {
             if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(tempDic, @"userid")]) {
                 [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:@"1"];
-                
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
             }
             else
                 [self requestPeopleInfoWithName:KISDictionaryHaveKey(tempDic, @"username") ForType:1];
