@@ -10,6 +10,8 @@
 #import "GuildCell.h"
 #import "RoleCell.h"
 #import "HelpViewController.h"
+#import "GuildMembersViewController.h"
+#import "TestViewController.h"
 @interface SearchWithGameViewController ()
 {
     NSMutableArray *m_dataArray;
@@ -35,6 +37,7 @@
     m_dataArray = [NSMutableArray array];
     if (self.myInfoType ==COME_GUILD) {
         m_dataArray = [self.dataDic objectForKey:@"guilds"];
+        
         [self setTopViewWithTitle:@"查找工会"withBackButton:YES];
     }else{
     
@@ -60,9 +63,9 @@
     UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 30)];
     if (self.myInfoType ==COME_GUILD) {
 
-    helpLbel.text = @"查不到角色？";
+    helpLbel.text = @"查不到公会?";
     }else{
-    helpLbel.text = @"查不到公会？";
+    helpLbel.text = @"查不到角色？";
     }
     helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     helpLbel.font = [UIFont systemFontOfSize:12];
@@ -81,7 +84,6 @@
     HelpViewController *helpVC = [[HelpViewController alloc]init];
     helpVC.myUrl = @"content.html?4";
     [self.navigationController pushViewController:helpVC animated:YES];
-    
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -128,7 +130,7 @@
             cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
         }else{
             cell.headImgBtn.imageURL = nil;
-            cell.genderImgView.image = nil;
+            cell.genderImgView.image = KUIImage(@"weibangding");
             cell.nickNameLabel.text = @"未绑定";
         }
 
@@ -138,6 +140,28 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    NSDictionary *dic =[m_dataArray objectAtIndex:indexPath.row];
+    
+    if (self.myInfoType == COME_GUILD) {
+        GuildMembersViewController *guildMember = [[GuildMembersViewController alloc]init];
+        guildMember.guildStr = KISDictionaryHaveKey(dic, @"name");
+        guildMember.realmStr = self.realmStr;
+        guildMember.gameidStr = KISDictionaryHaveKey(dic, @"gameid");
+        [self.navigationController pushViewController:guildMember animated:YES];
+
+    }else{
+        if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
+            TestViewController *testVC =[[ TestViewController alloc]init];
+            testVC.nickName =[GameCommon  getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+            testVC.userId =[GameCommon  getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id")];
+            [self.navigationController pushViewController:testVC animated:YES];
+        }else{
+            [self showAlertViewWithTitle:@"提示" message:@"此角色尚未在陌游绑定" buttonTitle:@"确定"];
+        }
+    }
+    
     
 }
 - (void)didReceiveMemoryWarning

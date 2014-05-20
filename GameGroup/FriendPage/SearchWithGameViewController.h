@@ -14,5 +14,6 @@ typedef enum
 }MYINFOTYPE;
 @interface SearchWithGameViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,assign)MYINFOTYPE myInfoType;
-@property(nonatomic,assign)NSMutableDictionary *dataDic;
+@property(nonatomic,strong)NSDictionary *dataDic;
+@property(nonatomic,copy)NSString *realmStr;
 @end

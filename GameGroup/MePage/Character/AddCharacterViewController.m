@@ -442,6 +442,14 @@
 
 #pragma mark textField
 
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField == m_roleNameText&&(m_gameNameText.text ==nil||[m_gameNameText.text isEqualToString:@""]||[m_gameNameText.text isEqualToString:NULL])) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return NO;
+    }
+    return YES;
+}
 
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {

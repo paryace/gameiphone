@@ -286,17 +286,18 @@
             
             
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
-            int i = [KISDictionaryHaveKey(responseObject, @"characterTotalNum")intValue];
-            if (i==0) {
-                [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
-                return ;
-            }
+            NSArray *array = KISDictionaryHaveKey(responseObject, @"characters");
+            if (array.count>0) {
 
             secGame.dataDic = responseObject;
+            secGame.realmStr = searchContent.text;
             secGame.myInfoType = COME_ROLE;
             [self.navigationController pushViewController:secGame animated:YES];
             
             [hud hide:YES];
+            }else{
+            [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
+            }
             }
             failure:^(AFHTTPRequestOperation *operation, id error) {
             [hud hide:YES];
@@ -319,14 +320,17 @@
             [hud hide:YES];
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
             
-            int i = [KISDictionaryHaveKey(responseObject, @"characterTotalNum")intValue];
-            if (i==0) {
-            [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
-                return ;
-            }
+            NSArray *array = KISDictionaryHaveKey(responseObject, @"guilds");
+            if (array.count>0) {
+            secGame.dataDic = [NSDictionary new];
             secGame.dataDic = responseObject;
+            secGame.realmStr = searchContent.text;
             secGame.myInfoType = COME_GUILD;
             [self.navigationController pushViewController:secGame animated:YES];
+            }else{
+                [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
+                return ;
+            }
         }
     failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];

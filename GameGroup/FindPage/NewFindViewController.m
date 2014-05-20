@@ -186,7 +186,7 @@
     [self setTopViewWithTitle:@"发现" withBackButton:NO];
     //self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     self.view.backgroundColor = [UIColor whiteColor];
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+//    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
 
 
     

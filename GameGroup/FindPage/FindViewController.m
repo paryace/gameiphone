@@ -157,7 +157,7 @@
     
     
     //初始化背景图片 并且添加点击换图方法
-    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
+    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"]) {
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
@@ -175,13 +175,13 @@
     
     
     
-    UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, 320,90 )];
+    UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     topView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
     [self.view addSubview:topView];
     
     
     
-    UILabel *titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    UILabel *titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?20:0, 320, 44)];
     titleLabel.font = [UIFont boldSystemFontOfSize:20];
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text  = @"发现";
@@ -189,7 +189,7 @@
     titleLabel.backgroundColor = [ UIColor clearColor];
     [topView addSubview:titleLabel];
     
-    UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 44, 320, 20)];
+    UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, 20)];
     textLabel.text = @"选择游戏 开始您的游戏社交";
     textLabel.textColor = UIColorFromRGBA(0xf3f3f3, 1);
     textLabel.textAlignment = NSTextAlignmentCenter;
@@ -201,7 +201,7 @@
     menuButotn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 44, 44)];
     menuButotn.center = CGPointMake(160, KISHighVersion_7?110:90);
     [menuButotn addTarget:self action:@selector(didClickMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+    [menuButotn setBackgroundImage:KUIImage(@"wow") forState:UIControlStateNormal];
     [self.view addSubview:menuButotn];
     
    

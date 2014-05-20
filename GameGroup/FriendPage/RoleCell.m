@@ -15,22 +15,22 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.glazzImgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+        self.glazzImgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(20, 10, 40, 40)];
         [self.contentView addSubview:self.glazzImgView];
         
-        self.roleLabel =[[ UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-        self.roleLabel.font = [UIFont boldSystemFontOfSize:15];
-        self.roleLabel.textColor = [UIColor grayColor];
+        self.roleLabel =[[ UILabel alloc]initWithFrame:CGRectMake(70, 10, 250, 20)];
+        self.roleLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
+        self.roleLabel.textColor = [UIColor blackColor];
         self.roleLabel.backgroundColor =[ UIColor clearColor];
         [self.contentView addSubview:self.roleLabel];
         
         
-        self.genderImgView  =[[UIImageView alloc]initWithFrame:CGRectMake(60, 30, 20, 20)];
+        self.genderImgView  =[[UIImageView alloc]initWithFrame:CGRectMake(70, 34, 18, 18)];
         [self.contentView addSubview:self.genderImgView];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 30, 200, 20)];
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(90, 28, 200, 30)];
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
-        self.nickNameLabel.font = [UIFont systemFontOfSize:12];
+        self.nickNameLabel.font = [UIFont systemFontOfSize:14];
         [self.contentView addSubview:self.nickNameLabel];
         
         
