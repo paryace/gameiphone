@@ -1328,8 +1328,8 @@ return @"";
 }
 + (void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type
 {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",nameIndex];
-        NSArray * dUser = [DSuser MR_findAllWithPredicate:predicate];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",nameIndex];
+    NSArray * dUser = [DSuser MR_findAllWithPredicate:predicate];
     NSMutableArray *array = [NSMutableArray array];
     for (int i = 0; i<dUser.count; i++) {
         DSuser *user = [dUser objectAtIndex:i];
@@ -1733,10 +1733,13 @@ return @"";
         NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
         NSMutableArray * usersarray= [NSMutableArray array];
         for (int i = 0; i<fri.count; i++) {
-             NSString * shipT = [[fri objectAtIndex:i]shiptype];
+          NSString * shipT = [[fri objectAtIndex:i]shiptype];
             if ([shipT isEqualToString:shipType]||[shipT isEqualToString:shipType2]) {
                 NSMutableDictionary *user= [self getUserDictionary:[fri objectAtIndex:i]];
-                [usersarray addObject:user];
+//                NSString * shipT =[user objectForKey:@"shiptype"];
+//                if ([shipT isEqualToString:shipType]||[shipT isEqualToString:shipType2]) {
+                    [usersarray addObject:user];
+//                }
             }
         }
         if (usersarray&&[usersarray count]>0) {
@@ -1764,7 +1767,7 @@ return @"";
     [user setObject:[dbUser refreshTime]?[dbUser refreshTime]:@"" forKey:@"updateUserLocationDate"];
     [user setObject:[dbUser distance]?[dbUser distance]:@"" forKey:@"distance"];
     [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
-    [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shipType"];
+    [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shiptype"];
     if (![dbUser remarkName] || [[dbUser remarkName] isEqualToString:@""]) {
         if(![dbUser nickName] || [[dbUser nickName] isEqualToString:@""]){
             [user setObject:@"" forKey:@"alias"];

@@ -1282,8 +1282,8 @@
                 if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
                     [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
                 }
-                NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
+                NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
+                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT];
                 DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
                 [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];

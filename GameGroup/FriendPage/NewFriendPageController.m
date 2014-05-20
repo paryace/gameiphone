@@ -40,13 +40,13 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
+    [self getFriendDateFromDataSore];
+    [m_myTableView reloadData];
     [self setFansNum];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
-        [self getFriendDateFromDataSore];
-        [m_myTableView reloadData];
         [self getFriendListFromNet];
     }
 
