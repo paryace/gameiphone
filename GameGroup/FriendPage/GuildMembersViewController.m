@@ -84,7 +84,15 @@
             [m_foot endRefreshing];
         }
         } failure:^(AFHTTPRequestOperation *operation, id error) {
-                              
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+            [m_head endRefreshing];
+            [m_foot endRefreshing];
         }];
 
 }
@@ -102,6 +110,7 @@
     }
     NSDictionary *dict = m_dataArray[indexPath.row];
     
+
     cell.glazzImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
     
     cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
@@ -118,7 +127,11 @@
             cell.headImgBtn.placeholderImage = KUIImage(@"people_man");
 
         }
+        if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
+            cell.headImgBtn.imageURL = nil;
+        }else{
         cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
+        }
     }else{
         cell.headImgBtn.imageURL = nil;
         cell.genderImgView.image = KUIImage(@"weibangding");

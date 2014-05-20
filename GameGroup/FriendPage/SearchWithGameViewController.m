@@ -127,13 +127,18 @@
             }else{
                 cell.genderImgView.image = KUIImage(@"gender_boy");
             }
-            cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
+            
+            if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
+                cell.headImgBtn.imageURL = nil;
+            }else{
+                cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
+            }
         }else{
             cell.headImgBtn.imageURL = nil;
             cell.genderImgView.image = KUIImage(@"weibangding");
             cell.nickNameLabel.text = @"未绑定";
         }
-
+        
         return cell;
     }
     return nil;

@@ -127,7 +127,7 @@ static UserManager *userManager = NULL;
 {
     NSString * nickName=KISDictionaryHaveKey(userDict, @"nickname");
     NSString * userImg=KISDictionaryHaveKey(userDict,@"img");
-    NSString * userId=KISDictionaryHaveKey(userDict,@"id");
+    NSString * userId=KISDictionaryHaveKey(userDict,@"userid");
     [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];
 }
 

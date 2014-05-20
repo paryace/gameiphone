@@ -341,7 +341,6 @@
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {    //新的朋友圈动态
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
-                
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])
             {
@@ -349,9 +348,7 @@
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
                 
-                
                 NSMutableData *data= [[NSMutableData alloc]init];
-                
                 NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
                 [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
                 [archiver finishEncoding];
@@ -360,6 +357,7 @@
                     [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
                 }else{
                     int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
+                    
                     [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
                 }
                 
