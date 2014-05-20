@@ -63,11 +63,23 @@
 #pragma mark -粉丝列表 只有距离排序
 - (void)getFansBySort
 {
+    NSString *typeKey;
+    if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        typeKey=@"3";
+    }else{
+        typeKey=@"4";
+    }
+
     [hud show:YES];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
-    [paramDict setObject:@"4" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
+//    if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+//        [paramDict setObject:@"3" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
+//    }else{
+//        [paramDict setObject:@"4" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
+//    }
+    [paramDict setObject:typeKey forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -85,18 +97,18 @@
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"4") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"4") isKindOfClass:[NSDictionary class]] )) {
+            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, typeKey) isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, typeKey) isKindOfClass:[NSDictionary class]] )) {
                 return;
             }
 
             if (m_currentPage == 0) {//默认展示存储的
-                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"4"), @"totalResults") intValue];
+                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, typeKey), @"totalResults") intValue];
 
                 [m_otherSortFansArray removeAllObjects];
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"4"), @"users")];
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, typeKey), @"users")];
             }
             else{
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"4")];
+                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, typeKey)];
             }
             
             m_currentPage ++;//从0开始

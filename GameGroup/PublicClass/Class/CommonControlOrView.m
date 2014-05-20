@@ -162,7 +162,7 @@
     EGOImageView* heardImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     heardImg.backgroundColor = [UIColor clearColor];
     if (!image ||[image isEqualToString:@""]||[image isEqualToString:@" "]) {
-        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_0.png"]];
+        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_00.png"]];
     }
     else
         heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];

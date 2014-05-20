@@ -223,7 +223,7 @@
 #pragma mark -清空
 - (void)cleanBtnClick:(id)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定要清空消息页面吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"将会清除所有的聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alert.tag = 345;
     [alert show];
 }
@@ -253,7 +253,9 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-            [DataStoreManager deleteAllThumbMsg];
+//            [DataStoreManager deleteAllThumbMsg];//删除绘画列表记录
+//            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
+            [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
             [self displayMsgsForDefaultView];
         }
     }
