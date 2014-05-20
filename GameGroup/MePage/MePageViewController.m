@@ -431,19 +431,9 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
-
-//        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界 旧的
-        
         NSMutableArray* characterArray = m_hostInfo.charactersArr;//魔兽世界 新的
-        
-        
         [[NSUserDefaults standardUserDefaults]setObject:characterArray forKey:@"CharacterArrayOfAllForYou"];
-        
-        
-//        if (![characterArray isKindOfClass:[NSArray class]]) {
             if ([characterArray count]<=0) {
-//          cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-//          cell.nameLabel.text = @"暂无角色";
             cell.heardImg.hidden = YES;
             cell.authBg.hidden = YES;
             cell.nameLabel.hidden = YES;
@@ -463,38 +453,7 @@
             cell.pveLabel.hidden = NO;
             cell.noCharacterLabel.hidden = YES;
             NSDictionary* tempDic = [characterArray objectAtIndex:indexPath.row];
-            
-//            if ([KISDictionaryHaveKey(tempDic, @"failedmsg")intValue] ==404)//角色不存在
-//            {
-//                cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-//                cell.realmLabel.text = @"角色不存在";
-//            }
-//            else
-//            {
-//                int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-//                if (imageId > 0 && imageId < 12) {//1~11
-//                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-//                }
-//                else
-//                    cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-//                NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
-//                cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
-//            }
-//            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
-//                cell.authBg.hidden = NO;
-//                cell.authBg.image= KUIImage(@"chara_auth_1");
-//            }
-//            else
-//            {
-//                cell.authBg.hidden = NO;
-//                 cell.authBg.image= KUIImage(@"chara_auth_2");
-//            }
-//            cell.rowIndex = indexPath.row;
-//            cell.myDelegate = self;
-//            cell.gameImg.image = KUIImage(@"wow");
-//            cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"name");
-//            cell.pveLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"pveScore")];
-//            cell.noCharacterLabel.hidden = YES;
+
             NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
             NSString* v1=KISDictionaryHaveKey(tempDic, @"value1");//部落
             NSString* v2=KISDictionaryHaveKey(tempDic, @"value2");//战斗力
@@ -511,8 +470,7 @@
             }
             else
             {
-                if (!img ||[img isEqualToString:@""]||[img isEqualToString:@" "]) {//1~11
-//                    cell.heardImg.imageURL=nil;
+                if (!img ||[img isEqualToString:@""]||[img isEqualToString:@" "]) {
                     cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_00.png"]];
                 }
                 else
@@ -752,24 +710,11 @@
 //        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
 //        [[NSUserDefaults standardUserDefaults] synchronize];
 //        [[GameCommon shareGameCommon] displayTabbarNotification];
-        
-
-        
-        
-        
     }
     else if(indexPath.section == 2)
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
-//        NSArray* characterArray = KISDictionaryHaveKey(m_hostInfo.characters, @"1");//魔兽世界
-//        if (![characterArray isKindOfClass:[NSArray class]]){
-//            CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
-//            characterVC.isFromMeet =NO;
-//            
-//            [self.navigationController pushViewController:characterVC animated:YES];
-//            NSLog(@"添加角色");
-//        }
          NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
         if ([characterArray count]>0){
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
@@ -842,7 +787,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end

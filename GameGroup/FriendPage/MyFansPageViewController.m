@@ -61,6 +61,7 @@
     [self getFansList];
     [self addFooter];
     [self addHeader];
+    [self getFansBySort];
 }
 
 - (void)reloadFansList:(NSNotification*)notification
@@ -321,7 +322,7 @@
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
     };
-    [header beginRefreshing];
+//    [header beginRefreshing];
     m_fansheader = header;
 }
 

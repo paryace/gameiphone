@@ -758,22 +758,13 @@
         
         if ([failedmsg intValue ]==404)//角色不存在
         {
-//            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:@"0" auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
-//            myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
-//            [m_myScrollView addSubview:myCharacter];
-            
-            
             UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:[GameCommon getNewStringWithId:auth] Pro:v2];
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
         }
         else
         {
-//            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:KISDictionaryHaveKey(characterDic, @"name") gameId:@"1" realm:[KISDictionaryHaveKey(characterDic, @"realm") stringByAppendingString:realm] pveScore:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"pveScore")] img:KISDictionaryHaveKey(characterDic, @"clazz") auth:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterDic, @"auth")]];
-            
             UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[[realm stringByAppendingString:@" "] stringByAppendingString:v1] pveScore:[NSString stringWithFormat:@"%@",v3] img:img auth:[GameCommon getNewStringWithId:auth] Pro:v2];
-            
-            
             
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
@@ -784,12 +775,6 @@
             titleSelect.tag = i+1000;
             [m_myScrollView addSubview:titleSelect];
             
-            //  m_currentStartY += 40;
-            
-            
-            
-            //[myCharacter setTag:i+1000];
-            //[myCharacter addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapMyCharacter:)]];
         }
         m_currentStartY += 60;
         [self setOneLineWithY:m_currentStartY];
@@ -805,8 +790,9 @@
     NSArray* characterArray = self.hostInfo.charactersArr;
     if ([characterArray isKindOfClass:[NSArray class]]){
         NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
+        NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
         CVC.characterId = KISDictionaryHaveKey(dic, @"id");
-        CVC.gameId = @"1";
+        CVC.gameId = gameId;
         //告诉是他人看到推过来的
     }else{
         NSDictionary *dic = KISDictionaryHaveKey(self.hostInfo.state, @"titleObj");

@@ -252,7 +252,7 @@
             
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             NSString *charaInfoImageId=m_charaInfo.thumbnail;
-            if ( charaInfoImageId || [charaInfoImageId isEqualToString:@""]||[charaInfoImageId isEqualToString:@" "]) {
+            if (!charaInfoImageId || [charaInfoImageId isEqualToString:@""]||[charaInfoImageId isEqualToString:@" "]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
             }else{
                 m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",m_charaInfo.thumbnail]];
