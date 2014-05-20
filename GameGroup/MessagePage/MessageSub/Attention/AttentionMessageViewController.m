@@ -133,17 +133,19 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    NSURL * theUrl;
+  //  NSURL * theUrl;
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
-        theUrl = nil;
-    }else{
-    theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row]senderimg]]]];
-    }
-    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
+//    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
+//        theUrl = nil;
+//    }else{
+//    theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:[[self.dataArray objectAtIndex:indexPath.row]senderimg]]]];
+//    }
+//    if ([[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@""]||[[[self.dataArray objectAtIndex:indexPath.row]senderimg]isEqualToString:@" "]) {
+    NSString * headImageId=[[self.dataArray objectAtIndex:indexPath.row]senderimg];
+    if (!headImageId ||[headImageId isEqualToString:@""]||[headImageId isEqualToString:@" "]) {
         cell.headImageV.imageURL = nil;
     }else{
-        cell.headImageV.imageURL = theUrl;
+        cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:headImageId]]];
     }
     cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row]msgContent];
     cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];

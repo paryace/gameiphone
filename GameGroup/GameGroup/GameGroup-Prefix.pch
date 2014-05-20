@@ -104,6 +104,7 @@
 #define isFirstIntoMePage @"isFirstIntoMePage"//第一次进入“我”的页面
 
 #define kReloadContentKey @"reloadContent"//刷新联系人表的notification
+#define kReloadFansKey @"reloadFansKey"//刷新联系人表的notification
 
 #define kOpenData @"openData"//开机请求的数据
 

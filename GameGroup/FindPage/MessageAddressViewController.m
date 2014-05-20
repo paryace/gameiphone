@@ -80,6 +80,8 @@
     _tableView.rowHeight = 60;
     _tableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_tableView];
+    
+    
     UIView * headV = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
     UIImageView *imageV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 27.5, 40, 45)];
     imageV.image = [UIImage imageNamed:@"addressBookIcon"];
@@ -97,6 +99,7 @@
     [headV addSubview:label2];
     self.swith = [[UISwitch alloc]initWithFrame:CGRectMake(250, 30, 40, 60)];
     [headV addSubview:_swith];
+    
     [_swith addTarget:self action:@selector(SwithCellChangeSwith:) forControlEvents:UIControlEventValueChanged];
     _tableView.tableHeaderView = headV;
     _tableView.backgroundColor = [UIColor clearColor];
@@ -380,8 +383,8 @@
 - (NSMutableArray*)getAddressBook
 {
     NSMutableArray * addressArray = [NSMutableArray array];
-    //取得本地通信录名柄
     
+    //取得本地通信录名柄
     ABAddressBookRef tmpAddressBook = nil;
     tmpAddressBook=ABAddressBookCreateWithOptions(NULL, NULL);
     dispatch_semaphore_t sema=dispatch_semaphore_create(0);
@@ -399,17 +402,14 @@
     {
         //获取的联系人单一属性:First name
         NSString* tmpFirstName = (__bridge NSString*)ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonFirstNameProperty);
-        NSLog(@"First name:%@", tmpFirstName);
         //获取的联系人单一属性:Last name
         NSString* tmpLastName = (__bridge NSString*)ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonLastNameProperty);
-        NSLog(@"Last name:%@", tmpLastName);
         //获取的联系人单一属性:Generic phone number
         ABMultiValueRef tmpPhones = ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonPhoneProperty);
         for(NSInteger j = 0; j < ABMultiValueGetCount(tmpPhones); j++)
         {
             NSString* tmpPhoneIndex = (__bridge NSString*)ABMultiValueCopyValueAtIndex(tmpPhones, j);
             tmpPhoneIndex = [tmpPhoneIndex stringByReplacingOccurrencesOfString:@"-"withString:@""];
-            NSLog(@"tmpPhoneIndex%d:%@", j, tmpPhoneIndex);
             NSMutableDictionary * dic = [NSMutableDictionary dictionary];
             if (tmpLastName&&tmpFirstName) {
                 [dic setObject:[NSString stringWithFormat:@"%@%@",tmpLastName,tmpFirstName] forKey:@"name"];
@@ -434,7 +434,17 @@
 }
 - (void)uploadAddress
 {
-    NSMutableArray * arr = [self getAddressBook];
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.MessageAddressViewController", NULL);
+    dispatch_async(queue, ^{
+        NSMutableArray * arr = [self getAddressBook];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self uploadContacts:arr];
+        });
+    });
+}
+
+-(void)uploadContacts:(NSMutableArray*)arr
+{
     if (!arr) {
         UIAlertView * alertV = [[UIAlertView alloc]initWithTitle:nil message:@"您可能禁用了通讯录,请在 设置-隐私-通讯录 启用陌游" delegate:self cancelButtonTitle:@"放弃" otherButtonTitles:@"告诉我怎么做", nil];
         [alertV show];
@@ -485,6 +495,7 @@
         }
     }];
 }
+
 /*
 #pragma mark - Navigation
 

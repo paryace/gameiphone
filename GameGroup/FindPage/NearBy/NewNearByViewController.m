@@ -1050,13 +1050,13 @@ typedef enum : NSUInteger {
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
+        [self getLocationForNet];
+//        isSaveHcTopImg = YES;
 //        isSaveHcListInfo = YES;
 //        [self getInfoWithNet];
+//        [self getTopImageFromNet];
         
-        isSaveHcTopImg = YES;
-        isSaveHcListInfo = YES;
-        [self getInfoWithNet];
-        [self getTopImageFromNet];
+        
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
     };
