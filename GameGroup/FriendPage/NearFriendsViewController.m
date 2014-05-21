@@ -140,8 +140,10 @@
     
     if ([KISDictionaryHaveKey(dict, @"shiptype")isEqualToString:@"1"]) {
         cell.shiptypeLabel.text = @"好友";
-    }else{
+    }else if([KISDictionaryHaveKey(dict, @"shiptype")isEqualToString:@"2"]){
         cell.shiptypeLabel.text = @"关注";
+    }else{
+        cell.shiptypeLabel.text = @"粉丝";
     }
     [cell refreshCell];
     return cell;
