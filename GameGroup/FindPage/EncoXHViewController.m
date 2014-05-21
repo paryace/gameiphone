@@ -119,7 +119,7 @@
     }
     else{
 
-    [self getSayHelloForNetWithDictionary:paramDict method:@"125" prompt:@"获取中..." type:3];
+    [self getSayHelloForNetWithDictionary:paramDict method:@"202" prompt:@"获取中..." type:3];
     }
     //}else{
     //  m_characterArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"];

@@ -10,6 +10,7 @@
 #import "AuthViewController.h"
 #import "AddCharacterViewController.h"
 #import "NewFindViewController.h"
+
 @interface CharacterEditViewController ()
 {
     UITableView*    m_myTabelView;
@@ -61,7 +62,7 @@
     [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"125" forKey:@"method"];
+    [postDict setObject:@"202" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [hud show:YES];
@@ -69,11 +70,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"%@", responseObject);
-        if ([KISDictionaryHaveKey(responseObject, @"1") isKindOfClass:[NSArray class]]) {
+        if ([responseObject isKindOfClass:[NSArray class]]) {
             [m_characterArray removeAllObjects];
-            [m_characterArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"1")];
-
-            [m_myTabelView reloadData];
+            [m_characterArray addObjectsFromArray:responseObject];
+             [m_myTabelView reloadData];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -156,6 +156,7 @@
 
     if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
     {
+        cell.heardImg.imageURL =nil;
         cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
         cell.realmLabel.text = @"角色不存在";
         
@@ -164,12 +165,17 @@
     }
     else
     {
-        int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-        if (imageId > 0 && imageId < 12) {//1~11
-            cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-        }
-        else
-            cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+//        int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
+//        if (imageId > 0 && imageId < 12) {//1~11
+//            cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+//        }
+//        else
+//            cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+        
+        cell.heardImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
+        
+        
+        
         NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
         cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
         
