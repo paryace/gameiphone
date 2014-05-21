@@ -273,10 +273,18 @@
             str =KISDictionaryHaveKey(dict, @"commentStr");
         }
         else{
+            NSString *nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
+            if ([GameCommon isEmtity:nickName]) {
+                nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+            }
             if ([[dict allKeys]containsObject:@"destUser"]) {
-                str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+                NSString *nickName2 =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"alias");
+                if ([GameCommon isEmtity:nickName2]) {
+                    nickName2 =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname");
+                }
+                str =[NSString stringWithFormat:@"%@ 回复 %@: %@", nickName,nickName2,KISDictionaryHaveKey(dict, @"comment")];
             }else{
-                str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+                str =[NSString stringWithFormat:@"%@: %@",nickName,KISDictionaryHaveKey(dict, @"comment")];
             }
             str = [UILabel getStr:str];
             [dict setObject:str forKey:@"commentStr"];
