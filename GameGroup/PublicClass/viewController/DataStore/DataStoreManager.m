@@ -1255,6 +1255,7 @@ return @"";
     if (dUser) {
         dUser.shiptype = type;
     }
+    //[self cleanIndexWithNameIndex:dUser.nameIndex withType:type];
 }
 
 +(void)deleteAllUser
@@ -1732,7 +1733,10 @@ return @"";
           NSString * shipT = [[fri objectAtIndex:i]shiptype];
             if ([shipT isEqualToString:shipType]||[shipT isEqualToString:shipType2]) {
                 NSMutableDictionary *user= [self getUserDictionary:[fri objectAtIndex:i]];
-                [usersarray addObject:user];
+//                NSString * shipT =[user objectForKey:@"shiptype"];
+//                if ([shipT isEqualToString:shipType]||[shipT isEqualToString:shipType2]) {
+                    [usersarray addObject:user];
+//                }
             }
         }
         if (usersarray&&[usersarray count]>0) {
@@ -1761,7 +1765,16 @@ return @"";
     [user setObject:[dbUser distance]?[dbUser distance]:@"" forKey:@"distance"];
     [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
     [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shiptype"];
-    [user setObject:[dbUser remarkName]?[dbUser remarkName]:@"" forKey:@"alias"];
+    if (![dbUser remarkName] || [[dbUser remarkName] isEqualToString:@""]) {
+        if(![dbUser nickName] || [[dbUser nickName] isEqualToString:@""]){
+            [user setObject:@"" forKey:@"alias"];
+            
+        }else{
+            [user setObject:[dbUser nickName] forKey:@"alias"];
+        }
+    }else{
+        [user setObject:[dbUser remarkName] forKey:@"alias"];
+    }
     return user;
 }
 //---------------------------------------

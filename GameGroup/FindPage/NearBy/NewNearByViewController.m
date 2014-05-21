@@ -1295,7 +1295,6 @@ typedef enum : NSUInteger {
         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
             [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
         for (int i = 0 ;i<m_dataArray.count;i++) {
             NSMutableDictionary *dicTemp = [m_dataArray objectAtIndex:i];

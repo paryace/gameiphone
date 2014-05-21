@@ -198,7 +198,6 @@ UINavigationControllerDelegate>
     
     
     
-//    [self registerKeybordNotification];
     
     float version = [[[UIDevice currentDevice] systemVersion] floatValue];
     if (version >= 5.0) {
@@ -1320,6 +1319,7 @@ UINavigationControllerDelegate>
     }
     //    if (!ifEmoji||self.kkchatInputType != KKChatInputTypeEmoji) {
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
+        
         [self.textView resignFirstResponder];
         
         ifEmoji = YES;
@@ -1473,19 +1473,37 @@ UINavigationControllerDelegate>
     UITouch * touch = [touches anyObject];
     if ([touch view]==clearView) {
         [self.textView resignFirstResponder];
+        //        if (ifEmoji) {
         if (self.kkchatInputType != KKChatInputTypeNone) {
             
+            
             [self autoMovekeyBoard:0];
+            //            ifEmoji = NO;
+            
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 
-                self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
+                self.theEmojiView.frame = CGRectMake(0,
+                                                     self.theEmojiView.frame.origin.y+260+startX-44,
+                                                     320,
+                                                     253);
                 
-                self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,
+                self.kkChatAddView.frame = CGRectMake(0,
+                                                      self.theEmojiView.frame.origin.y+260+startX-44,
+                                                      320,
                                                       253);
-                m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
-                emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
-                m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
+                m_EmojiScrollView.frame = CGRectMake(0,
+                                                     m_EmojiScrollView.frame.origin.y+260,
+                                                     320,
+                                                     253);
+                emojiBGV.frame = CGRectMake(0,
+                                            emojiBGV.frame.origin.y+260+startX-44,
+                                            320,
+                                            emojiBGV.frame.size.height);
+                m_Emojipc.frame = CGRectMake(0,
+                                             m_Emojipc.frame.origin.y+260+startX-44,
+                                             320,
+                                             m_Emojipc.frame.size.height);
                 
                 
             } completion:^(BOOL finished) {
@@ -1496,8 +1514,11 @@ UINavigationControllerDelegate>
                 [m_Emojipc removeFromSuperview];
             }];
             
-            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
+                           forState:UIControlStateNormal];
+            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
+                                  forState:UIControlStateNormal];
+            
         }
         
         [clearView removeFromSuperview];
@@ -1528,29 +1549,61 @@ UINavigationControllerDelegate>
 }
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+//	if(textField == self.messageTextField)
+//	{
+//        
+//	}
+    
 }
 
+
+
+
 -(void) autoMovekeyBoard: (float) h{
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
+	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
+    
     CGRect containerFrame = self.inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
-	self.inPutView.frame = containerFrame;
-    CGRect cgmm=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
-    self.tView.frame=cgmm;
-    [UIView commitAnimations];
+	// animations settings
     
+	
+	// set views with new info
+	self.inPutView.frame = containerFrame;
+    self.tView.frame = CGRectMake(0.0f,
+                                  startX,
+                                  320.0f,
+                                  self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-10);
+    
+	
+	// commit animations
+    
+    
+    //	UITableView *tableView = (UITableView *)[self.view viewWithTag:TABLEVIEWTAG];
+    //	tableView.frame = CGRectMake(0.0f, 0.0f, 320.0f,(float)(480.0-h-108.0));
+    [UIView commitAnimations];
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
+                          atScrollPosition:UITableViewScrollPositionBottom
+                                  animated:NO];
     }
+    
     if (h>0&&canAdd) {
         canAdd = NO;
-        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,
+                                                             startX,
+                                                             320,
+                                                             self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
         [clearView setBackgroundColor:[UIColor clearColor]];
         [self.view addSubview:clearView];
     }
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        [clearView setFrame:CGRectMake(0,
+                                       startX,
+                                       320,
+                                       self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
     }
 }
 #pragma mark -
@@ -1590,19 +1643,37 @@ UINavigationControllerDelegate>
 	self.inPutView.frame = r;
     
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0,startX,320,clearView.frame.size.height+diff)];
+        [clearView setFrame:CGRectMake(0,
+                                       startX,
+                                       320,
+                                       clearView.frame.size.height+diff)];
     }
-    self.tView.frame = CGRectMake(0.0f, startX,320.0f,self.tView.frame.size.height+diff);
+    self.tView.frame = CGRectMake(0.0f,
+                                  startX,
+                                  320.0f,
+                                  self.tView.frame.size.height+diff);
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
                           atScrollPosition:UITableViewScrollPositionBottom
                                   animated:YES];
     }
     //    [senBtn setFrame:CGRectMake(282, inPutView.frame.size.height-37.5, 28, 27.5)];
-    [picBtn setFrame:CGRectMake(285,self.inPutView.frame.size.height-12-27,25,27)];
-    [self.emojiBtn setFrame:CGRectMake(277,self.inPutView.frame.size.height-12-36,45,45)];
-    [self.kkChatAddButton setFrame:CGRectMake(242,self.inPutView.frame.size.height-12-36,45,45)];
-    [audioBtn setFrame:CGRectMake(8,self.inPutView.frame.size.height-12-27,25,27)];
+    [picBtn setFrame:CGRectMake(285,
+                                self.inPutView.frame.size.height-12-27,
+                                25,
+                                27)];
+    [self.emojiBtn setFrame:CGRectMake(277,
+                                       self.inPutView.frame.size.height-12-36,
+                                       45,
+                                       45)];
+    [self.kkChatAddButton setFrame:CGRectMake(242,
+                                              self.inPutView.frame.size.height-12-36,
+                                              45,
+                                              45)];
+    [audioBtn setFrame:CGRectMake(8,
+                                  self.inPutView.frame.size.height-12-27,
+                                  25,
+                                  27)];
 }
 
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
@@ -1674,6 +1745,7 @@ UINavigationControllerDelegate>
 #pragma mark -
 #pragma mark UI/UE : 响应各种交互操作
 - (void)keyboardWillShow:(NSNotification *)notification {
+    
     ifEmoji = NO;
     self.kkchatInputType = KKChatInputTypeKeyboard;
     
@@ -1702,12 +1774,15 @@ UINavigationControllerDelegate>
     
     // Get the origin of the keyboard when it's displayed.
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    
     // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
     CGRect keyboardRect = [aValue CGRectValue];
+    
     // Get the duration of the animation.
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
+    
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
     
@@ -1725,12 +1800,12 @@ UINavigationControllerDelegate>
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
-
+    
+    
     [self autoMovekeyBoard:0];
     
     
 }
-
 -(NSString *)selectedEmoji:(NSString *)ssss
 {
 	if (self.textView.text == nil) {
@@ -2327,7 +2402,7 @@ UINavigationControllerDelegate>
 {
     
     EGOImageView* imgV = (EGOImageView*)sender.view;
-    readyIndex = imgV.tag ;//设置当前要操作的cell idnex
+    readyIndex = imgV.tag ; //设置当前要操作的cell idnex
     indexPathTo = [[NSIndexPath indexPathForRow:(imgV.tag) inSection:0] copy];
     
     //弹出菜单

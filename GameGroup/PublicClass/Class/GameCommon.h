@@ -60,6 +60,4 @@
 
 + (void)loginOut;
 + (void)cleanLastData;
-
-+(BOOL)isEmtity:(NSString*)str;
 @end

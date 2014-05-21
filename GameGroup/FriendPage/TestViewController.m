@@ -70,6 +70,11 @@
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
+    
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+
     wxSDArray = [NSMutableArray array];
      littleImgArray = [NSMutableArray array];
     if (self.hostInfo!=NULL) {//有值 查找用户
@@ -93,8 +98,6 @@
             [[UserManager singleton]requestUserFromNet:self.userId];
         }
     }
-    hud = [[MBProgressHUD alloc]initWithView:self.view];
-    [self.view addSubview:hud];
 }
 //从缓存获取用户信息
 -(NSDictionary*)getUserInfo:(NSString*)userId
@@ -1030,6 +1033,80 @@
     }
 }
 
+- (void)addFriendClick:(id)sender
+{
+    [self DetectNetwork];
+    addFriendBtn.userInteractionEnabled = NO;
+    delFriendBtn.userInteractionEnabled = NO;
+    attentionBtn.userInteractionEnabled = NO;
+    attentionOffBtn.userInteractionEnabled = NO;
+    
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
+    [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
+    [paramDict setObject:@"2" forKey:@"type"];
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"109" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    MBProgressHUD *hud1 =[[ MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud1];
+    [self.view bringSubviewToFront:hud];
+    [hud1 show:YES];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [hud1 hide:YES];
+        addFriendBtn.userInteractionEnabled = YES;
+        delFriendBtn.userInteractionEnabled = YES;
+        attentionBtn.userInteractionEnabled = YES;
+        attentionOffBtn.userInteractionEnabled = YES;
+        [self refreFansNum:@"1"];
+        NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+        [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:shipType];
+        
+        
+        //[GameCommon shareGameCommon].fansTableChanged = YES;
+//        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+        if (self.isFansPage) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
+        }else{
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+        }
+        [[GameCommon shareGameCommon] fansCountChanged:NO];
+        
+        
+        
+        
+        [wxSDArray removeAllObjects];
+        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+        
+        if (![wxSDArray containsObject:self.hostInfo.userId]) {
+            [self getSayHello];
+        }
+
+        [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        addFriendBtn.userInteractionEnabled = YES;
+        delFriendBtn.userInteractionEnabled = YES;
+        attentionBtn.userInteractionEnabled = YES;
+        attentionOffBtn.userInteractionEnabled = YES;
+
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud1 hide:YES];
+    }];
+}
 
 -(void)getSayHello
 {
@@ -1099,119 +1176,120 @@
     [self DetectNetwork];
 
     if (alertView.tag == 234) {//删除好友
+        
         if (buttonIndex != alertView.cancelButtonIndex) {
-            [self cancelFriend:@"2"];
+            //后台存储
+            addFriendBtn.userInteractionEnabled = NO;
+            delFriendBtn.userInteractionEnabled = NO;
+            attentionBtn.userInteractionEnabled = NO;
+            attentionOffBtn.userInteractionEnabled = NO;
+
+            NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             
-//            //后台存储
-//            addFriendBtn.userInteractionEnabled = NO;
-//            delFriendBtn.userInteractionEnabled = NO;
-//            attentionBtn.userInteractionEnabled = NO;
-//            attentionOffBtn.userInteractionEnabled = NO;
-//            [hud show:YES];
-//
-//            NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//            
-//            [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-//            [paramDict setObject:@"2" forKey:@"type"];
-//            
-//            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//            [postDict setObject:paramDict forKey:@"params"];
-//            [postDict setObject:@"110" forKey:@"method"];
-//            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//        
-//            
-//            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//                [hud hide:YES];
-//                addFriendBtn.userInteractionEnabled = YES;
-//                delFriendBtn.userInteractionEnabled = YES;
-//                attentionBtn.userInteractionEnabled = YES;
-//                attentionOffBtn.userInteractionEnabled = YES;
-//                
-//                NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-//                //[DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
-//                [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:shipType];
-//                [self refreFansNum:@"0"];
-//                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
-//                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
-//
-//                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
-//                [self showMessageWindowWithContent:@"删除成功" imageType:0];
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-//                [self.navigationController popViewControllerAnimated:YES];
-//            } failure:^(AFHTTPRequestOperation *operation, id error) {
-//                addFriendBtn.userInteractionEnabled = YES;
-//                delFriendBtn.userInteractionEnabled = YES;
-//                attentionBtn.userInteractionEnabled = YES;
-//                attentionOffBtn.userInteractionEnabled = YES;
-//                [hud hide:YES];
-//
-//                if ([error isKindOfClass:[NSDictionary class]]) {
-//                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//                    {
-//                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                        [alert show];
-//                    }
-//                }
-//            }];
+            [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
+            [paramDict setObject:@"2" forKey:@"type"];
+            
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:paramDict forKey:@"params"];
+            [postDict setObject:@"110" forKey:@"method"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+            
+            [hud show:YES];
+            
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [hud hide:YES];
+                addFriendBtn.userInteractionEnabled = YES;
+                delFriendBtn.userInteractionEnabled = YES;
+                attentionBtn.userInteractionEnabled = YES;
+                attentionOffBtn.userInteractionEnabled = YES;
+                [self refreFansNum:@"0"];
+                NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+                //[DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];//删除聊天消息
+                [DataStoreManager changshiptypeWithUserId:self.userId?self.userId:self.hostInfo.userId type:shipType];
+                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
+
+                
+                
+                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+                [self showMessageWindowWithContent:@"删除成功" imageType:0];
+                [self.navigationController popViewControllerAnimated:YES];
+
+                
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                addFriendBtn.userInteractionEnabled = YES;
+                delFriendBtn.userInteractionEnabled = YES;
+                attentionBtn.userInteractionEnabled = YES;
+                attentionOffBtn.userInteractionEnabled = YES;
+
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                }
+                [hud hide:YES];
+            }];
         }
     }
     else if(alertView.tag == 345)//取消关注
     {
         if (buttonIndex != alertView.cancelButtonIndex) {
+            //后台存储
+            addFriendBtn.userInteractionEnabled = NO;
+            delFriendBtn.userInteractionEnabled = NO;
+            attentionBtn.userInteractionEnabled = NO;
+            attentionOffBtn.userInteractionEnabled = NO;
+
+            NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             
-            [self cancelFriend:@"1"];
+            [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
+            [paramDict setObject:@"1" forKey:@"type"];
             
-//            //后台存储
-//            addFriendBtn.userInteractionEnabled = NO;
-//            delFriendBtn.userInteractionEnabled = NO;
-//            attentionBtn.userInteractionEnabled = NO;
-//            attentionOffBtn.userInteractionEnabled = NO;
-//            [hud show:YES];
-//            
-//            NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//            [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-//            [paramDict setObject:@"1" forKey:@"type"];
-//            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//            [postDict setObject:paramDict forKey:@"params"];
-//            [postDict setObject:@"110" forKey:@"method"];
-//            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//            
-//            
-//            
-//            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//                [hud hide:YES];
-//                addFriendBtn.userInteractionEnabled = YES;
-//                delFriendBtn.userInteractionEnabled = YES;
-//                attentionBtn.userInteractionEnabled = YES;
-//                attentionOffBtn.userInteractionEnabled = YES;
-//                
-//                NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
-//                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT];
-//                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
-//                if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-//                    [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
-//                }
-//                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
-//                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-//                [self.navigationController popViewControllerAnimated:YES];
-//                
-//            } failure:^(AFHTTPRequestOperation *operation, id error) {
-//                addFriendBtn.userInteractionEnabled = YES;
-//                delFriendBtn.userInteractionEnabled = YES;
-//                attentionBtn.userInteractionEnabled = YES;
-//                attentionOffBtn.userInteractionEnabled = YES;
-//                [hud hide:YES];
-//                if ([error isKindOfClass:[NSDictionary class]]) {
-//                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//                    {
-//                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                        [alert show];
-//                    }
-//                }
-//            }];
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:paramDict forKey:@"params"];
+            [postDict setObject:@"110" forKey:@"method"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+            
+            [hud show:YES];
+            
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [hud hide:YES];
+                addFriendBtn.userInteractionEnabled = YES;
+                delFriendBtn.userInteractionEnabled = YES;
+                attentionBtn.userInteractionEnabled = YES;
+                attentionOffBtn.userInteractionEnabled = YES;
+                [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
+                //[DataStoreManager deleteThumbMsgWithSender:self.hostInfo.userName];
+                if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
+                    [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
+                }
+                NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
+                [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT];
+                DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+                [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+                [self.navigationController popViewControllerAnimated:YES];
+                
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                addFriendBtn.userInteractionEnabled = YES;
+                delFriendBtn.userInteractionEnabled = YES;
+                attentionBtn.userInteractionEnabled = YES;
+                attentionOffBtn.userInteractionEnabled = YES;
+
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                }
+                [hud hide:YES];
+            }];
         }
     }
     else if (alertView.tag == 23) { //举报
@@ -1241,77 +1319,6 @@
         }
     }
 }
-
--(void)begin
-{
-    addFriendBtn.userInteractionEnabled = NO;
-    delFriendBtn.userInteractionEnabled = NO;
-    attentionBtn.userInteractionEnabled = NO;
-    attentionOffBtn.userInteractionEnabled = NO;
-}
--(void)end
-{
-    addFriendBtn.userInteractionEnabled = YES;
-    delFriendBtn.userInteractionEnabled = YES;
-    attentionBtn.userInteractionEnabled = YES;
-    attentionOffBtn.userInteractionEnabled = YES;
-}
-
-
--(void)cancelFriend:(NSString*)type
-{
-    [self begin];
-    [hud show:YES];
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-    [paramDict setObject:type forKey:@"type"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"110" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self end];
-        [hud hide:YES];
-        dispatch_queue_t queue = dispatch_queue_create("com.living.game.", NULL);
-        dispatch_async(queue, ^{
-            NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
-            [self updateDb:shipT];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([type isEqualToString:@"1"]) {
-                    if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-                        [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
-                    }
-                }
-                if ([type isEqualToString:@"2"]) {
-                    [self showMessageWindowWithContent:@"删除成功" imageType:0];
-                }
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-                [self.navigationController popViewControllerAnimated:YES];
-            });
-        });
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [self end];
-        [hud hide:YES];
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-    }];
-}
-
--(void)updateDb:(NSString*)shiptype
-{
-    [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shiptype];
-    [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
-    DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
-    [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
-}
-
 - (void)startChat:(id)sender
 {
     //    [self.navigationController popToRootViewControllerAnimated:NO];
@@ -1330,198 +1337,69 @@
         [self.navigationController pushViewController:kkchat animated:YES];
     }
 }
-- (void)addFriendClick:(id)sender
-{
-    [self addFriend:@"2"];
-    
-//    [self DetectNetwork];
-//    addFriendBtn.userInteractionEnabled = NO;
-//    delFriendBtn.userInteractionEnabled = NO;
-//    attentionBtn.userInteractionEnabled = NO;
-//    attentionOffBtn.userInteractionEnabled = NO;
-//    
-//    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    
-//    [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-//    [paramDict setObject:@"2" forKey:@"type"];
-//    
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"109" forKey:@"method"];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//    
-//    MBProgressHUD *hud1 =[[ MBProgressHUD alloc]initWithView:self.view];
-//    [self.view addSubview:hud1];
-//    [self.view bringSubviewToFront:hud];
-//    [hud1 show:YES];
-//    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        
-//        [hud1 hide:YES];
-//        addFriendBtn.userInteractionEnabled = YES;
-//        delFriendBtn.userInteractionEnabled = YES;
-//        attentionBtn.userInteractionEnabled = YES;
-//        attentionOffBtn.userInteractionEnabled = YES;
-//        
-//        NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-//        [DataStoreManager changshiptypeWithUserId:(self.userId?self.userId:self.hostInfo.userId) type:shipType];
-//        [self refreFansNum:@"1"];
-//        if (self.isFansPage) {
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
-//        }else{
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-//        }
-//        [[GameCommon shareGameCommon] fansCountChanged:NO];
-//        [wxSDArray removeAllObjects];
-//        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-//        if (![wxSDArray containsObject:self.hostInfo.userId]) {
-//            [self getSayHello];
-//        }
-//        [self showMessageWindowWithContent:@"添加成功" imageType:0];
-//        [self.navigationController popViewControllerAnimated:YES];
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        addFriendBtn.userInteractionEnabled = YES;
-//        delFriendBtn.userInteractionEnabled = YES;
-//        attentionBtn.userInteractionEnabled = YES;
-//        attentionOffBtn.userInteractionEnabled = YES;
-//        
-//        if ([error isKindOfClass:[NSDictionary class]]) {
-//            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//            {
-//                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                [alert show];
-//            }
-//        }
-//        [hud1 hide:YES];
-//    }];
-}
 
 - (void)attentionClick:(id)sender
 {
-    [self addFriend:@"1"];
-    
-//    [self DetectNetwork];
-//
-//    MBProgressHUD *hud2 = [[MBProgressHUD alloc]initWithView:self.view];
-//    [self.view addSubview:hud2];
-//    
-//    [self.view bringSubviewToFront:hud2];
-//    [hud2 show:YES];
-//
-//    addFriendBtn.userInteractionEnabled = NO;
-//    delFriendBtn.userInteractionEnabled = NO;
-//    attentionBtn.userInteractionEnabled = NO;
-//    attentionOffBtn.userInteractionEnabled = NO;
-//
-//    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-//    [paramDict setObject:@"1" forKey:@"type"];
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"109" forKey:@"method"];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//    
-//    
-//    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        [hud2 hide:YES];
-//        addFriendBtn.userInteractionEnabled = YES;
-//        delFriendBtn.userInteractionEnabled = YES;
-//        attentionBtn.userInteractionEnabled = YES;
-//        attentionOffBtn.userInteractionEnabled = YES;
-//        if ([responseObject isKindOfClass:[NSDictionary class]])
-//        {
-//            NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-//            [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-//        }
-//        
-//        if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-//            [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
-//        }
-//
-//        [wxSDArray removeAllObjects];
-//        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-//        
-//        if (![wxSDArray containsObject:self.hostInfo.userId]) {
-//            [self getSayHello];
-//        }
-//
-//        [self showMessageWindowWithContent:@"关注成功" imageType:0];
-//        [self.navigationController popViewControllerAnimated:YES];
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        addFriendBtn.userInteractionEnabled = YES;
-//        delFriendBtn.userInteractionEnabled = YES;
-//        attentionBtn.userInteractionEnabled = YES;
-//        attentionOffBtn.userInteractionEnabled = YES;
-//        if ([error isKindOfClass:[NSDictionary class]]) {
-//            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-//            {
-//                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//                [alert show];
-//            }
-//        }
-//        [hud2 hide:YES];
-//    }];
-}
-
-
--(void)addFriend:(NSString*)type
-{
     [self DetectNetwork];
-    MBProgressHUD *hudadd = [[MBProgressHUD alloc]initWithView:self.view];
-    [self.view addSubview:hudadd];
-    [self.view bringSubviewToFront:hudadd];
-    [hudadd show:YES];
-    [self begin];
+
+    MBProgressHUD *hud2 = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud2];
     
+    [self.view bringSubviewToFront:hud2];
+    [hud2 show:YES];
+
+    addFriendBtn.userInteractionEnabled = NO;
+    delFriendBtn.userInteractionEnabled = NO;
+    attentionBtn.userInteractionEnabled = NO;
+    attentionOffBtn.userInteractionEnabled = NO;
+
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
     [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
-    [paramDict setObject:type forKey:@"type"];
+    [paramDict setObject:@"1" forKey:@"type"];
+    
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"109" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
+    
+    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self end];
-        [hudadd hide:YES];
-        
-        NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
-        if ([type isEqualToString:@"2"]) {
-            [self refreFansNum:@"1"];
+        [hud2 hide:YES];
+        addFriendBtn.userInteractionEnabled = YES;
+        delFriendBtn.userInteractionEnabled = YES;
+        attentionBtn.userInteractionEnabled = YES;
+        attentionOffBtn.userInteractionEnabled = YES;
+
+        if ([responseObject isKindOfClass:[NSDictionary class]])
+        {
+            NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
+            [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
+        
+        if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
+            [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
+        }
+
         [wxSDArray removeAllObjects];
         [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+        
         if (![wxSDArray containsObject:self.hostInfo.userId]) {
             [self getSayHello];
         }
-        if ([type isEqualToString:@"1"]) {
-            if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-                [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
-            }
-            [self showMessageWindowWithContent:@"关注成功" imageType:0];
-        }
-        if ([type isEqualToString:@"2"]) {
-            if (self.isFansPage) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
-            }else{
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-            }
-        }else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-        }
+
+        [self showMessageWindowWithContent:@"关注成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [self end];
-        [hudadd hide:YES];
+        addFriendBtn.userInteractionEnabled = YES;
+        delFriendBtn.userInteractionEnabled = YES;
+        attentionBtn.userInteractionEnabled = YES;
+        attentionOffBtn.userInteractionEnabled = YES;
+
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -1529,9 +1407,8 @@
                 [alert show];
             }
         }
+        [hud2 hide:YES];
     }];
-    
-
 }
 
 - (void)cancelAttentionClick:(id)sender
