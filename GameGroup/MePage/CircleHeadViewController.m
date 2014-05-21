@@ -112,7 +112,8 @@ typedef enum : NSUInteger {
     height=216;
     
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
-    nickNameLabel.text = KISDictionaryHaveKey(user, @"nickName");
+    NSString * nickName=KISDictionaryHaveKey(user, @"nickname");
+    nickNameLabel.text = nickName;
     headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
     m_dataArray = [NSMutableArray new];
     
@@ -161,12 +162,12 @@ typedef enum : NSUInteger {
     [topVIew addSubview:topunderBgImageView];
     
 //    昵称
-    NSString * strNickName = KISDictionaryHaveKey(user, @"nickname");
-    CGSize nickLabelsize =[strNickName sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+//    NSString * strNickName = KISDictionaryHaveKey(user, @"nickname");
+    CGSize nickLabelsize =[nickName sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     
     UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(221-nickLabelsize.width, 291, nickLabelsize.width, 30)];
     underNickLabel.text =self.nickNmaeStr;
-    underNickLabel.text = KISDictionaryHaveKey(user, @"nickname");
+    underNickLabel.text = nickName;
     underNickLabel.textColor = [UIColor blackColor];
     underNickLabel.backgroundColor =[UIColor clearColor];
     underNickLabel.textAlignment = NSTextAlignmentRight;
@@ -175,7 +176,7 @@ typedef enum : NSUInteger {
    
     nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(220-nickLabelsize.width, 290, nickLabelsize.width, 30)];
     nickNameLabel.text =self.nickNmaeStr;
-    nickNameLabel.text = KISDictionaryHaveKey(user, @"nickname");
+    nickNameLabel.text = nickName;
     nickNameLabel.textColor = [UIColor whiteColor];
     nickNameLabel.backgroundColor =[UIColor clearColor];
     nickNameLabel.textAlignment = NSTextAlignmentRight;
