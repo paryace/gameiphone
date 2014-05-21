@@ -25,7 +25,6 @@
     [self setTopViewWithTitle:@"备注" withBackButton:YES];
     
     [self setMainView];
-    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"修改中...";

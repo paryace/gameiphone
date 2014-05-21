@@ -47,13 +47,17 @@ static UserManager *userManager = NULL;
         if (dUser) {
             [dict setObject:dUser.userName forKey:@"username"];
             [dict setObject:dUser.userId?dUser.userId:@"" forKey:@"userid"];
-            [dict setObject:dUser.nickName?dUser.nickName:@"" forKey:@"nickname"];
             [dict setObject:dUser.gender?dUser.gender:@"" forKey:@"gender"];
             [dict setObject:dUser.signature?dUser.signature:@"" forKey:@"signature"];
             [dict setObject:@"0" forKey:@"latitude"];
             [dict setObject:@"0" forKey:@"longitude"];
             [dict setObject:dUser.age?dUser.age:@"" forKey:@"birthdate"];
             [dict setObject:dUser.headImgID?dUser.headImgID:@"" forKey:@"img"];
+            NSString * alis =dUser.remarkName;
+            if ([GameCommon isEmtity:alis]) {
+                alis = dUser.nickName;
+            }
+            [dict setObject:alis?alis:@"" forKey:@"nickname"];
         }
         else{
             [self requestUserFromNet:userId];
@@ -94,8 +98,11 @@ static UserManager *userManager = NULL;
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
     dispatch_async(queue, ^{
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        
-         [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:KISDictionaryHaveKey(recDict,@"nickname") andImg:KISDictionaryHaveKey(recDict,@"img")];
+        NSString * nickName=KISDictionaryHaveKey(recDict,@"alias");
+        if ([GameCommon isEmtity:nickName]) {
+            nickName=KISDictionaryHaveKey(recDict,@"nickname");
+        }
+         [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:nickName andImg:KISDictionaryHaveKey(recDict,@"img")];
         
         if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
             NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
@@ -111,9 +118,6 @@ static UserManager *userManager = NULL;
             [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
             [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         }
-        
-
-        
         [self updateMsgInfo:recDict];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
@@ -125,7 +129,10 @@ static UserManager *userManager = NULL;
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict
 {
-    NSString * nickName=KISDictionaryHaveKey(userDict, @"nickname");
+    NSString * nickName=KISDictionaryHaveKey(userDict,@"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(userDict,@"nickname");
+    }
     NSString * userImg=KISDictionaryHaveKey(userDict,@"img");
     NSString * userId=KISDictionaryHaveKey(userDict,@"userid");
     [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];

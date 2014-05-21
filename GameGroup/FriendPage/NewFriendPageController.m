@@ -24,7 +24,6 @@
     NSArray* keyArr;//字母集合
     
     UITableView*  m_myTableView;
-    MJRefreshHeaderView *m_Friendheader;
     NSString *fansNum;
 }
 @property (nonatomic, strong) UIView *topView;
@@ -40,13 +39,12 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
+    [self getFriendDateFromDataSore];
     [self setFansNum];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
-        [self getFriendDateFromDataSore];
-        [m_myTableView reloadData];
         [self getFriendListFromNet];
     }
 
@@ -80,8 +78,6 @@
     self.view.backgroundColor=[UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
-        [self getFriendDateFromDataSore];
-        [m_myTableView reloadData];
         if (!keyArr||[keyArr count]==0) {
             hud = [[MBProgressHUD alloc] initWithView:self.view];
             [self.view addSubview:hud];
@@ -203,7 +199,12 @@
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.sexImg.image =KUIImage(genderimage);
     
-    cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
+    NSString * nickName=[tempDict objectForKey:@"alias"];
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=[tempDict objectForKey:@"nickname"];
+    }
+    cell.nameLabel.text = nickName;
+    
     cell.gameImg_one.image = KUIImage(@"wow");
     NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
@@ -292,6 +293,7 @@
                         resultArray = result;
                         [m_myTableView reloadData];
                         [self setFansNum];
+//                        [self getFriendDateFromDataSore];
                         //保存
                         [self saveFriendsList:result Keys:keys];
                     }
@@ -312,8 +314,8 @@
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
-//        [DataStoreManager deleteAllUserWithShipType:@"1"];
-//        [DataStoreManager deleteAllUserWithShipType:@"2"];
+        [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
+        [DataStoreManager deleteAllUserWithShipType:@"1"];
         for (int i=0; i<[keys count]; i++) {
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * dict in [result objectForKey:key]) {
@@ -331,8 +333,10 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-        keyArr = [userinfo objectForKey:@"nameKey"];
-        resultArray = [userinfo objectForKey:@"userList"];
+        NSDictionary* result = [userinfo objectForKey:@"userList"];
+        NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+        keyArr = keys;
+        resultArray = result;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setFansNum];
             [m_myTableView reloadData];
