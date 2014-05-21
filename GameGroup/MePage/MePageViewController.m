@@ -107,7 +107,6 @@
     }
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        NSLog(@"responseObject%@", responseObject);
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];

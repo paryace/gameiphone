@@ -293,7 +293,6 @@
                         resultArray = result;
                         [m_myTableView reloadData];
                         [self setFansNum];
-//                        [self getFriendDateFromDataSore];
                         //保存
                         [self saveFriendsList:result Keys:keys];
                     }
@@ -361,7 +360,7 @@
     
     fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     NSString *fanstr;
-    if (fansNum==nil||[fansNum isEqualToString:@""]) {
+    if ([GameCommon isEmtity:fansNum]) {
         fanstr=@"粉丝";
     }else {
         int intfans = [fansNum intValue];
