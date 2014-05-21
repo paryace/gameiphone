@@ -18,7 +18,7 @@ typedef enum
     CHA_TYPE_Change,
 }CharacterType;
 
-@interface AddCharacterViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, UIAlertViewDelegate, SearchRoleDelegate, AuthCharacterDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
+@interface AddCharacterViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, UIAlertViewDelegate, SearchRoleDelegate, AuthCharacterDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UITableViewDataSource,UITableViewDelegate>
 
 
 @property(nonatomic, assign)CharacterType viewType;//增加或删除

@@ -18,6 +18,7 @@
 #import "UserManager.h"
 #import "HelpViewController.h"
 #import "EGOImageView.h"
+#import "AboutRoleCell.h"
 @interface RegisterViewController ()
 {
     UILabel*     m_titleLabel;
@@ -37,10 +38,7 @@
     NSTimer*      m_verCodeTimer;
 
     UIScrollView* m_step2Scroll;
-    UITextField*  m_gameNameText;
     UIPickerView* m_gameNamePick;
-    UITextField*  m_serverNameText;
-    UITextField*  m_roleNameText;
     
     UIScrollView* m_step3Scroll;
     UIButton*     m_photoButton;
@@ -62,6 +60,15 @@
     
     UILabel* table_label_two1;
     UILabel* table_label_three1;
+    
+    UITableView *m_myTableView;
+    NSMutableArray *m_dataArray;
+    UIToolbar* toolbar_server1;
+    UIButton* m_okButton;
+    AboutRoleCell *aboutRoleCell;
+
+    
+    
 }
 @property(nonatomic,retain)NSString *imgID;
 @end
@@ -101,6 +108,13 @@
     m_titleLabel.textAlignment = NSTextAlignmentCenter;
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:m_titleLabel];
+    
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
+    m_dataArray =[NSMutableArray array];
+    
+    [m_dataArray addObject:dic];
+
+    
     
     [self setMainView];
     [self setStep_1View];
@@ -524,133 +538,25 @@
     topLabel.backgroundColor = [UIColor clearColor];
     topLabel.text = @"如果您拥有多名角色，请先绑定最主要的，其他游戏角色可在注册完成之后，在设置面板中添加";
     [m_step2Scroll addSubview:topLabel];
-    
-//    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
-//    bottomLabel.numberOfLines = 2;
-//    bottomLabel.backgroundColor = [UIColor clearColor];
-//    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
-//    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
-//    [m_step2Scroll addSubview:bottomLabel];
-//    
-//    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 202, 70, 15) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"search_bg") HighImage:KUIImage(@"") selectImage:nil];
-//    searchBtn.backgroundColor = [UIColor clearColor];
-//    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [m_step2Scroll addSubview:searchBtn];
-    
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 300, 40)];
-    table_top.image = KUIImage(@"table_top");
-    [m_step2Scroll addSubview:table_top];
-    
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 76, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
-    [m_step2Scroll addSubview:table_arrow];
-    
-    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(10, 100, 300, 40)];
-    table_middle.image = KUIImage(@"table_middle");
-    [m_step2Scroll addSubview:table_middle];
-    
-    UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(290, 116, 12, 8)];
-    table_arrow_two.image = KUIImage(@"arrow_bottom");
-    [m_step2Scroll addSubview:table_arrow_two];
 
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 140, 300, 40)];
-    table_bottom.image = KUIImage(@"table_bottom");
-    [m_step2Scroll addSubview:table_bottom];
     
-    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 61, 100, 38)];
-    table_label_one.text = @"选择游戏";
-    table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_one];
-    
-    table_label_two1 = [[UILabel alloc] initWithFrame:CGRectMake(20, 101, 80, 38)];
-//    table_label_two.text = @"所在服务器";
-    table_label_two1.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_two1.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_two1];
-    
-    table_label_three1 = [[UILabel alloc] initWithFrame:CGRectMake(20, 141, 80, 38)];
-//    table_label_three.text = @"角色名";
-    table_label_three1.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_three1.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_three1];
-    
-    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(190, 60+11, 18, 18)];
-//    gameImg.image = KUIImage(@"wow");
-    [m_step2Scroll addSubview:gameImg];
-    
-    m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60, 180, 40)];
-    m_gameNameText.returnKeyType = UIReturnKeyDone;
-    m_gameNameText.delegate = self;
-   // m_gameNameText.text = @"魔兽世界";
-    m_gameNameText.textAlignment = NSTextAlignmentRight;
-    m_gameNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_gameNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_gameNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_step2Scroll addSubview:m_gameNameText];
-    
-//  UIPickerView *  m_clazzNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-//    m_clazzNamePick.dataSource = self;
-//    m_clazzNamePick.delegate = self;
-//    m_clazzNamePick.showsSelectionIndicator = YES;
-//    m_gameNameText.inputView = m_clazzNamePick;//点击弹出的是pickview
-//
-//    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-//    toolbar_server.tintColor = [UIColor blackColor];
-//    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectClazzNameOK)];
-//    rb_server.tintColor = [UIColor blackColor];
-//    toolbar_server.items = @[rb_server];
-//    m_gameNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
-//
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 60, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
+    m_myTableView.delegate = self;
+    m_myTableView.dataSource = self;
+    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [m_step2Scroll addSubview:m_myTableView];
     
     m_gameNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
     m_gameNamePick.dataSource = self;
     m_gameNamePick.delegate = self;
     m_gameNamePick.showsSelectionIndicator = YES;
-    m_gameNameText.inputView = m_gameNamePick;//点击弹出的是pickview
     
-    UIToolbar* toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectGameNameOK)];
-    rb.tintColor = [UIColor blackColor];
-    toolbar.items = @[rb];
-    m_gameNameText.inputAccessoryView = toolbar;//跟着pickview上移
-    
-    m_serverNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 100, 180, 40)];
-    m_serverNameText.delegate = self;
-    m_serverNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_serverNameText.textAlignment = NSTextAlignmentRight;
-    m_serverNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    [m_step2Scroll addSubview:m_serverNameText];
-    
-    UIButton* serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 100, 180, 40)];
-    serverButton.backgroundColor = [UIColor clearColor];
-    [serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_step2Scroll addSubview:serverButton];
-    
-//    m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-//    m_serverNamePick.dataSource = self;
-//    m_serverNamePick.delegate = self;
-//    m_serverNamePick.showsSelectionIndicator = YES;
-//    m_serverNameText.inputView = m_serverNamePick;//点击弹出的是pickview
-    
-//    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-//    toolbar_server.tintColor = [UIColor blackColor];
-//    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK)];
-//    rb_server.tintColor = [UIColor blackColor];
-//    toolbar_server.items = @[rb_server];
-//    m_serverNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
-    
-    m_roleNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 140, 180, 40)];
-    m_roleNameText.returnKeyType = UIReturnKeyDone;
-    m_roleNameText.delegate = self;
-    m_roleNameText.textAlignment = NSTextAlignmentRight;
-    m_roleNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_roleNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_roleNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_step2Scroll addSubview:m_roleNameText];
+    toolbar_server1 = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar_server1.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectGameNameOK:)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar_server1.items = @[rb_server];
 
     UIButton* step2Button = [[UIButton alloc] initWithFrame:CGRectMake(160, 230, 140, 40)];
     [step2Button setBackgroundImage:KUIImage(@"zhuce") forState:UIControlStateNormal];
@@ -670,71 +576,75 @@
     [step3Button addTarget:self action:@selector(jump3ButtonOK) forControlEvents:UIControlEventTouchUpInside];
     [m_step2Scroll addSubview:step3Button];
 }
-- (void)selectGameNameOK
+- (void)selectGameNameOK:(UIButton *)sender
 {
-    [m_gameNameText resignFirstResponder];
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
-        
-        m_gameNameText.text = [dict objectForKey:@"name"];
-        
-        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[dict objectForKey:@"img"]]];
-        table_label_two1.hidden = NO;
-        table_label_three1.hidden = NO;
         NSArray *sarchArray ;
         sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"bindCharacterParams"];
-        table_label_two1.text = [[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"] objectAtIndex:0]objectForKey:@"name"];
-        m_roleNameText.placeholder =[[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]objectAtIndex:0] objectForKey:@"tip"];
         
-        table_label_three1.text = [[sarchArray objectAtIndex:0] objectForKey:@"name"];
-        m_roleNameText.placeholder =[[sarchArray objectAtIndex:0] objectForKey:@"tip"];
+        [m_dataArray removeAllObjects];
         
-    }
-    else
-        m_gameNameText.text = @"";
-    //m_clazzNamePick =nil;
-}
-- (void)realmSelectClick:(id)sender
-{
-    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
-        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
-        return;
+        NSDictionary *firstDic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",[dict objectForKey:@"name"],@"content",@"picker",@"type",[dict objectForKey:@"id"],@"gameid",KISDictionaryHaveKey(dict,@"img"),@"img",nil];
+        
+        [m_dataArray addObject:firstDic];
+        [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
+        [m_dataArray addObjectsFromArray:sarchArray];
+        
+        m_okButton.hidden = NO;
+        m_myTableView.frame = CGRectMake(0, 60, 320, 44*m_dataArray.count);
+        m_okButton.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 300, 40);
+        [m_myTableView reloadData];
     }
     
+
+}
+- (void)realmSelectClick:(UIButton *)sender
+{
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
-    realmVC.gameNum = [[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]]objectForKey:@"id"];
+    realmVC.indexCount =[NSString stringWithFormat:@"%d",sender.tag];
+    realmVC.gameNum = [[m_dataArray objectAtIndex:0]objectForKey:@"gameid"];
+    realmVC.prama = [[m_dataArray objectAtIndex:sender.tag]objectForKey:@"param"];
+    
     [self.navigationController pushViewController:realmVC animated:YES];
 }
 
-- (void)selectOneRealmWithName:(NSString *)name
+- (void)selectOneRealmWithName:(NSString *)name num:(NSString *)num
 {
-    m_serverNameText.text = name;
+    //    dic = [m_dataArray objectAtIndex:[num intValue]];
+    //    [dic setObject:name forKey:@"content"];
+    UITextField *tf = (UITextField *)[self.view viewWithTag:[num intValue]+100000];
+    tf.text = name;
 }
 
 - (void)step2ButtonOK:(id)sender
 {
-    [m_serverNameText resignFirstResponder];
-    [m_roleNameText resignFirstResponder];
-    
-    if (KISEmptyOrEnter(m_serverNameText.text)) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择服务器！" buttonTitle:@"确定"];
-        return;
-    }
-    if (KISEmptyOrEnter(m_roleNameText.text)) {
-        [self showAlertViewWithTitle:@"提示" message:@"请输入角色名！" buttonTitle:@"确定"];
-        return;
-    }
-//    NSString* fenQu = [[[GameCommon shareGameCommon].wow_realms allKeys] objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
-//    NSString* fuName = [[[GameCommon shareGameCommon].wow_realms objectForKey:fenQu] objectAtIndex:[m_serverNamePick selectedRowInComponent:1]];
-  
-    NSArray *array = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+//    [m_serverNameText resignFirstResponder];
+//    [m_roleNameText resignFirstResponder];
+//    
+//    if (KISEmptyOrEnter(m_serverNameText.text)) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请选择服务器！" buttonTitle:@"确定"];
+//        return;
+//    }
+//    if (KISEmptyOrEnter(m_roleNameText.text)) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请输入角色名！" buttonTitle:@"确定"];
+//        return;
+//    }
+//    NSArray *array = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
     
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-    [params setObject:KISDictionaryHaveKey([array objectAtIndex:[gameNum intValue]], @"id") forKey:@"gameid"];
-    [params setObject:m_serverNameText.text forKey:@"gamerealm"];
-    [params setObject:m_roleNameText.text forKey:@"gamename"];
+    for (int i =0; i<m_dataArray.count; i++) {
+        NSDictionary *dic = m_dataArray[i];
+        if (i==0) {
+            [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+        }else{
+            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
+            
+            [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+        }
+    }
 
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -750,11 +660,11 @@
         
         characterid = KISDictionaryHaveKey(dic, @"id");//角色id
         [[TempData sharedInstance] setCharacterID:characterid];
-        [[TempData sharedInstance] setGamerealm:m_serverNameText.text];
+        [[TempData sharedInstance] setGamerealm:KISDictionaryHaveKey(dic, @"realm")];
         m_step2Scroll.hidden = YES;
         m_step3Scroll.hidden = NO;
         m_topImage.image = KUIImage(@"register_step_3");
-        m_userNameText.text = m_roleNameText.text;
+        m_userNameText.text = KISDictionaryHaveKey(dic, @"name");
         m_titleLabel.text = @"个人信息";
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -778,16 +688,16 @@
 #pragma mark 角色查找
 - (void)searchButtonClick:(id)semder
 {
-    SearchRoleViewController* searchVC = [[SearchRoleViewController alloc] init];
-    searchVC.searchDelegate = self;
-    searchVC.getRealmName = m_serverNameText.text;
-    [self.navigationController pushViewController:searchVC animated:YES];
+//    SearchRoleViewController* searchVC = [[SearchRoleViewController alloc] init];
+//    searchVC.searchDelegate = self;
+//    searchVC.getRealmName = m_serverNameText.text;
+//    [self.navigationController pushViewController:searchVC animated:YES];
 }
 
 - (void)searchRoleSuccess:(NSString*)roleName realm:(NSString*)realm
 {
-    m_roleNameText.text = roleName;
-    m_serverNameText.text = realm;
+//    m_roleNameText.text = roleName;
+//    m_serverNameText.text = realm;
 }
 
 #pragma mark alertView
@@ -814,7 +724,7 @@
             m_step2Scroll.hidden = YES;
             m_step3Scroll.hidden = NO;
             m_topImage.image = KUIImage(@"register_step_3");
-            m_userNameText.text = m_roleNameText.text;
+        //    m_userNameText.text = m_roleNameText.text;
             m_titleLabel.text = @"个人信息";
             [[TempData sharedInstance] setPassBindingRole:YES];
         }
@@ -1303,6 +1213,56 @@
 }
 
 
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return m_dataArray.count;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifint = @"cell";
+    AboutRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:identifint];
+    if (cell ==nil) {
+        cell = [[AboutRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifint];
+    }
+    cell.contentTF.delegate = self;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    NSDictionary *dic = m_dataArray[indexPath.row];
+    cell.titleLabel.text =KISDictionaryHaveKey(dic, @"name");
+    cell.contentTF.text = KISDictionaryHaveKey(dic, @"content");
+    cell.contentTF.tag = indexPath.row+100000;
+    
+    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
+        cell.rightImageView.hidden = NO;
+        if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
+            cell.contentTF.inputView =m_gameNamePick;
+            cell.contentTF.inputAccessoryView= toolbar_server1;
+            cell.serverButton.hidden = YES;
+            cell.gameImg.hidden = NO;
+            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+//            m_gameNamePick.tag = indexPath.row;
+//            toolbar_server1.tag = indexPath.row;
+            
+        }else if([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]){
+            cell.serverButton.hidden =NO;
+            cell.gameImg.hidden = YES;
+            [cell.serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
+            cell.serverButton.tag = indexPath.row;
+        }
+        
+    }else{
+        cell.gameImg.hidden = YES;
+        cell.serverButton.hidden = YES;
+        cell.rightImageView.hidden = YES;
+        cell.contentTF.inputView =nil;
+    }
+    
+    return cell;
+}
+
+
+
+
 #pragma mark textField and touch delegate
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
@@ -1375,9 +1335,9 @@
     
     [m_verCodeTextField resignFirstResponder];
     
-    [m_gameNameText resignFirstResponder];
-    [m_serverNameText resignFirstResponder];
-    [m_roleNameText resignFirstResponder];
+//    [m_gameNameText resignFirstResponder];
+//    [m_serverNameText resignFirstResponder];
+//    [m_roleNameText resignFirstResponder];
     
     [m_userNameText resignFirstResponder];
     [m_passwordText resignFirstResponder];

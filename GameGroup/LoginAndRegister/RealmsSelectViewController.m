@@ -30,23 +30,7 @@
     m_realmsDic = [[NSMutableDictionary alloc] initWithCapacity:1];
     m_realmsIndexArray = [[NSArray alloc] init];
     
-//    if ([[[GameCommon shareGameCommon].wow_realms allKeys] count] != 0) {
-//        [m_realmsDic addEntriesFromDictionary:[GameCommon shareGameCommon].wow_realms];
-//        
-//        m_realmsIndexArray = [[m_realmsDic allKeys] sortedArrayUsingSelector:@selector(compare:)];
-//    }
-//    else
-//    {
-//        hud = [[MBProgressHUD alloc] initWithView:self.view];
-//        [self.view addSubview:hud];
-//        hud.labelText = @"查询中...";
-//        
-//       // [self firtOpen];
-//    }
-    
-//    NSMutableDictionary* openData;
-//    NSFileManager *fileManager =[NSFileManager defaultManager];
-    NSString *path  =[RootDocPath stringByAppendingString:[NSString stringWithFormat:@"/openInfogameid_%@",self.gameNum]];
+    NSString *path  =[RootDocPath stringByAppendingString:[NSString stringWithFormat:@"/openInfogameid_%@_%@",self.gameNum,self.prama]];
      m_realmsDic= [NSMutableDictionary dictionaryWithContentsOfFile:path];
     
     
@@ -97,7 +81,7 @@
     [m_realmsTableView deselectRowAtIndexPath:indexPath animated:YES];
     
 //    [GameCommon shareGameCommon].selectRealm = [m_realmsTableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    [self.realmSelectDelegate selectOneRealmWithName:[m_realmsTableView cellForRowAtIndexPath:indexPath].textLabel.text];
+    [self.realmSelectDelegate selectOneRealmWithName:[m_realmsTableView cellForRowAtIndexPath:indexPath].textLabel.text num:self.indexCount];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
