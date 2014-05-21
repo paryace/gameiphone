@@ -546,13 +546,23 @@ typedef enum : NSUInteger {
             cell.headImageV.imageURL = nil;
         }
     }
-    
-    cell.nickNameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic,@"commentUser"), @"nickname") ;
+    NSMutableDictionary *commentD =KISDictionaryHaveKey(tempDic,@"commentUser");
+    NSString * nickName=KISDictionaryHaveKey(commentD, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(commentD, @"nickname");
+    }
+    cell.nickNameLabel.text = nickName;
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"createDate")]];
     
     NSString* commentStr;
     if ([[tempDic allKeys]containsObject:@"destUser"]) {
-        commentStr = [NSString stringWithFormat:@"回复 %@:%@",KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"destUser"),@"nickname"),KISDictionaryHaveKey(tempDic, @"comment")];
+        
+        NSMutableDictionary *destUserDic =KISDictionaryHaveKey(tempDic,@"destUser");
+        NSString * desnickName=KISDictionaryHaveKey(destUserDic, @"alias");
+        if ([GameCommon isEmtity:desnickName]) {
+            desnickName=KISDictionaryHaveKey(destUserDic, @"nickname");
+        }
+        commentStr = [NSString stringWithFormat:@"回复 %@:%@",desnickName,KISDictionaryHaveKey(tempDic, @"comment")];
         cell.commentStr = commentStr;
     }else{
         commentStr = KISDictionaryHaveKey(tempDic, @"comment");
@@ -592,7 +602,10 @@ typedef enum : NSUInteger {
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"), @"userid")intValue]==[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]intValue]) {
         return;
     }
-    NSString* nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"),@"nickname");
+    NSString* nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"),@"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName =KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"),@"nickname");
+    }
     isComeBackComment = YES;
     self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
     [self.textView becomeFirstResponder];
