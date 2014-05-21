@@ -19,11 +19,9 @@
     UITextField *m_roleNameText;
     UIPickerView *m_serverNamePick;
     NSMutableArray *gameInfoArray;
-    UITableView *m_myTableView;
-    NSMutableArray *m_dataArray;
-    UIToolbar* toolbar_server;
-    UIButton* m_okButton;
-    AboutRoleCell *aboutRoleCell;
+    EGOImageView* gameImg;
+    UILabel* table_label_two;
+    UILabel* table_label_three;
 }
 @end
 
@@ -52,103 +50,15 @@
     m_roleView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_roleView];
 
-  //  [self setRoleView];
+    [self setRoleView];
     
     gameInfoArray = [NSMutableArray new];
     gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
-
-    
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
-    m_dataArray =[NSMutableArray array];
-
-    [m_dataArray addObject:dic];
-    
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+44, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
-    m_myTableView.delegate = self;
-    m_myTableView.dataSource = self;
-    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:m_myTableView];
-    
-    m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-    m_serverNamePick.dataSource = self;
-    m_serverNamePick.delegate = self;
-    m_serverNamePick.showsSelectionIndicator = YES;
-    
-    toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar_server.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar_server.items = @[rb_server];
-
-    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
-    [m_okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [m_okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [m_okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [m_okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    m_okButton.backgroundColor = [UIColor clearColor];
-    m_okButton.hidden = YES;
-    [m_okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:m_okButton];
-
-    
 }
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return m_dataArray.count;
-}
-
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *identifint = @"cell";
-    AboutRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:identifint];
-    if (cell ==nil) {
-        cell = [[AboutRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifint];
-    }
-    cell.contentTF.delegate = self;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    NSDictionary *dic = m_dataArray[indexPath.row];
-    cell.titleLabel.text =KISDictionaryHaveKey(dic, @"name");
-    cell.contentTF.text = KISDictionaryHaveKey(dic, @"content");
-    cell.contentTF.tag = indexPath.row;
-    
-    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-        cell.rightImageView.hidden = NO;
-        if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-            cell.contentTF.inputView =m_serverNamePick;
-            cell.contentTF.inputAccessoryView= toolbar_server;
-            cell.serverButton.hidden = YES;
-            cell.gameImg.hidden = NO;
-            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
-            m_serverNamePick.tag = indexPath.row;
-            toolbar_server.tag = indexPath.row;
-
-        }else if([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]){
-            cell.serverButton.hidden =NO;
-            cell.gameImg.hidden = YES;
-        [cell.serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
-            cell.serverButton.tag = indexPath.row;
-        }
-        
-    }else{
-        cell.gameImg.hidden = YES;
-        cell.serverButton.hidden = YES;
-        cell.rightImageView.hidden = YES;
-        cell.contentTF.inputView =nil;
-    }
-    
-    return cell;
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-}
-
-
-
-/*
 - (void)setRoleView
 {
+   
+    
     UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 20, 300, 40)];
     table_top.image = KUIImage(@"table_top");
     [m_roleView addSubview:table_top];
@@ -239,14 +149,14 @@
     m_roleNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [m_roleView addSubview:m_roleNameText];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_roleView addSubview:okButton];
+//    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+//    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
+//    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    okButton.backgroundColor = [UIColor clearColor];
+//    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [m_roleView addSubview:okButton];
     
 //    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 205, 300, 40)];
 //    bottomLabel.numberOfLines = 2;
@@ -266,55 +176,60 @@
     [self.view addSubview:hud];
     hud.labelText = @"搜索中...";
 }
-*/
-- (void)selectServerNameOK:(UIButton *)sender
+
+- (void)selectServerNameOK
 {
-   // [m_gameNameText resignFirstResponder];
+    [m_gameNameText resignFirstResponder];
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
-      //  m_gameNameText.text = [dict objectForKey:@"name"];
+        m_gameNameText.text = [dict objectForKey:@"name"];
         
-
+        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[dict objectForKey:@"img"]]];
+        table_label_two.hidden = NO;
+        table_label_three.hidden = NO;
         NSArray *sarchArray ;
         if (self.myViewType == SEARCH_TYPE_ROLE) {
             sarchArray =[[dict objectForKey:@"gameParams" ] objectForKey:@"searchCharacterParams"];
         }else{
             sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"searchOrganizationParams"];
         }
-        [m_dataArray removeAllObjects];
+        table_label_two.text = [[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"] objectAtIndex:0]objectForKey:@"name"];
+        searchContent.placeholder =[[[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]objectAtIndex:0] objectForKey:@"tip"];
         
-        NSDictionary *firstDic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",[dict objectForKey:@"name"],@"content",@"picker",@"type",[dict objectForKey:@"id"],@"gameid",KISDictionaryHaveKey(dict,@"img"),@"img",nil];
+        table_label_three.text = [[sarchArray objectAtIndex:0] objectForKey:@"name"];
+        m_roleNameText.placeholder =[[sarchArray objectAtIndex:0] objectForKey:@"tip"];
         
-        [m_dataArray addObject:firstDic];
-        [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
-        [m_dataArray addObjectsFromArray:sarchArray];
-        m_okButton.hidden = NO;
-        m_myTableView.frame = CGRectMake(0, startX+44, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 300, 40);
-        [m_myTableView reloadData];
+        NSLog(@"----%@-----%@",m_roleNameText.placeholder,searchContent.placeholder);
+        
     }
+    else
+        m_gameNameText.text = @"";
+    //m_clazzNamePick =nil;
 }
-- (void)realmSelectClick:(UIButton *)sender
+- (void)realmSelectClick:(id)sender
 {
+    if ([m_gameNameText.text isEqualToString:@""]||m_gameNameText.text ==nil) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
-    realmVC.indexCount =[NSString stringWithFormat:@"%d",sender.tag];
-    realmVC.gameNum = [[m_dataArray objectAtIndex:0]objectForKey:@"gameid"];
-    realmVC.prama = [[m_dataArray objectAtIndex:sender.tag]objectForKey:@"param"];
-    
+    realmVC.gameNum = [[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]]objectForKey:@"id"];
     [self.navigationController pushViewController:realmVC animated:YES];
 }
-- (void)selectOneRealmWithName:(NSString *)name num:(NSString *)num
+- (void)selectOneRealmWithName:(NSString *)name
 {
-//    dic = [m_dataArray objectAtIndex:[num intValue]];
-//    [dic setObject:name forKey:@"content"];
-    UITextField *tf = (UITextField *)[self.view viewWithTag:[num intValue]];
-    tf.text = name;
+    searchContent.text = name;
 }
 
 #pragma mark 角色查找
 - (void)searchButtonClick:(id)semder
 {
+//    SearchRoleViewController* searchVC = [[SearchRoleViewController alloc] init];
+//    searchVC.searchDelegate = self;
+//    searchVC.getRealmName = searchContent.text;
+//    [self.navigationController pushViewController:searchVC animated:YES];
     HelpViewController *helpVC = [[HelpViewController alloc]init];
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
         helpVC.myUrl = @"content.html?4";
@@ -331,24 +246,38 @@
     searchContent.text = realm;
 }
 
-- (void)okButtonClick:(UIButton *)sender
+- (void)okButtonClick:(id)sender
 {
     [searchContent resignFirstResponder];
     [m_roleNameText resignFirstResponder];
-        
+    
+    if (KISEmptyOrEnter(searchContent.text)) {
+        [self showAlertViewWithTitle:@"提示" message:@"请把搜索内容填写完整！" buttonTitle:@"确定"];
+        return;
+    }
+    else if(self.myViewType == SEARCH_TYPE_ROLE && KISEmptyOrEnter(m_roleNameText.text))
+    {
+        [self showAlertViewWithTitle:@"提示" message:@"请把搜索内容填写完整！" buttonTitle:@"确定"];
+        return;
+    }
+    
+    NSDictionary *dic = [gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
+    
+    NSArray *roleArray = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"gameParams"), @"commonParams");
+
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        
+        NSArray* sarchArray =[[dic objectForKey:@"gameParams" ] objectForKey:@"searchCharacterParams"];
+
+        
+        
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-
-        for (int i =0; i<m_dataArray.count; i++) {
-            NSDictionary *dic = m_dataArray[i];
-            if (i==0) {
-                [tempDic setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-            }else{
-                UITextField *tf  = (UITextField *)[self.view viewWithTag:i];
-                [tempDic setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
-            }
-        }
+        
+        [tempDic setObject:searchContent.text forKey:KISDictionaryHaveKey(roleArray[0], @"param")];
+        [tempDic setObject:KISDictionaryHaveKey(dic,@"id") forKey:@"gameid"];
+        [tempDic setObject:m_roleNameText.text  forKey:KISDictionaryHaveKey([sarchArray objectAtIndex:0], @"param")];
+        
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [postDict setObject:@"215" forKey:@"method"];
         [postDict setObject:tempDic forKey:@"params"];
@@ -361,6 +290,7 @@
             if (array.count>0) {
 
             secGame.dataDic = responseObject;
+            secGame.realmStr = searchContent.text;
             secGame.myInfoType = COME_ROLE;
             [self.navigationController pushViewController:secGame animated:YES];
             
@@ -373,16 +303,13 @@
             [hud hide:YES];
                               }];
     }else{
+    NSArray* sarchArray =[[dic objectForKey:@"gameParams" ] objectForKey:@"searchOrganizationParams"];
+
     NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-        for (int i =0; i<m_dataArray.count; i++) {
-            NSDictionary *dic = m_dataArray[i];
-            if (i==0) {
-                [tempDic1 setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-            }else
-                [tempDic1 setObject:KISDictionaryHaveKey(dic, @"content") forKey:KISDictionaryHaveKey(dic, @"param")];
-        }
-
+    [tempDic1 setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"gameid"];
+    [tempDic1 setObject: searchContent.text forKey:KISDictionaryHaveKey(roleArray[0], @"param")];
+    [tempDic1 setObject:m_roleNameText.text forKey:KISDictionaryHaveKey(sarchArray[0], @"param")];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"217" forKey:@"method"];
     [postDict setObject:tempDic1 forKey:@"params"];
@@ -428,16 +355,34 @@
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
+    
+    //    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+    //    gameNum = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"id");
+    //    m_gameNameText.text =title;
+    //    [m_gameNameText resignFirstResponder];
+    
 }
 
+
+#pragma mark textField
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    if (textField ==m_roleNameText) {
+        [self okButtonClick:nil];
+    }
     
     [textField resignFirstResponder];
     return YES;
 }
 
-
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField == m_roleNameText&&(m_gameNameText.text ==nil||[m_gameNameText.text isEqualToString:@""]||[m_gameNameText.text isEqualToString:NULL])) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return NO;
+    }
+    return YES;
+}
 #pragma mark 手势
 - (void)tapTopViewClick:(id)sender
 {

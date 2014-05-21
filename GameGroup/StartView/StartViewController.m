@@ -193,22 +193,10 @@
                     NSDictionary *dic = array[i];
                     NSDictionary *temDic = newArray[j];
                     if ([KISDictionaryHaveKey(dic,@"id")intValue]==[KISDictionaryHaveKey(temDic, @"id")intValue]&&[KISDictionaryHaveKey(dic, @"gameInfoMills")longLongValue]==KISDictionaryHaveKey(temDic, @"gameInfoMills")) {
-                        
-                        NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
-                        for (int m =0; m>commonPArray.count; m++) {
-                            NSDictionary *commonDic = commonPArray[m];
-                            [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id") withParams:KISDictionaryHaveKey(commonDic, @"param")];
-                        }
-
+                        [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id")];
                     }
                     else if (![[dic allKeys]containsObject:KISDictionaryHaveKey(temDic, @"id")]){
-                        
-                        
-                        NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
-                        for (int m =0; m>commonPArray.count; m++) {
-                            NSDictionary *commonDic = commonPArray[m];
-                            [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id") withParams:KISDictionaryHaveKey(commonDic, @"param")];
-                        }
+                        [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id")];
                     }
                 }
             }
@@ -219,12 +207,7 @@
             NSArray *array = KISDictionaryHaveKey(dict, @"gamelist");
             for (int i =0; i<array.count; i++) {
                 NSDictionary *dic = array[i];
-                NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"gameParams"), @"commonParams");
-                
-                for (int j =0; j<commonPArray.count; j++) {
-                    NSDictionary *commonDic = commonPArray[j];
-            [self getGameInfoWithGameID:KISDictionaryHaveKey(dic, @"id") withParams:KISDictionaryHaveKey(commonDic, @"param")];
-                }
+                [self getGameInfoWithGameID:KISDictionaryHaveKey(dic, @"id")];
             }
         }
         [[NSUserDefaults standardUserDefaults] setObject:dict forKey:kOpenData];
@@ -235,11 +218,10 @@
 }
 
 #pragma mark ----更新游戏数据、、wow服务器等
--(void)getGameInfoWithGameID:(NSString *)gameId withParams:(NSString *)params
+-(void)getGameInfoWithGameID:(NSString *)gameId
 {
     NSMutableDictionary * paramsDic = [NSMutableDictionary dictionary];
     [paramsDic setObject:gameId forKey:@"gameid"];
-    [paramsDic setObject:params forKey:@"param"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramsDic forKey:@"params"];
@@ -271,7 +253,7 @@
 
         
         NSString *filePath = [RootDocPath stringByAppendingString:@"/openInfo"];
-        [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@_%@",gameId,params]] atomically:YES];
+        [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@",gameId]] atomically:YES];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];

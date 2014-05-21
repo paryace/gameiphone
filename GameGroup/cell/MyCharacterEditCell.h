@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EGOImageView.h"
+
 @protocol  MyCharacterEditDelegate;
 
 @interface MyCharacterEditCell : UITableViewCell
 
 @property(nonatomic,assign)id<MyCharacterEditDelegate> myDelegate;
 
-@property(strong,nonatomic)EGOImageView* heardImg;
+@property(strong,nonatomic)UIImageView* heardImg;
 @property(strong,nonatomic)UIImageView* authBg;
 @property(strong,nonatomic)UILabel* nameLabel;
 @property(strong,nonatomic)UILabel* realmLabel;

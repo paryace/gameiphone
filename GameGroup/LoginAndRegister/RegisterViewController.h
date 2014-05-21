@@ -24,9 +24,7 @@ UIImagePickerControllerDelegate,
 UINavigationControllerDelegate,
 UIGestureRecognizerDelegate,
 UIPickerViewDataSource,
-UIPickerViewDelegate,
-UITableViewDelegate,
-UITableViewDataSource
+UIPickerViewDelegate
 >
 @property (nonatomic,retain) id <RegisterViewControllerDelegate>delegate;
 

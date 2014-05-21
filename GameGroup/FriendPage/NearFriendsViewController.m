@@ -13,7 +13,7 @@
 {
     UITableView *m_myTableView;
     NSMutableArray *m_dataArray;
-    UILabel* m_titleLabel;
+    
 }
 @end
 
@@ -31,15 +31,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
-    m_titleLabel.textColor = [UIColor whiteColor];
-    m_titleLabel.backgroundColor = [UIColor clearColor];
-    m_titleLabel.text = @"附近的朋友";
-    m_titleLabel.textAlignment = NSTextAlignmentCenter;
-    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    [self.view addSubview:m_titleLabel];
-
+    [self setTopViewWithTitle:@"附近的好友" withBackButton:YES];
+    
     
     //数据初始化
     m_dataArray = [NSMutableArray array];
