@@ -216,8 +216,12 @@
     cell.tag = indexPath.row;
     NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str = KISDictionaryHaveKey(dict, @"commentStr");
-
-    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    NSMutableDictionary * commentD = KISDictionaryHaveKey(dict, @"commentUser");
+    NSString * nickName=KISDictionaryHaveKey(commentD, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(commentD, @"nickname");
+    }
+    cell.comNickNameStr =nickName;
     nickNameLenght=[cell.comNickNameStr length];
     
     cell.commentContLabel.text = str;
@@ -249,7 +253,10 @@
 {
     float height = 0.0f;
     NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    
+    NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    }
     if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
         NSString *str ;
         if ([[dict allKeys]containsObject:@"commentStr"]) {
@@ -257,9 +264,15 @@
         }
         else{
             if ([[dict allKeys]containsObject:@"destUser"]) {
-                str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"),@"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+                
+                NSString * nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"alias");
+                if ([GameCommon isEmtity:nickName2]) {
+                    nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname");
+                }
+                
+                str =[NSString stringWithFormat:@"%@ 回复 %@: %@",nickName,nickName2,KISDictionaryHaveKey(dict, @"comment")];
             }else{
-                str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dict, @"comment")];
+                str =[NSString stringWithFormat:@"%@: %@",nickName,KISDictionaryHaveKey(dict, @"comment")];
             }
             str = [UILabel getStr:str];
             [dict setObject:str forKey:@"commentStr"];

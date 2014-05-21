@@ -10,11 +10,13 @@
 
 @protocol RealmSelectDelegate <NSObject>
 
-- (void)selectOneRealmWithName:(NSString*)name;
+- (void)selectOneRealmWithName:(NSString*)name num:(NSString *)num;
 
 @end
 
 @interface RealmsSelectViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 @property(nonatomic, assign)id<RealmSelectDelegate> realmSelectDelegate;
 @property(nonatomic,copy)NSString *gameNum;
+@property(nonatomic,copy)NSString *indexCount;
+@property(nonatomic,copy)NSString *prama;
 @end

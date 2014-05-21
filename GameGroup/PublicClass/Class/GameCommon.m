@@ -640,4 +640,11 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++(BOOL)isEmtity:(NSString*)str
+{
+    if (!str||[str isEqualToString:@""]||[str isEqualToString:@" "]) {
+        return YES;
+    }return NO;
+}
+
 @end

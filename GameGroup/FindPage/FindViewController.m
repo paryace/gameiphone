@@ -266,8 +266,7 @@
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
     [self buildMenuButton];
-
-    
+    [self didClickMenu:nil];
 }
 
 -(void)buildMenuButton
@@ -279,7 +278,6 @@
     [sameRealmBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
 //    添加点击手势
     [sameRealmBtn addTarget:self action:@selector(enterOtherPage:) forControlEvents:UIControlEventTouchUpInside];
-    
     
     [self.view addSubview:sameRealmBtn];
     
@@ -486,23 +484,9 @@
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         SameRealmViewController* realmsVC = [[SameRealmViewController alloc] init];
         [self.navigationController pushViewController:realmsVC animated:YES];
-        
     }
-//    if (sender == m_newPhoneBtn  ) {
-//        NSLog(@"手机通讯录");
-//        [[Custom_tabbar showTabBar] hideTabBar:YES];
-//        MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];
-//        [self.navigationController pushViewController:addVC animated:YES];
-//    }
-//    
-//    if (sender ==m_activateBtn) {
-//        [[Custom_tabbar showTabBar] hideTabBar:YES];
-//        
-//        ActivateViewController *activeVC = [[ActivateViewController alloc]init];
-//        [self.navigationController pushViewController:activeVC animated:YES];
-//    }
-    
 }
+
 
 -(void)enterCirclePage:(id)sender
 {

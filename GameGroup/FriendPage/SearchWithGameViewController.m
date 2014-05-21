@@ -152,7 +152,7 @@
     if (self.myInfoType == COME_GUILD) {
         GuildMembersViewController *guildMember = [[GuildMembersViewController alloc]init];
         guildMember.guildStr = KISDictionaryHaveKey(dic, @"name");
-        guildMember.realmStr = self.realmStr;
+        guildMember.realmStr = KISDictionaryHaveKey(dic, @"gamerealm");
         guildMember.gameidStr = KISDictionaryHaveKey(dic, @"gameid");
         [self.navigationController pushViewController:guildMember animated:YES];
 
