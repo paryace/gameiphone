@@ -219,9 +219,10 @@
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
         [hud hide:YES];
-        [DataStoreManager updateRecommendStatus:@"1" ForPerson:KISDictionaryHaveKey(tempDic, @"userid")];
+        NSString * userid=KISDictionaryHaveKey(tempDic, @"userid");
+        [DataStoreManager updateRecommendStatus:@"1" ForPerson:userid];
+        
         if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"2"])
         {
             [self requestPeopleInfoWithName:KISDictionaryHaveKey(tempDic, @"username") ForType:2];

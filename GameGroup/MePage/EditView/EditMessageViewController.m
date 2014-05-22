@@ -166,9 +166,11 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        NSLog(@"%@", responseObject);
-        
-        [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [responseObject setObject:[responseObject objectForKey:@"id"] forKey:@"userid"];
+            [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
+            [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
+        }
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

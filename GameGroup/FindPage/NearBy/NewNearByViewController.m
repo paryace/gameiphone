@@ -675,6 +675,11 @@ typedef enum : NSUInteger {
     else{
     NSDictionary *dict =[headImgArray objectAtIndex:indexPath.row];
     TestViewController *testVC = [[TestViewController alloc]init];
+        
+    NSString * nickName=KISDictionaryHaveKey(dict, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(dict, @"nickname");
+    }
     testVC.nickName =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"nickname")];
     testVC.userId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"userid")];
     [self.navigationController pushViewController:testVC animated:YES];
@@ -730,8 +735,11 @@ typedef enum : NSUInteger {
     }
     
     
-    
-    cell.nickNameLabel.text =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
+    }
+    cell.nickNameLabel.text =nickName;
     m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
     //cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
     cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
@@ -851,8 +859,11 @@ typedef enum : NSUInteger {
         NSArray *array = KISDictionaryHaveKey(dict, @"zanList");
         if (array.count>0){ //以前的数据有些没有zanlist
             cell.zanView.frame = CGRectMake(59, m_currmagY, 251, 25);
-            
-            NSString *zanNickName=KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
+            NSString * nickName=KISDictionaryHaveKey([array objectAtIndex:0], @"alias");
+            if ([GameCommon isEmtity:nickName]) {
+                nickName=KISDictionaryHaveKey([array objectAtIndex:0], @"nickname");
+            }
+            NSString *zanNickName=nickName;
             
             cell.zanView.hidden = NO;
             cell.zanNameLabel.text = zanNickName;
@@ -1116,7 +1127,11 @@ typedef enum : NSUInteger {
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     TestViewController *test = [[TestViewController alloc]init];
     test.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic,@"user"), @"userid");
-    test.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
+    NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
+    }
+    test.nickName = nickName;
     [self.navigationController pushViewController: test animated:YES];
 }
 #pragma mark Content分析器
@@ -1237,10 +1252,19 @@ typedef enum : NSUInteger {
                     str =KISDictionaryHaveKey(dic, @"commentStr");
                 }
                 else{
+                    NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"alias");
+                    if ([GameCommon isEmtity:nickName]) {
+                        nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname");
+                    }
                     if ([[dic allKeys]containsObject:@"destUser"]) {
-                        str =[NSString stringWithFormat:@"%@ 回复 %@: %@", KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"),@"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                        
+                        NSString * nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"alias");
+                        if ([GameCommon isEmtity:nickName2]) {
+                            nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"destUser"), @"nickname");
+                        }
+                        str =[NSString stringWithFormat:@"%@ 回复 %@: %@",nickName,nickName2,KISDictionaryHaveKey(dic, @"comment")];
                     }else{
-                        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                        str =[NSString stringWithFormat:@"%@: %@",nickName,KISDictionaryHaveKey(dic, @"comment")];
                     }
                     str = [UILabel getStr:str];
                     [dic setObject:str forKey:@"commentStr"];
@@ -1542,7 +1566,10 @@ typedef enum : NSUInteger {
         return;
     }
     NSString *userid = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"userid");
-    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    NSString *nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    }
     testVC.userId =userid;
     testVC.nickName = nickName;
     testVC.viewType = VIEW_TYPE_STRANGER1;
@@ -1555,7 +1582,10 @@ typedef enum : NSUInteger {
     NSDictionary *zanDic  = [KISDictionaryHaveKey(dic,@"zanList")objectAtIndex:0];
     TestViewController *testVC = [[TestViewController alloc]init];
     NSString *userid =KISDictionaryHaveKey(zanDic, @"userid");
-    NSString *nickName = KISDictionaryHaveKey(zanDic, @"nickname");
+    NSString *nickName = KISDictionaryHaveKey(zanDic, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName =KISDictionaryHaveKey(zanDic, @"nickname");
+    }
     testVC.userId =userid;
     testVC.nickName = nickName;
     [self.navigationController pushViewController:testVC animated:YES];
@@ -1728,7 +1758,10 @@ typedef enum : NSUInteger {
         NSArray *array = [dic objectForKey:@"commentList"];
         NSDictionary *dict = [array objectAtIndex:row];
         //  self.textView.placeholder = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") ;
-        NSString* nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+        NSString* nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
+        if ([GameCommon isEmtity:nickName]) {
+            nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+        }
         self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
         self.textView.placeholderColor = [UIColor grayColor];
         

@@ -1285,6 +1285,7 @@
                     }
                 }
                 if ([type isEqualToString:@"2"]) {
+                    [self refreFansNum:@"0"];
                     [self showMessageWindowWithContent:@"删除成功" imageType:0];
                 }
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];

@@ -422,7 +422,11 @@
     
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@", responseObject);
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [responseObject setObject:[responseObject objectForKey:@"id"] forKey:@"userid"];
+            [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
+            [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
+        }
         
         [self showMessageWindowWithContent:@"保存成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
