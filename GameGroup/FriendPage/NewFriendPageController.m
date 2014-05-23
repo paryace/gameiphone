@@ -79,12 +79,6 @@
     self.view.backgroundColor=[UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
-        if (!keyArr||[keyArr count]==0) {
-            hud = [[MBProgressHUD alloc] initWithView:self.view];
-            [self.view addSubview:hud];
-            hud.labelText = @"查询中...";
-            hud.hidden=NO;
-        }
         [self getFriendListFromNet];
     }
 }
@@ -285,7 +279,6 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    [hud hide:YES];
                     if ([responseObject isKindOfClass:[NSDictionary class]]) {
                         fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
                         [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
@@ -309,7 +302,6 @@
                             [alert show];
                         }
                     }
-                    [hud hide:YES];
                 }];
 }
 //保存用户列表信息
@@ -317,14 +309,16 @@
 {
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
-        [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
-        [DataStoreManager deleteAllUserWithShipType:@"1"];
-        for (int i=0; i<[keys count]; i++) {
-            NSString *key=[keys objectAtIndex:i];
-            for (NSMutableDictionary * dict in [result objectForKey:key]) {
-                [dict setObject:key forKey:@"nameIndex"];
-                NSString *shiptype=[dict objectForKey:@"shiptype"];
-                [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
+        if (result.count>0) {
+            [DataStoreManager deleteAllUserWithShipType:@"2"];//先清 再存
+            [DataStoreManager deleteAllUserWithShipType:@"1"];
+            for (int i=0; i<[keys count]; i++) {
+                NSString *key=[keys objectAtIndex:i];
+                for (NSMutableDictionary * dict in [result objectForKey:key]) {
+                    [dict setObject:key forKey:@"nameIndex"];
+                    NSString *shiptype=[dict objectForKey:@"shiptype"];
+                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
+                }
             }
         }
     });

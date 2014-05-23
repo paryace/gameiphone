@@ -264,17 +264,17 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString * characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"characterImg")];
-    NSString * clazzImageUrl=[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage];
+    NSString * characterImageUrl=[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage];
     
     NSString * characyerName=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"charactername")];
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     if (buttonIndex ==0) {
-        [[ShareToOther singleton] onTShareImage:clazzImageUrl Title:characyerName Description:messageText Url:OfficerUrl];
+        [[ShareToOther singleton] onTShareImage:characterImageUrl Title:characyerName Description:messageText Url:OfficerUrl];
     }
     else if (buttonIndex ==1)
     {
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:clazzImageUrl] Title:characyerName Description:messageText Url:OfficerUrl];
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:characterImageUrl] Title:characyerName Description:messageText Url:OfficerUrl];
     }
     else if(buttonIndex ==2)
     {
