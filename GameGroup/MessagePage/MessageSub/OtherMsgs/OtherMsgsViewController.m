@@ -171,7 +171,8 @@
         CharacterDetailsViewController *charVC = [[CharacterDetailsViewController alloc]init];
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
         charVC.characterId = dic[@"characterid"];
-        charVC.gameId = @"1";
+//        charVC.gameId = @"1";
+        charVC.gameId = dic[@"gameid"];
         charVC.myViewType = CHARA_INFO_MYSELF;
         [self.navigationController pushViewController:charVC animated:YES];
         return;

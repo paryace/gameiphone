@@ -45,7 +45,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"绑定角色" withBackButton:YES];
+    
+    if ([self.type isEqualToString:@"1"]) {
+        [self setTopViewWithTitle:@"邀请绑定" withBackButton:YES];
+    }else
+    {
+        [self setTopViewWithTitle:@"举报该角色" withBackButton:YES];
+    }
     [self initView];
     [self setInfo:self.dataDic];
 }
@@ -165,7 +171,7 @@
         text1.hidden=YES;
         binBtn.hidden=YES;
         
-        tongzhiVIew.frame=CGRectMake(0, 85+startX, 320, 20);
+        tongzhiVIew.frame=CGRectMake(0, 85+startX, 320, 23);
         text2.text=@"通知朋友绑定角色";
         text3.frame=CGRectMake(10, 125+startX, 310, 60);
         text3.text=@"如果该角色为您朋友所有，您可以立即通知他来绑定角色，这样可以方便您们再好友排行榜上比较战绩，也可以防止他人冒领角色";
