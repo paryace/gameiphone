@@ -24,6 +24,7 @@
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     NSMutableArray  *m_imgArray;
+    UIAlertView* backpopAlertView;
 }
 
 @end
@@ -49,6 +50,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"" withBackButton:YES];
+    
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -96,7 +98,16 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
             if (m_pageNum ==0) {
-//                m_titleLabel.text = [NSString stringWithFormat:@"查询结果(%@)",KISDictionaryHaveKey(responseObject,@"totalResults")];
+                NSArray *array = responseObject;
+                if (![responseObject isKindOfClass:[NSArray class]]||array.count<1) {
+                    NSLog(@"没东西");
+                    backpopAlertView = [[UIAlertView alloc]initWithTitle:nil message:@"用户不存在" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [backpopAlertView show];
+
+                }
+                
+                
+                
                 [m_tabelData removeAllObjects];
                 [m_tabelData addObjectsFromArray:responseObject];
             }
@@ -105,8 +116,6 @@
                 [m_tabelData addObjectsFromArray:responseObject];
 
             }
-        
-
         
         [m_myTableView reloadData];
         m_pageNum ++;
@@ -259,6 +268,15 @@
     m_footer = footer;
     
 }
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+
+
 - (void)addHeader
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
@@ -285,5 +303,8 @@
 {
     [super didReceiveMemoryWarning];
 }
-
+-(void)dealloc
+{
+    backpopAlertView.delegate = nil;
+}
 @end

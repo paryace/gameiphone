@@ -199,6 +199,10 @@
                     
                     if ([oldId isEqualToString: newid]&&![gameInfoMills isEqualToString: newGameInfoMills]) {
                         
+                        NSLog(@"%@--%@-=-%@--%@",oldId,gameInfoMills,newid,newGameInfoMills);
+                        
+                        
+                        
                         NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
                         for (int m =0; m<commonPArray.count; m++) {
                             NSDictionary *commonDic = commonPArray[m];
@@ -206,9 +210,10 @@
                         }
 
                     }
-                    else if (![[dic allKeys]containsObject:KISDictionaryHaveKey(temDic, @"id")]){
+                    else if (![[dic allKeys]containsObject:KISDictionaryHaveKey(temDic, @"id")]&&array.count<newArray.count){
                         
-                        
+                        NSLog(@"%@",temDic);
+
                         NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
                         for (int m =0; m<commonPArray.count; m++) {
                             NSDictionary *commonDic = commonPArray[m];

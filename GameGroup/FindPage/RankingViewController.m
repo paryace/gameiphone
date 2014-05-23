@@ -11,6 +11,7 @@
 #import "SendNewsViewController.h"
 #import "MePageViewController.h"
 #import "ShareToOther.h"
+#import "AddCharacterViewController.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
 #define kSegmentCountry (2)
@@ -53,6 +54,8 @@
     NSInteger       m_ppageCount;
     UIActivityIndicatorView   *loginActivity;
     
+    NSInteger   m_infoNum;
+    NSInteger m_tableViewNum;
     BOOL  isFirstLoading1;
     BOOL  isFirstLoading2;
     BOOL  isFirstLoading3;
@@ -473,41 +476,93 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    
-    TestViewController *detailVC = [[TestViewController alloc]init];
+    m_infoNum = indexPath.row;
     NSDictionary *dic = [[NSDictionary alloc]init];
     if(tableView ==m_tableView){
     dic = [m_cArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 1;
     }
     if (tableView ==m_tableviewServer) {
         dic = [m_serverArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 2;
+
     }
     if (tableView ==m_tableviewCountry) {
         dic = [m_countryArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 3;
+
     }
     
-//    if ([KISDictionaryHaveKey(dic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//        [self.navigationController popToRootViewControllerAnimated:YES];
-//        return;
-//    }
     NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"userid"),self.userId);
     NSString * str =KISDictionaryHaveKey(dic, @"nickname");
     if ([str isEqualToString:@" "]) {
         isRegisterForMe = NO;
     }
     if (isRegisterForMe ==YES) {
-        detailVC.userId = KISDictionaryHaveKey(dic, @"userid");
-        detailVC.nickName = KISDictionaryHaveKey(dic, @"displayName");
-        detailVC.isChatPage = NO;
-        [self.navigationController pushViewController:detailVC animated:YES];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+        alertView.tag = 1002;
+        [alertView show];
+
 
     }else{
-        [self showAlertViewWithTitle:@"提示" message:@"该角色尚未在陌游注册" buttonTitle:@"确定"];
+        
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
+        alertView.tag = 1001;
+        [alertView show];
         isRegisterForMe =YES;
     }
 
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSDictionary *dic = [[NSDictionary alloc]init];
+    if(m_tableViewNum == 1){
+        dic = [m_cArray objectAtIndex:m_infoNum];
+    }
+    if (m_tableViewNum == 2) {
+        dic = [m_serverArray objectAtIndex:m_infoNum];
+    }
+    if (m_tableViewNum == 3) {
+        dic = [m_countryArray objectAtIndex:m_infoNum];
+    }
+    
+    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
+    if (alertView.tag ==1001)//点击没有被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去绑定");//去绑定
+            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
+            addVC.viewType = CHA_TYPE_Add;
+            [self.navigationController pushViewController:addVC animated:YES];
+        }else{
+            NSLog(@"通知好友绑定");
+        }
+    }
+    else//点击已经被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去看资料");
+            TestViewController *detailVC = [[TestViewController alloc]init];
+            detailVC.userId = KISDictionaryHaveKey(dic, @"userid");
+            detailVC.nickName = KISDictionaryHaveKey(dic, @"displayName");
+            detailVC.isChatPage = NO;
+            [self.navigationController pushViewController:detailVC animated:YES];
+
+        }else{
+            NSLog(@"去举报");
+            
+        }
+        
+    }
+
+}
 
 #pragma mark ---创建顶部分类button
 -(void)buildTopBtnView

@@ -700,15 +700,6 @@
     }
     else if (indexPath.section == 1)
     {
-//        [[Custom_tabbar showTabBar] hideTabBar:YES];
-//        NewsViewController* VC = [[NewsViewController alloc] init];
-//        VC.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-//        VC.myViewType = ME_NEWS_TYPE;
-//        [self.navigationController pushViewController:VC animated:YES];
-//        
-//        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//        [[GameCommon shareGameCommon] displayTabbarNotification];
     }
     else if(indexPath.section == 2)
     {
@@ -775,9 +766,6 @@
         [self showMessageWithContent:@"暂无头衔" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
     }
 }
-
-
-
 - (BOOL)prefersStatusBarHidden
 {
     return NO;

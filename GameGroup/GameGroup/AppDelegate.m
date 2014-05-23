@@ -84,7 +84,8 @@
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
-    [MobClick startWithAppkey:@"52caacec56240b18e2035237"];
+    [MobClick startWithAppkey:@"52caacec56240b18e2035237" reportPolicy:BATCH channelId:appChannel];
+    
     [WeiboSDK enableDebugMode:YES];
     [WeiboSDK registerApp:@"2195106285"];
     [WXApi registerApp:@"wx64c8dc2f82a0c8fd" withDescription:nil];

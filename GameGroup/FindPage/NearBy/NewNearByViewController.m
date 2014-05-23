@@ -2047,7 +2047,7 @@ typedef enum : NSUInteger {
 #pragma mark --举报
 -(void)jubaoThisInfoWithCell:(NewNearByCell*)myCell
 {
-    NSDictionary *dic =[m_dataArray objectAtIndex:myCell.tag];
+   // NSDictionary *dic =[m_dataArray objectAtIndex:myCell.tag];
  
     UIAlertView *jubaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认举报这条动态么？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"举报", nil];
     
@@ -2095,7 +2095,22 @@ typedef enum : NSUInteger {
     m_loginActivity.center = CGPointMake(title_left_x-20, KISHighVersion_7?42:22);
     
 }
-
+- (void)getmsgIdwithCircle:(NewNearByCell *)myCell withindexPath:(NSInteger)row
+{
+    
+}
+-(void)transferClickEventsWithCell:(NewNearByCell *)myCell withIndexPath:(NSInteger)row
+{
+    
+}
+-(void)hiddenOrShowMenuImageViewWithCell:(NewNearByCell*)myCell
+{
+    
+}
+-(void)delCellWithCell:(NewNearByCell*)myCell
+{
+    
+}
 /*
 #pragma mark - Navigation
 

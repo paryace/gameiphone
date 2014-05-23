@@ -43,7 +43,7 @@
     
     m_dataArray =[self.dataDic objectForKey:@"characters"];
     
-    [self setTopViewWithTitle:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(self.dataDic, @"characterTotalNum")] withBackButton:YES];
+    [self setTopViewWithTitle:[NSString stringWithFormat:@"共查找到%@个角色",KISDictionaryHaveKey(self.dataDic, @"characterTotalNum")] withBackButton:YES];
     }
     UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     tableView.delegate = self;

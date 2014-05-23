@@ -272,17 +272,19 @@
 */
 - (void)selectServerNameOK:(UIButton *)sender
 {
-   // [m_gameNameText resignFirstResponder];
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
-      //  m_gameNameText.text = [dict objectForKey:@"name"];
-        
 
-        NSArray *sarchArray ;
+        NSMutableArray *sarchArray = [NSMutableArray array] ;
+        [sarchArray removeAllObjects];
         if (self.myViewType == SEARCH_TYPE_ROLE) {
             sarchArray =[[dict objectForKey:@"gameParams" ] objectForKey:@"searchCharacterParams"];
         }else{
             sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"searchOrganizationParams"];
+            if (![sarchArray isKindOfClass:[NSArray class]]||sarchArray.count<1) {
+                [self showAlertViewWithTitle:@"提示" message:@"此游戏暂不支持组织查找" buttonTitle:@"确定"];
+                return;
+            }
         }
         [m_dataArray removeAllObjects];
         
@@ -385,8 +387,10 @@
             NSDictionary *dic = m_dataArray[i];
             if (i==0) {
                 [tempDic1 setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-            }else
-                [tempDic1 setObject:KISDictionaryHaveKey(dic, @"content") forKey:KISDictionaryHaveKey(dic, @"param")];
+            }else{
+                UITextField *tf  = (UITextField *)[self.view viewWithTag:i];
+                [tempDic1 setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            }
         }
 
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
