@@ -45,7 +45,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"绑定角色" withBackButton:YES];
+    
+    if ([self.type isEqualToString:@"1"]) {
+        [self setTopViewWithTitle:@"邀请绑定" withBackButton:YES];
+    }else
+    {
+        [self setTopViewWithTitle:@"举报该角色" withBackButton:YES];
+    }
     [self initView];
     [self setInfo:self.dataDic];
 }
@@ -165,7 +171,7 @@
         text1.hidden=YES;
         binBtn.hidden=YES;
         
-        tongzhiVIew.frame=CGRectMake(0, 85+startX, 320, 20);
+        tongzhiVIew.frame=CGRectMake(0, 85+startX, 320, 23);
         text2.text=@"通知朋友绑定角色";
         text3.frame=CGRectMake(10, 125+startX, 310, 60);
         text3.text=@"如果该角色为您朋友所有，您可以立即通知他来绑定角色，这样可以方便您们再好友排行榜上比较战绩，也可以防止他人冒领角色";
@@ -237,7 +243,7 @@
 -(void)binBtnClick:(id)sender
 {
     AuthViewController* authVC = [[AuthViewController alloc] init];
-    authVC.gameId = @"1";
+    authVC.gameId = self.gameId;
     authVC.realm = KISDictionaryHaveKey(self.dataDic, @"realm");
     authVC.character = KISDictionaryHaveKey(self.dataDic, @"charactername");
     [self.navigationController pushViewController:authVC animated:YES];
@@ -272,9 +278,8 @@
     }
     else if(buttonIndex ==2)
     {
-        NSString * msgBody=[[@"你的角色 " stringByAppendingString:characyerName] stringByAppendingString:@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
-        NSString * msgBody2=[[@"你的角色 " stringByAppendingString:characyerName] stringByAppendingString:@" 在陌游中尚未被绑定. 你的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
-        
+        NSString * msgBody= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
+         NSString * msgBody2= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 在陌游中尚未被绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
         if ([self.type isEqualToString:@"2"]) {
             [self sendSMS:msgBody];
         }else{
@@ -307,6 +312,7 @@
     }
 
 }
+//发送消息结束代理回调
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     [self dismissViewControllerAnimated:YES completion:^{
         switch (result) {

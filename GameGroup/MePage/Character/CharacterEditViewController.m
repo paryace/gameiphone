@@ -197,7 +197,8 @@
     
     AuthViewController* authVC = [[AuthViewController alloc] init];
     NSDictionary* dic = [m_characterArray objectAtIndex:selectRow];
-    authVC.gameId = @"1";
+//    authVC.gameId = @"1";
+    authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
     authVC.character = KISDictionaryHaveKey(dic, @"name");
 
@@ -223,7 +224,7 @@
     changeVC.viewType = CHA_TYPE_Change;
     
     changeVC.realm = KISDictionaryHaveKey(dic, @"realm");
-    changeVC.gameId =KISDictionaryHaveKey(dic, @"gameid");
+    changeVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     changeVC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")];
     changeVC.character = KISDictionaryHaveKey(dic, @"name");
     
@@ -241,9 +242,9 @@
         [hud show:YES];
         
         NSDictionary* dic = [m_characterArray objectAtIndex:alertView.tag - 1];
-        
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-        [params setObject:@"1" forKey:@"gameid"];
+//        [params setObject:@"1" forKey:@"gameid"];
+        [params setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
         [params setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
         
         NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
