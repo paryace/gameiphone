@@ -186,8 +186,14 @@
         //本地开机数据和网络获取开机数据相互遍历 判断是否需要更新
         if ([[openData allKeys]containsObject:@"gamelist"]) {
             NSArray *array = KISDictionaryHaveKey(openData, @"gamelist");
-            NSArray *newArray = KISDictionaryHaveKey(dict, @"gamelist");
-
+            NSDictionary *newDic = KISDictionaryHaveKey(dict, @"gamelist");
+            NSMutableArray *newArray = [NSMutableArray array];
+            NSArray *allk =[newDic allKeys];
+            for (int i =0; i<allk.count; i++) {
+                NSArray *array = [newDic objectForKey:allk[i] ];
+                [newArray addObjectsFromArray:array];
+            }
+            
             for (int i =  0; i<array.count; i++) {
                 for (int j = 0; j<newArray.count; j++) {
                     NSDictionary *dic = array[i];
@@ -226,9 +232,15 @@
         }else{
             
             //第一次登陆 无本地数据
-            NSArray *array = KISDictionaryHaveKey(dict, @"gamelist");
-            for (int i =0; i<array.count; i++) {
-                NSDictionary *dic = array[i];
+            NSDictionary *newDic = KISDictionaryHaveKey(dict, @"gamelist");
+            NSMutableArray *newArray = [NSMutableArray array];
+            NSArray *allk =[newDic allKeys];
+            for (int i =0; i<allk.count; i++) {
+                NSArray *array = [newDic objectForKey:allk[i] ];
+                [newArray addObjectsFromArray:array];
+            }
+            for (int i =0; i<newArray.count; i++) {
+                NSDictionary *dic = newArray[i];
                 NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"gameParams"), @"commonParams");
                 
                 for (int j =0; j<commonPArray.count; j++) {

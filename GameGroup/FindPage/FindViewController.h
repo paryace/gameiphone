@@ -7,7 +7,8 @@
 //
 
 #import "BaseViewController.h"
+#import "TvView.h"
 
-@interface FindViewController : BaseViewController<UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@interface FindViewController : BaseViewController<UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,TvViewDelegate>
 
 @end

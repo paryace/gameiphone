@@ -222,7 +222,7 @@
     if (m_searchType != 3) {
         [paramDict setObject:[NSString stringWithFormat:@"%d", m_searchType] forKey:@"gender"];
     }
-    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
     NSArray* realmArr = [m_selectRealmButton.titleLabel.text componentsSeparatedByString:@"("];
     
     //记忆服务器

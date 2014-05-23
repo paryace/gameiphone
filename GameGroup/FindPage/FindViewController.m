@@ -20,6 +20,7 @@
     UIButton *nearByBtn;
     UIButton *moGirlBtn;
     UIButton *encoBtn;
+    UIView *bottomView;
     UIImageView *m_notibgInfoImageView; //与我相关红点
     UIImageView *m_notibgCircleNewsImageView; //朋友圈红点
 
@@ -33,6 +34,8 @@
     float button_center_y;
     NSMutableArray *centerBtnArray;
     BOOL isDidClick;
+    TvView *drawView;
+    NSDictionary *manDic;
     
     UIImageView *imgV;
 }
@@ -155,7 +158,7 @@
     
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor blackColor];
-    
+    manDic = [NSDictionary new];
     
     //初始化背景图片 并且添加点击换图方法
     imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
@@ -174,8 +177,12 @@
     
     centerBtnArray = [NSMutableArray array];
     
-    
-    
+    drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
+    drawView.myViewDelegate = self;
+    drawView.tableDic = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    drawView.tableArray = [drawView.tableDic allKeys];
+    [self.view addSubview:drawView];
+ /*
     UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     topView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
     [self.view addSubview:topView];
@@ -205,8 +212,9 @@
     [menuButotn setBackgroundImage:KUIImage(@"wow") forState:UIControlStateNormal];
     [self.view addSubview:menuButotn];
     
-   
-    UIView *bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
+  */
+    
+    bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
     [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
 
@@ -266,7 +274,7 @@
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
     [self buildMenuButton];
-    [self didClickMenu:nil];
+   // [self didClickMenu:nil];
 }
 
 -(void)buildMenuButton
@@ -353,7 +361,7 @@
 -(void)didClickMenu:(UIButton *)sender
 {
     
-    if (sameRealmBtn.hidden ==YES) {
+    if (drawView.showList) {
         nearByBtn.hidden = NO;
 
         [UIView beginAnimations:nil context:nil];
@@ -461,6 +469,8 @@
         return;
     }
     
+    NSLog(@"------%@------",manDic);
+    
     NSLog(@"点击");
     if (sender ==encoBtn) {  //许愿
         [[Custom_tabbar showTabBar] hideTabBar:YES];
@@ -477,12 +487,14 @@
     if (sender ==nearByBtn ) {//附近
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         NewNearByViewController* VC = [[NewNearByViewController alloc] init];
+        VC.gameid = KISDictionaryHaveKey(manDic, @"id");
         [self.navigationController pushViewController:VC animated:YES];
         
     }
     if (sender ==sameRealmBtn) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         SameRealmViewController* realmsVC = [[SameRealmViewController alloc] init];
+        realmsVC.gameid = KISDictionaryHaveKey(manDic, @"id");
         [self.navigationController pushViewController:realmsVC animated:YES];
     }
 }
@@ -570,6 +582,21 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+}
+-(void)didClickGameIdWithView:(TvView *)myView
+{
+    bottomView.hidden =YES;
+    [self didClickMenu:nil];
+}
+-(void)didClickGameIdSuccessWithView:(TvView *)myView section:(NSInteger)section row:(NSInteger)row
+{
+    [self didClickMenu:nil];
+    bottomView.hidden = NO;
+    
+    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSArray *allkeys = [dict allKeys];    
+    manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
+    NSLog(@"manDic--%@",manDic);
 }
 
 
