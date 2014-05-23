@@ -114,7 +114,7 @@ static ShareToOther *userManager = NULL;
                                                   description:des
                                               previewImageURL:[NSURL URLWithString:imageUrl]];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:newsObj];
-    QQApiSendResultCode sent =[QQApiInterface sendReq:req];
+    QQApiSendResultCode sent = [QQApiInterface sendReq:req];
     [self handleSendResult:sent];
 }
 - (void)handleSendResult:(QQApiSendResultCode)sendResult

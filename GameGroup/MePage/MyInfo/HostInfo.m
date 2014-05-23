@@ -66,37 +66,27 @@
     if (self) {
         
         self.characters = KISDictionaryHaveKey(info, @"characters");//角色
-        
         self.achievementArray = KISDictionaryHaveKey(info, @"title");//头衔
-        
         self.state = KISDictionaryHaveKey(info, @"latestDynamicMsg");//动态
-        
         self.charactersArr=KISDictionaryHaveKey(info, @"characters");//新角色
-
-//获取游戏角色列表
+        //获取游戏角色列表
         //NSDictionary *charaDic = KISDictionaryHaveKey(info, @"dynamicmsg");
         if (![self.state isKindOfClass:[NSDictionary class]]) {
             ;
         }else{
-         NSDictionary *dic =KISDictionaryHaveKey(self.state, @"titleObj");
-        if ([dic isKindOfClass:[NSDictionary class]]) {
-           
-            
-            NSLog(@"charaDic%@",dic);
-            
-             self.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-             self.characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterid")];
-            
-            NSLog(@"各种ID%@--%@",self.gameid,self.characterid);
-
-        }else{
-            NSLog(@"字典为空");
-
-        }
+            NSDictionary *dic =KISDictionaryHaveKey(self.state, @"titleObj");
+            if ([dic isKindOfClass:[NSDictionary class]]) {
+                NSLog(@"charaDic%@",dic);
+                self.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+                self.characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterid")];
+                NSLog(@"各种ID%@--%@",self.gameid,self.characterid);
+            }else{
+                NSLog(@"字典为空");
+                
+            }
         }
         self.zanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"zannum")];
         self.fanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"fansnum")];
-
         NSDictionary* userInfo = KISDictionaryHaveKey(info, @"user");
         if (![userInfo isKindOfClass:[NSDictionary class]]) {
             return self;
@@ -139,7 +129,6 @@
 
         self.headImgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"img")];
         [self getHead:[NSString stringWithFormat:@"%@",[userInfo objectForKey:@"img"]]];
-    
         self.backgroundImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"backgroundImg")];
     }
     return self;

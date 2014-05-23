@@ -71,27 +71,17 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
     wxSDArray = [NSMutableArray array];
-     littleImgArray = [NSMutableArray array];
-    if (self.hostInfo!=NULL) {//有值 查找用户
+    littleImgArray = [NSMutableArray array];
+    NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
+    if (dic) {//本地有
+        self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
         [self setInfoViewType:self.hostInfo];
         [self setBottomView];
         [self buildMainView];
-    }
-    else//没有详情 请求
-    {
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]]) {//有值 查找用户
-            NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
-            self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
-            [self setInfoViewType:self.hostInfo];
-            [self setBottomView];
-            [self buildMainView];
-            [[UserManager singleton]requestUserFromNet:self.userId];
-        }
-        else//没有详情 请求
-        {
-            [self buildInitialize];
-            [[UserManager singleton]requestUserFromNet:self.userId];
-        }
+        [[UserManager singleton]requestUserFromNet:self.userId];
+    }else{
+        [self buildInitialize];
+        [[UserManager singleton]requestUserFromNet:self.userId];
     }
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
@@ -329,25 +319,26 @@
     m_relationLabel.backgroundColor = [UIColor clearColor];
     m_relationLabel.textColor = kColorWithRGB(51, 51, 51, 1.0);
     m_relationLabel.font = [UIFont boldSystemFontOfSize:14.0];
-    switch (self.viewType) {
-        case VIEW_TYPE_FriendPage1:
-            m_relationLabel.text = @"好友";
-            break;
-        case VIEW_TYPE_AttentionPage1:
-            m_relationLabel.text = @"关注";
-            break;
-        case VIEW_TYPE_FansPage1:
-            m_relationLabel.text = @"粉丝";
-            break;
-        case VIEW_TYPE_STRANGER1:
-            m_relationLabel.text = @"陌生人";
-            break;
-        case VIEW_TYPE_Self1:
-            m_relationLabel.text = @"自己";
-            break;
-        default:
-            break;
-    }
+    m_relationLabel.text = @"陌生人";
+//    switch (self.viewType) {
+//        case VIEW_TYPE_FriendPage1:
+//            m_relationLabel.text = @"好友";
+//            break;
+//        case VIEW_TYPE_AttentionPage1:
+//            m_relationLabel.text = @"关注";
+//            break;
+//        case VIEW_TYPE_FansPage1:
+//            m_relationLabel.text = @"粉丝";
+//            break;
+//        case VIEW_TYPE_STRANGER1:
+//            m_relationLabel.text = @"陌生人";
+//            break;
+//        case VIEW_TYPE_Self1:
+//            m_relationLabel.text = @"自己";
+//            break;
+//        default:
+//            break;
+//    }
     [m_myScrollView addSubview:m_relationLabel];
     
     m_currentStartY += 37;
@@ -709,7 +700,6 @@
 - (void)stateSelectClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
    // NewsViewController* VC = [[NewsViewController alloc] init];
     MyCircleViewController *VC = [[MyCircleViewController alloc]init];
     VC.userId = self.hostInfo.userId;
@@ -728,23 +718,14 @@
     [topBg addSubview:titleLabel];
     
     m_currentStartY += 30;
-    
-//    NSArray* charactersArr = KISDictionaryHaveKey(self.hostInfo.characters, @"1");
-    
-     NSArray * charactersArr = self.hostInfo.charactersArr;
-    
+    NSArray * charactersArr = self.hostInfo.charactersArr;
     if (![charactersArr isKindOfClass:[NSArray class]]) {
         return;
     }
     for (int i = 0; i < [charactersArr count]; i++) {
         NSDictionary* characterDic = [charactersArr objectAtIndex:i];
-        
-        
-        
-        
-//        NSString* realm = [KISDictionaryHaveKey(characterDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(characterDic, @"raceObj"), @"sidename") : @"";
-       NSString* realm =  KISDictionaryHaveKey(characterDic, @"realm");//服务器
-       NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"gameid")];//游戏Id
+        NSString* realm =  KISDictionaryHaveKey(characterDic, @"realm");//服务器
+        NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"gameid")];//游戏Id
         NSString* v1=KISDictionaryHaveKey(characterDic, @"value1");//部落
         NSString* v2=KISDictionaryHaveKey(characterDic, @"value2");//战斗力
         NSString* v3=KISDictionaryHaveKey(characterDic, @"value3");//战斗力数
@@ -783,7 +764,6 @@
 {
     NSLog(@"点击角色%d",sender.tag);
     CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
-//  NSArray* characterArray = KISDictionaryHaveKey(self.hostInfo.characters, @"1");//魔兽世界
     NSArray* characterArray = self.hostInfo.charactersArr;
     if ([characterArray isKindOfClass:[NSArray class]]){
         NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
@@ -831,9 +811,7 @@
             [titleSelect addTarget:self action:@selector(titleObjSelectClick:) forControlEvents:UIControlEventTouchUpInside];
             titleSelect.tag = i;
             [m_myScrollView addSubview:titleSelect];
-            
             m_currentStartY += 40;
-            
             [self setOneLineWithY:m_currentStartY];
         }
     }
@@ -889,10 +867,7 @@
     }else{
         reportButton.hidden =NO;
         m_myScrollView.frame =CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX - (KISHighVersion_7?0:20)-44);
-
     }
-    
-    
     m_currentStartY += 45;
 }
 
@@ -916,40 +891,21 @@
 - (void)setBottomView
 {
     switch (self.viewType) {
-        case VIEW_TYPE_FriendPage1:
+        case VIEW_TYPE_FriendPage1://好友
         {
             UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
             editButton.frame=CGRectMake(255, KISHighVersion_7 ? 20 : 0 , 65, 43);
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
-            //[editButton setTitle:@"备注" forState:UIControlStateNormal];
-            
             editButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:editButton];
-            
-            
-            delFriendBtn = [CommonControlOrView
-                                     setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height -44, 107, 44)//120
-                                     title:nil
-                                     fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                     bgImage:KUIImage(@"del_friend_normal")
-                                     HighImage:KUIImage(@"del_friend_click")
-                                     selectImage:Nil];
+
+            delFriendBtn = [self setCenterBtn:@"del_friend_normal" ClickImage:@"del_friend_click"];
             [delFriendBtn addTarget:self action:@selector(deleteFriend:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:delFriendBtn];
-            
-            UIButton* button_right = [CommonControlOrView
-                                      setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
-                                      title:@""
-                                      fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                      bgImage:KUIImage(@"chat_normal")
-                                      HighImage:KUIImage(@"chat_click")
-                                      selectImage:Nil];
-            [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:button_right];
         }break;
-        case VIEW_TYPE_AttentionPage1:
+        case VIEW_TYPE_AttentionPage1://关注
         {
             UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
             editButton.frame=CGRectMake(270, startX - 38, 37, 30);
@@ -958,84 +914,56 @@
             [self.view addSubview:editButton];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             
-            attentionOffBtn = [CommonControlOrView
-                                     setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height -44, 107, 44)//120
-                                     title:nil
-                                     fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                    bgImage:KUIImage(@"Focus_off_normal")
-                                     HighImage:KUIImage(@"Focus_off_click")
-                                     selectImage:Nil];
+            attentionOffBtn = [self setCenterBtn:@"Focus_off_normal" ClickImage:@"Focus_off_click"];
             [attentionOffBtn addTarget:self action:@selector(cancelAttentionClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:attentionOffBtn];
-            
-            UIButton* button_right = [CommonControlOrView
-                                      setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
-                                      title:@""
-                                      fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                      bgImage:KUIImage(@"chat_normal")
-                                      HighImage:KUIImage(@"chat_click")
-                                      selectImage:Nil];
-            [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:button_right];
         }  break;
-        case VIEW_TYPE_FansPage1:
+        case VIEW_TYPE_FansPage1://粉丝
         {
-            
-            addFriendBtn = [CommonControlOrView
-                                     setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height -44, 107, 44)//120
-                                     title:nil
-                                     fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                     bgImage:KUIImage(@"add_friend_normal")
-                                     HighImage:KUIImage(@"add_friend_click")
-                                     selectImage:Nil];
+            addFriendBtn = [self setCenterBtn:@"add_friend_normal" ClickImage:@"add_friend_click"];
             [addFriendBtn addTarget:self action:@selector(addFriendClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:addFriendBtn];
-            
-            UIButton* button_right = [CommonControlOrView
-                                      setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
-                                      title:@""
-                                      fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                      bgImage:KUIImage(@"chat_normal")
-                                      HighImage:KUIImage(@"chat_click")
-                                      selectImage:Nil];
-            [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:button_right];
         }break;
-        case VIEW_TYPE_STRANGER1:
+        case VIEW_TYPE_STRANGER1://陌生人
         {
-            attentionBtn = [CommonControlOrView
-                                     setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height-44, 107, 44)//120
-                                     title:nil
-                                     fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                     bgImage:KUIImage(@"Focus_on_normal")
-                                     HighImage:KUIImage(@"Focus_on_3_click")
-                                     selectImage:Nil];
+            attentionBtn=[self setCenterBtn:@"Focus_on_normal" ClickImage:@"Focus_on_3_click"];
             [attentionBtn addTarget:self action:@selector(attentionClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:attentionBtn];
-            
-            UIButton* button_right = [CommonControlOrView
-                                      setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height-44, 106, 44)//120
-                                      title:@""
-                                      fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                                      bgImage:KUIImage(@"chat_normal")
-                                      HighImage:KUIImage(@"chat_click")
-                                      selectImage:Nil];
-            [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:button_right];
         }break;
         default:
         {
             
         }break;
     }
+    
+    UIButton* button_right = [CommonControlOrView
+                              setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
+                              title:@""
+                              fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
+                              bgImage:KUIImage(@"chat_normal")
+                              HighImage:KUIImage(@"chat_click")
+                              selectImage:Nil];
+    [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button_right];
 }
 
+-(UIButton*)setCenterBtn:(NSString*)normalImage ClickImage:(NSString*)clickImage
+{
+    UIButton *centenBtn = [CommonControlOrView
+                    setButtonWithFrame:CGRectMake(106, self.view.bounds.size.height-44, 107, 44)//120
+                    title:nil
+                    fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
+                    bgImage:KUIImage(normalImage)
+                    HighImage:KUIImage(clickImage)
+                    selectImage:Nil];
+    return centenBtn;
 
+}
+//添加第一次打招呼
 -(void)getSayHello
 {
     
     [self DetectNetwork];
-    
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.hostInfo.userId forKey:@"touserid"];
@@ -1046,13 +974,10 @@
     [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
         [wxSDArray addObject:self.hostInfo.userId];
         [DataStoreManager storeThumbMsgUser:self.hostInfo.userId type:@"1"];
-
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
         [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
     
@@ -1066,7 +991,7 @@
     alter.tag = 234;
     [alter show];
 }
-//
+//刷新粉丝数
 -(void)refreFansNum:(NSString*)type
 {
     NSString *fansNumFileName=[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -1316,8 +1241,6 @@
 
 - (void)startChat:(id)sender
 {
-    //    [self.navigationController popToRootViewControllerAnimated:NO];
-    //    [[TempData sharedInstance] setNeedChatToUser:self.hostInfo.userName];
     if (self.isChatPage) {
         [self.navigationController popViewControllerAnimated:YES];
     }
@@ -1325,8 +1248,6 @@
     {
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.chatWithUser = self.hostInfo.userId;
-        //        kkchat.nickName = [DataStoreManager queryRemarkNameForUser:self.userName];
-        //        kkchat.chatUserImg = [DataStoreManager queryFirstHeadImageForUser:self.hostInfo.userName];
         kkchat.nickName = m_titleLabel.text;
         kkchat.chatUserImg = [GameCommon getHeardImgId:self.hostInfo.headImgStr];
         [self.navigationController pushViewController:kkchat animated:YES];
