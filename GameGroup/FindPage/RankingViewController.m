@@ -11,6 +11,7 @@
 #import "SendNewsViewController.h"
 #import "MePageViewController.h"
 #import "ShareToOther.h"
+#import "BinRoleViewController.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
 #define kSegmentCountry (2)
@@ -56,6 +57,9 @@
     BOOL  isFirstLoading1;
     BOOL  isFirstLoading2;
     BOOL  isFirstLoading3;
+    
+    
+    NSDictionary *dicClick;
     }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -472,9 +476,6 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
-    TestViewController *detailVC = [[TestViewController alloc]init];
     NSDictionary *dic = [[NSDictionary alloc]init];
     if(tableView ==m_tableView){
     dic = [m_cArray objectAtIndex:indexPath.row];
@@ -485,24 +486,27 @@
     if (tableView ==m_tableviewCountry) {
         dic = [m_countryArray objectAtIndex:indexPath.row];
     }
-    
-//    if ([KISDictionaryHaveKey(dic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//        [self.navigationController popToRootViewControllerAnimated:YES];
-//        return;
-//    }
-    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"userid"),self.userId);
+    dicClick=dic;
     NSString * str =KISDictionaryHaveKey(dic, @"nickname");
     if ([str isEqualToString:@" "]) {
         isRegisterForMe = NO;
     }
     if (isRegisterForMe ==YES) {
-        detailVC.userId = KISDictionaryHaveKey(dic, @"userid");
-        detailVC.nickName = KISDictionaryHaveKey(dic, @"displayName");
-        detailVC.isChatPage = NO;
-        [self.navigationController pushViewController:detailVC animated:YES];
+        UIActionSheet* actionSheet = [[UIActionSheet alloc]
+                                      initWithTitle:@"分享到"
+                                      delegate:self
+                                      cancelButtonTitle:@"取消"
+                                      destructiveButtonTitle:Nil
+                                      otherButtonTitles:@"查看用户详情",@"举报该角色", nil];
+        actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+        [actionSheet setTag:122];
+        [actionSheet showInView:self.view];
 
     }else{
-        [self showAlertViewWithTitle:@"提示" message:@"该角色尚未在陌游注册" buttonTitle:@"确定"];
+        BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+        binRole.dataDic=dic;
+        binRole.type=@"1";
+        [self.navigationController pushViewController:binRole animated:YES];
         isRegisterForMe =YES;
     }
 
@@ -624,35 +628,51 @@
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    
-    if (buttonIndex ==0) {
-        [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
-    }
-    else if (buttonIndex ==1)
-    {
-        [[ShareToOther singleton]shareTosina:viewImage];
-    }
-    else if(buttonIndex ==2)
-    {
-        [[ShareToOther singleton]changeScene:WXSceneSession];
+    if (actionSheet.tag==122) {
+        if (buttonIndex==0) {
+            TestViewController *detailVC = [[TestViewController alloc]init];
+            detailVC.userId = KISDictionaryHaveKey(dicClick, @"userid");
+            detailVC.nickName = KISDictionaryHaveKey(dicClick, @"displayName");
+            detailVC.isChatPage = NO;
+            [self.navigationController pushViewController:detailVC animated:YES];
+        }else if(buttonIndex==1)
+        {
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dicClick;
+            binRole.type=@"2";
+            [self.navigationController pushViewController:binRole animated:YES];
+            isRegisterForMe =YES;
+        }
         
-        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-    }
-    else if(buttonIndex ==3)
-    {
-        [[ShareToOther singleton] changeScene:WXSceneTimeline];
+    }else{
+        UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+        [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
         
-        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-    }
-    
-    if (bgView != nil) {
-        [bgView removeFromSuperview];
+        
+        if (buttonIndex ==0) {
+            [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
+        }
+        else if (buttonIndex ==1)
+        {
+            [[ShareToOther singleton]shareTosina:viewImage];
+        }
+        else if(buttonIndex ==2)
+        {
+            [[ShareToOther singleton]changeScene:WXSceneSession];
+            
+            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        }
+        else if(buttonIndex ==3)
+        {
+            [[ShareToOther singleton] changeScene:WXSceneTimeline];
+            
+            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        }
+        if (bgView != nil) {
+            [bgView removeFromSuperview];
+        }
     }
 }
 

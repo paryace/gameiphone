@@ -253,23 +253,21 @@
 {
     float height = 0.0f;
     NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
-    NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
-    if ([GameCommon isEmtity:nickName]) {
-        nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
-    }
     if(![[dict allKeys]containsObject:@"commentCellHieght"]){    //如果没算高度， 算出高度，存起来
         NSString *str ;
         if ([[dict allKeys]containsObject:@"commentStr"]) {
             str =KISDictionaryHaveKey(dict, @"commentStr");
         }
         else{
+            NSString * nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
+            if ([GameCommon isEmtity:nickName]) {
+                nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+            }
             if ([[dict allKeys]containsObject:@"destUser"]) {
-                
                 NSString * nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"alias");
                 if ([GameCommon isEmtity:nickName2]) {
                     nickName2=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"destUser"), @"nickname");
                 }
-                
                 str =[NSString stringWithFormat:@"%@ 回复 %@: %@",nickName,nickName2,KISDictionaryHaveKey(dict, @"comment")];
             }else{
                 str =[NSString stringWithFormat:@"%@: %@",nickName,KISDictionaryHaveKey(dict, @"comment")];
