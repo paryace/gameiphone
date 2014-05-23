@@ -329,7 +329,7 @@
     hud.labelText = @"修改中...";
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-    [params setObject:@"1" forKey:@"gameid"];
+    [params setObject:self.gameId forKey:@"gameid"];
     [params setObject:self.characterId forKey:@"characterid"];
     
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
