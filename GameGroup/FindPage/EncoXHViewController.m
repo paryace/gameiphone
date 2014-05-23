@@ -27,7 +27,7 @@
     UIButton *sayHelloBtn;//打招呼
     UIButton *inABtn;//换一个
     EGOImageView *headImageView;//头像
-    UIImageView *clazzImageView;//职业图标
+    EGOImageView *clazzImageView;//职业图标
     UILabel *NickNameLabel;//昵称
     UILabel *customLabel;//年龄+性别+星座
     UITextView *promptLabel;//提示语
@@ -55,6 +55,7 @@
     NSInteger   EncoCount;
     NSInteger   encoLastCount;
     NSInteger   nowCount;
+    NSMutableDictionary *mainDic;
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -108,6 +109,8 @@
     promptLabel .hidden = YES;
     promptView.hidden =YES;
 
+    mainDic = [NSMutableDictionary dictionary];
+    
     //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]==NULL) {
     //        NSLog(@"空走不走");
     NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
@@ -160,7 +163,7 @@
 #pragma mark ---创建邂逅界面
 -(void)buildEncounterView
 {
-    clazzImageView = [[UIImageView alloc]initWithFrame:CGRectMake(260,6, 40, 40)];
+    clazzImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(260,6, 40, 40)];
     clazzImageView.image = KUIImage(@"ceshi.jpg");
     clazzImageView.layer.masksToBounds = YES;
     clazzImageView.layer.cornerRadius = 20;
@@ -279,7 +282,7 @@
 
     NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
 
-    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:KISDictionaryHaveKey(mainDic, @"gameid") forKey:@"gameid"];
     [paramDict setObject:self.characterId forKey:@"characterid"];
  //   [paramDict setObject:@"6" forKey:@"testIndex"];
     [self getSayHelloForNetWithDictionary:paramDict method:@"164" prompt:nil type:1];
@@ -310,7 +313,7 @@
         sayHelloBtn.enabled = NO;
     }else{
         NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
-        [paramDict setObject:@"1" forKey:@"gameid"];
+        [paramDict setObject:KISDictionaryHaveKey(mainDic, @"gameid") forKey:@"gameid"];
         [paramDict setObject:self.characterId forKey:@"characterid"];
         [paramDict setObject:KISDictionaryHaveKey(getDic, @"userid") forKey:@"touserid"];
         [paramDict setObject:KISDictionaryHaveKey(getDic,@"sayHelloType") forKey:@"sayHelloType"];
@@ -502,8 +505,8 @@
         }
         
        else if (COME_TYPE ==3) {
-            if ([KISDictionaryHaveKey(responseObject, @"1") isKindOfClass:[NSArray class]]) {
-                [m_characterArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"1")];
+            if ([responseObject isKindOfClass:[NSArray class]]) {
+                [m_characterArray addObjectsFromArray:responseObject];
                 
                 
                 if (m_characterArray.count ==1) {
@@ -633,25 +636,24 @@
     
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
     
-    int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
+//    int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
     
-    if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
-    {
-        cell.headerImageView.image = [UIImage imageNamed:@"clazz_0.png"];
-        cell.serverLabel.text = @"角色不存在";
-    }
-    else{
+//    if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
+//    {
+//        cell.headerImageView.image = [UIImage imageNamed:@"clazz_0.png"];
+//        cell.serverLabel.text = @"角色不存在";
+//    }
+//    else{
+//    
+//    if (imageId > 0 && imageId < 12) {//1~11
+//        cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
+//    }
+//    else
+        cell.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
     
-    if (imageId > 0 && imageId < 12) {//1~11
-        cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-    }
-    else
-        cell.headerImageView.image = [UIImage imageNamed:@"clazz_0.png"];
+    NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
     
-    NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
-    
-    cell.serverLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
-        }
+    cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     
     
@@ -688,20 +690,15 @@
 }
 -(void)getEncoXhinfoWithNet:(NSDictionary *)dic
 {
-    NSDictionary* tempDic = dic;
+    [mainDic removeAllObjects];
+    [mainDic setValuesForKeysWithDictionary:dic];
     NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
-    self.characterId =KISDictionaryHaveKey(tempDic, @"id");
-    [paramDict setObject:@"1" forKey:@"gameid"];
-    int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-    
-    clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-    clazzLabel.text =KISDictionaryHaveKey(tempDic, @"name");
+    self.characterId =KISDictionaryHaveKey(dic, @"id");
+    [paramDict setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+    clazzImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+    clazzLabel.text =KISDictionaryHaveKey(dic, @"name");
     clazzLabel.frame = CGRectMake(260-clazzLabel.text.length*3, 53, 10+clazzLabel.text.length *12, 20);
-    
     clazzLabel.center = CGPointMake(280, 63);
-    // clazzLabel.center = CGPointMake(286, 63);
-   // [paramDict setObject:KISDictionaryHaveKey(tempDic, @"id") forKey:@"characterid"];
-  // [self getSayHelloForNetWithDictionary:paramDict method:@"149" prompt:@"邂逅中..." type:1];
 }
 
 #pragma mark ---查看角色详情
@@ -731,7 +728,7 @@
 {
     CharacterDetailsViewController *cv =[[CharacterDetailsViewController alloc]init];
     cv.characterId = charaterId;
-    cv.gameId = @"1";
+    cv.gameId = KISDictionaryHaveKey(mainDic, @"gameid");
     [self.navigationController pushViewController:cv animated:YES];
 }
 

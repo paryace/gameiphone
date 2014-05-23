@@ -15,7 +15,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.headerImageView =[[UIImageView alloc]initWithFrame:CGRectMake(22, 13, 34, 34)];
+        self.headerImageView =[[EGOImageView alloc]initWithFrame:CGRectMake(22, 13, 34, 34)];
         [self addSubview:self.headerImageView];
         
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(67, 12, 100, 20)];

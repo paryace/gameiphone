@@ -223,7 +223,7 @@
     changeVC.viewType = CHA_TYPE_Change;
     
     changeVC.realm = KISDictionaryHaveKey(dic, @"realm");
-    changeVC.gameId = @"1";
+    changeVC.gameId =KISDictionaryHaveKey(dic, @"gameid");
     changeVC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")];
     changeVC.character = KISDictionaryHaveKey(dic, @"name");
     

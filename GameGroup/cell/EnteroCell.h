@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EGOImageView.h"
 @interface EnteroCell : UITableViewCell
-@property(nonatomic,strong)UIImageView *headerImageView;
+@property(nonatomic,strong)EGOImageView *headerImageView;
 @property(nonatomic,strong)UIImageView *gameTitleImage;
 @property(nonatomic,strong)UIImageView *jtImageView;
 @property(nonatomic,strong)UILabel *titleLabel;

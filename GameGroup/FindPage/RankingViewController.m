@@ -502,14 +502,18 @@
         isRegisterForMe = NO;
     }
     if (isRegisterForMe ==YES) {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看用户信息",@"举报该用户", nil];
         alertView.tag = 1002;
         [alertView show];
 
 
     }else{
         
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示"
+                                                           message:@"该角色尚未在陌游绑定"
+                                                          delegate:self
+                                                 cancelButtonTitle:@"取消"
+                                                 otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
         alertView.tag = 1001;
         [alertView show];
         isRegisterForMe =YES;
