@@ -272,9 +272,8 @@
     }
     else if(buttonIndex ==2)
     {
-        NSString * msgBody=[[@"你的角色 " stringByAppendingString:characyerName] stringByAppendingString:@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
-        NSString * msgBody2=[[@"你的角色 " stringByAppendingString:characyerName] stringByAppendingString:@" 在陌游中尚未被绑定. 你的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
-        
+        NSString * msgBody= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
+         NSString * msgBody2= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 在陌游中尚未被绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
         if ([self.type isEqualToString:@"2"]) {
             [self sendSMS:msgBody];
         }else{
@@ -307,6 +306,7 @@
     }
 
 }
+//发送消息结束代理回调
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     [self dismissViewControllerAnimated:YES completion:^{
         switch (result) {
