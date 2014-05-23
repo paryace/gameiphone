@@ -23,9 +23,17 @@
 @end
 
 @implementation IntroduceViewController
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
-    return UIStatusBarStyleLightContent;
+    return UIStatusBarStyleBlackOpaque;
 }
 /*
 - (void)viewWillDisappear:(BOOL)animated
@@ -58,23 +66,33 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor blackColor];
+//    self.view.backgroundColor = [UIColor blackColor];
     self.navigationController.navigationBar.hidden = YES;
 
-    diffH = [GameCommon diffHeight:self];
+   // diffH = [GameCommon diffHeight:self];
 
-    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?-20:0, 320, kScreenHeigth - ((diffH == 0) ? 20 : 0))];
-
-   // m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
+    m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
     m_myScrollView.backgroundColor =[UIColor greenColor];
     NSLog(@"%@", NSStringFromCGRect(m_myScrollView.frame));
-    m_myScrollView.backgroundColor = [UIColor clearColor];
+    m_myScrollView.pagingEnabled = YES;
+    m_myScrollView.scrollEnabled = YES;
+    m_myScrollView.contentSize = CGSizeMake(320 * (kMAXPAGE+2), 0);    //5张图但是需要6ge
+//    m_myScrollView.contentOffset = CGPointMake(0, 0); //从第二张开始
+    m_myScrollView.showsHorizontalScrollIndicator = NO;
+    m_myScrollView.showsVerticalScrollIndicator = NO;
+    m_myScrollView.delegate = self;
+    m_myScrollView.contentOffset = CGPointMake(320, 0);//开始展示第2页
+    m_myScrollView.bounces = NO;
+    [self.view addSubview:m_myScrollView];
+
+   // m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
+//    m_myScrollView.backgroundColor = [UIColor clearColor];
     
    
     for (int i = 0; i < kMAXPAGE+2; i++) {   //5张图循环6次
-        UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i, KISHighVersion_7?-20:0, 320, m_myScrollView.bounds.size.height)];
-       // UIImageView *dianImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 36, 6)];
-        
+        UIImageView* bgImage = [[UIImageView alloc] initWithFrame:CGRectMake(320 * i,0, 320, self.view.bounds.size.height)];
+        NSLog(@"%@",bgImage);
+        bgImage.backgroundColor =[ UIColor redColor];
         //第一张图是最后一张
         int page;
         if (i==0)
@@ -84,39 +102,17 @@
         else
             page = i;
         if (iPhone5) {
-          //  dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 455);
             NSString* imageName = [NSString stringWithFormat:@"second_%d.jpg", page];
-          //  NSString *imgName = [NSString stringWithFormat:@"second_1%d.png ",page];
             bgImage.image = KUIImage(imageName);
-        //    dianImage.image = KUIImage(imgName);
         }else{
-         //   dianImage.center = CGPointMake(m_myScrollView.center.x+320*i, 383);
             NSString* imageName = [NSString stringWithFormat:@"first_%d.jpg", page];
-           // NSString *imgName = [NSString stringWithFormat:@"first_1%d",i+1];
 
             bgImage.image = KUIImage(imageName);
-         //   dianImage.image = KUIImage(imgName);
         }
-        
-       // }
-       // bgImage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin;
-        [m_myScrollView addSubview:bgImage];
-      //  [m_myScrollView addSubview:dianImage];
+            [m_myScrollView addSubview:bgImage];
     }
-    m_myScrollView.pagingEnabled = YES;
-    m_myScrollView.scrollEnabled = YES;
-    m_myScrollView.contentSize = CGSizeMake(320 * (kMAXPAGE+2), 0);    //5张图但是需要6ge
-
-    m_myScrollView.contentOffset = CGPointMake(320, 0); //从第二张开始
     
-    m_myScrollView.showsHorizontalScrollIndicator = NO;
-    m_myScrollView.showsVerticalScrollIndicator = NO;
-    m_myScrollView.delegate = self;
-   // m_myScrollView.contentOffset = CGPointMake(320, 0);//开始展示第2页
-    m_myScrollView.bounces = NO;
-    [self.view addSubview:m_myScrollView];
-    
-    m_currentPage = 0;
+//    m_currentPage = 0;
     
     loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?10:0), 120, 35)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -170,7 +166,7 @@
     
 	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
 
-    if(page==0||page==1||page==kMAXPAGE||page==kMAXPAGE+1){
+    if(page==0||page==1||page==kMAXPAGE+1){
         loginButton.hidden = YES;
         registerButton.hidden = YES;
     }else{
@@ -179,54 +175,12 @@
     }
     if( page ==0)
     {
-        m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE, KISHighVersion_7?-20:0);
+        m_myScrollView.contentOffset = CGPointMake(320 * kMAXPAGE,0);
     }
     else if (page==(kMAXPAGE+1))
     {
-        m_myScrollView.contentOffset = CGPointMake(320, KISHighVersion_7?-20:0);
+        m_myScrollView.contentOffset = CGPointMake(320,0);
     }
-//    if(0 == page || 5 == page)
-//	{
-//        CGRect rect;
-//        if (0 == page)
-//        {
-//            rect = CGRectMake(4 * m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//            m_currentPage = 4;
-//        }
-//        else
-//        {
-//            rect = CGRectMake(m_myScrollView.bounds.size.width, 0, m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//            m_currentPage = 1;
-//        }
-//        [m_myScrollView scrollRectToVisible:rect animated:NO];
-//    }
-//    else
-//    {
-//        CGRect rect = CGRectMake(page * m_myScrollView.bounds.size.width, 0,
-//                                 m_myScrollView.bounds.size.width, m_myScrollView.bounds.size.height);
-//        [m_myScrollView scrollRectToVisible:rect animated:NO];
-//        m_currentPage = page;
-//    }
-//    if (m_currentPage == 4) {//最后一页
-//        m_myScrollView.contentOffset = CGPointMake(0, 0);
-//        m_currentPage = 0;
-//    }
-//    else
-//    {
-//        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage), 0);
-//        m_currentPage++;
-//    }
-
-//    NSLog(@"m_currentPage: %d",m_currentPage);
-//    if (m_currentPage == 4) {//最后一页
-//        m_myScrollView.contentOffset = CGPointMake(320, 0);
-//        m_currentPage = 1;
-//    }
-//    else
-//    {
-//        m_myScrollView.contentOffset = CGPointMake(320 * (m_currentPage + 1), 0);
-//        m_currentPage++;
-//    }
 }
 
 

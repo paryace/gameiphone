@@ -22,7 +22,7 @@
 //        UIView *lessView = [[UIView alloc]initWithFrame:CGRectMake(0, 43, 320, .5)];
 //        lessView.backgroundColor = [UIColor grayColor];
 //        [self addSubview:lessView];
-        UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, .5)];
+        UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 43.5, 320, .5)];
         lineImg.image = KUIImage(@"line");
         lineImg.backgroundColor = [UIColor clearColor];
         [self addSubview:lineImg];
@@ -32,6 +32,7 @@
        // self.titleLabel.text = @"选择游戏";
         self.titleLabel.textColor = kColorWithRGB(102, 102, 102, 1.0);
         self.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
+        self.titleLabel.backgroundColor= [UIColor clearColor];
         [self.contentView addSubview:self.titleLabel];
    
         
@@ -42,6 +43,7 @@
         self.contentTF.font = [UIFont boldSystemFontOfSize:15.0];
         self.contentTF.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.contentTF.clearButtonMode = UITextFieldViewModeWhileEditing;
+        self.contentTF.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.contentTF];
 
         self.rightImageView = [[UIImageView alloc] initWithFrame:CGRectMake(290, 16, 12, 8)];

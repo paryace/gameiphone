@@ -146,8 +146,8 @@ typedef enum : NSUInteger {
     
     topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
     topImgaeView.backgroundColor = [UIColor blackColor];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]) {
-        topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:@"topImageData_wx"]];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]]) {
+        topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]]];
     }else{
         topImgaeView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     }
@@ -582,7 +582,19 @@ typedef enum : NSUInteger {
                 
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
-                NSArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
+                NSMutableArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
+                NSMutableArray *idArray = [NSMutableArray array];
+                for (int i = 0; i<m_dataArray.count; i++) {
+                    NSString *idStr = KISDictionaryHaveKey(m_dataArray[i], @"id");
+                    [idArray addObject:idStr];
+                }
+                for (int i = 0; i<customArr.count;i++) {
+                    if ([idArray containsObject:KISDictionaryHaveKey(customArr[i], @"id")]) {
+                        [customArr removeObjectAtIndex:i];
+                    }
+                }
+                
+                
                 for (int i =0; i<customArr.count; i++) {
                     [arr addObject:[self contentAnalyzer:customArr[i] withReAnalyzer:NO]];
                 }
@@ -1191,7 +1203,7 @@ typedef enum : NSUInteger {
     [self uploadbgImg:upImage];
     topImgaeView.image = upImage;
     NSData *data = UIImageJPEGRepresentation(upImage, 0.7);
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"topImageData_wx"];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
@@ -1939,8 +1951,22 @@ typedef enum : NSUInteger {
     return YES;
 }
 
-
-
+-(void)hiddenOrShowMenuImageViewWithCell:(CircleHeadCell*)myCell
+{
+    
+}
+- (void)getmsgIdwithCircle:(CircleHeadCell *)myCell withindexPath:(NSInteger)row
+{
+    
+}
+-(void)transferClickEventsWithCell:(CircleHeadCell *)myCell withIndexPath:(NSInteger)row
+{
+    
+}
+- (void)handleNickNameButton:(CommentCell*)cell
+{
+    
+}
 -(void)dealloc
 {
     delCellAlertView.delegate = nil;

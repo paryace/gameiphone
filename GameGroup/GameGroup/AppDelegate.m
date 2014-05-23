@@ -72,7 +72,6 @@
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         [self.xmppHelper connect];
         
-        
     }
    
     //注册离线系统  里面监听重连事件 自动提交赞与评论 未来可以添加其他离线的内容
@@ -84,7 +83,8 @@
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
-    [MobClick startWithAppkey:@"52caacec56240b18e2035237"];
+    [MobClick startWithAppkey:@"52caacec56240b18e2035237" reportPolicy:BATCH channelId:appChannel];
+    
     [WeiboSDK enableDebugMode:YES];
     [WeiboSDK registerApp:@"2195106285"];
     [WXApi registerApp:@"wx64c8dc2f82a0c8fd" withDescription:nil];

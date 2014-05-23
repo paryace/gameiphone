@@ -440,5 +440,8 @@
 {
     [super didReceiveMemoryWarning];
 }
-
+- (void)searchRoleSuccess:(NSString*)roleName realm:(NSString*)realm
+{
+    
+}
 @end

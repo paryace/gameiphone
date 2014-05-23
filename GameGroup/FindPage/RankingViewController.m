@@ -11,6 +11,7 @@
 #import "SendNewsViewController.h"
 #import "MePageViewController.h"
 #import "ShareToOther.h"
+#import "AddCharacterViewController.h"
 #import "BinRoleViewController.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
@@ -54,6 +55,8 @@
     NSInteger       m_ppageCount;
     UIActivityIndicatorView   *loginActivity;
     
+    NSInteger   m_infoNum;
+    NSInteger m_tableViewNum;
     BOOL  isFirstLoading1;
     BOOL  isFirstLoading2;
     BOOL  isFirstLoading3;
@@ -476,15 +479,22 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    m_infoNum = indexPath.row;
     NSDictionary *dic = [[NSDictionary alloc]init];
     if(tableView ==m_tableView){
     dic = [m_cArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 1;
     }
     if (tableView ==m_tableviewServer) {
         dic = [m_serverArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 2;
+
     }
     if (tableView ==m_tableviewCountry) {
         dic = [m_countryArray objectAtIndex:indexPath.row];
+        m_tableViewNum = 3;
+
     }
     dicClick=dic;
     NSString * str =KISDictionaryHaveKey(dic, @"nickname");
@@ -492,26 +502,82 @@
         isRegisterForMe = NO;
     }
     if (isRegisterForMe ==YES) {
-        UIActionSheet* actionSheet = [[UIActionSheet alloc]
-                                      initWithTitle:@"分享到"
-                                      delegate:self
-                                      cancelButtonTitle:@"取消"
-                                      destructiveButtonTitle:Nil
-                                      otherButtonTitles:@"查看用户详情",@"举报该角色", nil];
-        actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-        [actionSheet setTag:122];
-        [actionSheet showInView:self.view];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+        alertView.tag = 1002;
+        [alertView show];
+
 
     }else{
-        BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
-        binRole.dataDic=dic;
-        binRole.type=@"1";
-        [self.navigationController pushViewController:binRole animated:YES];
+        
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
+        alertView.tag = 1001;
+        [alertView show];
         isRegisterForMe =YES;
     }
 
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSDictionary *dic = [[NSDictionary alloc]init];
+    if(m_tableViewNum == 1){
+        dic = [m_cArray objectAtIndex:m_infoNum];
+    }
+    if (m_tableViewNum == 2) {
+        dic = [m_serverArray objectAtIndex:m_infoNum];
+    }
+    if (m_tableViewNum == 3) {
+        dic = [m_countryArray objectAtIndex:m_infoNum];
+    }
+    
+    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
+    if (alertView.tag ==1001)//点击没有被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去绑定");//去绑定
+            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
+            addVC.viewType = CHA_TYPE_Add;
+            [self.navigationController pushViewController:addVC animated:YES];
+        }else{
+            
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            [self.navigationController pushViewController:binRole animated:YES];
+            isRegisterForMe =YES;
+
+            NSLog(@"通知好友绑定");
+        }
+    }
+    else//点击已经被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去看资料");
+            TestViewController *detailVC = [[TestViewController alloc]init];
+            detailVC.userId = KISDictionaryHaveKey(dic, @"userid");
+            detailVC.nickName = KISDictionaryHaveKey(dic, @"displayName");
+            detailVC.isChatPage = NO;
+            [self.navigationController pushViewController:detailVC animated:YES];
+
+        }else{
+            NSLog(@"去举报");
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            [self.navigationController pushViewController:binRole animated:YES];
+            isRegisterForMe =YES;
+
+        }
+        
+    }
+
+}
 
 #pragma mark ---创建顶部分类button
 -(void)buildTopBtnView
@@ -628,23 +694,6 @@
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet.tag==122) {
-        if (buttonIndex==0) {
-            TestViewController *detailVC = [[TestViewController alloc]init];
-            detailVC.userId = KISDictionaryHaveKey(dicClick, @"userid");
-            detailVC.nickName = KISDictionaryHaveKey(dicClick, @"displayName");
-            detailVC.isChatPage = NO;
-            [self.navigationController pushViewController:detailVC animated:YES];
-        }else if(buttonIndex==1)
-        {
-            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
-            binRole.dataDic=dicClick;
-            binRole.type=@"2";
-            [self.navigationController pushViewController:binRole animated:YES];
-            isRegisterForMe =YES;
-        }
-        
-    }else{
         UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
         [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
         UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -673,7 +722,6 @@
         if (bgView != nil) {
             [bgView removeFromSuperview];
         }
-    }
 }
 
 - (void)pushSendNews

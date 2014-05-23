@@ -8,6 +8,7 @@
 
 #import "GuildMembersViewController.h"
 #import "TestViewController.h"
+#import "AddCharacterViewController.h"
 #import "MJRefresh.h"
 @interface GuildMembersViewController ()
 {
@@ -15,7 +16,7 @@
     MJRefreshFooterView *m_foot;
     UITableView *m_myTableView;
     NSMutableArray *m_dataArray;
-    
+    int m_infoNum;
    int  m_pageCount;
 }
 @end
@@ -115,6 +116,7 @@
     
     cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
     if ([KISDictionaryHaveKey(dict,@"user")isKindOfClass:[NSDictionary class]]) {
+        cell.headImgBtn.hidden =NO;
         NSDictionary *dic = KISDictionaryHaveKey(dict, @"user");
         cell.nickNameLabel.text =KISDictionaryHaveKey(dic, @"nickname");
         
@@ -133,47 +135,84 @@
         cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
         }
     }else{
+        cell.headImgBtn.hidden = YES;
         cell.headImgBtn.imageURL = nil;
         cell.genderImgView.image = KUIImage(@"weibangding");
         cell.headImgBtn.placeholderImage = KUIImage(@"");
         cell.nickNameLabel.text = @"未绑定";
     }
-
-         
-    
-    /*
-    {
-        id = 163272;
-        img = " ";
-        name = Candylol;
-        user =             {
-            alias = " ";
-            gender = 0;
-            id = 10110158;
-            img = " ";
-            nickname = "\U6211\U4e0d\U662f\U6d4b\U8bd5";
-        };
-    },
-
-    */
-    
-    
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+    m_infoNum = indexPath.row;
+    
+    
     NSDictionary *dic =m_dataArray[indexPath.row];
     if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
-        TestViewController *testVC = [[TestViewController alloc]init];
-        testVC.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
-        testVC.userId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id")];
-        [self.navigationController pushViewController:testVC animated:YES];
     }
+    if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+        alertView.tag = 1002;
+        [alertView show];
+        
+        
+    }else{
+        
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
+        alertView.tag = 1001;
+        [alertView show];
+    }
+
+    
+    
+    
+    
+    
 }
 
-
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSDictionary *dic = [[NSDictionary alloc]init];
+        dic = [m_dataArray objectAtIndex:m_infoNum];
+    
+    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
+    if (alertView.tag ==1001)//点击没有被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去绑定");//去绑定
+            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
+            addVC.viewType = CHA_TYPE_Add;
+            [self.navigationController pushViewController:addVC animated:YES];
+        }else{
+            NSLog(@"通知好友绑定");
+        }
+    }
+    else//点击已经被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去看资料");
+            TestViewController *testVC = [[TestViewController alloc]init];
+            testVC.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+            testVC.userId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id")];
+            [self.navigationController pushViewController:testVC animated:YES];
+            
+        }else{
+            NSLog(@"去举报");
+            
+        }
+        
+    }
+    
+}
 
 //添加下拉刷新
 -(void)addheadView

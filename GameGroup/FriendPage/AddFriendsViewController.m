@@ -19,6 +19,7 @@
     UITextField*  m_roleNameText;
     NSInteger    m_pageNum;
     NSArray *sjArray;
+    UITableView *m_myTableview;
 }
 @end
 
@@ -39,8 +40,17 @@
     
     [self setTopViewWithTitle:@"添加好友" withBackButton:YES];
     sjArray = [NSArray arrayWithObjects:@"查找游戏角色",@"搜索游戏组织", nil];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resignFirstResponder:)];
+    tap.cancelsTouchesInView = NO;
+    tap.delegate = self;
+    [self.view addGestureRecognizer:tap];
 
-    UILabel* warnLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10 + startX, 300, 30)];
+    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 15+startX,20, 20)];
+    iconImageView.image =KUIImage(@"moyou_icon");
+    [self.view addSubview:iconImageView];
+    
+    UILabel* warnLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 10 + startX, 300, 30)];
     warnLabel.textColor = kColorWithRGB(154, 154, 154, 1.0);
     warnLabel.shadowColor = [UIColor whiteColor];
     [warnLabel setFont:[UIFont systemFontOfSize:15.0]];
@@ -62,6 +72,15 @@
     searchContent.clearButtonMode = UITextFieldViewModeWhileEditing;
     [self.view addSubview:searchContent];
     
+//    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(250, 50+startX, 40, 40)];
+//    [button setImage:KUIImage(@"search_person") forState:UIControlStateNormal];
+//    [button setImageEdgeInsets:UIEdgeInsetsMake(8, 10, 12, 10)];
+//
+//    [button addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    [self.view addSubview:button];
+    
+    
 //    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110 + startX, 300, 40)];
 //    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
 //    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
@@ -78,14 +97,14 @@
 
     // Do any additional setup after loading the view.
     
-    UITableView *tableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 88)];
-    tableview.delegate = self;
-    tableview.dataSource = self;
-    tableview.rowHeight = 44;
-    tableview.bounces =NO;
-    tableview.scrollEnabled = NO;
+    m_myTableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 88)];
+    m_myTableview.delegate = self;
+    m_myTableview.dataSource = self;
+    m_myTableview.rowHeight = 44;
+    m_myTableview.bounces =NO;
+    m_myTableview.scrollEnabled = NO;
 
-    [self.view addSubview:tableview];
+    [self.view addSubview:m_myTableview];
     
 }
 - (void)okButtonClick:(id)sender
@@ -147,6 +166,19 @@
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [self okButtonClick:nil];
+    return YES;
+}
+-(BOOL)resignFirstResponder:(UITapGestureRecognizer *)sender
+{
+	[super resignFirstResponder];
+	return [searchContent resignFirstResponder];
+}
+//手势代理的方法，解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    if ([touch.view isKindOfClass:[UIButton class]]||[touch.view isKindOfClass:[UITableView class]])
+    {
+        return NO;
+    }
     return YES;
 }
 
