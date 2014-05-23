@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 #import "SelectView.h"
 @interface SameRealmViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, SelectViewDelegate, UIAlertViewDelegate>
-
+@property(nonatomic,copy)NSString *gameid;
 @end

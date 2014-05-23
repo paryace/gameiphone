@@ -422,7 +422,7 @@ typedef enum : NSUInteger {
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDic setObject:cityCode?cityCode:@"" forKey:@"cityCode"];
-    [paramDic setObject:@"1" forKey:@"gameid"];
+    [paramDic setObject:self.gameid forKey:@"gameid"];
     
     
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -539,7 +539,7 @@ typedef enum : NSUInteger {
       [paramDic setObject:@"20" forKey:@"maxSize"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
-    [paramDic setObject:@"1" forKey:@"gameid"];
+    [paramDic setObject:self.gameid forKey:@"gameid"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {

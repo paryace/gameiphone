@@ -129,7 +129,13 @@
     
     
     gameInfoArray = [NSMutableArray new];
-    gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSArray *allkeys = [dict allKeys];
+    for (int i = 0; i <allkeys.count; i++) {
+        NSArray *array = [dict objectForKey:allkeys[i]];
+        [gameInfoArray addObjectsFromArray:array];
+    }
+
 }
 
 - (void)setMainView

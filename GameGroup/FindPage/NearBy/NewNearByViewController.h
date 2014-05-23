@@ -22,5 +22,5 @@ UIActionSheetDelegate,
 HPGrowingTextViewDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
-
+@property(nonatomic,copy)NSString *gameid;
 @end

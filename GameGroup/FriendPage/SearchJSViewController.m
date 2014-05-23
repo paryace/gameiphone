@@ -55,8 +55,13 @@
   //  [self setRoleView];
     
     gameInfoArray = [NSMutableArray new];
-    gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
 
+    NSArray *allkeys = [dict allKeys];
+    for (int i = 0; i <allkeys.count; i++) {
+        NSArray *array = [dict objectForKey:allkeys[i]];
+        [gameInfoArray addObjectsFromArray:array];
+    }
     
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
     m_dataArray =[NSMutableArray array];

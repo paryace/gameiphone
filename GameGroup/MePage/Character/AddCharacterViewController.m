@@ -18,7 +18,7 @@
     BOOL          isRefresh;//从认证界面成功后  直接提交
     UIPickerView *m_serverNamePick;
     EGOImageView* gameImg;
-    NSArray *gameInfoArray;
+    NSMutableArray *gameInfoArray;
     UILabel* table_label_two;
     UILabel * table_label_three;
     UITableView *m_myTableView;
@@ -71,9 +71,16 @@
             break;
     }
     
+    gameInfoArray = [NSMutableArray array];
     
+    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
     
-    gameInfoArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSArray *allkeys = [dict allKeys];
+    for (int i = 0; i <allkeys.count; i++) {
+        NSArray *array = [dict objectForKey:allkeys[i]];
+        [gameInfoArray addObjectsFromArray:array];
+    }
+
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
     m_dataArray =[NSMutableArray array];
     
