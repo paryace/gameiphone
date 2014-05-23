@@ -10,6 +10,9 @@
 #import "Reachability.h"
 #import "WeiboSDK.h"
 #import"WXApi.h"
+#import <TencentOpenAPI/TencentOAuth.h>
+#import "TencentOpenAPI/QQApiInterface.h"
+#import <TencentOpenAPI/TencentApiInterface.h>
 @class StartViewController;
 @class XMPPHelper;
 
@@ -17,12 +20,17 @@
 <UIApplicationDelegate,
 WeiboSDKDelegate
 ,WXApiDelegate
+,TencentSessionDelegate
+,TencentApiInterfaceDelegate
+,QQApiInterfaceDelegate
 >
 {
     NSString* _wbtoken;
     
 }
 @property(nonatomic,assign)BOOL bSinaWB;
+@property(nonatomic,assign)BOOL bQQ;
+
 @property (strong, nonatomic) NSString *wbtoken;
 
 @property (strong, nonatomic) UIWindow *window;
@@ -32,4 +40,5 @@ WeiboSDKDelegate
 @property(nonatomic,strong)Reachability * reach;
 
 - (void)didReceiveWeiboResponse:(WBBaseResponse *)response;
+- (void)responseDidReceived:(APIResponse*)response forMessage:(NSString *)message;
 @end

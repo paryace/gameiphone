@@ -799,7 +799,7 @@ typedef enum : NSUInteger {
                         }
                         str =[NSString stringWithFormat:@"%@ 回复 %@: %@",nickName,nickName2,KISDictionaryHaveKey(dic, @"comment")];
                     }else{
-                        str =[NSString stringWithFormat:@"%@: %@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"commentUser"), @"nickname"),KISDictionaryHaveKey(dic, @"comment")];
+                        str =[NSString stringWithFormat:@"%@: %@",nickName,KISDictionaryHaveKey(dic, @"comment")];
                     }
                     str = [UILabel getStr:str];
                     [dic setObject:str forKey:@"commentStr"];
@@ -1476,7 +1476,6 @@ typedef enum : NSUInteger {
 
     if (self.textView.placeholder!=nil) {
         NSMutableDictionary *destUser = [NSMutableDictionary dictionary];
-        [destUser setObject:@"" forKey:@"alias"];
         [destUser setObject:KISDictionaryHaveKey(commentOffLineDict, @"id") forKey:@"id"];
         [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"nickname") forKey:@"nickname"];
         [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"userid") forKey:@"userid"];

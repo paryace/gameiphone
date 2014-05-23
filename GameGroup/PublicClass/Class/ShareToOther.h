@@ -18,4 +18,6 @@
 - (void) sendImageContentWithImage:(UIImage *)imageV;//分享到微信
 -(void) changeScene:(NSInteger)scene;
 - (void)ssoButtonPressed;//授权
+- (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri;
+- (void)sendAppExtendContent_friend:(UIImage*)image Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri;
 @end

@@ -1257,9 +1257,10 @@
     attentionOffBtn.userInteractionEnabled = YES;
 }
 
-
+//取消关注或者删除好友
 -(void)cancelFriend:(NSString*)type
 {
+    NSLog(@"取消关注或者删除好友请求－－－》》");
     [self begin];
     [hud show:YES];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
@@ -1470,9 +1471,10 @@
 //    }];
 }
 
-
+//添加关注或者加好友
 -(void)addFriend:(NSString*)type
 {
+    NSLog(@"添加好友或者添加关注请求－－－》》");
     [self DetectNetwork];
     MBProgressHUD *hudadd = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hudadd];

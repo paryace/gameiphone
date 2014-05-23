@@ -12,6 +12,7 @@
 #import "MePageViewController.h"
 #import "ShareToOther.h"
 #import "AddCharacterViewController.h"
+#import "BinRoleViewController.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
 #define kSegmentCountry (2)
@@ -59,6 +60,9 @@
     BOOL  isFirstLoading1;
     BOOL  isFirstLoading2;
     BOOL  isFirstLoading3;
+    
+    
+    NSDictionary *dicClick;
     }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -492,8 +496,7 @@
         m_tableViewNum = 3;
 
     }
-    
-    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"userid"),self.userId);
+    dicClick=dic;
     NSString * str =KISDictionaryHaveKey(dic, @"nickname");
     if ([str isEqualToString:@" "]) {
         isRegisterForMe = NO;
@@ -539,6 +542,13 @@
             addVC.viewType = CHA_TYPE_Add;
             [self.navigationController pushViewController:addVC animated:YES];
         }else{
+            
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            [self.navigationController pushViewController:binRole animated:YES];
+            isRegisterForMe =YES;
+
             NSLog(@"通知好友绑定");
         }
     }
@@ -557,7 +567,12 @@
 
         }else{
             NSLog(@"去举报");
-            
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            [self.navigationController pushViewController:binRole animated:YES];
+            isRegisterForMe =YES;
+
         }
         
     }
@@ -679,36 +694,34 @@
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    
-    if (buttonIndex ==0) {
-        [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
-    }
-    else if (buttonIndex ==1)
-    {
-        [[ShareToOther singleton]shareTosina:viewImage];
-    }
-    else if(buttonIndex ==2)
-    {
-        [[ShareToOther singleton]changeScene:WXSceneSession];
+        UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+        [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
         
-        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-    }
-    else if(buttonIndex ==3)
-    {
-        [[ShareToOther singleton] changeScene:WXSceneTimeline];
         
-        [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-    }
-    
-    if (bgView != nil) {
-        [bgView removeFromSuperview];
-    }
+        if (buttonIndex ==0) {
+            [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
+        }
+        else if (buttonIndex ==1)
+        {
+            [[ShareToOther singleton]shareTosina:viewImage];
+        }
+        else if(buttonIndex ==2)
+        {
+            [[ShareToOther singleton]changeScene:WXSceneSession];
+            
+            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        }
+        else if(buttonIndex ==3)
+        {
+            [[ShareToOther singleton] changeScene:WXSceneTimeline];
+            
+            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
+        }
+        if (bgView != nil) {
+            [bgView removeFromSuperview];
+        }
 }
 
 - (void)pushSendNews

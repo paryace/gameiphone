@@ -20,7 +20,7 @@
 #import "OfflineComment.h"
 @implementation AppDelegate
 {
-   
+    TencentOAuth *tOAuth;
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -72,7 +72,6 @@
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         [self.xmppHelper connect];
         
-        
     }
    
     //注册离线系统  里面监听重连事件 自动提交赞与评论 未来可以添加其他离线的内容
@@ -90,10 +89,15 @@
     [WeiboSDK registerApp:@"2195106285"];
     [WXApi registerApp:@"wx64c8dc2f82a0c8fd" withDescription:nil];
 //    [MobClick startWithAppkey:@"xxxxxxxxxxxxxxx" reportPolicy:BATCH   channelId:@""];
-
+    
+    tOAuth = [[TencentOAuth alloc] initWithAppId:@"1101176253" andDelegate:self];
     [self.window makeKeyAndVisible];
-
     return YES;
+}
+- (BOOL)tencentNeedPerformIncrAuth:(TencentOAuth *)tencentOAuth withPermissions:(NSArray *)permissions
+{
+    BOOL incrAuthRes = [tencentOAuth incrAuthWithPermissions:permissions];
+    return !incrAuthRes;
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
@@ -101,7 +105,9 @@
     if (!_bSinaWB) {
         return  [WXApi handleOpenURL:url delegate:self];
     }
-    else{
+    else if(!_bQQ){
+        return [TencentOAuth HandleOpenURL:url];
+    }else{
         return [WeiboSDK handleOpenURL:url delegate:self];
     }
 
@@ -111,7 +117,9 @@
     if (!_bSinaWB) {
         return  [WXApi handleOpenURL:url delegate:self];
     }
-    else{
+    else if(!_bQQ){
+        return [TencentOAuth HandleOpenURL:url];
+    }else{
         return [WeiboSDK handleOpenURL:url delegate:self];
     }
 }
@@ -147,7 +155,6 @@
     }
     
 }
-
 
 - (void)didReceiveWeiboResponse:(WBBaseResponse *)response
 {
@@ -200,9 +207,23 @@
         [alert show];
     }
 }
-
-
-
++ (void)onResp:(QQBaseResp *)resp
+{
+    switch (resp.type)
+    {
+        case ESENDMESSAGETOQQRESPTYPE:
+        {
+            SendMessageToQQResp* sendResp = (SendMessageToQQResp*)resp;
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:sendResp.result message:sendResp.errorDescription delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+            [alert show];
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+}
 
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
