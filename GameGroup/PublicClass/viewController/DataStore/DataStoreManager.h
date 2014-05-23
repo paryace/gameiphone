@@ -143,11 +143,10 @@
 +(void)deleteOtherMsgWithUUID:(NSString *)uuid;
 
 +(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype ShipType2:(NSString*) shiptype2;//取出好友和关注的数量
-//+(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2;//取出好友和关注的字母
 +(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2;//取出好友和关注的字母
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
-+(NSMutableArray *)queryNameIndex;
 +(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType;
++(NSDictionary *)queryUserInfo:(NSString*)userId;
 
 
 
