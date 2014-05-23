@@ -600,6 +600,7 @@
         }
         
         ranking.COME_FROM =[NSString stringWithFormat:@"%u",self.myViewType];
+        ranking.gameId=self.gameId;
         NSLog(@"COME_FROM%@",ranking.COME_FROM);
         [self.navigationController pushViewController:ranking animated:YES];
     

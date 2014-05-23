@@ -12,4 +12,5 @@
 @interface BinRoleViewController : BaseViewController<UIActionSheetDelegate,MFMessageComposeViewControllerDelegate>
 @property(nonatomic,strong)NSDictionary *dataDic;
 @property(nonatomic, copy)NSString*   type;
+@property(nonatomic, copy)NSString*   gameId;
 @end

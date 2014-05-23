@@ -545,7 +545,8 @@
             
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
             binRole.dataDic=dic;
-            binRole.type=@"2";
+            binRole.type=@"1";
+            binRole.gameId=self.gameId;
             [self.navigationController pushViewController:binRole animated:YES];
             isRegisterForMe =YES;
 
@@ -570,6 +571,7 @@
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
             binRole.dataDic=dic;
             binRole.type=@"2";
+            binRole.gameId=self.gameId;
             [self.navigationController pushViewController:binRole animated:YES];
             isRegisterForMe =YES;
 
@@ -870,9 +872,9 @@
         
     }
 
-    
     [paramDict setObject:self.server forKey:@"realm"];
-    [paramDict setObject:@"1" forKey:@"gameid"];
+//    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.gameId forKey:@"gameid"];
     [paramDict setObject:self.characterid forKey:@"characterid"];
     [paramDict setObject:@"1" forKey:@"ranktype"];
     [paramDict setObject:self.dRankvaltype forKey:@"rankvaltype"];
@@ -942,7 +944,8 @@
     
     
     [paramDict setObject:self.server forKey:@"realm"];
-    [paramDict setObject:@"1" forKey:@"gameid"];
+//    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.gameId forKey:@"gameid"];
     [paramDict setObject:self.characterid forKey:@"characterid"];
     [paramDict setObject:@"2" forKey:@"ranktype"];
     [paramDict setObject:self.dRankvaltype forKey:@"rankvaltype"];
@@ -1014,7 +1017,8 @@
         [paramDict setObject:self.custType forKey:@"classid"];
     }
     [paramDict setObject:self.server forKey:@"realm"];
-    [paramDict setObject:@"1" forKey:@"gameid"];
+//    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.gameId forKey:@"gameid"];
     [paramDict setObject:self.characterid forKey:@"characterid"];
     [paramDict setObject:@"3" forKey:@"ranktype"];
     [paramDict setObject:self.dRankvaltype forKey:@"rankvaltype"];

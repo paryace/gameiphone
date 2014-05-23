@@ -237,7 +237,7 @@
 -(void)binBtnClick:(id)sender
 {
     AuthViewController* authVC = [[AuthViewController alloc] init];
-    authVC.gameId = @"1";
+    authVC.gameId = self.gameId;
     authVC.realm = KISDictionaryHaveKey(self.dataDic, @"realm");
     authVC.character = KISDictionaryHaveKey(self.dataDic, @"charactername");
     [self.navigationController pushViewController:authVC animated:YES];

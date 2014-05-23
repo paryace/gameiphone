@@ -24,4 +24,6 @@
 @property(nonatomic,assign)NSInteger     pageCount2;
 @property(nonatomic,assign)NSInteger     pageCount3;
 @property(nonatomic,copy)NSString *userId;
+
+@property(nonatomic,copy)NSString *gameId;//游戏Id
 @end
