@@ -16,13 +16,17 @@
     if (self) {
         // Initialization code
         
-        UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 1)];
-        topView.backgroundColor = [UIColor grayColor];
-        [self addSubview:topView];
-        UIView *lessView = [[UIView alloc]initWithFrame:CGRectMake(0, 43, 320, 1)];
-        lessView.backgroundColor = [UIColor grayColor];
-        [self addSubview:lessView];
-        
+//        UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, .5)];
+//        topView.backgroundColor = [UIColor blackColor];
+//        [self addSubview:topView];
+//        UIView *lessView = [[UIView alloc]initWithFrame:CGRectMake(0, 43, 320, .5)];
+//        lessView.backgroundColor = [UIColor grayColor];
+//        [self addSubview:lessView];
+        UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, .5)];
+        lineImg.image = KUIImage(@"line");
+        lineImg.backgroundColor = [UIColor clearColor];
+        [self addSubview:lineImg];
+
         
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 44)];
        // self.titleLabel.text = @"选择游戏";

@@ -90,6 +90,9 @@
     [m_okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_okButton];
 
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"搜索中...";
+    [self.view addSubview:hud];
     
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -110,7 +113,7 @@
     cell.titleLabel.text =KISDictionaryHaveKey(dic, @"name");
     cell.contentTF.text = KISDictionaryHaveKey(dic, @"content");
     cell.contentTF.tag = indexPath.row;
-    
+    cell.contentTF.placeholder = KISDictionaryHaveKey(dic, @"tip");
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
@@ -337,6 +340,7 @@
     [m_roleNameText resignFirstResponder];
         
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        [hud show:YES];
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
 
@@ -359,7 +363,6 @@
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
             NSArray *array = KISDictionaryHaveKey(responseObject, @"characters");
             if (array.count>0) {
-
             secGame.dataDic = responseObject;
             secGame.myInfoType = COME_ROLE;
             [self.navigationController pushViewController:secGame animated:YES];
@@ -368,11 +371,14 @@
             }else{
             [self showAlertViewWithTitle:@"提示" message:@"搜索无结果" buttonTitle:@"确定"];
             }
+            [hud hide:YES];
             }
+         
             failure:^(AFHTTPRequestOperation *operation, id error) {
             [hud hide:YES];
                               }];
     }else{
+        [hud show:YES];
     NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
         for (int i =0; i<m_dataArray.count; i++) {

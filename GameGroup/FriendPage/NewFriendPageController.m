@@ -72,6 +72,7 @@
     if(KISHighVersion_7){
         m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     }
+    
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
@@ -271,6 +272,9 @@
 {
     return keyArr;
 }
+
+
+
 
 #pragma mark 请求数据
 - (void)getFriendListFromNet

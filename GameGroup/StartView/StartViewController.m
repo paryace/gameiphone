@@ -192,10 +192,15 @@
                 for (int j = 0; j<newArray.count; j++) {
                     NSDictionary *dic = array[i];
                     NSDictionary *temDic = newArray[j];
-                    if ([KISDictionaryHaveKey(dic,@"id")intValue]==[KISDictionaryHaveKey(temDic, @"id")intValue]&&[KISDictionaryHaveKey(dic, @"gameInfoMills")longLongValue]==KISDictionaryHaveKey(temDic, @"gameInfoMills")) {
+                    NSString *oldId =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dic,@"id")];
+                    NSString *newid =[GameCommon getNewStringWithId: KISDictionaryHaveKey(temDic, @"id")];
+                    NSString *gameInfoMills =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameInfoMills")];
+                    NSString *newGameInfoMills =[GameCommon getNewStringWithId: KISDictionaryHaveKey(temDic, @"gameInfoMills")];
+                    
+                    if ([oldId isEqualToString: newid]&&![gameInfoMills isEqualToString: newGameInfoMills]) {
                         
                         NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
-                        for (int m =0; m>commonPArray.count; m++) {
+                        for (int m =0; m<commonPArray.count; m++) {
                             NSDictionary *commonDic = commonPArray[m];
                             [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id") withParams:KISDictionaryHaveKey(commonDic, @"param")];
                         }
@@ -205,7 +210,7 @@
                         
                         
                         NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
-                        for (int m =0; m>commonPArray.count; m++) {
+                        for (int m =0; m<commonPArray.count; m++) {
                             NSDictionary *commonDic = commonPArray[m];
                             [self getGameInfoWithGameID:KISDictionaryHaveKey(temDic, @"id") withParams:KISDictionaryHaveKey(commonDic, @"param")];
                         }
@@ -229,9 +234,7 @@
         }
         [[NSUserDefaults standardUserDefaults] setObject:dict forKey:kOpenData];
         [[NSUserDefaults standardUserDefaults] synchronize];
-
     }
-    
 }
 
 #pragma mark ----更新游戏数据、、wow服务器等
