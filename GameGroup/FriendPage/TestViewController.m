@@ -889,15 +889,17 @@
         }break;
     }
     
-    UIButton* button_right = [CommonControlOrView
-                              setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
-                              title:@""
-                              fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
-                              bgImage:KUIImage(@"chat_normal")
-                              HighImage:KUIImage(@"chat_click")
-                              selectImage:Nil];
-    [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:button_right];
+    if (self.viewType!=VIEW_TYPE_Self1) {
+        UIButton* button_right = [CommonControlOrView
+                                  setButtonWithFrame:CGRectMake(0, self.view.bounds.size.height -44, 106, 44)//120
+                                  title:@""
+                                  fontSize:[UIFont boldSystemFontOfSize:15.0] textColor:[UIColor whiteColor]
+                                  bgImage:KUIImage(@"chat_normal")
+                                  HighImage:KUIImage(@"chat_click")
+                                  selectImage:Nil];
+        [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:button_right];
+    }
 }
 
 -(UIButton*)setCenterBtn:(NSString*)normalImage ClickImage:(NSString*)clickImage
