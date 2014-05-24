@@ -16,4 +16,5 @@ typedef enum
 @property(nonatomic,assign)MYINFOTYPE myInfoType;
 @property(nonatomic,strong)NSDictionary *dataDic;
 @property(nonatomic,copy)NSString *realmStr;
+@property(nonatomic,copy)NSString *gameid;
 @end

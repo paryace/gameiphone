@@ -152,9 +152,7 @@
     
     NSDictionary *dic =m_dataArray[indexPath.row];
     if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
-    }
-    if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
         alertView.tag = 1002;
         [alertView show];
         

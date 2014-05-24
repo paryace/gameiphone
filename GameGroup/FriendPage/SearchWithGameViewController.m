@@ -11,10 +11,13 @@
 #import "RoleCell.h"
 #import "HelpViewController.h"
 #import "GuildMembersViewController.h"
+#import "BinRoleViewController.h"
 #import "TestViewController.h"
+#import "AddCharacterViewController.h"
 @interface SearchWithGameViewController ()
 {
     NSMutableArray *m_dataArray;
+    int m_infoNum;
 }
 @end
 
@@ -147,6 +150,7 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+    m_infoNum = indexPath.row;
     NSDictionary *dic =[m_dataArray objectAtIndex:indexPath.row];
     
     if (self.myInfoType == COME_GUILD) {
@@ -158,17 +162,79 @@
 
     }else{
         if ([KISDictionaryHaveKey(dic, @"user")isKindOfClass:[NSDictionary class]]) {
-            TestViewController *testVC =[[ TestViewController alloc]init];
-            testVC.nickName =[GameCommon  getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
-            testVC.userId =[GameCommon  getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id")];
-            [self.navigationController pushViewController:testVC animated:YES];
+            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
+            alertView.tag = 1002;
+            [alertView show];
+            
+            
         }else{
-            [self showAlertViewWithTitle:@"提示" message:@"此角色尚未在陌游绑定" buttonTitle:@"确定"];
+            
+            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"该角色尚未在陌游绑定" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻绑定",@"邀请好友绑定", nil];
+            alertView.tag = 1001;
+            [alertView show];
         }
+        
     }
     
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSDictionary *dic = [[NSDictionary alloc]init];
+    dic = [m_dataArray objectAtIndex:m_infoNum];
+    
+    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
+    if (alertView.tag ==1001)//点击没有被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去绑定");//去绑定
+            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
+            addVC.viewType = CHA_TYPE_Add;
+            // addVC.contentDic =
+            [self.navigationController pushViewController:addVC animated:YES];
+        }else{
+            
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"1";
+            binRole.gameId=KISDictionaryHaveKey(dic, @"id");
+            [self.navigationController pushViewController:binRole animated:YES];
+            
+            NSLog(@"通知好友绑定");
+        }
+    }
+    else//点击已经被绑定的角色
+    {
+        if (buttonIndex ==0) {
+            NSLog(@"0");
+        }else if (buttonIndex ==1)
+        {
+            NSLog(@"去看资料");
+            TestViewController *detailVC = [[TestViewController alloc]init];
+            detailVC.userId = KISDictionaryHaveKey(dic, @"userid");
+            detailVC.nickName = KISDictionaryHaveKey(dic, @"displayName");
+            detailVC.isChatPage = NO;
+            [self.navigationController pushViewController:detailVC animated:YES];
+            
+        }else{
+            NSLog(@"去举报");
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            binRole.gameId = KISDictionaryHaveKey(dic, @"id");
+            [self.navigationController pushViewController:binRole animated:YES];
+            
+        }
+        
+    }
     
 }
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
