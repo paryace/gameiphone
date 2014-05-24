@@ -282,7 +282,6 @@
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
     
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
-    cell.gameImg_one.image = KUIImage(@"wow");
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
@@ -321,6 +320,8 @@
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
     [cell refreshCell];
+    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+    [cell setGameIconUIView:gameidss];
     
     return cell;
 }

@@ -168,10 +168,11 @@
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
-    
+
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
-    cell.gameImg_one.image = KUIImage(@"wow");
+//    cell.gameImg_one.image = KUIImage(@"wow");
     
+
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
         cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
@@ -211,6 +212,10 @@
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
     [cell refreshCell];
+
+    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+    [cell setGameIconUIView:gameidss];
+
     
     return cell;
 }
@@ -223,32 +228,32 @@
 
     TestViewController *VC = [[TestViewController alloc]init];
     VC.userId = KISDictionaryHaveKey(recDict, @"userid");
-    VC.nickName = KISDictionaryHaveKey(recDict, @"nickname");
-    
-    
-    VC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")];
-    
-    VC.ageStr = [NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(recDict, @"age")intValue]];
-    VC.sexStr = [NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(recDict, @"gender")intValue]];
-    VC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"updateUserLocationDate")];
-    VC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"distance")];
-
-    VC.achievementColor =[[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" :KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"rarenum");
-    if([KISDictionaryHaveKey(recDict, @"active")intValue]==2){
-        VC.isActiveAc =YES;
-    }
-    else{
-        VC.isActiveAc =NO;
-    }
-
-    VC.achievementStr = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"title");
-    
-    VC.constellationStr =KISDictionaryHaveKey(recDict, @"constellation");
-    VC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"createTime")];
-    
-    
-    VC.isChatPage = NO;
-    NSLog(@"age%@ sex%@",VC.ageStr,VC.sexStr);
+//    VC.nickName = KISDictionaryHaveKey(recDict, @"nickname");
+//    
+//    
+//    VC.titleImage =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"img")];
+//    
+//    VC.ageStr = [NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(recDict, @"age")intValue]];
+//    VC.sexStr = [NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(recDict, @"gender")intValue]];
+//    VC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"updateUserLocationDate")];
+//    VC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"distance")];
+//
+//    VC.achievementColor =[[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" :KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"rarenum");
+//    if([KISDictionaryHaveKey(recDict, @"active")intValue]==2){
+//        VC.isActiveAc =YES;
+//    }
+//    else{
+//        VC.isActiveAc =NO;
+//    }
+//
+//    VC.achievementStr = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"title")] isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(recDict, @"title"), @"titleObj"), @"title");
+//    
+//    VC.constellationStr =KISDictionaryHaveKey(recDict, @"constellation");
+//    VC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(recDict, @"createTime")];
+//    
+//    
+//    VC.isChatPage = NO;
+//    NSLog(@"age%@ sex%@",VC.ageStr,VC.sexStr);
     [self.navigationController pushViewController:VC animated:YES];
 }
 #pragma mark --加载刷新

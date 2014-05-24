@@ -159,35 +159,37 @@
         cell.heardImg.imageURL =nil;
         cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
         cell.realmLabel.text = @"角色不存在";
-        
         cell.editBtn.hidden = NO;
         cell.authBtn.hidden = YES;
     }
     else
     {
-//        int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-//        if (imageId > 0 && imageId < 12) {//1~11
-//            cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-//        }
-//        else
-//            cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-        
         cell.heardImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
-        
-        
         
         NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
         cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
         
         cell.editBtn.hidden = YES;
-//        cell.authBtn.hidden = NO;
     }
     cell.myIndexPath = indexPath;
     cell.myDelegate = self;
-    cell.gameImg.image = KUIImage(@"wow");
+    NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
+    cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
     cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"name");
-    
     return cell;
+}
+//头像地址
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
+        }else{
+            return  nil;
+        }
+    }
 }
 
 #pragma mark 按钮

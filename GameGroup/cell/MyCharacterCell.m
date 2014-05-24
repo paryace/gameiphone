@@ -32,7 +32,7 @@
         self.nameLabel.font = [UIFont boldSystemFontOfSize:15.0];
         [myView addSubview:self.nameLabel];
         
-        self.gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
+        self.gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
         self.gameImg.backgroundColor = [UIColor clearColor];
         [myView addSubview:self.gameImg];
                 

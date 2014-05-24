@@ -268,8 +268,6 @@
                 
                 [m_charaDetailsView.reloadingBtn setTitle:[NSString stringWithFormat:@"上次更新时间:%@",changeBtnTitle] forState:UIControlStateNormal];
             }
-
-            
             if ([m_charaInfo.auth isEqualToString:@"1"]) {
                 m_charaDetailsView.certificationImage.image = KUIImage(@"6");
             }else

@@ -10,7 +10,7 @@
 #import "EGOImageView.h"
 @interface EnteroCell : UITableViewCell
 @property(nonatomic,strong)EGOImageView *headerImageView;
-@property(nonatomic,strong)UIImageView *gameTitleImage;
+@property(nonatomic,strong)EGOImageView *gameTitleImage;
 @property(nonatomic,strong)UIImageView *jtImageView;
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *serverLabel;

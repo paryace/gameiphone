@@ -206,7 +206,8 @@
     
     NSString *sexStr = [NSString stringWithFormat:@"%@",self.sexStr];
     NSString *ageStr = [NSString stringWithFormat:@"%@",self.ageStr];
-    UIView* genderView = [CommonControlOrView setGenderAndAgeViewWithFrame:CGRectMake(10, m_currentStartY, kScreenWidth, 30) gender:sexStr age:ageStr star:self.constellationStr gameId:@"1"];
+    NSArray * gameidss=[GameCommon getGameids:self.hostInfo.gameids];
+    UIView* genderView = [CommonControlOrView setGenderAndAgeViewWithFrame:CGRectMake(10, m_currentStartY, kScreenWidth, 30) gender:sexStr age:ageStr star:self.constellationStr gameIds:gameidss];
     [m_myScrollView addSubview:genderView];
     
     UILabel* timeLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(150, m_currentStartY, 160, 30) textColor:kColorWithRGB(151, 151, 151, 1.0) font:[UIFont systemFontOfSize:12.0] text:[GameCommon getTimeAndDistWithTime:self.timeStr Dis:self.jlStr] textAlignment:NSTextAlignmentRight];
@@ -423,7 +424,9 @@
     m_currentStartY += m_photoWall.frame.size.height;
     
     
-    UIView* genderView = [CommonControlOrView setGenderAndAgeViewWithFrame:CGRectMake(10, m_currentStartY, kScreenWidth, 30) gender:self.hostInfo.gender age:self.hostInfo.age star:self.hostInfo.starSign gameId:@"1"];
+    NSArray * gameidss=[GameCommon getGameids:self.hostInfo.gameids];
+    
+    UIView* genderView = [CommonControlOrView setGenderAndAgeViewWithFrame:CGRectMake(10, m_currentStartY, kScreenWidth, 30) gender:self.hostInfo.gender age:self.hostInfo.age star:self.hostInfo.starSign gameIds:gameidss];
     [m_myScrollView addSubview:genderView];
     
     UILabel* timeLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(150, m_currentStartY, 160, 30) textColor:kColorWithRGB(151, 151, 151, 1.0) font:[UIFont systemFontOfSize:12.0] text:[GameCommon getTimeAndDistWithTime:self.hostInfo.updateTime Dis:self.hostInfo.distrance] textAlignment:NSTextAlignmentRight];

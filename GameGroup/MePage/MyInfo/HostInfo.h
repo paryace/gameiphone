@@ -49,6 +49,7 @@
 @property (strong, nonatomic) NSDictionary* characters;//角色
 
 @property (strong, nonatomic) NSMutableArray* charactersArr;//新的角色
+@property (strong,nonatomic) NSString * gameids;//游戏id列表
 
 
 - (id)initWithHostInfo:(NSDictionary*)info;

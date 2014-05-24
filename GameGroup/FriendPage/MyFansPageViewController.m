@@ -81,27 +81,17 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
-    [paramDict setObject:@"3" forKey:@"shiptype"];
-    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
-    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%d", m_currentPage] forKey:@"pageIndex"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"111" forKey:@"method"];
+    [postDict setObject:@"221" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
-            
-            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, @"3") isKindOfClass:[NSDictionary class]] )) {
-                return;
-            }
-            
             if (m_currentPage == 0) {//默认展示存储的
                 m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue];
                 [self refreFansNum:m_allcurrentPage];
@@ -134,13 +124,14 @@
         
     }];
 }
+//刷新title
 -(void)refreFansNum:(NSInteger)fansInteger
 {
     NSString *fansNum=[NSString stringWithFormat: @"%d",fansInteger];
     [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
+//结束刷新
 -(void)endLoad
 {
     [m_myFansTableView reloadData];
@@ -251,7 +242,6 @@
         }
     }
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
-    cell.gameImg_one.image = KUIImage(@"wow");
     
     NSString * titleObj = @"";
     NSString * titleObjLevel = @"";
@@ -270,9 +260,9 @@
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[titleObjLevel intValue]];
     
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
-    
-    
     [cell refreshCell];
+    NSArray * gameidss=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
+    [cell setGameIconUIView:gameidss];
     return cell;
 }
 

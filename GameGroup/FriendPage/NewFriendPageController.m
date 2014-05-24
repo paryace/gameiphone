@@ -199,7 +199,6 @@
     }
     cell.nameLabel.text = nickName;
     
-//    cell.gameImg_one.image = KUIImage(@"wow");
     NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
@@ -208,7 +207,6 @@
     cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
     NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameids];
-    
     return cell;
 }
 

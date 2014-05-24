@@ -226,14 +226,16 @@
     }
 }
     cell.nameLabel.text = [tempDict objectForKey:@"displayName"];
-    cell.gameImg_one.image = KUIImage(@"wow");
+    
     cell.distLabel.text = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
         
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
+    
     [cell refreshCell];
-
+    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+    [cell setGameIconUIView:gameidss];
     return cell;
 }
 

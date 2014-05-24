@@ -132,7 +132,6 @@
         
     }
     cell.nameLabel.text = [dict objectForKey:@"nickname"];
-    cell.gameImg_one.image = KUIImage(@"wow");
     cell.distLabel.text = [KISDictionaryHaveKey(dict, @"titleName") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(dict, @"titleName");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(dict, @"rarenum") integerValue]];
     
@@ -146,9 +145,8 @@
         cell.shiptypeLabel.text = @"粉丝";
     }
     [cell refreshCell];
-    return cell;
-
-    
+    NSArray * gameidss=[GameCommon getGameids:[dict objectForKey:@"gameids"]];
+    [cell setGameIconUIView:gameidss];
     return cell;
 }
 

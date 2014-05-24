@@ -652,14 +652,26 @@
         cell.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
     
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
-    
+    NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
     cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     
-    
+    cell.gameTitleImage.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
     return cell;
 }
-
+//头像地址
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
+        }else{
+            return  nil;
+        }
+    }
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *tempDic =[m_characterArray objectAtIndex:indexPath.row];

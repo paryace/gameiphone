@@ -24,8 +24,8 @@
         self.titleLabel.font = [UIFont boldSystemFontOfSize:15];
         [self addSubview:self.titleLabel];
         
-        self.gameTitleImage =[[UIImageView alloc]initWithFrame:CGRectMake(67, 39, 20, 20)];
-        self.gameTitleImage.image =KUIImage(@"wow");
+        self.gameTitleImage =[[EGOImageView alloc]initWithFrame:CGRectMake(67, 39, 20, 20)];
+//        self.gameTitleImage.image =KUIImage(@"wow");
         [self addSubview:self.gameTitleImage];
         
         self.serverLabel = [[UILabel alloc]initWithFrame:CGRectMake(88, 39, 100, 20)];
