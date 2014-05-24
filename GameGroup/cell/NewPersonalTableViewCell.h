@@ -14,6 +14,8 @@
 @property (strong,nonatomic) EGOImageView * headImageV;// 头像
 @property (nonatomic,strong) UIImageView* sexImg;//性别
 @property (strong,nonatomic) UILabel * nameLabel;//昵称
-@property (nonatomic,strong) UIImageView* gameImg_one;//游戏图标
+//@property (nonatomic,strong) UIImageView* gameImg_one;//游戏图标
 @property (strong,nonatomic) UILabel* distLabel;//头衔
+
+-(void)setGameIconUIView:(NSArray*)gameIds;
 @end

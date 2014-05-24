@@ -233,7 +233,7 @@
     //把所有游戏的图标以key为游戏id写入文件
         NSMutableDictionary *gameiconDic = [NSMutableDictionary dictionary];
         NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameIcon.plist"];
-        NSArray *keysArr =[dict allKeys];
+        NSArray *keysArr =[KISDictionaryHaveKey(dict, @"gamelist") allKeys];
         for (int i = 0; i <keysArr.count; i++) {
             NSArray *arr = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"gamelist"), keysArr[i]);
             for (NSDictionary *dic in arr) {

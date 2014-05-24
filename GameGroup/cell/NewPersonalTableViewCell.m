@@ -32,10 +32,10 @@
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self addSubview:self.nameLabel];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
-
-        self.gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(320-50, 12, 20, 20)];
-        self.gameImg_one.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.gameImg_one];
+//
+//        self.gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(320-50, 12, 20, 20)];
+//        self.gameImg_one.backgroundColor = [UIColor clearColor];
+//        [self addSubview:self.gameImg_one];
         
         self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 5, 20, 20)];
         self.sexImg.backgroundColor = [UIColor clearColor];
@@ -49,13 +49,29 @@
     }
     return self;
 }
-//-(void)setGameIconUIView:(NSArray*)gameIds
-//{
-//    for (NSString *gameid in gameIds) {
-//        UIImageView *gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(320-50, 12, 20, 20)];
-//        gameImg_one.backgroundColor = [UIColor clearColor];
-//    }
-//}
+-(void)setGameIconUIView:(NSArray*)gameIds
+{
+    for (int i=0 ; i<gameIds.count;i++) {
+        NSString * gameid=[gameIds objectAtIndex:i];
+        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(320-50-20*i-2, 12, 20, 20)];
+        gameImg_one.backgroundColor = [UIColor clearColor];
+        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+        [self addSubview:gameImg_one];
+    }
+}
+//
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([GameCommon isEmtity:imageUrl]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+        }else{
+            return  nil;
+        }
+    }
+}
 - (void)awakeFromNib
 {
 }

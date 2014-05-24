@@ -199,15 +199,15 @@
     }
     cell.nameLabel.text = nickName;
     
-    cell.gameImg_one.image = KUIImage(@"wow");
+//    cell.gameImg_one.image = KUIImage(@"wow");
     NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
     cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
-    
-//    NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
+    NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
+    [cell setGameIconUIView:gameids];
     
     return cell;
 }
