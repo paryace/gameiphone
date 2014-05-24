@@ -10,6 +10,7 @@
 #import "TestViewController.h"
 #import "AddCharacterViewController.h"
 #import "MJRefresh.h"
+#import "BinRoleViewController.h"
 @interface GuildMembersViewController ()
 {
     MJRefreshHeaderView *m_head;
@@ -174,7 +175,7 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSDictionary *dic = [[NSDictionary alloc]init];
-        dic = [m_dataArray objectAtIndex:m_infoNum];
+    dic = [m_dataArray objectAtIndex:m_infoNum];
     
     NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
     if (alertView.tag ==1001)//点击没有被绑定的角色
@@ -186,8 +187,16 @@
             NSLog(@"去绑定");//去绑定
             AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
             addVC.viewType = CHA_TYPE_Add;
+            // addVC.contentDic =
             [self.navigationController pushViewController:addVC animated:YES];
         }else{
+            
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"1";
+            binRole.gameId=KISDictionaryHaveKey(dic, @"id");
+            [self.navigationController pushViewController:binRole animated:YES];
+            
             NSLog(@"通知好友绑定");
         }
     }
@@ -198,18 +207,23 @@
         }else if (buttonIndex ==1)
         {
             NSLog(@"去看资料");
-            TestViewController *testVC = [[TestViewController alloc]init];
-            testVC.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
-            testVC.userId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id")];
-            [self.navigationController pushViewController:testVC animated:YES];
+            TestViewController *detailVC = [[TestViewController alloc]init];
+            detailVC.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id");
+            detailVC.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias")? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias"): KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
+            detailVC.isChatPage = NO;
+            [self.navigationController pushViewController:detailVC animated:YES];
             
         }else{
             NSLog(@"去举报");
+            BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
+            binRole.dataDic=dic;
+            binRole.type=@"2";
+            binRole.gameId = KISDictionaryHaveKey(dic, @"id");
+            [self.navigationController pushViewController:binRole animated:YES];
             
         }
         
     }
-    
 }
 
 //添加下拉刷新

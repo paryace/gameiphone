@@ -337,7 +337,9 @@
     
     if (drawView.showList) {
         nearByBtn.hidden = NO;
+        bottomView.hidden = NO;
 
+        
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.4];
 
@@ -355,7 +357,8 @@
         [self performSelector:@selector(showSamerealm:) withObject:nil afterDelay:0.15];
         [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
         [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
-        
+        [self changebuttonImgWithButton:nearByBtn img:@"nearby_highlight" durTime:0.2 delay:10];
+
 
     }else{
         sameRealmBtn.hidden = YES;
@@ -391,6 +394,9 @@
         sameRealmBtn.center = CGPointMake(80, 150);
     }
     [UIView commitAnimations];
+    [self changebuttonImgWithButton:sameRealmBtn img:@"samerealm_highlight" durTime:0.2 delay:1.2];
+  //  [self changebuttonImgWithButton:sameRealmBtn img:@"realm" durTime:0.2 delay:1.4];
+;
 
 }
 
@@ -412,9 +418,12 @@
         moGirlBtn.center = CGPointMake(240, 150);
     }
     [UIView commitAnimations];
-
+    [self changebuttonImgWithButton:moGirlBtn img:@"mogirl_highlight" durTime:0.2 delay:1.4];
+    [self changebuttonImgWithButton:moGirlBtn img:@"girl" durTime:0.2 delay:5];
+;
 
 }
+
 -(void)showEnco:(id)sender
 {
     encoBtn.hidden = NO;
@@ -433,8 +442,21 @@
         encoBtn.center = CGPointMake(240, 300);
     }
     [UIView commitAnimations];
+    [self changebuttonImgWithButton:encoBtn img:@"enxo_highlight" durTime:0.2 delay:1.8];
+   // [self changebuttonImgWithButton:encoBtn img:@"spring" durTime:0.2 delay:2.1];
 
+    
 }
+
+
+-(void)changebuttonImgWithButton:(UIButton *)button img:(NSString *)img durTime:(float)dTime delay:(float)delay
+{
+    [UIView animateWithDuration:dTime delay:delay options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [button setBackgroundImage:KUIImage(img) forState:UIControlStateNormal];
+    } completion:^(BOOL finished){
+    }];
+}
+
 
 -(void)enterOtherPage:(UIButton *)sender
 {
@@ -566,6 +588,7 @@
 {
     bottomView.hidden =YES;
     [self didClickMenu:nil];
+
 }
 -(void)didClickGameIdSuccessWithView:(TvView *)myView section:(NSInteger)section row:(NSInteger)row
 {
@@ -585,6 +608,10 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
+
 
 /*
 #pragma mark - Navigation

@@ -233,16 +233,17 @@
         [hud show:YES];
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-
+        NSDictionary *infoDic;
         for (int i =0; i<m_dataArray.count; i++) {
-            NSDictionary *dic = m_dataArray[i];
+            infoDic = m_dataArray[i];
             if (i==0) {
-                [tempDic setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+                [tempDic setObject:KISDictionaryHaveKey(infoDic, @"gameid") forKey:@"gameid"];
             }else{
                 UITextField *tf  = (UITextField *)[self.view viewWithTag:i];
-                [tempDic setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+                [tempDic setObject:tf.text forKey:KISDictionaryHaveKey(infoDic, @"param")];
                 if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
                     [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+                    return;
                 }
                 
             }
@@ -259,6 +260,7 @@
             if (array.count>0) {
             secGame.dataDic = responseObject;
             secGame.myInfoType = COME_ROLE;
+            secGame.gameid = KISDictionaryHaveKey(infoDic, @"gameid");
             [self.navigationController pushViewController:secGame animated:YES];
             
             [hud hide:YES];
@@ -283,8 +285,9 @@
         [hud show:YES];
     NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+        NSDictionary *dic;
         for (int i =0; i<m_dataArray.count; i++) {
-            NSDictionary *dic = m_dataArray[i];
+            dic = m_dataArray[i];
             if (i==0) {
                 [tempDic1 setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
             }else{
@@ -292,6 +295,7 @@
                 [tempDic1 setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
                 if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
                     [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+                    return;
                 }
 
             }
@@ -311,6 +315,7 @@
             secGame.dataDic = [NSDictionary new];
             secGame.dataDic = responseObject;
             secGame.realmStr = searchContent.text;
+            secGame.gameid = KISDictionaryHaveKey(dic, @"gameid");
             secGame.myInfoType = COME_GUILD;
             [self.navigationController pushViewController:secGame animated:YES];
             }else{
@@ -320,6 +325,15 @@
         }
     failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        
+
     }];
     }
 }
@@ -337,7 +351,6 @@
 {
     NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
     return title;
-    
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {

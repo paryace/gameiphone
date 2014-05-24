@@ -1205,7 +1205,7 @@ UINavigationControllerDelegate>
     [hud show:YES];
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(100, 100)];
+    UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString* openImgPath=[self writeImageToFile:thumbimg];
     NSString* upImagePath=[self writeImageToFile:upImage];

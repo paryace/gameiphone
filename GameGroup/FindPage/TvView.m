@@ -27,7 +27,7 @@
     }
     tabheight = frameHeight-30;
     
-    frame.size.height = KISHighVersion_7?110:90;
+    frame.size.height = KISHighVersion_7?130:110;
     
     self=[super initWithFrame:frame];
     
@@ -41,6 +41,9 @@
         tv.dataSource = self;
         tv.separatorStyle = UITableViewCellSeparatorStyleNone;
         tv.rowHeight = 40;
+        if (KISHighVersion_7) {
+            tv.sectionIndexBackgroundColor = [UIColor clearColor];
+        }
         tv.backgroundColor = [UIColor clearColor];
         tv.separatorColor = [UIColor lightGrayColor];
         tv.hidden = YES;
@@ -54,7 +57,7 @@
         titleLabel.backgroundColor = [ UIColor clearColor];
         [self addSubview:titleLabel];
         
-        textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,self.bounds.size.height-46, 320, 20)];
+        textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,self.bounds.size.height-66, 320, 20)];
         textLabel.text = @"选择游戏 开始您的游戏社交";
         textLabel.textColor =[UIColor whiteColor];
         textLabel.textAlignment = NSTextAlignmentCenter;
@@ -62,10 +65,9 @@
         textLabel.font = [UIFont boldSystemFontOfSize:14];
         [self addSubview:textLabel];
         menuButotn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-30, 44, 44)];
-        menuButotn.center = CGPointMake(160, self.bounds.size.height);
+        menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
         [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
-//        menuButotn.backgroundColor = [UIColor clearColor];
-        menuButotn.placeholderImage = KUIImage(@"menu_find");
+        [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
         [self addSubview:menuButotn];
         
  
@@ -84,12 +86,12 @@
         tv.hidden = YES;
         
         CGRect sf = self.frame;
-        sf.size.height = KISHighVersion_7?110:90;
+        sf.size.height = KISHighVersion_7?130:110;
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         
         self.frame = sf;
-        menuButotn.center = CGPointMake(160, self.bounds.size.height);
+        menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
         titleLabel.text = @"发现";
         textLabel.hidden =NO;
         CGRect frame = tv.frame;
@@ -121,6 +123,21 @@
         tv.frame = frame;
         [UIView commitAnimations];
     }
+}
+
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    view.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
+    return view;
+}
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [tableArray objectAtIndex:section];
+}
+
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+    return tableArray;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -159,7 +176,8 @@
 {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+    [menuButotn setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
+    
     NSArray *arr = [self.tableDic objectForKey:[tableArray objectAtIndex:indexPath.section]];
     NSDictionary *dic = [arr objectAtIndex:indexPath.row];
     
@@ -170,13 +188,13 @@
     tv.hidden = YES;
     
     CGRect sf = self.frame;
-    sf.size.height = KISHighVersion_7?110:90;
+    sf.size.height = KISHighVersion_7?130:110;
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
     self.frame = sf;
     menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
-    menuButotn.center = CGPointMake(160, self.bounds.size.height);
+    menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
     titleLabel.text  = @"发现";
     textLabel.hidden =NO;
     CGRect frame = tv.frame;
@@ -185,6 +203,8 @@
     [UIView commitAnimations];
 
 }
+
+
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
