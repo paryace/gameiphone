@@ -182,10 +182,18 @@
     
     if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
         
+   /* 这里略乱 临时添加尚未修改 */
         
         //本地开机数据和网络获取开机数据相互遍历 判断是否需要更新
         if ([[openData allKeys]containsObject:@"gamelist"]) {
-            NSArray *array = KISDictionaryHaveKey(openData, @"gamelist");
+            NSDictionary *oldDic = KISDictionaryHaveKey(openData, @"gamelist");
+            NSMutableArray *array = [NSMutableArray array];
+            NSArray *alk =[oldDic allKeys];
+            for (int i =0; i<alk.count; i++) {
+                NSArray *arr = [oldDic objectForKey:alk[i] ];
+                [array addObjectsFromArray:arr];
+            }
+            
             NSDictionary *newDic = KISDictionaryHaveKey(dict, @"gamelist");
             NSMutableArray *newArray = [NSMutableArray array];
             NSArray *allk =[newDic allKeys];

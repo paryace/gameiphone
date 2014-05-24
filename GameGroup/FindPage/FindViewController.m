@@ -468,7 +468,11 @@
         isDidClick =YES;
         return;
     }
-    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+
     NSLog(@"------%@------",manDic);
     
     NSLog(@"点击");
@@ -492,6 +496,7 @@
         
     }
     if (sender ==sameRealmBtn) {
+        
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         SameRealmViewController* realmsVC = [[SameRealmViewController alloc] init];
         realmsVC.gameid = KISDictionaryHaveKey(manDic, @"id");
@@ -598,10 +603,6 @@
     manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
     NSLog(@"manDic--%@",manDic);
 }
-
-
-
-
 
 - (void)didReceiveMemoryWarning
 {

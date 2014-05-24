@@ -669,6 +669,7 @@ typedef enum : NSUInteger {
     if (indexPath.row ==headImgArray.count-1) {
         NearByViewController *nearBy = [[NearByViewController alloc]init];
         nearBy.cityCode =[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:cityCode]];
+        nearBy.gameidStr = self.gameid;
         nearBy.titleStr =[NSString stringWithFormat:@"%@",titleStr];
         [self.navigationController pushViewController:nearBy animated:YES];
     }
