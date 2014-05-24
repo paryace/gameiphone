@@ -633,9 +633,10 @@ static GameCommon *my_gameCommon = NULL;
 
 +(NSString *)putoutgameIconWithGameId:(NSString *)gameid
 {
-    NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameIcon.plist"];
+    NSString *str = [NSString stringWithFormat:@"id%@",gameid];
+    NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameicon_wx"];
     NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:filePath];
-    return [self getNewStringWithId: KISDictionaryHaveKey(dic, gameid)];
+    return [self getNewStringWithId: KISDictionaryHaveKey(dic, str)];
 }
 
 #pragma mark 是否由1.0版本升级

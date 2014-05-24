@@ -14,10 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-//        UIView * bgV = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-//        [bgV setBackgroundColor:[UIColor clearColor]];
-//        [self addSubview:bgV];
-        
         self.backgroudImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
         [self addSubview:self.backgroudImageV];
         
@@ -32,10 +28,6 @@
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self addSubview:self.nameLabel];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
-//
-//        self.gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(320-50, 12, 20, 20)];
-//        self.gameImg_one.backgroundColor = [UIColor clearColor];
-//        [self addSubview:self.gameImg_one];
         
         self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 5, 20, 20)];
         self.sexImg.backgroundColor = [UIColor clearColor];
@@ -53,7 +45,7 @@
 {
     for (int i=0 ; i<gameIds.count;i++) {
         NSString * gameid=[gameIds objectAtIndex:i];
-        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(320-50-20*i-2, 12, 20, 20)];
+        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(320-50-20*i-2, 20, 20, 20)];
         gameImg_one.backgroundColor = [UIColor clearColor];
         gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
         [self addSubview:gameImg_one];
