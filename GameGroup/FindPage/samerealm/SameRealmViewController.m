@@ -418,7 +418,6 @@
     
     
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
-    cell.gameImg_one.image = KUIImage(@"wow");
     
 //    cell.sexImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
     
@@ -464,7 +463,11 @@
     
     [cell refreshCell];
     
-    
+    //-----
+//    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+    NSArray * gameidss=[GameCommon getGameids:[NSString stringWithFormat:@"%@",self.gameid]];
+    [cell setGameIconUIView:gameidss];
+    //-----
     return cell;
 }
 

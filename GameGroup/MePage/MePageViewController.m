@@ -99,7 +99,6 @@
     [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"106" forKey:@"method"];
     [postDict setObject:@"201" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
@@ -111,7 +110,12 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
-            [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            
+            NSMutableDictionary * userDic=KISDictionaryHaveKey(responseObject, @"user");
+            NSString * shipTyep=KISDictionaryHaveKey(responseObject, @"shiptype");
+            NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
+            [userDic setObject:gameids forKey:@"gameids"];
+            [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:shipTyep];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -286,8 +290,9 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
+        
         cell.nameLabel.text = m_hostInfo.nickName;
-        cell.gameImg_one.image = KUIImage(@"wow");
+        
         
         if ([m_hostInfo.gender isEqualToString:@"0"]) {//男♀♂
             cell.ageLabel.text = [@"♂ " stringByAppendingString:m_hostInfo.age?m_hostInfo.age:@""];
@@ -316,6 +321,9 @@
         }
         
         [cell refreshCell];
+        
+        NSArray * gameidss=[GameCommon getGameids:m_hostInfo.gameids];
+        [cell setGameIconUIView:gameidss];
         return cell;
     }
     else if(1 == indexPath.section)//我的动态
@@ -462,6 +470,7 @@
             NSString* name=KISDictionaryHaveKey(tempDic, @"name");
             NSString* failedmsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
             NSString* img=KISDictionaryHaveKey(tempDic, @"img");//角色图标
+            NSString* gameid=KISDictionaryHaveKey(tempDic, @"gameid");
             
             if ([failedmsg intValue] ==404)//角色不存在
             {
@@ -490,7 +499,7 @@
             }
             cell.rowIndex = indexPath.row;
             cell.myDelegate = self;
-            cell.gameImg.image = KUIImage(@"wow");
+            cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
             cell.nameLabel.text = name;
             cell.pveLabel.text = [GameCommon getNewStringWithId:v3];
             cell.noCharacterLabel.text=v2;
@@ -545,7 +554,19 @@
     }
     return Nil;
 }
-
+//---
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([GameCommon isEmtity:imageUrl]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+        }else{
+            return  nil;
+        }
+    }
+}
 //- (NSString*)getCellTitleWithType:(NSString*)type withNick:(NSString*)nickName withUserId:(NSString*)userid
 //{
 //    NSInteger typeInt = [type intValue];

@@ -16,7 +16,7 @@
 @property(strong,nonatomic)UIImageView* authBg;
 @property(strong,nonatomic)UILabel* nameLabel;
 @property(strong,nonatomic)UILabel* realmLabel;
-@property(strong,nonatomic)UIImageView* gameImg;
+@property(strong,nonatomic)EGOImageView* gameImg;
 @property(strong,nonatomic)UILabel* pveLabel;//战斗力
 @property(assign,nonatomic)NSInteger rowIndex;
 @property(strong,nonatomic)UIButton* refreshPVEbtn;

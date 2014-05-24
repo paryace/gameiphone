@@ -16,7 +16,7 @@
 @property (strong,nonatomic) EGOImageView * headImageV;
 @property (strong,nonatomic) UILabel * nameLabel;
 
-@property (nonatomic,strong) UIImageView* gameImg_one;
+//@property (nonatomic,strong) UIImageView* gameImg_one;
 @property (nonatomic,strong) UIImageView* sexImg;
 @property (nonatomic,strong) UIImageView* sexBg;
 
@@ -27,6 +27,9 @@
 
 
 @property (nonatomic,strong)UILabel *shiptypeLabel;
+@property (nonatomic,strong)UIView *bgView;
 - (void)refreshCell;
+
+-(void)setGameIconUIView:(NSArray*)gameIds;
 
 @end

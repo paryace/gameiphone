@@ -36,25 +36,10 @@
     return nameLabel;
 }
 
-+ (UIView*)setGenderAndAgeViewWithFrame:(CGRect)myFrame gender:(NSString*)gender age:(NSString*)age star:(NSString*)star gameId:(NSString*)gameId
++ (UIView*)setGenderAndAgeViewWithFrame:(CGRect)myFrame gender:(NSString*)gender age:(NSString*)age star:(NSString*)star gameIds:(NSArray*)gameIds
 {
     UIView* myView = [[UIView alloc] initWithFrame:myFrame];
     
-//    UILabel* sexBg = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, myFrame.size.width, myFrame.size.height)];
-//    sexBg.backgroundColor = [gender isEqualToString:@"0"] ? kColorWithRGB(33, 193, 250, 1.0) : kColorWithRGB(238, 100, 196, 1.0) ;
-//    [myView addSubview:sexBg];
-//    
-//    UIImageView* sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(1, 1, myFrame.size.height-1, myFrame.size.height-1)];
-//    sexImg.backgroundColor = [UIColor clearColor];
-//    sexImg.image = [gender isEqualToString:@"0"] ? KUIImage(@"man") : KUIImage(@"woman");
-//    [myView addSubview:sexImg];
-//    
-//    UILabel* ageLabel = [[UILabel alloc] initWithFrame:CGRectMake(myFrame.size.width - 20, 0, 30, myFrame.size.height)];
-//    ageLabel.text = age;
-//    [ageLabel setTextColor:[UIColor whiteColor]];
-//    [ageLabel setFont:[UIFont systemFontOfSize:14]];
-//    [ageLabel setBackgroundColor:[UIColor clearColor]];
-//    [myView addSubview:ageLabel];
     UILabel* ageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 9, 30, 12)];
     [ageLabel setTextColor:[UIColor whiteColor]];
     [ageLabel setFont:[UIFont boldSystemFontOfSize:10.0]];
@@ -79,14 +64,45 @@
     UILabel* starSign = [CommonControlOrView setLabelWithFrame:CGRectMake(ageSize.width + 10, 0, 50, myFrame.size.height) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:star textAlignment:NSTextAlignmentLeft];
     [myView addSubview:starSign];
     
-    UIImageView* gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(ageSize.width + 50, 6, 18, 18)];
-    gameImg_one.backgroundColor = [UIColor clearColor];
-    gameImg_one.image = KUIImage(@"wow");
-    [myView addSubview:gameImg_one];
+//    UIImageView* gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(ageSize.width + 50, 6, 18, 18)];
+//    gameImg_one.backgroundColor = [UIColor clearColor];
+//    gameImg_one.image = KUIImage(@"wow");
+//    [myView addSubview:gameImg_one];
+    
+    CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
+    UIView *gameicomView=[self getGameIconUIView:gameIds X:ageSize.width + 50 Y:6 Width:w Height:18];
+    [myView addSubview:gameicomView];
+    
+    
     
     return myView;
 }
-
+//---
++(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([GameCommon isEmtity:imageUrl]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+        }else{
+            return  nil;
+        }
+    }
+}
++(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
+{
+    UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
+    for (int i=0 ; i<gameIds.count;i++) {
+        NSString * gameid=[gameIds objectAtIndex:i];
+        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+        gameImg_one.backgroundColor = [UIColor clearColor];
+        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+        [gameIconView addSubview:gameImg_one];
+    }
+    return gameIconView;
+}
+//---
 //好友详情 个人动态
 + (UIView*)setPersonStateViewTime:(NSString*)time nameText:(NSString*)nameText achievement:(NSString*)achievement achievementLevel:(NSString*)level titleImage:(NSString*)titleImage
 {
@@ -142,7 +158,6 @@
 
     return myView;
 }
-
 //我的角色
 + (UIView*)setCharactersViewWithName:(NSString*)text gameId:(NSString*)gameId realm:(NSString*)realm pveScore:(NSString*)pveScore img:(NSString*)image auth:(NSString *)auth Pro:(NSString*)pro
 {
@@ -162,8 +177,9 @@
     UILabel* oneLabel =  [CommonControlOrView setLabelWithFrame:CGRectMake(55, 5, 120, 20) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont boldSystemFontOfSize:15.0] text:text textAlignment:NSTextAlignmentLeft];
     [myView addSubview:oneLabel];
     //---
-    UIImageView* gameIg = [[UIImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
-    gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
+    EGOImageView* gameIg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
+    gameIg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]]];
+//    gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
     [myView addSubview:gameIg];
     //---
     UILabel* twoLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(75, 30, 130, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:14.0] text:realm textAlignment:NSTextAlignmentLeft];

@@ -14,7 +14,7 @@
 
 + (UILabel*)setLabelWithFrame:(CGRect)myFrame textColor:(UIColor*)myColor font:(UIFont*)myFont text:(NSString*)text textAlignment:(NSTextAlignment)alignment;
 
-+ (UIView*)setGenderAndAgeViewWithFrame:(CGRect)myFrame gender:(NSString*)gender age:(NSString*)age star:(NSString*)star gameId:(NSString*)gameId
++ (UIView*)setGenderAndAgeViewWithFrame:(CGRect)myFrame gender:(NSString*)gender age:(NSString*)age star:(NSString*)star gameIds:(NSArray*)gameIds
 ;
 
 //好友详情 个人动态

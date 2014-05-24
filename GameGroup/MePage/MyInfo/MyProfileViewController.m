@@ -9,6 +9,7 @@
 #import "MyProfileViewController.h"
 #import "PhotoViewController.h"
 #import "EditMessageViewController.h"
+#import "EGOImageView.h"
 
 @interface MyProfileViewController ()
 {
@@ -510,17 +511,18 @@
             CGSize ageSize = [m_ageLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:10.0] constrainedToSize:CGSizeMake(100, 12) lineBreakMode:NSLineBreakByWordWrapping];
             m_ageLabel.frame = CGRectMake(10, 9, ageSize.width + 5, 12);
 
-            UIImageView* gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(ageSize.width + 70, 6, 18, 18)];
-            gameImg_one.backgroundColor = [UIColor clearColor];
-            gameImg_one.image = KUIImage(@"wow");
-            [topBg addSubview:gameImg_one];
+//            UIImageView* gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(ageSize.width + 70, 6, 18, 18)];
+//            gameImg_one.backgroundColor = [UIColor clearColor];
+//            gameImg_one.image = KUIImage(@"wow");
+//            [topBg addSubview:gameImg_one];
             
-//            m_ageLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(30, 0, 20, 30) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:12.0] text:self.hostInfo.age textAlignment:NSTextAlignmentLeft];
-//            [topBg addSubview:m_ageLabel];
+            NSArray * gameIds=[GameCommon getGameids:self.hostInfo.gameids];
+            CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
+            UIView *gameicomView=[self getGameIconUIView:gameIds X:ageSize.width + 70 Y:6 Width:w Height:18];
+            [topBg addSubview:gameicomView];
+            
             m_starSignLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(ageSize.width + 25, 0, 50, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:self.hostInfo.starSign textAlignment:NSTextAlignmentLeft];
             [topBg addSubview:m_starSignLabel];
-            
-            
         } break;
         case 2:
         {
@@ -534,7 +536,32 @@
     [topBg addSubview:titleLabel];
     return topBg;
 }
-
+//---
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([GameCommon isEmtity:imageUrl]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+        }else{
+            return  nil;
+        }
+    }
+}
+-(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
+{
+    UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
+    for (int i=0 ; i<gameIds.count;i++) {
+        NSString * gameid=[gameIds objectAtIndex:i];
+        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+        gameImg_one.backgroundColor = [UIColor clearColor];
+        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+        [gameIconView addSubview:gameImg_one];
+    }
+    return gameIconView;
+}
+//---
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {

@@ -178,8 +178,6 @@
     }
     }
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
-    cell.gameImg_one.image = KUIImage(@"wow");
-    
     NSString * titleObj = @"";
     NSString * titleObjLevel = @"";
     NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
@@ -200,6 +198,10 @@
     
     
     [cell refreshCell];
+    //
+    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+    [cell setGameIconUIView:gameidss];
+    //
     return cell;
 }
 

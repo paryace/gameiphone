@@ -18,7 +18,7 @@
 @property(strong,nonatomic)UIImageView* authBg;
 @property(strong,nonatomic)UILabel* nameLabel;
 @property(strong,nonatomic)UILabel* realmLabel;
-@property(strong,nonatomic)UIImageView* gameImg;
+@property(strong,nonatomic)EGOImageView* gameImg;
 
 @property(strong,nonatomic)UIButton*    delBtn;
 @property(strong,nonatomic)UIButton*    authBtn;
