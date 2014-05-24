@@ -64,8 +64,8 @@
         menuButotn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-30, 44, 44)];
         menuButotn.center = CGPointMake(160, self.bounds.size.height);
         [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
-        menuButotn.backgroundColor = [UIColor clearColor];
-        [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+//        menuButotn.backgroundColor = [UIColor clearColor];
+        menuButotn.placeholderImage = KUIImage(@"menu_find");
         [self addSubview:menuButotn];
         
  

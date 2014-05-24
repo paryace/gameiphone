@@ -28,5 +28,5 @@ typedef enum
 @property(nonatomic,strong)NSString* characterId;
 @property(nonatomic,strong)NSString* character;
 @property(nonatomic,strong)NSString* realm;
-
+@property(nonatomic,strong)NSDictionary *contentDic;
 @end
