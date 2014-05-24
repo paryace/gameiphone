@@ -29,7 +29,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -53,64 +52,30 @@
     
     [self addFooter];
     [self addHeader];
-//    hud = [[MBProgressHUD alloc]initWithView:self.view];
-//    hud.labelText = @"获取中";
-//    [self.view addSubview:hud];
-//    //[self getFansBySort];
-	// Do any additional setup after loading the view.
 }
 
 #pragma mark -粉丝列表 只有距离排序
 - (void)getFansBySort
 {
-    NSString *typeKey;
-    if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        typeKey=@"3";
-    }else{
-        typeKey=@"4";
-    }
-
     [hud show:YES];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
-//    if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//        [paramDict setObject:@"3" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
-//    }else{
-//        [paramDict setObject:@"4" forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
-//    }
-    [paramDict setObject:typeKey forKey:@"shiptype"];// 1：好友   2：关注  3：粉丝
-    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
-    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%d", m_currentPage] forKey:@"pageIndex"];
-    
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"111" forKey:@"method"];
+    [postDict setObject:@"221" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-   // [paramDict setObject:sort forKey:@"sorttype_3"];
-    
-    //[hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
-        
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            if ((m_currentPage != 0 && ![KISDictionaryHaveKey(responseObject, typeKey) isKindOfClass:[NSArray class]]) || (m_currentPage == 0 && ![KISDictionaryHaveKey(responseObject, typeKey) isKindOfClass:[NSDictionary class]] )) {
-                return;
-            }
-
             if (m_currentPage == 0) {//默认展示存储的
-                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, typeKey), @"totalResults") intValue];
-
+                m_allcurrentPage = [KISDictionaryHaveKey(responseObject, @"totalResults") intValue];
                 [m_otherSortFansArray removeAllObjects];
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, typeKey), @"users")];
             }
-            else{
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, typeKey)];
-            }
-            
+            [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
             m_currentPage ++;//从0开始
             [m_myFansTableView reloadData];
             [m_fansheader endRefreshing];
@@ -147,64 +112,52 @@
         cell = [[PersonTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    NSDictionary * tempDict;
-    
-    tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
+    NSDictionary * tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
+    NSString * gender=KISDictionaryHaveKey(tempDict, @"gender");
+    NSString * age=KISDictionaryHaveKey(tempDict, @"age");
+    NSString * img = KISDictionaryHaveKey(tempDict, @"img");
+    NSString * updateTime=KISDictionaryHaveKey(tempDict, @"updateUserLocationDate");
+    NSString * distance= KISDictionaryHaveKey(tempDict, @"distance");
 
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+    
+    
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:age]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
     }
     else
     {
-        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:age]];
         cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
-    NSString * fruits = KISDictionaryHaveKey(tempDict, @"img");
-    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
-        cell.headImageV.imageURL =nil;
-    }else{
-    NSArray  * array= [fruits componentsSeparatedByString:@","];
-    NSString* headURL;
-    if (array.count>0) {
-        headURL = [array objectAtIndex:0];
-        cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[GameCommon getNewStringWithId:headURL] stringByAppendingString:@"/80"]]];
-    }else
-    {
-        cell.headImageV.imageURL =nil;
-    }
-    }
+    cell.headImageV.imageURL=[self getHeadImageUrl:[GameCommon getHeardImgId:img]];
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
-    NSString * titleObj = @"";
-    NSString * titleObjLevel = @"";
-    NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
-    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
-        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
-    }
-    else
-    {
-        titleObj = @"暂无头衔";
-        titleObjLevel = @"6";
-    }
-    
-    cell.distLabel.text = titleObj;
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[titleObjLevel intValue]];
-    
-    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
-    
-    
+    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
+    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
+     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:updateTime] Dis:[GameCommon getNewStringWithId:distance]];
     [cell refreshCell];
-    //
     NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
     [cell setGameIconUIView:gameidss];
-    //
+    
     return cell;
 }
-
+//头像地址
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
+        }else{
+            return  nil;
+        }
+    }
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myFansTableView deselectRowAtIndexPath:indexPath animated:YES];

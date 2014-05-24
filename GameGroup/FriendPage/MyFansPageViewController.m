@@ -93,16 +93,16 @@
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if (m_currentPage == 0) {//默认展示存储的
-                m_allcurrentPage = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"totalResults") intValue];
+                m_allcurrentPage = [KISDictionaryHaveKey(responseObject, @"totalResults") intValue];
                 [self refreFansNum:m_allcurrentPage];
-                NSMutableArray *fans=KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"3"), @"users");
+                NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
                 m_otherSortFansArray=fans;
                 [self endLoad];
-                
                 [self saveFansList:fans];
             }
             else{
-                [m_otherSortFansArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"3")];
+                NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
+                [m_otherSortFansArray addObjectsFromArray:fans];
                 [self endLoad];
             }
             m_currentPage ++;//从0开始
@@ -141,16 +141,12 @@
 
 -(void)saveFansList:(NSMutableArray*)result
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-    dispatch_async(queue, ^{
+//    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
+//    dispatch_async(queue, ^{
         for (NSDictionary * dict in result) {
-            [dict setValue:[[self getTitleInfo:dict] objectForKey:@"titleName"] forKey:@"titleName"];
-            [dict setValue:[[self getTitleInfo:dict] objectForKey:@"rarenum"]forKey:@"rarenum"];
-            [dict setValue:[dict objectForKey:@"id"] forKey:@"userid"];
-            [dict setValue:[dict objectForKey:@"birthdate"] forKey:@"birthday"];
             [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
         }
-    });
+//    });
 }
 -(void)getFansList
 {
@@ -214,53 +210,39 @@
     NSDictionary * tempDict;
     
     tempDict = [m_otherSortFansArray objectAtIndex:indexPath.row];
+    NSString * gender=KISDictionaryHaveKey(tempDict, @"gender");
+    NSString * age=KISDictionaryHaveKey(tempDict, @"age");
+    NSString * img = KISDictionaryHaveKey(tempDict, @"img");
+    NSString * updateTime=KISDictionaryHaveKey(tempDict, @"updateUserLocationDate");
+    NSString * distance= KISDictionaryHaveKey(tempDict, @"distance");
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+    
+    
+    
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:age]];
         cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
     }
     else
     {
-        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
+        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:age]];
         cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
-    NSString * fruits = KISDictionaryHaveKey(tempDict, @"img");
-    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
-        cell.headImageV.imageURL =nil;
-    }else{
-        NSArray  * array= [fruits componentsSeparatedByString:@","];
-        NSString* headURL;
-        if (array.count>0) {
-            headURL = [array objectAtIndex:0];
-            cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[GameCommon getNewStringWithId:headURL] stringByAppendingString:@"/80/80"]]];
-        }else
-        {
-            cell.headImageV.imageURL =nil;
-        }
-    }
+    cell.headImageV.imageURL=[self getHeadImageUrl:[GameCommon getHeardImgId:img]];
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     
-    NSString * titleObj = @"";
-    NSString * titleObjLevel = @"";
-    NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
-    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
-        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
-    }
-    else
-    {
-        titleObj = @"暂无头衔";
-        titleObjLevel = @"6";
-    }
     
-    cell.distLabel.text = titleObj;
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[titleObjLevel intValue]];
+    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
+    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
     
-    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
+    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:updateTime] Dis:[GameCommon getNewStringWithId:distance]];
+    
     [cell refreshCell];
+    
     NSArray * gameidss=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameidss];
     return cell;
@@ -278,7 +260,19 @@
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
-
+//头像地址
+-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+{
+    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageUrl]) {
+            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
+        }else{
+            return  nil;
+        }
+    }
+}
 
 - (void)addFooter
 {
@@ -319,7 +313,6 @@
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         
     };
-//    [header beginRefreshing];
     m_fansheader = header;
 }
 
