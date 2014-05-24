@@ -55,7 +55,10 @@
   //  [self setRoleView];
     
     gameInfoArray = [NSMutableArray new];
-    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    
+    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+
 
     NSArray *allkeys = [dict allKeys];
     for (int i = 0; i <allkeys.count; i++) {
@@ -154,127 +157,7 @@
 
 
 
-/*
-- (void)setRoleView
-{
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 20, 300, 40)];
-    table_top.image = KUIImage(@"table_top");
-    [m_roleView addSubview:table_top];
-    
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 36, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
-    [m_roleView addSubview:table_arrow];
-    
-    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 300, 40)];
-    table_middle.image = KUIImage(@"table_middle");
-    [m_roleView addSubview:table_middle];
-    
-    UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(290, 76, 12, 8)];
-    table_arrow_two.image = KUIImage(@"arrow_bottom");
-    [m_roleView addSubview:table_arrow_two];
-    
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 100, 300, 40)];
-    table_bottom.image = KUIImage(@"table_bottom");
-    [m_roleView addSubview:table_bottom];
-    
-    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 21, 100, 38)];
-    table_label_one.text = @"选择游戏";
-    table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_roleView addSubview:table_label_one];
-    
-    table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 61, 80, 38)];
-    table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_roleView addSubview:table_label_two];
-    
-    table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 101, 80, 38)];
-    table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_roleView addSubview:table_label_three];
-    table_label_two.hidden = YES;
-    table_label_three.hidden = YES;
-    
-    
-    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(180, 31, 18, 18)];
-    [m_roleView addSubview:gameImg];
-    
-    m_gameNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 20, 180, 40)];
-    m_gameNameText.returnKeyType = UIReturnKeyDone;
-    m_gameNameText.delegate = self;
-    m_gameNameText.textAlignment = NSTextAlignmentRight;
-    m_gameNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_gameNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_gameNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_roleView addSubview:m_gameNameText];
-    
-    
-    m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-    m_serverNamePick.dataSource = self;
-    m_serverNamePick.delegate = self;
-    m_serverNamePick.showsSelectionIndicator = YES;
-    m_gameNameText.inputView = m_serverNamePick;//点击弹出的是pickview
-    
-    UIToolbar* toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar_server.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar_server.items = @[rb_server];
-    m_gameNameText.inputAccessoryView = toolbar_server;//跟着pickview上移
 
-    
-    searchContent = [[UITextField alloc] initWithFrame:CGRectMake(100, 60, 180, 40)];
-    searchContent.returnKeyType = UIReturnKeyDone;
-    searchContent.textAlignment = NSTextAlignmentRight;
-    searchContent.delegate = self;
-    searchContent.font = [UIFont boldSystemFontOfSize:15.0];
-    searchContent.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    searchContent.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_roleView addSubview:searchContent];
-    
-    UIButton* serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 60, 180, 40)];
-    serverButton.backgroundColor = [UIColor clearColor];
-    [serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_roleView addSubview:serverButton];
-    //
-    
-    m_roleNameText = [[UITextField alloc] initWithFrame:CGRectMake(100, 100, 180, 40)];
-    m_roleNameText.returnKeyType = UIReturnKeyDone;
-    m_roleNameText.delegate = self;
-    m_roleNameText.textAlignment = NSTextAlignmentRight;
-    m_roleNameText.font = [UIFont boldSystemFontOfSize:15.0];
-    m_roleNameText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_roleNameText.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_roleView addSubview:m_roleNameText];
-    
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"搜 索" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [m_roleView addSubview:okButton];
-    
-//    UILabel* bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 205, 300, 40)];
-//    bottomLabel.numberOfLines = 2;
-//    bottomLabel.backgroundColor = [UIColor clearColor];
-//    bottomLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    bottomLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
-//    bottomLabel.text = @"繁体字可使用手写输入法，角色名过于生僻无法输入时，可尝试";
-//    [m_roleView addSubview:bottomLabel];
-//    
-//    UIButton* searchBtn = [CommonControlOrView setButtonWithFrame:CGRectMake(60, 227, 70, 15) title:@"查找不到?" fontSize:Nil textColor:nil bgImage:KUIImage(@"") HighImage:KUIImage(@"") selectImage:nil];
-//    searchBtn.backgroundColor = [UIColor clearColor];
-//    [searchBtn addTarget:self action:@selector(searchButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [m_roleView addSubview:searchBtn];
-    
-    
-    hud = [[MBProgressHUD alloc] initWithView:self.view];
-    [self.view addSubview:hud];
-    hud.labelText = @"搜索中...";
-}
-*/
 - (void)selectServerNameOK:(UIButton *)sender
 {
     if ([gameInfoArray count] != 0) {
@@ -383,7 +266,15 @@
          
             failure:^(AFHTTPRequestOperation *operation, id error) {
             [hud hide:YES];
-                              }];
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                }
+
+            }];
     }else{
         [hud show:YES];
     NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];

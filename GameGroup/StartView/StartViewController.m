@@ -104,10 +104,11 @@
 {
     NSMutableDictionary * paramsDic = [NSMutableDictionary dictionary];
     NSFileManager *fileManager =[NSFileManager defaultManager];
-    NSString *path  =[RootDocPath stringByAppendingString:@"/HC_NearByTopImg"];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
     NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
     if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        
      NSMutableDictionary*   openData= [NSMutableDictionary dictionaryWithContentsOfFile:path];
         [paramsDic setObject:KISDictionaryHaveKey(openData, @"gamelist_millis") forKey:@"gamelist_millis"];
     }else{
@@ -115,46 +116,12 @@
     }
 
     
-    
-    
-    
-    
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:kOpenData]) {
-        NSDictionary* tempDic = [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData];
-        [paramsDic setObject:KISDictionaryHaveKey(tempDic, @"gamelist_millis") forKey:@"gamelist_millis"];
-    }
-    else
-    {
-        [paramsDic setObject:@"" forKey:@"gamelist_millis"];
-    }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramsDic forKey:@"params"];
     [postDict setObject:@"203" forKey:@"method"];
   
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        /*
-         clientUpdate = 0;//版本是否升级
-         gamelist =         (
-         {
-         gameInfoMills = 1400211385840;//版本时间
-         id = 1;
-         img = " ";
-         name = "\U9b54\U517d\U4e16\U754c";
-         },
-         {
-         gameInfoMills = 1400211385006;//版本时间
-         id = 2;
-         img = " ";
-         name = "\U82f1\U96c4\U8054\U76df";
-         }
-         );
-         "gamelist_millis" = 1398485326397;
-         "gamelist_update" = 1;
-         registerNeedMsg = 0;
-         tokenValid = 0;
-         */
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 
@@ -165,6 +132,9 @@
 {
 //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
     [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
+    
+    
+    
     if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
         [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -178,7 +148,8 @@
     }
 
     
-    NSMutableDictionary* openData = [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] ? [[NSUserDefaults standardUserDefaults] objectForKey:kOpenData] : [NSMutableDictionary dictionaryWithCapacity:1];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    NSMutableDictionary* openData = [NSMutableDictionary dictionaryWithContentsOfFile:path] ? [NSMutableDictionary dictionaryWithContentsOfFile:path] : [NSMutableDictionary dictionaryWithCapacity:1];
     
     if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
         
@@ -214,8 +185,6 @@
                     if ([oldId isEqualToString: newid]&&![gameInfoMills isEqualToString: newGameInfoMills]) {
                         
                         NSLog(@"%@--%@-=-%@--%@",oldId,gameInfoMills,newid,newGameInfoMills);
-                        
-                        
                         
                         NSArray * commonPArray = KISDictionaryHaveKey(KISDictionaryHaveKey(temDic, @"gameParams"), @"commonParams");
                         for (int m =0; m<commonPArray.count; m++) {
@@ -257,8 +226,21 @@
                 }
             }
         }
-        [[NSUserDefaults standardUserDefaults] setObject:dict forKey:kOpenData];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+       
+      //把开机数据写入文件
+        [dict writeToFile:path atomically:YES];
+        
+    //把所有游戏的图标以key为游戏id写入文件
+        NSMutableDictionary *gameiconDic = [NSMutableDictionary dictionary];
+        NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameIcon.plist"];
+        NSArray *keysArr =[dict allKeys];
+        for (int i = 0; i <keysArr.count; i++) {
+            NSArray *arr = KISDictionaryHaveKey(dict, keysArr[i]);
+            for (NSDictionary *dic in arr) {
+                [gameiconDic setObject:KISDictionaryHaveKey(dic, @"img") forKey:KISDictionaryHaveKey(dic, @"id")];
+            }
+        }
+        [gameiconDic writeToFile:filePath atomically:YES];
     }
 }
 
