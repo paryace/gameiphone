@@ -226,25 +226,31 @@
                 }
             }
         }
-       
       //把开机数据写入文件
         [dict writeToFile:path atomically:YES];
-        
-    //把所有游戏的图标以key为游戏id写入文件
-        NSMutableDictionary *gameiconDic = [NSMutableDictionary dictionary];
-        NSArray *keysArr =[KISDictionaryHaveKey(dict, @"gamelist") allKeys];
-        for (int i = 0; i <keysArr.count; i++) {
-            NSArray *arr = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"gamelist"), keysArr[i]);
-            for (NSDictionary *dic in arr) {
-                [gameiconDic setObject:KISDictionaryHaveKey(dic, @"img") forKey:[NSString stringWithFormat:@"id%@",KISDictionaryHaveKey(dic, @"id")]];
-            }
-        }
-        NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameicon_wx"];
-        [gameiconDic writeToFile:filePath atomically:YES];
-        NSLog(@"%@",gameiconDic);
+        [self saveGameIconInfo:dict];
+    }else
+    {
+        [self saveGameIconInfo:openData];
     }
 }
 
+#pragma mark ----把所有游戏的图标以key为游戏id写入文件
+-(void)saveGameIconInfo:(NSDictionary*)openData
+{
+    NSMutableDictionary *gameiconDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *gameListDic=KISDictionaryHaveKey(openData, @"gamelist");
+    NSArray *keysArr =[gameListDic allKeys];
+    for (int i = 0; i <keysArr.count; i++) {
+        NSArray *arr = KISDictionaryHaveKey(gameListDic, keysArr[i]);
+        for (NSDictionary *dic in arr) {
+            [gameiconDic setObject:KISDictionaryHaveKey(dic, @"img") forKey:[NSString stringWithFormat:@"id%@",KISDictionaryHaveKey(dic, @"id")]];
+        }
+    }
+    NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameicon_wx"];
+    [gameiconDic writeToFile:filePath atomically:YES];
+    NSLog(@"%@",gameiconDic);
+}
 #pragma mark ----更新游戏数据、、wow服务器等
 -(void)getGameInfoWithGameID:(NSString *)gameId withParams:(NSString *)params
 {

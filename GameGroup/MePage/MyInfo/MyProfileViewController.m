@@ -553,11 +553,13 @@
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
     for (int i=0 ; i<gameIds.count;i++) {
-        NSString * gameid=[gameIds objectAtIndex:i];
-        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
-        gameImg_one.backgroundColor = [UIColor clearColor];
-        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
-        [gameIconView addSubview:gameImg_one];
+        if (i<3) {
+            NSString * gameid=[gameIds objectAtIndex:i];
+            EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
+            gameImg_one.backgroundColor = [UIColor clearColor];
+            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+            [gameIconView addSubview:gameImg_one];
+        }
     }
     return gameIconView;
 }
