@@ -62,6 +62,8 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
+    [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%d", m_currentPage] forKey:@"pageIndex"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
@@ -140,7 +142,7 @@
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
      cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:updateTime] Dis:[GameCommon getNewStringWithId:distance]];
     [cell refreshCell];
-    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+        NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
     [cell setGameIconUIView:gameidss];
     
     return cell;
@@ -169,9 +171,6 @@
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"id");
     detailVC.nickName = KISDictionaryHaveKey(tempDict, @"nickname");
 
-    
-    
-    
     detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     
     detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel");
@@ -193,7 +192,6 @@
     else{
         detailVC.isActiveAc =NO;
     }
-    
     detailVC.isChatPage = NO;
     [self.navigationController pushViewController:detailVC animated:YES];
 }

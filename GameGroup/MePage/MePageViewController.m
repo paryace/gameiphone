@@ -448,6 +448,7 @@
             cell.realmLabel.hidden = YES;
             cell.gameImg.hidden = YES;
             cell.pveLabel.hidden = YES;
+            cell.pveTitle.hidden=YES;
             cell.noCharacterLabel.hidden = NO;
             return cell;
         }
@@ -459,6 +460,7 @@
             cell.realmLabel.hidden = NO;
             cell.gameImg.hidden = NO;
             cell.pveLabel.hidden = NO;
+            cell.pveTitle.hidden=NO;
             cell.noCharacterLabel.hidden = YES;
             NSDictionary* tempDic = [characterArray objectAtIndex:indexPath.row];
 
@@ -502,7 +504,7 @@
             cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
             cell.nameLabel.text = name;
             cell.pveLabel.text = [GameCommon getNewStringWithId:v3];
-            cell.noCharacterLabel.text=v2;
+            cell.pveTitle.text=v2;
             return cell;
         }
     }
@@ -657,11 +659,14 @@
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
-            VC.characterId = chatId;
-            VC.gameId = gameId;
-            VC.myViewType = CHARA_INFO_MYSELF;
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
-            [self.navigationController pushViewController:VC animated:YES];
+            if([gameId isEqualToString:@"1"])
+            {
+                VC.characterId = chatId;
+                VC.gameId = gameId;
+                VC.myViewType = CHARA_INFO_MYSELF;
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
+                [self.navigationController pushViewController:VC animated:YES];
+            }
             NSLog(@"角色详情");
         }
         else

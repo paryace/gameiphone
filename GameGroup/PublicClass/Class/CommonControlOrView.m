@@ -63,12 +63,6 @@
     
     UILabel* starSign = [CommonControlOrView setLabelWithFrame:CGRectMake(ageSize.width + 10, 0, 50, myFrame.size.height) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:star textAlignment:NSTextAlignmentLeft];
     [myView addSubview:starSign];
-    
-//    UIImageView* gameImg_one = [[UIImageView alloc] initWithFrame:CGRectMake(ageSize.width + 50, 6, 18, 18)];
-//    gameImg_one.backgroundColor = [UIColor clearColor];
-//    gameImg_one.image = KUIImage(@"wow");
-//    [myView addSubview:gameImg_one];
-    
     CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
     UIView *gameicomView=[self getGameIconUIView:gameIds X:ageSize.width + 50 Y:6 Width:w Height:18];
     [myView addSubview:gameicomView];
@@ -94,11 +88,13 @@
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
     for (int i=0 ; i<gameIds.count;i++) {
-        NSString * gameid=[gameIds objectAtIndex:i];
-        EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-        gameImg_one.backgroundColor = [UIColor clearColor];
-        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
-        [gameIconView addSubview:gameImg_one];
+        if (i<3) {
+            NSString * gameid=[gameIds objectAtIndex:i];
+            EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
+            gameImg_one.backgroundColor = [UIColor clearColor];
+            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+            [gameIconView addSubview:gameImg_one];
+        }
     }
     return gameIconView;
 }

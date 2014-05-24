@@ -500,7 +500,7 @@
         }
         UIView* person_state ;
         if (imageId) {
-            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:[[BaseImageUrl stringByAppendingString:imageId] stringByAppendingString:@"/80"]];
+            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:[[BaseImageUrl stringByAppendingString:imageId] stringByAppendingString:@"/80/80"]];
         }else
         {
             person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:nil];
@@ -718,25 +718,34 @@
 //点击角色
 -(void)tapMyCharacter:(UIButton *)sender
 {
+    
     NSLog(@"点击角色%d",sender.tag);
-    CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
     NSArray* characterArray = self.hostInfo.charactersArr;
-    if ([characterArray isKindOfClass:[NSArray class]]){
-        NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
-        NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
+    NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
+    NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
+    if ([gameId isEqualToString:@"1"]) {
+        CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
         CVC.characterId = KISDictionaryHaveKey(dic, @"id");
         CVC.gameId = gameId;
-        //告诉是他人看到推过来的
-    }else{
-        NSDictionary *dic = KISDictionaryHaveKey(self.hostInfo.state, @"titleObj");
-        if ([dic isKindOfClass:[NSDictionary class]]) {
-            CVC.gameId =self.hostInfo.gameid;
-            CVC.characterId = self.hostInfo.characterid;
-        }
-        
+        CVC.myViewType = CHARA_INFO_PERSON;
+        [self.navigationController pushViewController:CVC animated:YES];
     }
-    CVC.myViewType = CHARA_INFO_PERSON;
-    [self.navigationController pushViewController:CVC animated:YES];
+    
+    
+//    if ([characterArray isKindOfClass:[NSArray class]]){
+//        
+//       
+//        //告诉是他人看到推过来的
+//    }else{
+//        NSDictionary *dic = KISDictionaryHaveKey(self.hostInfo.state, @"titleObj");
+//        if ([dic isKindOfClass:[NSDictionary class]]) {
+//            CVC.gameId =self.hostInfo.gameid;
+//            CVC.characterId = self.hostInfo.characterid;
+//        }
+//        
+//    }
+//    CVC.myViewType = CHARA_INFO_PERSON;
+//    [self.navigationController pushViewController:CVC animated:YES];
     
 }
 - (void)setAchievementView

@@ -141,12 +141,9 @@
 
 -(void)saveFansList:(NSMutableArray*)result
 {
-//    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-//    dispatch_async(queue, ^{
-        for (NSDictionary * dict in result) {
-            [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
-        }
-//    });
+    for (NSDictionary * dict in result) {
+        [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
+    }
 }
 -(void)getFansList
 {
@@ -159,7 +156,7 @@
         });
     });
 }
-//
+//刷新title
 -(void)refreTitle
 {
     NSString *fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
@@ -168,7 +165,6 @@
 
 -(NSMutableDictionary*)getTitleInfo:(NSDictionary*)titleDic
 {
-    
     NSMutableDictionary *titled=[[NSMutableDictionary alloc]init];
     NSString * titleObj = @"";
     NSString * titleObjLevel = @"";

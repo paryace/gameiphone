@@ -46,11 +46,6 @@
         lineLabel.backgroundColor = kColorWithRGB(200, 200, 200, 1.0);
         [myView addSubview:lineLabel];
         
-//        UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(200, 10, 2, 40)];
-//        lineImg.image = KUIImage(@"line");
-//        lineImg.backgroundColor = [UIColor clearColor];
-//        [myView addSubview:lineImg];
-        
         self.pveLabel = [[UILabel alloc] init];
         self.pveLabel.frame = CGRectMake(201, 7, 110, 20);
         self.pveLabel.textColor = UIColorFromRGBA(0x0077ff,1.0);
@@ -58,19 +53,12 @@
         self.pveLabel.font = [UIFont boldSystemFontOfSize:16.0];
         [myView addSubview:self.pveLabel];
         
-        UILabel* pveTitle = [[UILabel alloc] initWithFrame:CGRectMake(201, 30, 110, 20)];
-        pveTitle.textColor = UIColorFromRGBA(0xa7a7a7,1.0);
-        pveTitle.textAlignment = NSTextAlignmentCenter;
-        pveTitle.font = [UIFont boldSystemFontOfSize:13.0];
-        //pveTitle.text = @"刷新战斗力";
-        pveTitle.text = @"PVE战斗力";
-
-        [myView addSubview:pveTitle];
-        
-//        self.refreshPVEbtn = [[UIButton alloc] initWithFrame:CGRectMake(200, 0, 100, 60)];
-//        self.refreshPVEbtn.backgroundColor = [UIColor clearColor];
-//        [self.refreshPVEbtn addTarget:self action:@selector(refreshPVEbtnClick:) forControlEvents:UIControlEventTouchUpInside];
-//        [self addSubview:self.refreshPVEbtn];
+        self.pveTitle = [[UILabel alloc] initWithFrame:CGRectMake(201, 30, 110, 20)];
+        self.pveTitle.textColor = UIColorFromRGBA(0xa7a7a7,1.0);
+        self.pveTitle.textAlignment = NSTextAlignmentCenter;
+        self.pveTitle.font = [UIFont boldSystemFontOfSize:13.0];
+        self.pveTitle.text = @"PVE战斗力";
+        [myView addSubview:self.pveTitle];
         
         self.noCharacterLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 255, 60)];
         self.noCharacterLabel.backgroundColor = [UIColor clearColor];
@@ -96,8 +84,6 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

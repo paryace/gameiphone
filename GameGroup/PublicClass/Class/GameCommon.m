@@ -662,4 +662,17 @@ static GameCommon *my_gameCommon = NULL;
     }return NO;
 }
 
++(NSURL*)getImageUrl:(NSString*)imageid
+{
+    if ([self isEmtity:imageid]) {
+        return nil;
+    }else{
+        if ([GameCommon getNewStringWithId:imageid]) {
+            return [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageid]]];
+        }else{
+            return  nil;
+        }
+    }
+}
+
 @end
