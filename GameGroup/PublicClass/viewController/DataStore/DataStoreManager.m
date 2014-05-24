@@ -1749,6 +1749,7 @@ return @"";
 +(NSMutableDictionary *)getUserDictionary:(id)dbUser
 {
     NSMutableDictionary *user=[[NSMutableDictionary alloc]init];
+    [user setObject:[dbUser gameids]?[dbUser gameids]:@"" forKey:@"gameids"];
     [user setObject:[dbUser userName]?[dbUser userName]:@"" forKey:@"username"];
     [user setObject:[dbUser userId]?[dbUser userId]:@"" forKey:@"userid"];
     [user setObject:[dbUser nickName]?[dbUser nickName]:@"" forKey:@"nickname"];

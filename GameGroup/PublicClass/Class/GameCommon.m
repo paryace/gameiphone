@@ -537,6 +537,13 @@ static GameCommon *my_gameCommon = NULL;
     }
     return @"";
 }
++(NSArray*)getGameids:(NSString*)gameids
+{
+    if ([self isEmtity:gameids]) {
+        return nil;
+    }
+   return [gameids componentsSeparatedByString:@","];
+}
 
 //+(NSString *)isNewOrOldWithImage:(NSString *)imgStr
 //{

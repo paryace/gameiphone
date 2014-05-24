@@ -235,7 +235,7 @@
         NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameIcon.plist"];
         NSArray *keysArr =[dict allKeys];
         for (int i = 0; i <keysArr.count; i++) {
-            NSArray *arr = KISDictionaryHaveKey(dict, keysArr[i]);
+            NSArray *arr = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"gamelist"), keysArr[i]);
             for (NSDictionary *dic in arr) {
                 [gameiconDic setObject:KISDictionaryHaveKey(dic, @"img") forKey:KISDictionaryHaveKey(dic, @"id")];
             }

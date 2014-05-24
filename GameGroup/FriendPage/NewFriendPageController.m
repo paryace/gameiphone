@@ -206,8 +206,15 @@
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
     cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
+    
+//    NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
+    
     return cell;
 }
+
+
+
+
 //头像地址
 -(NSURL*)getHeadImageUrl:(NSString*)imageUrl
 {

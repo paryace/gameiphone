@@ -65,4 +65,5 @@
 + (void)cleanLastData;
 
 +(BOOL)isEmtity:(NSString*)str;
++(NSArray*)getGameids:(NSString*)gameids;
 @end
