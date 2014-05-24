@@ -440,7 +440,7 @@
         
     NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
         if (heardImgArray.count > 0) {
-            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80"]];
+            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80/80"]];
             NSLog(@"-------===---%@",[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80"]);
         }else
         {

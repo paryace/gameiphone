@@ -197,7 +197,7 @@
             imageID = [[imageID componentsSeparatedByString:@","] objectAtIndex:0];
         }
         if (imageID) {
-            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",imageID]];
+            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",imageID]];
         }else
         {
             cell.headerImage.imageURL = nil;

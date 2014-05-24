@@ -314,7 +314,9 @@
         NSDictionary* tempDic = [m_showDataArray objectAtIndex:indexPath.row];
         cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"titleObj"), @"title");
         cell.nameLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"titleObj"), @"rarenum") integerValue]];
+        //----
         cell.gameImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"gameid")] isEqualToString:@"1"] ? KUIImage(@"wow") : KUIImage(@"");
+        //----
         cell.characterLabel.text = KISDictionaryHaveKey(tempDic, @"charactername");
         
         cell.myIndexPath = indexPath;
@@ -338,7 +340,9 @@
         NSDictionary* tempDic = [m_hideDataArray objectAtIndex:indexPath.row];
         cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"titleObj"), @"title");
         cell.nameLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"titleObj"), @"rarenum") integerValue]];
+        //----
         cell.gameImg.image = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"gameid")] isEqualToString:@"1"] ? KUIImage(@"wow") : KUIImage(@"");
+        //----
         cell.characterLabel.text = KISDictionaryHaveKey(tempDic, @"charactername");
         
         cell.myIndexPath = indexPath;

@@ -322,11 +322,8 @@
         oneView.titleName= KISDictionaryHaveKey(titleDic, @"title");
         oneView.characterName= KISDictionaryHaveKey(tempDic, @"charactername");
         oneView.remark= KISDictionaryHaveKey(titleDic, @"remark");
-
         oneView.rarememo= KISDictionaryHaveKey(titleDic, @"rarememo");//%
-
         oneView.detailDis= KISDictionaryHaveKey(titleDic, @"remarkDetail");//查看详情内容
-
         [oneView setMainView];
         [upScroll addSubview:oneView];
     }

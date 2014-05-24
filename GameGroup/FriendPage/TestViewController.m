@@ -195,7 +195,7 @@
     }else{
     NSArray  * array= [fruits componentsSeparatedByString:@","];
     if (array.count>1) {
-        self.headImageView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",[array objectAtIndex:0]]];
+        self.headImageView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",[array objectAtIndex:0]]];
     }else
     {
         self.headImageView.imageURL =nil;

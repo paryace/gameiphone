@@ -244,7 +244,7 @@
         NSString* headURL;
         if (array.count>0) {
             headURL = [array objectAtIndex:0];
-            cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[GameCommon getNewStringWithId:headURL] stringByAppendingString:@"/80"]]];
+            cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[[GameCommon getNewStringWithId:headURL] stringByAppendingString:@"/80/80"]]];
         }else
         {
             cell.headImageV.imageURL =nil;

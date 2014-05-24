@@ -116,7 +116,7 @@
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey([m_tableData objectAtIndex:indexPath.row], @"sendTime") substringToIndex:10]];
     return cell;
 }
-
+//----
 #pragma mark 获取角色等头像
 - (NSString*)getCharacterHeardWithID:(NSString*)gameId
 {
@@ -125,7 +125,7 @@
     }
     return @"";
 }
-
+//----
 - (NSString*)getPveScoreHeardWithID:(NSString*)characterId
 {
     NSInteger imageId = [characterId integerValue];
