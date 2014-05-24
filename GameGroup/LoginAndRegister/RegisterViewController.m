@@ -641,7 +641,10 @@
 //        return;
 //    }
 //    NSArray *array = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
-    
+    if (!m_dataArray||m_dataArray.count<2) {
+        [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+        return;
+    }
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
@@ -650,7 +653,10 @@
             [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
         }else{
             UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
-            
+            if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+                return;
+            }
             [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
         }
     }

@@ -126,6 +126,11 @@
     [self.view addSubview:m_okButton];
 
     
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"请求中..";
+    [self.view addSubview:hud];
+    
+    
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -248,6 +253,8 @@
 
 - (void)addCharacterByNet
 {
+    [hud show:YES];
+    
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
         NSDictionary *dic = m_dataArray[i];
@@ -336,7 +343,7 @@
 - (void)changeByNet
 {
     hud.labelText = @"修改中...";
-    
+    [hud show:YES];
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     [params setObject:self.gameId forKey:@"gameid"];
     [params setObject:self.characterId forKey:@"characterid"];
@@ -348,7 +355,7 @@
     [body setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        [hud hide:YES];
+        [hud hide:YES];
         
         [self addCharacterByNet];//添加
         
@@ -368,17 +375,19 @@
 #pragma mark alertView
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//    if (alertView.tag == 18) {
-//        if (buttonIndex != alertView.cancelButtonIndex) {
-//            AuthViewController* authVC = [[AuthViewController alloc] init];
-//
-//            authVC.gameId = @"1";
-//            authVC.realm = m_realmText.text;
-//            authVC.character = m_roleNameText.text;
-//            authVC.authDelegate = self;
-//            [self.navigationController pushViewController:authVC animated:YES];
-//        }
-//    }
+    if (alertView.tag == 18) {
+        if (buttonIndex != alertView.cancelButtonIndex) {
+            AuthViewController* authVC = [[AuthViewController alloc] init];
+            
+            authVC.gameId = [m_dataArray[0] objectForKey:@"gameid"];
+            UITextField *tf = (UITextField *)[self.view viewWithTag:1];
+            UITextField*tf1 = (UITextField *)[self.view viewWithTag:2];
+            authVC.realm = tf.text;
+            authVC.character =tf1.text;
+            authVC.authDelegate = self;
+            [self.navigationController pushViewController:authVC animated:YES];
+        }
+    }
 }
 
 -(void)authCharacterSuccess
