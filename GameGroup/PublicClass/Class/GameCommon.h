@@ -50,8 +50,9 @@
 +(NSString *)DynamicCurrentTime:(NSString *)currentTime AndMessageTime:(NSString *)messageTime;
 
 + (NSString*)getHeardImgId:(NSString*)img;
+
 //根据gameid 返回open接口的游戏信息
-+(NSDictionary *)putoutDictionaryWithGameId:(NSString *)gameid;
++(NSString *)putoutgameIconWithGameId:(NSString *)gameid;
 
 //是否有网
 //+ (BOOL)testConnection;

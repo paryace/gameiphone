@@ -33,8 +33,18 @@
     [self setTopViewWithTitle:@"查找角色" withBackButton:YES];
     
     m_gameArray = [[NSMutableArray alloc] init];
-    m_gameArray = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
-
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    
+    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    
+    NSArray *allkeysArray = [dict allKeys];
+    for (int i = 0; i<allkeysArray.count; i++) {
+        NSArray *arr = [dict objectForKey:allkeysArray[i]];
+        [m_gameArray addObjectsFromArray:arr];
+    }
+    
+    
+    
     [self setMainView];
 }
 

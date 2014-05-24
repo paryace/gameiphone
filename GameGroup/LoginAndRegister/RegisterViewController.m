@@ -129,7 +129,10 @@
     
     
     gameInfoArray = [NSMutableArray new];
-    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    
+    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+
     NSArray *allkeys = [dict allKeys];
     for (int i = 0; i <allkeys.count; i++) {
         NSArray *array = [dict objectForKey:allkeys[i]];

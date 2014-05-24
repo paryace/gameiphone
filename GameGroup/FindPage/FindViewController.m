@@ -179,7 +179,15 @@
     
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     drawView.myViewDelegate = self;
-    drawView.tableDic = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+//    drawView.tableDic = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
+    
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    
+    drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    
+    
+
+    
     drawView.tableArray = [drawView.tableDic allKeys];
     [self.view addSubview:drawView];
  /*
@@ -597,9 +605,11 @@
 {
     [self didClickMenu:nil];
     bottomView.hidden = NO;
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
-    NSDictionary *dict = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
-    NSArray *allkeys = [dict allKeys];    
+    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+
+    NSArray *allkeys = [dict allKeys];
     manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
     NSLog(@"manDic--%@",manDic);
 }

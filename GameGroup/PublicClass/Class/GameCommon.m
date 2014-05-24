@@ -624,19 +624,11 @@ static GameCommon *my_gameCommon = NULL;
     [app.xmppHelper disconnect];
 }
 
-+(NSDictionary *)putoutDictionaryWithGameId:(NSString *)gameid
++(NSString *)putoutgameIconWithGameId:(NSString *)gameid
 {
-    NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:kOpenData];
-    NSArray *allkeyArr = [dic allKeys];
-    for (int i = 0; i <allkeyArr.count; i++) {
-        NSArray *array = KISDictionaryHaveKey(dic, allkeyArr[i]);
-        for (NSDictionary *dict in array) {
-            if ([KISDictionaryHaveKey(dict, @"id")isEqualToString:gameid] ){
-                return dict;
-            }
-        }
-    }
-    
+    NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameIcon.plist"];
+    NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    return [self getNewStringWithId: KISDictionaryHaveKey(dic, gameid)];
 }
 
 
