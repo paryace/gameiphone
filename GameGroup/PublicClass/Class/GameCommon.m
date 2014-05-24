@@ -638,9 +638,6 @@ static GameCommon *my_gameCommon = NULL;
     return [self getNewStringWithId: KISDictionaryHaveKey(dic, gameid)];
 }
 
-
-
-
 #pragma mark 是否由1.0版本升级
 + (void)cleanLastData
 {

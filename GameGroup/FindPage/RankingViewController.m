@@ -544,6 +544,7 @@
             NSLog(@"去绑定");//去绑定
             AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
             addVC.viewType = CHA_TYPE_Add;
+           // addVC.contentDic =
             [self.navigationController pushViewController:addVC animated:YES];
         }else{
             
