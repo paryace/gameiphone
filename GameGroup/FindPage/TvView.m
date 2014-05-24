@@ -64,7 +64,8 @@
         menuButotn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-30, 44, 44)];
         menuButotn.center = CGPointMake(160, self.bounds.size.height);
         [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
-        [menuButotn setBackgroundImage:KUIImage(@"wow") forState:UIControlStateNormal];
+        menuButotn.backgroundColor = [UIColor clearColor];
+        [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
         [self addSubview:menuButotn];
         
  
@@ -157,7 +158,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     NSArray *arr = [self.tableDic objectForKey:[tableArray objectAtIndex:indexPath.section]];
     NSDictionary *dic = [arr objectAtIndex:indexPath.row];
     

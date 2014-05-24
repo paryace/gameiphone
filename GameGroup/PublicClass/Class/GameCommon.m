@@ -624,6 +624,24 @@ static GameCommon *my_gameCommon = NULL;
     [app.xmppHelper disconnect];
 }
 
++(NSDictionary *)putoutDictionaryWithGameId:(NSString *)gameid
+{
+    NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:kOpenData];
+    NSArray *allkeyArr = [dic allKeys];
+    for (int i = 0; i <allkeyArr.count; i++) {
+        NSArray *array = KISDictionaryHaveKey(dic, allkeyArr[i]);
+        for (NSDictionary *dict in array) {
+            if ([KISDictionaryHaveKey(dict, @"id")isEqualToString:gameid] ){
+                return dict;
+            }
+        }
+    }
+    
+}
+
+
+
+
 #pragma mark 是否由1.0版本升级
 + (void)cleanLastData
 {

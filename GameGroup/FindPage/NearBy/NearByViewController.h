@@ -12,4 +12,5 @@
 @property (strong,nonatomic) AppDelegate * appDel;
 @property(nonatomic,copy)NSString *cityCode;
 @property(nonatomic,copy)NSString *titleStr;
+@property(nonatomic,copy)NSString *gameidStr;
 @end

@@ -141,7 +141,7 @@
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLon]] forKey:@"longitude"];
-    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:self.gameidStr forKey:@"gameid"];
     [paramDict setObject:self.cityCode?self.cityCode:@"" forKey:@"cityCode"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
