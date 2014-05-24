@@ -852,10 +852,12 @@ typedef enum : NSUInteger {
     
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
     
-    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
+    NSString * headImage=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
+    
+    if ([GameCommon isEmtity:headImage]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
+    cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:headImage],@"/80/80"]];
     }
     cell.headImgBtn.tag= indexPath.row;
     

@@ -87,7 +87,7 @@
         
         [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
         if (_friendImgStr) {
-            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",_friendImgStr]];
         }else{
             headImgView.imageURL = nil;
         }
