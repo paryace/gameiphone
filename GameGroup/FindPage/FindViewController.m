@@ -179,48 +179,14 @@
     
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     drawView.myViewDelegate = self;
-//    drawView.tableDic = [[[NSUserDefaults standardUserDefaults]objectForKey:kOpenData]objectForKey:@"gamelist"];
     
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
     drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
     
-    
-
-    
     drawView.tableArray = [drawView.tableDic allKeys];
     [self.view addSubview:drawView];
- /*
-    UIView *topView = [[UIView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
-    topView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
-    [self.view addSubview:topView];
-    
-    
-    
-    UILabel *titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?20:0, 320, 44)];
-    titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text  = @"发现";
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.backgroundColor = [ UIColor clearColor];
-    [topView addSubview:titleLabel];
-    
-    UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, 20)];
-    textLabel.text = @"选择游戏 开始您的游戏社交";
-    textLabel.textColor = UIColorFromRGBA(0xf3f3f3, 1);
-    textLabel.textAlignment = NSTextAlignmentCenter;
-    textLabel.backgroundColor =[ UIColor clearColor];
-    textLabel.font = [UIFont boldSystemFontOfSize:14];
-    [topView addSubview:textLabel];
-    
-    
-    menuButotn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 44, 44)];
-    menuButotn.center = CGPointMake(160, KISHighVersion_7?110:90);
-    [menuButotn addTarget:self action:@selector(didClickMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [menuButotn setBackgroundImage:KUIImage(@"wow") forState:UIControlStateNormal];
-    [self.view addSubview:menuButotn];
-    
-  */
+
     
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];

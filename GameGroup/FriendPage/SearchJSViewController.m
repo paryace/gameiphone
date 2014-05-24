@@ -306,7 +306,6 @@
         [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             SearchWithGameViewController *secGame = [[SearchWithGameViewController alloc]init];
-            
             NSArray *array = KISDictionaryHaveKey(responseObject, @"guilds");
             if (array.count>0) {
             secGame.dataDic = [NSDictionary new];

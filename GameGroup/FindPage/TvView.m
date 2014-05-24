@@ -46,7 +46,7 @@
         tv.hidden = YES;
         [self addSubview:tv];
         
-        titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,self.bounds.size.height-90, 320, 44)];
+        titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?20:0, 320, 44)];
         titleLabel.font = [UIFont boldSystemFontOfSize:20];
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.text  = @"发现";
@@ -90,7 +90,7 @@
         
         self.frame = sf;
         menuButotn.center = CGPointMake(160, self.bounds.size.height);
-        titleLabel.hidden = NO;
+        titleLabel.text = @"发现";
         textLabel.hidden =NO;
         CGRect frame = tv.frame;
         frame.size.height = 0;
@@ -107,7 +107,7 @@
         [self.superview bringSubviewToFront:self];
         tv.hidden = NO;
         self.showList = YES;//显示下拉框
-        titleLabel.hidden = YES;
+        titleLabel.text = @"请选择游戏";
         textLabel.hidden = YES;
         CGRect frame = tv.frame;
         frame.size.height = 0;
@@ -177,7 +177,7 @@
     self.frame = sf;
     menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
     menuButotn.center = CGPointMake(160, self.bounds.size.height);
-    titleLabel.hidden = NO;
+    titleLabel.text  = @"发现";
     textLabel.hidden =NO;
     CGRect frame = tv.frame;
     frame.size.height = 0;
