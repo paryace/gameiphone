@@ -8,6 +8,7 @@
 
 #import "CommonControlOrView.h"
 #import "EGOImageView.h"
+#import "ImageService.h"
 
 @implementation CommonControlOrView
 
@@ -100,7 +101,7 @@
 }
 //---
 //好友详情 个人动态
-+ (UIView*)setPersonStateViewTime:(NSString*)time nameText:(NSString*)nameText achievement:(NSString*)achievement achievementLevel:(NSString*)level titleImage:(NSString*)titleImage
++ (UIView*)setPersonStateViewTime:(NSString*)time nameText:(NSString*)nameText achievement:(NSString*)achievement achievementLevel:(NSString*)level titleImage:(NSString*)images
 {
     UIView* myView = [[UIView alloc] init];
     UILabel* oneLabel =  [CommonControlOrView setLabelWithFrame:CGRectMake(10, 5, 200, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:12.0] text:nameText textAlignment:NSTextAlignmentLeft];
@@ -119,11 +120,14 @@
     [myView addSubview:thereLabel];
     
     EGOImageView* img = [[EGOImageView alloc] initWithFrame:CGRectMake(250, 20, 40, 40)];
-    if ([titleImage isEqualToString:[BaseImageUrl stringByAppendingString:@"/80"]]) {
-        img.imageURL = nil;
-    }else{
-    img.imageURL = [NSURL URLWithString:titleImage];
-    }
+//    if ([titleImage isEqualToString:[BaseImageUrl stringByAppendingString:@"/80"]]) {
+//        img.imageURL = nil;
+//    }else{
+//        img.imageURL = [NSURL URLWithString:titleImage];
+//    }
+    
+    img.imageURL=[ImageService getImageStr:images Width:80];
+    
     img.layer.cornerRadius = 5;
     img.layer.masksToBounds = YES;
     [myView addSubview:img];

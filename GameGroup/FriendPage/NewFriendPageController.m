@@ -16,6 +16,7 @@
 #import "TestViewController.h"
 #import "AddFriendsViewController.h"
 #import "MyFansPageViewController.h"
+#import "ImageService.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
@@ -187,7 +188,7 @@
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
     NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
-    NSURL *url=[self getHeadImageUrl:iamgeId];
+    NSURL * url=[ImageService getImageStr:iamgeId Width:80];
     cell.headImageV.imageURL = url;
     
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
@@ -208,23 +209,6 @@
     NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameids];
     return cell;
-}
-
-
-
-
-//头像地址
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-        }else{
-            return  nil;
-        }
-    }
 }
 //头像默认图片
 -(NSString*)headPlaceholderImage:(NSString*)gender

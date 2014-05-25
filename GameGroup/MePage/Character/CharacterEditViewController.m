@@ -181,7 +181,7 @@
 //头像地址
 -(NSURL*)getHeadImageUrl:(NSString*)imageUrl
 {
-    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+    if ([GameCommon isEmtity:imageUrl]) {
         return nil;
     }else{
         if ([GameCommon getNewStringWithId:imageUrl]) {

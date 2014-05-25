@@ -18,6 +18,8 @@
 #import "UserManager.h"
 #import "HelpViewController.h"
 #import "MyCircleViewController.h"
+#import "ImageService.h"
+
 @interface TestViewController ()
 {
     UILabel*        m_titleLabel;
@@ -188,19 +190,23 @@
     self.headImageView.layer.cornerRadius = 5;
     self.headImageView.layer.masksToBounds=YES;
     self.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-    NSString * fruits = self.titleImage;
-    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
-        self.headImageView.imageURL =nil;
-
-    }else{
-    NSArray  * array= [fruits componentsSeparatedByString:@","];
-    if (array.count>1) {
-        self.headImageView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",[array objectAtIndex:0]]];
-    }else
-    {
-        self.headImageView.imageURL =nil;
-    }
-    }
+    
+    
+//    NSString * fruits = self.titleImage;
+//    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
+//        self.headImageView.imageURL =nil;
+//
+//    }else{
+//    NSArray  * array= [fruits componentsSeparatedByString:@","];
+//    if (array.count>1) {
+//        self.headImageView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",[array objectAtIndex:0]]];
+//    }else
+//    {
+//        self.headImageView.imageURL =nil;
+//    }
+//    }
+    
+   self.headImageView.imageURL =[ImageService getImageStr:self.titleImage Width:80];
     
     m_currentStartY +=80;
     
@@ -461,7 +467,7 @@
         m_currentStartY += 30;
         
         NSString* showTitle = @"";
-        NSString* imageId = @"";
+//        NSString* imageId = @"";
         if ([KISDictionaryHaveKey(self.hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]])
         {//目标 别人评论了我
 //            NSDictionary* destDic = KISDictionaryHaveKey(self.hostInfo.state, @"destUser");
@@ -491,7 +497,8 @@
                 showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
                 
             }
-            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(self.hostInfo.state, @"userimg")];
+//            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(self.hostInfo.state, @"userimg")];
+            
         }
         
         NSString* tit = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"title")] isEqualToString:@""] ? KISDictionaryHaveKey(self.hostInfo.state, @"msg") : KISDictionaryHaveKey(self.hostInfo.state, @"title");
@@ -499,12 +506,15 @@
             tit = [NSString stringWithFormat:@"「%@」", tit];
         }
         UIView* person_state ;
-        if (imageId) {
-            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:[[BaseImageUrl stringByAppendingString:imageId] stringByAppendingString:@"/80/80"]];
-        }else
-        {
-            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:nil];
-        }
+        
+        person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:KISDictionaryHaveKey(self.hostInfo.state, @"userimg")];
+        
+//        if (imageId) {
+//            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:[[BaseImageUrl stringByAppendingString:imageId] stringByAppendingString:@"/80/80"]];
+//        }else
+//        {
+//            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:nil];
+//        }
         
         currentHeigth = person_state.frame.size.height;
         person_state.frame = CGRectMake(0, m_currentStartY, kScreenWidth, currentHeigth);
