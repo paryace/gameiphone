@@ -37,16 +37,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self setTopViewWithTitle:@"查询结果"withBackButton:YES];
+
     m_dataArray = [NSMutableArray array];
     if (self.myInfoType ==COME_GUILD) {
-        m_dataArray = [self.dataDic objectForKey:@"guilds"];
-        
-        [self setTopViewWithTitle:@"查找工会"withBackButton:YES];
+    m_dataArray = [self.dataDic objectForKey:@"guilds"];
     }else{
-    
     m_dataArray =[self.dataDic objectForKey:@"characters"];
-    
-    [self setTopViewWithTitle:[NSString stringWithFormat:@"共查找到%@个角色",KISDictionaryHaveKey(self.dataDic, @"characterTotalNum")] withBackButton:YES];
     }
     UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
     tableView.delegate = self;
@@ -59,6 +56,7 @@
         titleLabel.backgroundColor = UIColorFromRGBA(0x455ca8, 1);
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.text = [NSString stringWithFormat:@"共查询到%@条数据,建议输入更具体的信息查询",KISDictionaryHaveKey(self.dataDic,@"characterTotalNum")];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.font = [UIFont systemFontOfSize:12];
         tableView.tableHeaderView = titleLabel;
     }
@@ -76,11 +74,7 @@
     helpLbel.userInteractionEnabled = YES;
     helpLbel.textAlignment = NSTextAlignmentCenter;
     [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
-    
     tableView.tableFooterView = helpLbel;
-    
-    
-    
 }
 -(void)enterToHelpPage:(id)sender
 {
@@ -165,7 +159,6 @@
             UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看角色信息",@"举报该用户", nil];
             alertView.tag = 1002;
             [alertView show];
-            
             
         }else{
             

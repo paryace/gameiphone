@@ -340,7 +340,18 @@
         {
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {    //新的朋友圈动态
                 NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
+                    i++;
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
+                }else{
+                    int i = 0;
+                    i++;
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
+                }
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
+                
+
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])
             {

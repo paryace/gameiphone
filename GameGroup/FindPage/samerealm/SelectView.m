@@ -7,7 +7,7 @@
 //
 
 #import "SelectView.h"
-
+#import "EGOImageView.h"
 @implementation SelectView
 
 - (id)initWithFrame:(CGRect)frame
@@ -37,8 +37,8 @@
     for (int i = 0; i < buttonCount; i++) {
         NSDictionary * dataDic = [self.buttonTitleArray objectAtIndex:i];
         
-        UIImageView* gameImg = [[UIImageView alloc] initWithFrame:CGRectMake(70, 29 + i * 40, 18, 18)];
-        gameImg.image = [[dataDic objectForKey:kSelectGameIdKey] isEqualToString:@"1"] ? KUIImage(@"wow") : KUIImage(@"");
+        EGOImageView* gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(70, 29 + i * 40, 18, 18)];
+        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]]]];
         [self addSubview:gameImg];
         
         UIButton*  tempButton = [[UIButton alloc] initWithFrame:CGRectMake(55, 18 + i * 40, 210, 40)];

@@ -119,10 +119,10 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"125" forKey:@"method"];
+    [postDict setObject:@"218" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [hud show:YES];
@@ -130,27 +130,20 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject)
      {
          isGetNetSuccess =YES;
-//         if ([responseObject isEqualToString:@""]) {
-//             [self showAlertViewWithTitle:nil message:@"你还没有角色呢" buttonTitle:@"确定"];
              [hud hide: YES];
-//             return ;
-//         }
-        if ([KISDictionaryHaveKey(responseObject, @"1") isKindOfClass:[NSArray class]])
+        if ([responseObject isKindOfClass:[NSArray class]])
         {
             NSMutableArray* selectArray = [[NSMutableArray alloc] init];
-            for (NSDictionary* tempDic in KISDictionaryHaveKey(responseObject, @"1"))
+            for (NSString *str in responseObject)
             {
-                NSString* realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"realm")];
-                if (![m_realmsArray containsObject:realmStr])
-                {
+                NSString* realmStr = str;
                     [m_realmsArray addObject:realmStr];
                    
                     NSMutableDictionary* selectViewDic = [NSMutableDictionary dictionaryWithCapacity:1];
-                    [selectViewDic setObject:@"1" forKey:kSelectGameIdKey];
+                    [selectViewDic setObject:self.gameid forKey:kSelectGameIdKey];
                     [selectViewDic setObject:realmStr forKey:kSelectRealmKey];
-                    [selectViewDic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"name")] forKey:kSelectCharacterKey];
+                    [selectViewDic setObject:str forKey:kSelectCharacterKey];
                     [selectArray addObject:selectViewDic];
-                }
             }
             if ([m_realmsArray count] > 0) {
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]!=nil&&[[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]intValue]<m_realmsArray.count) {

@@ -51,7 +51,7 @@
     m_myTableView.tableHeaderView = topImg;
     
     
-    [self addheadView];
+  //  [self addheadView];
     [self addFootView];
     [self getguildMembersFromNet];
     

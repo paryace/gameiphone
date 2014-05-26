@@ -32,6 +32,8 @@
     UILabel *lb;
     float button_center_x;
     float button_center_y;
+    float curren_hieght;
+    
     NSMutableArray *centerBtnArray;
     BOOL isDidClick;
     TvView *drawView;
@@ -131,23 +133,33 @@
         }
     }
     
-    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
-    {
-        NSLog(@"-------->>>%d",friendDunamicmsgCount);
-        if(m_notibgInfoImageView.hidden)
-        {
-            m_notibgCircleNewsImageView.hidden = NO;
-        }
-        else{
-            m_notibgCircleNewsImageView.hidden = YES;
-        }
-        //        m_notibgInfoImageView.hidden = NO;
-        //        if (friendDunamicmsgCount > 99) {
-        //            lb.text = @"99";
-        //        }
-        //        else
-      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
+//    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
+//    {
+//        NSLog(@"-------->>>%d",friendDunamicmsgCount);
+//        if(m_notibgInfoImageView.hidden)
+//        {
+//            m_notibgCircleNewsImageView.hidden = NO;
+//        }
+//        else{
+//            m_notibgCircleNewsImageView.hidden = YES;
+//        }
+//        //        m_notibgInfoImageView.hidden = NO;
+//        //        if (friendDunamicmsgCount > 99) {
+//        //            lb.text = @"99";
+//        //        }
+//        //        else
+//      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
+//    }
+    NSString *commStr1 = @"";
+    NSString *commStr2 = @"";
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+        commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
     }
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+    }
+    commentLabel.text = [commStr1 stringByAppendingString:commStr2];
+
 }
 
 - (void)viewDidLoad
@@ -155,13 +167,13 @@
     [super viewDidLoad];
     
     isDidClick = YES;
-    
+    curren_hieght =kScreenHeigth;
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor blackColor];
     manDic = [NSDictionary new];
     
     //初始化背景图片 并且添加点击换图方法
-    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
+    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, kScreenHeigth-(KISHighVersion_7?20:0))];
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"]) {
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
@@ -215,7 +227,15 @@
     commentLabel.textAlignment = NSTextAlignmentLeft;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
-//    commentLabel.text = @"没有新的的消息";
+    NSString *commStr1 = @"";
+    NSString *commStr2 = @"";
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+        commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+    }
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+    }
+    commentLabel.text = [commStr1 stringByAppendingString:commStr2];
     [bottomView addSubview:commentLabel];
     
     headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
@@ -253,7 +273,7 @@
 
 -(void)buildMenuButton
 {
-    sameRealmBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"realm" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    sameRealmBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"samerealm_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
     sameRealmBtn.hidden = YES;
     
 //    添加退拽手势
@@ -263,7 +283,7 @@
     
     [self.view addSubview:sameRealmBtn];
     
-    nearByBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"nearby" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    nearByBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"nearby_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
     nearByBtn.hidden = YES;
     //    添加退拽手势
 
@@ -275,7 +295,7 @@
     [self.view addSubview:nearByBtn];
     
     
-    encoBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"spring" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    encoBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"enxo_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
     encoBtn.hidden = YES;
     //    添加退拽手势
 
@@ -287,7 +307,7 @@
     [self.view addSubview:encoBtn];
     
     
-    moGirlBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"gril" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    moGirlBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"mogirl_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
     moGirlBtn.hidden = YES;
     //    添加退拽手势
 
@@ -304,6 +324,8 @@
 {
     isDidClick =NO;
     c.center = [[[ev allTouches] anyObject] locationInView:self.view];
+
+    
     NSArray *centerArray = [NSArray arrayWithObjects:@(c.center.x),@(c.center
                             .y),nil];
     if (c ==nearByBtn) {
@@ -338,6 +360,8 @@
     if (drawView.showList) {
         nearByBtn.hidden = NO;
         bottomView.hidden = NO;
+        [self.view sendSubviewToBack:drawView];
+        [self.view sendSubviewToBack:imgV];
 
         
         [UIView beginAnimations:nil context:nil];
@@ -345,9 +369,18 @@
 
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"]) {
             NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"];
-            if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
-                nearByBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
-            }else{
+            float i =[centerArray[1]floatValue];
+            
+            NSLog(@"%d",KISHighVersion_7?130:110);
+            if (i>curren_hieght-110||i<(KISHighVersion_7?130:110)) {
+                if ([centerArray[1]floatValue]>curren_hieght-110) {
+                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+                }else if (i<KISHighVersion_7?130:110)
+                {
+                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+                }
+            }
+            else{
                 nearByBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
             }
         }else{
@@ -357,8 +390,6 @@
         [self performSelector:@selector(showSamerealm:) withObject:nil afterDelay:0.15];
         [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
         [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
-        [self changebuttonImgWithButton:nearByBtn img:@"nearby_highlight" durTime:0.2 delay:10];
-
 
     }else{
         sameRealmBtn.hidden = YES;
@@ -385,8 +416,15 @@
 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"]) {
         NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"];
-        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
+        float i = [centerArray[1]floatValue];
+        
+        if (i>curren_hieght-110) {
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?130:110))
+        {
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+            
+
         }else{
             sameRealmBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
         }
@@ -394,7 +432,7 @@
         sameRealmBtn.center = CGPointMake(80, 150);
     }
     [UIView commitAnimations];
-    [self changebuttonImgWithButton:sameRealmBtn img:@"samerealm_highlight" durTime:0.2 delay:1.2];
+
   //  [self changebuttonImgWithButton:sameRealmBtn img:@"realm" durTime:0.2 delay:1.4];
 ;
 
@@ -409,8 +447,13 @@
 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"]) {
         NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"];
-        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
-            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],self.view.bounds.size.height-110);
+        float i = [centerArray[1]floatValue];
+
+        if (i>curren_hieght-110) {
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?130:110))
+        {
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
         }else{
         moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
         }
@@ -418,8 +461,6 @@
         moGirlBtn.center = CGPointMake(240, 150);
     }
     [UIView commitAnimations];
-    [self changebuttonImgWithButton:moGirlBtn img:@"mogirl_highlight" durTime:0.2 delay:1.4];
-    [self changebuttonImgWithButton:moGirlBtn img:@"girl" durTime:0.2 delay:5];
 ;
 
 }
@@ -433,8 +474,15 @@
 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"]) {
         NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"];
-        if ([centerArray[1]floatValue]>self.view.bounds.size.height-110) {
-            encoBtn.center = CGPointMake([centerArray[0]floatValue], self.view.bounds.size.height-110);
+        float i = [centerArray[1]floatValue];
+
+        if (i>curren_hieght-110) {
+            encoBtn.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
+            
+        }else if (i<(KISHighVersion_7?130:110))
+        {
+            encoBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+
         }else{
         encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
         }
@@ -442,18 +490,46 @@
         encoBtn.center = CGPointMake(240, 300);
     }
     [UIView commitAnimations];
-    [self changebuttonImgWithButton:encoBtn img:@"enxo_highlight" durTime:0.2 delay:1.8];
-   // [self changebuttonImgWithButton:encoBtn img:@"spring" durTime:0.2 delay:2.1];
 
-    
+ 
 }
 
 
--(void)changebuttonImgWithButton:(UIButton *)button img:(NSString *)img durTime:(float)dTime delay:(float)delay
+-(void)changebuttonImgWithButton:(UIButton *)button framekey:(NSString *)framekey initialcenter:(CGPoint)initiAlcenter img:(NSString *)img durTime:(float)dTime delay:(float)delay img2:(NSString *)img2 durtime2:(float)dTime2 delay:(float)delay2
 {
-    [UIView animateWithDuration:dTime delay:delay options:UIViewAnimationOptionCurveEaseIn animations:^{
-        [button setBackgroundImage:KUIImage(img) forState:UIControlStateNormal];
+    [UIView animateWithDuration:0.5 animations:^{
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.4];
+        
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:framekey]) {
+            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:framekey];
+            if ([centerArray[1]floatValue]>curren_hieght-110) {
+                button.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
+            }else{
+                button.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+            }
+        }else{
+            button.center = initiAlcenter;
+        }
+        [UIView commitAnimations];
+        
     } completion:^(BOOL finished){
+        if (finished) {
+            [UIView animateWithDuration:3 animations:^{
+                
+                [button setBackgroundImage:KUIImage(img) forState:UIControlStateNormal];
+                
+            } completion:^(BOOL finished){
+                if (finished) {
+                    
+                    [UIView beginAnimations:nil context:nil];
+                    [UIView setAnimationDelay:delay2];
+                    [UIView setAnimationDuration:dTime2];
+                    [button setBackgroundImage:KUIImage(img2) forState:UIControlStateNormal];
+                    [UIView commitAnimations];
+                }
+            }];
+        }
     }];
 }
 
@@ -493,6 +569,7 @@
     }
     if (sender ==sameRealmBtn) {
         
+        NSLog(@"123123123312313");
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         SameRealmViewController* realmsVC = [[SameRealmViewController alloc] init];
         realmsVC.gameid = KISDictionaryHaveKey(manDic, @"id");
@@ -513,6 +590,7 @@
     m_notibgCircleNewsImageView.hidden = YES;
     friendDunamicmsgCount =0;
     myDunamicmsgCount =0;
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
     commentLabel.text = @"暂无新的动态";
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
@@ -587,6 +665,7 @@
 -(void)didClickGameIdWithView:(TvView *)myView
 {
     bottomView.hidden =YES;
+    
     [self didClickMenu:nil];
 
 }
@@ -594,6 +673,8 @@
 {
     [self didClickMenu:nil];
     bottomView.hidden = NO;
+    [self.view sendSubviewToBack:drawView];
+    [self.view sendSubviewToBack:imgV];
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
     NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
@@ -608,8 +689,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 
 
 
