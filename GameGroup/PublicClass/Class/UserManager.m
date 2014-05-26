@@ -98,27 +98,27 @@ static UserManager *userManager = NULL;
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.UserManager", NULL);
     dispatch_async(queue, ^{
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        NSString * nickName=KISDictionaryHaveKey(recDict,@"alias");
-        if ([GameCommon isEmtity:nickName]) {
-            nickName=KISDictionaryHaveKey(recDict,@"nickname");
-        }
-         [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:nickName andImg:KISDictionaryHaveKey(recDict,@"img")];
         
+        [recDict setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
         if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
             NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+            
             NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
             NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
             [recDict setObject:titleObj forKey:@"titleName"];
             [recDict setObject:titleObjLevel forKey:@"rarenum"];
         }
-        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
-        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
-            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-        }else{
-            [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
-            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-        }
+        [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        
+//        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
+//        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
+//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        }else{
+//            [DataStoreManager deleteAllUserWithUserId:KISDictionaryHaveKey(responseObject, @"userid")];
+//            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        }
         [self updateMsgInfo:recDict];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
         });
@@ -135,6 +135,7 @@ static UserManager *userManager = NULL;
     }
     NSString * userImg=KISDictionaryHaveKey(userDict,@"img");
     NSString * userId=KISDictionaryHaveKey(userDict,@"userid");
+    [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:nickName andImg:userImg];
     [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];
 }
 

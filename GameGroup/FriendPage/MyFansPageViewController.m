@@ -10,6 +10,7 @@
 #import "PersonTableCell.h"
 #import "TestViewController.h"
 #import "MJRefresh.h"
+#import "ImageService.h"
 
 @interface MyFansPageViewController ()
 {
@@ -230,7 +231,8 @@
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
-    cell.headImageV.imageURL=[self getHeadImageUrl:[GameCommon getHeardImgId:img]];
+    cell.headImageV.imageURL=[ImageService getImageStr:img Width:80];
+    
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     
     
@@ -253,24 +255,10 @@
     NSDictionary * tempDict= [m_otherSortFansArray objectAtIndex:indexPath.row];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     TestViewController *detailVC = [[TestViewController alloc]init];
-    detailVC.userId = KISDictionaryHaveKey(tempDict, @"id");
+    detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
     detailVC.fansTestRow = indexPath.row;
     detailVC.isFansPage = YES;
     [self.navigationController pushViewController:detailVC animated:YES];
-}
-
-//头像地址
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-        }else{
-            return  nil;
-        }
-    }
 }
 
 - (void)addFooter

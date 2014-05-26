@@ -652,8 +652,7 @@
     }
     else if(indexPath.section == 2)
     {
-        [[Custom_tabbar showTabBar] hideTabBar:YES];
-        CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+        
          NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
         if ([characterArray count]>0){
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
@@ -661,6 +660,8 @@
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
             if([gameId isEqualToString:@"1"])
             {
+                [[Custom_tabbar showTabBar] hideTabBar:YES];
+                CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
                 VC.characterId = chatId;
                 VC.gameId = gameId;
                 VC.myViewType = CHARA_INFO_MYSELF;
@@ -671,6 +672,7 @@
         }
         else
         {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             CharacterEditViewController *characterVC = [[CharacterEditViewController alloc]init];
             characterVC.isFromMeet =NO;
             [self.navigationController pushViewController:characterVC animated:YES];

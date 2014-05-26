@@ -10,6 +10,7 @@
 #import "PersonTableCell.h"
 #import "TestViewController.h"
 #import "MJRefresh.h"
+#import "ImageService.h"
 @interface FunsOfOtherViewController ()
 {
     UITableView * m_myFansTableView;
@@ -136,7 +137,9 @@
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
-    cell.headImageV.imageURL=[self getHeadImageUrl:[GameCommon getHeardImgId:img]];
+    cell.headImageV.imageURL=[ImageService getImageStr:img Width:80];
+    
+    
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
@@ -148,19 +151,6 @@
     
     return cell;
 }
-//头像地址
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-        }else{
-            return  nil;
-        }
-    }
-}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myFansTableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -169,21 +159,15 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     TestViewController *detailVC = [[TestViewController alloc]init];
     
-    detailVC.userId = KISDictionaryHaveKey(tempDict, @"id");
+    detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
     detailVC.nickName = KISDictionaryHaveKey(tempDict, @"nickname");
-
     detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
-    
     detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel");
-    
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"gender");
-    
     detailVC.titleImage =[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] ;
-    
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
     NSLog(@"vc.VC.constellationStr%@",detailVC.constellationStr);
-    
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
     detailVC.jlStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")];
     detailVC.createTimeStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"createTime")];

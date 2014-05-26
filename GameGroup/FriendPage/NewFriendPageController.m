@@ -41,7 +41,6 @@
         return;
     }
     [self getFriendDateFromDataSore];
-    [self setFansNum];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
