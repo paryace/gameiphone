@@ -431,7 +431,6 @@ typedef enum : NSUInteger {
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [m_loginActivity stopAnimating];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [headImgArray removeAllObjects];
             [headImgArray addObjectsFromArray:responseObject];

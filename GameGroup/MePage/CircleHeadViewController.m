@@ -571,6 +571,8 @@ typedef enum : NSUInteger {
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
             
             if (m_currPageCount==0) {
+                [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
+                
                 [m_dataArray removeAllObjects];
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];

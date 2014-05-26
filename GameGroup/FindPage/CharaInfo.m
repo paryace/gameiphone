@@ -63,9 +63,6 @@
         
         self.mountsnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"mountsnum")];//坐骑数量
         
-      //  NSDictionary *toDic = KISDictionaryHaveKey(self.titleDic, @"titleObj");
-
-     //   self.rankvaltype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(toDic, @"rankvaltype")];
         NSLog(@"ranvaltype---%@",self.rankvaltype);
         
         
@@ -94,9 +91,6 @@
         self.pveScoreDic3 = KISDictionaryHaveKey(self.serverOfRanking, @"pveScore");
         self.pvpscoreDic3 = KISDictionaryHaveKey(self.serverOfRanking, @"pvpScore");
         self.KillsDic3 = KISDictionaryHaveKey(self.serverOfRanking, @"totalHonorableKills");
-
-        
-        
         [self getListContentForUrl];
         
         
@@ -134,8 +128,6 @@
     [self getListContentForUrl];
     return self;
 }
-
-
 -(void) getListContentForUrl
 {
     /*  第一界面*/
@@ -169,9 +161,6 @@
                         str:KISDictionaryHaveKey(self.itemlevelDic1, @"compare")
                         str:KISDictionaryHaveKey(self.achievementDic1, @"compare")
                         str:KISDictionaryHaveKey(self.pvpscoreDic1, @"compare")];
-    
-    
-    
     /*  第2界面*/
     
     //获取所有的Value
@@ -217,11 +206,7 @@
                         str:KISDictionaryHaveKey(self.itemlevelDic3, @"compare")
                         str:KISDictionaryHaveKey(self.achievementDic3, @"compare")
                         str:KISDictionaryHaveKey(self.pvpscoreDic3, @"compare")];
-    
-    
-    
 }
-
 
 -(id)addNSMutableArray:(NSMutableArray *)array getContentOfDic:(NSString *)str1 str:(NSString *)str2 str:(NSString *)str3 str:(NSString *)str4 str:(NSString *)str5
 {
