@@ -201,18 +201,18 @@ UINavigationControllerDelegate>
 //    [self registerKeybordNotification];
     
     float version = [[[UIDevice currentDevice] systemVersion] floatValue];
-    if (version >= 5.0) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillShow:)
-                                                     name:UIKeyboardWillChangeFrameNotification
-                                                   object:nil];
-    }
-    else{
+//    if (version >= 5.0) {
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(keyboardWillShow:)
+//                                                     name:UIKeyboardDidChangeFrameNotification
+//                                                   object:nil];
+//    }
+//    else{
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(keyboardWillShow:)
                                                      name:UIKeyboardWillShowNotification
                                                    object:nil];
-    }
+//    }
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
@@ -1321,7 +1321,6 @@ UINavigationControllerDelegate>
     //    if (!ifEmoji||self.kkchatInputType != KKChatInputTypeEmoji) {
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         [self.textView resignFirstResponder];
-        
         ifEmoji = YES;
         self.kkchatInputType = KKChatInputTypeEmoji;
         
@@ -1366,14 +1365,11 @@ UINavigationControllerDelegate>
         [self.textView resignFirstResponder];
         self.kkchatInputType = KKChatInputTypeAdd;
         
-        [sender setImage:[UIImage imageNamed:@"keyboard.png"]
-                forState:UIControlStateNormal];
-        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]
-                       forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
+        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
         
     }else{      //点击切回键盘
-        
         [self.textView.internalTextView becomeFirstResponder];
         ifEmoji = NO;
         self.kkchatInputType = KKChatInputTypeKeyboard;
@@ -1396,38 +1392,21 @@ UINavigationControllerDelegate>
         case KKChatInputTypeEmoji:
         {
             [self.textView resignFirstResponder];
-            
-            self.inPutView.frame = CGRectMake(0,
-                                              self.view.frame.size.height-227-self.inPutView.frame.size.height,
-                                              320,
-                                              self.inPutView.frame.size.height);
-            
+            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = NO;
             self.kkChatAddView.hidden = YES;
-            self.theEmojiView.frame = CGRectMake(0,
-                                                 self.view.frame.size.height-253,
-                                                 320,
-                                                 253);
+            self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
             [self autoMovekeyBoard:253];
-            
         }
             break;
         case KKChatInputTypeAdd:
         {
             [self.textView resignFirstResponder];
-            self.inPutView.frame = CGRectMake(0,
-                                              self.view.frame.size.height-125-self.inPutView.frame.size.height,
-                                              320,
-                                              self.inPutView.frame.size.height);
+            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
-            self.kkChatAddView.frame = CGRectMake(0,
-                                                  self.view.frame.size.height-125,
-                                                  320,
-                                                  125);
+            self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
             [self autoMovekeyBoard:125];
-            
-            
         }
             break;
             
@@ -1443,7 +1422,7 @@ UINavigationControllerDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
-    //    PersonDetailViewController* detailV = [[PersonDetailViewController alloc] init];
+    //PersonDetailViewController* detailV = [[PersonDetailViewController alloc] init];
     TestViewController *detailV = [[TestViewController alloc]init];
     detailV.userId = self.chatWithUser;
     detailV.nickName = self.nickName;
@@ -1474,15 +1453,11 @@ UINavigationControllerDelegate>
     if ([touch view]==clearView) {
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
-            
             [self autoMovekeyBoard:0];
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
-                
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-                
-                self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,
-                                                      253);
+                self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
                 m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
                 emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
                 m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
@@ -1495,7 +1470,6 @@ UINavigationControllerDelegate>
                 [emojiBGV removeFromSuperview];
                 [m_Emojipc removeFromSuperview];
             }];
-            
             [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
             [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         }
@@ -1536,13 +1510,21 @@ UINavigationControllerDelegate>
     CGRect containerFrame = self.inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	self.inPutView.frame = containerFrame;
-    CGRect cgmm=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
+    
+//    CGRect cgmm=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
+//    self.tView.frame=cgmm;
+    
+    CGRect cgmm = self.tView.frame;
+     cgmm.origin.y = startX-h;
+    
     self.tView.frame=cgmm;
     [UIView commitAnimations];
     
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
+    
+    
     if (h>0&&canAdd) {
         canAdd = NO;
         clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
@@ -1592,7 +1574,12 @@ UINavigationControllerDelegate>
     if ([clearView superview]) {
         [clearView setFrame:CGRectMake(0,startX,320,clearView.frame.size.height+diff)];
     }
-    self.tView.frame = CGRectMake(0.0f, startX,320.0f,self.tView.frame.size.height+diff);
+//    self.tView.frame = CGRectMake(0.0f, startX,320.0f,self.tView.frame.size.height+diff);
+    
+    CGRect tvRect=self.tView.frame;
+    tvRect.origin.y = tvRect.origin.y+diff;
+    self.tView.frame=tvRect;
+    
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]
                           atScrollPosition:UITableViewScrollPositionBottom
@@ -1674,6 +1661,8 @@ UINavigationControllerDelegate>
 #pragma mark -
 #pragma mark UI/UE : 响应各种交互操作
 - (void)keyboardWillShow:(NSNotification *)notification {
+
+    
     ifEmoji = NO;
     self.kkchatInputType = KKChatInputTypeKeyboard;
     
@@ -1709,13 +1698,12 @@ UINavigationControllerDelegate>
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
-    [self autoMovekeyBoard:keyboardRect.size.height];
     
+    [self autoMovekeyBoard:keyboardRect.size.height];
 }
 
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-    
     NSDictionary* userInfo = [notification userInfo];
     
     /*
@@ -1728,10 +1716,7 @@ UINavigationControllerDelegate>
 
     [self autoMovekeyBoard:0];
     
-    
-}
-
--(NSString *)selectedEmoji:(NSString *)ssss
+}-(NSString *)selectedEmoji:(NSString *)ssss
 {
 	if (self.textView.text == nil) {
 		self.textView.text = ssss;

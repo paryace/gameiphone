@@ -21,6 +21,7 @@
 #import "ReconnectMessage.h"
 #import "UserManager.h"
 //#import "Reachability.h"
+#import "ImageService.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
 {
@@ -371,14 +372,19 @@
     }
     else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
     {
-        NSURL * theUrl;
+        
+        
         NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
-        if (!sendImageId||[sendImageId isEqualToString:@""]||[sendImageId isEqualToString:@" "]) {
-            theUrl =nil;
-        }else{
-            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:sendImageId]]];
-        }
-        cell.headImageV.imageURL = theUrl;
+        cell.headImageV.imageURL=[ImageService getImageStr:sendImageId Width:80];
+//      NSURL * theUrl;
+//        if (!sendImageId||[sendImageId isEqualToString:@""]||[sendImageId isEqualToString:@" "]) {
+//            theUrl =nil;
+//        }else{
+//            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:sendImageId]]];
+//        }
+//        cell.headImageV.imageURL = theUrl;
+        
+        
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         
     }

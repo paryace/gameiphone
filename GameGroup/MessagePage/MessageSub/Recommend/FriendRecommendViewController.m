@@ -11,6 +11,7 @@
 #import "DSRecommendList.h"
 #import "AppDelegate.h"
 #import "TestViewController.h"
+#import "ImageService.h"
 @interface FriendRecommendViewController ()
 {
     UITableView*   m_myTableView;
@@ -108,15 +109,18 @@
     NSDictionary* tempDic = [m_tableData objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
 
-    NSURL * theUrl = nil;
-    if ([KISDictionaryHaveKey(tempDic, @"headImgID") isEqualToString:@""]||[KISDictionaryHaveKey(tempDic, @"headImgID")isEqualToString:@" "]) {
-        cell.headImageV.imageURL = nil;
-    }else{
-    if ([GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]) {
-        theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]]];
-    }
-    cell.headImageV.imageURL = theUrl;
-    }
+//    NSURL * theUrl = nil;
+//    if ([KISDictionaryHaveKey(tempDic, @"headImgID") isEqualToString:@""]||[KISDictionaryHaveKey(tempDic, @"headImgID")isEqualToString:@" "]) {
+//        cell.headImageV.imageURL = nil;
+//    }else{
+//        if ([GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]) {
+//            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]]];
+//        }
+//        cell.headImageV.imageURL = theUrl;
+//    }
+    
+    cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(tempDic, @"headImgID") Width:80];
+    
     cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"nickname");
     
     if ([KISDictionaryHaveKey(tempDic, @"type") isEqualToString:@"1"]) {
