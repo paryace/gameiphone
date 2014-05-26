@@ -59,15 +59,19 @@
                                                 selector:@selector(receivedMyDynamicMsg:)
                                                     name:@"mydynamicmsg_wx"
                                                   object:nil];
-
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
     }
     return self;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
 
+}
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 #pragma mark -
@@ -133,23 +137,18 @@
         }
     }
     
-//    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
-//    {
-//        NSLog(@"-------->>>%d",friendDunamicmsgCount);
-//        if(m_notibgInfoImageView.hidden)
-//        {
-//            m_notibgCircleNewsImageView.hidden = NO;
-//        }
-//        else{
-//            m_notibgCircleNewsImageView.hidden = YES;
-//        }
-//        //        m_notibgInfoImageView.hidden = NO;
-//        //        if (friendDunamicmsgCount > 99) {
-//        //            lb.text = @"99";
-//        //        }
-//        //        else
-//      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
-//    }
+    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
+    {
+        NSLog(@"-------->>>%d",friendDunamicmsgCount);
+        if(m_notibgInfoImageView.hidden)
+        {
+            m_notibgCircleNewsImageView.hidden = NO;
+        }
+        else{
+            m_notibgCircleNewsImageView.hidden = YES;
+        }
+      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
+    }
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
@@ -162,14 +161,22 @@
 
 }
 
+-(void)cleanNews
+{
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
+    m_notibgCircleNewsImageView.hidden = YES;
+    commentLabel.text = @"暂无新动态";
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor darkGrayColor];
     isDidClick = YES;
     curren_hieght =kScreenHeigth;
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor blackColor];
+//    self.view.backgroundColor = [UIColor blackColor];
     manDic = [NSDictionary new];
     
     //初始化背景图片 并且添加点击换图方法
@@ -181,6 +188,8 @@
     }else{
     imgV.image = KUIImage(@"bg.jpg");
     }
+    imgV.frame = CGRectMake(0, 0, 320, 320/imgV.image.size.width*imgV.image.size.height);
+    imgV.center = self.view.center;
     imgV.userInteractionEnabled = YES;
     [imgV addGestureRecognizer:[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [self.view addSubview:imgV];
@@ -656,6 +665,14 @@
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
 
     imgV.image = selectImage;
+    
+    imgV.frame = CGRectMake(0, 0, 320, 320/imgV.image.size.width*imgV.image.size.height);
+    imgV.center = self.view.center;
+    
+//    NSArray *arr = [NSArray arrayWithObjects:@(imgV.bounds.size.width),@(imgV.bounds.size.height), nil];
+//    [[NSUserDefaults standardUserDefaults]setObject:arr forKey:@"imgV_frame"];
+//    
+    
     NSData *data = UIImageJPEGRepresentation(selectImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];
     [self dismissViewControllerAnimated:YES completion:^{

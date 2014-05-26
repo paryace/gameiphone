@@ -572,7 +572,7 @@ typedef enum : NSUInteger {
             
             if (m_currPageCount==0) {
                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
-                
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"cleanInfoOffinderPage_wx" object:nil];
                 [m_dataArray removeAllObjects];
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
