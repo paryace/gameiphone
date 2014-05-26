@@ -14,23 +14,23 @@
 {
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]];
 }
-//传入单个图片id，返回默认宽高相等的的完整路径
+//传入单个图片id，返回默认宽高相等的完整图片路径
 +(NSURL*)getImageUrl2:(NSString*)imageid
 {
     return [self getImageUrl:imageid Width:80 Height:80];
 }
-//传入单个图片id，返回指定宽高相等的的完整路径
+//传入单个图片id，返回指定宽高相等的的完整图片路径
 +(NSURL*)getImageUrl3:(NSString*)imageid Width:(NSInteger)width
 {
     return [self getImageUrl:imageid Width:width Height:width];
 }
-//传入单个图片id，返回没有宽高的完整路径
+//传入单个图片id，返回没有宽高的完整图片路径
 +(NSURL*)getImageUrl4:(NSString*)imageid
 {
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@",[self getImgUrl:imageid]]];
 }
 
-//根据图片id集合返回第一张的图片带宽度的完整路径
+//根据图片id集合返回第一张带宽度的完整图片路径
 +(NSURL*)getImageStr:(NSString*)imageids Width:(NSInteger)width
 {
     NSMutableArray *images=[self getImageIds2:imageids Width:width];
@@ -52,7 +52,7 @@
 {
     return [self getHeardImgId:images Width:width AllUrl:YES];
 }
-////根据图片id集合返回不带宽度的完整地址路径集合
+//根据图片id集合返回不带宽度的完整地址路径集合
 +(NSMutableArray*)getImageIds3:(NSString*)images
 {
     return [self getImageIds2:images Width:0];
