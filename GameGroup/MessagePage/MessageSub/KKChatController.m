@@ -1320,15 +1320,12 @@ UINavigationControllerDelegate>
     }
     //    if (!ifEmoji||self.kkchatInputType != KKChatInputTypeEmoji) {
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
-        [self.textView resignFirstResponder];
         ifEmoji = YES;
         self.kkchatInputType = KKChatInputTypeEmoji;
         
         ifAudio = NO;
-        [sender setImage:[UIImage imageNamed:@"keyboard.png"]
-                forState:UIControlStateNormal];
-        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
-                              forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
+        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         
         self.textView.hidden = NO;
       //  audioRecordBtn.hidden = YES;
@@ -1340,7 +1337,6 @@ UINavigationControllerDelegate>
         [self.textView.internalTextView becomeFirstResponder];
         ifEmoji = NO;
         self.kkchatInputType = KKChatInputTypeKeyboard;
-        
         self.theEmojiView.hidden = YES;
         [m_EmojiScrollView removeFromSuperview];
         [emojiBGV removeFromSuperview];
@@ -1362,7 +1358,6 @@ UINavigationControllerDelegate>
     }
     
     if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
-        [self.textView resignFirstResponder];
         self.kkchatInputType = KKChatInputTypeAdd;
         
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
@@ -1713,8 +1708,13 @@ UINavigationControllerDelegate>
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
-
-    [self autoMovekeyBoard:0];
+    if (self.kkchatInputType==KKChatInputTypeEmoji||self.kkchatInputType==KKChatInputTypeAdd) {
+        
+    }else
+    {
+        [self autoMovekeyBoard:0];
+    }
+    
     
 }-(NSString *)selectedEmoji:(NSString *)ssss
 {
