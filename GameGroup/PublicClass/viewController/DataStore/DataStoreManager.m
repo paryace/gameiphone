@@ -791,7 +791,6 @@
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
-            
             if (!dUser){
                dUser = [DSuser MR_createInContext:localContext];
             }
@@ -855,8 +854,6 @@
                 [dfansNameIndex MR_deleteInContext:localContext];
             }
         }
-        
-        
     }];
 }
 
@@ -864,7 +861,6 @@
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
     [self deleteNameIndex:nameIndex ShipType:shiptype];//先删除一遍再插入吧
-    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             
@@ -875,11 +871,8 @@
                 {
                     dFname = [DSNameIndex MR_createInContext:localContext];
                 }
-                
                 dFname.index = nameIndex;
-                return ;
-            }
-            if([shiptype isEqualToString:@"3"])
+            }else if([shiptype isEqualToString:@"3"])
             {
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
@@ -887,9 +880,7 @@
                 {
                     dFname = [DSFansNameIndex MR_createInContext:localContext];
                 }
-                
                 dFname.index = nameIndex;
-                return ;
             }
             
         }
@@ -901,8 +892,6 @@
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
     DSuser *dUser = [DSuser MR_findFirstWithPredicate:predicate];
-    
-    
     if (dUser.headImgID) {
         NSRange range=[dUser.headImgID rangeOfString:@","];
         if (range.location!=NSNotFound) {
