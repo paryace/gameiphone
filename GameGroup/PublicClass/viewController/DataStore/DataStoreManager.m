@@ -786,16 +786,16 @@
     }
     
     if (![GameCommon isEmtity:userId]) {
-        [self deleteUserInfo:userId];//先删除一遍再插入吧
+//        [self deleteUserInfo:userId];//先删除一遍再插入吧
         
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
             
-            if (!dUser)
-                dUser = [DSuser MR_createInContext:localContext];
+            if (!dUser){
+               dUser = [DSuser MR_createInContext:localContext];
+            }
             
-           
             dUser.achievement = title?title:@"";
             dUser.achievementLevel = rarenum?rarenum:@"";
             dUser.action = [NSNumber numberWithBool:action];
@@ -867,7 +867,7 @@
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
-    [self deleteNameIndex:nameIndex UserId:userId ShipType:shiptype];//先删除一遍再插入吧
+//    [self deleteNameIndex:nameIndex UserId:userId ShipType:shiptype];//先删除一遍再插入吧
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
@@ -876,8 +876,10 @@
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
                 if (!dFname)
+                {
                     dFname = [DSNameIndex MR_createInContext:localContext];
-               
+                }
+                
                 dFname.index = nameIndex;
                 return ;
             }
@@ -886,7 +888,9 @@
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
                 if (dFname)
+                {
                     dFname = [DSFansNameIndex MR_createInContext:localContext];
+                }
                 
                 dFname.index = nameIndex;
                 return ;
