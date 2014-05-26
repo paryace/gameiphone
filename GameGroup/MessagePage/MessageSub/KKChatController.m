@@ -1448,7 +1448,7 @@ UINavigationControllerDelegate>
     if ([touch view]==clearView) {
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
-            [self autoMovekeyBoard:0];
+//            [self autoMovekeyBoard:0];
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
@@ -1500,19 +1500,25 @@ UINavigationControllerDelegate>
 }
 
 -(void) autoMovekeyBoard: (float) h{
+    NSLog(@"ff------>>%f",h);
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
     CGRect containerFrame = self.inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	self.inPutView.frame = containerFrame;
     
-//    CGRect cgmm=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
-//    self.tView.frame=cgmm;
-    
-    CGRect cgmm = self.tView.frame;
-    cgmm.origin.y = startX-h;
-
-    self.tView.frame=cgmm;
+    if (messages.count<5) {//有点不太合理的做法
+//        CGRect cgmm1=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
+        CGRect cgmm1=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-55-h);
+        self.tView.frame=cgmm1;
+    }else{
+        CGRect cgmm = self.tView.frame;
+        if (cgmm.size.height<(self.view.frame.size.height-startX-55)) {
+            cgmm.size.height=self.view.frame.size.height-startX-55;
+        }
+        cgmm.origin.y = startX-h;
+        self.tView.frame=cgmm;
+    }
     [UIView commitAnimations];
     
     if (messages.count>0) {

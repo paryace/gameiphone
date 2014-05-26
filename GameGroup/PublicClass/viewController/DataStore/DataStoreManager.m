@@ -838,26 +838,22 @@
     }];
 }
 //
-+(void)deleteNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
++(void)deleteNameIndex:(NSString*)nameIndex ShipType:(NSString*)shiptype
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        
         if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
             DSNameIndex * dNameIndex= [DSNameIndex MR_findFirstWithPredicate:predicate];
             if (dNameIndex) {
                 [dNameIndex MR_deleteInContext:localContext];
             }
-            return ;
-        }
-        if([shiptype isEqualToString:@"3"])
+        }else if([shiptype isEqualToString:@"3"])
         {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
             DSFansNameIndex * dfansNameIndex= [DSFansNameIndex MR_findFirstWithPredicate:predicate];
             if (dfansNameIndex) {
                 [dfansNameIndex MR_deleteInContext:localContext];
             }
-            return;
         }
         
         
@@ -867,7 +863,7 @@
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
-//    [self deleteNameIndex:nameIndex UserId:userId ShipType:shiptype];//先删除一遍再插入吧
+    [self deleteNameIndex:nameIndex ShipType:shiptype];//先删除一遍再插入吧
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
