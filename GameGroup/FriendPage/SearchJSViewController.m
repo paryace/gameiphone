@@ -24,6 +24,7 @@
     UIToolbar* toolbar_server;
     UIButton* m_okButton;
     AboutRoleCell *aboutRoleCell;
+    UILabel *helpLabel;
 }
 @end
 
@@ -52,6 +53,35 @@
     m_roleView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_roleView];
 
+    UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(5, 5, 30, 30)];
+    imageView.image = KUIImage(@"role_add_title");
+    [m_roleView addSubview:imageView];
+    
+    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(40, 5, 200, 30)];
+    lb.backgroundColor = [UIColor clearColor];
+    lb.textColor = [UIColor  grayColor];
+    lb.font = [UIFont systemFontOfSize:14];
+    [m_roleView addSubview:lb];
+    
+    helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];
+    helpLabel.hidden = YES;
+    helpLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
+    helpLabel.backgroundColor =[UIColor clearColor];
+    helpLabel.font = [UIFont systemFontOfSize:12];
+    helpLabel.userInteractionEnabled = YES;
+    helpLabel.textAlignment = NSTextAlignmentRight;
+    helpLabel.text = @"为何查询不到";
+    [helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHelp:)]];
+    [m_roleView addSubview:helpLabel];
+    
+    if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        lb.text = @"通过游戏角色来搜索玩家";
+    }else{
+       lb.text = @"通过游戏中的组织来搜索玩家";
+    }
+    
+    
+    
   //  [self setRoleView];
     
     gameInfoArray = [NSMutableArray new];
@@ -71,11 +101,11 @@
 
     [m_dataArray addObject:dic];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+44, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 44, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:m_myTableView];
+    [m_roleView addSubview:m_myTableView];
     
     m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
     m_serverNamePick.dataSource = self;
@@ -88,7 +118,7 @@
     rb_server.tintColor = [UIColor blackColor];
     toolbar_server.items = @[rb_server];
 
-    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
+    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 150, 300, 40)];
     [m_okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [m_okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [m_okButton setTitle:@"搜 索" forState:UIControlStateNormal];
@@ -96,7 +126,7 @@
     m_okButton.backgroundColor = [UIColor clearColor];
     m_okButton.hidden = YES;
     [m_okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:m_okButton];
+    [m_roleView addSubview:m_okButton];
 
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"搜索中...";
@@ -182,8 +212,10 @@
         [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
         [m_dataArray addObjectsFromArray:sarchArray];
         m_okButton.hidden = NO;
-        m_myTableView.frame = CGRectMake(0, startX+44, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 300, 40);
+        helpLabel.hidden = NO;
+        m_myTableView.frame = CGRectMake(0, 44, 320, 44*m_dataArray.count);
+        helpLabel.frame = CGRectMake(10, 50+44*m_dataArray.count, 300, 20);
+        m_okButton.frame = CGRectMake(10, 74+44*m_dataArray.count, 300, 40);
         [m_myTableView reloadData];
     }
 }
@@ -230,7 +262,6 @@
     [m_roleNameText resignFirstResponder];
         
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
-        [hud show:YES];
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
         NSDictionary *infoDic;
@@ -248,6 +279,8 @@
                 
             }
         }
+        [hud show:YES];
+
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [postDict setObject:@"215" forKey:@"method"];
         [postDict setObject:tempDic forKey:@"params"];
@@ -282,7 +315,6 @@
 
             }];
     }else{
-        [hud show:YES];
     NSMutableDictionary *tempDic1= [ NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
         NSDictionary *dic;
@@ -300,7 +332,7 @@
 
             }
         }
-
+        [hud show:YES];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"217" forKey:@"method"];
     [postDict setObject:tempDic1 forKey:@"params"];
@@ -370,6 +402,11 @@
     [m_gameNameText resignFirstResponder];
     [searchContent resignFirstResponder];
     [m_roleNameText resignFirstResponder];
+}
+
+-(void)enterHelp:(id)sender
+{
+    NSLog(@"就是不让你查");
 }
 
 - (void)didReceiveMemoryWarning

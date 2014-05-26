@@ -129,12 +129,22 @@
 {
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     view.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
+    UILabel * headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 300, 30)];
+    headerLabel.backgroundColor = [UIColor clearColor];
+    headerLabel.opaque = NO;
+    headerLabel.textColor = [UIColor whiteColor];
+    headerLabel.highlightedTextColor = [UIColor whiteColor];
+    headerLabel.font = [UIFont boldSystemFontOfSize:14];
+    
+    headerLabel.text = tableArray[section];
+    [view addSubview:headerLabel];
     return view;
 }
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    return [tableArray objectAtIndex:section];
-}
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    tableView.tableHeaderView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.3];
+//    return [tableArray objectAtIndex:section];
+//}
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
     return tableArray;
