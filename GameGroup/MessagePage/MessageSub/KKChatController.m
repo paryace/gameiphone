@@ -1510,8 +1510,8 @@ UINavigationControllerDelegate>
 //    self.tView.frame=cgmm;
     
     CGRect cgmm = self.tView.frame;
-     cgmm.origin.y = startX-h;
-    
+    cgmm.origin.y = startX-h;
+
     self.tView.frame=cgmm;
     [UIView commitAnimations];
     

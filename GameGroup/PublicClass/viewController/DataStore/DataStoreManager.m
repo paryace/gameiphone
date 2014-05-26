@@ -731,152 +731,6 @@
     }
 }
 
-//#pragma mark -存储所有人的列表信息  （旧）
-//+(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
-//{
-//    NSString * alias = [GameCommon getNewStringWithId:[userInfo objectForKey:@"alias"]];//别名
-//    NSString * gameids = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gameids"]];
-//    NSString * gender = [GameCommon getNewStringWithId:[userInfo objectForKey:@"gender"]];
-//    NSString * headImgID = [GameCommon getNewStringWithId:[userInfo objectForKey:@"img"]];
-//    NSString * nickName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"nickname"]];
-//    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];
-//    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superstar")];//是否为明星用户
-//    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];
-//    
-//    
-//    NSString * titleObj = @"";
-//    NSString * titleObjLevel = @"";
-//    NSDictionary* titleDic = KISDictionaryHaveKey(userInfo, @"title");
-//    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-//        titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
-//        titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum")];
-//    }
-//    else
-//    {
-//        if (title.length>0) {
-//            titleObj=title;
-//        }else{
-//            titleObj=@"暂无头衔";
-//        }
-//        if (rarenum.length>0) {
-//            titleObjLevel=rarenum;
-//        }else{
-//            titleObjLevel=@"6";
-//        }
-//    }
-//    
-//    NSString * userId = [GameCommon getNewStringWithId:[userInfo objectForKey:@"userid"]];
-//    NSString * myUserName = [GameCommon getNewStringWithId:[userInfo objectForKey:@"username"]];
-//    
-//    NSString * background = [GameCommon getNewStringWithId:[userInfo objectForKey:@"backgroundImg"]];
-//    BOOL action;
-//    if ([[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]]intValue] == 2) {
-//        action =YES;
-//    }else{
-//        action =NO;
-//    }
-//    NSString * signature = [GameCommon getNewStringWithId:[userInfo objectForKey:@"signature"]];
-//    NSString * age = [GameCommon getNewStringWithId:[userInfo objectForKey:@"age"]];
-//    NSString * achievement = [GameCommon getNewStringWithId:[userInfo objectForKey:@"achievement"]];
-//    NSString * starSign = [GameCommon getNewStringWithId:[userInfo objectForKey:@"constellation"]];
-//    NSString * hobby = [GameCommon getNewStringWithId:[userInfo objectForKey:@"remark"]];
-//    NSString * birthday = [GameCommon getNewStringWithId:[userInfo objectForKey:@"birthdate"]];
-//    NSString * createTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"createTime"]];
-//    NSString * refreshTime = [GameCommon getNewStringWithId:[userInfo objectForKey:@"updateUserLocationDate"]];
-//    double distance = [KISDictionaryHaveKey(userInfo, @"distance") doubleValue];
-//    if (distance == -1) {//若没有距离赋最大值
-//        distance = 9999000;
-//    }
-//    NSString * superremark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"superremark")];
-//    
-//    
-//    if (userId) {
-//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
-//            
-//            
-//            DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
-//            if (!dUser)
-//                dUser = [DSuser MR_createInContext:localContext];
-//            
-//            
-//            dUser.userName = myUserName;
-//            dUser.nickName = nickName?(nickName.length>1?nickName:[nickName stringByAppendingString:@" "]):@"";
-//            dUser.action = [NSNumber numberWithBool:action];
-//            dUser.gender = gender?gender:@"";
-//            dUser.userId = userId?userId:@"";
-//            dUser.headImgID = headImgID?headImgID:@"";
-//            dUser.signature = signature?signature:@"";
-//            dUser.age = age?age:@"";
-//            dUser.backgroundImg = background;
-//            dUser.achievement = achievement?achievement:@"";
-//            
-//            dUser.starSign = starSign?starSign:@"";
-//            dUser.hobby = hobby?hobby:@"";
-//            dUser.birthday = birthday?birthday:@"";
-//            dUser.createTime = createTime?createTime:@"";
-//            dUser.remarkName = alias?alias:@"";
-//            
-//            dUser.superstar = superstar?superstar:@"";
-//            dUser.superremark = superremark?superremark:@"";
-//            dUser.shiptype = shiptype?shiptype:@"";
-//            dUser.achievement = titleObj;
-//            dUser.achievementLevel = titleObjLevel;
-//            dUser.refreshTime = refreshTime;
-//            dUser.distance = [NSNumber numberWithDouble:distance];
-//            dUser.gameids =gameids;
-//            
-//            NSString* pinYin =(alias==nil||[alias isEqualToString:@""])? nickName : alias;
-//            NSString * nameIndex;
-//            NSString * nameKey;
-//            if (nickName.length>=1) {
-//                nameKey = [[DataStoreManager convertChineseToPinYin:pinYin] stringByAppendingFormat:@"+%@",pinYin];
-//                nameKey = [nameKey stringByAppendingFormat:@"%@", userId];
-//                dUser.nameKey = nameKey;
-//                nameIndex = [[nameKey substringToIndex:1] uppercaseString];
-//                dUser.nameIndex = nameIndex;
-//            }
-//            
-//            
-//            if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]&&nickName.length>=1) {
-//                
-//                if ([dUser.shiptype isEqualToString:@"1"]) {
-//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-//                    DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
-//                    if (!dFname)
-//                        dFname = [DSNameIndex MR_createInContext:localContext];
-//                    
-//                    dFname.index = nameIndex;
-//                    return ;
-//                }
-//                if([dUser.shiptype isEqualToString:@"2"])
-//                {
-//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-//                    DSAttentionNameIndex * dFname = [DSAttentionNameIndex MR_findFirstWithPredicate:predicate2];
-//                    if (!dFname)
-//                        dFname = [DSAttentionNameIndex MR_createInContext:localContext];
-//                    
-//                    dFname.index = nameIndex;
-//                    return ;
-//                }
-//                if([dUser.shiptype isEqualToString:@"2"])
-//                {
-//                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-//                    DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
-//                    if (!dFname)
-//                        dFname = [DSFansNameIndex MR_createInContext:localContext];
-//                    
-//                    dFname.index = nameIndex;
-//                    return ;
-//                }
-//                
-//            }
-//        }];
-//    }
-//}
-
-
-
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
@@ -932,13 +786,16 @@
     }
     
     if (![GameCommon isEmtity:userId]) {
+        [self deleteUserInfo:userId];//先删除一遍再插入吧
+        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
+            
             if (!dUser)
                 dUser = [DSuser MR_createInContext:localContext];
             
-            
+           
             dUser.achievement = title?title:@"";
             dUser.achievementLevel = rarenum?rarenum:@"";
             dUser.action = [NSNumber numberWithBool:action];
@@ -969,9 +826,49 @@
         }];
     }
 }
+//
++(void)deleteUserInfo:(NSString*)userId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+        DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
+        if (dUser) {
+            [dUser MR_deleteInContext:localContext];
+        }
+    }];
+}
+//
++(void)deleteNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+            DSNameIndex * dNameIndex= [DSNameIndex MR_findFirstWithPredicate:predicate];
+            if (dNameIndex) {
+                [dNameIndex MR_deleteInContext:localContext];
+            }
+            return ;
+        }
+        if([shiptype isEqualToString:@"3"])
+        {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+            DSFansNameIndex * dfansNameIndex= [DSFansNameIndex MR_findFirstWithPredicate:predicate];
+            if (dfansNameIndex) {
+                [dfansNameIndex MR_deleteInContext:localContext];
+            }
+            return;
+        }
+        
+        
+    }];
+}
+
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
+    [self deleteNameIndex:nameIndex UserId:userId ShipType:shiptype];//先删除一遍再插入吧
+    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             

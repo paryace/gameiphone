@@ -111,11 +111,20 @@
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
             
-            NSMutableDictionary * userDic=KISDictionaryHaveKey(responseObject, @"user");
+            NSMutableDictionary * recDict=KISDictionaryHaveKey(responseObject, @"user");
             NSString * shipTyep=KISDictionaryHaveKey(responseObject, @"shiptype");
             NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
-            [userDic setObject:gameids forKey:@"gameids"];
-            [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:shipTyep];
+            [recDict setObject:gameids forKey:@"gameids"];
+            if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
+                NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+                
+                NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
+                NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
+                [recDict setObject:titleObj forKey:@"titleName"];
+                [recDict setObject:titleObjLevel forKey:@"rarenum"];
+            }
+
+            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:shipTyep];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

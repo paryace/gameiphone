@@ -578,27 +578,39 @@
         [self displayMsgsForDefaultView];
     }
 }
-
-- (void)getMyUserInfoFromNet
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
-    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"106" forKey:@"method"];
-    [postDict setObject:@"201" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        
-    }];
-}
+//
+//- (void)getMyUserInfoFromNet
+//{
+//    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+//    
+//    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
+//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+//    [postDict setObject:paramDict forKey:@"params"];
+////    [postDict setObject:@"106" forKey:@"method"];
+//    [postDict setObject:@"201" forKey:@"method"];
+//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+//    
+//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        
+//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
+//        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
+//        [recDict setObject:gameids forKey:@"gameids"];
+//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
+//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+//            
+//            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
+//            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
+//            [recDict setObject:titleObj forKey:@"titleName"];
+//            [recDict setObject:titleObjLevel forKey:@"rarenum"];
+//        }
+//        
+//        [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        
+//    } failure:^(AFHTTPRequestOperation *operation, id error) {
+//        
+//    }];
+//}
 
 -(void)getSayHelloWithUserid:(NSString*)userId
 {

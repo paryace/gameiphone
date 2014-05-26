@@ -273,8 +273,21 @@
         [hud hide:YES];
 
         NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {
-            [recDict setObject:[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0] forKey:@"title"];
+//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {
+//            [recDict setObject:[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0] forKey:@"title"];
+//        }
+        
+        
+        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
+        [recDict setObject:gameids forKey:@"gameids"];
+        
+        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
+            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+            
+            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
+            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
+            [recDict setObject:titleObj forKey:@"titleName"];
+            [recDict setObject:titleObjLevel forKey:@"rarenum"];
         }
         
         if ([recDict isKindOfClass:[NSDictionary class]]) {
