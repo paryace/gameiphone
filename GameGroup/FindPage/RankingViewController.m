@@ -502,7 +502,7 @@
         isRegisterForMe = NO;
     }
     if (isRegisterForMe ==YES) {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看用户信息",@"举报该用户", nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"查看用户信息",@"举报该角色", nil];
         alertView.tag = 1002;
         [alertView show];
 

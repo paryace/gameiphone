@@ -174,7 +174,7 @@
         tongzhiVIew.frame=CGRectMake(0, 85+startX, 320, 23);
         text2.text=@"通知朋友绑定角色";
         text3.frame=CGRectMake(10, 125+startX, 310, 60);
-        text3.text=@"如果该角色为您朋友所有，您可以立即通知他来绑定角色，这样可以方便您们再好友排行榜上比较战绩，也可以防止他人冒领角色";
+        text3.text=@"如果该角色为您朋友所有，您可以立即通知他来绑定角色，这样可以方便您们在好友排行榜上比较战绩，也可以防止他人冒领角色";
         jubaoBtn.frame=CGRectMake(10, 200+startX, 300, 30);
         [jubaoBtn setTitle:@"通知好友绑定角色" forState:UIControlStateNormal];
         

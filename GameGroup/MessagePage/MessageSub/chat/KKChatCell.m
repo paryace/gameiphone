@@ -55,6 +55,7 @@
         
         self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.statusLabel setTextColor:kColorWithRGB(151, 151, 151, 1.0)];
+        self.statusLabel.backgroundColor=[UIColor clearColor];
         [self.statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
         self.statusLabel.hidden = YES;
         [self.contentView addSubview:self.statusLabel];

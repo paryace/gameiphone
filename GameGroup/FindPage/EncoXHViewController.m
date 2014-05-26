@@ -233,12 +233,19 @@
     sexLabel.textAlignment = NSTextAlignmentRight;
     [backgroundImageView addSubview:sexLabel];
     
-    
-    promptView = [[UIView alloc]initWithFrame:CGRectMake(0,318-50-heightAox, 320, 50)];
+    if (iPhone5) {
+        promptView = [[UIView alloc]initWithFrame:CGRectMake(0,318-50-heightAox, 320, 50)];
+    }else{
+        promptView = [[UIView alloc]initWithFrame:CGRectMake(0,318-50-heightAox, 320, 60)];
+    }
     promptView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];;
     [backgroundImageView addSubview:promptView];
     
-    promptLabel = [[UITextView alloc]initWithFrame:CGRectMake(20,0, 280, 50)];
+    if (iPhone5) {
+        promptLabel = [[UITextView alloc]initWithFrame:CGRectMake(20,0, 280, 50)];
+    }else{
+        promptLabel = [[UITextView alloc]initWithFrame:CGRectMake(20,0, 280, 60)];
+    }
     promptLabel.textColor = UIColorFromRGBA(0xc3c3c3, 1);
     promptLabel.textAlignment =NSTextAlignmentLeft;
     promptLabel.userInteractionEnabled = NO;
