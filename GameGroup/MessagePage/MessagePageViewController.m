@@ -279,7 +279,7 @@
     for (int i = 0; i <allMsgArray.count;i++) {
         DSThumbMsgs *thumb = [allMsgArray objectAtIndex:i];
         if ([thumb.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
-            if (sayhellocoArray.count==0) {
+            if (sayhellocoArray.count==0) {//没有打招呼消息
                 [allMsgArray removeObject:thumb];
             }else{
                 thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
@@ -287,7 +287,7 @@
             }
         }
     }
-    
+
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
     [allMsgArray sortUsingDescriptors:sortDescriptors];
@@ -335,7 +335,7 @@
     }
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-        if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {
+    if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {//打招呼
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
         cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],[[sayhellocoArray objectAtIndex:0]msgContent]];
@@ -343,7 +343,7 @@
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
-    {
+    {//角色，头衔，战斗力
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_titleobj");
@@ -351,7 +351,7 @@
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])
-    {
+    {//好友推荐
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_tuijian");
@@ -359,7 +359,7 @@
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] msgContent];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])
-    {
+    {//每日一闻
         cell.headImageV.imageURL =nil;
         
         cell.headImageV.image = KUIImage(@"mess_news");
@@ -367,7 +367,7 @@
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
     }
     else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
-    {
+    {//正常聊天
         
         
         NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];

@@ -186,8 +186,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     
+    //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
-        
         NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
         if ([array containsObject:sender]) {
             [messageContent setValue:@"1" forKey:@"sayHiType"];

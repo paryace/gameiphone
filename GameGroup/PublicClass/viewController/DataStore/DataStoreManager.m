@@ -179,7 +179,8 @@
                 
             if ([sayhiType isEqualToString:@"2"]){
                     NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
-                   DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];                    if (!thumbMsgs)
+                    DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];
+                    if (!thumbMsgs)
                     thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
                     thumbMsgs.sender = @"1234567wxxxxxxxxx";
                     thumbMsgs.senderNickname = @"有新的打招呼信息";
@@ -191,7 +192,7 @@
                     thumbMsgs.status = @"1";//已发送
                     thumbMsgs.sayHiType = @"1";
                     thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-                }
+            }
             
         }];
     }

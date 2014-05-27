@@ -224,8 +224,10 @@
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    if (m_tabelData==nil||m_tabelData.count==0) {
+        return;
+    }
     NSDictionary* recDict = [m_tabelData objectAtIndex:indexPath.row];
-
     TestViewController *VC = [[TestViewController alloc]init];
     VC.userId = KISDictionaryHaveKey(recDict, @"userid");
 //    VC.nickName = KISDictionaryHaveKey(recDict, @"nickname");
