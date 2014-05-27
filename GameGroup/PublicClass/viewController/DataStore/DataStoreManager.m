@@ -702,19 +702,27 @@
     }
     return array;
 }
+//----
+//+(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
+//{
+//    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
+//    NSMutableArray *allMsgArray = [NSMutableArray array];
+//    for (int i = 0; i<array.count; i++) {
+//        if ([[[array objectAtIndex:i]sayHiType]isEqualToString:type]) {
+//            [allMsgArray addObject:[array objectAtIndex:i]];
+//        }
+//    }
+//    return allMsgArray;
+//}
+
 
 +(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
 {
-    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-    NSMutableArray *allMsgArray = [NSMutableArray array];
-    for (int i = 0; i<array.count; i++) {
-        if ([[[array objectAtIndex:i]sayHiType]isEqualToString:type]) {
-            [allMsgArray addObject:[array objectAtIndex:i]];
-        }
-    }
-    return allMsgArray;
+    NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
+    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
+    return array;
 }
-
+//----
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
 {
     if (messageuuid && messageuuid.length > 0) {//0失败 1发送到服务器 2发送中 3已送达 4已读

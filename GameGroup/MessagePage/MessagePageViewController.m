@@ -268,8 +268,7 @@
 {
     //获取所有聊过天人的id （你对他）
     [allSayHelloArray removeAllObjects];
-    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]
-                                           objectForKey:@"sayHello_wx_info_id"]];
+    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
     
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
@@ -283,9 +282,8 @@
             if (sayhellocoArray.count==0) {
                 [allMsgArray removeObject:thumb];
             }else{
-            thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
-            thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
-            
+                thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
+                thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
             }
         }
     }
@@ -293,9 +291,7 @@
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
     [allMsgArray sortUsingDescriptors:sortDescriptors];
-
     [m_messageTable reloadData];
-    
     [self displayTabbarNotification];
 }
 -(void)displayTabbarNotification
