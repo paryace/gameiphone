@@ -20,6 +20,7 @@
 
 - (void)setMainView
 {
+    self.backgroundColor = [UIColor clearColor];
     NSInteger buttonCount = [self.buttonTitleArray count];
     
     UIImageView* topImage = [[UIImageView alloc] initWithFrame:CGRectMake(55, 0, 210, 18)];

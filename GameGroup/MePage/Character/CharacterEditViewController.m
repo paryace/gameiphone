@@ -9,7 +9,6 @@
 #import "CharacterEditViewController.h"
 #import "AuthViewController.h"
 #import "AddCharacterViewController.h"
-#import "NewFindViewController.h"
 
 @interface CharacterEditViewController ()
 {

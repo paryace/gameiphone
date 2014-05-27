@@ -88,9 +88,23 @@
     
     [m_dataArray addObject:dic];
     
+    UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(5, startX+5, 30, 30)];
+    imageView.image = KUIImage(@"role_add_title");
+    [self.view addSubview:imageView];
+    
+    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(40, startX+5, 200, 30)];
+    lb.backgroundColor = [UIColor clearColor];
+    lb.textColor = [UIColor  grayColor];
+    lb.text = @"添加游戏角色";
+    lb.font = [UIFont systemFontOfSize:14];
+    [self.view addSubview:lb];
+
+    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+44, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.scrollEnabled = NO;
+
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_myTableView];
     

@@ -615,6 +615,7 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_buttonTitleOfPage"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"wx_buttonTitleOfPage"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"find_initial_game"];
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveFriendNews];
     [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:PhoneNumKey];

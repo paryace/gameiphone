@@ -10,7 +10,6 @@
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "FindPasswordViewController.h"
