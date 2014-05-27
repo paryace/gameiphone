@@ -1506,7 +1506,7 @@ UINavigationControllerDelegate>
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	self.inPutView.frame = containerFrame;
 
-    if (messages.count<5) {//有点不太合理的做法
+    if (messages.count<4) {//有点不太合理的做法
 //        CGRect cgmm1=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
         CGRect cgmm = self.tView.frame;
         cgmm.size.height=self.view.frame.size.height-startX-55-h;

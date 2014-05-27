@@ -860,10 +860,9 @@
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
-    [self deleteNameIndex:nameIndex ShipType:shiptype];//先删除一遍再插入吧
+//    [self deleteNameIndex:nameIndex ShipType:shiptype];//先删除一遍再插入吧
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-            
             if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
