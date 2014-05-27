@@ -786,7 +786,7 @@
     }
     
     if (![GameCommon isEmtity:userId]) {
-//        [self deleteUserInfo:userId];//先删除一遍再插入吧
+//        [self deleteUserInfo:userId];
         
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -825,7 +825,7 @@
         }];
     }
 }
-//
+//删除用户信息
 +(void)deleteUserInfo:(NSString*)userId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -836,7 +836,7 @@
         }
     }];
 }
-//
+//删除首字母
 +(void)deleteNameIndex:(NSString*)nameIndex ShipType:(NSString*)shiptype
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -856,11 +856,22 @@
         }
     }];
 }
+//
++(void)deleteAllNameIndex
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * naminddex = [DSCommonMsgs MR_findAllInContext:localContext];
+        for (int i = 0; i<naminddex.count; i++) {
+            DSNameIndex * common = [naminddex objectAtIndex:i];
+            [common MR_deleteInContext:localContext];
+        }
+    }];
+}
 
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
-//    [self deleteNameIndex:nameIndex ShipType:shiptype];//先删除一遍再插入吧
+//    [self deleteNameIndex:nameIndex ShipType:shiptype];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {

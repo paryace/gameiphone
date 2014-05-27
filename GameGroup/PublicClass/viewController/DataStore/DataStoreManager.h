@@ -147,7 +147,7 @@
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType;
 +(NSDictionary *)queryUserInfo:(NSString*)userId;
-
++(void)deleteAllNameIndex;
 
 
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
