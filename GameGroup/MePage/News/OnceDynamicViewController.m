@@ -682,7 +682,7 @@
             [m_shareView addSubview:contentLabel];
         }
         if (shareType == 0) {
-            sharePeopleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 95, 250, 30) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont systemFontOfSize:13.0] text:[NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"displayName")] textAlignment:NSTextAlignmentLeft];
+            sharePeopleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 95, 250, 30) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont systemFontOfSize:13.0] text:[NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"nickname")] textAlignment:NSTextAlignmentLeft];
         }
         else
         {
@@ -711,7 +711,7 @@
         m_shareViewBg.hidden = NO;
         m_shareView.hidden = NO;
         if (shareType == 0) {
-            sharePeopleLabel.text = [NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"displayName")];
+            sharePeopleLabel.text = [NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"nickname")];
         }
         else
         {
@@ -768,7 +768,7 @@
             [dictionary setObject:@"you" forKey:@"sender"];
             [dictionary setObject:[GameCommon getCurrentTime] forKey:@"time"];
             [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"userid") forKey:@"receiver"];
-            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"displayName") forKey:@"nickname"];
+            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"nickname") forKey:@"nickname"];
             [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"img") forKey:@"img"];
             [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
             [dictionary setObject:@"payloadchat" forKey:@"msgType"];

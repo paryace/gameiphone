@@ -1074,7 +1074,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
         [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
-
+        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
         [hud hide:YES];
         dispatch_queue_t queue = dispatch_queue_create("com.living.game.", NULL);
         dispatch_async(queue, ^{

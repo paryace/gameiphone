@@ -123,6 +123,9 @@
     if ([gameId isEqualToString:@"1"]) {
         return @"wow";
     }
+    else if ([gameId isEqualToString:@"2"]){
+        return @"lol";
+    }
     return @"";
 }
 //----
