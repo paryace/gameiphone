@@ -70,35 +70,39 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 	return my_getDataAfterManager;
 }
 
-
--(void)storeNewMessage:(NSDictionary *)messageContent
+//声音
+-(BOOL)isSoundOpen
 {
-    BOOL isVibrationopen;
-    BOOL isSoundOpen;
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
     {
         if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
-            isSoundOpen =YES;
+             return YES;
         }else{
-            isSoundOpen =NO;
+             return NO;
         }
     }else{
-        isSoundOpen =YES;
+        return YES;
     }
-    
+}
+//震动
+-(BOOL)isVibrationopen
+{
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
     {
         if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
-            isVibrationopen =YES;
+            return YES;
         }else{
-            isVibrationopen =NO;
+            return NO;
         }
     }else{
-        isVibrationopen =YES;
+        return YES;
     }
+}
 
-    
-    
+-(void)storeNewMessage:(NSDictionary *)messageContent
+{
+    BOOL isVibrationopen=[self isVibrationopen];;
+    BOOL isSoundOpen = [self isSoundOpen];
     
     NSLog(@"messageContent==%@",messageContent);
     NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
@@ -166,14 +170,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [self storeNewMessage:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
-#pragma mark --收到与我相关动态消息
+#pragma mark --收到与我相关动态消息代理回调
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
     NSLog(@"messageContent%@",messageContent);
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
 
-#pragma mark 收到聊天消息
+#pragma mark 收到聊天消息代理回调
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
     NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
@@ -185,7 +189,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSLog(@"消息已存在");
         return;
     }
-    
     //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
         NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
@@ -194,25 +197,23 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         }else{
             [messageContent setValue:@"2" forKey:@"sayHiType"];
         }
-
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    [self storeNewMessage:messageContent];
+    
+    [self storeNewMessage:messageContent];//保存消息
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];
-    }
-    else
-    {
+    }else{//更新消息表
         NSDictionary* user=[[UserManager singleton] getUser:sender];
         [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
 
 
-#pragma mark 收到验证好友请求
+#pragma mark 收到验证好友请求代理回调
 -(void)newAddReq:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
@@ -239,7 +240,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];
 }
 
-#pragma mark 收到取消关注 删除好友请求
+#pragma mark 收到取消关注 删除好友请求代理回调
 -(void)deletePersonReceived:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
@@ -270,7 +271,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
 
-#pragma mark - 其他消息 头衔、角色等
+#pragma mark - 其他消息 头衔、角色等代理回调
 -(void)otherMessageReceived:(NSDictionary *)info
 {
     BOOL isVibrationopen;
@@ -314,7 +315,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 }
 
-#pragma mark 收到推荐好友
+#pragma mark 收到推荐好友代理回调
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];

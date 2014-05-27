@@ -254,7 +254,7 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-//            [DataStoreManager deleteAllThumbMsg];//删除绘画列表记录
+//            [DataStoreManager deleteAllThumbMsg];//删除会话列表记录
 //            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
             [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
             [self displayMsgsForDefaultView];

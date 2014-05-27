@@ -139,12 +139,13 @@
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
+    
+    
 //    NSString * receiver;
 //    if ([msg objectForKey:@"receicer"]) {
 //        NSRange range2 = [[msg objectForKey:@"receicer"] rangeOfString:@"@"];
 //        receiver = [[msg objectForKey:@"receicer"] substringToIndex:range2.location];
 //    }
-    
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -250,13 +251,10 @@
     else if([sendertype isEqualToString:OTHERMESSAGE])//头衔、角色、战斗力
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
-
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-
             thumbMsgs.sender = @"1";
             thumbMsgs.senderNickname = [msg objectForKey:@"title"];
             thumbMsgs.msgContent = msgContent;
@@ -275,7 +273,6 @@
     else if([sendertype isEqualToString:RECOMMENDFRIEND])//推荐好友
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
@@ -291,7 +288,6 @@
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-
         }];
     }
     else if([sendertype isEqualToString:DAILYNEWS])//新闻
@@ -304,8 +300,6 @@
             newsMsg.msgtype = msgType;
             newsMsg.mytitle = title;
             newsMsg.sendtime = sendTime;
-            
-            
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
@@ -869,7 +863,7 @@
 +(void)deleteAllNameIndex
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSArray * naminddex = [DSCommonMsgs MR_findAllInContext:localContext];
+        NSArray * naminddex = [DSNameIndex MR_findAllInContext:localContext];
         for (int i = 0; i<naminddex.count; i++) {
             DSNameIndex * common = [naminddex objectAtIndex:i];
             [common MR_deleteInContext:localContext];
