@@ -9,7 +9,7 @@
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "FriendPageViewController.h"
-#import "NewFindViewController.h"
+//#import "NewFindViewController.h"
 #import "MePageViewController.h"
 #import "ShowTextViewController.h"
 #import "AuthViewController.h"
@@ -553,6 +553,8 @@
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 60, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.scrollEnabled = NO;
+
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [m_step2Scroll addSubview:m_myTableView];
     

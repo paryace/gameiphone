@@ -233,8 +233,8 @@
     cell.tag = indexPath.row;
     NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str = KISDictionaryHaveKey(dict, @"commentStr");
-    
-    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+
+    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias")?KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias"):KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
     nickNameLenght=[cell.comNickNameStr length];
     
     cell.commentContLabel.text = str;

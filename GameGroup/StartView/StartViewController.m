@@ -13,7 +13,7 @@
 #import "FriendPageViewController.h"
 #import "FindViewController.h"
 #import "MePageViewController.h"
-#import "NewFindViewController.h"
+//#import "NewFindViewController.h"
 
 #import "MLNavigationController.h"
 #import "Custom_tabbar.h"

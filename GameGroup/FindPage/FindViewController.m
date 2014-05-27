@@ -198,6 +198,9 @@
     
     centerBtnArray = [NSMutableArray array];
     
+    
+    
+    // 建立标头和下拉菜单
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     drawView.myViewDelegate = self;
     
@@ -209,6 +212,7 @@
     [self.view addSubview:drawView];
 
     
+    //简历朋友圈view
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
     [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
@@ -228,34 +232,6 @@
     iconImageView.image = KUIImage(@"circleIcon");
    // iconImageView.backgroundColor =[ UIColor clearColor];
     [bottomView addSubview:iconImageView];
-    
-    
-    
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 120, 20)];
-    commentLabel.backgroundColor = [UIColor clearColor];
-    commentLabel.textAlignment = NSTextAlignmentLeft;
-    commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
-    commentLabel.font = [UIFont systemFontOfSize:11];
-    NSString *commStr1 = @"";
-    NSString *commStr2 = @"";
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-        commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
-    }
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
-    }
-    commentLabel.text = [commStr1 stringByAppendingString:commStr2];
-    [bottomView addSubview:commentLabel];
-    
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
-    headImgView.frame = CGRectMake(260, 10, 40, 40);
-       if (_friendImgStr ==nil) {
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"]]];
-    }else{
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
-    }
-    [bottomView addSubview:headImgView];
-
     
     //红点 - 朋友圈
     m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(253, 2, 15, 15)];
@@ -277,6 +253,53 @@
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
     [self buildMenuButton];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
+        manDic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
+        drawView.showList = YES;
+        [self didClickMenu:nil];
+        drawView.showList =NO;
+    }
+
+    
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 120, 20)];
+    commentLabel.backgroundColor = [UIColor clearColor];
+    commentLabel.textAlignment = NSTextAlignmentLeft;
+    commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
+    commentLabel.font = [UIFont systemFontOfSize:11];
+    NSString *commStr1 = @"";
+    NSString *commStr2 = @"";
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]||[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+            commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+            m_notibgCircleNewsImageView.hidden =NO;
+        }
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+            
+            NSString *counts = [[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"];
+                       
+            commStr2 = [NSString stringWithFormat:@"%@条与我相关",counts];
+            m_notibgInfoImageView.hidden = NO;
+            lb.text =counts;
+        }
+        commentLabel.text = [commStr1 stringByAppendingString:commStr2];
+    }else{
+        commentLabel.text  = @"暂无新动态";
+        lb.text = @"";
+        m_notibgInfoImageView.hidden = YES;
+        m_notibgCircleNewsImageView.hidden = YES;
+    }
+    [bottomView addSubview:commentLabel];
+    
+    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
+    headImgView.frame = CGRectMake(260, 10, 40, 40);
+       if (_friendImgStr ==nil) {
+        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"]]];
+    }else{
+        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+    }
+    [bottomView addSubview:headImgView];
+
+    
    // [self didClickMenu:nil];
 }
 
@@ -698,6 +721,8 @@
 
     NSArray *allkeys = [dict allKeys];
     manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
+    [[NSUserDefaults standardUserDefaults]setObject:manDic forKey:@"find_initial_game"];
+
     NSLog(@"manDic--%@",manDic);
 }
 

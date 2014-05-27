@@ -67,7 +67,12 @@
         menuButotn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-30, 44, 44)];
         menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
         [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
-        [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
+             NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
+            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+        }else{
+            [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+        }
         [self addSubview:menuButotn];
         
  
