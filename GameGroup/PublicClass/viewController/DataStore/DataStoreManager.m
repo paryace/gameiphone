@@ -1168,11 +1168,14 @@ return @"";
 
 +(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type
 {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {
         dUser.shiptype = type;
     }
+    }];
 }
 
 +(void)deleteAllUser
@@ -2473,14 +2476,13 @@ return @"";
 +(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
-        DSRecommendList * dReceivedHellos = [DSRecommendList MR_findFirstWithPredicate:predicate];
-        if (dReceivedHellos)
-        {
-            dReceivedHellos.state = state;
-        }
-    }];
 
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+    DSRecommendList * dUser = [DSRecommendList MR_findFirstWithPredicate:predicate];
+    if (dUser) {
+        dUser.state = state;
+    }
+    }];
 }
 
 

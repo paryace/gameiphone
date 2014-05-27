@@ -227,18 +227,10 @@
         NSString * userid=KISDictionaryHaveKey(tempDic, @"userid");
         [DataStoreManager updateRecommendStatus:@"1" ForPerson:userid];
         
-        if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"2"])
+         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
-            [self requestPeopleInfoWithName:KISDictionaryHaveKey(tempDic, @"username") ForType:2];
-        }
-        else if ([responseObject isKindOfClass:[NSDictionary class]] && [KISDictionaryHaveKey(responseObject, @"shiptype") isEqualToString:@"1"])
-        {
-            if ([DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(tempDic, @"userid")]) {
-                [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:@"1"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-            }
-            else
-                [self requestPeopleInfoWithName:KISDictionaryHaveKey(tempDic, @"username") ForType:1];
+            [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(tempDic, @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
         [tempDic setObject:@"1" forKey:@"state"];
         [m_tableData replaceObjectAtIndex:row withObject:tempDic];
