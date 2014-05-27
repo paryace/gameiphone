@@ -99,21 +99,19 @@
         [hud hide:YES];
             if (m_pageNum ==0) {
                 NSArray *array = responseObject;
-                if (![responseObject isKindOfClass:[NSArray class]]||array.count<1) {
+                if (![KISDictionaryHaveKey(responseObject, @"users") isKindOfClass:[NSArray class]]||array.count<1) {
                     NSLog(@"没东西");
                     backpopAlertView = [[UIAlertView alloc]initWithTitle:nil message:@"用户不存在" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                     [backpopAlertView show];
 
                 }
-                
-                
-                
+                m_titleLabel.text =[NSString stringWithFormat: @"查询结果%@",KISDictionaryHaveKey(responseObject,@"userTotalNum")];
                 [m_tabelData removeAllObjects];
-                [m_tabelData addObjectsFromArray:responseObject];
+                [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
             }
             else{
                 
-                [m_tabelData addObjectsFromArray:responseObject];
+                [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
 
             }
         
