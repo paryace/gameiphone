@@ -207,10 +207,11 @@
 //    if (![self sendMessage:mes]) {
 //        return;
 //    }
+    NSString *domain=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
     NSString * nowTime=[GameCommon getCurrentTime];
     NSString * message=[dic JSONRepresentation];
     NSString * from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:sender FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:domain FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     if (![self sendMessage:mes]) {
         return;
     }
@@ -249,13 +250,12 @@
     }
     NSString *msgtype = [[message attributeForName:@"msgtype"] stringValue];
     NSString *from = [[message attributeForName:@"from"] stringValue];
-    NSString *to = [[message attributeForName:@"to"] stringValue];
     NSString *msgId = [[message attributeForName:@"id"] stringValue];
     NSRange range = [from rangeOfString:@"@"];
     NSString * fromName = [from substringToIndex:(range.location == NSNotFound) ? 0 : range.location];
     NSString *type = [[message attributeForName:@"type"] stringValue];
     NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:[GameCommon getCurrentTime];
-    
+   
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];
     [dict setObject:from forKey:@"sender"];
@@ -413,8 +413,11 @@
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
         {
-            NSString *groupid = [[message attributeForName:@"groupid"] stringValue];
-            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是to字段，即聊天群的JID）
+            NSString * groupid = [[message attributeForName:@"groupid"] stringValue];
+            NSString * domain=[[from componentsSeparatedByString:@"@"] objectAtIndex:1];
+            NSString * to=[NSString stringWithFormat:@"%@%@%@",groupid,@"@group.",domain];
+            
+            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
         }
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])
