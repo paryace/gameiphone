@@ -207,11 +207,11 @@
 //    if (![self sendMessage:mes]) {
 //        return;
 //    }
-    NSString *domain=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
+    NSString *to=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
     NSString * nowTime=[GameCommon getCurrentTime];
     NSString * message=[dic JSONRepresentation];
     NSString * from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:domain FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     if (![self sendMessage:mes]) {
         return;
     }
@@ -255,12 +255,10 @@
     NSString * fromName = [from substringToIndex:(range.location == NSNotFound) ? 0 : range.location];
     NSString *type = [[message attributeForName:@"type"] stringValue];
     NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:[GameCommon getCurrentTime];
-   
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];
     [dict setObject:from forKey:@"sender"];
     [dict setObject:msgId forKey:@"msgId"];
-    
     //消息接收到的时间
     [dict setObject: msgTime forKey:@"time"];
     
@@ -305,7 +303,6 @@
             else
                 [dict setObject:@""  forKey:@"shiptype"];
             [self.deletePersonDelegate newAddReq:dict];
-            ///  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"deletePerson"])//取消关注
         {
@@ -320,7 +317,6 @@
                 [dict setObject:@""  forKey:@"shiptype"];
             
             [self.deletePersonDelegate deletePersonReceived:dict];
-            //   [self comeBackDelivered:from msgId:msgId];
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
@@ -333,7 +329,6 @@
             
             [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
-//            [self comeBackDelivered:from msgId:msgId];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
         {
@@ -351,7 +346,6 @@
             [dict setObject:dis forKey:@"disStr"];
             [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
-            //  [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
         {
@@ -398,7 +392,6 @@
             }
             else{   //未知的动态
             }
-            //    [self comeBackDelivered:from msgId:msgId];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {

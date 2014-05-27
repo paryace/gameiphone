@@ -131,7 +131,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
         [DataStoreManager storeNewMsgs:messageContent senderType:PAYLOADMSG];//动态消息
     }
-    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//关注和取消关注
+    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])
     {
         if (isSoundOpen) {
             [SoundSong soundSong];
@@ -140,11 +140,17 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             [VibrationSong vibrationSong];
         }
 
-        [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//打招呼消息
+        [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//关注和取消关注
     }
     else if([type isEqualToString:@"recommendfriend"])
     {
-        [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];
+        if (isSoundOpen) {
+            [SoundSong soundSong];
+        }
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
+        [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];//好友推荐
     }
     else if([type isEqualToString:@"dailynews"])
     {
@@ -166,7 +172,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
-     [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
@@ -185,7 +191,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     
     if ([DataStoreManager savedMsgWithID:msgId]) {
-        [self.xmppHelper comeBackDelivered:[messageContent objectForKey:@"sender"] msgId:msgId];
         NSLog(@"消息已存在");
         return;
     }
@@ -221,7 +226,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
   //  NSString * msg = KISDictionaryHaveKey(userInfo, @"msg");
-    
     [self storeNewMessage:userInfo];
    // NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
@@ -274,29 +278,31 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark - 其他消息 头衔、角色等代理回调
 -(void)otherMessageReceived:(NSDictionary *)info
 {
-    BOOL isVibrationopen;
-    BOOL isSoundOpen;
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
-    {
-        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
-            isSoundOpen =YES;
-        }else{
-            isSoundOpen =NO;
-        }
-    }else{
-        isSoundOpen =YES;
-    }
-    
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
-    {
-        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
-            isVibrationopen =YES;
-        }else{
-            isVibrationopen =NO;
-        }
-    }else{
-        isVibrationopen =YES;
-    }
+//    BOOL isVibrationopen;
+//    BOOL isSoundOpen;
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
+//    {
+//        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
+//            isSoundOpen =YES;
+//        }else{
+//            isSoundOpen =NO;
+//        }
+//    }else{
+//        isSoundOpen =YES;
+//    }
+//    
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
+//    {
+//        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
+//            isVibrationopen =YES;
+//        }else{
+//            isVibrationopen =NO;
+//        }
+//    }else{
+//        isVibrationopen =YES;
+//    }
+    BOOL isVibrationopen=[self isVibrationopen];;
+    BOOL isSoundOpen = [self isSoundOpen];
 
     if ([DataStoreManager savedOtherMsgWithID:info[@"msgId"]]) {
         return;
@@ -339,23 +345,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"154" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
-    
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             NSRange range = [[responseObject objectForKey:@"sender"] rangeOfString:@"@"];
             NSString * sender = [[responseObject objectForKey:@"sender"] substringToIndex:range.location];
-
-        if ([responseObject containsObject:sender]) {
-            
-            [info setValue:@"1" forKey:@"sayHiType"];
-        }else{
-            [info setValue:@"2" forKey:@"sayHiType"];
-        }
+            if ([responseObject containsObject:sender]) {
+                [info setValue:@"1" forKey:@"sayHiType"];
+            }else{
+                [info setValue:@"2" forKey:@"sayHiType"];
+            }
         }
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {

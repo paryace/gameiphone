@@ -229,25 +229,26 @@
     [alert show];
 }
 
--(void)getSayHiUserIdWithNet
-{
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:@"" forKey:@"touserid"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"154" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
-    
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
-        
-        [self displayMsgsForDefaultView];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"deviceToken fail");
-    }];
-}
+//貌似没地方调用此方法了
+//-(void)getSayHiUserIdWithNet
+//{
+//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+//    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+//    [paramDict setObject:@"" forKey:@"touserid"];
+//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+//    [postDict setObject:@"154" forKey:@"method"];
+//    [postDict setObject:paramDict forKey:@"params"];
+//    
+//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+//    
+//    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
+//        
+//        [self displayMsgsForDefaultView];
+//    } failure:^(AFHTTPRequestOperation *operation, id error) {
+//        NSLog(@"deviceToken fail");
+//    }];
+//}
 
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
