@@ -1209,7 +1209,6 @@
         }
         [hud hide:YES];
     }];
-
 }
 -(void)dealloc
 {

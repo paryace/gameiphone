@@ -10,6 +10,8 @@
 #import "XMPPHelper.h"
 #import "JSON.h"
 #import "PersonTableCell.h"
+#import "NewPersonalTableViewCell.h"
+#import "ImageService.h"
 
 @interface selectContactPage ()
 {
@@ -48,110 +50,31 @@
     
     self.hidesBottomBarWhenPushed = YES;
     
-    self.contactsTable = [[UITableView alloc] initWithFrame:CGRectMake(0, startX+44, 320, self.view.frame.size.height-44-startX) style:UITableViewStylePlain];
+    self.contactsTable = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height-startX) style:UITableViewStylePlain];
     [self.view addSubview:self.contactsTable];
     self.contactsTable.dataSource = self;
     self.contactsTable.delegate = self;
-    //    self.contactsTable.contentOffset = CGPointMake(0, 44);
-    searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, startX, 320, 44)];
-    searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-    searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    //searchBar.keyboardType = UIKeyboardTypeAlphabet;
-    //    self.contactsTable.tableHeaderView = searchBar;
-    searchBar.placeholder = @"搜索联系人";
-    [self.view addSubview:searchBar];
-    searchBar.delegate = self;
     
-    searchDisplay = [[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self];
-    searchDisplay.delegate = self;
-    searchDisplay.searchResultsDataSource = self;
-    searchDisplay.searchResultsDelegate = self;
-    
-    hud = [[MBProgressHUD alloc] initWithView:self.view];
-    [self.view addSubview:hud];
-    hud.labelText = @"查询中...";
-    [hud show:YES];
+//    hud = [[MBProgressHUD alloc] initWithView:self.view];
+//    [self.view addSubview:hud];
+//    hud.labelText = @"查询中...";
+//    [hud show:YES];
 }
-//-(void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
-//{
-//    
-//    if (diffH==20.0f) {
-//        [searchBar setFrame:CGRectMake(0, 20, 320, 64)];
-//        searchBar.backgroundImage = [UIImage imageNamed:@"topBar2.png"];
-//        [UIView animateWithDuration:0.3 animations:^{
-//            [self.contactsTable setFrame:CGRectMake(0, 64, 320, self.view.frame.size.height-(49+64))];
-//        } completion:^(BOOL finished) {
-//            
-//        }];
-////    }
-//}
-//
-//-(void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller
-//{
-//    if (diffH==20.0f) {
-//        
-//    }
-//    
-//}
-//-(void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller
-//{
-//    if (diffH==20.0f) {
-//        [UIView animateWithDuration:0.2 animations:^{
-//            [searchBar setFrame:CGRectMake(0, 64, 320, 44)];
-//            [self.contactsTable setFrame:CGRectMake(0, 44+44+diffH, 320, self.view.frame.size.height-(49+44+diffH))];
-//        } completion:^(BOOL finished) {
-//            searchBar.backgroundImage = nil;
-//        }];
-//    }
-//    
-//    
-//}
-//-(void)searchDisplayController:(UISearchDisplayController *)controller willShowSearchResultsTableView:(UITableView *)tableView
-//{
-//    
-//    if (diffH==20.0f) {
-//        //        [tableView setFrame:CGRectMake(0, 20, 320, self.view.frame.size.height-(49+diffH))];
-//        //        [tableView setContentOffset:CGPointMake(0, 20)];
-//    }
-//    
-//    
-//}
 
--(void)viewWillAppear:(BOOL)animated
-{
-//    if ([[TempData sharedInstance] needChat]) {
-//        [self.customTabBarController setSelectedPage:0];
-//        return;
-//    }
-//    if ([[TempData sharedInstance] ifPanned]) {
-//        [self.customTabBarController hidesTabBar:NO animated:NO];
-//    }
-//    else
-//    {
-//        [self.customTabBarController hidesTabBar:NO animated:YES];
-//        [[TempData sharedInstance] Panned:YES];
-//    }
-}
 -(void)viewDidAppear:(BOOL)animated
 {
     [self refreshFriendList];
     
-    //   [self getFriendInfo:@"england"];
 }
 
 -(void)refreshFriendList
 {
-    friendDict = [DataStoreManager queryAllUserManagerWithshipType:@"1"];
-    sectionArray = [DataStoreManager querySections];
-    [sectionIndexArray removeAllObjects];
-    for (int i = 0; i<sectionArray.count; i++) {
-        [sectionIndexArray addObject:[[sectionArray objectAtIndex:i] objectAtIndex:0]];
-    }
     
-    friendsArray = [NSMutableArray arrayWithArray:[friendDict allKeys]];
-    [friendsArray sortUsingSelector:@selector(compare:)];
+    NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+    friendDict = [userinfo objectForKey:@"userList"];
+    NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+    sectionArray = keys;
     [self.contactsTable reloadData];
-    [hud hide:YES];
 }
 
 -(void)addButton:(UIButton *)sender
@@ -174,68 +97,62 @@
     NSLog(@"hhhh3:%@",dd);
     return dd;
 }
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [friendDict allKeys].count;
+
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@",searchBar.text];
-    NSLog(@"%@",searchBar.text);
-    
-    searchResultArray = [friendsArray filteredArrayUsingPredicate:resultPredicate ]; //注意retain
-    NSLog(@"%@",searchResultArray);
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        return [searchResultArray count];
-    }
-    
-    return [[[sectionArray objectAtIndex:section] objectAtIndex:1] count];
+//    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@",searchBar.text];
+//    NSLog(@"%@",searchBar.text);
+//    
+//    searchResultArray = [friendsArray filteredArrayUsingPredicate:resultPredicate ]; //注意retain
+//    NSLog(@"%@",searchResultArray);
+//    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+//        return [searchResultArray count];
+//    }
+    NSArray *array =[friendDict objectForKey:sectionArray[section]];
+    return array.count ;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString * stringCell3 = @"cell33";
-    PersonTableCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
+    NewPersonalTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
     if (!cell) {
-        cell = [[PersonTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
+        cell = [[NewPersonalTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
     NSDictionary * tempDict;
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        tempDict = [friendDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
-    }
-    else
-        tempDict = [friendDict objectForKey:[[[sectionArray objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
+        tempDict = [[friendDict objectForKey:[sectionArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
    
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"sex")] isEqualToString:@"0"]) {//男♀♂
-        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
-        cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+    cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
+    NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
+    NSURL * url=[ImageService getImageStr:iamgeId Width:80];
+    cell.headImageV.imageURL = url;
+    
+    NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+    cell.sexImg.image =KUIImage(genderimage);
+    
+    NSString * nickName=[tempDict objectForKey:@"alias"];
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=[tempDict objectForKey:@"nickname"];
     }
-    else
-    {
-        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
-        cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
-        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-    }
+    cell.nameLabel.text = nickName;
     
-     NSLog(@"tempDic--gender--->%@",tempDict);
-    if ([KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "]) {
-        cell.headImageV.imageURL = nil;;
-    }else{
-    if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]) {
-        cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] stringByAppendingString:@"/80"]];
-    }else
-    {
-        cell.headImageV.imageURL = nil;
-    }
-}
-    cell.nameLabel.text = [tempDict objectForKey:@"displayName"];
-    
-    cell.distLabel.text = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
-    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"achievementLevel") integerValue]];
-        
-    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
-    
-    
-    [cell refreshCell];
-    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
-    [cell setGameIconUIView:gameidss];
+    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
+    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
+    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
+    CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
+    cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
+    NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
+    [cell setGameIconUIView:gameids];
     return cell;
 }
 
@@ -243,13 +160,7 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        selectDict = [friendDict objectForKey:[searchResultArray objectAtIndex:indexPath.row]];
-    }
-    else
-    {
-        selectDict = [friendDict objectForKey:[[[sectionArray objectAtIndex:indexPath.section] objectAtIndex:1] objectAtIndex:indexPath.row]];
-    }
+        selectDict = [[friendDict objectForKey:[sectionArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     [self.contactDelegate getContact:selectDict];
 
     [self.navigationController popViewControllerAnimated:YES];
@@ -274,21 +185,21 @@
     }
 }
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        return 1;
-    }
-    
-    return sectionArray.count;
-}
+//-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{
+//    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+//        return 1;
+//    }
+//    
+//    return sectionArray.count;
+//}
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        return @"";
-    }
-    return [[sectionArray objectAtIndex:section] objectAtIndex:0];
+//    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+//        return @"";
+//    }
+    return [sectionArray objectAtIndex:section];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -296,7 +207,7 @@
 }
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    return sectionIndexArray;
+    return sectionArray;
 }
 -(void)back
 {
@@ -305,6 +216,29 @@
         
     }];
 }
+//头像默认图片
+-(NSString*)headPlaceholderImage:(NSString*)gender
+{
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        return @"people_man.png";
+    }
+    else
+    {
+        return @"people_woman.png";//
+    }
+}
+//性别图标
+-(NSString*)genderImage:(NSString*)gender
+{
+    if ([gender intValue]==0)
+    {
+        return @"gender_boy";
+    }else
+    {
+        return @"gender_girl";
+    }
+}
+
 #pragma mark -分享功能
 
 /*

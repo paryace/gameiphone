@@ -267,7 +267,6 @@
 
 - (void)addCharacterByNet
 {
-    [hud show:YES];
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
@@ -277,8 +276,13 @@
         }else{
             UITextField *tf  = (UITextField *)[self.view viewWithTag:i];
             [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+                return;
+            }
         }
     }
+
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];

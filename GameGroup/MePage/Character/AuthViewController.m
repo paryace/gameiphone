@@ -124,27 +124,58 @@
 
 -(void)buildContentWithArray:(NSArray *)array
 {
+    NSMutableArray *hegarr = [NSMutableArray array];
+    float heightForlb=0;
+    for (int i=0; i<array.count; i++) {
+                float height = [self returnSizeHeightWithValue:KISDictionaryHaveKey(array[i], @"value") font:KISDictionaryHaveKey(array[i], @"fontSize")];
+        heightForlb+=height;
+        [hegarr addObject:@(heightForlb)];
+    }
     
-    UILabel*  topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+130, 300, 40)];
-    topLabel.text = KISDictionaryHaveKey(array[0], @"value");
-    topLabel.numberOfLines = 0;
-    topLabel.backgroundColor = [UIColor clearColor];
-    topLabel.textColor =[self stringTOColor:KISDictionaryHaveKey(array[0], @"color")];
-    topLabel.font = [UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[0], @"fontSize")floatValue]];
-    [self.view addSubview:topLabel];
+    for (int i =0; i<array.count; i++) {
+        NSDictionary *dic = array[i];
+        UILabel*  topLabel = [[UILabel alloc] init];
+        topLabel.text = KISDictionaryHaveKey(dic, @"value");
+        topLabel.font = [UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(dic, @"fontSize")floatValue]];
 
-    UILabel* authitem  = [CommonControlOrView setLabelWithFrame:CGRectMake(10, startX+150, 300, 50) textColor:[self stringTOColor:KISDictionaryHaveKey(array[1], @"color")] font:[UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[1], @"fontSize")floatValue]] text:KISDictionaryHaveKey(array[1], @"value") textAlignment:NSTextAlignmentCenter];
-    [self.view addSubview:authitem];
+        float height = [self returnSizeHeightWithValue:KISDictionaryHaveKey(dic, @"value") font:KISDictionaryHaveKey(dic, @"fontSize")];
+        float hh = [hegarr[i] floatValue];
 
-    UILabel*  bottomLabel1 = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+200, 300, 40)];
-    bottomLabel1.text = KISDictionaryHaveKey(array[2], @"value");
-    bottomLabel1.numberOfLines = 0;
-    bottomLabel1.backgroundColor = [UIColor clearColor];
-    bottomLabel1.textColor = [self stringTOColor:KISDictionaryHaveKey(array[2], @"color")];
-    bottomLabel1.font = [UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[2], @"fontSize")floatValue]];
-    [self.view addSubview:bottomLabel1];
-    bottomLabel1.textAlignment = [self putoutAletr:KISDictionaryHaveKey(array[2], @"textAlign")];
+        topLabel.textAlignment = [self putoutAletr:KISDictionaryHaveKey(dic, @"textAlign")];
+        topLabel.frame = CGRectMake(10, startX+130+hh-height, 300, height);
+        topLabel.numberOfLines = 0;
+        topLabel.backgroundColor = [UIColor clearColor];
+        topLabel.textColor =[self stringTOColor:KISDictionaryHaveKey(dic, @"color")];
+        [self.view addSubview:topLabel];
 }
+
+
+}
+-(float)returnSizeHeightWithValue:(NSString *)value font:(NSString *)font
+{
+    CGSize cSize = [value sizeWithFont:[UIFont systemFontOfSize:[font floatValue]] constrainedToSize:CGSizeMake(300, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+    return cSize.height;
+}
+//    UILabel*  topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+130, 300, 40)];
+//    topLabel.text = KISDictionaryHaveKey(array[0], @"value");
+//    topLabel.numberOfLines = 0;
+//    topLabel.backgroundColor = [UIColor clearColor];
+//    topLabel.textColor =[self stringTOColor:KISDictionaryHaveKey(array[0], @"color")];
+//    topLabel.font = [UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[0], @"fontSize")floatValue]];
+//    [self.view addSubview:topLabel];
+//
+//    UILabel* authitem  = [CommonControlOrView setLabelWithFrame:CGRectMake(10, startX+150, 300, 50) textColor:[self stringTOColor:KISDictionaryHaveKey(array[0], @"color")] font:[UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[0], @"fontSize")floatValue]] text:KISDictionaryHaveKey(array[0], @"value") textAlignment:NSTextAlignmentCenter];
+//    [self.view addSubview:authitem];
+//
+//    UILabel*  bottomLabel1 = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+200, 300, 40)];
+//    bottomLabel1.text = KISDictionaryHaveKey(array[0], @"value");
+//    bottomLabel1.numberOfLines = 0;
+//    bottomLabel1.backgroundColor = [UIColor clearColor];
+//    bottomLabel1.textColor = [self stringTOColor:KISDictionaryHaveKey(array[0], @"color")];
+//    bottomLabel1.font = [UIFont boldSystemFontOfSize:[KISDictionaryHaveKey(array[0], @"fontSize")floatValue]];
+//    [self.view addSubview:bottomLabel1];
+//    bottomLabel1.textAlignment = [self putoutAletr:KISDictionaryHaveKey(array[0], @"textAlign")];
+
 #pragma mark - 颜色转换 IOS中十六进制的颜色转换为UIColor
 //转换16进制颜色
 - (UIColor *) stringTOColor:(NSString *)str

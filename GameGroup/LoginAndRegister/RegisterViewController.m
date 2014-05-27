@@ -1035,14 +1035,14 @@
             [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1"  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
                 hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
             }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSLog(@"%@", responseObject);
+                NSLog(@"-------------------------------------%@", responseObject);
                 [hud hide:YES];
-                if ([responseObject isKindOfClass:[NSNumber class]]) {
+//                if ([responseObject isKindOfClass:[NSNumber class]]) {
                     [self continueStep3Net:[NSString stringWithFormat:@"%@", responseObject]];
                     _imgID =[NSString stringWithFormat:@"%@", responseObject];
-                }
-                else
-                    [self continueStep3Net:@""];
+//                }
+//                else
+//                    [self continueStep3Net:@""];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 [hud hide:YES];
                 [self continueStep3Net:@""];
