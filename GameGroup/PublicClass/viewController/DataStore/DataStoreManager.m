@@ -132,8 +132,6 @@
 {
     NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
-    NSDictionary* user= [[UserManager singleton] getUser:sender];
-    NSString * senderNickname = [user objectForKey:@"nickname"];
     NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
@@ -148,6 +146,9 @@
 //    }
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
+        NSDictionary* user= [[UserManager singleton] getUser:sender];
+        NSString * senderNickname = [user objectForKey:@"nickname"];
+
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
             commonMsg.sender = sender;
@@ -198,6 +199,9 @@
         }];
     }
     else if ([sendertype isEqualToString:PAYLOADMSG]) {//动态聊天消息
+        NSDictionary* user= [[UserManager singleton] getUser:sender];
+        NSString * senderNickname = [user objectForKey:@"nickname"];
+
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
             commonMsg.sender = sender;
@@ -1958,7 +1962,7 @@ return @"";
         [dict setObject:@"0" forKey:@"longitude"];
         [dict setObject:dUser.age forKey:@"birthdate"];
         [dict setObject:dUser.headImgID forKey:@"img"];
-        [dict setObject:dUser.backgroundImg forKey:@"backgroundImg"];
+        [dict setObject:dUser.backgroundImg?dUser.backgroundImg:@"" forKey:@"backgroundImg"];
         [dict setObject:dUser.superstar forKey:@"superstar"];
     }
     return dict;
@@ -2465,5 +2469,20 @@ return @"";
         
     }];
 }
+
++(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
+        DSRecommendList * dReceivedHellos = [DSRecommendList MR_findFirstWithPredicate:predicate];
+        if (dReceivedHellos)
+        {
+            dReceivedHellos.state = state;
+        }
+    }];
+
+}
+
+
 
 @end

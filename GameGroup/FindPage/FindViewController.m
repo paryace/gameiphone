@@ -27,7 +27,6 @@
     UILabel *commentLabel;
     EGOImageView * headImgView;
     
-    NSInteger    friendDunamicmsgCount;
     NSInteger    myDunamicmsgCount;
     UILabel *lb;
     float button_center_x;
@@ -100,16 +99,27 @@
     }
     
     //显示数字
-    if (myDunamicmsgCount && myDunamicmsgCount !=0)
-    {
-        m_notibgInfoImageView.hidden = NO;  //数字
-        if (myDunamicmsgCount > 99) {
-            lb.text = @"99+";
+        NSString *commStr1 = @"";
+        NSString *commStr2 = @"";
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+            m_notibgCircleNewsImageView.hidden = NO;
+            commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+        }else{
+            commStr1 =@"";
+            m_notibgCircleNewsImageView.hidden = YES;
         }
-        else
-            lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
-        commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",myDunamicmsgCount];
-    }
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+            commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+            m_notibgInfoImageView.hidden = NO;  //数字
+            int dianCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
+            if (dianCount > 99) {
+                lb.text = @"99+";
+            }
+            else
+                lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
+
+        }
+        commentLabel.text =[commStr1 stringByAppendingString:commStr2];
     
     
 }
@@ -118,7 +128,6 @@
 {
     NSLog(@"监听");
     //控制红点
-    friendDunamicmsgCount ++;
     
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     //显示头像
@@ -136,23 +145,16 @@
             headImgView.imageURL = nil;
         }
     }
-    
-    if (friendDunamicmsgCount && friendDunamicmsgCount !=0)
-    {
-        NSLog(@"-------->>>%d",friendDunamicmsgCount);
-        if(m_notibgInfoImageView.hidden)
-        {
-            m_notibgCircleNewsImageView.hidden = NO;
-        }
-        else{
-            m_notibgCircleNewsImageView.hidden = YES;
-        }
-      commentLabel.text =[NSString stringWithFormat:@"有%d条新动态",friendDunamicmsgCount] ;
-    }
+
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-        commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+        m_notibgCircleNewsImageView.hidden = NO;
+        [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
+        commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+    }else{
+        commStr1 =@"";
+        m_notibgCircleNewsImageView.hidden = YES;
     }
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
         commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
@@ -228,6 +230,18 @@
     
     [bottomView addSubview:bottomTitleLabel];
     
+    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
+    headImgView.frame = CGRectMake(260, 10, 40, 40);
+    if (_friendImgStr ==nil) {
+        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"]]];
+    }else{
+        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+    }
+    [bottomView addSubview:headImgView];
+
+    
+    
+    
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
     iconImageView.image = KUIImage(@"circleIcon");
    // iconImageView.backgroundColor =[ UIColor clearColor];
@@ -238,14 +252,12 @@
     [self.view bringSubviewToFront:m_notibgCircleNewsImageView];
     [m_notibgCircleNewsImageView setImage:[UIImage imageNamed:@"redpot.png"]];
     [bottomView addSubview:m_notibgCircleNewsImageView];
-    m_notibgCircleNewsImageView.hidden = YES;
-    //红点 - 与我相关
+    
     m_notibgInfoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(297,2, 18, 18)];
     [bottomView bringSubviewToFront:m_notibgInfoImageView];
     [m_notibgInfoImageView setImage:[UIImage imageNamed:@"redCB.png"]];
     [bottomView addSubview:m_notibgInfoImageView];
-    m_notibgInfoImageView.hidden = YES;
-    
+
     lb = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
     [lb setBackgroundColor:[UIColor clearColor]];
     [lb setTextAlignment:NSTextAlignmentCenter];
@@ -253,6 +265,8 @@
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
     [self buildMenuButton];
+    
+    
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
         manDic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
         drawView.showList = YES;
@@ -261,7 +275,7 @@
     }
 
     
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 120, 20)];
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 170, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentLeft;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
@@ -272,6 +286,9 @@
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
             commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
             m_notibgCircleNewsImageView.hidden =NO;
+            [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
+        }else{
+            m_notibgCircleNewsImageView.hidden = YES;
         }
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
             
@@ -279,7 +296,12 @@
                        
             commStr2 = [NSString stringWithFormat:@"%@条与我相关",counts];
             m_notibgInfoImageView.hidden = NO;
-            lb.text =counts;
+            [bottomView bringSubviewToFront:m_notibgInfoImageView];
+            lb.text =[NSString stringWithFormat:@"%@",counts];
+        }else{
+            commStr2 = @"";
+            lb.text = @"";
+            m_notibgInfoImageView.hidden = YES;
         }
         commentLabel.text = [commStr1 stringByAppendingString:commStr2];
     }else{
@@ -290,14 +312,6 @@
     }
     [bottomView addSubview:commentLabel];
     
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
-    headImgView.frame = CGRectMake(260, 10, 40, 40);
-       if (_friendImgStr ==nil) {
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"]]];
-    }else{
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
-    }
-    [bottomView addSubview:headImgView];
 
     
    // [self didClickMenu:nil];
@@ -620,7 +634,6 @@
     //清除红点
     m_notibgInfoImageView.hidden = YES;
     m_notibgCircleNewsImageView.hidden = YES;
-    friendDunamicmsgCount =0;
     myDunamicmsgCount =0;
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
     commentLabel.text = @"暂无新的动态";

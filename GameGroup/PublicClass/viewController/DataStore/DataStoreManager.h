@@ -152,6 +152,9 @@
 
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 
++(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state;
+
+
 +(void)deleteAllDSCommonMsgs;
 +(void)deleteMsgByMsgType:(NSString *)msgType;
 

@@ -277,7 +277,6 @@
                     [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
                     return;
                 }
-                
             }
         }
         [hud show:YES];
