@@ -933,19 +933,15 @@ typedef enum : NSUInteger {
             //有图动态
             else{
             NSArray *imgArray = KISDictionaryHaveKey(dict, @"imgArray");
-            cell.collArray = imgArray;
+                [cell getImgWithArray:imgArray];
+//            cell.collArray = imgArray;
             cell.customPhotoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
             cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
             m_currmagY += imgHeight;
     
-            CGFloat paddingY = 2;
-            CGFloat paddingX = 2;
-            cell.layout.sectionInset = UIEdgeInsetsMake(paddingY, paddingX, paddingY, paddingX);
-            cell.layout.minimumLineSpacing = paddingY;
 
-            [cell.customPhotoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
             
@@ -1048,17 +1044,13 @@ typedef enum : NSUInteger {
     
     // 评论
     commentArray =KISDictionaryHaveKey(dict, @"commentList");
-    cell.commentArray = commentArray;
+//    cell.commentArray = commentArray;
+    [cell getCommentArray:commentArray];
     cell.commentTabelView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
-    [cell.commentTabelView reloadData];
     
     float commHieght = [KISDictionaryHaveKey(dict, @"commentListHieght") floatValue];
-    
     cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght);
- 
     m_currmagY+= commHieght;
-    
-    
     if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
         cell.commentMoreBtn.hidden = NO;
         cell.commentMoreBtn.frame = CGRectMake(60, m_currmagY, 250, 20);

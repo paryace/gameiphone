@@ -119,6 +119,7 @@ UINavigationControllerDelegate>
     //监听通知（收到新消息，与发送消息成功）
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(newMesgReceived:)
                                                  name:kNewMessageReceived

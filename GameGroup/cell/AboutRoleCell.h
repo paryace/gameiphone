@@ -14,7 +14,7 @@
 @interface AboutRoleCell : UITableViewCell<UITextFieldDelegate>
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UITextField *contentTF;
-@property(nonatomic,strong)UIImageView *rightImageView;
+@property(nonatomic,strong)UIButton *rightImageView;
 @property(nonatomic,strong)UIButton * serverButton;
 @property(nonatomic,strong)EGOImageView *gameImg;
 @property(nonatomic,assign)id<AboutRoleCellDelegate>myCellDelegate;
@@ -23,5 +23,5 @@
 @protocol AboutRoleCellDelegate <NSObject>
 
 -(void)outputTextField:(UITextField *)tf WithCell:(AboutRoleCell *)myCell;
-
+-(void)didClickRightImgWithCell:(AboutRoleCell *)myCell;
 @end
