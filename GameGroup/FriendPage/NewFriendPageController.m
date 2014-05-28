@@ -181,6 +181,11 @@
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    if (resultArray.count==0||keyArr.count==0) {
+        return nil;
+    }
+    
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];

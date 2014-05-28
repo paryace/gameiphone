@@ -1448,7 +1448,7 @@ UINavigationControllerDelegate>
     if ([touch view]==clearView) {
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
-//            [self autoMovekeyBoard:0];
+            [self autoMovekeyBoard:0];
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
@@ -1456,8 +1456,6 @@ UINavigationControllerDelegate>
                 m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
                 emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
                 m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
-                
-                
             } completion:^(BOOL finished) {
                 self.theEmojiView.hidden = YES;
                 self.kkChatAddView.hidden = YES;
@@ -2234,14 +2232,13 @@ UINavigationControllerDelegate>
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
-        [messages setValue:@"4" forKey:@"status"];
+        [tempDic setValue:@"4" forKey:@"status"];
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
         [self.tView reloadData];
         if (messages.count>0) {
             [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
         }
-        
         [self comeBackDisplayed:sender msgId:msgId];//发送已读消息
     }
     else

@@ -149,6 +149,9 @@
 +(NSDictionary *)queryUserInfo:(NSString*)userId;
 +(void)deleteAllNameIndex;
 
++(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType;//根据senderType和sayHiType删除消息
+
++(BOOL)isHaveSayHiMsg:(NSString *)type;//是否有打招呼的消息
 
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 

@@ -127,7 +127,17 @@
         [thumbMsgs MR_deleteInContext:localContext];
     }];
 }
-
++(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"senderType==[c]%@ and sayHiType==[c]%@",senderType,sayHiType];
+        NSArray * thumbMsg = [DSThumbMsgs MR_findAllWithPredicate:predicate];
+        for (int i = 0; i<thumbMsg.count; i++) {
+            DSThumbMsgs * thumb = [thumbMsg objectAtIndex:i];
+            [thumb MR_deleteInContext:localContext];
+        }
+    }];
+}
 +(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
 {
     NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
@@ -179,13 +189,15 @@
             thumbMsgs.sayHiType = sayhiType;
             thumbMsgs.receiveTime=[GameCommon getCurrentTime];
                 
-            if ([sayhiType isEqualToString:@"2"]){
+            if ([sayhiType isEqualToString:@"2"]){//自定义一条用于显示打招呼的消息
                     NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
                     DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];
                     if (!thumbMsgs)
                     thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+                    thumbMsgs.msgContent = msgContent;//打招呼内容
                     thumbMsgs.sender = @"1234567wxxxxxxxxx";
-                    thumbMsgs.senderNickname = @"有新的打招呼信息";
+//                    thumbMsgs.senderNickname = @"有新的打招呼信息";
+                    thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
                     thumbMsgs.senderType = sendertype;
                     int unread = [thumbMsgs.unRead intValue];
                     thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
@@ -193,9 +205,9 @@
                     thumbMsgs.messageuuid = @"wx123";
                     thumbMsgs.status = @"1";//已发送
                     thumbMsgs.sayHiType = @"1";
+                    thumbMsgs.sendTime=sendTime;
                     thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
             }
-            
         }];
     }
     else if ([sendertype isEqualToString:PAYLOADMSG]) {//动态聊天消息
@@ -714,12 +726,20 @@
 //    return allMsgArray;
 //}
 
-
 +(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
 {
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
     return array;
+}
++(BOOL)isHaveSayHiMsg:(NSString *)type
+{
+    NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
+    DSThumbMsgs * sayThumbMsg= [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+    if (sayThumbMsg){
+        return YES;
+    }
+    return NO;
 }
 //----
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status

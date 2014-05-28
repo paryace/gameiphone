@@ -31,9 +31,6 @@
     
     NSMutableArray * allMsgArray;
     
-    NSMutableArray * allSayHelloArray;//id
-    NSMutableArray * sayhellocoArray;//内容
-    
     UIButton *deltButton;
 }
 @end
@@ -64,6 +61,10 @@
     }
     else
     {
+        //如果没有打招呼消息 删除打招呼的条目
+        if (![DataStoreManager isHaveSayHiMsg:@"2"]) {
+            [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
+        }
         
         [self.view bringSubviewToFront:hud];
             if([self.appDel.xmppHelper isConnected]){
@@ -115,8 +116,6 @@
     
     
     allMsgArray = [NSMutableArray array];
-    allSayHelloArray = [NSMutableArray array];
-    sayhellocoArray = [NSMutableArray array];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
@@ -229,28 +228,6 @@
     [alert show];
 }
 
-//貌似没地方调用此方法了
-//-(void)getSayHiUserIdWithNet
-//{
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-//    [paramDict setObject:@"" forKey:@"touserid"];
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:@"154" forKey:@"method"];
-//    [postDict setObject:paramDict forKey:@"params"];
-//    
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//    
-//    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
-//        
-//        [self displayMsgsForDefaultView];
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        NSLog(@"deviceToken fail");
-//    }];
-//}
-
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 345) {
@@ -267,28 +244,10 @@
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {
-    //获取所有聊过天人的id （你对他）
-    [allSayHelloArray removeAllObjects];
-    [allSayHelloArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-    
+    [allMsgArray removeAllObjects];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
     
-    NSMutableArray *array1 = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
-    sayhellocoArray = [array1 mutableCopy];
-    
-    for (int i = 0; i <allMsgArray.count;i++) {
-        DSThumbMsgs *thumb = [allMsgArray objectAtIndex:i];
-        if ([thumb.sender isEqualToString:@"1234567wxxxxxxxxx"]) {
-            if (sayhellocoArray.count==0) {//没有打招呼消息
-                [allMsgArray removeObject:thumb];
-            }else{
-                thumb.sendTime = [[sayhellocoArray objectAtIndex:0]sendTime];
-                thumb.sendTimeStr =[[sayhellocoArray objectAtIndex:0]sendTimeStr];
-            }
-        }
-    }
-
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
     [allMsgArray sortUsingDescriptors:sortDescriptors];
@@ -335,57 +294,48 @@
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     
-    cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
+    cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];//@"有新的打招呼信息"
     if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {//打招呼
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
-        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",[[sayhellocoArray objectAtIndex:0]senderNickname],[[sayhellocoArray objectAtIndex:0]msgContent]];
+        NSString *nickName=[[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+        NSString *msgContent=[[allMsgArray objectAtIndex:indexPath.row] msgContent];
+        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
+        cell.nameLabel.text = @"有新的打招呼信息";
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
     {//角色，头衔，战斗力
         cell.headImageV.imageURL =nil;
-        
         cell.headImageV.image = KUIImage(@"mess_titleobj");
         NSDictionary * dict = [[[allMsgArray objectAtIndex:indexPath.row] msgContent] JSONValue];
         cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
+        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])
     {//好友推荐
         cell.headImageV.imageURL =nil;
-        
         cell.headImageV.image = KUIImage(@"mess_tuijian");
-        
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row] msgContent];
+        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])
     {//每日一闻
         cell.headImageV.imageURL =nil;
-        
         cell.headImageV.image = KUIImage(@"mess_news");
-        
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
     {//正常聊天
-        
-        
         NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
         cell.headImageV.imageURL=[ImageService getImageStr:sendImageId Width:80];
-//      NSURL * theUrl;
-//        if (!sendImageId||[sendImageId isEqualToString:@""]||[sendImageId isEqualToString:@" "]) {
-//            theUrl =nil;
-//        }else{
-//            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:sendImageId]]];
-//        }
-//        cell.headImageV.imageURL = theUrl;
-        
-        
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
-        
+        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     
+    //设置红点 start
     if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
         cell.unreadCountLabel.hidden = NO;
         cell.notiBgV.hidden = NO;
@@ -418,11 +368,9 @@
         cell.unreadCountLabel.hidden = YES;
         cell.notiBgV.hidden = YES;
     }
-    cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+    //-- end
     NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
-
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
-    
     return cell;
 }
 
@@ -432,7 +380,6 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHi"]) {
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
-        friq.personCount = sayhellocoArray.count;
         [self.navigationController pushViewController:friq animated:YES];
         [self cleanUnReadCountWithType:5 Content:@"" typeStr:@""];
         return;
@@ -448,12 +395,9 @@
     if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        
         FriendRecommendViewController* VC = [[FriendRecommendViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
-        
         [self cleanUnReadCountWithType:2 Content:@"" typeStr:@""];
-        
         return;
     }
     if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])//新闻
@@ -469,7 +413,6 @@
         [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        
         OtherMsgsViewController* VC = [[OtherMsgsViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
@@ -494,11 +437,6 @@
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
 {
     if (1 == type) {//头衔、角色、战斗力
-        //        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        //            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@ AND msgType==[c]%@",pre, typeStr];
-        //            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-        //            thumbMsgs.unRead = @"0";
-        //        }];//清数字
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -545,15 +483,12 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
-
-
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
         if([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1"])//角色
         {
-            //            [DataStoreManager deleteThumbMsgWithUUID:[[allMsgArray objectAtIndex:indexPath.row] objectForKey:@"messageuuid"]];
             [DataStoreManager cleanOtherMsg];
         }
         else if ([[[allMsgArray objectAtIndex:indexPath.row]sender] isEqual:@"sys00000011"])
@@ -563,9 +498,8 @@
         else{
             if ([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1234567wxxxxxxxxx"])
             {
-                for (int i =0;i<sayhellocoArray.count;i++) {
-                    [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[sayhellocoArray objectAtIndex:i]sender]]];
-                }
+                [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];//删除打招呼显示的消息
+                [DataStoreManager deleteSayHiMsgWithSenderAndSayType:COMMONUSER SayHiType:@"2"];//删除打所有打招呼的消息
             }
             [DataStoreManager deleteMsgsWithSender:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]] Type:COMMONUSER];
             
@@ -575,58 +509,6 @@
         [self displayMsgsForDefaultView];
     }
 }
-//
-//- (void)getMyUserInfoFromNet
-//{
-//    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    
-//    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:paramDict forKey:@"params"];
-////    [postDict setObject:@"106" forKey:@"method"];
-//    [postDict setObject:@"201" forKey:@"method"];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-//    
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        
-//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-//        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
-//        [recDict setObject:gameids forKey:@"gameids"];
-//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-//            
-//            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
-//            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
-//            [recDict setObject:titleObj forKey:@"titleName"];
-//            [recDict setObject:titleObjLevel forKey:@"rarenum"];
-//        }
-//        
-//        [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        
-//    }];
-//}
-
--(void)getSayHelloWithUserid:(NSString*)userId
-{
-    NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:userId forKey:@"touserid"];
-    [postDict1 addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict1 setObject:@"153" forKey:@"method"];
-    [postDict1 setObject:paramDict forKey:@"params"];
-    
-    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-    }];
-    
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
