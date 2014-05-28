@@ -19,5 +19,5 @@ UIScrollViewDelegate,
 TableViewDatasourceDidChange,
 EveryDataNewsCellDelegate
 >
-
+@property(nonatomic,copy)NSString *gameid;
 @end

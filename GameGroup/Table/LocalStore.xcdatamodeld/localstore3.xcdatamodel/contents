@@ -133,6 +133,10 @@
     <entity name="DSNameIndex" representedClassName="DSNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSNewsGameList" representedClassName="DSNewsGameList" syncable="YES">
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSNewsMsgs" representedClassName="DSNewsMsgs" syncable="YES">
         <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
@@ -249,5 +253,6 @@
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="255"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="75"/>
     </elements>
 </model>

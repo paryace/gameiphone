@@ -20,6 +20,7 @@
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
 #import "UserManager.h"
+#import "DataNewsViewController.h"
 //#import "Reachability.h"
 #import "ImageService.h"
 
@@ -404,7 +405,8 @@
     if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])//新闻
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        EveryDataNewsViewController * newsVC = [[EveryDataNewsViewController alloc]init];
+//        EveryDataNewsViewController * newsVC = [[EveryDataNewsViewController alloc]init];
+        DataNewsViewController *newsVC = [[DataNewsViewController alloc]init];
         [self.navigationController pushViewController:newsVC animated:YES];
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;

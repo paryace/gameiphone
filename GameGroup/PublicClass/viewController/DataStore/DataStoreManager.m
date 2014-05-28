@@ -64,7 +64,6 @@
     }
     return NO;
 }
-#pragma mark - 存储消息相关
 #pragma mark - 会话列表界面 - thumbMsg
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img
 {
@@ -149,6 +148,8 @@
         }
     }];
 }
+#pragma mark - 存储消息相关
+
 +(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
 {
     NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
@@ -320,12 +321,18 @@
     else if([sendertype isEqualToString:DAILYNEWS])//新闻
     {
         NSString* title = KISDictionaryHaveKey(msg, @"title");
+        NSDictionary *dic =[title JSONValue];
+        NSString *gameid =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
+        
+        
+        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             DSNewsMsgs * newsMsg = [DSNewsMsgs MR_createInContext:localContext];//所有消息
             newsMsg.messageuuid = msgId;
             newsMsg.msgcontent = msgContent;
             newsMsg.msgtype = msgType;
             newsMsg.mytitle = title;
+            newsMsg.gameid = gameid;
             newsMsg.sendtime = sendTime;
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -342,6 +349,13 @@
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+            
+            NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"gameid=[c]%@",gameid];
+            DSNewsGameList * dnews = [DSNewsGameList MR_findFirstWithPredicate:predicate1];
+            if (!dnews)
+                dnews = [DSNewsGameList MR_createInContext:localContext];
+            dnews.gameid = gameid;
+            dnews.mytitle = title;
 
         }];
     }
@@ -713,6 +727,34 @@
         
     }];
 }
++(NSArray *)qureyAllNewsMessageWithGameid:(NSString *)gameid
+{
+    NSPredicate * predicate= [NSPredicate predicateWithFormat:@"gameid==[c]%@",gameid];
+    NSArray *arr =[DSNewsMsgs MR_findAllSortedBy:@"sendtime" ascending:YES withPredicate:predicate];
+    NSMutableArray* array = [NSMutableArray array];
+    for (DSNewsMsgs* news in arr) {
+        NSString * str = news.mytitle;
+        NSDictionary * dic = [str JSONValue];
+        [array addObject:dic];
+    }
+    return array;
+}
+
++(NSArray *)qureyFirstOfgame
+{
+    NSMutableArray *mutarr = [NSMutableArray array];
+    NSArray *array = [DSNewsGameList MR_findAll];
+    for (DSNewsGameList *news in array) {
+        NSString *str = news.gameid;
+        NSString *str1 = news.mytitle;
+        NSString *dic =[str1 JSONValue];
+        NSDictionary *momo =[NSDictionary dictionaryWithObjectsAndKeys:str,@"gameid",dic,@"content", nil];
+        [mutarr addObject:momo];
+    }
+    return mutarr;
+}
+
+
 +(NSArray *)qureyAllNewsMessage
 {
     NSArray * newsMessage = [DSNewsMsgs MR_findAllSortedBy:@"sendtime" ascending:YES];
@@ -1497,6 +1539,7 @@ return @"";
     }
     return arr;
 }
+
 
 +(void)deletecommentWithMsgId:(NSString*)msgid
 {

@@ -10,6 +10,7 @@
 #import "TestViewController.h"
 #import "OnceDynamicViewController.h"
 #import "PhotoViewController.h"
+#import "EGOImageView.h"
 @interface EveryDataNewsViewController ()
 {
     UITableView *m_myTableView;
@@ -36,7 +37,7 @@
     [super viewDidLoad];
     m_pageNum =0;
     m_tableArray = [NSMutableArray array];
-    [m_tableArray addObjectsFromArray:[DataStoreManager qureyAllNewsMessage]];
+    [m_tableArray addObjectsFromArray:[DataStoreManager qureyAllNewsMessageWithGameid:self.gameid]];
     
    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX-20, self.view.bounds.size.width, self.view.bounds.size.height-startX+20) style:UITableViewStylePlain];
@@ -67,8 +68,8 @@
     titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:titleLabel];
     
-    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x-30, KISHighVersion_7 ? 27 : 7, 30, 30)];
-    imageView.image = KUIImage(@"WOW图标_03");
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x-30, KISHighVersion_7 ? 27 : 7, 30, 30)];
+    imageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameid]]];
     [self.view addSubview:imageView];
     
     dictDic = [NSMutableDictionary dictionary];

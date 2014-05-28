@@ -10,13 +10,12 @@
 
 #import "DSThumbMsgs.h"
 #import "DSCommonMsgs.h"
-
+#import "DSNewsGameList.h"
 #import "DSReceivedHellos.h"
 #import "DSUnreadCount.h"
 #import "DSNameIndex.h"
 
 #import "DSAttentionNameIndex.h"
-
 #import "DSFansNameIndex.h"
 
 #import "DSMyNewsList.h"
@@ -67,6 +66,10 @@
 
 + (void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;
 + (NSArray *)qureyAllNewsMessage;
++(NSArray *)qureyAllNewsMessageWithGameid:(NSString *)gameid;
++(NSArray *)qureyFirstOfgame;
++(NSArray *)qureyAllFirstNewsMessage;
+
 + (NSArray *)queryAllReceivedHellos;
 + (NSDictionary *)qureyLastReceivedHello;
 
@@ -92,7 +95,7 @@
 +(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)UnRead;
 +(void)deletecommentWithMsgId:(NSString*)msgid;
 +(void)deleteAllcomment;
-
++(NSArray *)qureyAllNewsMessage;
 
 //离线评论和赞
 +(void)saveCommentsWithDic:(NSDictionary *)dic;

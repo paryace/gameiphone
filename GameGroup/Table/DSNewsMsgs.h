@@ -17,5 +17,5 @@
 @property (nonatomic, retain) NSString * msgtype;
 @property (nonatomic, retain) NSString * mytitle;
 @property (nonatomic, retain) NSDate * sendtime;
-
+@property (nonatomic, retain) NSString * gameid;
 @end
