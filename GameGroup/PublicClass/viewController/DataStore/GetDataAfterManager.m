@@ -190,7 +190,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     
-    if ([DataStoreManager savedMsgWithID:msgId]) {
+//    if ([DataStoreManager savedMsgWithID:msgId]) {
+//        NSLog(@"消息已存在");
+//        return;
+//    }
+    if ([DataStoreManager isHaveMsgOnDb:msgId]) {
         NSLog(@"消息已存在");
         return;
     }

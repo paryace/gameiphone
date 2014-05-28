@@ -37,6 +37,17 @@
     }
     return NO;
 }
+
++ (BOOL)isHaveMsgOnDb:(NSString*)msgId//消息是否已存
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
+    DSCommonMsgs * msg = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
+    if (msg)
+    {
+        return YES;
+    }
+    return NO;
+}
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID
 {
     NSArray * array = [DSOtherMsgs MR_findByAttribute:@"messageuuid" withValue:msgID];
@@ -732,6 +743,7 @@
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
     return array;
 }
+//检查消息是否存在
 +(BOOL)isHaveSayHiMsg:(NSString *)type
 {
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];

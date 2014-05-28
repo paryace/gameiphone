@@ -153,6 +153,8 @@
 
 +(BOOL)isHaveSayHiMsg:(NSString *)type;//是否有打招呼的消息
 
++ (BOOL)isHaveMsgOnDb:(NSString*)msgId;//消息是否存在
+
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 
 +(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state;
