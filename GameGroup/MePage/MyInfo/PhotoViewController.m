@@ -10,6 +10,10 @@
 #import "EGOImageView.h"
 
 @interface PhotoViewController ()<UIScrollViewDelegate,UIActionSheetDelegate,EGOImageViewDelegate>
+{
+    EGOImageView* imageV;
+}
+
 @property (nonatomic,retain)UIScrollView* sc;
 @property (nonatomic,retain)UIImage* myimage;
 @property (nonatomic,retain)NSArray* smallImageArray;
@@ -62,7 +66,7 @@
     for (int i = 0;i < self.imgIDArray.count;i++) {
         
         //为每张图片imageV建立单独的Scorllview
-        EGOImageView* imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
+        imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
         imageV.placeholderImage = _smallImageArray[i];
         EGOImageView *imgview = [[EGOImageView alloc]init];
         imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
@@ -237,5 +241,9 @@
         UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"图片加载失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
         [alert show];
     }];
+}
+- (void)dealloc
+{
+    imageV.imageURL = nil;
 }
 @end

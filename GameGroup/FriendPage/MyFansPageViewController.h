@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 
 @interface MyFansPageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
-@property(nonatomic,strong)NSString *userId;
+@property(nonatomic,copy)NSString *userId;
 @end

@@ -298,6 +298,10 @@
         [self showAlertViewWithTitle:@"提示" message:@"请输入手机号！" buttonTitle:@"确定"];
         return;
     }
+    if (m_phoneNumText.text.length!=11) {
+        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号！" buttonTitle:@"确定"];
+        return;
+    }
     if (!m_agreeButton.selected) {
         [self showAlertViewWithTitle:@"提示" message:@"请勾选用户协议！" buttonTitle:@"确定"];
         return;

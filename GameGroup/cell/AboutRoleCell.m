@@ -69,6 +69,10 @@
     return self;
 }
 
+- (void)dealloc
+{
+    self.gameImg.imageURL = nil;
+}
 -(void)result:(id)sender
 {
     NSLog(@"111111111");

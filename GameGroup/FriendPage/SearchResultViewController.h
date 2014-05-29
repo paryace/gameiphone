@@ -16,6 +16,6 @@
 @end
 
 @interface SearchResultViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, UIScrollViewDelegate,UIAlertViewDelegate>
-@property (strong,nonatomic) id responseObject;
+@property (assign,nonatomic) id responseObject;
 @property(nonatomic,copy)NSString *nickNameList;
 @end

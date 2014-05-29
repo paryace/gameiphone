@@ -883,11 +883,11 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
     NSLog(@"self.drank%@",self.dRankvaltype);
-    if ([self.dRankvaltype isEqualToString:@"pveScore"]||[self.dRankvaltype isEqualToString:@"totalHonorableKills"]) {
-        NSLog(@"传职业");
-        [paramDict setObject:self.custType forKey:@"classid"];
-        
-    }
+//    if ([self.dRankvaltype isEqualToString:@"pveScore"]||[self.dRankvaltype isEqualToString:@"totalHonorableKills"]) {
+//        NSLog(@"传职业");
+//        [paramDict setObject:self.custType forKey:@"classid"];
+//        
+//    }
 
     [paramDict setObject:self.server forKey:@"realm"];
 //    [paramDict setObject:@"1" forKey:@"gameid"];
@@ -952,12 +952,12 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    NSLog(@"self.drank%@",self.dRankvaltype);
-    if ([self.dRankvaltype isEqualToString:@"pveScore"]||[self.dRankvaltype isEqualToString:@"totalHonorableKills"]) {
-        NSLog(@"传职业");
-        [paramDict setObject:self.custType forKey:@"classid"];
-        
-    }
+//    NSLog(@"self.drank%@",self.dRankvaltype);
+//    if ([self.dRankvaltype isEqualToString:@"pveScore"]||[self.dRankvaltype isEqualToString:@"totalHonorableKills"]) {
+//        NSLog(@"传职业");
+//        [paramDict setObject:self.custType forKey:@"classid"];
+//        
+//    }
     
     
     [paramDict setObject:self.server forKey:@"realm"];

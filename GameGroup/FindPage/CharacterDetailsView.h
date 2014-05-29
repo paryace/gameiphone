@@ -19,9 +19,8 @@
 @property(nonatomic,strong)EGOImageView *  headerImageView;//头像
 @property(nonatomic,strong)UILabel      *  NickNameLabel;//名字LB
 @property(nonatomic,strong)UILabel      *  guildLabel;//公会label
-@property(nonatomic,strong)UIView       *  rightPView;//右上透明veiw；
 @property(nonatomic,strong)UILabel      *  realmView;//服务器 阵营 职业
-@property(nonatomic,strong)UIImageView  *  gameIdView;//游戏图标
+@property(nonatomic,strong)EGOImageView  *  gameIdView;//游戏图标
 @property(nonatomic,strong)UIView       *  authView;//认证view；
 @property(nonatomic,strong)UIImageView  *  clazzImageView;//职业图标
 @property(nonatomic,strong)UILabel      *  levelLabel;//等级

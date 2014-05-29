@@ -85,7 +85,10 @@
 - (void)awakeFromNib
 {
 }
-
+- (void)dealloc
+{
+    self.headImageV.imageURL = nil;
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];

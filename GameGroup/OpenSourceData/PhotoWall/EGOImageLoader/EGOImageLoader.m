@@ -327,7 +327,7 @@ inline static NSString* keyForURL(NSURL* url, NSString* style) {
 	#if __EGOIL_USE_BLOCKS
 		dispatch_release(_operationQueue), _operationQueue = nil;
 	#endif
-	
+
 	self.currentConnections = nil;
 	[currentConnections release], currentConnections = nil;
 	[connectionsLock release], connectionsLock = nil;

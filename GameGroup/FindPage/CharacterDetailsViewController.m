@@ -30,15 +30,22 @@
     NSArray              * titleArray;
     NSInteger              m_pageNum;
     float startX;
-    NSString           *m_serverStr;//储存服务器名称
-    NSString           *m_characterId;
-    NSString           *m_zhiyeId;
+//    NSString           *m_characterId;
+//    NSString           *m_zhiyeId;
     NSString           *m_characterName;
     BOOL            isInTheQueue;//获取刷新数据队列中
     UIAlertView* alertView1;
     BOOL            isGoToNextPage;
     UIView              *bgView;
     UIActivityIndicatorView   *loginActivity;
+    
+    
+    NSMutableDictionary * m_titleDic;
+    NSMutableArray * m_nameArray;
+    NSMutableDictionary * m_infoDic;
+    
+    NSMutableArray * m_tabListArray;
+    
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -65,9 +72,13 @@
     
     isInTheQueue =NO;
     isGoToNextPage = YES;
-    
     [self setTopViewWithTitle:@"角色详情" withBackButton:YES];
-     startX = KISHighVersion_7 ? 64 : 44;
+    
+    m_titleDic =[NSMutableDictionary dictionary];
+    m_nameArray = [NSMutableArray array];
+    m_infoDic = [NSMutableDictionary dictionary];
+    m_tabListArray = [NSMutableArray array];
+    
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
@@ -75,17 +86,11 @@
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    //self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
-	// Do any additional setup after loading the view.
-    
-   // m_charaDetailsView.listScrollView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-   // m_charaDetailsView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX)];
+    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - startX)];
 
     [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
 
-    m_charaDetailsView.contentSize = CGSizeMake(320, 610);
-    //m_charaDetailsView.bounces = NO;
+    m_charaDetailsView.contentSize = CGSizeMake(320, 680);
     m_charaDetailsView.myCharaterDelegate = self;
     
     
@@ -98,16 +103,6 @@
     
     
     [self buildScrollView];//创建下面的表格
-    
-    
-    titleImageArray =[NSMutableArray array];
-    [titleImageArray addObject:KUIImage(@"PVE.png")];
-    [titleImageArray addObject:KUIImage(@"killer.png")];
-    [titleImageArray addObject:KUIImage(@"itemserver.png")];
-    [titleImageArray addObject:KUIImage(@"achievementCount.png")];
-    [titleImageArray addObject:KUIImage(@"Wjjc.png")];
-    //PVE战斗力  荣誉击杀数  装备等级 成就点数  PVP竞技场）
-    titleArray = [NSMutableArray arrayWithObjects:@"PVE战斗力",@"荣誉击杀",@"装备等级",@"成就点数",@"PVP竞技场", nil];
     
 
     m_charaDetailsView.reloadingBtn.userInteractionEnabled = NO;
@@ -127,6 +122,7 @@
     
     if (self.myViewType ==CHARA_INFO_MYSELF) {
         m_charaDetailsView.isComeTo = YES;
+        
         m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_contentTableView];
         m_contentTableView.dataSource = self;
@@ -195,7 +191,7 @@
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"146" forKey:@"method"];
+    [postDict setObject:@"224" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -208,11 +204,25 @@
 
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
+            m_titleDic = KISDictionaryHaveKey(responseObject, @"headMap");
+            m_nameArray = KISDictionaryHaveKey(responseObject, @"bodyList");
+            m_infoDic = KISDictionaryHaveKey(responseObject, @"ranking");
+            m_tabListArray = KISDictionaryHaveKey(responseObject, @"tabList");
+            
+            if (self.myViewType ==CHARA_INFO_PERSON){
+                [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
+                [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
+                
+            }else{
+                [m_charaDetailsView.myFriendBtn setTitle:KISDictionaryHaveKey(m_tabListArray[0], @"name") forState:UIControlStateNormal];
+                [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
+                [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
+            }
             
             
-            m_charaInfo = [[CharaInfo alloc] initWithCharaInfo:responseObject];
-            m_charaDetailsView.NickNameLabel.text = m_charaInfo.roleNickName;
-            NSString *guildStr =[NSString stringWithFormat:@"%@", m_charaInfo.guild];
+            
+            m_charaDetailsView.NickNameLabel.text = KISDictionaryHaveKey(m_titleDic, @"name");
+            NSString *guildStr =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_titleDic, @"value1")];
             NSString *guilStr = nil;
             if (guildStr.length>8 ) {
                 guilStr =[NSString stringWithFormat:@"%@..." ,[guildStr substringToIndex:8]];
@@ -220,46 +230,33 @@
             }else{
                 m_charaDetailsView.guildLabel.text = [NSString stringWithFormat:@"<%@>",guildStr];
             }
-            if ([m_charaInfo.guild isEqualToString:@""]) {
-                m_charaDetailsView.guildLabel.text =@"<无工会>";
+            if ([KISDictionaryHaveKey(m_titleDic, @"value1") isEqualToString:@""]) {
+                m_charaDetailsView.guildLabel.text =@"";
             }
+            
             //计算view的franme
-            NSString *str =[NSString stringWithFormat:@"%@ %@",m_charaInfo.realm,m_charaInfo.sidename];
-            m_charaDetailsView.rightPView.frame = CGRectMake(295-str.length*11, 5, str.length*11+20,20 );
-            m_charaDetailsView.realmView.frame = CGRectMake(18, 0, str.length*11+5, 20);
-            m_serverStr = m_charaInfo.realm;
-            m_characterId = m_charaInfo.characterid;
-            m_zhiyeId = m_charaInfo.professionalId;
-            m_characterName =m_charaInfo.roleNickName;
-            m_charaDetailsView.realmView.text = [NSString stringWithFormat:@"%@ %@", m_charaInfo.realm,m_charaInfo.sidename];
+            CGSize size = [KISDictionaryHaveKey(m_titleDic, @"value2") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByCharWrapping];
             
-            m_charaDetailsView.levelLabel.text =[NSString stringWithFormat:@"Lv.%@ %@", m_charaInfo.level,m_charaInfo.professionalName];
+            m_charaDetailsView.realmView.frame = CGRectMake(310-size.width, 28,size.width, 20);
+            m_charaDetailsView.gameIdView.frame = CGRectMake(295-size.width-7, 32, 15, 15);
+            m_charaDetailsView.gameIdView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameId]]];
+            m_characterName =KISDictionaryHaveKey(m_titleDic, @"name");
             
-//            CGSize size = [str sizeWithFont:m_charaDetailsView.levelLabel.font constrainedToSize:CGSizeMake(300, 25)];
+            m_charaDetailsView.realmView.text = KISDictionaryHaveKey(m_titleDic, @"value3");
             
+            m_charaDetailsView.levelLabel.text =KISDictionaryHaveKey(m_titleDic, @"value2");
             m_charaDetailsView.levelLabel.frame =CGRectMake(200,8,110,25);
 
-            
-            
-            
-            m_charaDetailsView.itemlevelView.text = [NSString stringWithFormat:@"%@/%@",m_charaInfo.itemlevelequipped,m_charaInfo.itemlevel] ;//
-//            CGSize size1 = [str sizeWithFont:m_charaDetailsView.itemlevelView.font constrainedToSize:CGSizeMake(300, 25)];
-            m_charaDetailsView.itemlevelView.frame =CGRectMake(200, 33,110,25);
-
-            //m_charaDetailsView.levelLabel.center = CGPointMake(m_charaDetailsView.itemlevelView.center.x, m_charaDetailsView.levelLabel.center.y);
-            
-            m_charaDetailsView.clazzImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%@",m_charaInfo.professionalId]];
-            
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-            NSString *charaInfoImageId=m_charaInfo.thumbnail;
+            
+            NSString *charaInfoImageId=KISDictionaryHaveKey(m_titleDic, @"thumbnail");
             if (!charaInfoImageId || [charaInfoImageId isEqualToString:@""]||[charaInfoImageId isEqualToString:@" "]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
             }else{
-                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",m_charaInfo.thumbnail]];
+                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",m_charaInfo.thumbnail]];
             }
             
             if ([[KISDictionaryHaveKey(responseObject, @"ranking") allKeys] containsObject:@"rankingtime"]) {
-//                NSString *changeBtnTitle =[NSString stringWithFormat:@"上次更新时间：%@",[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rankingtime")]]];
                 
                 NSString *changeBtnTitle=[self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"ranking"), @"rankingtime") ]];
                 
@@ -268,7 +265,7 @@
                 
                 [m_charaDetailsView.reloadingBtn setTitle:[NSString stringWithFormat:@"上次更新时间:%@",changeBtnTitle] forState:UIControlStateNormal];
             }
-            if ([m_charaInfo.auth isEqualToString:@"1"]) {
+            if ([KISDictionaryHaveKey(m_titleDic, @"auth")boolValue]) {
                 m_charaDetailsView.certificationImage.image = KUIImage(@"6");
             }else
             {
@@ -352,17 +349,21 @@
             return;
         }
             m_charaDetailsView.reloadingBtn.userInteractionEnabled = YES;
-            m_charaInfo = [[CharaInfo alloc] initWithReLoadingInfo:responseObject];
+        
+        m_infoDic = responseObject;
+        [m_contentTableView reloadData];
+        [m_reamlTableView reloadData];
+        [m_countryTableView reloadData];
+        
         MBProgressHUD *  hud2 = [[MBProgressHUD alloc] initWithView:self.view];
         [self.view addSubview:hud2];
         hud2.labelText = @"获取成功";
-            hud2.mode =  MBProgressHUDModeCustomView;
+        hud2.mode =  MBProgressHUDModeCustomView;
         hud2.customView = [[UIImageView alloc]initWithImage:KUIImage(@"37x-Checkmark")];
         [hud2 showAnimated:YES whileExecutingBlock:^{
             sleep(2);
             
         }];
-         // [self showMessageWindowWithContent:@"获取成功" imageType:0];
         NSString *changeBtnTitle =[NSString stringWithFormat:@"上次更新时间：%@",[self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rankingtime")]]];
         
         [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"rankingtime") forKey:@"WX_reloadBtnTitle_wx"];
@@ -381,7 +382,6 @@
             }
         }
     }];
-
 }
 //刷新数据
 -(void)reLoadingUserInfoFromNet
@@ -408,9 +408,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         m_charaDetailsView.reloadingBtn.userInteractionEnabled =YES;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            m_charaInfo = [[CharaInfo alloc] initWithReLoadingInfo:responseObject];
-            
-            [hud hide:YES];
+
+            m_infoDic = responseObject;
             
             [m_contentTableView reloadData];
             [m_countryTableView reloadData];
@@ -448,14 +447,30 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView ==m_contentTableView) {
-        return m_charaInfo.firstCompArray.count;
-    }else if (tableView ==m_countryTableView)
+        return m_nameArray.count;
+    }else if (tableView ==m_contentTableView)
     {
-        return m_charaInfo.secondCompArray.count;
+        return m_nameArray.count;
     }else{
-        return m_charaInfo.thirdCompArray.count;
+        return m_nameArray.count;
     }
 }
+
+-(NSMutableArray *)finishingDisgustingDataWithDic:(NSDictionary *)dic num:(NSString *)num
+{
+    NSDictionary *contentDic = [NSDictionary dictionary];
+    contentDic = KISDictionaryHaveKey(dic, num);
+    NSMutableArray *arr = [NSMutableArray array];
+    for (int i =0; i<m_nameArray.count; i++) {
+        NSMutableDictionary *dict = m_nameArray[i];
+        [dict setObject:KISDictionaryHaveKey(contentDic, KISDictionaryHaveKey(dict, @"key")) forKey:@"disgustingData"];
+        [arr addObject:dict];
+    }
+    return arr;
+}
+
+
+
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -464,143 +479,67 @@
     if (cell == nil) {
         cell = [[CharaDaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.titleImgView.image = [titleImageArray objectAtIndex:indexPath.row];
-    cell.titleLabel.text = [titleArray objectAtIndex:indexPath.row];
+    NSDictionary *dic  =m_nameArray[indexPath.row];
+    cell.titleImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+    cell.titleLabel.text = KISDictionaryHaveKey(dic, @"value1");
     cell.topImgView.image = KUIImage(@"paiming_ico");
-    
-    
+    cell.CountLabel.text = KISDictionaryHaveKey(dic, @"value2");
+
+    NSDictionary *contentDic = [NSDictionary dictionary];
     if (tableView ==m_contentTableView) {
-        cell.CountLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.firstValueArray objectAtIndex:indexPath.row]];
-        cell.rankingLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.firstRankArray objectAtIndex:indexPath.row]];
-        NSInteger  i =[[m_charaInfo.firstCompArray objectAtIndex:indexPath.row]integerValue];
-        if ([[NSString stringWithFormat:@"%@",[m_charaInfo.firstRankArray objectAtIndex:indexPath.row]] isEqualToString:@""]) {
-            cell.upDowmImgView.hidden = YES;
-        }else
-        {
-            cell.upDowmImgView.hidden =NO;
-        }
-        if (i ==1) {
-            cell.upDowmImgView.image = KUIImage(@"die");
-        }
-        if (i==-1) {
-            
-                cell.upDowmImgView.image = KUIImage(@"zhang");
-            }
-        else{
-                cell.upDowmImgView.image =nil;
-            }
-        //
+        contentDic = KISDictionaryHaveKey(m_infoDic, @"1");
+    }else if (tableView ==m_reamlTableView){
+        contentDic = KISDictionaryHaveKey(m_infoDic, @"2");
+    }else{
+        contentDic = KISDictionaryHaveKey(m_infoDic, @"3");
     }
-    if (tableView ==m_countryTableView){
-        cell.CountLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.secondValueArray objectAtIndex:indexPath.row]];
-        cell.rankingLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.secondRankArray objectAtIndex:indexPath.row]];
-        NSInteger  i =[[m_charaInfo.firstCompArray objectAtIndex:indexPath.row]integerValue];
-        if (i ==1) {
-            cell.upDowmImgView.image = KUIImage(@"die");
-        }
-        if (i==-1) {
-          
-            cell.upDowmImgView.image = KUIImage(@"zhang");
-        }
-        if (i==0) {
-                cell.upDowmImgView.image =nil;
-        }
-    }
-    if (tableView ==m_reamlTableView) {
-        cell.CountLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.thirdValueArray objectAtIndex:indexPath.row]];
-        
-        cell.rankingLabel.text = [NSString stringWithFormat:@"%@",[m_charaInfo.thirdRankArray objectAtIndex:indexPath.row]];
-        NSInteger  i =[[m_charaInfo.firstCompArray objectAtIndex:indexPath.row]integerValue];
-        if (i ==1) {
-            cell.upDowmImgView.image = KUIImage(@"die");
-        }
-        if (i==-1) {
-                cell.upDowmImgView.image = KUIImage(@"zhang");
-            }
-            if (i==0) {
-                cell.upDowmImgView.image =nil;
-        }
-        
-    }
-    
-    if ([cell.rankingLabel.text isEqualToString:@"0"]||[cell.rankingLabel.text intValue]>100||[cell.rankingLabel.text isEqualToString:@""]) {
-        cell.rankingLabel.text =@"--";
-        cell.upDowmImgView.hidden = YES;
-    }
+
+    NSDictionary *dict =KISDictionaryHaveKey(contentDic, KISDictionaryHaveKey(dic, @"key"));
+    cell.dataLabel.text =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"value")];
+    NSString *str =KISDictionaryHaveKey(dict, @"rank");
+    cell.rankingLabel.text = [NSString stringWithFormat:@"第%@名",str];
+
+    NSLog(@"dict-----------%@",dict);
+    NSLog(@"dic----------%@",dic);
+
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    
-    
-    NSString *alertTitle =nil;
-    alertTitle =[titleArray objectAtIndex:indexPath.row];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     RankingViewController *ranking = [[RankingViewController alloc]init] ;
-    
+
     if (tableView ==m_contentTableView) {
         ranking.cRankvaltype = @"1" ;
-        NSInteger i =[[m_charaInfo.firstRankArray objectAtIndex:indexPath.row]intValue];
-        if (i==0) {
-            isGoToNextPage = NO;
-        }
-        
-    }
-    if (tableView ==m_countryTableView) {
-        ranking.cRankvaltype = @"3" ;
-        NSInteger i =[[m_charaInfo.secondRankArray objectAtIndex:indexPath.row]intValue];
-        if (i==0) {
-            isGoToNextPage = NO;
-        }
 
-    }
-    if (tableView ==m_reamlTableView) {
+    }else if (tableView ==m_reamlTableView){
         ranking.cRankvaltype = @"2" ;
-        NSInteger i =[[m_charaInfo.thirdRankArray objectAtIndex:indexPath.row]intValue];
-        if (i==0) {
-            isGoToNextPage = NO;
-        }
-
+    }else{
+        ranking.cRankvaltype = @"3" ;
     }
-
-   // if (isGoToNextPage ==YES) {
-        ranking.characterid =m_characterId;
-        ranking.custType = m_zhiyeId;
-        ranking.server = m_serverStr;
-        ranking.userId = self.userId;
-        ranking.pageCount1 = -1;
-        ranking.pageCount2 = -1;
-        ranking.pageCount3 = -1;
-        ranking.characterName =m_characterName;
-        ranking. titleOfRanking = [titleArray objectAtIndex:indexPath.row];
-
-        switch (indexPath.row) {
-            case 0:
-                ranking.dRankvaltype = @"pveScore";
-                break;
-            case 1:
-                ranking.dRankvaltype = @"totalHonorableKills";
-                break;
-            case 2:
-                ranking.dRankvaltype = @"itemlevel";
-                break;
-            case 3:
-                ranking.dRankvaltype = @"achievementPoints";
-                break;
-            case 4:
-                ranking.dRankvaltype = @"pvpScore";
-                break;
-                
-            default:
-                break;
+    NSDictionary *dic  =m_nameArray[indexPath.row];
+    
+    for (int i =0; i<m_tabListArray.count; i++) {
+        NSDictionary *dicta = m_tabListArray[i];
+        if ([KISDictionaryHaveKey(dicta, @"key")intValue]==2) {
+            ranking.server = KISDictionaryHaveKey(dicta, @"name");
         }
-        
-        ranking.COME_FROM =[NSString stringWithFormat:@"%u",self.myViewType];
-        ranking.gameId=self.gameId;
-        NSLog(@"COME_FROM%@",ranking.COME_FROM);
-        [self.navigationController pushViewController:ranking animated:YES];
+    }
+    ranking.characterid =self.characterId;
+    ranking.userId = self.userId;
+    ranking.pageCount1 = -1;
+    ranking.pageCount2 = -1;
+    ranking.pageCount3 = -1;
+    ranking.characterName =m_characterName;
+    ranking.dRankvaltype = KISDictionaryHaveKey(dic, @"key");
+    
+    ranking.titleOfRanking = KISDictionaryHaveKey(dic, @"key");
+    ranking.COME_FROM =[NSString stringWithFormat:@"%u",self.myViewType];
+    ranking.gameId=self.gameId;
+    [self.navigationController pushViewController:ranking animated:YES];
     
 }
 
@@ -727,21 +666,7 @@
 
 - (void)pushSendNews
 {
-    //http://www.dapps.net/dev/iphone/iphone-ipad-screenshots-tips.html
-    //    CGImageRef UIGetScreenImage();
-    //    CGImageRef img = UIGetScreenImage();
-    //    UIImage* scImage=[UIImage imageWithCGImage:img];
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
-    //    if(upScroll.center.y < 0)
-    //    {
-    //        [downScroll.layer renderInContext:UIGraphicsGetCurrentContext()];
-    //    }
-    //    else
-    //    {
-    //        CGContextRef cm = UIGraphicsGetCurrentContext();
-    //        CGContextTranslateCTM(cm, 200, 0.0);
-    //        [upScroll.layer renderInContext:cm];
-    //    }
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();

@@ -302,7 +302,6 @@
     };
     m_fansheader = header;
 }
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

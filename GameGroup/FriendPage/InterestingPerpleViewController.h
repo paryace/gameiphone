@@ -1,8 +1,8 @@
 //
-//  CircleHeadViewController.h
+//  InterestingPerpleViewController.h
 //  GameGroup
-//  朋友圈
-//  Created by 魏星 on 14-4-23.
+//
+//  Created by 魏星 on 14-5-29.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
@@ -12,9 +12,7 @@
 #import "SendNewsViewController.h"
 #import "EmojiView.h"
 
-
-@interface CircleHeadViewController : BaseViewController
-<
+@interface InterestingPerpleViewController : BaseViewController<
 UITableViewDataSource,
 UITableViewDelegate,
 UINavigationControllerDelegate,

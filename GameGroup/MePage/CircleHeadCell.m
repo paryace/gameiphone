@@ -364,7 +364,10 @@
 
 }
 
-
+- (void)dealloc
+{
+    self.headImgBtn.imageURL = nil;
+}
 
 - (void)awakeFromNib
 {

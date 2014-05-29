@@ -32,7 +32,7 @@
 
        [self addSubview:self.TopScrollView];
         
-        [self buildRightView];
+    
         [self buildRoleView];
 //        self.authView = [[UIView alloc]initWithFrame:CGRectMake(290, 40, 45, 20)];
 //        self.authView.backgroundColor = [UIColor greenColor];
@@ -47,9 +47,6 @@
 
       //  [self buildButton];
         
-        self. certificationImage = [[UIImageView alloc]initWithFrame:CGRectMake(287, 27, 28, 12)];
-        self.backgroundColor = UIColorFromRGBA(0x262930, 1);
-        [self addSubview:self.certificationImage];
         
 
         self.listScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 236, 320, 300)];
@@ -100,29 +97,6 @@
     return self;
 }
 //右上view “石爪峰 部落  战士”
--(void)buildRightView
-{
-    self.rightPView = [[UIView alloc]initWithFrame:CGRectMake(240, 0, 100, 20)];
-    self.rightPView.backgroundColor = [UIColor colorWithRed:0/225.0f green:0/225.0f blue:0/225.0f alpha:0.6];
-    self.rightPView.layer.masksToBounds = YES;
-    self.rightPView.layer.cornerRadius = 6.0;
-    self.rightPView.layer.borderWidth = 0.1;
-    self.rightPView.layer.borderColor = [[UIColor blackColor] CGColor];
-
-    
-    [self addSubview:self.rightPView];
-    //wow图标
-    self.gameIdView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 4, 12, 12)];
-    self.gameIdView.image = KUIImage(@"wow");
-    [self.rightPView addSubview:self.gameIdView];
-    
-    self.realmView = [[UILabel alloc]initWithFrame:CGRectMake(15, 0, 85, 20)];
-    self.realmView.backgroundColor =[UIColor clearColor];
-    self.realmView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
- //   self.realmView.text = @"石爪峰 部落";
-    self.realmView.font = [UIFont boldSystemFontOfSize:12];
-    [self.rightPView addSubview:self.realmView];
-}
 
 -(void)buildRoleView//职业资料条
 {
@@ -141,6 +115,13 @@
     
   //  self.headerImageView.image =KUIImage(@"ceshi.jpg");
     [self.titleView addSubview:self.headerImageView];
+    
+    
+  //认证图片
+    self. certificationImage = [[UIImageView alloc]initWithFrame:CGRectMake(20, 43, 28, 12)];
+    self.backgroundColor = UIColorFromRGBA(0x262930, 1);
+    [self.titleView addSubview:self.certificationImage];
+
     
     //角色名
     self.NickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(70, 0, 200, 35)];
@@ -169,41 +150,15 @@
     self.levelLabel.font = [UIFont boldSystemFontOfSize:12];
     [self.titleView addSubview:self.levelLabel];
 
-    //装等
-    self.itemlevelView = [[UILabel alloc]initWithFrame:CGRectMake(230, 28, 90, 30)];
-    self.itemlevelView.textAlignment = NSTextAlignmentRight;
-    self.itemlevelView.backgroundColor = [UIColor clearColor];
-    self.itemlevelView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
-    self.itemlevelView.font = [UIFont fontWithName:@"DigifaceWide" size:16];
-    [self.titleView addSubview:self.itemlevelView];
-
+    self.gameIdView = [[EGOImageView alloc]initWithFrame:CGRectMake(230, 32, 12, 12)];
+    [self.titleView addSubview:self.gameIdView];
     
-}
-
--(void)buildButton
-{
-    self.myFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.myFriendBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [self.myFriendBtn setTitle:@"好友" forState:UIControlStateNormal];
-    [self.myFriendBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    [self.myFriendBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview:self.myFriendBtn];
-
-    self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
-    [self.countryBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    [self.countryBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview:self.countryBtn];
-    
-    
-    self.realmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
-    [ self.realmBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    [ self.realmBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview: self.realmBtn];
-
+    self.realmView = [[UILabel alloc]initWithFrame:CGRectMake(250, 26, 85, 20)];
+    self.realmView.backgroundColor =[UIColor clearColor];
+    self.realmView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
+    //   self.realmView.text = @"石爪峰 部落";
+    self.realmView.font = [UIFont boldSystemFontOfSize:12];
+    [self.titleView addSubview:self.realmView];
 }
 
 -(void)comeFromMy
@@ -223,7 +178,7 @@
     }
     
     self.myFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.myFriendBtn.frame = CGRectMake(0, 200, 106,36);
+    self.myFriendBtn.frame = CGRectMake(0, 200, 106.6,36);
 
     [self.myFriendBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
     [self.myFriendBtn setTitle:@"好友" forState:UIControlStateNormal];
@@ -232,7 +187,7 @@
     [self addSubview:self.myFriendBtn];
     
     self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.countryBtn.frame = CGRectMake(212, 200,106,36);
+    self.countryBtn.frame = CGRectMake(213.4, 200,106.6,36);
 
     [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
     [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
@@ -242,7 +197,7 @@
     
     
     self.realmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.realmBtn.frame = CGRectMake(106, 200, 106, 36);
+    self.realmBtn.frame = CGRectMake(106.6, 200, 106.8, 36);
 
     [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
     [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
