@@ -20,34 +20,13 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        self.showsHorizontalScrollIndicator = NO;
-        self.showsVerticalScrollIndicator = NO;
-        self.TopScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-        self.TopScrollView.pagingEnabled = YES;
-        self.TopScrollView.bounces = NO;
-        self.TopScrollView.userInteractionEnabled = NO;
-
-        self.TopScrollView.showsHorizontalScrollIndicator =NO;
-        self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
-
-       [self addSubview:self.TopScrollView];
+        self.backgroundColor = [UIColor whiteColor];
+        self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+        self.topImageView.backgroundColor  = [UIColor whiteColor];
+       [self addSubview:self.topImageView];
         
     
         [self buildRoleView];
-//        self.authView = [[UIView alloc]initWithFrame:CGRectMake(290, 40, 45, 20)];
-//        self.authView.backgroundColor = [UIColor greenColor];
-//        [self addSubview:self.authView];
-        
-//        UILabel * authLabel = [[UILabel alloc]initWithFrame:self.authView.bounds ];
-//        authLabel.backgroundColor = [UIColor clearColor];
-//        authLabel.textColor = [UIColor whiteColor];
-//        authLabel.text = @"未认证";
-//        authLabel.font = [UIFont systemFontOfSize:9];
-//        [self.authView addSubview:authLabel];
-
-      //  [self buildButton];
-        
-        
 
         self.listScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 236, 320, 300)];
         self.listScrollView.pagingEnabled = YES;
@@ -112,8 +91,6 @@
     self.headerImageView.layer.borderWidth = 0.1;
     self.headerImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
 
-    
-  //  self.headerImageView.image =KUIImage(@"ceshi.jpg");
     [self.titleView addSubview:self.headerImageView];
     
     
@@ -125,7 +102,6 @@
     
     //角色名
     self.NickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(70, 0, 200, 35)];
-  //  self.NickNameLabel.text = @"下一站停留";
     self.NickNameLabel.backgroundColor = [UIColor clearColor];
     self.NickNameLabel.textColor = [UIColor whiteColor];
     self.NickNameLabel.font = [UIFont boldSystemFontOfSize:20];
@@ -133,7 +109,6 @@
     
     //公会
     self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(70, 30, 160, 25)];
-  //  self.guildLabel.text = @"<众神之巅>";
     self.guildLabel.backgroundColor = [UIColor clearColor];
     self.guildLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.guildLabel.font = [UIFont boldSystemFontOfSize:14];
@@ -142,7 +117,7 @@
 
     
     //等级
-    self.levelLabel = [[UILabel alloc]initWithFrame:CGRectMake(247, 8, 73, 25)];
+    self.levelLabel = [[UILabel alloc]initWithFrame:CGRectMake(235, 8, 73, 25)];
     self.levelLabel.backgroundColor = [UIColor clearColor];
     self.levelLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
     self.levelLabel.textAlignment = NSTextAlignmentRight;
@@ -155,33 +130,20 @@
     
     self.realmView = [[UILabel alloc]initWithFrame:CGRectMake(250, 26, 85, 20)];
     self.realmView.backgroundColor =[UIColor clearColor];
+    self.realmView.textAlignment = NSTextAlignmentRight;
     self.realmView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
-    //   self.realmView.text = @"石爪峰 部落";
     self.realmView.font = [UIFont boldSystemFontOfSize:12];
     [self.titleView addSubview:self.realmView];
 }
 
 -(void)comeFromMy
 {
-    self.TopScrollView.contentSize = CGSizeMake(self.bounds.size.width *3, 200);
     self.listScrollView.contentSize = CGSizeMake(320*3, 244);
-
-    //topscrollview里面的图片
-    for (int i = 0; i <3; i++) {
-        self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(320*i, 0, 320, 200)];
-        NSMutableArray *array = [NSMutableArray array];
-        [array addObject:KUIImage(@"wowfriend.jpg")];
-        [array addObject:KUIImage(@"wowserverwow.jpg")];
-        [array addObject:KUIImage(@"wowall.jpg")];
-        self.topImageView.image = [array objectAtIndex:i];
-        [self.TopScrollView addSubview:self.topImageView];
-    }
-    
     self.myFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.myFriendBtn.frame = CGRectMake(0, 200, 106.6,36);
 
     [self.myFriendBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [self.myFriendBtn setTitle:@"好友" forState:UIControlStateNormal];
+//    [self.myFriendBtn setTitle:@"好友" forState:UIControlStateNormal];
     [self.myFriendBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.myFriendBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
     [self addSubview:self.myFriendBtn];
@@ -190,7 +152,7 @@
     self.countryBtn.frame = CGRectMake(213.4, 200,106.6,36);
 
     [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
+//    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
     [self addSubview:self.countryBtn];
@@ -200,7 +162,7 @@
     self.realmBtn.frame = CGRectMake(106.6, 200, 106.8, 36);
 
     [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
+//    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
     [self addSubview: self.realmBtn];
@@ -223,35 +185,21 @@
 
 -(void)comeFromPerson
 {
-    self.TopScrollView.contentSize = CGSizeMake(self.bounds.size.width *2, 200);
     self.listScrollView.contentSize = CGSizeMake(320*2, 244);
-    
-    //topscrollview里面的图片
-    for (int i = 0; i <2; i++) {
-        self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(320*i, 0, 320, 200)];
-        NSMutableArray *array = [NSMutableArray array];
-        [array addObject:KUIImage(@"wowserverwow.jpg")];
-        [array addObject:KUIImage(@"wowall.jpg")];
-        self.topImageView.image = [array objectAtIndex:i];
-        [self.TopScrollView addSubview:self.topImageView];
-    }
-    
-    
     self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.countryBtn.frame = CGRectMake(160, 200,160,36);
 
     [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
+//    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
     [self addSubview:self.countryBtn];
-    
     
     self.realmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.realmBtn.frame = CGRectMake(0, 200, 160, 36);;
 
     [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
-    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
+//    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
     [self addSubview: self.realmBtn];
@@ -276,7 +224,6 @@
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
     m_pageNum =0;
-    self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
     self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
     
     self.underListImageView.frame =CGRectMake(self.myFriendBtn.frame.origin.x, 234, self.myFriendBtn.frame.size.width, 4);;
@@ -297,7 +244,6 @@
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
     m_pageNum =2;
-    self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
     
     self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
     
@@ -316,7 +262,6 @@
     [UIView setAnimationDuration:0.4];
     m_pageNum =1;
     
-    self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
     
     self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
 
@@ -341,7 +286,6 @@
     NSLog(@"m_pageNum%d",m_pageNum);
     
     self.underListImageView.frame = CGRectMake(m_pageNum *self.underListImageView.bounds.size.width, 234, self.underListImageView.bounds.size.width, 4);
-    [self.TopScrollView setContentOffset:self.listScrollView.contentOffset];
 
 
     [UIView commitAnimations];
@@ -390,8 +334,6 @@
     [UIView setAnimationDuration:0.4];
     m_pageNum =1;
     
-    self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
-    
     self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
     
     self.underListImageView.frame = CGRectMake(160, 234, 160, 4);
@@ -407,7 +349,6 @@
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
     m_pageNum =0;
-    self.TopScrollView.contentOffset = CGPointMake(m_pageNum*self.TopScrollView.bounds.size.width, 0);
     
     self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
     

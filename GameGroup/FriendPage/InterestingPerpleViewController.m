@@ -1762,6 +1762,94 @@ typedef enum : NSUInteger {
 	// set views with new info
 	inPutView.frame = containerFrame;
 }
+/*
+-(void)changeShiptypeWithCell:(NewNearByCell *)myCell
+{
+    
+    NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
+    
+    
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
+    [paramDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid") forKey:@"frienduserid"];
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"shiptype")isEqualToString:@"unkown"]) {
+        [paramDict setObject:@"2" forKey:@"type"];
+    }else if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"shiptype")isEqualToString:@"3"]){
+        [paramDict setObject:@"1" forKey:@"type"];
+    }
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"109" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]])
+        {
+            [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+        }
+        for (int i = 0 ;i<m_dataArray.count;i++) {
+            NSMutableDictionary *dicTemp = [m_dataArray objectAtIndex:i];
+            NSMutableDictionary *dicUser =KISDictionaryHaveKey(dicTemp, @"user");
+            if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dicTemp, @"user"), @"userid")isEqualToString:
+                 KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid")]) {
+                NSLog(@"前user--%@",dicUser);
+                
+                [dicUser setObject:KISDictionaryHaveKey(responseObject, @"shiptype") forKey:@"shiptype"];
+                NSLog(@"后user--%@",dicUser);
+                [m_dataArray replaceObjectAtIndex:i withObject:dicTemp];
+            }
+        }
+        [wxSDArray removeAllObjects];
+        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+        
+        if (![wxSDArray containsObject:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")]) {
+            [self getSayHelloWithID:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")];
+        }
+        myCell.focusButton.hidden =YES;
+        [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
+    
+}
+-(void)getSayHelloWithID:(NSString *)userid
+{
+    
+    [self DetectNetwork];
+    
+    NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:userid forKey:@"touserid"];
+    [postDict1 addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict1 setObject:@"153" forKey:@"method"];
+    [postDict1 setObject:paramDict forKey:@"params"];
+    
+    [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [wxSDArray addObject:userid];
+        [DataStoreManager storeThumbMsgUser:userid type:@"1"];
+        
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];
+        [[NSUserDefaults standardUserDefaults]setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+    
+}
+*/
 #pragma mark 输入
 #pragma mark HPExpandingTextView delegate
 //改变键盘高度

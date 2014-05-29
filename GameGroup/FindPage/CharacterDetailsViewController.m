@@ -74,6 +74,7 @@
     isGoToNextPage = YES;
     [self setTopViewWithTitle:@"角色详情" withBackButton:YES];
     
+    
     m_titleDic =[NSMutableDictionary dictionary];
     m_nameArray = [NSMutableArray array];
     m_infoDic = [NSMutableDictionary dictionary];
@@ -86,14 +87,14 @@
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - startX)];
+    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?64:44))];
 
     [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
 
-    m_charaDetailsView.contentSize = CGSizeMake(320, 680);
+    m_charaDetailsView.contentSize = CGSizeMake(320, 610);
     m_charaDetailsView.myCharaterDelegate = self;
     
-    
+    m_charaDetailsView.topImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"gameTopImg_%@.jpg",self.gameId]];
     if (self.myViewType ==CHARA_INFO_MYSELF) {
         [m_charaDetailsView comeFromMy];
     }else if(self.myViewType ==CHARA_INFO_PERSON){
@@ -212,11 +213,16 @@
             if (self.myViewType ==CHARA_INFO_PERSON){
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
+                [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateSelected];
+                [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateSelected];
                 
             }else{
                 [m_charaDetailsView.myFriendBtn setTitle:KISDictionaryHaveKey(m_tabListArray[0], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
+                [m_charaDetailsView.myFriendBtn setTitle:KISDictionaryHaveKey(m_tabListArray[0], @"name") forState:UIControlStateSelected];
+                [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateSelected];
+                [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateSelected];
             }
             
             
@@ -227,15 +233,21 @@
             if (guildStr.length>8 ) {
                 guilStr =[NSString stringWithFormat:@"%@..." ,[guildStr substringToIndex:8]];
                 m_charaDetailsView.guildLabel.text = [NSString stringWithFormat:@"<%@>",guilStr];
+                m_charaDetailsView.NickNameLabel.frame = CGRectMake(70, 0, 200, 35);
             }else{
-                m_charaDetailsView.guildLabel.text = [NSString stringWithFormat:@"<%@>",guildStr];
-            }
-            if ([KISDictionaryHaveKey(m_titleDic, @"value1") isEqualToString:@""]) {
-                m_charaDetailsView.guildLabel.text =@"";
+                if ([guildStr isEqualToString:@""]||[guildStr isEqualToString:@" "]||!guildStr) {
+                    m_charaDetailsView.guildLabel.text =@"";
+                    m_charaDetailsView.NickNameLabel.frame = CGRectMake(70, 12, 200, 35);
+
+                }
+                else{
+                    m_charaDetailsView.guildLabel.text = [NSString stringWithFormat:@"<%@>",guildStr];
+                m_charaDetailsView.NickNameLabel.frame = CGRectMake(70, 0, 200, 35);
+                }
             }
             
             //计算view的franme
-            CGSize size = [KISDictionaryHaveKey(m_titleDic, @"value2") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByCharWrapping];
+            CGSize size = [KISDictionaryHaveKey(m_titleDic, @"value3") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByCharWrapping];
             
             m_charaDetailsView.realmView.frame = CGRectMake(310-size.width, 28,size.width, 20);
             m_charaDetailsView.gameIdView.frame = CGRectMake(295-size.width-7, 32, 15, 15);
@@ -408,7 +420,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         m_charaDetailsView.reloadingBtn.userInteractionEnabled =YES;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-
+            [hud hide:YES];
             m_infoDic = responseObject;
             
             [m_contentTableView reloadData];
@@ -536,7 +548,7 @@
     ranking.characterName =m_characterName;
     ranking.dRankvaltype = KISDictionaryHaveKey(dic, @"key");
     
-    ranking.titleOfRanking = KISDictionaryHaveKey(dic, @"key");
+    ranking.titleOfRanking = KISDictionaryHaveKey(dic, @"value1");
     ranking.COME_FROM =[NSString stringWithFormat:@"%u",self.myViewType];
     ranking.gameId=self.gameId;
     [self.navigationController pushViewController:ranking animated:YES];

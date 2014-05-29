@@ -1029,12 +1029,7 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
     NSLog(@"self.drank%@",self.dRankvaltype);
-    if ([self.dRankvaltype isEqualToString:@"pveScore"]||[self.dRankvaltype isEqualToString:@"totalHonorableKills"]) {
-        NSLog(@"传职业");
-        [paramDict setObject:self.custType forKey:@"classid"];
-    }
     [paramDict setObject:self.server forKey:@"realm"];
-//    [paramDict setObject:@"1" forKey:@"gameid"];
     [paramDict setObject:self.gameId forKey:@"gameid"];
     [paramDict setObject:self.characterid forKey:@"characterid"];
     [paramDict setObject:@"3" forKey:@"ranktype"];
@@ -1045,7 +1040,6 @@
     [postDict setObject:@"130" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // [hud hide:YES];
         
         [loginActivity stopAnimating];
         [loginActivity removeFromSuperview];

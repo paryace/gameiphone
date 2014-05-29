@@ -33,22 +33,22 @@
         self.CountLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.CountLabel];
 
-        self.topImgView =[[UIImageView alloc]initWithFrame:CGRectMake(190, 20, 18, 18)];
-        [self addSubview:self.topImgView];
+//        self.topImgView =[[UIImageView alloc]initWithFrame:CGRectMake(190, 20, 18, 18)];
+//        [self addSubview:self.topImgView];
         
-        self.dataLabel = [[UILabel alloc]initWithFrame:CGRectMake(210, 5, 85, 32)];
-        self.dataLabel.textColor = UIColorFromRGBA(0x636363, 1);
+        self.dataLabel = [[UILabel alloc]initWithFrame:CGRectMake(200, 5, 85, 32)];
+        self.dataLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.dataLabel.font = [UIFont fontWithName:@"DigifaceWide" size:17];
-        self.dataLabel.textAlignment = NSTextAlignmentCenter;
+        self.dataLabel.textAlignment = NSTextAlignmentRight;
         self.dataLabel.backgroundColor =[UIColor clearColor];
         [self addSubview:self.dataLabel];
 
         
         
-        self.rankingLabel = [[UILabel alloc]initWithFrame:CGRectMake(210, 35, 85, 15)];
+        self.rankingLabel = [[UILabel alloc]initWithFrame:CGRectMake(200, 35, 85, 15)];
         self.rankingLabel.textColor = [UIColor grayColor];
         self.rankingLabel.font = [UIFont systemFontOfSize:12];
-        self.rankingLabel.textAlignment = NSTextAlignmentCenter;
+        self.rankingLabel.textAlignment = NSTextAlignmentRight;
         self.rankingLabel.backgroundColor =[UIColor clearColor];
         [self addSubview:self.rankingLabel];
         

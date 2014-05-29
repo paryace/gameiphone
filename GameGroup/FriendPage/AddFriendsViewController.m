@@ -9,6 +9,7 @@
 #import "AddFriendsViewController.h"
 #import "SearchResultViewController.h"
 #import "SearchJSViewController.h"
+#import "MessageAddressViewController.h"
 @interface AddFriendsViewController ()
 {
     UITextField * searchContent;
@@ -39,7 +40,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"添加好友" withBackButton:YES];
-    sjArray = [NSArray arrayWithObjects:@"查找游戏角色",@"搜索游戏组织", nil];
+    sjArray = [NSArray arrayWithObjects:@"查找游戏角色",@"搜索游戏组织",@"手机通讯录", nil];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resignFirstResponder:)];
     tap.cancelsTouchesInView = NO;
@@ -97,7 +98,7 @@
 
     // Do any additional setup after loading the view.
     
-    m_myTableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 88)];
+    m_myTableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 132)];
     m_myTableview.delegate = self;
     m_myTableview.dataSource = self;
     m_myTableview.rowHeight = 44;
@@ -132,7 +133,7 @@
 {
     UITableViewCell *cell =[[ UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     
-    NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild", nil];
+    NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild",@"find_address", nil];
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 24, 24)];
     iconImageView.image = KUIImage(array[indexPath.row]);
     [cell.contentView addSubview:iconImageView];
@@ -155,12 +156,20 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
         SearchJSViewController *searchp = [[SearchJSViewController alloc]init];
-    if (indexPath.row ==0) {
+    if (indexPath.row ==2) {
+        MessageAddressViewController *aaa = [[MessageAddressViewController alloc]init];
+        [self.navigationController pushViewController:aaa animated:YES];
+    }else{
+    if(indexPath.row==0){
         searchp.myViewType = SEARCH_TYPE_ROLE;
+
     }else{
         searchp.myViewType = SEARCH_TYPE_FORCES;
+
     }
-    [self.navigationController pushViewController:searchp animated:YES];
+        [self.navigationController pushViewController:searchp animated:YES];
+  
+    }
 }
 
 
