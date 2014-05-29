@@ -17,6 +17,7 @@
 #import "AddFriendsViewController.h"
 #import "MyFansPageViewController.h"
 #import "ImageService.h"
+#import "InterestingPerpleViewController.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
@@ -141,7 +142,8 @@
         case 2:
         {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
-            MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];
+//            MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];
+            InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
             [self.navigationController pushViewController:addVC animated:YES];
         }
             break;

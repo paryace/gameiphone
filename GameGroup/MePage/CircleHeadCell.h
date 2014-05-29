@@ -44,6 +44,14 @@
 @property(nonatomic,strong)NSString *destUserStr;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
+
+-(void)getImgWithArray:(NSArray *)array;
+
+-(void)getCommentArray:(NSArray *)array;
+
+
+
+
 //- (void)refreshCell:(NSInteger)hieght;
 @end
 @protocol CircleHeadDelegate <NSObject>

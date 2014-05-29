@@ -85,9 +85,8 @@
         [self.customPhotoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.customPhotoCollectionView];
-        
-        
-        
+        [self.customPhotoCollectionView reloadData];
+
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
         self.zanView.image = KUIImage(@"zanAndCommentBg");
         self.zanView.userInteractionEnabled = YES;
@@ -121,7 +120,7 @@
         self.commentTabelView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.commentTabelView.scrollEnabled = NO;
         [self.contentView addSubview:self.commentTabelView];
-        
+
         //展开菜单“。。。”
         self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
@@ -161,7 +160,17 @@
     }
     return self;
 }
+-(void)getImgWithArray:(NSArray *)array
+{
+    self.collArray = array;
+    [self.customPhotoCollectionView reloadData];
+}
 
+-(void)getCommentArray:(NSArray *)array
+{
+    self.commentArray = array;
+    [self.commentTabelView reloadData];
+}
 //隐藏评论赞button
 -(void)comeBackMenuView:(UIGestureRecognizer *)sender
 {
@@ -355,7 +364,10 @@
 
 }
 
-
+- (void)dealloc
+{
+    self.headImgBtn.imageURL = nil;
+}
 
 - (void)awakeFromNib
 {

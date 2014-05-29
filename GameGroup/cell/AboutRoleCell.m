@@ -24,6 +24,7 @@
 //        [self addSubview:lessView];
         UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 43.5, 320, .5)];
         lineImg.image = KUIImage(@"line");
+        lineImg.userInteractionEnabled = YES;
         lineImg.backgroundColor = [UIColor clearColor];
         [self addSubview:lineImg];
 
@@ -46,11 +47,16 @@
         self.contentTF.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.contentTF];
 
-        self.rightImageView = [[UIImageView alloc] initWithFrame:CGRectMake(290, 16, 12, 8)];
-        self.rightImageView.image = KUIImage(@"arrow_bottom");
+        self.rightImageView = [[UIButton alloc] initWithFrame:CGRectMake(280, 0, 40, 40)];
+//        self.rightImageView seti
+//        (290, 16, 12, 8)
+        [self.rightImageView setImage:KUIImage(@"arrow_bottom") forState:UIControlStateNormal];
+        [self.rightImageView setImageEdgeInsets:UIEdgeInsetsMake(16, 10, 16, 18)];
+        [self.rightImageView addTarget:self action:@selector(result:) forControlEvents:UIControlEventTouchUpInside];
         self.rightImageView.hidden = YES;
         [self.contentView addSubview:self.rightImageView];
-        self.serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 0, 180, 40)];
+        
+        self.serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 0, 220, 40)];
         self.serverButton.backgroundColor = [UIColor clearColor];
         self.serverButton.hidden = YES;
         [self.contentView addSubview:self.serverButton];
@@ -63,7 +69,15 @@
     return self;
 }
 
-
+- (void)dealloc
+{
+    self.gameImg.imageURL = nil;
+}
+-(void)result:(id)sender
+{
+    NSLog(@"111111111");
+    [self.contentTF becomeFirstResponder];
+}
 
 
 - (void)awakeFromNib

@@ -81,6 +81,10 @@
     }
 }
 
+- (void)dealloc
+{
+    self.heardImg.imageURL = nil;
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];

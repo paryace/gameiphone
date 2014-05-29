@@ -100,7 +100,6 @@
 	#if __EGOIL_USE_BLOCKS
 	[handlers release], handlers = nil;
 	#endif
-
 	[_connection release];
 	[_imageURL release];
 	[_responseData release];

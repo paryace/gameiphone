@@ -37,7 +37,7 @@
    #endif
 
 #define appType @"91"//91、appStore
-#define appChannel @"wx_test"//wx_test、91、appStore
+#define appChannel @"wx_test"//wx_test、91、appStore(如果测试请用"wx_test")
 
 
 //常量

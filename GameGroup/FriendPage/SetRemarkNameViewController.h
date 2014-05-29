@@ -10,9 +10,9 @@
 
 @interface SetRemarkNameViewController : BaseViewController<UITextFieldDelegate, UIAlertViewDelegate>
 
-@property (strong, nonatomic)NSString* userId;
-@property (strong, nonatomic)NSString* userName;
-@property (strong, nonatomic)NSString* nickName;
+@property (copy, nonatomic)NSString* userId;
+@property (copy, nonatomic)NSString* userName;
+@property (copy, nonatomic)NSString* nickName;
 @property (assign, nonatomic)BOOL      isFriend;//好友或关注的人
 
 @end

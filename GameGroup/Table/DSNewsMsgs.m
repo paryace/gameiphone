@@ -16,5 +16,5 @@
 @dynamic msgtype;
 @dynamic mytitle;
 @dynamic sendtime;
-
+@dynamic gameid;
 @end

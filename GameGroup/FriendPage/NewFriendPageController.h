@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NewFriendPageController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIActionSheetDelegate>
+@interface NewFriendPageController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
 
 @end
