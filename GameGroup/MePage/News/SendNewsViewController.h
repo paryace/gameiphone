@@ -11,7 +11,7 @@
 #import "EmojiView.h"
 
 
-@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate>
+@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate,QiniuUploadDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 @property (nonatomic, strong)UIImage* titleImage;//分享头衔

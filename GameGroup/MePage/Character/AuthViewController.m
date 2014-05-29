@@ -108,7 +108,9 @@
         
         if ([[dic allKeys]containsObject:@"icon"]) {
             EGOImageView* gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(120, startX+11+42*i, 18, 18)];
-            gameImg.imageURL= [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"icon")]];
+            NSString * imageId=KISDictionaryHaveKey(dic, @"icon");
+//            gameImg.imageURL= [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imageId]];
+            gameImg.imageURL=[ImageService getImageUrl4:imageId];
             [self.view addSubview:gameImg];
         }
         

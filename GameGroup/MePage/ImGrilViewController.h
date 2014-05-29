@@ -8,6 +8,6 @@
 
 #import "BaseViewController.h"
 
-@interface ImGrilViewController : BaseViewController
+@interface ImGrilViewController : BaseViewController<QiniuUploadDelegate>
 
 @end

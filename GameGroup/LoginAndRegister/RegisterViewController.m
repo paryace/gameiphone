@@ -42,7 +42,8 @@
     
     UIScrollView* m_step3Scroll;
     UIButton*     m_photoButton;
-    UIImage*      m_photoImage;
+//    UIImage*      m_photoImage;
+    NSString * imagePath;
     
     UITextField*  m_userNameText;
     UITextField*  m_passwordText;
@@ -1013,7 +1014,26 @@
     UIImage*selectImage = [info objectForKey:@"UIImagePickerControllerEditedImage"];
    
     [m_photoButton setImage:selectImage forState:UIControlStateNormal];
-    m_photoImage = selectImage;
+    
+    imagePath=[self writeImageToFile:selectImage ImageName:@"register.jpg"];
+    
+//    m_photoImage = selectImage;
+}
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -1021,43 +1041,85 @@
     [picker dismissViewControllerAnimated:YES completion:^{}];
 }
 
-#pragma mark 上传头像
-- (void)upLoadMyPhoto
+-(void)uploadImage:(NSString*)uploadImagePath
 {
-    if (m_photoImage != nil)
-    {
-       // hud.labelText = @"上传头像中...";
+    if (uploadImagePath!=nil) {
         if (_imgID ==nil) {
-            
-            
             [hud show:YES];
-            
-            [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1"  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-            }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSLog(@"-------------------------------------%@", responseObject);
-                [hud hide:YES];
-//                if ([responseObject isKindOfClass:[NSNumber class]]) {
-                    [self continueStep3Net:[NSString stringWithFormat:@"%@", responseObject]];
-                    _imgID =[NSString stringWithFormat:@"%@", responseObject];
-//                }
-//                else
-//                    [self continueStep3Net:@""];
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [hud hide:YES];
-                [self continueStep3Net:@""];
-            }];
-        }else {
-            [self continueStep3Net:_imgID];
+            UpLoadFileService * up = [[UpLoadFileService alloc] init];
+            [up simpleUpload:uploadImagePath UpDeleGate:self];
+        }else{
+             [self continueStep3Net:_imgID];
         }
-    }
-    else
-    {
+    }else{
         UIAlertView* alterView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"尚未设置头像, 头像会更方便的让其它玩家注意到你. 建议您点击返回设置您的头像. 点击确定将忽略" delegate:self cancelButtonTitle:@"返回设置" otherButtonTitles:@"确定", nil];
         alterView.tag = 67;
         [alterView show];
     }
 }
+//
+//#pragma mark 上传头像
+//- (void)upLoadMyPhoto
+//{
+//    if (m_photoImage != nil)
+//    {
+//       // hud.labelText = @"上传头像中...";
+//        if (_imgID ==nil) {
+//            
+//            
+//            [hud show:YES];
+//            
+//            [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1"  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+//                hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
+//            }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//                NSLog(@"-------------------------------------%@", responseObject);
+//                [hud hide:YES];
+////                if ([responseObject isKindOfClass:[NSNumber class]]) {
+//                    [self continueStep3Net:[NSString stringWithFormat:@"%@", responseObject]];
+//                    _imgID =[NSString stringWithFormat:@"%@", responseObject];
+////                }
+////                else
+////                    [self continueStep3Net:@""];
+//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                [hud hide:YES];
+//                [self continueStep3Net:@""];
+//            }];
+//        }else {
+//            [self continueStep3Net:_imgID];
+//        }
+//    }
+//    else
+//    {
+//        UIAlertView* alterView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"尚未设置头像, 头像会更方便的让其它玩家注意到你. 建议您点击返回设置您的头像. 点击确定将忽略" delegate:self cancelButtonTitle:@"返回设置" otherButtonTitles:@"确定", nil];
+//        alterView.tag = 67;
+//        [alterView show];
+//    }
+//}
+
+
+
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
+    
+}
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    [self continueStep3Net:[NSString stringWithFormat:@"%@", response]];
+    _imgID =[NSString stringWithFormat:@"%@", response];
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [self continueStep3Net:@""];
+}
+
+
+
+
 #pragma 最后一步
 - (void)step3ButtonOK:(id)sender
 {
@@ -1087,7 +1149,8 @@
         [self showAlertViewWithTitle:@"提示" message:@"请输入正确的邮箱格式！" buttonTitle:@"确定"];
         return;
     }
-    [self upLoadMyPhoto];
+//    [self upLoadMyPhoto];
+    [self uploadImage:imagePath];
 }
 
 - (void)continueStep3Net:(NSString*)imageId

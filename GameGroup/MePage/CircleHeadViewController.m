@@ -1204,13 +1204,33 @@ typedef enum : NSUInteger {
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-    [self uploadbgImg:upImage];
+    NSString * imagePath=[self writeImageToFile:upImage ImageName:@"topImage.jpg"];
+    [self uploadbgImg:imagePath];
+//    [self uploadbgImg:upImage];
     topImgaeView.image = upImage;
-    NSData *data = UIImageJPEGRepresentation(upImage, 0.7);
+   
+}
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    
+    NSData *data = UIImageJPEGRepresentation(thumbimg, 0.7);
+    
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]];
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+    if ([data writeToFile:openImgPath atomically:NO]) {
+        return openImgPath;
+    }
+    return nil;
 }
 
 
@@ -1811,34 +1831,82 @@ typedef enum : NSUInteger {
     self.textView.placeholder= nil;
     
 }
-#pragma mark --上传顶部图片
--(void)uploadbgImg:(UIImage *)image
+//#pragma mark --上传顶部图片
+//-(void)uploadbgImg:(UIImage *)image
+//{
+//    [NetManager uploadImage:image
+//                 WithURLStr:BaseUploadImageUrl
+//                  ImageName:@"coverImg"
+//              TheController:self
+//                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+//                       
+//                   }
+//                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
+//     {
+//         if (responseObject) {
+//             [self uploadsuccessImg:responseObject];
+//         }
+//     }
+//                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//     {
+//         
+//         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+//                                                         message:@"发送图片失败请重新发送"
+//                                                        delegate:nil
+//                                               cancelButtonTitle:@"知道啦"
+//                                               otherButtonTitles:nil];
+//         [alert show];
+//     }
+//];
+//}
+
+
+
+-(void)uploadbgImg:(NSString*)uploadImagePath
 {
-    [NetManager uploadImage:image
-                 WithURLStr:BaseUploadImageUrl
-                  ImageName:@"coverImg"
-              TheController:self
-                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                       
-                   }
-                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         if (responseObject) {
-             [self uploadsuccessImg:responseObject];
-         }
-     }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         
-         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                         message:@"发送图片失败请重新发送"
-                                                        delegate:nil
-                                               cancelButtonTitle:@"知道啦"
-                                               otherButtonTitles:nil];
-         [alert show];
-     }
-];
+    [hud show:YES];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:uploadImagePath UpDeleGate:self];
+
 }
+
+
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"长在上传 %.2f％",percent];
+    
+}
+/**
+ {
+ hash = Fg1pj8Y3tNOB905kaCeaAUBrEC94;
+ key = 340480FC3CD34A26A45A1D8C386D0104;
+ }
+ **/
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    [hud hide:YES];
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    if (response) {
+        [self uploadsuccessImg:response];
+    }
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                    message:@"发送图片失败请重新发送"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"知道啦"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
+
+
+
 -(void)uploadsuccessImg:(NSString *)img
 {
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];

@@ -448,10 +448,11 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
-        NSMutableArray* characterArray = m_hostInfo.charactersArr;//魔兽世界 新的
+        NSMutableArray *characterArray = [NSMutableArray array];
+        characterArray = m_hostInfo.charactersArr;//魔兽世界 新的
         [[NSUserDefaults standardUserDefaults]setObject:characterArray forKey:@"CharacterArrayOfAllForYou"];
             if ([characterArray count]<=0) {
-            cell.heardImg.hidden = YES;
+            cell.heardImg.hidden = YES; 
             cell.authBg.hidden = YES;
             cell.nameLabel.hidden = YES;
             cell.realmLabel.hidden = YES;

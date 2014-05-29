@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "TableViewDatasourceDidChange.h"
 
-@interface SendArticleViewController : BaseViewController
+@interface SendArticleViewController : BaseViewController<QiniuUploadDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 

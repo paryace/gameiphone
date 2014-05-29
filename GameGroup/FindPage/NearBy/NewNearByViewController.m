@@ -1368,7 +1368,7 @@ typedef enum : NSUInteger {
     
     [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [wxSDArray addObject:userid];
         [DataStoreManager storeThumbMsgUser:userid type:@"1"];

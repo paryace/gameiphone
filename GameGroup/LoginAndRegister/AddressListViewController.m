@@ -12,6 +12,7 @@
 #import "OutDodeAddressTableViewCell.h"
 //#import "AddSameServerListViewController.h"
 #import <MessageUI/MessageUI.h>
+#import "ImageService.h"
 @interface AddressListViewController ()<UITableViewDelegate,UITableViewDataSource,DodeAddressCellDelegate,MFMessageComposeViewControllerDelegate>
 {
     UITableView * _tableView;
@@ -105,17 +106,21 @@
         cell.nameL.text = [_inDudeArray[indexPath.row] objectForKey:@"nickname"];
         cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[_inDudeArray[indexPath.row] objectForKey:@"addressName"]];
         NSString* imageID = [_inDudeArray[indexPath.row] objectForKey:@"img"];
-        if ([imageID isEqualToString:@""]||[imageID isEqualToString:@" "]) {
-            cell.headerImage.imageURL = nil;
-        }else{
-        if ([imageID componentsSeparatedByString:@","].count>0) {
-            imageID = [[imageID componentsSeparatedByString:@","] objectAtIndex:0];
-            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",imageID]];
-        }else
-        {
-            cell.headerImage.imageURL = nil;
-        }
-        }
+        
+//        if ([imageID isEqualToString:@""]||[imageID isEqualToString:@" "]) {
+//            cell.headerImage.imageURL = nil;
+//        }else{
+//        if ([imageID componentsSeparatedByString:@","].count>0) {
+//            imageID = [[imageID componentsSeparatedByString:@","] objectAtIndex:0];
+//            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",imageID]];
+//        }else
+//        {
+//            cell.headerImage.imageURL = nil;
+//        }
+//        }
+        cell.headerImage.imageURL=[ImageService getImageStr:imageID Width:80];
+        
+        
         if ([[_inDudeArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
             [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
             cell.addFriendB.userInteractionEnabled = YES;

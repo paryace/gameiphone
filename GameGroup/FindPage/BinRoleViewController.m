@@ -203,18 +203,27 @@
         NumLable.hidden=NO;
         
     }
-   NSString * headImage =[GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
-    if ([GameCommon isEmtity:headImage]) {
+    NSString *imageIds=KISDictionaryHaveKey(dic, @"img");
+    NSURL * imageurl=[ImageService getImageStr:imageIds Width:100];
+    if (imageurl==nil) {
         titleImageView.image = [UIImage imageNamed:@"people_man.png"];
     }else{
-        titleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headImage]];
+        titleImageView.imageURL = imageurl;
     }
+//   NSString * headImage =[GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
+//    if ([GameCommon isEmtity:headImage]) {
+//        titleImageView.image = [UIImage imageNamed:@"people_man.png"];
+//    }else{
+//        
+//        titleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headImage]];
+//    }
     
     NSString *characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterImg")];
     if ([GameCommon isEmtity:characterImage]) {
         roleImageView.image = [UIImage imageNamed:@"clazz_0.png"];
     }else{
-        roleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage]];
+        roleImageView.imageURL = [ImageService getImageUrl4:characterImage];
+//        roleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage]];
     }
     
     NumLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"rank")];

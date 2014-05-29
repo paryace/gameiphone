@@ -11,6 +11,7 @@
 #import "HostInfo.h"
 #import "DSuser.h"
 #import "TextLabelTableCell.h"
+#import "QiniuUploadDelegate.h"
 
 typedef  enum
 {
@@ -27,7 +28,8 @@ UIImagePickerControllerDelegate,
 UINavigationControllerDelegate,
 HGPhotoWallDelegate,
 UIAlertViewDelegate,
-BirthDayDelegate
+BirthDayDelegate,
+QiniuUploadDelegate
 >
 
 @property(nonatomic,strong)NSString*  nickName;

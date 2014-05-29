@@ -950,7 +950,7 @@
     
     [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [wxSDArray addObject:self.hostInfo.userId];
         [DataStoreManager storeThumbMsgUser:self.hostInfo.userId type:@"1"];
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sayHello_wx_info_id"];

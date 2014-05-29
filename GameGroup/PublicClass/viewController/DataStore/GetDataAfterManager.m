@@ -351,7 +351,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             NSRange range = [[responseObject objectForKey:@"sender"] rangeOfString:@"@"];

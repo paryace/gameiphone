@@ -18,8 +18,15 @@
     UITableView*   m_myTableView;
     HGPhotoWall    *m_photoWall;
     
-    NSMutableArray * waitingUploadImgArray;
-    NSMutableArray * waitingUploadStrArray;
+//    NSMutableArray * waitingUploadImgArray;
+//    NSMutableArray * waitingUploadStrArray;
+    
+    
+    NSMutableArray * uploadImagePathArray;
+    NSMutableDictionary * reponseStrArray;
+    NSInteger imageImdex;
+    
+    
     
     NSMutableArray * deleteImageIdArray;//需要删除的图片
     
@@ -29,6 +36,7 @@
     BOOL            m_isSort;//图片顺序变化
     NSInteger     picPage;
     UIAlertView* alter1;
+    
 }
 @end
 
@@ -77,9 +85,12 @@
     [self.view addSubview:addButton];
     [addButton addTarget:self action:@selector(saveMyPicter:) forControlEvents:UIControlEventTouchUpInside];
     
-    waitingUploadImgArray = [NSMutableArray array];
-    waitingUploadStrArray = [NSMutableArray array];
+    uploadImagePathArray = [NSMutableArray array];
+    
+    reponseStrArray = [[NSMutableDictionary dictionary] init];
+    
     deleteImageIdArray = [NSMutableArray array];
+    
     
     m_photoWall = [[HGPhotoWall alloc] initWithFrame:CGRectZero];
     m_photoWall.descriptionType = DescriptionTypeImage;
@@ -119,10 +130,22 @@
 {
     alter1.delegate = nil;
 }
+//#pragma mark 返回
+//- (void)backButtonClick:(id)sender
+//{
+//    if ([waitingUploadImgArray count] != 0 || [deleteImageIdArray count] != 0 || m_isSort) {
+//        alter1 = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的相册还未保存，确认要退出吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
+//        alter1.tag = 75;
+//        [alter1 show];
+//    }
+//    else
+//        [self.navigationController popViewControllerAnimated:YES];
+//}
+
 #pragma mark 返回
 - (void)backButtonClick:(id)sender
 {
-    if ([waitingUploadImgArray count] != 0 || [deleteImageIdArray count] != 0 || m_isSort) {
+    if ([uploadImagePathArray count] != 0 || [deleteImageIdArray count] != 0 || m_isSort) {
         alter1 = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的相册还未保存，确认要退出吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
         alter1.tag = 75;
         [alter1 show];
@@ -208,31 +231,47 @@
 {
     
 }
+//-(void)photoWallDelPhotoAtIndex:(NSInteger)index
+//{
+//    NSLog(@"%d",index);
+//    NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
+////    NSMutableArray * tempHBig = [NSMutableArray arrayWithArray:self.headBigImgArray];
+//    NSString * tempStr = [tempH objectAtIndex:index];
+//    if ([waitingUploadStrArray containsObject:tempStr]) {
+//        int tempIndex = [waitingUploadStrArray indexOfObject:tempStr];
+//        [waitingUploadStrArray removeObject:tempStr];
+//        [waitingUploadImgArray removeObjectAtIndex:tempIndex];
+//    }
+//    else//需要删除的id
+//    {
+//        [deleteImageIdArray addObject:tempStr];//小图
+//        
+////        NSString* bigStr = [tempHBig objectAtIndex:index];
+////        
+////        [deleteImageIdArray addObject:bigStr];//大图
+//        NSLog(@"需要删除的图片id %@", deleteImageIdArray);
+//    }
+//    [tempH removeObjectAtIndex:index];
+////    [tempHBig removeObjectAtIndex:index];
+//    self.headImgArray = tempH;
+////    self.headBigImgArray = tempHBig;
+//
+//    [m_myTableView reloadData];
+//}
 -(void)photoWallDelPhotoAtIndex:(NSInteger)index
 {
     NSLog(@"%d",index);
     NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
-//    NSMutableArray * tempHBig = [NSMutableArray arrayWithArray:self.headBigImgArray];
     NSString * tempStr = [tempH objectAtIndex:index];
-    if ([waitingUploadStrArray containsObject:tempStr]) {
-        int tempIndex = [waitingUploadStrArray indexOfObject:tempStr];
-        [waitingUploadStrArray removeObject:tempStr];
-        [waitingUploadImgArray removeObjectAtIndex:tempIndex];
+    if ([uploadImagePathArray count]>0) {
+        [uploadImagePathArray removeObjectAtIndex:index];
     }
     else//需要删除的id
     {
         [deleteImageIdArray addObject:tempStr];//小图
-        
-//        NSString* bigStr = [tempHBig objectAtIndex:index];
-//        
-//        [deleteImageIdArray addObject:bigStr];//大图
-        NSLog(@"需要删除的图片id %@", deleteImageIdArray);
     }
     [tempH removeObjectAtIndex:index];
-//    [tempHBig removeObjectAtIndex:index];
     self.headImgArray = tempH;
-//    self.headBigImgArray = tempHBig;
-
     [m_myTableView reloadData];
 }
 
@@ -287,117 +326,159 @@
         }
     }
 }
+//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+//{
+//    NSLog(@"%@",info);
+//    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+//    //    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:image targetSizeX:100 targetSizeY:100];
+//    //    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
+//    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+//    NSFileManager *fm = [NSFileManager defaultManager];
+//    if([fm fileExistsAtPath:path] == NO)
+//    {
+//        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+//    }
+//    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%d_me.jpg",path,self.headImgArray.count];
+//    
+//    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
+//        NSLog(@"success///");
+//    }
+//    else
+//    {
+//        NSLog(@"fail");
+//    }
+//    NSMutableArray * tempArray;
+//    NSMutableArray * tempBigArray;
+//    if (self.headImgArray) {
+//        tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
+////        tempBigArray = [NSMutableArray arrayWithArray:self.headBigImgArray];
+//    }
+//    else
+//    {
+//        tempArray = [NSMutableArray array];
+//        tempBigArray = [NSMutableArray array];
+//    }
+//    [tempArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
+//    [tempBigArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
+//    [waitingUploadImgArray addObject:upImage];
+//    [waitingUploadStrArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
+//    [m_photoWall addPhoto:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
+//    self.headImgArray = tempArray;
+////    self.headBigImgArray = tempBigArray;
+//    NSLog(@"新图 %@", self.headImgArray);// 47,39,"<local>2_me.jpg"
+//
+//    [m_myTableView reloadData];
+//    [self dismissViewControllerAnimated:YES completion:^{
+//        
+//    }];
+//    
+//}
+
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     NSLog(@"%@",info);
-    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-    //    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:image targetSizeX:100 targetSizeY:100];
-    //    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
+    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
+
+    NSString * imageName=[NSString stringWithFormat:@"%d_me.jpg",self.headImgArray.count];
+    NSString * imagePath=[self writeImageToFile:upImage ImageName:imageName];//完整路径
+
+    NSString * imageLocalUrl=[NSString stringWithFormat:@"<local>%@",imageName];//本地文件名
+    
+    NSMutableArray * tempArray;
+    if (self.headImgArray) {
+        tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
+    }
+    else
+    {
+        tempArray = [NSMutableArray array];
+    }
+    [tempArray addObject:imageLocalUrl];
+    [uploadImagePathArray addObject:imageName];
+    
+    [m_photoWall addPhoto:imageLocalUrl];
+    self.headImgArray = tempArray;
+    
+    [m_myTableView reloadData];
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+}
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
     {
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%d_me.jpg",path,self.headImgArray.count];
-    
-    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
-        NSLog(@"success///");
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
     }
-    else
-    {
-        NSLog(@"fail");
-    }
-    NSMutableArray * tempArray;
-    NSMutableArray * tempBigArray;
-    if (self.headImgArray) {
-        tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
-//        tempBigArray = [NSMutableArray arrayWithArray:self.headBigImgArray];
-    }
-    else
-    {
-        tempArray = [NSMutableArray array];
-        tempBigArray = [NSMutableArray array];
-    }
-    [tempArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-    [tempBigArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-    [waitingUploadImgArray addObject:upImage];
-    [waitingUploadStrArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-    [m_photoWall addPhoto:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-    self.headImgArray = tempArray;
-//    self.headBigImgArray = tempBigArray;
-    NSLog(@"新图 %@", self.headImgArray);// 47,39,"<local>2_me.jpg"
-
-    [m_myTableView reloadData];
-    [self dismissViewControllerAnimated:YES completion:^{
-        
-    }];
-    
+    return nil;
 }
 
+//保存上传图片信息
 -(void)saveMyPicter:(id)sender
 {
+    imageImdex=0;
+    [reponseStrArray removeAllObjects];
+    
     [hud show:YES];
-    if (waitingUploadImgArray.count>0) {
-        [self uploadImages:waitingUploadImgArray WithURLStr:BaseUploadImageUrl view:self.view ImageName:waitingUploadStrArray TheController:self   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-           // hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picPage+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-        } Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
-            [hud hide:YES];
-            
-            NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-            for (NSString*a in responseObject) {
-                for (int i = 0;i<a1.count;i++) {
-                    if ([[a1 objectAtIndex:i] isEqualToString:a]) {
-                        [a1 replaceObjectAtIndex:i withObject:[responseObject objectForKey:a]];
-                    }
-                }
-            }
-            self.headImgArray = a1;
-            [self refreshMyInfo];
+    if (uploadImagePathArray.count>0) {
+        for (NSString * imageName in uploadImagePathArray) {
+            NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+            NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+            UpLoadFileService * up = [[UpLoadFileService alloc] init];
+            [up simpleUpload:uploadImagePath UpDeleGate:self];
         }
-                   failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [hud hide:YES];
-            [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
-        }];
     }
     else//只是修改顺序
         [self refreshMyInfo];
 }
 
--(void)uploadImages:(NSArray *)imageArray WithURLStr:(NSString *)urlStr view:(UIView*)view ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-   // picPage ＝ 0;
-    NSMutableDictionary * reponseStrArray = [[NSMutableDictionary dictionary] init];
-    for (int i = 0; i<imageArray.count; i++) {
-        [NetManager uploadImage:[imageArray objectAtIndex:i]
-                     WithURLStr:urlStr ImageName:[imageNameArray objectAtIndex:i]
-                  TheController:controller
-                       Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                           double progressPercent = ((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100;
-                           hud.labelText = [NSString stringWithFormat:@"照片上传中 %.2f％", progressPercent];
-                       }
-                        Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
-            NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
-            [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:i]];
-          //  picPage = picPage + 1;
-            //                NSLog(@"%d - %d",picPage, pageindex);
-            //picPage =reponseStrArray.count;
-            
-            if (reponseStrArray.count==imageArray.count) {
-                if (controller) {
-                    success(operation,reponseStrArray);
-                }
-                
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            if (controller) {
-                failure(operation,error);
-            }
 
-        }];
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
+    
+}
+/**
+ {
+ hash = Fg1pj8Y3tNOB905kaCeaAUBrEC94;
+ key = 340480FC3CD34A26A45A1D8C386D0104;
+ }
+ **/
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    
+    [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
+    
+    if (reponseStrArray.count==uploadImagePathArray.count) {
+        [hud hide:YES];
+        NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
+        for (NSString*a in reponseStrArray) {
+            for (int i = 0;i<a1.count;i++) {
+                if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
+                    [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
+                }
+            }
+        }
+        self.headImgArray = a1;
+        [self refreshMyInfo];
     }
+    imageImdex++;
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+    [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
 }
 
 - (void)refreshMyInfo//更新个人头像数据
@@ -405,8 +486,6 @@
     NSString* headImgStr = @"";
     for (int i = 0;i<self.headImgArray.count;i++) {
         NSString * temp1 = [self.headImgArray objectAtIndex:i];
-//        NSString * temp2 = [self.headBigImgArray objectAtIndex:i];
-//        headImgStr = [headImgStr stringByAppendingFormat:@"%@_%@,",temp1,temp2];
         headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
     }
     
@@ -449,13 +528,6 @@
 {
     [self.navigationController popViewControllerAnimated:YES];
 
-}
-- (void)deleteImageIdByNet
-{
-    [NetManager deleteImagesWithURLStr:BaseDeleteImageUrl ImageName:deleteImageIdArray TheController:self  Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    }];
 }
 
 #pragma mark - 表格

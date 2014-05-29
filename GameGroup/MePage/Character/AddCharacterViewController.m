@@ -9,6 +9,7 @@
 #import "AddCharacterViewController.h"
 #import "EGOImageView.h"
 #import "AboutRoleCell.h"
+#import "ImageService.h"
 @interface AddCharacterViewController ()
 {
 //    UITextField*  m_gameNameText;
@@ -172,7 +173,10 @@
             cell.contentTF.inputAccessoryView= toolbar_server;
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
-            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+            NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+            cell.gameImg.imageURL=[ImageService getImageUrl4:imageId];
+//            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+            
             m_serverNamePick.tag = indexPath.row;
             toolbar_server.tag = indexPath.row;
             

@@ -18,6 +18,11 @@
     UIAlertView* alert1;
     UIButton *emojiBtn;
     EmojiView *theEmojiView;
+    
+    
+    NSMutableArray * uploadImagePathArray;
+    NSMutableDictionary * reponseStrArray;
+    NSInteger imageImdex;
 }
 @property (nonatomic,strong)UITextView* dynamicTV;
 @property (nonatomic,strong)UILabel* placeholderL;
@@ -46,6 +51,10 @@
     m_maxZiShu = 225;
     [self setTopViewWithTitle:@"发表动态" withBackButton:YES];
 
+    uploadImagePathArray = [NSMutableArray array];
+    reponseStrArray = [[NSMutableDictionary dictionary] init];
+    
+    
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
     addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [addButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
@@ -229,7 +238,11 @@
         }
         hud.labelText = @"上传图片中...";
         [hud show:YES];
-        [self publishOnePicture:0 image:imageArray imageName:nameArray reponseStrDic:[NSMutableDictionary dictionaryWithCapacity:1]];
+        
+        if (uploadImagePathArray.count>0) {
+            [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
+        }
+//        [self publishOnePicture:0 image:imageArray imageName:nameArray reponseStrDic:[NSMutableDictionary dictionaryWithCapacity:1]];
     }else
     {
         [self publishWithImageString:@""];
@@ -245,38 +258,77 @@
  *	@param 	imageNameArray 	图片的序号， 必须是从0开始（很莫名其妙吧， 要改）
  *	@param 	reponseStrArray 	上传图片 返回的图片ID，数值， 形如 53878, 53879, 53880
  */
--(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
+//-(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
+//
+//{
+//    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+//        hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
+//    }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
+//        [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:picIndex]];
+//     //   [imageIndex addObject:response];
+//        if (reponseStrArray.count != imageArray.count) {
+//            [self publishOnePicture:(picIndex+1) image:imageArray imageName:imageNameArray reponseStrDic:reponseStrArray];
+//        }
+//        else
+//        {
+//            [hud hide:YES];
+//            self.imageId = [[NSMutableString alloc]init];
+//            
+//            for (int i=0; i<reponseStrArray.count; i++) {
+//                NSString *aString = [NSString stringWithFormat:@"%d", i];
+//                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:aString]];
+//            }
+//            [self publishWithImageString:_imageId];
+//        }
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        [hud hide:YES];
+//        [self showAlertViewWithTitle:@"提示" message:@"上传图片失败" buttonTitle:@"确定"];
+//    }];
+//}
 
+
+-(void)uploadPicture:(NSString*)imageName
 {
-    //hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-   // NSMutableArray* imageIndex = [[NSMutableArray alloc]init];
-    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-        hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-    }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
-        [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:picIndex]];
-     //   [imageIndex addObject:response];
-        
-        if (reponseStrArray.count != imageArray.count) {
-            [self publishOnePicture:(picIndex+1) image:imageArray imageName:imageNameArray reponseStrDic:reponseStrArray];
-        }
-        else
-        {
-            [hud hide:YES];
-            self.imageId = [[NSMutableString alloc]init];
-            
-            for (int i=0; i<reponseStrArray.count; i++) {
-                NSString *aString = [NSString stringWithFormat:@"%d", i];
-                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:aString]];
-            }
-            [self publishWithImageString:_imageId];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [hud hide:YES];
-        [self showAlertViewWithTitle:@"提示" message:@"上传图片失败" buttonTitle:@"确定"];
-    }];
+    NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:uploadImagePath UpDeleGate:self];
 }
 
+
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
+    
+}
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    
+    [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
+    
+
+    if (reponseStrArray.count==uploadImagePathArray.count) {
+        [hud hide:YES];
+        self.imageId = [[NSMutableString alloc]init];
+        for (NSString*a in reponseStrArray) {
+            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+        }
+        [self publishWithImageString:_imageId];
+    }else{
+        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+    }
+    imageImdex++;
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+    [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
+}
 
 
 
@@ -432,6 +484,15 @@
     [picker dismissViewControllerAnimated:YES completion:^{}];
 
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
+    NSString * imagePath=[self writeImageToFile:selectImage ImageName:imageName];//完整路径
+    if (imagePath) {
+        [uploadImagePathArray addObject:imageName];
+    }
+    
+    
     UIImageView* imageV = [[UIImageView alloc]initWithFrame:PhotoB.frame];
     imageV.userInteractionEnabled = YES;
     imageV.image = selectImage;
@@ -449,6 +510,25 @@
     [imageV addGestureRecognizer:tapGR];
 //    [self.dynamicTV becomeFirstResponder];
 }
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
+}
+
+
+
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {

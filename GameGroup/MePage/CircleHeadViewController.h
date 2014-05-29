@@ -30,7 +30,8 @@ EGOImageViewDelegate,
 UIAlertViewDelegate,
 UIScrollViewDelegate,
 TableViewDatasourceDidChange
-,EmojiViewDelegate
+,EmojiViewDelegate,
+QiniuUploadDelegate
 >
 @property(nonatomic,copy)NSString *imageStr;    //Cover图片
 @property(nonatomic,copy)NSString *nickNmaeStr; //昵称

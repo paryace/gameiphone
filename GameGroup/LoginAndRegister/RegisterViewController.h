@@ -26,7 +26,8 @@ UIGestureRecognizerDelegate,
 UIPickerViewDataSource,
 UIPickerViewDelegate,
 UITableViewDelegate,
-UITableViewDataSource
+UITableViewDataSource,
+QiniuUploadDelegate
 >
 @property (nonatomic,retain) id <RegisterViewControllerDelegate>delegate;
 

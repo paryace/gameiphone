@@ -13,6 +13,10 @@
 {
     UIButton* PhotoB;
     UIImageView* deleteIV;
+    
+    NSMutableArray * uploadImagePathArray;
+    NSMutableDictionary * reponseStrArray;
+    NSInteger imageImdex;
 }
 @property (nonatomic,strong)UITextField* titleTV;
 
@@ -44,6 +48,10 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"发表文章" withBackButton:YES];
+    
+    uploadImagePathArray = [NSMutableArray array];
+    reponseStrArray = [[NSMutableDictionary dictionary] init];
+    
     
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
     addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
@@ -138,34 +146,80 @@
     [_dynamicTV resignFirstResponder];
     if (self.pictureArray.count>0) {
         [self.view bringSubviewToFront:hud];
-        NSMutableArray* imageArray = [[NSMutableArray alloc]init];
-        NSMutableArray* nameArray = [[NSMutableArray alloc]init];
-        for (int i = 0;i< self.pictureArray.count;i++) {
-            [imageArray addObject:((UIImageView*)self.pictureArray[i]).image];
-            [nameArray addObject:[NSString stringWithFormat:@"%d",i]];
-        }
+//        NSMutableArray* imageArray = [[NSMutableArray alloc]init];
+//        NSMutableArray* nameArray = [[NSMutableArray alloc]init];
+//        for (int i = 0;i< self.pictureArray.count;i++) {
+//            [imageArray addObject:((UIImageView*)self.pictureArray[i]).image];
+//            [nameArray addObject:[NSString stringWithFormat:@"%d",i]];
+//        }
         hud.labelText = @"上传图片中...";
         [hud show:YES];
-
-        [NetManager uploadImages:imageArray WithURLStr:BaseUploadImageUrl ImageName:nameArray TheController:self   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传图片
-            [hud hide:YES];
-
-            self.imageId = [[NSMutableString alloc]init];
-            for (NSString*a in responseObject) {
-                [_imageId appendFormat:@"%@,",[responseObject objectForKey:a]];
+        
+        imageImdex=0;
+        [reponseStrArray removeAllObjects];
+        
+        [hud show:YES];
+        if (uploadImagePathArray.count>0) {
+            for (NSString * imageName in uploadImagePathArray) {
+                NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+                NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+                UpLoadFileService * up = [[UpLoadFileService alloc] init];
+                [up simpleUpload:uploadImagePath UpDeleGate:self];
             }
-            [self publishWithImageString:_imageId];
-            
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [hud hide:YES];
+        }
+        
 
-        }];
+//        [NetManager uploadImages:imageArray WithURLStr:BaseUploadImageUrl ImageName:nameArray TheController:self   Progress:nil Success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {//上传图片
+//            [hud hide:YES];
+//
+//            self.imageId = [[NSMutableString alloc]init];
+//            for (NSString*a in responseObject) {
+//                [_imageId appendFormat:@"%@,",[responseObject objectForKey:a]];
+//            }
+//            [self publishWithImageString:_imageId];
+//            
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            [hud hide:YES];
+//
+//        }];
     }else
     {
         [self publishWithImageString:@""];
     }
 
 }
+
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
+    
+}
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    
+    [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
+    
+    if (reponseStrArray.count==uploadImagePathArray.count) {
+        [hud hide:YES];
+        self.imageId = [[NSMutableString alloc]init];
+        for (NSString*a in reponseStrArray) {
+            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+        }
+        [self publishWithImageString:_imageId];
+    }
+    imageImdex++;
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+    [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
+}
+
+
 
 -(void)publishWithImageString:(NSString*)imageID
 {
@@ -302,7 +356,16 @@
     }
     PhotoB.hidden = NO;
     [picker dismissViewControllerAnimated:YES completion:^{}];
-    UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    UIImage * selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
+    NSString * imagePath=[self writeImageToFile:selectImage ImageName:imageName];//完整路径
+    if (imagePath) {
+        [uploadImagePathArray addObject:imageName];
+    }
+
     UIImageView* imageV = [[UIImageView alloc]initWithFrame:PhotoB.frame];
     imageV.userInteractionEnabled = YES;
     imageV.image = selectImage;
@@ -319,8 +382,25 @@
     UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
     [self.dynamicTV becomeFirstResponder];
-    
 }
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
+}
+
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:^{}];

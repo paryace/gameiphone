@@ -18,6 +18,7 @@
 #import "TestViewController.h"
 #import "MJRefresh.h"
 #import "PhotoViewController.h"
+#import "UpLoadFileService.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -430,6 +431,7 @@ UINavigationControllerDelegate>
         if (cell == nil) {
             cell = [[KKImgCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
+        cell.sendMsgDeleGate = self;
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
        // cell.messageContentView.attributedText = [self.finalMessageArray objectAtIndex:indexPath.row];
@@ -1211,7 +1213,12 @@ UINavigationControllerDelegate>
     NSString* upImagePath=[self writeImageToFile:upImage];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
-        [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
+//        [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
+        
+        
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(messages.count-1) inSection:0];
+        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        [cell uploadImage:upImagePath cellIndex:(messages.count-1)];
     }
     else
     {
@@ -1238,53 +1245,97 @@ UINavigationControllerDelegate>
     }
     return nil;
 }
+//-(void)uploadImage:(NSString*)imagePath cellIndex:(int)index
+//{
+//    //开启进度条 - 在最后一个ＣＥＬＬ处。
+//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
+//    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+//    cell.progressView.hidden = NO;
+//    cell.progressView.progress = 0.0f;
+//    
+//    [hud show:YES];
+//    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+//    [up simpleUpload:imagePath UpDeleGate:self];
+//}
+//
+//// 上传进度
+//- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+//{
+//    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
+//    
+//    cell.progressView.progress = percent;
+//    if (progress == 1) {
+//        cell.progressView.progress = 1.0f;
+//        cell.progressView.hidden = YES;
+//    }
+//    
+//}
+////上传成功代理回调
+//- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+//{
+//    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+//    cell.progressView.hidden = YES;
+//    if(index < messages.count){
+//        [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
+//    }
+//
+//}
+////上传失败代理回调
+//- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+//{
+//    cell.progressView.hidden = YES;
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
+//                                          cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
+//    [alert show];
+//    [self refreMessageStatus:index Status:@"0"];
+//}
 
-#pragma mark 图片聊天上传图片
--(void)uploadImage:(UIImage*)image cellIndex:(int)index
-{
-    //开启进度条 - 在最后一个ＣＥＬＬ处。
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
-    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-    cell.progressView.hidden = NO;
-    cell.progressView.progress = 0.0f;
-   
-    NetManager *netmanager=[[NetManager alloc] init];
-    [netmanager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
-    Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
-    {
-        @synchronized (self) {
-            double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"fafafaf-------->>>%f",progress);
-                cell.progressView.progress = progress;
-                if (progress == 1) {
-                    cell.progressView.progress = 1.0f;
-                    cell.progressView.hidden = YES;
-                }
-            });
-        }
-    }
-    Success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
-         dispatch_async(dispatch_get_main_queue(), ^{
-             cell.progressView.hidden = YES;
-             if(index < messages.count){
-                 [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
-             }
-         });
-     }
-    failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         dispatch_async(dispatch_get_main_queue(), ^{
-             cell.progressView.hidden = YES;
-             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
-                                                   cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
-             [alert show];
-             [self refreMessageStatus:index Status:@"0"];
-         });
-     }];
-}
+//#pragma mark 图片聊天上传图片
+//-(void)uploadImage:(UIImage*)image cellIndex:(int)index
+//{
+//    //开启进度条 - 在最后一个ＣＥＬＬ处。
+//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
+//    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+//    cell.progressView.hidden = NO;
+//    cell.progressView.progress = 0.0f;
+//   
+//    NetManager *netmanager=[[NetManager alloc] init];
+//    [netmanager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
+//    Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
+//    {
+//        @synchronized (self) {
+//            double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSLog(@"fafafaf-------->>>%f",progress);
+//                cell.progressView.progress = progress;
+//                if (progress == 1) {
+//                    cell.progressView.progress = 1.0f;
+//                    cell.progressView.hidden = YES;
+//                }
+//            });
+//        }
+//    }
+//    Success:^(AFHTTPRequestOperation *operation, id responseObject)
+//     {
+//         NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
+//         dispatch_async(dispatch_get_main_queue(), ^{
+//             cell.progressView.hidden = YES;
+//             if(index < messages.count){
+//                 [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
+//             }
+//         });
+//     }
+//    failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//     {
+//         dispatch_async(dispatch_get_main_queue(), ^{
+//             cell.progressView.hidden = YES;
+//             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
+//                                                   cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
+//             [alert show];
+//             [self refreMessageStatus:index Status:@"0"];
+//         });
+//     }];
+//}
 
 
 // 刷新消息状态
@@ -1994,7 +2045,13 @@ UINavigationControllerDelegate>
     else{//如果之前没上传成功,读取本地图片，再次上传
         UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
         [self refreMessageStatus2:messageDict Status:@"2"];
-        [self uploadImage:imgFromUrl cellIndex:cellIndex];
+        
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
+        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+//        [self uploadImage:imgFromUrl cellIndex:cellIndex];
+         [cell uploadImage:thumb cellIndex:cellIndex];
+        
+        
     }
 }
 /*
@@ -2139,7 +2196,7 @@ UINavigationControllerDelegate>
     [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]
                   forKey:@"token"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl
+    [NetManager requestWithURLStr:BaseClientUrl
                                    Parameters:postDict1
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           [wxSDArray addObject:self.chatWithUser];
@@ -2335,6 +2392,16 @@ UINavigationControllerDelegate>
     [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
    // [[NSNotificationCenter defaultCenter] removeObserver:self]; //移除所有观察者，不再监听消息。
 
+}
+//发送消息
+-(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
+{
+    [self sendImageMsg:imageId UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
+}
+ // 刷新状态
+-(void)refreStatus:(NSInteger)cellIndex
+{
+    [self refreMessageStatus:cellIndex Status:@"0"];
 }
 
 

@@ -21,8 +21,11 @@
 #import "KKMessageCell.h"
 #import "KKChatCell.h"
 #import "KKImgCell.h"
+#import "QiniuUploadDelegate.h"
 
 @class AppDelegate, XMPPHelper;
+
+
 
 @interface KKChatController : BaseViewController
 <UITableViewDelegate,
@@ -36,7 +39,9 @@ AVAudioSessionDelegate,
 AVAudioPlayerDelegate,
 HPGrowingTextViewDelegate,
 KKChatCellDelegate,
-EmojiViewDelegate>
+EmojiViewDelegate,
+QiniuUploadDelegate,
+SendMsgDeleGate>
 {
     //    UILabel    *titleLabel;
     NSString * userName;
@@ -111,6 +116,7 @@ EmojiViewDelegate>
 @property (strong,nonatomic) HPGrowingTextView *textView;
 @property (nonatomic,retain) AVAudioSession *session;
 @property (nonatomic,retain) AVAudioRecorder *recorder;
+
 - (void)sendButton:(id)sender;
 
 

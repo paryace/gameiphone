@@ -89,8 +89,10 @@
                 NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,[self.imgIDArray[i] substringFromIndex:7]];
                 NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
                 UIImage * openPic= [UIImage imageWithData:nsData];
-                imageV.image = openPic;
-                [self imageViewLoadedImage:imageV]; //读取图片
+                if (openPic) {
+                    imageV.image = openPic;
+                    [self imageViewLoadedImage:imageV]; //读取图片
+                }
             }
             else if(docRange.location!=NSNotFound) //本地图片
             {

@@ -31,6 +31,8 @@
     #import "WeiboSDK.h"
     #import "Reachability.h"
     #import "PBEmojiLabel.h"
+    #import "ImageService.h"
+    #import "UpLoadFileService.h"
 
    #endif
 
@@ -84,6 +86,9 @@
 #define kMyToken  @"MyToken"//我的token
 #define kMYUSERID @"MyUserId"//我的userid
 #define PhoneNumKey @"phoneKey"//用于判断是否自动登陆
+
+#define UploadImageToken @"uploadImageToken"//上传图片的token
+#define TokenEfficaciousTime @"tokenEfficaciousTime"//token剩余时间
 
 #define NewComment @"newCommentOfMyDynamic"
 

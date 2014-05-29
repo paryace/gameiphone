@@ -16,9 +16,6 @@
 @interface NetManager : NSObject
 +(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
     failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure;
-+(void)requestWithURLStrNoController:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                             failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure;
-+(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters TheController:(UIViewController *)controller success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success;
 +(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success
     failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure;
 //上传注册时头像
@@ -45,13 +42,6 @@
 +(UIImage*)compressImage:(UIImage*)theImage targetSizeX:(CGFloat) sizeX targetSizeY:(CGFloat) sizeY; //图片压缩 设置最宽，按比例压缩
 + (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
 
-
-//删除图片
-+(void)deleteImageWithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-
-+(void)deleteImagesWithURLStr:(NSString *)urlStr ImageName:(NSArray *)imageNameArray TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation,  NSDictionary *responseObject))success
-                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 #pragma mark 上传单张妹子图片
 +(void)uploadGrilImage:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
@@ -64,9 +54,9 @@
            Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 ////开始执行上传图片
--(void)startUpload:(AFHTTPClient *)httpClient Request:(NSMutableURLRequest *)request TheController:(UIViewController *)controller
-          Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block
-           Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+//-(void)startUpload:(AFHTTPClient *)httpClient Request:(NSMutableURLRequest *)request TheController:(UIViewController *)controller
+//          Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block
+//           Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+//           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 @end

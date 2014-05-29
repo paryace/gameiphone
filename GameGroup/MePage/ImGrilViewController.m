@@ -12,6 +12,8 @@
 {
     UIScrollView * scV ;
     UIButton * button;
+    
+     NSString * imagePath;
 }
 @property (nonatomic,retain)UIImage * upDataImage;
 @end
@@ -144,43 +146,106 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+    
+     imagePath=[self writeImageToFile:self.upDataImage ImageName:@"gril.jpg"];
 }
+
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
+}
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
 }
-- (void)uploadImage
+
+
+
+-(void)uploadImage
 {
     if (!self.upDataImage) {
         UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"选择上传的照片" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
         [alert show];
         return;
     }
-    hud.labelText = @"发送中...";
     [hud show:YES];
-    [NetManager uploadGrilImage:self.upDataImage
-        WithURLStr:BaseUploadImageUrl
-        ImageName:@"1"
-         
-                    TheController:self   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-                           hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-                       }
-        Success:^(AFHTTPRequestOperation *operation, id responseObject)
-        {
-            NSLog(@"%@",responseObject);
-            [self updateImGrilWithID:responseObject];
-            
-        }
-        failure:^(AFHTTPRequestOperation *operation, NSError *error)
-        {
-            [hud hide:YES];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"上传失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles:nil];
-            [alert show];
-        }];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:imagePath UpDeleGate:self];
+}
+
+
+//- (void)uploadImage
+//{
+//    if (!self.upDataImage) {
+//        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:nil message:@"选择上传的照片" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
+//        [alert show];
+//        return;
+//    }
+//    hud.labelText = @"发送中...";
+//    [hud show:YES];
+//    [NetManager uploadGrilImage:self.upDataImage
+//        WithURLStr:BaseUploadImageUrl
+//        ImageName:@"1"
+//         
+//                    TheController:self   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
+//                           hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
+//                       }
+//        Success:^(AFHTTPRequestOperation *operation, id responseObject)
+//        {
+//            NSLog(@"%@",responseObject);
+//            [self updateImGrilWithID:responseObject];
+//            
+//        }
+//        failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//        {
+//            [hud hide:YES];
+//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"上传失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles:nil];
+//            [alert show];
+//        }];
+//
+//}
+//
+
+
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
+    
+}
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    NSLog(@"%@",response);
+    [self updateImGrilWithID:response];
+
 
 }
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"上传失败" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles:nil];
+    [alert show];
+}
+
+
 - (void)updateImGrilWithID:(NSString*)imgID
 {
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];

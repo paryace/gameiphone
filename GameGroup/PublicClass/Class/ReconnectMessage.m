@@ -51,7 +51,7 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
-    [NetManager requestWithURLStrNoController:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");

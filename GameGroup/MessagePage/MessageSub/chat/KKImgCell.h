@@ -11,10 +11,18 @@
 #import "EGOImageView.h"
 #import "KKChatCell.h"
 #import "KKMessageCell.h"
-@interface KKImgCell : KKChatCell
+@protocol SendMsgDeleGate;
+
+@interface KKImgCell : KKChatCell<QiniuUploadDelegate>
 @property (nonatomic, strong) EGOImageView *msgImageView;
 @property (nonatomic, strong) UIProgressView *progressView;
 
-
-
+@property(nonatomic,assign)id<SendMsgDeleGate>sendMsgDeleGate;
+-(void)uploadImage:(NSString*)imagePath cellIndex:(int)index;
 @end
+@protocol SendMsgDeleGate <NSObject>
+
+-(void)sendMsg:(NSString *)imageId Index:(NSInteger)index;
+-(void)refreStatus:(NSInteger)cellIndex;
+@end
+
