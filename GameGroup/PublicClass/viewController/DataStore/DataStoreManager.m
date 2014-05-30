@@ -869,6 +869,7 @@
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
             if (!dUser)
             dUser = [DSuser MR_createInContext:localContext];
+            
             dUser.achievement = title?title:@"";
             dUser.achievementLevel = rarenum?rarenum:@"";
             dUser.action = [NSNumber numberWithBool:action];
@@ -1763,7 +1764,7 @@ return @"";
 +(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType
 {
     NSMutableArray * theArr = [NSMutableArray array];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shipType];
         NSArray * users = [DSuser MR_findAllWithPredicate:predicate];
         for (int i = 0; i <users.count; i++) {
@@ -1771,7 +1772,7 @@ return @"";
             NSMutableDictionary *user= [self getUserDictionary:dUser];
             [theArr addObject:user];
         }
-    }];
+//    }];
     return theArr;
 }
 //----------------------------------------

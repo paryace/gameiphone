@@ -367,7 +367,7 @@ typedef enum : NSUInteger {
     
     UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(10, 5, 300, 20)];
     lb1.font = [UIFont boldSystemFontOfSize:14];
-    lb1.text = @"再陌游中分享你在游戏与现实中发生的事情";
+    lb1.text = @"在陌游中分享你在游戏与现实中发生的事情";
     lb1.textColor = [UIColor grayColor];
     lb1.textAlignment = NSTextAlignmentCenter;
     lb1.backgroundColor =[ UIColor clearColor];
