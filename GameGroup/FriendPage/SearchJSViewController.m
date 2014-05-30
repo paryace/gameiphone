@@ -269,9 +269,7 @@
 
 - (void)okButtonClick:(UIButton *)sender
 {
-    [searchContent resignFirstResponder];
-    [m_roleNameText resignFirstResponder];
-        
+    
     if (self.myViewType ==SEARCH_TYPE_ROLE) {
         NSMutableDictionary *tempDic= [ NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -287,6 +285,7 @@
                     [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
                     return;
                 }
+                    [tf resignFirstResponder];
             }
         }
         [hud show:YES];
@@ -339,7 +338,7 @@
                     [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
                     return;
                 }
-
+                [tf resignFirstResponder];
             }
         }
         [hud show:YES];
@@ -418,11 +417,7 @@
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
     
-    if (self.myViewType ==SEARCH_TYPE_ROLE) {
-        helpVC.myUrl = @"content.html?5";
-    }else{
-        helpVC.myUrl = @"content.html?6";
-    }
+    helpVC.myUrl = @"content.html?5";
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 

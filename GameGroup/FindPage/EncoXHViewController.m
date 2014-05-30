@@ -515,7 +515,8 @@
         }
         
        else if (COME_TYPE ==3) {
-            if ([responseObject isKindOfClass:[NSArray class]]) {
+           NSArray *array = responseObject;
+            if ([array isKindOfClass:[NSArray class]]&&array.count>0) {
                 [m_characterArray addObjectsFromArray:responseObject];
                 
                 

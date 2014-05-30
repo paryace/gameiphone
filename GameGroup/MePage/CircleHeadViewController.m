@@ -70,6 +70,8 @@ typedef enum : NSUInteger {
     UIView *topVIew;
     NSMutableDictionary *commentOffLineDict;
     UIActivityIndicatorView * m_loginActivity;
+    BOOL ishaveAboutMe;
+    BOOL ishavehuancun;
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -105,7 +107,8 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    ishaveAboutMe =NO;
+    ishavehuancun = NO;
 //    self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
@@ -250,7 +253,7 @@ typedef enum : NSUInteger {
     [abobtMeImageView addSubview:aboutMeLabel];
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"]) {
-        
+        ishaveAboutMe =YES;
         //改变HeadView的高度 以容纳aboutMeImageView
         CGRect frame = m_myTableView.tableHeaderView.frame;
         frame.size.height =430;
@@ -336,8 +339,12 @@ typedef enum : NSUInteger {
     NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
     if ([NSMutableArray arrayWithContentsOfFile:path]) {
         m_dataArray= [NSMutableArray arrayWithContentsOfFile:path];
+        if (m_dataArray.count<1) {
+            [self buildBottomView];
+        }
         [self getInfoFromNet];
     }else{
+        ishavehuancun = YES;
         m_myTableView.contentOffset = CGPointMake(0, 150);
         [self buildBottomView];
         [self getInfoFromNet];
@@ -626,6 +633,7 @@ typedef enum : NSUInteger {
 -(void)enterAboutMePage:(id)sender
 {
     offer-=20;
+    ishaveAboutMe = NO;
     abobtMeImageView.hidden =YES;
     //改变Headview高度 以适配隐藏aboutMeImageView后的样式
     CGRect frame = m_myTableView.tableHeaderView.frame;
@@ -663,28 +671,36 @@ typedef enum : NSUInteger {
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
         
-        
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.4];
-        m_myTableView.contentOffset = CGPointMake(0, 0);
-        topVIew.frame =CGRectMake(0, 0, 320, 370);
-        [UIView commitAnimations];
-        [bottomView removeFromSuperview];
-        
-        CGRect frame = m_myTableView.tableHeaderView.frame;
-        frame.size.height =370;
-        UIView *view = m_myTableView. tableHeaderView;
-        view.frame = frame;
-        m_myTableView.tableHeaderView = view;
-
-        
-        
         self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
         if (KISHighVersion_7) {
             m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
         }
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            NSArray *arraaay =KISDictionaryHaveKey(responseObject, @"dynamicMsgList");
+            if (([arraaay isKindOfClass:[NSArray class]]||arraaay.count>0)&&ishavehuancun) {
+                
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.4];
+                m_myTableView.contentOffset = CGPointMake(0, 0);
+                topVIew.frame =CGRectMake(0, 0, 320, 370);
+                [UIView commitAnimations];
+                [bottomView removeFromSuperview];
+                
+                CGRect frame = m_myTableView.tableHeaderView.frame;
+                if (ishaveAboutMe) {
+                    frame.size.height =430;
+                }else{
+                    frame.size.height =370;
+                }
+                UIView *view = m_myTableView. tableHeaderView;
+                view.frame = frame;
+                m_myTableView.tableHeaderView = view;
+                ishavehuancun =NO;
+            }
+
+            
             
             if ([KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch")intValue]==1) {
                 friendZanBtn.selected = YES;

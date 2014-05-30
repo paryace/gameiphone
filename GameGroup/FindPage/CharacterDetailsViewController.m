@@ -129,19 +129,21 @@
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
-        
+        m_contentTableView.scrollEnabled = NO;
         m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(640, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_countryTableView];
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
-        
+        m_countryTableView.scrollEnabled = NO;
+
         m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_reamlTableView];
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
         m_reamlTableView.bounces = NO;
-        
+        m_reamlTableView.scrollEnabled = NO;
+
     }else if(self.myViewType ==CHARA_INFO_PERSON){
         m_charaDetailsView.isComeTo = NO;
         m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
@@ -150,20 +152,24 @@
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
         m_contentTableView.hidden =YES;
-        
+        m_contentTableView.scrollEnabled = NO;
+
         
         m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_countryTableView];
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
-        
+        m_countryTableView.scrollEnabled = NO;
+
         
         m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_reamlTableView];
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
         m_reamlTableView.bounces = NO;
+        m_reamlTableView.scrollEnabled = NO;
+
     }
     
     m_contentTableView.hidden =YES;

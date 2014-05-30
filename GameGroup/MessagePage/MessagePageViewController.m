@@ -321,7 +321,7 @@
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"dailynews"])
     {//每日一闻
         cell.headImageV.imageURL =nil;
-        cell.headImageV.image = KUIImage(@"mess_news");
+        cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }

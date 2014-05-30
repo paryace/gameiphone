@@ -37,7 +37,7 @@
     BOOL isDidClick;
     TvView *drawView;
     NSDictionary *manDic;
-    
+    EGOImageButton *m_menuButton;
     UIImageView *imgV;
 }
 @property(nonatomic,retain)NSString * friendImgStr;
@@ -204,7 +204,7 @@
         CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
 
     }else{
-    imgV.image = KUIImage(@"bg.jpg");
+    imgV.image = KUIImage(@"bg");
     }
     imgV.center = self.view.center;
     imgV.userInteractionEnabled = YES;
@@ -216,13 +216,9 @@
     centerBtnArray = [NSMutableArray array];
     
     
-    
     // 建立标头和下拉菜单
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     drawView.myViewDelegate = self;
-    
-    
-    
     
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -258,7 +254,7 @@
     
     [bottomView addSubview:bottomTitleLabel];
     
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
+    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
     headImgView.frame = CGRectMake(260, 10, 40, 40);
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
@@ -344,11 +340,30 @@
     }
     [bottomView addSubview:commentLabel];
     
+    m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 44, 44)];
+    m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
+    [m_menuButton addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
+        NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
+        //            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+        
+        NSString * imageId= KISDictionaryHaveKey(dic, @"img");
+        m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
+    }else{
+        [m_menuButton setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+    }
+    [self.view addSubview:m_menuButton];
+
 
     
    // [self didClickMenu:nil];
 }
 
+-(void)dropdown
+{
+    [drawView dropdown];
+    [self.view bringSubviewToFront:m_menuButton];
+}
 -(void)buildMenuButton
 {
     sameRealmBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"samerealm_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
@@ -749,8 +764,25 @@
 -(void)didClickGameIdWithView:(TvView *)myView
 {
     bottomView.hidden =YES;
-    
+    if (drawView.showList) {
+        [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
+        [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+
+        m_menuButton.center = CGPointMake(160,KISHighVersion_7?110:90);
+        [self.view bringSubviewToFront:m_menuButton];
+        [UIView commitAnimations];
+
+    }else{
+        [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
+        [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+
+        m_menuButton.center = CGPointMake(160,430);
+
+        [UIView commitAnimations];
+
+    }
     [self didClickMenu:nil];
+    [self.view bringSubviewToFront:m_menuButton];
 
 }
 -(void)didClickGameIdSuccessWithView:(TvView *)myView section:(NSInteger)section row:(NSInteger)row
@@ -767,6 +799,20 @@
     manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
     [[NSUserDefaults standardUserDefaults]setObject:manDic forKey:@"find_initial_game"];
 
+    [m_menuButton setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
+    
+    NSString * imageId2=KISDictionaryHaveKey(manDic, @"img");
+    m_menuButton.imageURL=[ImageService getImageUrl4:imageId2];
+    [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
+    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+
+    m_menuButton.center = CGPointMake(160, KISHighVersion_7?110:90);
+    [self.view bringSubviewToFront:m_menuButton];
+
+    [UIView commitAnimations];
+
+    
+    
     NSLog(@"manDic--%@",manDic);
 }
 

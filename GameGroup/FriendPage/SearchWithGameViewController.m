@@ -81,11 +81,7 @@
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
     
-    if (self.myInfoType ==COME_GUILD) {
-        helpVC.myUrl = @"content.html?6";
-    }else{
         helpVC.myUrl = @"content.html?5";
-    }
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 
@@ -223,7 +219,7 @@
         {
             NSLog(@"去看资料");
             TestViewController *detailVC = [[TestViewController alloc]init];
-            detailVC.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id");
+            detailVC.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid");
             detailVC.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias")? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias"): KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
             detailVC.isChatPage = NO;
             [self.navigationController pushViewController:detailVC animated:YES];

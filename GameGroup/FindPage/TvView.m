@@ -11,7 +11,6 @@
 #import "GameListCell.h"
 @implementation TvView
 {
-    EGOImageButton * menuButotn;
     UILabel *titleLabel;
     UILabel *textLabel;
 }
@@ -64,19 +63,6 @@
         textLabel.backgroundColor =[ UIColor clearColor];
         textLabel.font = [UIFont boldSystemFontOfSize:14];
         [self addSubview:textLabel];
-        menuButotn = [[EGOImageButton alloc]initWithFrame:CGRectMake(0, self.bounds.size.height-30, 44, 44)];
-        menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
-        [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
-             NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
-//            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
-            
-            NSString * imageId= KISDictionaryHaveKey(dic, @"img");
-            menuButotn.imageURL= [ImageService getImageUrl4:imageId];
-        }else{
-            [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
-        }
-        [self addSubview:menuButotn];
         
  
         
@@ -94,12 +80,11 @@
         tv.hidden = YES;
         
         CGRect sf = self.frame;
-        sf.size.height = KISHighVersion_7?130:110;
+        sf.size.height = KISHighVersion_7?110:90;
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         
         self.frame = sf;
-        menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
         titleLabel.text = @"发现";
         textLabel.hidden =NO;
         CGRect frame = tv.frame;
@@ -127,7 +112,6 @@
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         self.frame = sf;
         self.frame = CGRectMake(0, 0, 320, 430);
-        menuButotn.center = CGPointMake(160, self.bounds.size.height-30);
         tv.frame = frame;
         [UIView commitAnimations];
     }
@@ -197,10 +181,9 @@
 {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [menuButotn setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
     
-    NSArray *arr = [self.tableDic objectForKey:[tableArray objectAtIndex:indexPath.section]];
-    NSDictionary *dic = [arr objectAtIndex:indexPath.row];
+//    NSArray *arr = [self.tableDic objectForKey:[tableArray objectAtIndex:indexPath.section]];
+//    NSDictionary *dic = [arr objectAtIndex:indexPath.row];
     
     if (self.myViewDelegate &&[self.myViewDelegate respondsToSelector:@selector(didClickGameIdSuccessWithView:section:row:)]) {
         [self.myViewDelegate didClickGameIdSuccessWithView:self section:indexPath.section row:indexPath.row];
@@ -209,15 +192,12 @@
     tv.hidden = YES;
     
     CGRect sf = self.frame;
-    sf.size.height = KISHighVersion_7?130:110;
+    sf.size.height =  KISHighVersion_7?110:90;
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
     self.frame = sf;
 //    menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
-    NSString * imageId2=KISDictionaryHaveKey(dic, @"img");
-    menuButotn.imageURL=[ImageService getImageUrl4:imageId2];
-    menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
     titleLabel.text  = @"发现";
     textLabel.hidden =NO;
     CGRect frame = tv.frame;
