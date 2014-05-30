@@ -93,7 +93,7 @@
         _topView = [[UIView alloc] init];
         _topView.frame = CGRectMake(0,0,320,60);
         _topView.backgroundColor = [UIColor blackColor];
-        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"手机通讯录",@"添加好友"];
+        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
         for (int i = 0; i < 4; i++) {
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = i;
