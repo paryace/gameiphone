@@ -9,6 +9,7 @@
 #import "SendNewsViewController.h"
 #import "Emoji.h"
 #import "EmojiView.h"
+#import "UpLoadFileService.h"
 @interface SendNewsViewController ()<UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MBProgressHUDDelegate>
 {
     UIButton* PhotoB;

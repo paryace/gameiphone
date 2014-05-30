@@ -7,32 +7,20 @@
 //
 
 #import "BaseViewController.h"
-#import "CircleHeadCell.h"
+#import "NewNearByCell.h"
 #import "HPGrowingTextView.h"
-#import "SendNewsViewController.h"
 #import "EmojiView.h"
-
-@interface InterestingPerpleViewController : BaseViewController<
+@interface InterestingPerpleViewController : BaseViewController
+<
 UITableViewDataSource,
 UITableViewDelegate,
-UINavigationControllerDelegate,
-UIImagePickerControllerDelegate,
-UIActionSheetDelegate,
-CircleHeadDelegate,
-CommentCellDelegate,
-UITextViewDelegate,
-HPGrowingTextViewDelegate,
-UIActionSheetDelegate,
-UIScrollViewDelegate,
-EGOImageViewDelegate,
 UIAlertViewDelegate,
-UIScrollViewDelegate,
-TableViewDatasourceDidChange,
+NewNearByCellDelegate,
+UIActionSheetDelegate,
+HPGrowingTextViewDelegate,
 EmojiViewDelegate
 >
-@property(nonatomic,copy)NSString *imageStr;    //Cover图片
-@property(nonatomic,copy)NSString *nickNmaeStr; //昵称
-@property(nonatomic,copy)NSString *userId;  //userid
 @property(nonatomic,strong)HPGrowingTextView *textView;
+@property(nonatomic,copy)NSString *gameid;
 
 @end

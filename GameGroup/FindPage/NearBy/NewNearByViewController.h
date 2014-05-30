@@ -10,6 +10,7 @@
 #import "NewNearByCell.h"
 #import "CityViewController.h"
 #import "HPGrowingTextView.h"
+#import "EmojiView.h"
 @interface NewNearByViewController : BaseViewController
 <UICollectionViewDataSource,
 UICollectionViewDelegate,
@@ -19,7 +20,8 @@ UIAlertViewDelegate,
 NewNearByCellDelegate,
 CityDelegate,
 UIActionSheetDelegate,
-HPGrowingTextViewDelegate
+HPGrowingTextViewDelegate,
+EmojiViewDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *gameid;

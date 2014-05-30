@@ -9,6 +9,7 @@
 #import "BaseViewController.h"
 #import "RealmsSelectViewController.h"
 #import "SearchRoleViewController.h"
+#import "UpLoadFileService.h"
 @protocol RegisterViewControllerDelegate <NSObject>
 @optional
 -(void)RegisterViewControllerFinishRegister;

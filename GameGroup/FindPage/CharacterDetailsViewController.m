@@ -238,7 +238,6 @@
                 if ([guildStr isEqualToString:@""]||[guildStr isEqualToString:@" "]||!guildStr) {
                     m_charaDetailsView.guildLabel.text =@"";
                     m_charaDetailsView.NickNameLabel.frame = CGRectMake(70, 12, 200, 35);
-
                 }
                 else{
                     m_charaDetailsView.guildLabel.text = [NSString stringWithFormat:@"<%@>",guildStr];
