@@ -721,16 +721,46 @@
     
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-    
-    SendNewsViewController* VC = [[SendNewsViewController alloc] init];
-    VC.titleImage = viewImage;
-    VC.delegate = self;
-    VC.isComeFromMe = NO;
-   // VC.defaultContent = [NSString stringWithFormat:@"分享了%@的角色详情",self.characterName];
-    VC.defaultContent = [NSString stringWithFormat:@"分享了%@的数据",m_characterName];
-    [self.navigationController pushViewController:VC animated:NO];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
+    NSString * imagePath=[self writeImageToFile:viewImage ImageName:imageName];//完整路径
+    if (imagePath) {
+        SendNewsViewController* VC = [[SendNewsViewController alloc] init];
+        VC.titleImage = viewImage;
+        VC.titleImageName = imageName;
+        VC.delegate = self;
+        VC.isComeFromMe = NO;
+        VC.defaultContent = [NSString stringWithFormat:@"分享了%@的数据",m_characterName];
+        [self.navigationController pushViewController:VC animated:NO];
+    }
 }
+
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSData * imageDate=[self compressImage:thumbimg];
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([imageDate writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
+}
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
+}
+
+
 -(void)enterTohelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];

@@ -74,7 +74,8 @@ static ShareToOther *userManager = NULL;
     
     WXImageObject *ext = [WXImageObject object];
     UIImage* image = imageV;
-    ext.imageData = UIImagePNGRepresentation(image);
+//    ext.imageData = UIImagePNGRepresentation(image);
+    ext.imageData =UIImageJPEGRepresentation(image, 0.2);
     [self shareToWX:ext uiimage:imageV Title:@"" Description:@""];
 }
 - (void)sendAppExtendContent_friend:(UIImage *)image Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
@@ -88,7 +89,8 @@ static ShareToOther *userManager = NULL;
 {
     if ([WXApi isWXAppInstalled]) {
         WXMediaMessage *message = [WXMediaMessage message];
-        [message setThumbImage:imageV];
+        UIImage * imageVV=[NetManager compressImage:imageV targetSizeX:640/3 targetSizeY:1136/3];
+        [message setThumbImage:imageVV];
         message.title = title;
         message.description = des;
         message.mediaObject = mediaObject;

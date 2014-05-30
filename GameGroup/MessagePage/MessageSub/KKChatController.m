@@ -1261,52 +1261,6 @@ UINavigationControllerDelegate>
     return imageData;
 }
 
-
-//-(void)uploadImage:(NSString*)imagePath cellIndex:(int)index
-//{
-//    //开启进度条 - 在最后一个ＣＥＬＬ处。
-//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
-//    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//    cell.progressView.hidden = NO;
-//    cell.progressView.progress = 0.0f;
-//    
-//    [hud show:YES];
-//    UpLoadFileService * up = [[UpLoadFileService alloc] init];
-//    [up simpleUpload:imagePath UpDeleGate:self];
-//}
-//
-//// 上传进度
-//- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
-//{
-//    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
-//    
-//    cell.progressView.progress = percent;
-//    if (progress == 1) {
-//        cell.progressView.progress = 1.0f;
-//        cell.progressView.hidden = YES;
-//    }
-//    
-//}
-////上传成功代理回调
-//- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
-//{
-//    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
-//    cell.progressView.hidden = YES;
-//    if(index < messages.count){
-//        [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
-//    }
-//
-//}
-////上传失败代理回调
-//- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
-//{
-//    cell.progressView.hidden = YES;
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
-//                                          cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
-//    [alert show];
-//    [self refreMessageStatus:index Status:@"0"];
-//}
-
 //#pragma mark 图片聊天上传图片
 //-(void)uploadImage:(UIImage*)image cellIndex:(int)index
 //{

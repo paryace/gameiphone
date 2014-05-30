@@ -158,7 +158,7 @@
             self.pictureArray = [[NSMutableArray alloc]init];
         }
         [_pictureArray addObject:titleimg];
-
+        [uploadImagePathArray addObject:self.titleImageName];
     }
     
     m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(23, startX, 200, 20)];

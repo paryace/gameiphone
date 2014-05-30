@@ -254,18 +254,18 @@
 
         [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
     }
-    else if (buttonIndex ==1)
+    else if (buttonIndex ==1)//新浪
     {
         
         [[ShareToOther singleton]shareTosina:viewImage];
     }
-    else if(buttonIndex ==2)
+    else if(buttonIndex ==2)//微信
     {
         [[ShareToOther singleton]changeScene:WXSceneSession];
         
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
     }
-    else if(buttonIndex ==3)
+    else if(buttonIndex ==3)//朋友圈
     {
         [[ShareToOther singleton] changeScene:WXSceneTimeline];
         
@@ -282,29 +282,61 @@
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    NSDictionary* tempDic = [self.titleObjArray objectAtIndex:self.showIndex];
-    NSDictionary* tempDic_small = KISDictionaryHaveKey([self.titleObjArray objectAtIndex:self.showIndex], @"titleObj");
-    sortButton.hidden = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic_small, @"rank")] isEqualToString:@"1"] ? NO : YES;
+    
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
+    NSString * imagePath=[self writeImageToFile:viewImage ImageName:imageName];//完整路径
+    
+    if (imagePath) {
+        NSDictionary* tempDic = [self.titleObjArray objectAtIndex:self.showIndex];
+        NSDictionary* tempDic_small = KISDictionaryHaveKey([self.titleObjArray objectAtIndex:self.showIndex], @"titleObj");
+        sortButton.hidden = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic_small, @"rank")] isEqualToString:@"1"] ? NO : YES;
+        
+        pageControl.hidden = NO;
+        m_backButton.hidden = NO;
+        m_shareButton.hidden = NO;
+        if (self.isFriendTitle) {
+            pageControl.hidden = YES;
+        }
+        SendNewsViewController* VC = [[SendNewsViewController alloc] init];
+        VC.titleImage = viewImage;
+        VC.titleImageName = imageName;
+        VC.delegate = self;
+        VC.isComeFromMe = NO;
+        if(upScroll.center.y < 0)
+        {
+            VC.defaultContent = [NSString stringWithFormat:@"分享%@的%@排名", KISDictionaryHaveKey(tempDic, @"charactername"), KISDictionaryHaveKey(tempDic_small, @"titletype")];
+        }
+        else
+        {
+            VC.defaultContent = [NSString stringWithFormat:@"分享%@的头衔：%@", KISDictionaryHaveKey(tempDic, @"charactername"), KISDictionaryHaveKey(tempDic_small, @"title")];
+        }
+        [self.navigationController pushViewController:VC animated:NO];
+    }
+}
 
-    pageControl.hidden = NO;
-    m_backButton.hidden = NO;
-    m_shareButton.hidden = NO;
-    if (self.isFriendTitle) {
-        pageControl.hidden = YES;
-    }
-    SendNewsViewController* VC = [[SendNewsViewController alloc] init];
-    VC.titleImage = viewImage;
-    VC.delegate = self;
-    VC.isComeFromMe = NO;
-    if(upScroll.center.y < 0)
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSData * imageDate=[self compressImage:thumbimg];
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
     {
-        VC.defaultContent = [NSString stringWithFormat:@"分享%@的%@排名", KISDictionaryHaveKey(tempDic, @"charactername"), KISDictionaryHaveKey(tempDic_small, @"titletype")];
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
-    else
-    {
-        VC.defaultContent = [NSString stringWithFormat:@"分享%@的头衔：%@", KISDictionaryHaveKey(tempDic, @"charactername"), KISDictionaryHaveKey(tempDic_small, @"title")];
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([imageDate writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
     }
-    [self.navigationController pushViewController:VC animated:NO];
+    return nil;
+}
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
 }
 
 - (void)setUpView

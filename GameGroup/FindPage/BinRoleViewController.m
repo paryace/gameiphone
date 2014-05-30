@@ -12,8 +12,6 @@
 #import "AuthViewController.h"
 
 
-#define OfficerUrl @"http://www.momotalk.com"
-
 @interface BinRoleViewController ()
 {
     EGOImageView *titleImageView;
@@ -210,20 +208,11 @@
     }else{
         titleImageView.imageURL = imageurl;
     }
-//   NSString * headImage =[GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
-//    if ([GameCommon isEmtity:headImage]) {
-//        titleImageView.image = [UIImage imageNamed:@"people_man.png"];
-//    }else{
-//        
-//        titleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headImage]];
-//    }
-    
     NSString *characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterImg")];
     if ([GameCommon isEmtity:characterImage]) {
         roleImageView.image = [UIImage imageNamed:@"clazz_0.png"];
     }else{
         roleImageView.imageURL = [ImageService getImageUrl4:characterImage];
-//        roleImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage]];
     }
     
     NumLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"rank")];
@@ -272,10 +261,9 @@
 //通知方式
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//    NSString * characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"characterImg")];
-//    NSString * characterImageUrl=[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage];
-    
     NSString * imageId=KISDictionaryHaveKey(self.dataDic, @"characterImg");
+    NSString * characterid=KISDictionaryHaveKey(self.dataDic, @"characterid");
+    NSString * gameId=self.gameId;
     
     NSString * characterImageUrl=[ImageService getImgUrl:imageId];
     
@@ -283,23 +271,29 @@
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     if (buttonIndex ==0) {
-        [[ShareToOther singleton] onTShareImage:characterImageUrl Title:characyerName Description:messageText Url:OfficerUrl];
+        [[ShareToOther singleton] onTShareImage:characterImageUrl Title:characyerName Description:messageText Url:[self getBinUrl:characterid GameId:gameId]];
     }
     else if (buttonIndex ==1)
     {
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:characterImageUrl] Title:characyerName Description:messageText Url:OfficerUrl];
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:characterImageUrl] Title:characyerName Description:messageText Url:[self getBinUrl:characterid GameId:gameId]];
     }
     else if(buttonIndex ==2)
     {
-        NSString * msgBody= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
-         NSString * msgBody2= [NSString stringWithFormat:@"%@%@%@",@"你的角色 ",characyerName,@" 在陌游中尚未被绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP http://www.momotalk.com"];
+        NSString * msgBody= [NSString stringWithFormat:@"%@%@%@%@",@"你的角色 ",characyerName,@" 已被他人绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP ",[self getBinUrl:characterid GameId:gameId]];
+        
+         NSString * msgBody2= [NSString stringWithFormat:@"%@%@%@%@",@"你的角色 ",characyerName,@" 在陌游中尚未被绑定. 您的好友邀请您进入陌游APP认领该角色. 陌游APP ",[self getBinUrl:characterid GameId:gameId]];
         if ([self.type isEqualToString:@"2"]) {
             [self sendSMS:msgBody];
         }else{
             [self sendSMS:msgBody2];
         }
-        
     }
+}
+
+
+-(NSString*)getBinUrl:(NSString*)character GameId:(NSString*)gameid
+{
+    return [NSString stringWithFormat:@"%@%@%@%@%@",BinRoleUrl,@"characterid=",character,@"&gameid=",gameid];
 }
 //请求网络图片
 -(UIImage *) getImageFromURL:(NSString *)fileURL {
