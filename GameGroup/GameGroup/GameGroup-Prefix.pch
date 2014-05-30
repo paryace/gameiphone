@@ -49,7 +49,7 @@
 #define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
 #define BaseHelpUrl @"http://58.83.193.120/faq/"
 #define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
-
+#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
 
 
 //#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
