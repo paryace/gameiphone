@@ -265,8 +265,12 @@
     NSLog(@"%d",index);
     NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
     NSString * tempStr = [tempH objectAtIndex:index];
-    if ([uploadImagePathArray count]>0) {
-        [uploadImagePathArray removeObjectAtIndex:index];
+    if ([tempStr rangeOfString:@"<local>"].location!=NSNotFound) {
+        NSString *replaced = [tempStr stringByReplacingOccurrencesOfString:@"<local>" withString:@""];
+        if ([uploadImagePathArray containsObject:[GameCommon getNewStringWithId:replaced]]) {
+            int tempIndex = [uploadImagePathArray indexOfObject:replaced];
+            [uploadImagePathArray removeObjectAtIndex:tempIndex];
+        }
     }
     else//需要删除的id
     {
@@ -409,6 +413,7 @@
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
 {
+    NSData * imageData=[self compressImage:thumbimg];
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -416,12 +421,18 @@
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
-    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([imageData writeToFile:openImgPath atomically:YES]) {
         return openImgPath;
     }
     return nil;
 }
-
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
+}
 //保存上传图片信息
 -(void)saveMyPicter:(id)sender
 {
@@ -445,7 +456,9 @@
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
+    float pp= percent*100;
+    NSLog(@"%f",pp);
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.0f％", imageImdex+1,pp];
     
 }
 /**
@@ -464,7 +477,8 @@
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-        for (NSString*a in reponseStrArray) {
+        for (int i=0; i<reponseStrArray.count; i++) {
+            NSString * a= [uploadImagePathArray objectAtIndex:i];
             for (int i = 0;i<a1.count;i++) {
                 if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
                     [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];

@@ -81,8 +81,6 @@
 #pragma mark 重连标识 FailImg
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
 {
-//    dispatch_async(dispatch_get_main_queue(), ^{
-    
     mPoint = point;
     self.failImage.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
     self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
@@ -157,18 +155,11 @@
             self.cellTimer = nil;
         }
     }
-//         });
 }
 
 //菊花停止转动
 - (void)stopActivity
 {
-//    if ([self.cellTimer isValid]) {
-//        [self.cellTimer invalidate];
-//        self.cellTimer = nil;
-//    }
-//    [self.activityView stopAnimating];
-    
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"0", @"received",nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
@@ -177,62 +168,30 @@
 
 
 #pragma mark 头像 - Headimg
-
+//设置自己头像
 - (void)setHeadImgByMe:(NSString*) myHeadImg;
 {
-    [self.headImgV setFrame:CGRectMake(320-10-40,
-                                       padding*2-15,
-                                       40,
-                                       40)];
+    [self.headImgV setFrame:CGRectMake(320-10-40,padding*2-15,40,40)];
     
     if ([GameCommon isEmtity:myHeadImg]) {
         self.headImgV.imageURL = nil;
     }else{
-//        if (myHeadImg) {
-//            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", myHeadImg]];
-//            self.headImgV.imageURL = theUrl;
-//        }else
-//        {
-//            self.headImgV.imageURL = nil;
-//        }
-        
         headImgV.imageURL = [ImageService getImageUrl3:myHeadImg Width:80];
     }
-    
-    
-    
-    
     [self.headImgV removeTarget:self action:@selector(chatUserHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
     
-    [self.headImgV  addTarget:self
-                       action:@selector(myHeadImgClicked:)
-             forControlEvents:UIControlEventTouchUpInside];
+    [self.headImgV  addTarget:self action:@selector(myHeadImgClicked:)forControlEvents:UIControlEventTouchUpInside];
 }
-
+//设置对方头像
 - (void)setHeadImgByChatUser:(NSString*) chatUserImg;
 {
     //头像居左
     [self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
-    
     //头像设置为对方的
-    if ([GameCommon isEmtity:chatUserImg]) {
-        self.headImgV.imageURL = nil;
-    }else{
-//        if (chatUserImg) {
-//            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:chatUserImg]]];
-//            self.headImgV.imageURL = theUrl;
-//        }else
-//        {
-//            self.headImgV.imageURL = nil;
-//        }
-        self.headImgV.imageURL=[ImageService getImageUrl3:chatUserImg Width:80];
-    }
-
+    self.headImgV.imageURL=[ImageService getImageStr:chatUserImg Width:80];
     //点击事件
     [self.headImgV removeTarget:self action:@selector(myHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [self.headImgV addTarget:self
-                      action:@selector(chatUserHeadImgClicked:)
-                forControlEvents:UIControlEventTouchUpInside];
+    [self.headImgV addTarget:self action:@selector(chatUserHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
 
 }
 //点击我的头像

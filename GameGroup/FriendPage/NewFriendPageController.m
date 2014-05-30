@@ -22,8 +22,8 @@
     
     UILabel*        m_titleLabel;
     
-    NSDictionary* resultArray;//数据集合
-    NSArray* keyArr;//字母集合
+    NSMutableDictionary *resultArray;//数据集合
+    NSMutableArray * keyArr;//字母集合
     
     UITableView*  m_myTableView;
     NSString *fansNum;
@@ -56,8 +56,8 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
     
-    resultArray =[NSDictionary dictionary];
-    keyArr=[NSArray array];
+    resultArray =[NSMutableDictionary dictionary];
+    keyArr=[NSMutableArray array];
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -192,10 +192,8 @@
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
-    NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
-    NSURL * url=[ImageService getImageStr:iamgeId Width:80];
-    cell.headImageV.imageURL = url;
-    
+    NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+    cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.sexImg.image =KUIImage(genderimage);
     
@@ -275,9 +273,11 @@
                         fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
                         [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
                         [[NSUserDefaults standardUserDefaults] synchronize];
-                        NSDictionary* result = [responseObject objectForKey:@"contacts"];
+                        NSMutableDictionary* result = [responseObject objectForKey:@"contacts"];
                         NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
                         [keys sortUsingSelector:@selector(compare:)];
+                        [keyArr removeAllObjects];
+                        [resultArray removeAllObjects];
                         keyArr = keys;
                         resultArray = result;
                         [m_myTableView reloadData];
@@ -321,8 +321,10 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-        NSDictionary* result = [userinfo objectForKey:@"userList"];
+        NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+        [keyArr removeAllObjects];
+        [resultArray removeAllObjects];
         keyArr = keys;
         resultArray = result;
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -48,6 +48,7 @@
 #define monvbangURL @"http://58.83.193.120/h5/index.html"
 #define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
 #define BaseHelpUrl @"http://58.83.193.120/faq/"
+#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
 
 
 
@@ -58,8 +59,7 @@
 //#define monvbangURL @"http://221.122.66.243/h5/index.html"
 //#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
 //#define BaseHelpUrl @"http://211.122.66.243/h5/help/"
-
-#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"
+//#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

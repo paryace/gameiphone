@@ -301,8 +301,8 @@
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
-    
+    float pp= percent*100;
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.0f％", imageImdex+1,pp];
 }
 //上传成功代理回调
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
@@ -315,9 +315,13 @@
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         self.imageId = [[NSMutableString alloc]init];
-        for (NSString*a in reponseStrArray) {
-            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
-        }
+//        for (NSString*a in reponseStrArray) {
+            for (int i=0; i<reponseStrArray.count; i++) {
+                NSString * a=[uploadImagePathArray objectAtIndex:i];
+                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+            }
+        
+//        }
         [self publishWithImageString:_imageId];
     }else{
         [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
@@ -469,6 +473,7 @@
             }];
             [deleteIV removeFromSuperview];
             [_pictureArray removeObject:deleteIV];
+            [uploadImagePathArray removeObjectAtIndex:index];
             PhotoB.hidden = NO;
         }
     }
@@ -515,6 +520,7 @@
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
 {
+    NSData * imageDate=[self compressImage:thumbimg];
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -522,10 +528,17 @@
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
-    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([imageDate writeToFile:openImgPath atomically:YES]) {
         return openImgPath;
     }
     return nil;
+}
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
 }
 
 

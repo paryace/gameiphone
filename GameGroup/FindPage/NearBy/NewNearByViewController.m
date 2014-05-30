@@ -594,7 +594,6 @@ typedef enum : NSUInteger {
 
         [hud hide:YES];
     }];
-    
 }
 
 #pragma mark----
@@ -608,13 +607,9 @@ typedef enum : NSUInteger {
     NearByPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSDictionary *dict =[headImgArray objectAtIndex:indexPath.row];
     
-    
-    
-//    NSString *imgStr =[NSString stringWithFormat:@"%@",[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]];
-    
-    
     NSString * imageIds=KISDictionaryHaveKey(dict, @"img");
-    NSString * imageid=[ImageService getImageString:imageIds];
+    cell.photoView.imageURL = [ImageService getImageStr:imageIds Width:160];
+    NSString * imageid=[ImageService getImageOneId:imageIds];
     if ([GameCommon isEmtity:imageid]) {
         cell.photoView.imageURL = nil;
     }else{

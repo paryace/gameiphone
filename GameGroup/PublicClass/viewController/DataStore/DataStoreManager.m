@@ -864,8 +864,6 @@
     }
     
     if (![GameCommon isEmtity:userId]) {
-//        [self deleteUserInfo:userId];
-        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
@@ -949,7 +947,6 @@
 //保存首字母
 +(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
 {
-//    [self deleteNameIndex:nameIndex ShipType:shiptype];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
@@ -964,7 +961,7 @@
             {
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
-                if (dFname)
+                if (!dFname)
                 {
                     dFname = [DSFansNameIndex MR_createInContext:localContext];
                 }

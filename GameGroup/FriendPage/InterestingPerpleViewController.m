@@ -1608,6 +1608,37 @@ typedef enum : NSUInteger {
         
     }
 }
+#pragma mark --enter OnceDynamicViewController Page  进入动态详情界面
+-(void)enterInfoPage:(UIButton *)sender
+{
+    NSDictionary *dict = [m_dataArray objectAtIndex:sender.tag];
+    
+    OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
+    detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
+    
+    NSString * imageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
+    detailVC.imgStr = [ImageService getImgUrl:imageIds];
+    
+    
+    //    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+    //    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
+    //
+    
+    NSMutableDictionary *userDic=KISDictionaryHaveKey(dict, @"user");
+    NSString * nickName=KISDictionaryHaveKey(userDic, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(userDic, @"nickname");
+    }
+    
+    
+    detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :nickName;
+    
+    
+    detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
+    
+    [self.navigationController pushViewController:detailVC animated:YES];
+    
+}
 
 //根据标题的长度更改UIActivity的位置
 - (void)getmsgIdwithCircle:(NewNearByCell *)myCell withindexPath:(NSInteger)row

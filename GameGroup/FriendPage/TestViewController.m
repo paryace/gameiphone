@@ -376,9 +376,8 @@
 {
     NSMutableArray * temp = [NSMutableArray array];
     for (id headID in imageArray) {
-//        [temp addObject:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headID]];
         if (![GameCommon isEmtity:headID]) {
-            [temp addObject:[ImageService getImgUrl:headID]];
+            [temp addObject:[ImageService getImageUrlString:headID Width:160 Height:160]];
         }
     }
     return temp;
@@ -420,7 +419,8 @@
 
     [littleImgArray removeAllObjects];
     for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
-        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/160/160"];
+//        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/160/160"];
+        NSString *str = [self.hostInfo.headImgArray objectAtIndex:i];
         [littleImgArray addObject:str];
     }
 
@@ -742,6 +742,8 @@
         CVC.gameId = gameId;
         CVC.myViewType = CHARA_INFO_PERSON;
         [self.navigationController pushViewController:CVC animated:YES];
+    }else{
+        [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
     }
     
     

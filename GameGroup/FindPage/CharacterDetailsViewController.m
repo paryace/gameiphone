@@ -258,8 +258,8 @@
             if ([GameCommon isEmtity:charaInfoImageId]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
             }else{
-                NSString * imageId=m_charaInfo.thumbnail;
-                m_charaDetailsView.headerImageView.imageURL=[ImageService getImageUrl3:imageId Width:80];
+//                NSString * imageId=m_charaInfo.thumbnail;
+                m_charaDetailsView.headerImageView.imageURL=[ImageService getImageUrl3:charaInfoImageId Width:80];
                 
 //                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",m_charaInfo.thumbnail]];
             }

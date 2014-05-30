@@ -397,7 +397,7 @@
 - (NSString*)imageHtmlWithId:(NSString*)imageid
 {
 //    NSString* imageStr = [NSString stringWithFormat:@"<img src=\"%@%@\\305\" width=\"305\"></img>", BaseImageUrl, imageid];
-    NSString* imageStr = [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\\305\" width=\"305\"></img></a>", imageid,BaseImageUrl,imageid];
+    NSString* imageStr = [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"?imageView2/2/w/305"];
 
     return imageStr;
 }

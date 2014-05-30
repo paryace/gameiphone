@@ -154,6 +154,8 @@
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
 {
+    NSData * imageData=[self compressImage:thumbimg];
+    
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path] == NO)
@@ -161,10 +163,17 @@
         [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
     }
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
-    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([imageData writeToFile:openImgPath atomically:YES]) {
         return openImgPath;
     }
     return nil;
+}
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -225,7 +234,9 @@
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
+    float pp= percent*100;
+    hud.labelText = [NSString stringWithFormat:@"%.0f％",pp];
+//    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
     
 }
 //上传成功代理回调

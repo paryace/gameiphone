@@ -1357,8 +1357,6 @@ typedef enum : NSUInteger {
     }
     return nil;
 }
-
-
 #pragma mark --getTime //时间戳方法
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime
 {
@@ -1999,7 +1997,7 @@ typedef enum : NSUInteger {
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"长在上传 %.2f％",percent];
+//    hud.labelText = [NSString stringWithFormat:@"正在上传 %.2f％",percent];
     
 }
 /**

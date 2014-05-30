@@ -1214,12 +1214,15 @@ UINavigationControllerDelegate>
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString* openImgPath=[self writeImageToFile:thumbimg];
-    NSString* upImagePath=[self writeImageToFile:upImage];
+    
+     NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
+    NSData *upImageData = [self compressImage:upImage];
+    
+    NSString* openImgPath=[self writeImageToFile:thumbImageData];
+    NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
 //        [self uploadImage:upImage cellIndex:(messages.count-1)];  //上传图片
-        
         
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(messages.count-1) inSection:0];
         KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
@@ -1235,7 +1238,7 @@ UINavigationControllerDelegate>
 }
 
 //将图片保存到本地，返回保存的路径
--(NSString*)writeImageToFile:(UIImage*)thumbimg
+-(NSString*)writeImageToFile:(NSData*)thumbimgData
 {
     NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -1245,11 +1248,20 @@ UINavigationControllerDelegate>
     }
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@_me.jpg",path,uuid];
-    if ([UIImageJPEGRepresentation(thumbimg, 1.0) writeToFile:openImgPath atomically:YES]) {
+    if ([thumbimgData writeToFile:openImgPath atomically:YES]) {
         return openImgPath;
     }
     return nil;
 }
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
+}
+
+
 //-(void)uploadImage:(NSString*)imagePath cellIndex:(int)index
 //{
 //    //开启进度条 - 在最后一个ＣＥＬＬ处。
