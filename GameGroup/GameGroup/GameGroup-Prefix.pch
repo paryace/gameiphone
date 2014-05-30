@@ -41,25 +41,25 @@
 
 
 //常量
-//#define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
-//#define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
-//#define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"
-//#define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
-//#define monvbangURL @"http://58.83.193.120/h5/index.html"
-//#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
-//#define BaseHelpUrl @"http://58.83.193.120/faq/"
-//#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
+#define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
+#define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
+#define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"
+#define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
+#define monvbangURL @"http://58.83.193.120/h5/index.html"
+#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
+#define BaseHelpUrl @"http://58.83.193.120/faq/"
+#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
 
 
 
-#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
-#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
-#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"
-#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
-#define monvbangURL @"http://221.122.66.243/h5/index.html"
-#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
-#define BaseHelpUrl @"http://211.122.66.243/h5/help/"
-#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
+//#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
+//#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
+//#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"
+//#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
+//#define monvbangURL @"http://221.122.66.243/h5/index.html"
+//#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
+//#define BaseHelpUrl @"http://211.122.66.243/h5/help/"
+//#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 
@@ -118,11 +118,9 @@
 
 #define kLastVersion @"lastVersion"//上个版本的版本号 因1.0是用username登陆 后面版本是userid 必须清掉聊天消息和关注表
 
-#define receiveregularMsg @"wx_receiveregularMsg"//接收普通聊天信息
-#define receiverFriendRecommended @"wx_receiverFriendRecommended"//接收好友推荐
-#define receiverNewsMsg @"wx_receiverNewsMsg"//接收新闻消息
-
-#define receiverOtherChrarterMsg @"wx_receiverOtherChrarterMsg"//关于角色动态消息
+//#define receiverFriendRecommended @"wx_receiverFriendRecommended"//接收好友推荐
+//#define receiverNewsMsg @"wx_receiverNewsMsg"//接收新闻消息
+//#define receiverOtherChrarterMsg @"wx_receiverOtherChrarterMsg"//关于角色动态消息
 
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])

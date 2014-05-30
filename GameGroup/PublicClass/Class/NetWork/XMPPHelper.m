@@ -288,7 +288,7 @@
             }
             
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
+//            [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
 
             [self.chatDelegate newMessageReceived:dict];
         }
@@ -327,7 +327,7 @@
             title = KISDictionaryHaveKey([title JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
             
-            [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
+//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
@@ -344,7 +344,7 @@
                 }
             }
             [dict setObject:dis forKey:@"disStr"];
-            [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
+//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
@@ -401,7 +401,7 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-            [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
+//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
