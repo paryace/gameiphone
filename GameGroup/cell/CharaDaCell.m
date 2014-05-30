@@ -17,17 +17,17 @@
         // Initialization code
         self.titleImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(7, 12, 32, 32)];
         [self addSubview:self.titleImgView];
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 5, 100, 20)];
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 10, 100, 20)];
         self.titleLabel.textColor = [UIColor blackColor];
-        self.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+        self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
         
         self.titleLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.titleLabel];
         
-        self.CountLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 24, 100, 30)];
+        self.CountLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 25, 200, 30)];
         self.CountLabel.textColor = UIColorFromRGBA(0x696969, 1);
         self.CountLabel.numberOfLines = 0;
-        self.CountLabel.font = [UIFont boldSystemFontOfSize:10];
+        self.CountLabel.font = [UIFont boldSystemFontOfSize:13];
         self.CountLabel.textAlignment = NSTextAlignmentLeft;
         self.CountLabel.textColor = [UIColor grayColor];
         self.CountLabel.backgroundColor = [UIColor clearColor];
