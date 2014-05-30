@@ -35,4 +35,5 @@
 
 +(NSString*)getImageOneId:(NSString*)imageids;
 
++(NSString*)getBaseImageUrl:(NSString*)imageId;
 @end

@@ -302,7 +302,7 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         if (result.count>0) {
-//            [DataStoreManager deleteAllNameIndex];
+            [DataStoreManager deleteAllNameIndex];
             for (int i=0; i<[keys count]; i++) {
                 NSString *key=[keys objectAtIndex:i];
                 for (NSMutableDictionary * dict in [result objectForKey:key]) {

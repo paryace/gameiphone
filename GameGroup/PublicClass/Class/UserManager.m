@@ -110,7 +110,7 @@ static UserManager *userManager = NULL;
         }
         [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         
-//        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
+        //保存用户信息  如果有就删除旧的 保存新的 如果没有就保存
 //        if (![DataStoreManager ifHaveThisUserInUserManager:KISDictionaryHaveKey(responseObject, @"userid")]) {
 //            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 //        }else{

@@ -249,10 +249,6 @@
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
     
-    //查库的时已经做排序了，出来之后就不需要重新排序
-//    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sendTime" ascending:NO];
-//    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:&sortDescriptor count:1];
-//    [allMsgArray sortUsingDescriptors:sortDescriptors];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }

@@ -86,12 +86,14 @@
 //传入单个图片的id，返回拼接后的图片完整地址
 +(NSString*)getImgUrl:(NSString*)imageid
 {
-    if ([GameCommon isPureInt:imageid]) {
-        return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
-    }else{
-        return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:imageid]];
+    return [NSString stringWithFormat:@"%@%@",[self getBaseImageUrl:imageid],[GameCommon getNewStringWithId:imageid]];
+}
++(NSString*)getBaseImageUrl:(NSString*)imageId
+{
+    if ([GameCommon isPureInt:imageId]) {
+        return BaseImageUrl;
     }
-    
+    return QiniuBaseImageUrl;
 }
 //获取图片地址集合
 + (NSMutableArray*)getHeardImgId:(NSString*)imgs Width:(NSInteger)width AllUrl:(BOOL)allUrl
