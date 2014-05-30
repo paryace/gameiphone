@@ -70,23 +70,8 @@
     
 
     cell.nameLabel.text = KISDictionaryHaveKey(dict, @"title");
-    cell.contentLabel.text = KISDictionaryHaveKey(dict, @"content");
+    cell.contentLabel.text = KISDictionaryHaveKey(dict, @"editorNote");
     cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"time")]];
-    
-    
-//    DataNewsCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
-//    if (!cell) {
-//        cell = [[DataNewsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-//        cell.backgroundColor = [UIColor clearColor];
-//    }
-//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-//
-//    cell.gameIconImg.imageURL =[ NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]]];
-//    cell.bigImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"content"), @"img")]];
-//    cell.titleLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"content"), @"title");
-//    cell.timeLabel.text =[self getDataWithTimeMiaoInterval: [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"content"), @"time")]];
-    
-    
     
     
     return cell;

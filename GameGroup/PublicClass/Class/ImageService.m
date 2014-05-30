@@ -74,7 +74,7 @@
     if ([GameCommon isPureInt:imageid]) {
         return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
     }else{
-        return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
+        return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:imageid]];
     }
     
 }

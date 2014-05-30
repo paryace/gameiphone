@@ -19,6 +19,7 @@
 #import "HelpViewController.h"
 #import "EGOImageView.h"
 #import "AboutRoleCell.h"
+
 @interface RegisterViewController ()
 {
     UILabel*     m_titleLabel;
@@ -68,7 +69,7 @@
     UIButton* m_okButton;
     AboutRoleCell *aboutRoleCell;
 
-    
+    NSString *gameidStr;
     
 }
 @property(nonatomic,retain)NSString *imgID;
@@ -683,6 +684,7 @@
         characterid = KISDictionaryHaveKey(dic, @"id");//角色id
         [[TempData sharedInstance] setCharacterID:characterid];
         [[TempData sharedInstance] setGamerealm:KISDictionaryHaveKey(dic, @"realm")];
+        gameidStr = KISDictionaryHaveKey(dic, @"gameid");
         m_step2Scroll.hidden = YES;
         m_step3Scroll.hidden = NO;
         m_topImage.image = KUIImage(@"register_step_3");
@@ -1160,7 +1162,9 @@
 - (void)continueStep3Net:(NSString*)imageId
 {
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-    [params setObject:@"1" forKey:@"gameid"];
+    if (gameidStr) {
+        [params setObject:gameidStr forKey:@"gameid"];
+    }
     if (characterid) {
         [params setObject:characterid forKey:@"characterid"];
     }

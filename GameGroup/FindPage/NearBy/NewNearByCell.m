@@ -235,8 +235,12 @@
     cell.tag = indexPath.row;
     NSMutableDictionary *dict = [self.commentArray objectAtIndex:indexPath.row];
     NSString * str = KISDictionaryHaveKey(dict, @"commentStr");
-
-    cell.comNickNameStr =KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias")?KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias"):KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
+    NSMutableDictionary * commentD = KISDictionaryHaveKey(dict, @"commentUser");
+    NSString * nickName=KISDictionaryHaveKey(commentD, @"alias");
+    if ([GameCommon isEmtity:nickName]) {
+        nickName=KISDictionaryHaveKey(commentD, @"nickname");
+    }
+    cell.comNickNameStr =nickName;
     nickNameLenght=[cell.comNickNameStr length];
     
     cell.commentContLabel.text = str;
@@ -352,6 +356,7 @@
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     return cSize;
 }
+
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr
 {
     CGSize cSize = [contStr sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(245, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
