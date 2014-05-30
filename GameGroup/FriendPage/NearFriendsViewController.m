@@ -57,6 +57,12 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"加载中...";
+    
+    
     [self getInfoWithNet];
     
     // Do any additional setup after loading the view.
@@ -64,6 +70,7 @@
 
 -(void)getInfoWithNet
 {
+    [hud show:YES];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[NSString stringWithFormat:@"%f",[[TempData sharedInstance] returnLat]] forKey:@"latitude"];
@@ -75,6 +82,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                              [hud hide:YES];
                               if ([responseObject isKindOfClass:[NSArray class]]) {
                                   [m_dataArray removeAllObjects];
                                   [m_dataArray addObjectsFromArray:responseObject];
@@ -91,7 +99,7 @@
                                       [alert show];
                                   }
                               }
-   
+                              [hud hide:YES];
                           }];
 }
 

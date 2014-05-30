@@ -175,6 +175,7 @@
 -(void)cleanNews
 {
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
+    [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
     m_notibgCircleNewsImageView.hidden = YES;
     commentLabel.text = @"暂无新动态";
 
@@ -191,15 +192,20 @@
     manDic = [NSDictionary new];
     
     //初始化背景图片 并且添加点击换图方法
-    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, kScreenHeigth-(KISHighVersion_7?20:0))];
+    imgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth)];
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"]) {
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
-        imgV.image = [UIImage imageWithData:data];
+        
+        UIImage *image =[UIImage imageWithData:data];
+        CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*image.size.width,  image.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
+        CGImageRef cgimg = CGImageCreateWithImageInRect([image CGImage], rect);
+        imgV.image = [UIImage imageWithCGImage:cgimg];
+        CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
+
     }else{
     imgV.image = KUIImage(@"bg.jpg");
     }
-    imgV.frame = CGRectMake(0, 0, 320, 320/imgV.image.size.width*imgV.image.size.height);
     imgV.center = self.view.center;
     imgV.userInteractionEnabled = YES;
     [imgV addGestureRecognizer:[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
@@ -215,9 +221,22 @@
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
     drawView.myViewDelegate = self;
     
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
-    drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    
+    
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    }else{
+        [[GameCommon shareGameCommon]firtOpen];
+        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    }
+    
     
     drawView.tableArray = [drawView.tableDic allKeys];
     [self.view addSubview:drawView];
@@ -670,6 +689,7 @@
 {
     if (actionSheet.tag ==9999999) {
         UIImagePickerController * imagePicker;
+        
         if (buttonIndex==1)
         {
             if (imagePicker==nil) {
@@ -706,22 +726,19 @@
                 [libraryAlert show];
             }
         }
-        
     }
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
 //    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*selectImage.size.width,  selectImage.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
+    CGImageRef cgimg = CGImageCreateWithImageInRect([selectImage CGImage], rect);
+    imgV.image = [UIImage imageWithCGImage:cgimg];
+    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
 
-    imgV.image = selectImage;
     
-    imgV.frame = CGRectMake(0, 0, 320, 320/imgV.image.size.width*imgV.image.size.height);
-    imgV.center = self.view.center;
     
-//    NSArray *arr = [NSArray arrayWithObjects:@(imgV.bounds.size.width),@(imgV.bounds.size.height), nil];
-//    [[NSUserDefaults standardUserDefaults]setObject:arr forKey:@"imgV_frame"];
-//    
     
     NSData *data = UIImageJPEGRepresentation(selectImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];

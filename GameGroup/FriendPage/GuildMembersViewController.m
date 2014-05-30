@@ -51,7 +51,9 @@
     topImg.image = KUIImage(@"guildTop.jpg");
     m_myTableView.tableHeaderView = topImg;
     
-    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"获取中...";
   //  [self addheadView];
     [self addFootView];
     [self getguildMembersFromNet];
@@ -59,6 +61,7 @@
 }
 -(void)getguildMembersFromNet
 {
+    [hud show:YES];
     NSMutableDictionary *tempDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *postDic =[ NSMutableDictionary dictionary];
     [tempDic setObject:self.guildStr forKey:@"organizationName"];
@@ -86,6 +89,7 @@
             [m_head endRefreshing];
             [m_foot endRefreshing];
         }
+        [hud hide:YES];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -96,6 +100,7 @@
             }
             [m_head endRefreshing];
             [m_foot endRefreshing];
+            [hud hide:YES];
         }];
 
 }
@@ -279,13 +284,14 @@
 
 -(void)bangdingroleWithdic:(NSDictionary *)dict
 {
-    [hud show:YES];
     hud.labelText = @"绑定中...";
+
+    [hud show:YES];
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [params setObject:self.gameidStr forKey:@"gameid"];
     [params setObject:KISDictionaryHaveKey(dict, @"realm") forKey:@"gamerealm"];
-    [params setObject:KISDictionaryHaveKey(dict, @"charactername") forKey:@"gamename"];
+    [params setObject:KISDictionaryHaveKey(dict, @"name") forKey:@"gamename"];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];
     [body setObject:@"115" forKey:@"method"];

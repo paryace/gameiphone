@@ -65,13 +65,9 @@
     NSString * gameId=KISDictionaryHaveKey(dic, @"gameid");
     NSString * imageId=[GameCommon putoutgameIconWithGameId:gameId];
     cell.headImageV.imageURL = [ImageService getImageUrl4:imageId];
-    
-    
-    
-
     cell.nameLabel.text = KISDictionaryHaveKey(dict, @"title");
     cell.contentLabel.text = KISDictionaryHaveKey(dict, @"editorNote");
-    cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"time")]];
+    cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"time")]];
     
     
     return cell;

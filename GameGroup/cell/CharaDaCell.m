@@ -15,19 +15,20 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.titleImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(7, 12, 32, 32)];
+        self.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+        self.titleImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(7, 6, 45, 45)];
         [self addSubview:self.titleImgView];
-        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 10, 100, 20)];
+        self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(58, 10, 100, 20)];
         self.titleLabel.textColor = [UIColor blackColor];
-        self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+        self.titleLabel.font = [UIFont boldSystemFontOfSize:16];
         
         self.titleLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:self.titleLabel];
         
-        self.CountLabel = [[UILabel alloc]initWithFrame:CGRectMake(50, 25, 200, 30)];
+        self.CountLabel = [[UILabel alloc]initWithFrame:CGRectMake(58, 30, 150, 30)];
         self.CountLabel.textColor = UIColorFromRGBA(0x696969, 1);
         self.CountLabel.numberOfLines = 0;
-        self.CountLabel.font = [UIFont boldSystemFontOfSize:13];
+        self.CountLabel.font = [UIFont systemFontOfSize:12];
         self.CountLabel.textAlignment = NSTextAlignmentLeft;
         self.CountLabel.textColor = [UIColor grayColor];
         self.CountLabel.backgroundColor = [UIColor clearColor];
@@ -38,7 +39,8 @@
         
         self.dataLabel = [[UILabel alloc]initWithFrame:CGRectMake(200, 5, 85, 32)];
         self.dataLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
-        self.dataLabel.font = [UIFont fontWithName:@"DigifaceWide" size:17];
+        self.dataLabel.font = [UIFont fontWithName:@"汉仪菱心体简" size:18];
+//        [UIFont fontWithName:@"DigifaceWide" size:18]
         self.dataLabel.textAlignment = NSTextAlignmentRight;
         self.dataLabel.backgroundColor =[UIColor clearColor];
         [self addSubview:self.dataLabel];

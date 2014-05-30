@@ -80,7 +80,12 @@
 -(void)enterToHelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    helpVC.myUrl = @"content.html?4";
+    
+    if (self.myInfoType ==COME_GUILD) {
+        helpVC.myUrl = @"content.html?6";
+    }else{
+        helpVC.myUrl = @"content.html?5";
+    }
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 
@@ -245,7 +250,7 @@
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [params setObject:self.gameid forKey:@"gameid"];
     [params setObject:KISDictionaryHaveKey(dict, @"realm") forKey:@"gamerealm"];
-    [params setObject:KISDictionaryHaveKey(dict, @"charactername") forKey:@"gamename"];
+    [params setObject:KISDictionaryHaveKey(dict, @"name") forKey:@"gamename"];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];
     [body setObject:@"115" forKey:@"method"];
