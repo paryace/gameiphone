@@ -265,8 +265,12 @@
     NSLog(@"%d",index);
     NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
     NSString * tempStr = [tempH objectAtIndex:index];
-    if ([uploadImagePathArray count]>0) {
-        [uploadImagePathArray removeObjectAtIndex:index];
+    if ([tempStr rangeOfString:@"<local>"].location!=NSNotFound) {
+        NSString *replaced = [tempStr stringByReplacingOccurrencesOfString:@"<local>" withString:@""];
+        if ([uploadImagePathArray containsObject:[GameCommon getNewStringWithId:replaced]]) {
+            int tempIndex = [uploadImagePathArray indexOfObject:replaced];
+            [uploadImagePathArray removeObjectAtIndex:tempIndex];
+        }
     }
     else//需要删除的id
     {
