@@ -905,9 +905,8 @@
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
         DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
-        if (dUser) {
-            [dUser MR_deleteInContext:localContext];
-        }
+        if (dUser)
+        [dUser MR_deleteInContext:localContext];
     }];
 }
 //删除首字母
@@ -917,16 +916,14 @@
         if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
             DSNameIndex * dNameIndex= [DSNameIndex MR_findFirstWithPredicate:predicate];
-            if (dNameIndex) {
-                [dNameIndex MR_deleteInContext:localContext];
-            }
+            if (dNameIndex)
+            [dNameIndex MR_deleteInContext:localContext];
         }else if([shiptype isEqualToString:@"3"])
         {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
             DSFansNameIndex * dfansNameIndex= [DSFansNameIndex MR_findFirstWithPredicate:predicate];
-            if (dfansNameIndex) {
-                [dfansNameIndex MR_deleteInContext:localContext];
-            }
+            if (dfansNameIndex)
+            [dfansNameIndex MR_deleteInContext:localContext];
         }
     }];
 }
@@ -951,18 +948,14 @@
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
                 if (!dFname)
-                {
                     dFname = [DSNameIndex MR_createInContext:localContext];
-                }
                 dFname.index = nameIndex;
             }else if([shiptype isEqualToString:@"3"])
             {
                 NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
                 DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
                 if (!dFname)
-                {
                     dFname = [DSFansNameIndex MR_createInContext:localContext];
-                }
                 dFname.index = nameIndex;
             }
             
