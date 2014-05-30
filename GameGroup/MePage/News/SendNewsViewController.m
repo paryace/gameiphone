@@ -315,9 +315,13 @@
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         self.imageId = [[NSMutableString alloc]init];
-        for (NSString*a in reponseStrArray) {
-            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
-        }
+//        for (NSString*a in reponseStrArray) {
+            for (int i=0; i<reponseStrArray.count; i++) {
+                NSString * a=[uploadImagePathArray objectAtIndex:i];
+                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+            }
+        
+//        }
         [self publishWithImageString:_imageId];
     }else{
         [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];

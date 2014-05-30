@@ -15,7 +15,7 @@
     if ([GameCommon isPureInt:imageid]) {
         return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]];
     }
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w",width,@"/h/",height]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height]];
 }
 //返回带宽高的图片地址String
 +(NSString*)getImageUrlString:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height
@@ -23,7 +23,7 @@
     if ([GameCommon isPureInt:imageid]) {
         return [NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height];
     }
-    return [NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w",width,@"/h/",height];
+    return [NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height];
 }
 //传入单个图片id，返回默认宽高相等的完整图片路径
 +(NSURL*)getImageUrl2:(NSString*)imageid
@@ -102,9 +102,15 @@
             if (![GameCommon isEmtity:str]) {
                 if (allUrl) {//返回完整路径
                     if (width>0) {//指定宽高
-                        [imageList addObject:[self getImageUrl3:str Width:width]];
+                        NSURL *url1=[self getImageUrl3:str Width:width];
+                        if (url1) {
+                            [imageList addObject:url1];
+                        }
                     }else{//没有指定宽高
-                        [imageList addObject:[self getImageUrl4:str]];
+                        NSURL *url2=[self getImageUrl4:str];
+                        if (url2) {
+                            [imageList addObject:url2];
+                        }
                     }
                 }else{//仅返回图片id
                     [imageList addObject:str];
