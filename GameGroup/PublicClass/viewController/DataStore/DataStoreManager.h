@@ -163,6 +163,7 @@
 +(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state;
 
 
+
 +(void)deleteAllDSCommonMsgs;
 +(void)deleteMsgByMsgType:(NSString *)msgType;
 

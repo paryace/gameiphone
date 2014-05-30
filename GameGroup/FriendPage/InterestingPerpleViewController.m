@@ -1318,9 +1318,9 @@ typedef enum : NSUInteger {
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
     if(iPhone5){
-        offer+=(280-height-23);
+        offer+=(185-height-23);
     }else{
-        offer+=(280-height+65);
+        offer+=(185-height+65);
     }
     
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
