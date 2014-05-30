@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EGOImageView.h"
 
 @interface TitleObjUpView : UIView
 
@@ -21,7 +22,8 @@
 
 @property(nonatomic,strong)UIView*   showDetailView;
 
-@property(nonatomic,strong)UIImageView* rightBgImage;
+//@property(nonatomic,strong)UIImageView* rightBgImage;
+@property(nonatomic,strong)EGOImageView* rightBgImage;
 @property(nonatomic,strong)UIImageView* waitImageView;
 @property(nonatomic,strong)UILabel*     waitLabel;
 - (void)setMainView;

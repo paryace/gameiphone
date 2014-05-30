@@ -12,26 +12,6 @@
 #define CompressionQuality 1  //图片上传时压缩质量
 
 @implementation NetManager
-NSString * gen_uuid()
-{
-    
-    CFUUIDRef uuid_ref = CFUUIDCreate(NULL);
-    
-    CFStringRef uuid_string_ref= CFUUIDCreateString(NULL, uuid_ref);
-    
-    
-    CFRelease(uuid_ref);
-    
-    NSString *uuid =  [[NSString  alloc]initWithCString:CFStringGetCStringPtr(uuid_string_ref, 0) encoding:NSUTF8StringEncoding];
-    
-    uuid = [uuid stringByReplacingOccurrencesOfString:@"-"withString:@""];
-    
-    CFRelease(uuid_string_ref);
-    
-    return uuid;
-    
-}
-
 //post请求，需自己设置失败提示
 +(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure
 {
@@ -60,7 +40,6 @@ NSString * gen_uuid()
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(operation,error);
-        
     }];
 }
 
@@ -72,34 +51,65 @@ NSString * gen_uuid()
     [postDict setObject:@"141" forKey:@"method"];
     [postDict setObject:dic forKey:@"params"];
     [self requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        UIAlertView* al = [[UIAlertView alloc]
-                           initWithTitle:@"提示"
-                           message:responseObject
-                           delegate:nil
+        UIAlertView* al = [[UIAlertView alloc] initWithTitle:@"提示" message:responseObject delegate:nil
                            cancelButtonTitle:@"确定"
                            otherButtonTitles: nil];
         [al show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        
     }];
 }
 
 //下载图片
-+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success
-                           failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure
++(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion
 {
-//    NSString * downLoadUrl = [NSString stringWithFormat:@"%@%@",url,imgId];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:downLoadUrl]];
-//    AFImageRequestOperation *operation;
-//    [AFImageRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"multipart/form-data"]];
-//    operation = [AFImageRequestOperation imageRequestOperationWithRequest:request imageProcessingBlock:nil success:success  failure:failure];
-//    [operation start];
-    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
+    NSURL *URL = [NSURL URLWithString:downLoadUrl];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil
+    destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+         NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
+         NSURL *pathUrl = [[NSURL alloc]initFileURLWithPath:path];
+        return pathUrl;
+    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+        completion(response,filePath,error);
+    }];
+    [downloadTask resume];
 }
 
 
 
+////下载图片
+//+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure
+//{
+    //    NSString * downLoadUrl = [NSString stringWithFormat:@"%@%@",url,imgId];
+    //    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:downLoadUrl]];
+    //    AFImageRequestOperation *operation;
+    //    [AFImageRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"multipart/form-data"]];
+    //    operation = [AFImageRequestOperation imageRequestOperationWithRequest:request imageProcessingBlock:nil success:success  failure:failure];
+    //    [operation start];
+//}
 
+
+//NSString * gen_uuid()
+//{
+//    
+//    CFUUIDRef uuid_ref = CFUUIDCreate(NULL);
+//    
+//    CFStringRef uuid_string_ref= CFUUIDCreateString(NULL, uuid_ref);
+//    
+//    
+//    CFRelease(uuid_ref);
+//    
+//    NSString *uuid =  [[NSString  alloc]initWithCString:CFStringGetCStringPtr(uuid_string_ref, 0) encoding:NSUTF8StringEncoding];
+//    
+//    uuid = [uuid stringByReplacingOccurrencesOfString:@"-"withString:@""];
+//    
+//    CFRelease(uuid_string_ref);
+//    
+//    return uuid;
+//}
 //#pragma mark 上传注册时头像
 //+(void)uploadImageWithRegister:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
 //                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure

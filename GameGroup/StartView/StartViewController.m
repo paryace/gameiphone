@@ -311,33 +311,33 @@
         }
     }
 }
-#pragma mark 下载开机图
--(void)downloadImageWithID:(NSString *)imageId Type:(NSString *)theType PicName:(NSString *)picName
-{
-    [NetManager downloadImageWithBaseURLStr:imageId ImageId:@"" success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        if ([theType isEqualToString:@"open"]) {
-            NSString *path = [RootDocPath stringByAppendingPathComponent:@"OpenImages"];
-            NSFileManager *fm = [NSFileManager defaultManager];
-            if([fm fileExistsAtPath:path] == NO)
-            {
-                [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-            }
-            NSString  *openImgPath = [NSString stringWithFormat:@"%@/openImage.jpg",path];
-            
-            if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:openImgPath atomically:YES]) {
-                NSLog(@"success///");
-                [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:@"OpenImg"];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            }
-            else
-            {
-                NSLog(@"fail");
-            }
-        }
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-        
-    }];
-}
+//#pragma mark 下载开机图
+//-(void)downloadImageWithID:(NSString *)imageId Type:(NSString *)theType PicName:(NSString *)picName
+//{
+//    [NetManager downloadImageWithBaseURLStr:imageId ImageId:@"" success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+//        if ([theType isEqualToString:@"open"]) {
+//            NSString *path = [RootDocPath stringByAppendingPathComponent:@"OpenImages"];
+//            NSFileManager *fm = [NSFileManager defaultManager];
+//            if([fm fileExistsAtPath:path] == NO)
+//            {
+//                [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+//            }
+//            NSString  *openImgPath = [NSString stringWithFormat:@"%@/openImage.jpg",path];
+//            
+//            if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:openImgPath atomically:YES]) {
+//                NSLog(@"success///");
+//                [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:@"OpenImg"];
+//                [[NSUserDefaults standardUserDefaults] synchronize];
+//            }
+//            else
+//            {
+//                NSLog(@"fail");
+//            }
+//        }
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+//        
+//    }];
+//}
 
 #pragma mark 获取用户位置
 -(void)getUserLocation

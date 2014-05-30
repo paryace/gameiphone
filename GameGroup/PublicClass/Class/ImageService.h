@@ -29,7 +29,8 @@
 
 +(NSString*)getImgUrl:(NSString*)imageid;
 
-
 +(NSString*)getImageString:(NSString*)imageids;
+
++(NSString*)getImageUrlString:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height;
 
 @end

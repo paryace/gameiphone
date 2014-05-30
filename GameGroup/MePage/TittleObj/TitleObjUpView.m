@@ -36,7 +36,7 @@
 - (void)setMainView
 {
     float viewWidth = self.frame.size.width;//568 480
-    self.rightBgImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, self.frame.size.height)];
+    self.rightBgImage = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, self.frame.size.height)];
     self.rightBgImage.backgroundColor = [UIColor clearColor];
     NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",self.rightImageId]];
     NSLog(@"path%@",path);
@@ -171,28 +171,42 @@
 
 - (void)getImageByNetWithImageId:(NSString*)imageid
 {
-//    NSString* urlStr = [BaseImageUrl stringByAppendingString:imageid];
     NSString * urlStr= [ImageService getImgUrl:imageid];
-    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@""
-                                    success:^(NSURLRequest *request,
-                                              NSHTTPURLResponse *response,
-                                              UIImage *image){
-            NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageid]];
-        
-            if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:path atomically:YES]) {
-                self.rightBgImage.image = image;
-                NSLog(@"下载图片 success//%@",imageid);
-            }
-            else
-            {
-                NSLog(@"fail");
-            }
-        [self.waitImageView stopAnimating];
-        self.waitLabel.hidden = YES;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-        [self.waitImageView stopAnimating];
-        self.waitLabel.hidden = YES;
-    }];
+//    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@""
+//                                    success:^(NSURLRequest *request,
+//                                              NSHTTPURLResponse *response,
+//                                              UIImage *image){
+//            NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageid]];
+//        
+//            if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:path atomically:YES]) {
+//                self.rightBgImage.image = image;
+//                NSLog(@"下载图片 success//%@",imageid);
+//            }
+//            else
+//            {
+//                NSLog(@"fail");
+//            }
+//        [self.waitImageView stopAnimating];
+//        self.waitLabel.hidden = YES;
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+//        [self.waitImageView stopAnimating];
+//        self.waitLabel.hidden = YES;
+//    }];
+    
+    
+    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageid
+                                 completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
+     {
+         NSString * path=[filePath path];
+         NSFileManager *fm = [NSFileManager defaultManager];
+         if([fm fileExistsAtPath:path])
+         {
+             self.rightBgImage.image = [UIImage imageWithContentsOfFile:path];
+         }
+         [self.waitImageView stopAnimating];
+         self.waitLabel.hidden = YES;
+     }
+     ];
 }
 
 /*
