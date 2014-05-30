@@ -207,7 +207,7 @@
         }else{
             
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
-            binRole.dataDic=dic;
+            binRole.dataDic=[self getBinDic:dic];;
             binRole.type=@"1";
             binRole.gameId=KISDictionaryHaveKey(dic, @"id");
             [self.navigationController pushViewController:binRole animated:YES];
@@ -231,17 +231,29 @@
         }else{
             NSLog(@"去举报");
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
-            binRole.dataDic=dic;
+            binRole.dataDic=[self getBinDic:dic];
             binRole.type=@"2";
             binRole.gameId = KISDictionaryHaveKey(dic, @"id");
             [self.navigationController pushViewController:binRole animated:YES];
-            
         }
-        
     }
-    
 }
 
+-(NSMutableDictionary*)getBinDic:(NSDictionary*)dict
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *userDic=KISDictionaryHaveKey(dict, @"user");
+    [dictionary setObject:KISDictionaryHaveKey(dict, @"img") forKey:@"characterImg"];
+     [dictionary setObject:KISDictionaryHaveKey(dict, @"id") forKey:@"characterid"];
+     [dictionary setObject:KISDictionaryHaveKey(dict, @"name") forKey:@"charactername"];
+     [dictionary setObject:KISDictionaryHaveKey(dict, @"realm") forKey:@"realm"];
+    [dictionary setObject:@"" forKey:@"value"];
+    if (userDic&&![userDic isEqual:@" "]) {
+        [dictionary setObject:KISDictionaryHaveKey(userDic, @"img") forKey:@"img"];
+        [dictionary setObject:KISDictionaryHaveKey(userDic, @"gender") forKey:@"gender"];
+    }
+    return dictionary;
+}
 -(void)bangdingroleWithdic:(NSDictionary *)dict
 {
     [hud show:YES];
