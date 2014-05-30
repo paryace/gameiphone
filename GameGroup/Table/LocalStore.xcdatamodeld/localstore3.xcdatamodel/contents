@@ -136,6 +136,7 @@
     <entity name="DSNewsGameList" representedClassName="DSNewsGameList" syncable="YES">
         <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSNewsMsgs" representedClassName="DSNewsMsgs" syncable="YES">
         <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
@@ -244,6 +245,7 @@
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
+        <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="88"/>
         <element name="DSNewsMsgs" positionX="-18" positionY="234" width="128" height="135"/>
         <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
         <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
@@ -253,6 +255,5 @@
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="255"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="75"/>
     </elements>
 </model>
