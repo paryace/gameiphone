@@ -163,7 +163,10 @@
     }
     else
     {
-        cell.heardImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
+//        cell.heardImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
+        
+        NSString * imageId=KISDictionaryHaveKey(tempDic, @"img");
+        cell.heardImg.imageURL = [ImageService getImageUrl4:imageId];
         
         NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
         cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
@@ -173,22 +176,15 @@
     cell.myIndexPath = indexPath;
     cell.myDelegate = self;
     NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
-    cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
+    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+    
+    if ([GameCommon isEmtity:imageId]) {
+        cell.gameImg.imageURL=nil;
+    }else{
+        cell.gameImg.imageURL=[ImageService getImageUrl3:imageId Width:80];
+    }
     cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     return cell;
-}
-//头像地址
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-        }else{
-            return  nil;
-        }
-    }
 }
 
 #pragma mark 按钮
@@ -198,7 +194,6 @@
     
     AuthViewController* authVC = [[AuthViewController alloc] init];
     NSDictionary* dic = [m_characterArray objectAtIndex:selectRow];
-//    authVC.gameId = @"1";
     authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
     authVC.character = KISDictionaryHaveKey(dic, @"name");

@@ -105,7 +105,8 @@
                 [self imageViewLoadedImage:imageV]; //读取图片
             }
             else{
-                imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
+//                imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
+                imageV.imageURL = [ImageService getImageUrl4:self.imgIDArray[i]];
             }
         }
         else{

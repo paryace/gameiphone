@@ -303,15 +303,15 @@ UINavigationControllerDelegate>
                                            withThumb:YES];
         
         //动态缩略图
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")].length > 0 && ![KISDictionaryHaveKey(msgDic, @"thumb") isEqualToString:@"null"]) {
-            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
-            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/70/70",imgStr]];
-            cell.thumbImgV.imageURL = titleImage;
-            
+        NSString * dImageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
+        if ([GameCommon isEmtity:dImageId] ||[dImageId isEqualToString:@"null"]) {
+            cell.thumbImgV.imageURL = nil;
         }
         else
         {
-            cell.thumbImgV.imageURL = nil;
+            //            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/70/70",imgStr]];
+            //            cell.thumbImgV.imageURL = titleImage;
+            cell.thumbImgV.imageURL = [ImageService getImageUrl3:dImageId Width:70];
         }
         
         cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
@@ -502,8 +502,11 @@ UINavigationControllerDelegate>
             cell.msgImageView.placeholderImage = [UIImage imageNamed:@"placeholder.png"];
             //显示为缩略图
             NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
-            cell.msgImageView.imageURL =kkChatImageMsgUrl;
+//            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh]];
+//            cell.msgImageView.imageURL =kkChatImageMsgUrl;
+            
+            
+            cell.msgImageView.imageURL = [ImageService getImageUrl3:kkChatImageMsg Width:200];
             cell.msgImageView.hidden = NO;
             
             //msgImageView响应手势
@@ -1030,11 +1033,12 @@ UINavigationControllerDelegate>
         }
         else
         {
-            NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-            NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh];
-            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
             EGOImageView *image = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
-            image.imageURL = kkChatImageMsgUrl;
+            NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+//            NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh];
+//            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
+//            image.imageURL = kkChatImageMsgUrl;
+            image.imageURL = [ImageService getImageUrl3:kkChatImageMsg Width:200];
             return image.image;
             NSLog(@"finalmesg添加%@",uuid);
         }

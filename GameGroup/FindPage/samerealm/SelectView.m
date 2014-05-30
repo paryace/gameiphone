@@ -39,7 +39,12 @@
         NSDictionary * dataDic = [self.buttonTitleArray objectAtIndex:i];
         
         EGOImageView* gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(70, 29 + i * 40, 18, 18)];
-        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]]]];
+//        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]]]];
+        
+        NSString * gameImageId=[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]];
+        gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
+        
+        
         [self addSubview:gameImg];
         
         UIButton*  tempButton = [[UIButton alloc] initWithFrame:CGRectMake(55, 18 + i * 40, 210, 40)];

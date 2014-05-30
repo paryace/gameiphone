@@ -164,7 +164,12 @@
     detailVC.achievementStr = [KISDictionaryHaveKey(tempDict, @"achievement") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(tempDict, @"achievement");
     detailVC.achievementColor =KISDictionaryHaveKey(tempDict, @"achievementLevel");
     detailVC.sexStr =  KISDictionaryHaveKey(tempDict, @"gender");
-    detailVC.titleImage =[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] ;
+    
+//    detailVC.titleImage =[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")]] ;
+    
+    NSString * imageId=KISDictionaryHaveKey(tempDict, @"img");
+    detailVC.titleImage = [ImageService getImgUrl:imageId];
+    
     detailVC.ageStr = [GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]];
     detailVC.constellationStr =KISDictionaryHaveKey(tempDict, @"constellation");
     NSLog(@"vc.VC.constellationStr%@",detailVC.constellationStr);

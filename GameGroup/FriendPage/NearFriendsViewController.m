@@ -125,12 +125,17 @@
         cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
-    if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
-        cell.headImageV.imageURL = nil;
-    }else{
-        cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]] stringByAppendingString:@"/80/80"]];
-        
-    }
+    
+    NSString * uImageId=KISDictionaryHaveKey(dict, @"img");
+//    if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
+//        cell.headImageV.imageURL = nil;
+//    }else{
+//        cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]] stringByAppendingString:@"/80/80"]];
+//        
+//    }
+    cell.headImageV.imageURL = [ImageService getImageStr:uImageId Width:80];
+    
+    
     cell.nameLabel.text = [dict objectForKey:@"nickname"];
     cell.distLabel.text = [KISDictionaryHaveKey(dict, @"titleName") isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(dict, @"titleName");
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(dict, @"rarenum") integerValue]];

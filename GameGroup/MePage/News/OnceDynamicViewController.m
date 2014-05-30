@@ -250,7 +250,10 @@
     
     EGOImageButton* headBtn = [[EGOImageButton alloc] initWithFrame:CGRectMake(10, 10 + startX, 40, 40)];
     headBtn.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-    headBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(self.dataDic, @"userimg")]]];
+//    headBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(self.dataDic, @"userimg")]]];
+    
+    NSString * imageIds=KISDictionaryHaveKey(self.dataDic, @"userimg");
+    headBtn.imageURL = [ImageService getImageStr2:imageIds];
     
     headBtn.layer.cornerRadius = 5;
     headBtn.layer.masksToBounds=YES;
@@ -394,7 +397,7 @@
 - (NSString*)imageHtmlWithId:(NSString*)imageid
 {
 //    NSString* imageStr = [NSString stringWithFormat:@"<img src=\"%@%@\\305\" width=\"305\"></img>", BaseImageUrl, imageid];
-    NSString* imageStr = [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\\305\" width=\"305\"></img></a>", imageid,BaseImageUrl, imageid];
+    NSString* imageStr = [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\\305\" width=\"305\"></img></a>", imageid,BaseImageUrl,imageid];
 
     return imageStr;
 }
@@ -663,9 +666,14 @@
             thumb.layer.cornerRadius = 5;
             thumb.layer.masksToBounds = YES;
             thumb.placeholderImage = KUIImage(@"have_picture");
-            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"thumb")];
-            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/50",imgStr]];
-            thumb.imageURL = titleImage;
+            
+            
+//            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"thumb")];
+//            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/50",imgStr]];
+//            thumb.imageURL = titleImage;
+            NSString * imageId=KISDictionaryHaveKey(self.dataDic, @"thumb");
+            thumb.imageURL = [ImageService getImageUrl3:imageId Width:50];
+            
             [m_shareView addSubview:thumb];
             
             CGSize contentSize = [KISDictionaryHaveKey(self.dataDic, @"msg") sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(200, 50)];

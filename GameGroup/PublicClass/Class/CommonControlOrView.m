@@ -64,7 +64,7 @@
     
     UILabel* starSign = [CommonControlOrView setLabelWithFrame:CGRectMake(ageSize.width + 10, 0, 50, myFrame.size.height) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:star textAlignment:NSTextAlignmentLeft];
     [myView addSubview:starSign];
-    CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
+    CGFloat w=(gameIds.count*18)+(gameIds.count*4)-4;
     UIView *gameicomView=[self getGameIconUIView:gameIds X:ageSize.width + 50 Y:6 Width:w Height:18];
     [myView addSubview:gameicomView];
     
@@ -73,18 +73,18 @@
     return myView;
 }
 //---
-+(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+//+(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+//{
+//    if ([GameCommon isEmtity:imageUrl]) {
+//        return nil;
+//    }else{
+//        if ([GameCommon getNewStringWithId:imageUrl]) {
+//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+//        }else{
+//            return  nil;
+//        }
+//    }
+//}
 +(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
@@ -93,7 +93,10 @@
             NSString * gameid=[gameIds objectAtIndex:i];
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
-            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+//            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+            
+            NSString * imageId=[GameCommon putoutgameIconWithGameId:gameid];
+            gameImg_one.imageURL = [ImageService getImageUrl3:imageId Width:40];
             [gameIconView addSubview:gameImg_one];
         }
     }
@@ -168,7 +171,9 @@
         heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
     }
     else{
-        heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];
+//        heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];
+        
+        heardImg.imageURL = [ImageService getImageUrl3:image Width:80];
     }
 
     
@@ -178,7 +183,11 @@
     [myView addSubview:oneLabel];
     //---
     EGOImageView* gameIg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
-    gameIg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]]];
+//    gameIg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]]];
+    
+    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]];
+    gameIg.imageURL = [ImageService getImageUrl4:imageId];
+    
 //    gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
     [myView addSubview:gameIg];
     //---

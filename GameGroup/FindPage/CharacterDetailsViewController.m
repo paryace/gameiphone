@@ -251,7 +251,11 @@
             
             m_charaDetailsView.realmView.frame = CGRectMake(310-size.width, 28,size.width, 20);
             m_charaDetailsView.gameIdView.frame = CGRectMake(295-size.width-7, 32, 15, 15);
-            m_charaDetailsView.gameIdView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameId]]];
+//            m_charaDetailsView.gameIdView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameId]]];
+            
+            NSString * gameImageId=[GameCommon putoutgameIconWithGameId:self.gameId];
+            m_charaDetailsView.gameIdView.imageURL=[ImageService getImageUrl4:gameImageId];
+            
             m_characterName =KISDictionaryHaveKey(m_titleDic, @"name");
             
             m_charaDetailsView.realmView.text = KISDictionaryHaveKey(m_titleDic, @"value3");
@@ -262,10 +266,13 @@
             m_charaDetailsView.headerImageView.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
             
             NSString *charaInfoImageId=KISDictionaryHaveKey(m_titleDic, @"thumbnail");
-            if (!charaInfoImageId || [charaInfoImageId isEqualToString:@""]||[charaInfoImageId isEqualToString:@" "]) {
+            if ([GameCommon isEmtity:charaInfoImageId]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
             }else{
-                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",m_charaInfo.thumbnail]];
+                NSString * imageId=m_charaInfo.thumbnail;
+                m_charaDetailsView.headerImageView.imageURL=[ImageService getImageUrl3:imageId Width:80];
+                
+//                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",m_charaInfo.thumbnail]];
             }
             
             if ([[KISDictionaryHaveKey(responseObject, @"ranking") allKeys] containsObject:@"rankingtime"]) {
@@ -492,7 +499,12 @@
         cell = [[CharaDaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     NSDictionary *dic  =m_nameArray[indexPath.row];
-    cell.titleImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+    
+//    cell.titleImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+    
+    NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+    cell.titleImgView.imageURL = [ImageService getImageUrl4:imageId];
+    
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"value1");
     cell.topImgView.image = KUIImage(@"paiming_ico");
     cell.CountLabel.text = KISDictionaryHaveKey(dic, @"value2");

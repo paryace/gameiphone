@@ -608,12 +608,17 @@ typedef enum : NSUInteger {
     NearByPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSDictionary *dict =[headImgArray objectAtIndex:indexPath.row];
     
-    NSString *imgStr =[NSString stringWithFormat:@"%@",[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]];
     
-    if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@""]) {
+    
+//    NSString *imgStr =[NSString stringWithFormat:@"%@",[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]];
+    
+    
+    NSString * imageIds=KISDictionaryHaveKey(dict, @"img");
+    NSString * imageid=[ImageService getImageString:imageIds];
+    if ([GameCommon isEmtity:imageid]) {
         cell.photoView.imageURL = nil;
     }else{
-        if ([imgStr isEqualToString:@"seeMore.jpg"]) {
+        if ([imageid isEqualToString:@"seeMore.jpg"]) {
             cell.photoView.imageURL = nil;
             cell.photoView.hidden = YES;
             cell.moreImageView.hidden = NO;
@@ -623,9 +628,14 @@ typedef enum : NSUInteger {
             cell.photoView.hidden = NO;
             cell.moreImageView.hidden = YES;
             cell.photoView.placeholderImage = KUIImage(@"placehoder");
-            cell.photoView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,imgStr,@"/160/160"]];
+//            cell.photoView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,imgStr,@"/160/160"]];
+            cell.photoView.imageURL = [ImageService getImageUrl3:imageid Width:160];
+            
         }
     }
+    
+    
+    
     
     if ([KISDictionaryHaveKey(dict, @"gender")intValue]==0)
     {
@@ -716,11 +726,16 @@ typedef enum : NSUInteger {
     {
         cell.focusButton.hidden=YES;
     }
-    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
-        cell.headImgBtn.imageURL = nil;
-    }else{
-        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
-    }
+    NSString * imageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
+     cell.headImgBtn.imageURL = [ImageService getImageStr:imageIds Width:80];
+    
+//    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
+//        cell.headImgBtn.imageURL = nil;
+//    }else{
+//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
+//    }
+    
+    
     //判断赞按钮状态显示相应的图标
     UIButton *button  = cell.zanBtn;
     NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
@@ -835,15 +850,18 @@ typedef enum : NSUInteger {
         [cell.shareView addTarget:self action:@selector(enterInfoPage:) forControlEvents:UIControlEventTouchUpInside];
         cell.shareView.tag = indexPath.row;
         
+        NSString * imageId=KISDictionaryHaveKey(dict, @"img");
         //无图文章
-        if ([KISDictionaryHaveKey(dict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img")isEqualToString:@" "]) {
+        if ([GameCommon isEmtity:imageId]) {
             cell.shareImageView.imageURL =nil;
             cell.shareImageView.hidden =YES;
             cell.shareInfoLabel.frame = CGRectMake(5, 5, 245, 40);
             cell.shareInfoLabel.numberOfLines =2;
         }else{  //有图文章
             cell.shareImageView.hidden =NO;
-            cell.shareImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
+//            cell.shareImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
+            cell.shareImageView.imageURL = [ImageService getImageUrl4:imageId];
+            
             cell.shareInfoLabel.frame = CGRectMake(60, 5, 190, 40);
             cell.shareInfoLabel.numberOfLines = 2;
         }

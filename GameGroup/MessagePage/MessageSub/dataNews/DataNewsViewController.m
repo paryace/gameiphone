@@ -60,7 +60,14 @@
     }
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     NSDictionary *dict = KISDictionaryHaveKey(dic, @"content");
-    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]]];
+//    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]]];
+    
+    NSString * gameId=KISDictionaryHaveKey(dic, @"gameid");
+    NSString * imageId=[GameCommon putoutgameIconWithGameId:gameId];
+    cell.headImageV.imageURL = [ImageService getImageUrl4:imageId];
+    
+    
+    
 
     cell.nameLabel.text = KISDictionaryHaveKey(dict, @"title");
     cell.contentLabel.text = KISDictionaryHaveKey(dict, @"content");

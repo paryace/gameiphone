@@ -132,10 +132,12 @@
    // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
-    if ([dCircle.headImg isEqualToString:@""]||[dCircle.headImg isEqualToString:@" "]) {
+    if ([GameCommon isEmtity:dCircle.headImg]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:dCircle.headImg],@"/160/160"]];
+//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:dCircle.headImg],@"/160/160"]];
+        cell.headImgBtn.imageURL=[ImageService getImageStr:dCircle.headImg Width:160];
+        
     }
     
     [cell.headImgBtn addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -155,9 +157,12 @@
     }else{
         cell.contentsLabel.hidden =YES;
         cell.contentImageView.hidden = NO;
-        NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
-        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
-        cell.contentImageView.imageURL = imageContetURL;
+//        NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
+//        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
+//        cell.contentImageView.imageURL = imageContetURL;
+        
+        cell.contentImageView.imageURL = [ImageService getImageStr:dCircle.headImg Width:120];
+        
     }
     
     NSString *str;
@@ -194,12 +199,12 @@
     detailVC.messageid = dCircle.myMsgid;
     //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
     
-    NSString* imageName = [GameCommon getHeardImgId:dCircle.headImg];
+//    NSString* imageName = [GameCommon getHeardImgId:dCircle.headImg];
+//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
     
-    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
+    detailVC.imgStr = [ImageService getImageString:dCircle.headImg];
+    
     detailVC.nickNameStr = dCircle.nickname;
-    
-    
     detailVC.timeStr =dCircle.createDate;
 
     [self.navigationController pushViewController:detailVC animated:YES];

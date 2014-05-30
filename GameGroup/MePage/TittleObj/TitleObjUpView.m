@@ -171,7 +171,8 @@
 
 - (void)getImageByNetWithImageId:(NSString*)imageid
 {
-    NSString* urlStr = [BaseImageUrl stringByAppendingString:imageid];
+//    NSString* urlStr = [BaseImageUrl stringByAppendingString:imageid];
+    NSString * urlStr= [ImageService getImgUrl:imageid];
     [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@""
                                     success:^(NSURLRequest *request,
                                               NSHTTPURLResponse *response,

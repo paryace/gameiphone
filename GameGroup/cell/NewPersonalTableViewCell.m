@@ -50,7 +50,7 @@
             [uv removeFromSuperview];
         }
     }
-    CGFloat w=(gameIds.count*20)+(gameIds.count*2)-2;
+    CGFloat w=(gameIds.count*20)+(gameIds.count*4)-4;
     UIView *gV=[self getGameIconUIView:gameIds X:320-30-w Y:20 Width:w Height:20];
     gV.tag=122222;
     [self.bgView addSubview:gV];
@@ -63,25 +63,15 @@
             NSString * gameid=[gameIds objectAtIndex:i];
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
-            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+//            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+            NSString * gameImageId=[GameCommon putoutgameIconWithGameId:gameid];
+            gameImg_one.imageURL= [ImageService getImageUrl4:gameImageId];
             [gameIconView addSubview:gameImg_one];
         }
     }
     return gameIconView;
 }
-//
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+
 - (void)awakeFromNib
 {
 }

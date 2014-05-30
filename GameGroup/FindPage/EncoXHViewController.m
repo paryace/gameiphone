@@ -424,21 +424,24 @@
                     NSLog(@"imageUrl--->%@",headImageView.imageURL);
                     NSLog(@"imageUrl---->%@",headImageView.image);
                     
-                    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]]]];
+                    NSURL * imageUrl = [ImageService getImageUrl3:imageStr Width:330];
+                    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageUrl]];
+                    
+//                    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]]]];
                 }
                 [headImageView rotate360WithDuration:1.0 repeatCount:1 timingMode:i7Rotate360TimingModeEaseInEaseOut];
                 headImageView.animationDuration = 2.0;
-                headImageView.animationImages =
-                [NSArray arrayWithObjects:
-                 image,
-                 nil];
+                headImageView.animationImages = [NSArray arrayWithObjects:image,nil];
                 headImageView.animationRepeatCount = 1;
                 [headImageView startAnimating];
                 
                 if ([KISDictionaryHaveKey(getDic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(getDic, @"ing")isEqualToString:@" "]) {
                     headImageView.imageURL = nil;
                 }else{
-                    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]];
+//                    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/330",imageStr]]];
+                    
+                    headImageView.imageURL = [ImageService getImageUrl3:imageStr Width:330];
+                    
                     headImageView.animationImages=nil;
                 }
                 i= promptLabel.text.length/20;
@@ -656,29 +659,37 @@
 //        cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
 //    }
 //    else
-        cell.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
+//        cell.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
+    NSString * imageId=KISDictionaryHaveKey(tempDic, @"img");
+    cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
+    
+    
     
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
     NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
     cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     
-    cell.gameTitleImage.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
+//    cell.gameTitleImage.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
+    
+    NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+    cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
+    
     return cell;
 }
-//头像地址
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+////头像地址
+//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+//{
+//    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
+//        return nil;
+//    }else{
+//        if ([GameCommon getNewStringWithId:imageUrl]) {
+//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
+//        }else{
+//            return  nil;
+//        }
+//    }
+//}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *tempDic =[m_characterArray objectAtIndex:indexPath.row];
@@ -714,7 +725,10 @@
     NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
     self.characterId =KISDictionaryHaveKey(dic, @"id");
     [paramDict setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-    clazzImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+//    clazzImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+    
+    NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+    clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
     clazzLabel.text =KISDictionaryHaveKey(dic, @"name");
     clazzLabel.frame = CGRectMake(260-clazzLabel.text.length*3, 53, 10+clazzLabel.text.length *12, 20);
     clazzLabel.center = CGPointMake(280, 63);

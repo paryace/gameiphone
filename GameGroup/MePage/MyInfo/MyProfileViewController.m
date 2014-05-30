@@ -172,8 +172,10 @@
         if (range.location!=NSNotFound) {
             [temp addObject:headID];
         }
-        else
-            [temp addObject:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headID]];
+        else{
+//            [temp addObject:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headID]];
+            [temp addObject:[ImageService getImgUrl:headID]];
+        }
     }
     return temp;
 }
@@ -589,7 +591,7 @@
 //            [topBg addSubview:gameImg_one];
             
             NSArray * gameIds=[GameCommon getGameids:self.hostInfo.gameids];
-            CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
+            CGFloat w=(gameIds.count*18)+(gameIds.count*4)-4;
             UIView *gameicomView=[self getGameIconUIView:gameIds X:ageSize.width + 70 Y:6 Width:w Height:18];
             [topBg addSubview:gameicomView];
             
@@ -609,18 +611,18 @@
     return topBg;
 }
 //---
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+//{
+//    if ([GameCommon isEmtity:imageUrl]) {
+//        return nil;
+//    }else{
+//        if ([GameCommon getNewStringWithId:imageUrl]) {
+//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+//        }else{
+//            return  nil;
+//        }
+//    }
+//}
 -(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
@@ -629,7 +631,9 @@
             NSString * gameid=[gameIds objectAtIndex:i];
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
-            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+//            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+            NSString * gameImageId=[GameCommon putoutgameIconWithGameId:gameid];
+            gameImg_one.imageURL = [ImageService getImageUrl4:gameImageId];
             [gameIconView addSubview:gameImg_one];
         }
     }

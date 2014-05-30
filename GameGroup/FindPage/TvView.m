@@ -69,7 +69,10 @@
         [menuButotn addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
              NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
-            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+//            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+            
+            NSString * imageId= KISDictionaryHaveKey(dic, @"img");
+            menuButotn.imageURL= [ImageService getImageUrl4:imageId];
         }else{
             [menuButotn setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
         }
@@ -180,7 +183,10 @@
     NSDictionary *dic = [arr objectAtIndex:indexPath.row];
 
     cell.nameLabel.text = KISDictionaryHaveKey(dic, @"name");
-    cell.gameIconImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+//    cell.gameIconImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+    
+    NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+    cell.gameIconImg.imageURL= [ImageService getImageUrl4:imageId];
     return cell;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -208,7 +214,9 @@
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
     self.frame = sf;
-    menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+//    menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
+    NSString * imageId2=KISDictionaryHaveKey(dic, @"img");
+    menuButotn.imageURL=[ImageService getImageUrl4:imageId2];
     menuButotn.center = CGPointMake(160, self.bounds.size.height-22);
     titleLabel.text  = @"发现";
     textLabel.hidden =NO;

@@ -58,14 +58,17 @@
         self.thumbImageView.frame = CGRectMake(80, 10, 70, 70);
         [self addSubview:self.thumbImageView];
 
-        self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:0]]];
+//        self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:0]]];
+        self.thumbImageView.imageURL = [ImageService getImageUrl4:[arr objectAtIndex:0]];
     }
     else if (arr.count ==3)
     {
         for (int i =0; i<arr.count-1; i++) {
             
             self.thumbImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(80+35*i, 10, 35, 70)];
-            self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:i]]];
+//            self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:i]]];
+            self.thumbImageView.imageURL = [ImageService getImageUrl4:[arr objectAtIndex:i]];
+            
             [self addSubview:self.thumbImageView];
 
         }
@@ -89,7 +92,8 @@
                 default:
                     break;
             }
-            self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:i]]];
+//            self.thumbImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[arr objectAtIndex:i]]];
+            self.thumbImageView.imageURL = [ImageService getImageUrl4:[arr objectAtIndex:i]];
             [self addSubview:self.thumbImageView];
         }
     }

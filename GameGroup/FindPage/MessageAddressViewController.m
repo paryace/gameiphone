@@ -189,20 +189,32 @@
         cell.delegate = self;
         cell.nameL.text = [_addressArray[indexPath.row] objectForKey:@"nickname"];
         cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[_addressArray[indexPath.row] objectForKey:@"addressName"]];
-        NSString* imageID = [_addressArray[indexPath.row] objectForKey:@"img"];
-        if ([imageID isEqualToString:@""]||[imageID isEqualToString:@" "]) {
-            cell.headerImage.imageURL = nil;
-        }else{
-        if ([imageID componentsSeparatedByString:@","].count>0) {
-            imageID = [[imageID componentsSeparatedByString:@","] objectAtIndex:0];
-        }
-        if (imageID) {
-            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",imageID]];
-        }else
-        {
-            cell.headerImage.imageURL = nil;
-        }
-        }
+        
+        
+        
+//        NSString* imageID = [_addressArray[indexPath.row] objectForKey:@"img"];
+//        if ([imageID isEqualToString:@""]||[imageID isEqualToString:@" "]) {
+//            cell.headerImage.imageURL = nil;
+//        }else{
+//        if ([imageID componentsSeparatedByString:@","].count>0) {
+//            imageID = [[imageID componentsSeparatedByString:@","] objectAtIndex:0];
+//        }
+//        if (imageID) {
+//            cell.headerImage.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",imageID]];
+//        }else
+//        {
+//            cell.headerImage.imageURL = nil;
+//        }
+//        }
+        
+        
+        NSString* imageIds = [_addressArray[indexPath.row] objectForKey:@"img"];
+        cell.headerImage.imageURL = [ImageService getImageStr:imageIds Width:80];
+        
+        
+        
+        
+        
         
         if ([[_addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
             [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];

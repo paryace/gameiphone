@@ -323,7 +323,8 @@
             cell.distLabel.text = @"暂无头衔";
         }
         if (m_hostInfo.headImgArray.count>0) {
-            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[m_hostInfo.headImgArray objectAtIndex:0]]];
+//            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[m_hostInfo.headImgArray objectAtIndex:0]]];
+            cell.headImageV.imageURL = [ImageService getImageUrl4:[m_hostInfo.headImgArray objectAtIndex:0]];
         }else
         {
             cell.headImageV.imageURL = nil;
@@ -377,30 +378,38 @@
         {
             if ([KISDictionaryHaveKey(m_hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
                 NSDictionary* destDic = KISDictionaryHaveKey(m_hostInfo.state, @"destUser");
-                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
-                if (imgid) {
-                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-                }else
-                {
-                    cell.headImageV.imageURL = nil;
-                }
+                NSString * imageIds=KISDictionaryHaveKey(destDic, @"userimg");
+//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
+//                if (imgid) {
+//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
+//                }else
+//                {
+//                    cell.headImageV.imageURL = nil;
+//                }
+                
+                cell.headImageV.imageURL = [ImageService getImageStr2:imageIds];
                 
                 cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
             }
             else
             {
-                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(m_hostInfo.state, @"userimg")];
-                if ([imgid isEqualToString:@""]||[imgid isEqualToString:@" "]) {
-                     cell.headImageV.imageURL = nil;
-                }else{
-                if (imgid) {
-                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-                }else
-                {
-                    cell.headImageV.imageURL = nil;
-                }
+                NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
+//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(m_hostInfo.state, @"userimg")];
+//                if ([imgid isEqualToString:@""]||[imgid isEqualToString:@" "]) {
+//                     cell.headImageV.imageURL = nil;
+//                }else{
+//                if (imgid) {
+//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
+//                }else
+//                {
+//                    cell.headImageV.imageURL = nil;
+//                }
+//                
+//                }
+                cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
                 
-                }
+                
+                
                 if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
                 {
                     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
@@ -491,11 +500,16 @@
             }
             else
             {
-                if (!img ||[img isEqualToString:@""]||[img isEqualToString:@" "]) {
+                if ([GameCommon isEmtity:img]) {
                     cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
                 }
                 else
-                    cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];
+                {
+//                    cell.heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:img]] stringByAppendingString:@"/80"]];
+                    
+                    cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
+                }
+                
                 
                 
                 cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
@@ -511,7 +525,17 @@
             }
             cell.rowIndex = indexPath.row;
             cell.myDelegate = self;
-            cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
+//            cell.gameImg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
+            
+            NSString * gameImageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+            
+            if ([GameCommon isEmtity:gameImageId ]) {
+                cell.gameImg.imageURL=nil;
+            }else{
+                cell.gameImg.imageURL=[ImageService getImageUrl4:gameImageId];
+            }
+            
+            
             cell.nameLabel.text = name;
             cell.pveLabel.text = [GameCommon getNewStringWithId:v3];
             cell.pveTitle.text=v2;
@@ -567,18 +591,18 @@
     return Nil;
 }
 //---
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+//{
+//    if ([GameCommon isEmtity:imageUrl]) {
+//        return nil;
+//    }else{
+//        if ([GameCommon getNewStringWithId:imageUrl]) {
+//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+//        }else{
+//            return  nil;
+//        }
+//    }
+//}
 //- (NSString*)getCellTitleWithType:(NSString*)type withNick:(NSString*)nickName withUserId:(NSString*)userid
 //{
 //    NSInteger typeInt = [type intValue];

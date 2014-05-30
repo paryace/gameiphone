@@ -186,10 +186,17 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
-    NSURL *urls;
-    urls = [NSURL URLWithString:address];
-    cell.imageView.imageURL =urls;
+    
+    
+    
+    
+//    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
+//    NSURL *urls;
+//    urls = [NSURL URLWithString:address];
+//    cell.imageView.imageURL =urls;
+    
+    
+     cell.imageView.imageURL =[ImageService getImageUrl3:url Width:160];
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath

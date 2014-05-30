@@ -66,5 +66,7 @@
 
 +(BOOL)isEmtity:(NSString*)str;
 +(NSArray*)getGameids:(NSString*)gameids;
-+(NSURL*)getImageUrl:(NSString*)imageid;
+//+(NSURL*)getImageUrl:(NSString*)imageid;
+
++ (BOOL)isPureInt:(NSString*)string;
 @end

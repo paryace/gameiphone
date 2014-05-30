@@ -535,17 +535,25 @@ typedef enum : NSUInteger {
     }
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img")];
-    if ([imageName isEqualToString:@""]||[imageName isEqualToString:@" "]) {
-        cell.headImageV.imageURL = nil;
-    }else{
-        if (imageName) {
-            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80/80"]];;
-        }else
-        {
-            cell.headImageV.imageURL = nil;
-        }
-    }
+    
+    NSString * userimageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img");
+    
+    cell.headImageV.imageURL = [ImageService getImageStr:userimageIds Width:80];
+    
+    
+//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img")];
+//    if ([imageName isEqualToString:@""]||[imageName isEqualToString:@" "]) {
+//        cell.headImageV.imageURL = nil;
+//    }else{
+//        if (imageName) {
+//            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80/80"]];;
+//        }else
+//        {
+//            cell.headImageV.imageURL = nil;
+//        }
+//    }
+    
+    
     NSMutableDictionary *commentD =KISDictionaryHaveKey(tempDic,@"commentUser");
     NSString * nickName=KISDictionaryHaveKey(commentD, @"alias");
     if ([GameCommon isEmtity:nickName]) {

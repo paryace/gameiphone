@@ -114,11 +114,16 @@
     
     
     NSString *imgStr =[DataStoreManager queryFirstHeadImageForUser_userManager:self.userId];
-    if ([imgStr isEqualToString:@""]||[imgStr isEqualToString:@" "]) {
+    if ([GameCommon isEmtity:imgStr]) {
         headImageView.imageURL = nil;
     }else{
-    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/160/160",imgStr]]];
+        headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[NSString stringWithFormat:@"%@/160/160",imgStr]]];
+        headImageView.imageURL = [ImageService getImageUrl3:imgStr Width:160];
     }
+    
+    
+    
+    
     [topVIew addSubview:headImageView];
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
@@ -160,8 +165,9 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
             NSString *strImg = KISDictionaryHaveKey(responseObject, @"coverImg");
-            NSString *strImgID = [NSString stringWithFormat:BaseImageUrl@"%@",strImg];
-            topImgaeView.imageURL = [NSURL URLWithString:strImgID];
+//            NSString *strImgID = [NSString stringWithFormat:BaseImageUrl@"%@",strImg];
+//            topImgaeView.imageURL = [NSURL URLWithString:strImgID];
+            topImgaeView.imageURL = [ImageService getImageUrl4:strImg];
             
            // [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
             if (m_currPageCount==0) {
@@ -281,8 +287,9 @@
 
     cell.imgCountLabel.text = [NSString stringWithFormat:@"(共%d张)",arr.count];
     
-    cell.thumbImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")],@"/140/140"]];
-    
+//    cell.thumbImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")],@"/140/140"]];
+    NSString * imageIds=KISDictionaryHaveKey(dic, @"img");
+    cell.thumbImageView.imageURL = [ImageService getImageStr:imageIds Width:140];
    // [cell getImageWithCount:KISDictionaryHaveKey(dic, @"img")];
     return cell;
 }

@@ -29,4 +29,7 @@
 
 +(NSString*)getImgUrl:(NSString*)imageid;
 
+
++(NSString*)getImageString:(NSString*)imageids;
+
 @end

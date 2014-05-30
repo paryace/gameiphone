@@ -114,7 +114,11 @@
     NSDictionary *dict = m_dataArray[indexPath.row];
     
 
-    cell.glazzImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+//    cell.glazzImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+    
+    NSString * imageIds=KISDictionaryHaveKey(dict, @"img");
+    cell.glazzImgView.imageURL = [ImageService getImageStr2:imageIds];
+    
     
     cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
     if ([KISDictionaryHaveKey(dict,@"user")isKindOfClass:[NSDictionary class]]) {
@@ -131,10 +135,14 @@
             cell.headImgBtn.placeholderImage = KUIImage(@"people_man");
 
         }
-        if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
+        NSString * imageids=KISDictionaryHaveKey(dic, @"img");
+        
+        if ([GameCommon isEmtity:imageids]) {
             cell.headImgBtn.imageURL = nil;
         }else{
-        cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
+//            cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
+            
+            cell.headImgBtn.imageURL = [ImageService getImageStr2:imageIds];
         }
     }else{
         cell.headImgBtn.hidden = YES;

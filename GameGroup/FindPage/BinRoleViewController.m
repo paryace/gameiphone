@@ -272,8 +272,12 @@
 //通知方式
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSString * characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"characterImg")];
-    NSString * characterImageUrl=[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage];
+//    NSString * characterImage=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"characterImg")];
+//    NSString * characterImageUrl=[NSString stringWithFormat:@"%@%@",BaseImageUrl,characterImage];
+    
+    NSString * imageId=KISDictionaryHaveKey(self.dataDic, @"characterImg");
+    
+    NSString * characterImageUrl=[ImageService getImgUrl:imageId];
     
     NSString * characyerName=[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"charactername")];
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));

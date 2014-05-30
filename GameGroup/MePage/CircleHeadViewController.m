@@ -114,7 +114,15 @@ typedef enum : NSUInteger {
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     NSString * nickName=KISDictionaryHaveKey(user, @"nickname");
     nickNameLabel.text = nickName;
-    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
+    
+    
+//    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
+    
+    
+    NSString * imageIds=KISDictionaryHaveKey(user, @"img");
+    headImageView.imageURL = [ImageService getImageStr2:imageIds];
+    
+    
     m_dataArray = [NSMutableArray new];
     
     commentArray = [NSMutableArray array];
@@ -187,11 +195,22 @@ typedef enum : NSUInteger {
     //头像
     headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 280, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,self.imageStr]];
+    
+//    headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,self.imageStr]];
+    
+    headImageView.imageURL = [ImageService getImageUrl4:self.imageStr];
+    
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
     [headImageView addTarget:self action:@selector(enterPersonViewController:) forControlEvents:UIControlEventTouchDown];
-    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
+    
+    
+//    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
+    
+    NSString * headImageIds=KISDictionaryHaveKey(user, @"img");
+    headImageView.imageURL = [ImageService getImageStr2:headImageIds];
+    
+    
     
     [topVIew addSubview:headImageView];
 
@@ -260,10 +279,18 @@ typedef enum : NSUInteger {
         }
         
         abobtMeImageView.hidden =NO;
-        if ([KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")isEqualToString:@" "]) {
+        NSString * cusUserImageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img");
+        
+        if ([GameCommon isEmtity:cusUserImageIds]) {
             aboutMeHeadImgView.imageURL =nil;
         }else
-            aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")],@"/60/60"]];
+        {
+            aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
+            
+            
+//           aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")],@"/60/60"]];
+        }
+        
         
         m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
         aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
@@ -508,11 +535,18 @@ typedef enum : NSUInteger {
         abobtMeImageView.hidden =NO;
     }
     
+    NSString * userImageids=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img");
     
-    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")isEqualToString:@" "]) {
+    
+    if ([GameCommon isEmtity:userImageids]) {
         aboutMeHeadImgView.imageURL =nil;
     }else
-    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")],@"/60/60"]];
+    {
+        //    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")],@"/60/60"]];
+       aboutMeHeadImgView.imageURL = [ImageService getImageStr:userImageids Width:60];
+    }
+    
+    
     aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
     
 }
@@ -855,12 +889,14 @@ typedef enum : NSUInteger {
     
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
     
-    NSString * headImage=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
+    NSString * headImages=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     
-    if ([GameCommon isEmtity:headImage]) {
+    if ([GameCommon isEmtity:headImages]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-    cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:headImage],@"/80/80"]];
+//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:headImages],@"/80/80"]];
+        cell.headImgBtn.imageURL = [ImageService getImageStr:headImages Width:80];
+        
     }
     cell.headImgBtn.tag= indexPath.row;
     
@@ -994,7 +1030,12 @@ typedef enum : NSUInteger {
             cell.contentLabel.numberOfLines =2;
         }else{  //有图文章
             cell.shareImgView.hidden =NO;
-            cell.shareImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
+            NSString * imageId=KISDictionaryHaveKey(dict, @"img");
+            cell.shareImgView.imageURL = [ImageService getImageUrl4:imageId];
+            
+//            cell.shareImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
+            
+            
             cell.contentLabel.frame = CGRectMake(60, 5, 190, 40);
             cell.contentLabel.numberOfLines = 2;
         }
@@ -1114,10 +1155,13 @@ typedef enum : NSUInteger {
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
     detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
     
-    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+    NSString * imageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
+    detailVC.imgStr = [ImageService getImgUrl:imageIds];
     
-    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
     
+//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
+//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
+//    
     
     NSMutableDictionary *userDic=KISDictionaryHaveKey(dict, @"user");
     NSString * nickName=KISDictionaryHaveKey(userDic, @"alias");

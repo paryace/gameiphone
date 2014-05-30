@@ -78,24 +78,24 @@
         }
     }
     CGSize ageSize = [self.ageLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:10.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    CGFloat w=(gameIds.count*18)+(gameIds.count*2)-2;
+    CGFloat w=(gameIds.count*18)+(gameIds.count*4)-4;
     UIView * gV=[self getGameIconUIView:gameIds X:95 + ageSize.width Y:26 Width:w Height:18];
     gV.tag=122222;
     [self.backgroudImageV addSubview:gV];
 }
 //---
--(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-{
-    if ([GameCommon isEmtity:imageUrl]) {
-        return nil;
-    }else{
-        if ([GameCommon getNewStringWithId:imageUrl]) {
-            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-        }else{
-            return  nil;
-        }
-    }
-}
+//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
+//{
+//    if ([GameCommon isEmtity:imageUrl]) {
+//        return nil;
+//    }else{
+//        if ([GameCommon getNewStringWithId:imageUrl]) {
+//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
+//        }else{
+//            return  nil;
+//        }
+//    }
+//}
 //获取游戏图标
 -(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
@@ -104,7 +104,9 @@
         NSString * gameid=[gameIds objectAtIndex:i];
         EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
         gameImg_one.backgroundColor = [UIColor clearColor];
-        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+//        gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
+        NSString * gameImageId=[GameCommon putoutgameIconWithGameId:gameid];
+        gameImg_one.imageURL = [ImageService getImageUrl4:gameImageId];
         [gameIconView addSubview:gameImg_one];
     }
     return gameIconView;

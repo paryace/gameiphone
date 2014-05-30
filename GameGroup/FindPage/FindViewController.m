@@ -83,20 +83,25 @@
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     
     //显示头像
-    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
-    if ([fruits isEqualToString:@""]) {
-        headImgView.imageURL =nil;
-    }else{
-        NSArray  * array= [fruits componentsSeparatedByString:@","];
-        self.friendImgStr =[array objectAtIndex:0];
-        
-        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
-        if (_friendImgStr) {
-            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",_friendImgStr]];
-        }else{
-            headImgView.imageURL = nil;
-        }
-    }
+//    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
+//    if ([fruits isEqualToString:@""]) {
+//        headImgView.imageURL =nil;
+//    }else{
+//        NSArray  * array= [fruits componentsSeparatedByString:@","];
+//        self.friendImgStr =[array objectAtIndex:0];
+//        
+//        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
+//        if (_friendImgStr) {
+//            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",_friendImgStr]];
+//        }else{
+//            headImgView.imageURL = nil;
+//        }
+//    }
+    
+    
+    NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
+    headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
+    
     
     //显示数字
         NSString *commStr1 = @"";
@@ -131,20 +136,24 @@
     
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     //显示头像
-    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
-    if ([fruits isEqualToString:@""]) {
-        headImgView.imageURL =nil;
-    }else{
-        NSArray  * array= [fruits componentsSeparatedByString:@","];
-        self.friendImgStr =[array objectAtIndex:0];
-        
-        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
-        if (_friendImgStr) {
-            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
-        }else{
-            headImgView.imageURL = nil;
-        }
-    }
+//    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
+//    if ([fruits isEqualToString:@""]) {
+//        headImgView.imageURL =nil;
+//    }else{
+//        NSArray  * array= [fruits componentsSeparatedByString:@","];
+//        self.friendImgStr =[array objectAtIndex:0];
+//        
+//        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
+//        if (_friendImgStr) {
+//            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+//        }else{
+//            headImgView.imageURL = nil;
+//        }
+//    }
+    
+    NSString * headImage = KISDictionaryHaveKey(sender.userInfo, @"img");
+    headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+    
 
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
@@ -233,9 +242,13 @@
     headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"12312")];
     headImgView.frame = CGRectMake(260, 10, 40, 40);
     if (_friendImgStr ==nil) {
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"]]];
+        NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
+        
+//        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",imageId]];
+        headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
     }else{
-        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+//        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
+        headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
     }
     [bottomView addSubview:headImgView];
 

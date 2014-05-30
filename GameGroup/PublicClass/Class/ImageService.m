@@ -27,7 +27,7 @@
 //传入单个图片id，返回没有宽高的完整图片路径
 +(NSURL*)getImageUrl4:(NSString*)imageid
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@",[self getImgUrl:imageid]]];
+    return [NSURL URLWithString:[self getImgUrl:imageid]];
 }
 
 //根据图片id集合返回第一张带宽度的完整图片路径
@@ -41,6 +41,16 @@
 {
     return [self getImageStr:imageids Width:0];
 }
+
+////
+//根据图片id集合返回第一张带宽度的完整图片路径
++(NSString*)getImageString:(NSString*)imageids
+{
+    NSMutableArray *images=[self getImageIds:imageids];
+    return images.count==0?nil:[self getImgUrl:[images objectAtIndex:0]];
+}
+////
+
 
 //根据图片id集合返回解析之后的id集合（逗号截取之后放到数组里返回）
 +(NSMutableArray*)getImageIds:(NSString*)images
@@ -61,7 +71,12 @@
 //传入单个图片的id，返回拼接后的图片完整地址
 +(NSString*)getImgUrl:(NSString*)imageid
 {
-    return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
+    if ([GameCommon isPureInt:imageid]) {
+        return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
+    }else{
+        return [NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getNewStringWithId:imageid]];
+    }
+    
 }
 //获取图片地址集合
 + (NSMutableArray*)getHeardImgId:(NSString*)imgs Width:(NSInteger)width AllUrl:(BOOL)allUrl

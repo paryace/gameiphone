@@ -185,17 +185,23 @@
                                        40,
                                        40)];
     
-    if ([myHeadImg isEqualToString:@""]||[myHeadImg isEqualToString:@" "]) {
+    if ([GameCommon isEmtity:myHeadImg]) {
         self.headImgV.imageURL = nil;
     }else{
-        if (myHeadImg) {
-            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", myHeadImg]];
-            self.headImgV.imageURL = theUrl;
-        }else
-        {
-            self.headImgV.imageURL = nil;
-        }
+//        if (myHeadImg) {
+//            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80", myHeadImg]];
+//            self.headImgV.imageURL = theUrl;
+//        }else
+//        {
+//            self.headImgV.imageURL = nil;
+//        }
+        
+        headImgV.imageURL = [ImageService getImageUrl3:myHeadImg Width:80];
     }
+    
+    
+    
+    
     [self.headImgV removeTarget:self action:@selector(chatUserHeadImgClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.headImgV  addTarget:self
@@ -209,16 +215,17 @@
     [self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
     
     //头像设置为对方的
-    if ([chatUserImg isEqualToString:@""]||[chatUserImg isEqualToString:@" "]) {
+    if ([GameCommon isEmtity:chatUserImg]) {
         self.headImgV.imageURL = nil;
     }else{
-        if (chatUserImg) {
-            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:chatUserImg]]];
-            self.headImgV.imageURL = theUrl;
-        }else
-        {
-            self.headImgV.imageURL = nil;
-        }
+//        if (chatUserImg) {
+//            NSURL * theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80",[GameCommon getHeardImgId:chatUserImg]]];
+//            self.headImgV.imageURL = theUrl;
+//        }else
+//        {
+//            self.headImgV.imageURL = nil;
+//        }
+        self.headImgV.imageURL=[ImageService getImageUrl3:chatUserImg Width:80];
     }
 
     //点击事件
