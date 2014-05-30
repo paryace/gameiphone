@@ -232,7 +232,6 @@
     }
     
     cell.headImageV.imageURL=[ImageService getImageStr:img Width:80];
-    
     cell.nameLabel.text = [tempDict objectForKey:@"nickname"];
     
     

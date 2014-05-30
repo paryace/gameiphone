@@ -192,10 +192,8 @@
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
-    NSString *iamgeId=[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDict, @"img")];
-    NSURL * url=[ImageService getImageStr:iamgeId Width:80];
-    cell.headImageV.imageURL = url;
-    
+    NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+    cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.sexImg.image =KUIImage(genderimage);
     
@@ -304,7 +302,7 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
     dispatch_async(queue, ^{
         if (result.count>0) {
-            [DataStoreManager deleteAllNameIndex];
+//            [DataStoreManager deleteAllNameIndex];
             for (int i=0; i<[keys count]; i++) {
                 NSString *key=[keys objectAtIndex:i];
                 for (NSMutableDictionary * dict in [result objectForKey:key]) {

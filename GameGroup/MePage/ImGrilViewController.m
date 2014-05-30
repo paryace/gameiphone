@@ -234,7 +234,9 @@
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
+    float pp= percent*100;
+    hud.labelText = [NSString stringWithFormat:@"%.0f％",pp];
+//    hud.labelText = [NSString stringWithFormat:@"%.2f％",percent];
     
 }
 //上传成功代理回调

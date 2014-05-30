@@ -456,7 +456,9 @@
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", imageImdex+1,percent];
+    float pp= percent*100;
+    NSLog(@"%f",pp);
+    hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.0f％", imageImdex+1,pp];
     
 }
 /**
@@ -475,7 +477,8 @@
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-        for (NSString*a in reponseStrArray) {
+        for (int i=0; i<reponseStrArray.count; i++) {
+            NSString * a= [uploadImagePathArray objectAtIndex:i];
             for (int i = 0;i<a1.count;i++) {
                 if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
                     [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];

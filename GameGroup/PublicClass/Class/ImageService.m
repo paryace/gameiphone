@@ -53,15 +53,19 @@
     return [self getImageStr:imageids Width:0];
 }
 
-////
 //根据图片id集合返回第一张图片的完整地址
 +(NSString*)getImageString:(NSString*)imageids
 {
     NSMutableArray *images=[self getImageIds:imageids];
     return images.count==0?nil:[self getImgUrl:[images objectAtIndex:0]];
 }
-////
 
+//根据图片id集合返回第一张图片的id
++(NSString*)getImageOneId:(NSString*)imageids
+{
+    NSMutableArray *images=[self getImageIds:imageids];
+    return images.count==0?nil:[images objectAtIndex:0];
+}
 
 //根据图片id集合返回解析之后的id集合（逗号截取之后放到数组里返回）
 +(NSMutableArray*)getImageIds:(NSString*)images

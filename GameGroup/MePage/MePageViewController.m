@@ -701,6 +701,8 @@
                 VC.myViewType = CHARA_INFO_MYSELF;
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
                 [self.navigationController pushViewController:VC animated:YES];
+            }else{
+                [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             }
             NSLog(@"角色详情");
         }

@@ -33,6 +33,29 @@
     return self;
 }
 
+-(void)getRightImageFromNet
+{
+    self.rightBgImage.image = KUIImage(@"title_bg_default.jpg");
+    self.waitImageView = [[UIImageView alloc] initWithFrame:CGRectMake(kScreenHeigth - 110, 300/2 - 45/2, 45, 45)];
+    NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
+    for (int i = 1; i < 8; i++) {
+        NSString* str = [NSString stringWithFormat:@"load_%d", i];
+        [arr addObject:KUIImage(str)];
+    }
+    self.waitImageView.animationImages = arr;
+    self.waitImageView.animationDuration = 0.8;//越大越慢
+    self.waitImageView.animationRepeatCount = 0;//无限次
+    [self.waitImageView startAnimating];
+    
+    [self getImageByNetWithImageId:self.rightImageId];
+    
+    [self addSubview:self.rightBgImage];
+    
+    [self addSubview:self.waitImageView];
+    
+    self.waitLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(kScreenHeigth - 120, 300/2 - 45/2 + 45, 64, 30) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:15.0] text:@"加载中..." textAlignment:NSTextAlignmentCenter];
+    [self addSubview:self.waitLabel];
+}
 - (void)setMainView
 {
     float viewWidth = self.frame.size.width;//568 480
@@ -43,33 +66,17 @@
     NSFileManager *fm = [NSFileManager defaultManager];
     if([fm fileExistsAtPath:path])
     {
-        self.rightBgImage.image = [UIImage imageWithContentsOfFile:path];
-        
-        [self addSubview:self.rightBgImage];
+         UIImage * imageData=[UIImage imageWithContentsOfFile:path];
+        if (imageData==nil) {
+            [self getRightImageFromNet];
+        }else{
+            self.rightBgImage.image = imageData;
+            [self addSubview:self.rightBgImage];
+        }
     }
     else
     {
-        self.rightBgImage.image = KUIImage(@"title_bg_default.jpg");
-
-        self.waitImageView = [[UIImageView alloc] initWithFrame:CGRectMake(kScreenHeigth - 110, 300/2 - 45/2, 45, 45)];
-        NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
-        for (int i = 1; i < 8; i++) {
-            NSString* str = [NSString stringWithFormat:@"load_%d", i];
-            [arr addObject:KUIImage(str)];
-        }
-        self.waitImageView.animationImages = arr;
-        self.waitImageView.animationDuration = 0.8;//越大越慢
-        self.waitImageView.animationRepeatCount = 0;//无限次
-        [self.waitImageView startAnimating];
-        
-        [self getImageByNetWithImageId:self.rightImageId];
-        
-        [self addSubview:self.rightBgImage];
-        
-        [self addSubview:self.waitImageView];
-        
-        self.waitLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(kScreenHeigth - 120, 300/2 - 45/2 + 45, 64, 30) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:15.0] text:@"加载中..." textAlignment:NSTextAlignmentCenter];
-        [self addSubview:self.waitLabel];
+        [self getRightImageFromNet];
     }
     UIImageView* leftImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 330, self.frame.size.height)];
     leftImg.image = KUIImage(@"left_bg");
@@ -169,6 +176,7 @@
     [self.showDetailView removeFromSuperview];
 }
 
+//下载图片
 - (void)getImageByNetWithImageId:(NSString*)imageid
 {
     NSString * urlStr= [ImageService getImgUrl:imageid];

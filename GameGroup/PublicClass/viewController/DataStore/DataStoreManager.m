@@ -1730,7 +1730,7 @@ return @"";
             [userList setValue:usersarray forKey:nameIndex];
         }
     }
-//    [nameIndexArray sortUsingSelector:@selector(compare:)];
+    [nameIndexArray sortUsingSelector:@selector(compare:)];
     [userInfo setObject:nameIndexArray forKey:@"nameKey"];
     [userInfo setObject:userList forKey:@"userList"];
     return userInfo;

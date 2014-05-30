@@ -742,6 +742,8 @@
         CVC.gameId = gameId;
         CVC.myViewType = CHARA_INFO_PERSON;
         [self.navigationController pushViewController:CVC animated:YES];
+    }else{
+        [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
     }
     
     
