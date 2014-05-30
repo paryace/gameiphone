@@ -138,33 +138,38 @@
 -(void)comeFromMy
 {
     self.listScrollView.contentSize = CGSizeMake(320*3, 244);
+    
+    UIView *btnView =[[UIView alloc]initWithFrame:CGRectMake(0, 200, 320, 36)];
+    btnView.backgroundColor = [ UIColor whiteColor];
+    [self addSubview:btnView];
+    
     self.myFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.myFriendBtn.frame = CGRectMake(0, 200, 106.6,36);
+    self.myFriendBtn.frame = CGRectMake(0, 0, 106.6,36);
 
     [self.myFriendBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
 //    [self.myFriendBtn setTitle:@"好友" forState:UIControlStateNormal];
     [self.myFriendBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.myFriendBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview:self.myFriendBtn];
+    [btnView addSubview:self.myFriendBtn];
     
     self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.countryBtn.frame = CGRectMake(213.4, 200,106.6,36);
+    self.countryBtn.frame = CGRectMake(213.4, 0,106.6,36);
 
     [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
 //    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview:self.countryBtn];
+    [btnView addSubview:self.countryBtn];
     
     
     self.realmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.realmBtn.frame = CGRectMake(106.6, 200, 106.8, 36);
+    self.realmBtn.frame = CGRectMake(106.6, 0, 106.8, 36);
 
     [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
 //    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview: self.realmBtn];
+    [btnView addSubview: self.realmBtn];
 
     
     //全国
@@ -185,23 +190,29 @@
 -(void)comeFromPerson
 {
     self.listScrollView.contentSize = CGSizeMake(320*2, 244);
+    
+    UIView *btnView =[[UIView alloc]initWithFrame:CGRectMake(0, 200, 320, 36)];
+    btnView.backgroundColor = [ UIColor whiteColor];
+    [self addSubview:btnView];
+
+    
     self.countryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.countryBtn.frame = CGRectMake(160, 200,160,36);
+    self.countryBtn.frame = CGRectMake(160, 0,160,36);
 
     [self.countryBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
 //    [self.countryBtn setTitle:@"全国" forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [self.countryBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview:self.countryBtn];
+    [btnView addSubview:self.countryBtn];
     
     self.realmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.realmBtn.frame = CGRectMake(0, 200, 160, 36);;
+    self.realmBtn.frame = CGRectMake(0, 0, 160, 36);;
 
     [ self.realmBtn setBackgroundImage:KUIImage(@"tab_bg") forState:UIControlStateNormal];
 //    [ self.realmBtn setTitle:@"服务器" forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [ self.realmBtn setTitleColor:[UIColor grayColor] forState:UIControlStateSelected];
-    [self addSubview: self.realmBtn];
+    [btnView addSubview: self.realmBtn];
     self.countryBtn.selected = YES;
    // self.myFriendBtn.frame = CGRectMake(106, 200, 0,44);
     //全国

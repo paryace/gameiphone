@@ -26,9 +26,9 @@
         self.nameLabel.font = [UIFont boldSystemFontOfSize:16];
         [self addSubview:self.nameLabel];
         
-        UIView *bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, 39, 320, 1)];
-        bottomView.backgroundColor = [UIColor whiteColor];
-        [self addSubview:bottomView];
+//        UIView *bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, 39, 320, 1)];
+//        bottomView.backgroundColor = [UIColor whiteColor];
+//        [self addSubview:bottomView];
         
     }
     return self;

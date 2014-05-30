@@ -24,6 +24,9 @@
 @property (nonatomic,retain) NSArray *tableArray;
 @property (nonatomic,retain) UITextField *textField;
 @property (nonatomic,strong) id<TvViewDelegate>myViewDelegate;
+
+-(void)dropdown;
+
 @end
 
 @protocol TvViewDelegate <NSObject>

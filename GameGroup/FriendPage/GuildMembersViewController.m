@@ -147,7 +147,7 @@
         }else{
 //            cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
             
-            cell.headImgBtn.imageURL = [ImageService getImageStr2:imageIds];
+            cell.headImgBtn.imageURL = [ImageService getImageStr2:imageids];
         }
     }else{
         cell.headImgBtn.hidden = YES;
@@ -223,7 +223,7 @@
         {
             NSLog(@"去看资料");
             TestViewController *detailVC = [[TestViewController alloc]init];
-            detailVC.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"id");
+            detailVC.userId = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"userid");
             detailVC.nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias")? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"alias"): KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
             detailVC.isChatPage = NO;
             [self.navigationController pushViewController:detailVC animated:YES];

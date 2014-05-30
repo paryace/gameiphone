@@ -9,6 +9,8 @@
 #import <AddressBookUI/AddressBookUI.h>
 #import "AddAddressBookViewController.h"
 #import "AddressListViewController.h"
+#import "TeachMeViewController.h"
+
 //#import "AddSameServerListViewController.h"
 
 @interface AddAddressBookViewController ()<UIAlertViewDelegate>
@@ -76,6 +78,7 @@
 - (void)passUploadAddressBook
 {
     UIAlertView * alertV = [[UIAlertView alloc]initWithTitle:@"跳过添加通讯录好友?" message:@"开启通讯录有助于您立即找到好友.我们会加密您的通讯录数据以防被不正当使用." delegate:self cancelButtonTitle:nil otherButtonTitles:@"开启通讯录",@"坚持跳过", nil];
+    alertV.tag =1001;
     [alertV show];
 }
 - (NSMutableArray*)getAddressBook
@@ -138,6 +141,7 @@
     NSMutableArray * arr = [self getAddressBook];
     if (!arr) {
         UIAlertView * alertV = [[UIAlertView alloc]initWithTitle:nil message:@"您可能禁用了通讯录,请在 设置-隐私-通讯录 启用陌游" delegate:self cancelButtonTitle:@"放弃" otherButtonTitles:@"告诉我怎么做", nil];
+        alertV.tag =1002;
         [alertV show];
         return;
     }
@@ -193,11 +197,24 @@
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 0) {
-        [self uploadAddress];
-    }else
-    {
-        [self goToNext];
+    if (alertView.tag ==1002) {
+        if (buttonIndex == 1) {
+            TeachMeViewController *tc = [[TeachMeViewController alloc]init];
+            [self.navigationController pushViewController:tc animated:YES];
+        }else
+        {
+            [self goToNext];
+        }
+        
+    }else{
+        if (buttonIndex == 1) {
+            [self goToNext];
+        }else
+        {
+            [self uploadAddress];
+        }
+        
+ 
     }
 }
 - (void)goToNext

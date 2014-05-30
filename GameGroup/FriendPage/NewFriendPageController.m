@@ -18,10 +18,11 @@
 #import "MyFansPageViewController.h"
 #import "ImageService.h"
 #import "InterestingPerpleViewController.h"
+#import "MJRefresh.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
-    
+    MJRefreshHeaderView *m_header;
     NSMutableDictionary *resultArray;//数据集合
     NSMutableArray * keyArr;//字母集合
     
@@ -82,6 +83,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendListFromNet];
     }
+    [self addheadView];
 }
 #pragma mark 刷新表格
 - (void)reloadContentList:(NSNotification*)notification
@@ -284,6 +286,7 @@
                         [self setFansNum];
                         //保存
                         [self saveFriendsList:result Keys:keys];
+                        [m_header endRefreshing];
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -294,6 +297,7 @@
                             [alert show];
                         }
                     }
+                    [m_header endRefreshing];
                 }];
 }
 //保存用户列表信息
@@ -367,6 +371,32 @@
     CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
     fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
+
+
+-(void)addheadView
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_myTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getFriendListFromNet];
+        
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+    m_header = header;
+}
+
+
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
