@@ -161,7 +161,7 @@
 //        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
 //        cell.contentImageView.imageURL = imageContetURL;
         
-        cell.contentImageView.imageURL = [ImageService getImageStr:dCircle.headImg Width:120];
+        cell.contentImageView.imageURL = [ImageService getImageStr:dCircle.myMsgImg Width:120];
         
     }
     
