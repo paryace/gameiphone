@@ -18,6 +18,7 @@
 {
     NSMutableArray *m_dataArray;
     int m_infoNum;
+    UIAlertView *alertView1;
 }
 @end
 
@@ -193,10 +194,11 @@
         }else if (buttonIndex ==1)
         {
             NSLog(@"去绑定");//去绑定
-            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
-            addVC.viewType = CHA_TYPE_Add;
-            // addVC.contentDic =
-            [self.navigationController pushViewController:addVC animated:YES];
+//            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
+//            addVC.viewType = CHA_TYPE_Add;
+//            // addVC.contentDic =
+//            [self.navigationController pushViewController:addVC animated:YES];
+            [self bangdingroleWithdic:dic];
         }else{
             
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
@@ -232,6 +234,72 @@
         }
         
     }
+    
+}
+
+-(void)bangdingroleWithdic:(NSDictionary *)dict
+{
+    [hud show:YES];
+    hud.labelText = @"绑定中...";
+    NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
+    NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
+    [params setObject:self.gameid forKey:@"gameid"];
+    [params setObject:KISDictionaryHaveKey(dict, @"realm") forKey:@"gamerealm"];
+    [params setObject:KISDictionaryHaveKey(dict, @"charactername") forKey:@"gamename"];
+    [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [body setObject:params forKey:@"params"];
+    [body setObject:@"115" forKey:@"method"];
+    [body setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary* dic = responseObject;
+        
+        
+        NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
+        [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+        [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
+        
+        NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
+        [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [body_two setObject:params_two forKey:@"params"];
+        [body_two setObject:@"118" forKey:@"method"];
+        [body_two setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+        
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [hud hide:YES];
+            
+            NSLog(@"%@", responseObject);
+            
+            
+            [self showMessageWindowWithContent:@"添加成功" imageType:0];
+            [self.navigationController popViewControllerAnimated:YES];
+            
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+            [hud hide:YES];
+        }];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {//已被绑定
+                alertView1 = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
+                alertView1.tag = 18;
+                [alertView1 show];
+            }
+            else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
     
 }
 

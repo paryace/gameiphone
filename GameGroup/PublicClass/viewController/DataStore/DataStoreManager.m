@@ -323,9 +323,6 @@
         NSString* title = KISDictionaryHaveKey(msg, @"title");
         NSDictionary *dic =[title JSONValue];
         NSString *gameid =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
-        
-        
-        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             DSNewsMsgs * newsMsg = [DSNewsMsgs MR_createInContext:localContext];//所有消息
             newsMsg.messageuuid = msgId;
@@ -356,7 +353,7 @@
                 dnews = [DSNewsGameList MR_createInContext:localContext];
             dnews.gameid = gameid;
             dnews.mytitle = title;
-
+            dnews.time =[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
     }
 }

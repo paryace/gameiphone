@@ -8,6 +8,7 @@
 
 #import "AuthViewController.h"
 #import "EGOImageView.h"
+#import "CharacterEditViewController.h"
 @interface AuthViewController ()
 {
 }
@@ -85,7 +86,7 @@
                     [self.authDelegate authCharacterSuccess];
                 }
             }
-            [self.navigationController popViewControllerAnimated:YES];
+            [self.navigationController popToRootViewControllerAnimated:YES];
         }
     }
 //    else if(alertView.tag == 101)

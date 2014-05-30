@@ -14,5 +14,5 @@
 
 @property (nonatomic, retain) NSString * gameid;
 @property (nonatomic, retain) NSString * mytitle;
-
+@property (nonatomic, retain) NSString * time;
 @end

@@ -71,7 +71,7 @@
 
     cell.nameLabel.text = KISDictionaryHaveKey(dict, @"title");
     cell.contentLabel.text = KISDictionaryHaveKey(dict, @"editorNote");
-    cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"time")]];
+    cell.timeLabel.text = [self getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"time")]];
     
     
     return cell;

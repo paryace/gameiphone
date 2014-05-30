@@ -599,7 +599,7 @@
         isDidClick =YES;
         return;
     }
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
         [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
         return;
     }
@@ -617,6 +617,7 @@
         NSLog(@"魔女榜");
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         MagicGirlViewController *maVC = [[MagicGirlViewController alloc]init];
+        maVC.gameid = KISDictionaryHaveKey(manDic, @"id");
         [self.navigationController pushViewController:maVC animated:YES];
     }
     if (sender ==nearByBtn ) {//附近

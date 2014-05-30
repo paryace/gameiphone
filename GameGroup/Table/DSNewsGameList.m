@@ -13,5 +13,5 @@
 
 @dynamic gameid;
 @dynamic mytitle;
-
+@dynamic time;
 @end

@@ -40,7 +40,6 @@ typedef enum : NSUInteger {
     BOOL isSaveHcTopImg;
     BOOL isSaveHcListInfo;
     
-    UIActivityIndicatorView *m_loginActivity;
     
     NSMutableArray *commentArray;
     NewNearByCell *openMenuBtn;
@@ -112,13 +111,6 @@ typedef enum : NSUInteger {
     cellhightarray = [NSMutableDictionary dictionary];
     delcommentDic = [NSMutableDictionary dictionary];
     
-    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [self.view addSubview:m_loginActivity];
-    //m_loginActivity.frame = CGRectMake(75, KISHighVersion_7?27:7, 20, 20);
-    //m_loginActivity.center = CGPointMake(75, KISHighVersion_7?42:22);
-    m_loginActivity.color = [UIColor whiteColor];
-    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
-    // [m_loginActivity startAnimating];
     
     
     
@@ -130,10 +122,11 @@ typedef enum : NSUInteger {
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     
-    UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 250)];
+    UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
+    topImageView.image = KUIImage(@"topImg_youqu.jpg");
     [self.view addSubview:topImageView];
     
-    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 220, 320, 30)];
+    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];
     lb.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
     lb.textColor = [UIColor whiteColor];
     lb.font = [UIFont systemFontOfSize:12];
@@ -246,7 +239,6 @@ typedef enum : NSUInteger {
 -(void)getInfoWithNet
 {
     [hud show:YES];
-    [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -259,7 +251,6 @@ typedef enum : NSUInteger {
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [m_loginActivity stopAnimating];
         
         [m_dataArray removeAllObjects];
         if ([KISDictionaryHaveKey(responseObject, @"dynamicMsgList") isKindOfClass:[NSArray class]]) {
@@ -293,7 +284,6 @@ typedef enum : NSUInteger {
         [m_header endRefreshing];
         [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
