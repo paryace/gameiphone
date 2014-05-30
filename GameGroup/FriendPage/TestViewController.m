@@ -376,9 +376,8 @@
 {
     NSMutableArray * temp = [NSMutableArray array];
     for (id headID in imageArray) {
-//        [temp addObject:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headID]];
         if (![GameCommon isEmtity:headID]) {
-            [temp addObject:[ImageService getImgUrl:headID]];
+            [temp addObject:[ImageService getImageUrlString:headID Width:160 Height:160]];
         }
     }
     return temp;

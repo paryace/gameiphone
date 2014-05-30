@@ -9,7 +9,6 @@
 #import "LoginViewController.h"
 #import "RegisterViewController.h"
 #import "MessagePageViewController.h"
-#import "FriendPageViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "FindPasswordViewController.h"
@@ -185,8 +184,10 @@
         AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
         
         [app.xmppHelper connect];
+        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
+        [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];
         
-        [DataStoreManager newSaveAllUserWithUserManagerList:KISDictionaryHaveKey(responseObject, @"user") withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
+        [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
         
         [[UserManager singleton]getSayHiUserId];//获取打招呼id

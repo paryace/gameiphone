@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "IntroduceViewController.h"
 #import "MessagePageViewController.h"
-#import "FriendPageViewController.h"
 #import "FindViewController.h"
 #import "MePageViewController.h"
 //#import "NewFindViewController.h"

@@ -1269,8 +1269,6 @@ typedef enum : NSUInteger {
     }
     return nil;
 }
-
-
 #pragma mark --getTime //时间戳方法
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime
 {

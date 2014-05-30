@@ -17,7 +17,7 @@
     }
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w",width,@"/h/",height]];
 }
-
+//返回带宽高的图片地址String
 +(NSString*)getImageUrlString:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height
 {
     if ([GameCommon isPureInt:imageid]) {
@@ -54,7 +54,7 @@
 }
 
 ////
-//根据图片id集合返回第一张带宽度的完整图片路径
+//根据图片id集合返回第一张图片的完整地址
 +(NSString*)getImageString:(NSString*)imageids
 {
     NSMutableArray *images=[self getImageIds:imageids];
