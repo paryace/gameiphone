@@ -254,18 +254,18 @@
 
         [self performSelector:@selector(pushSendNews) withObject:nil afterDelay:1.0];
     }
-    else if (buttonIndex ==1)
+    else if (buttonIndex ==1)//新浪
     {
         
         [[ShareToOther singleton]shareTosina:viewImage];
     }
-    else if(buttonIndex ==2)
+    else if(buttonIndex ==2)//微信
     {
         [[ShareToOther singleton]changeScene:WXSceneSession];
         
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
     }
-    else if(buttonIndex ==3)
+    else if(buttonIndex ==3)//朋友圈
     {
         [[ShareToOther singleton] changeScene:WXSceneTimeline];
         

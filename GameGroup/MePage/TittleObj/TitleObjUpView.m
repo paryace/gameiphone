@@ -46,15 +46,15 @@
     self.waitImageView.animationDuration = 0.8;//越大越慢
     self.waitImageView.animationRepeatCount = 0;//无限次
     [self.waitImageView startAnimating];
-    
-    [self getImageByNetWithImageId:self.rightImageId];
+    self.rightBgImage.imageURL = [ImageService getImageUrl4:self.rightImageId];
+//    [self getImageByNetWithImageId:self.rightImageId];
     
     [self addSubview:self.rightBgImage];
     
-    [self addSubview:self.waitImageView];
+//    [self addSubview:self.waitImageView];
     
     self.waitLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(kScreenHeigth - 120, 300/2 - 45/2 + 45, 64, 30) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:15.0] text:@"加载中..." textAlignment:NSTextAlignmentCenter];
-    [self addSubview:self.waitLabel];
+//    [self addSubview:self.waitLabel];
 }
 - (void)setMainView
 {

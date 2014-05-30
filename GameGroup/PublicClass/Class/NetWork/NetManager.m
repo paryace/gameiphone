@@ -76,6 +76,23 @@
         completion(response,filePath,error);
     }];
     [downloadTask resume];
+    
+    
+    
+    
+//    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
+//    NSURL *URL = [NSURL URLWithString:downLoadUrl];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+//    NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
+//    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
+//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"sasa%@",responseObject);
+//    }
+//       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//           
+//       }];
+//    [operation start];
 }
 
 
