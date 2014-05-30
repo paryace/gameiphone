@@ -26,7 +26,6 @@ typedef enum : NSUInteger {
     MJRefreshFooterView *m_footer;
     UITableView *m_myTableView;
     NSMutableArray *m_dataArray;
-    NSMutableArray *headImgArray;
     NSString *sexStr ;
     AppDelegate *app;
     NSInteger m_currPageCount;
@@ -37,8 +36,6 @@ typedef enum : NSUInteger {
     NSString *citydongtaiStr;
     UIButton *menuButton;
     NSMutableArray *wxSDArray;
-    BOOL isSaveHcTopImg;
-    BOOL isSaveHcListInfo;
     
     
     NSMutableArray *commentArray;
@@ -98,13 +95,10 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    isSaveHcListInfo = NO;
-    isSaveHcTopImg = NO;
     [self setTopViewWithTitle:@"有趣的人" withBackButton:YES];
     
     m_currPageCount = 0;
-    m_dataArray = [NSMutableArray new];
-    headImgArray =[NSMutableArray array];
+    m_dataArray = [NSMutableArray array];
     wxSDArray = [NSMutableArray array];
     commentArray = [NSMutableArray array];
     commentOffLineDict = [NSMutableDictionary dictionary];
@@ -135,17 +129,22 @@ typedef enum : NSUInteger {
     [topImageView addSubview:lb];
     m_myTableView.tableHeaderView = topImageView;
     
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
+    
+    
     [self getInfoWithNet];
     [self addheadView];
     [self addFootView];
-    //    NSFileManager *fileManager =[NSFileManager defaultManager];
-    //
-    //    NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
-    //    BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
-    //    NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
-    //    if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-    //        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
-    //    }
+       NSFileManager *fileManager =[NSFileManager defaultManager];
+    
+       NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
+      BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
+       NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
+       if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+           m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
+        }
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
     
@@ -252,24 +251,18 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        [m_dataArray removeAllObjects];
         if ([KISDictionaryHaveKey(responseObject, @"dynamicMsgList") isKindOfClass:[NSArray class]]) {
             if (m_currPageCount ==0) {
-                
+                [m_dataArray removeAllObjects];
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
-                
                 for (int i =0; i <m_dataArray.count; i++) {
                     m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
                 }
-                
-                if (isSaveHcListInfo) {
-                    NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
+                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
                     [m_dataArray writeToFile:filePath atomically:YES];
-                    isSaveHcListInfo = NO;
-                }
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
-                NSArray *arrays = [NSArray arrayWithArray:responseObject];
+                NSArray *arrays = [NSArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 for (int i =0; i<arrays.count; i++) {
                     [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
                 }
@@ -612,8 +605,6 @@ typedef enum : NSUInteger {
     header.arrowImage.frame = headerRect;
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_myTableView;
-    
-    header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
         [self getInfoWithNet];
@@ -635,8 +626,6 @@ typedef enum : NSUInteger {
     headerRect.size = CGSizeMake(30, 30);
     footer.arrowImage.frame = headerRect;
     footer.activityView.center = footer.arrowImage.center;
-    footer.scrollView = m_myTableView;
-    
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self getInfoWithNet];
@@ -1073,7 +1062,8 @@ typedef enum : NSUInteger {
                 [dic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"isZan"];
                 [self showMessageWindowWithContent:@"赞已成功" imageType:0];
                 if (commentNum<1) {
-                    [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]+30) forKey:@"cellHieght"];
+                    float s =[KISDictionaryHaveKey(dic, @"cellHieght")floatValue];
+                    [dic setObject:@(s+30) forKey:@"cellHieght"];
                 }
                 [m_myTableView reloadData];
                 //请求网络点赞
@@ -1333,17 +1323,6 @@ typedef enum : NSUInteger {
         offer+=(280-height+65);
     }
     
-    if (headImgArray.count<1) {
-        offer-=240;
-    }
-    else if(headImgArray.count>0&&headImgArray.count<=4)
-    {
-        offer-=160;
-    }
-    else if(headImgArray.count>4&&headImgArray.count<=8)
-    {
-        offer-=80;
-    }
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
     offer=0;
 }

@@ -17,6 +17,7 @@
 #import "MJRefresh.h"
 #import "UserManager.h"
 #import "DSOfflineZan.h"
+#import "InterestingPerpleViewController.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -65,6 +66,8 @@ typedef enum : NSUInteger {
     float offer;
     int height;
     
+    UIView *bottomView;//逗你玩界面
+    UIView *topVIew;
     NSMutableDictionary *commentOffLineDict;
     UIActivityIndicatorView * m_loginActivity;
 }
@@ -111,6 +114,8 @@ typedef enum : NSUInteger {
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     height=216;
     
+    
+    
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     NSString * nickName=KISDictionaryHaveKey(user, @"nickname");
     nickNameLabel.text = nickName;
@@ -139,15 +144,10 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
-//    if (KISHighVersion_7) {
-//        m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-//    }
-
-//    m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
     [self.view addSubview:m_myTableView];
     
     //顶部图片
-    UIView *topVIew;
+    
     topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 370)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
@@ -338,9 +338,80 @@ typedef enum : NSUInteger {
         m_dataArray= [NSMutableArray arrayWithContentsOfFile:path];
         [self getInfoFromNet];
     }else{
+        m_myTableView.contentOffset = CGPointMake(0, 150);
+        [self buildBottomView];
         [self getInfoFromNet];
     }
 }
+
+-(void)buildBottomView
+{
+    
+    CGRect frame = m_myTableView.tableHeaderView.frame;
+    frame.size.height =kScreenHeigth+370;
+    UIView *view = m_myTableView. tableHeaderView;
+    view.frame = frame;
+    m_myTableView.tableHeaderView = view;
+
+    bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, 370, 320, kScreenHeigth)];
+    bottomView.backgroundColor = [UIColor whiteColor];
+    [topVIew addSubview:bottomView];
+
+    
+    UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(10, 5, 300, 20)];
+    lb1.font = [UIFont boldSystemFontOfSize:14];
+    lb1.text = @"再陌游中分享你在游戏与现实中发生的事情";
+    lb1.textColor = [UIColor grayColor];
+    lb1.textAlignment = NSTextAlignmentCenter;
+    lb1.backgroundColor =[ UIColor clearColor];
+    [bottomView addSubview:lb1];
+    
+    
+    UILabel *lb2 =[[ UILabel alloc]initWithFrame:CGRectMake(10, 35, 300, 20)];
+    lb2.font = [UIFont boldSystemFontOfSize:14];
+    lb2.text = @"你的组织成员,附近的玩家与好友会及时的";
+    lb2.textColor = [UIColor grayColor];
+    lb2.textAlignment = NSTextAlignmentCenter;
+    lb2.backgroundColor =[ UIColor clearColor];
+    [bottomView addSubview:lb2];
+    
+    UILabel *lb3 =[[ UILabel alloc]initWithFrame:CGRectMake(10, 65, 300, 20)];
+    lb3.font = [UIFont boldSystemFontOfSize:14];
+    lb3.text = @"看到你的动态";
+    lb3.textColor = [UIColor grayColor];
+    lb3.textAlignment = NSTextAlignmentCenter;
+    lb3.backgroundColor =[ UIColor clearColor];
+    [bottomView addSubview:lb3];
+    
+    UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(80, 90, 160, 100)];
+    imageView.image = KUIImage(@"eggs");
+    [bottomView addSubview:imageView];
+    
+    UIButton *button  =[[ UIButton alloc]initWithFrame:CGRectMake(110,200, 100, 20)];
+    [button setImage:KUIImage(@"nizhendou") forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(bierenyedou:) forControlEvents:UIControlEventTouchUpInside];
+    [bottomView addSubview:button];
+    
+    UILabel *lb4 =[[ UILabel alloc]initWithFrame:CGRectMake(10, 230, 300, 20)];
+    lb4.font = [UIFont boldSystemFontOfSize:14];
+    lb4.text = @"学着做一个有趣的人,就可以认识更多的游戏";
+    lb4.textColor = [UIColor grayColor];
+    lb4.textAlignment = NSTextAlignmentCenter;
+    lb4.backgroundColor =[ UIColor clearColor];
+    [bottomView addSubview:lb4];
+
+    UILabel *lb5 =[[ UILabel alloc]initWithFrame:CGRectMake(10, 255, 300, 20)];
+    lb5.font = [UIFont boldSystemFontOfSize:14];
+    lb5.text = @"的伙伴,充分享受陌游带给你的乐趣";
+    lb5.textColor = [UIColor grayColor];
+    lb5.textAlignment = NSTextAlignmentCenter;
+    lb5.backgroundColor =[ UIColor clearColor];
+    [bottomView addSubview:lb5];
+
+    
+}
+
+
 
 -(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
 {
@@ -576,7 +647,8 @@ typedef enum : NSUInteger {
 
 #pragma mark --网络请求 获取信息
 -(void)getInfoFromNet
-{ [m_loginActivity startAnimating];
+{
+    [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:self.userId forKey:@"userid"];
@@ -590,6 +662,22 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
+        
+        
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.4];
+        m_myTableView.contentOffset = CGPointMake(0, 0);
+        topVIew.frame =CGRectMake(0, 0, 320, 370);
+        [UIView commitAnimations];
+        [bottomView removeFromSuperview];
+        
+        CGRect frame = m_myTableView.tableHeaderView.frame;
+        frame.size.height =370;
+        UIView *view = m_myTableView. tableHeaderView;
+        view.frame = frame;
+        m_myTableView.tableHeaderView = view;
+
+        
         
         self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
         if (KISHighVersion_7) {
@@ -1174,7 +1262,7 @@ typedef enum : NSUInteger {
     
     
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
-    
+
     [self.navigationController pushViewController:detailVC animated:YES];
 
 }
@@ -2059,6 +2147,13 @@ typedef enum : NSUInteger {
     }
     return YES;
 }
+
+-(void)bierenyedou:(id)sender
+{
+    InterestingPerpleViewController *invv = [[InterestingPerpleViewController alloc]init];
+    [self.navigationController pushViewController:invv animated:YES];
+}
+
 
 -(void)hiddenOrShowMenuImageViewWithCell:(CircleHeadCell*)myCell
 {

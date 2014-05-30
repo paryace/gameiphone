@@ -10,6 +10,7 @@
 #import "EGOImageView.h"
 #import "AboutRoleCell.h"
 #import "ImageService.h"
+#import "HelpViewController.h"
 @interface AddCharacterViewController ()
 {
 //    UITextField*  m_gameNameText;
@@ -27,7 +28,7 @@
     UIToolbar* toolbar_server;
     UIButton* m_okButton;
     AboutRoleCell *aboutRoleCell;
-
+    UILabel *helplable;
 }
 
 @end
@@ -134,6 +135,19 @@
         default:
             break;
     }
+    
+    helplable = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 280, 30)];
+    helplable.backgroundColor =[ UIColor clearColor];
+    helplable.textColor =kColorWithRGB(41, 164, 246, 1.0);
+    helplable.font = [UIFont systemFontOfSize:12];
+    helplable.textAlignment = NSTextAlignmentRight;
+    helplable.text = @"角色为何无法添加/绑定?";
+    helplable.userInteractionEnabled = YES;
+    [helplable addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHelp:)]];
+    [self.view addSubview:helplable];
+    
+    
+    
     [m_okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     m_okButton.backgroundColor = [UIColor clearColor];
     m_okButton.hidden = YES;
@@ -259,7 +273,8 @@
         [m_dataArray addObjectsFromArray:sarchArray];
         m_okButton.hidden = NO;
         m_myTableView.frame = CGRectMake(0, startX+44, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 300, 40);
+        helplable.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 280, 30);
+        m_okButton.frame = CGRectMake(10, startX+94+44*m_dataArray.count, 300, 40);
         [m_myTableView reloadData];
     }
 
@@ -465,6 +480,14 @@
 {
     NSLog(@"%@aaa", textField.text);
     return YES;
+}
+
+-(void)enterHelp:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+        helpVC.myUrl = @"content.html?7";
+    [self.navigationController pushViewController:helpVC animated:YES];
+
 }
 
 #pragma mark 手势

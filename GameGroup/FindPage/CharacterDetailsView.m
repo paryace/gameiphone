@@ -20,11 +20,10 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        self.backgroundColor = [UIColor whiteColor];
         self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
         self.topImageView.backgroundColor  = [UIColor whiteColor];
        [self addSubview:self.topImageView];
-        
+        self.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     
         [self buildRoleView];
 
@@ -44,7 +43,7 @@
         self.unlessLabel.hidden =NO;
         [self addSubview:self.unlessLabel];
 
-        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 515, 320, 45)];
+        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 536, 320, 45)];
         self.helpLabel.text = @"如何获得PVP/PVE战斗力";
         self.helpLabel.backgroundColor = [UIColor whiteColor];
         self.helpLabel.userInteractionEnabled = YES;
@@ -111,7 +110,7 @@
     self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(70, 30, 160, 25)];
     self.guildLabel.backgroundColor = [UIColor clearColor];
     self.guildLabel.textColor = UIColorFromRGBA(0xe3e3e3, 1);
-    self.guildLabel.font = [UIFont boldSystemFontOfSize:14];
+    self.guildLabel.font = [UIFont boldSystemFontOfSize:13];
     [self.titleView addSubview:self.guildLabel];
     
 
@@ -132,7 +131,7 @@
     self.realmView.backgroundColor =[UIColor clearColor];
     self.realmView.textAlignment = NSTextAlignmentRight;
     self.realmView.textColor = UIColorFromRGBA(0xe3e3e3, 1);
-    self.realmView.font = [UIFont boldSystemFontOfSize:12];
+    self.realmView.font = [UIFont boldSystemFontOfSize:13];
     [self.titleView addSubview:self.realmView];
 }
 

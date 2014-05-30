@@ -69,4 +69,7 @@
 //+(NSURL*)getImageUrl:(NSString*)imageid;
 
 + (BOOL)isPureInt:(NSString*)string;
+
+
+-(void)firtOpen;
 @end

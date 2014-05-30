@@ -63,14 +63,21 @@
     lb.font = [UIFont systemFontOfSize:14];
     [m_roleView addSubview:lb];
     
-    helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];
+    helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 100, 280, 30)];
     helpLabel.hidden = YES;
     helpLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
     helpLabel.backgroundColor =[UIColor clearColor];
     helpLabel.font = [UIFont systemFontOfSize:12];
     helpLabel.userInteractionEnabled = YES;
     helpLabel.textAlignment = NSTextAlignmentRight;
-    helpLabel.text = @"为何查询不到";
+    helpLabel.userInteractionEnabled = YES;
+    [helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHelp:)]];
+    if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        helpLabel.text = @"为何查询不到角色?";
+    }else{
+        helpLabel.text = @"为何查询不到公会?";
+    }
+
     [helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHelp:)]];
     [m_roleView addSubview:helpLabel];
     
@@ -296,7 +303,7 @@
             if (array.count>0) {
             secGame.dataDic = responseObject;
             secGame.myInfoType = COME_ROLE;
-            secGame.gameid = KISDictionaryHaveKey(infoDic, @"gameid");
+            secGame.gameid = KISDictionaryHaveKey(m_dataArray[0], @"gameid");
             [self.navigationController pushViewController:secGame animated:YES];
             
             [hud hide:YES];
@@ -409,7 +416,14 @@
 
 -(void)enterHelp:(id)sender
 {
-    NSLog(@"就是不让你查");
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    
+    if (self.myViewType ==SEARCH_TYPE_ROLE) {
+        helpVC.myUrl = @"content.html?5";
+    }else{
+        helpVC.myUrl = @"content.html?6";
+    }
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 
 - (void)didReceiveMemoryWarning

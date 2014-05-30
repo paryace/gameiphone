@@ -59,9 +59,10 @@
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
     [self.view addSubview:m_myFansTableView];
-    [self getFansList];
+//    [self getFansList];
     [self addFooter];
     [self addHeader];
+    [m_fansheader beginRefreshing];
     [self getFansBySort];
 }
 

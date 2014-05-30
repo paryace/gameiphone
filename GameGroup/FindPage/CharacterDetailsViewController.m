@@ -91,7 +91,7 @@
 
     [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
 
-    m_charaDetailsView.contentSize = CGSizeMake(320, 610);
+    m_charaDetailsView.contentSize = CGSizeMake(320, 630);
     m_charaDetailsView.myCharaterDelegate = self;
     
     m_charaDetailsView.topImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"gameTopImg_%@.jpg",self.gameId]];
@@ -129,21 +129,18 @@
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
-        m_contentTableView.rowHeight = 55;
         
         m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(640, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_countryTableView];
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
-        m_countryTableView.rowHeight = 55;
         
         m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 300) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_reamlTableView];
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
         m_reamlTableView.bounces = NO;
-        m_reamlTableView.rowHeight = 55;
         
     }else if(self.myViewType ==CHARA_INFO_PERSON){
         m_charaDetailsView.isComeTo = NO;
@@ -152,7 +149,6 @@
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
-        m_contentTableView.rowHeight = 55;
         m_contentTableView.hidden =YES;
         
         
@@ -161,7 +157,6 @@
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
-        m_countryTableView.rowHeight = 55;
         
         
         m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
@@ -169,10 +164,6 @@
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
         m_reamlTableView.bounces = NO;
-        m_reamlTableView.rowHeight = 55;
-     
-        
-        
     }
     
     m_contentTableView.hidden =YES;
@@ -246,11 +237,10 @@
             }
             
             //计算view的franme
-            CGSize size = [KISDictionaryHaveKey(m_titleDic, @"value3") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByCharWrapping];
+            CGSize size = [KISDictionaryHaveKey(m_titleDic, @"value3") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByCharWrapping];
             
-            m_charaDetailsView.realmView.frame = CGRectMake(310-size.width, 28,size.width, 20);
-            m_charaDetailsView.gameIdView.frame = CGRectMake(295-size.width-7, 32, 15, 15);
-//            m_charaDetailsView.gameIdView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameId]]];
+            m_charaDetailsView.realmView.frame = CGRectMake(310-size.width, 35,size.width, 20);
+            m_charaDetailsView.gameIdView.frame = CGRectMake(295-size.width-7, 36, 15, 15);
             
             NSString * gameImageId=[GameCommon putoutgameIconWithGameId:self.gameId];
             m_charaDetailsView.gameIdView.imageURL=[ImageService getImageUrl4:gameImageId];
@@ -507,7 +497,11 @@
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"value1");
     cell.topImgView.image = KUIImage(@"paiming_ico");
     cell.CountLabel.text = KISDictionaryHaveKey(dic, @"value2");
-
+    CGSize size = [cell.CountLabel.text sizeWithFont:cell.CountLabel.font constrainedToSize:CGSizeMake(150, 60) lineBreakMode:NSLineBreakByCharWrapping];
+    
+    cell.CountLabel.frame = CGRectMake(58, 35, 150, size.height);
+    
+    NSLog(@"cell.........%@",cell.CountLabel);
     NSDictionary *contentDic = [NSDictionary dictionary];
     if (tableView ==m_contentTableView) {
         contentDic = KISDictionaryHaveKey(m_infoDic, @"1");
@@ -519,15 +513,42 @@
 
     NSDictionary *dict =KISDictionaryHaveKey(contentDic, KISDictionaryHaveKey(dic, @"key"));
     cell.dataLabel.text =[GameCommon getNewStringWithId: KISDictionaryHaveKey(dict, @"value")];
-    NSString *str =KISDictionaryHaveKey(dict, @"rank");
+    NSString *str =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dict, @"rank")];
+    if ([str isEqualToString:@""]||[str isEqualToString:@" "]||!str) {
+        cell.rankingLabel.text = @"暂未上榜";
+    }else{
     cell.rankingLabel.text = [NSString stringWithFormat:@"第%@名",str];
-
+    }
     NSLog(@"dict-----------%@",dict);
     NSLog(@"dic----------%@",dic);
 
+    int customS = [KISDictionaryHaveKey(dict, @"compare")intValue];
+    if (customS==1) {
+        cell.upDowmImgView.image = KUIImage( @"die");
+    }else if (customS ==-1)
+    {
+        cell.upDowmImgView.image = KUIImage(@"zhang");
+    }else{
+        cell.upDowmImgView.image = KUIImage(@"");
+    }
+    
+    
     return cell;
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *dic  =m_nameArray[indexPath.row];
+
+    CGSize size =[ KISDictionaryHaveKey(dic, @"value2") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(150, 60) lineBreakMode:NSLineBreakByCharWrapping];
+    if (size.height>30) {
+        return 37+size.height;
+    }else {
+        return 55;
+    }
+    
+    
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
