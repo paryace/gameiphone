@@ -59,7 +59,7 @@
 #define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
 #define BaseHelpUrl @"http://211.122.66.243/h5/help/"
 
-#define QiniuBaseImageUrl @"http://bucketname.qiniudn.com/"
+#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

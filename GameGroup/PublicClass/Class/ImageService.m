@@ -12,7 +12,10 @@
 ////传入单个图片id，返回指定宽高的的完整路径
 +(NSURL*)getImageUrl:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]];
+    if ([GameCommon isPureInt:imageid]) {
+        return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]];
+    }
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w",width,@"/h/",height]];
 }
 //传入单个图片id，返回默认宽高相等的完整图片路径
 +(NSURL*)getImageUrl2:(NSString*)imageid
