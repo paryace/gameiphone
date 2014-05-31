@@ -150,7 +150,6 @@
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 +(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType;
 +(NSDictionary *)queryUserInfo:(NSString*)userId;
-+(void)deleteAllNameIndex;
 
 +(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType;//根据senderType和sayHiType删除消息
 
@@ -165,6 +164,7 @@
 
 
 +(void)deleteAllDSCommonMsgs;
+
 +(void)deleteMsgByMsgType:(NSString *)msgType;
 
 

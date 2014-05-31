@@ -190,22 +190,7 @@
     self.headImageView.layer.cornerRadius = 5;
     self.headImageView.layer.masksToBounds=YES;
     self.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-    
-    
-//    NSString * fruits = self.titleImage;
-//    if ([fruits isEqualToString:@""]||[fruits isEqualToString:@" "]) {
-//        self.headImageView.imageURL =nil;
-//
-//    }else{
-//    NSArray  * array= [fruits componentsSeparatedByString:@","];
-//    if (array.count>1) {
-//        self.headImageView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",[array objectAtIndex:0]]];
-//    }else
-//    {
-//        self.headImageView.imageURL =nil;
-//    }
-//    }
-    
+
    self.headImageView.imageURL =[ImageService getImageStr:self.titleImage Width:80];
     
     m_currentStartY +=80;

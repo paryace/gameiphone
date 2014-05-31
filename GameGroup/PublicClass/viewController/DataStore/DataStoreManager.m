@@ -862,13 +862,12 @@
     if ([GameCommon isEmtity:nameIndex]) {
         nameIndex=@"#";
     }
-    
     if (![GameCommon isEmtity:userId]) {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
             if (!dUser)
-            dUser = [DSuser MR_createInContext:localContext];
+                dUser = [DSuser MR_createInContext:localContext];
             
             dUser.achievement = title?title:@"";
             dUser.achievementLevel = rarenum?rarenum:@"";
@@ -896,73 +895,28 @@
             dUser.userId = userId?userId:@"";
             dUser.userName = myUserName?myUserName:@"";
             
-            [self saveNameIndex:nameIndex UserId:userId ShipType:dUser.shiptype];
+            
+            if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+                if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
+                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+                    DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
+                    if (!dFname)
+                        dFname = [DSNameIndex MR_createInContext:localContext];
+                    dFname.index = nameIndex;
+                    return ;
+                }
+                if([shiptype isEqualToString:@"3"])
+                {
+                    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
+                    DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
+                    if (!dFname)
+                        dFname = [DSFansNameIndex MR_createInContext:localContext];
+                    dFname.index = nameIndex;
+                    return;
+                }
+            }
         }];
     }
-}
-//删除用户信息
-+(void)deleteUserInfo:(NSString*)userId
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
-        DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
-        if (dUser)
-        [dUser MR_deleteInContext:localContext];
-    }];
-}
-//删除首字母
-+(void)deleteNameIndex:(NSString*)nameIndex ShipType:(NSString*)shiptype
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-            DSNameIndex * dNameIndex= [DSNameIndex MR_findFirstWithPredicate:predicate];
-            if (dNameIndex)
-            [dNameIndex MR_deleteInContext:localContext];
-        }else if([shiptype isEqualToString:@"3"])
-        {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-            DSFansNameIndex * dfansNameIndex= [DSFansNameIndex MR_findFirstWithPredicate:predicate];
-            if (dfansNameIndex)
-            [dfansNameIndex MR_deleteInContext:localContext];
-        }
-    }];
-}
-//
-+(void)deleteAllNameIndex
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSArray * naminddex = [DSNameIndex MR_findAllInContext:localContext];
-        for (int i = 0; i<naminddex.count; i++) {
-            DSNameIndex * common = [naminddex objectAtIndex:i];
-            [common MR_deleteInContext:localContext];
-        }
-    }];
-}
-
-//保存首字母
-+(void)saveNameIndex:(NSString*)nameIndex UserId:(NSString*)userId ShipType:(NSString*)shiptype
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-            if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
-                NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-                DSNameIndex * dFname = [DSNameIndex MR_findFirstWithPredicate:predicate2];
-                if (!dFname)
-                    dFname = [DSNameIndex MR_createInContext:localContext];
-                dFname.index = nameIndex;
-            }else if([shiptype isEqualToString:@"3"])
-            {
-                NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
-                DSFansNameIndex * dFname = [DSFansNameIndex MR_findFirstWithPredicate:predicate2];
-                if (!dFname)
-                    dFname = [DSFansNameIndex MR_createInContext:localContext];
-                dFname.index = nameIndex;
-            }
-            
-        }
-
-    }];
 }
 
 +(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid
@@ -1976,20 +1930,6 @@ return @"";
     }
     return @"";
 }
-
-#pragma mark - 存储个人信息
-
-+(void)saveMyBackgroungImg:(NSString*)backgroundImg
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
-        if (!dUser)
-            dUser = [DSuser MR_createInContext:localContext];
-        dUser.backgroundImg = backgroundImg;
-    }];
-}
-
 +(NSMutableDictionary *)queryOneFriendInfoWithUserName:(NSString *)userName
 {
     NSMutableDictionary * dict = [NSMutableDictionary dictionary];
