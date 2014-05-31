@@ -198,13 +198,15 @@
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
         
         UIImage *image =[UIImage imageWithData:data];
-        CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*image.size.width,  image.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
-        CGImageRef cgimg = CGImageCreateWithImageInRect([image CGImage], rect);
-        imgV.image = [UIImage imageWithCGImage:cgimg];
-        CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
+//        CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*image.size.width,  image.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
+//        CGImageRef cgimg = CGImageCreateWithImageInRect([image CGImage], rect);
+//        imgV.image = [UIImage imageWithCGImage:cgimg];
+//        CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
+        imgV.image = image;
 
     }else{
-    imgV.image = KUIImage(@"bg");
+         UIImage * afterImage= [NetManager image:KUIImage(@"bg") centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
+        imgV.image = afterImage;
     }
     imgV.center = self.view.center;
     imgV.userInteractionEnabled = YES;
@@ -747,15 +749,14 @@
 {
 //    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*selectImage.size.width,  selectImage.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
-    CGImageRef cgimg = CGImageCreateWithImageInRect([selectImage CGImage], rect);
-    imgV.image = [UIImage imageWithCGImage:cgimg];
-    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
+//    CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*selectImage.size.width,  selectImage.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
+//    CGImageRef cgimg = CGImageCreateWithImageInRect([selectImage CGImage], rect);
+//    imgV.image = [UIImage imageWithCGImage:cgimg];
+//    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
 
-    
-    
-    
-    NSData *data = UIImageJPEGRepresentation(selectImage, 0.7);
+    UIImage * afterImage= [NetManager image:selectImage centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
+    imgV.image = afterImage;
+    NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];
     [self dismissViewControllerAnimated:YES completion:^{
         

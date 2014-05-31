@@ -26,6 +26,7 @@
 
 #import "DSNewsMsgs.h"//新闻
 #import "DSuser.h"
+#import "DSThumbMsgs.h"
 
 #import "DSOfflineZan.h"
 @interface DataStoreManager : NSObject
@@ -161,11 +162,13 @@
 
 +(void)changRecommendStateWithUserid:(NSString *)userid state:(NSString *)state;
 
-
++(id)queryDUser:(NSString*)userId;
 
 +(void)deleteAllDSCommonMsgs;
 
 +(void)deleteMsgByMsgType:(NSString *)msgType;
+
++(DSThumbMsgs*)qureySayHiMsg:(NSString *)type;
 
 
 @end

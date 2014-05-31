@@ -72,7 +72,7 @@
     NSInteger fansInteger=[fansTabIndex intValue];
     if (fansInteger>=0&&fansInteger< m_otherSortFansArray.count) {
         [m_otherSortFansArray removeObjectAtIndex:fansInteger];
-        [self refreTitle];
+        [self refreTitle:[NSString stringWithFormat:@"%d",m_otherSortFansArray.count]];
     }
     [m_myFansTableView reloadData];
 }
@@ -100,6 +100,7 @@
             if (m_currentPage == 0) {//默认展示存储的
                 m_allcurrentPage = [KISDictionaryHaveKey(responseObject, @"totalResults") intValue];
                 [self refreFansNum:m_allcurrentPage];
+                [self refreTitle:[NSString stringWithFormat:@"%d",m_allcurrentPage]];
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
                 m_otherSortFansArray=fans;
                 [self endLoad];
@@ -157,14 +158,14 @@
         m_otherSortFansArray = [DataStoreManager newQueryAllFansWithOtherSortType:@"3"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myFansTableView reloadData];
-            [self refreTitle];
+             NSString *fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+            [self refreTitle:fansNum];
         });
     });
 }
 //刷新title
--(void)refreTitle
+-(void)refreTitle:(NSString*)fansNum
 {
-    NSString *fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     m_titleLabel.text = [[@"粉丝(" stringByAppendingString:fansNum] stringByAppendingString:@")"];
 }
 

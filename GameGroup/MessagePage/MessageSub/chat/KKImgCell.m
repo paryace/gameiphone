@@ -17,10 +17,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.bgImageView.hidden = YES;  //图片聊天不要背景泡泡
         self.msgImageView = [[EGOImageView alloc]initWithPlaceholderImage:[UIImage imageNamed:@"default_icon.png"]];
-        //self.msgImageView.frame = CGRectZero;
         self.msgImageView.layer.masksToBounds = YES;
         self.msgImageView.layer.borderWidth = 1;
         self.msgImageView.layer.borderColor = [UIColor clearColor].CGColor;
@@ -42,14 +40,11 @@
 
 - (void)awakeFromNib
 {
-    // Initialization code
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-    
-    // Configure the view for the selected state
 }
 
 
@@ -80,8 +75,7 @@
 - (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
 {
     self.progressView.hidden = YES;
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
-                                          cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
     [alert show];
     if (self.sendMsgDeleGate) {
         [self.sendMsgDeleGate refreStatus:cellIndex];

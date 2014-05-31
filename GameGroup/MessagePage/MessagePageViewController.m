@@ -31,7 +31,7 @@
     SystemSoundID soundID;
     
     NSMutableArray * allMsgArray;
-    
+    DSThumbMsgs * firstSayHiMsg;
     UIButton *deltButton;
 }
 @end
@@ -228,7 +228,6 @@
     alert.tag = 345;
     [alert show];
 }
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 345) {
@@ -236,6 +235,7 @@
 //            [DataStoreManager deleteAllThumbMsg];//删除会话列表记录
 //            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
             [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
+            [DataStoreManager deleteMsgByMsgType:@"payloadchat"];//删除所有的链接消息
             [self displayMsgsForDefaultView];
         }
     }
@@ -247,8 +247,8 @@
 {
     [allMsgArray removeAllObjects];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
+    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     allMsgArray = [array mutableCopy];
-    
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }
@@ -296,10 +296,17 @@
     if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {//打招呼
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
-        NSString *nickName=[[allMsgArray objectAtIndex:indexPath.row] senderNickname];
-        NSString *msgContent=[[allMsgArray objectAtIndex:indexPath.row] msgContent];
-        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
-        cell.nameLabel.text = @"有新的打招呼信息";
+        if (firstSayHiMsg) {
+            NSString *nickName=[firstSayHiMsg senderNickname];
+            NSString *msgContent=[firstSayHiMsg msgContent];
+            cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
+            cell.nameLabel.text = @"有新的打招呼信息";
+        }
+        
+//        NSString *nickName=[[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+//        NSString *msgContent=[[allMsgArray objectAtIndex:indexPath.row] msgContent];
+//        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
+//        cell.nameLabel.text = @"有新的打招呼信息";
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||

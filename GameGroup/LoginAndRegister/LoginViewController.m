@@ -153,7 +153,6 @@
     [params setObject:passwordTextField.text forKey:@"password"];
 //    [params setObject:@"15811212096" forKey:@"username"];
 //    [params setObject:@"111111" forKey:@"password"];
-
 //    NSString * deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:PushDeviceToken];
     [params setObject:[GameCommon shareGameCommon].deviceToken forKey:@"deviceToken"];
     [params setObject:appType forKey:@"appType"];

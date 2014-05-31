@@ -782,6 +782,12 @@
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
     return array;
 }
++(DSThumbMsgs*)qureySayHiMsg:(NSString *)type
+{
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sayHiType==[c]%@", type];
+        DSThumbMsgs * firstSayHiMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate sortedBy:@"receiveTime" ascending:NO];
+        return firstSayHiMsg;
+}
 //检查消息是否存在
 +(BOOL)isHaveSayHiMsg:(NSString *)type
 {
@@ -792,6 +798,7 @@
     }
     return NO;
 }
+
 //----
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
 {
@@ -1122,7 +1129,7 @@
 
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId
 {
-    if (userId) {
+    if (![GameCommon isEmtity:userId]) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
         DSuser * dUserManager = [DSuser MR_findFirstWithPredicate:predicate];
         if (dUserManager) {
@@ -1701,32 +1708,33 @@ return @"";
     [user setObject:[dbUser remarkName]?[dbUser remarkName]:@"" forKey:@"alias"];
     return user;
 }
+
+//根据用户id查询用户信息
++(id)queryDUser:(NSString*)userId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+    return [DSuser MR_findFirstWithPredicate:predicate];
+}
+
 //根据用户id查询用户信息
 +(NSDictionary *)queryUserInfo:(NSString*)userId
 {
-    NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
-    DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dUser) {
-        dict=[self getUserDictionary:dUser];
-    }
-    return dict;
+    return [self getUserDictionary:[self queryDUser:userId]];
 }
+
 //---------------------------------------
 //粉丝列表（新）
 //---------------------------------------
 +(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType
 {
     NSMutableArray * theArr = [NSMutableArray array];
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shipType];
-        NSArray * users = [DSuser MR_findAllWithPredicate:predicate];
-        for (int i = 0; i <users.count; i++) {
-            DSuser *dUser = [users objectAtIndex:i];
-            NSMutableDictionary *user= [self getUserDictionary:dUser];
-            [theArr addObject:user];
-        }
-//    }];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shipType];
+    NSArray * users = [DSuser MR_findAllWithPredicate:predicate];
+    for (int i = 0; i <users.count; i++) {
+        DSuser *dUser = [users objectAtIndex:i];
+        NSMutableDictionary *user= [self getUserDictionary:dUser];
+        [theArr addObject:user];
+    }
     return theArr;
 }
 //----------------------------------------

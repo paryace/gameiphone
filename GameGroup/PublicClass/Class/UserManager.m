@@ -81,7 +81,6 @@ static UserManager *userManager = NULL;
     [paramDict setObject:userId forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"106" forKey:@"method"];//旧接口
     [postDict setObject:@"201" forKey:@"method"];//新接口
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
