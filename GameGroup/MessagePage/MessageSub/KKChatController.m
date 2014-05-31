@@ -1024,29 +1024,19 @@ UINavigationControllerDelegate>
     NSString *uuid = KISDictionaryHaveKey(plainEntry, @"messageuuid");
     if(![self.finalImage objectForKey:uuid]) //如果没有这个uuid，才执行这个压缩过程
     {
+        NSLog(@"finalmesg添加%@",uuid);
         NSDictionary* payload = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
         NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
         UIImage *image = [[UIImage alloc]initWithContentsOfFile:kkChatImagethumb];
         if(image){
             return image;
-            NSLog(@"finalmesg添加%@",uuid);
         }
-        else
-        {
-            EGOImageView *image = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
-            NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
-//            NSString *imgurl =[NSString stringWithFormat:BaseImageUrl@"%@/%@/%@",kkChatImageMsg,kChatImageSizeWidth,kChatImageSizeHigh];
-//            NSURL *kkChatImageMsgUrl = [NSURL URLWithString:imgurl];
-//            image.imageURL = kkChatImageMsgUrl;
-            image.imageURL = [ImageService getImageUrl3:kkChatImageMsg Width:200];
-            return image.image;
-            NSLog(@"finalmesg添加%@",uuid);
-        }
+        EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
+        NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+        imageView.imageURL = [ImageService getImageUrl3:kkChatImageMsg Width:200];
+        return imageView.image;
     }
-    else{//如果有这个uuid 那么就再赋值
-        UIImage *image = [self.finalImage objectForKey:uuid];
-        return image;
-    }
+    return [self.finalImage objectForKey:uuid];
 }
 //计算每条消息的大小，放到array里边
 -(NSArray*)cacuMsgSize:(NSDictionary*) plainEntry

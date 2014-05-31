@@ -13,37 +13,24 @@
 - (void)resumableUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
     NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
-    
-    NSString* nowTime = [GameCommon getCurrentTime];
-    if ([nowTime intValue]<[time intValue]) {//token处于有效的状态
-        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
+    long long expireSeconds = [time longLongValue];
+    if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
+        [self resumableUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
     }else{//token处于无效状态
         [self getUploadImageToken:filePath UpDeleGate:updeleGate];
     }
 }
 
 - (void)simpleUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
-//    NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
-//    NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
-//    
-//    NSString* nowTime = [GameCommon getCurrentTime];
-//    if ([nowTime intValue]<[time intValue]) {//token处于有效的状态
-//        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
-//    }else{//token处于无效状态
+    NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
+    NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
+    long long expireSeconds = [time longLongValue];
+    if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
+        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
+    }else{//token处于无效状态
         [self getUploadImageToken:filePath UpDeleGate:updeleGate];
-//    }
+    }
 }
-
-
-
-#pragma mark 上传注册时头像
-+(void)uploadImageWithRegister:(UIImage *)uploadImage WithURLStr:(NSString *)urlStr ImageName:(NSString *)imageName TheController:(UIViewController *)controller Progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block Success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    
-}
-
-
-
 -(void)resumableUpload:(NSString *)token FilePath:(NSString *)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
 {
     QiniuResumableUploader *rUploader = [[QiniuResumableUploader alloc] initWithToken:token];
@@ -68,16 +55,18 @@
     success:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSLog(@"deviceToken successed:%@",responseObject);
+        NSString * expireSeconds=KISDictionaryHaveKey(responseObject, @"expireSeconds");
+        long long alltime =([expireSeconds longLongValue]*1000)+[self getCurrentTime];
+        NSString *alltimeString=[NSString stringWithFormat:@"%lld",alltime];
         
-//        NSString * expireSeconds=KISDictionaryHaveKey(responseObject, @"expireSeconds");
         NSString * upToken=KISDictionaryHaveKey(responseObject, @"uploadToken");
         [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
         
         
-        [[NSUserDefaults standardUserDefaults] setValue:@"uploadToken" forKey:UploadImageToken];
+        [[NSUserDefaults standardUserDefaults] setValue:upToken forKey:UploadImageToken];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-        [[NSUserDefaults standardUserDefaults] setValue:@"time" forKey:TokenEfficaciousTime];
+        [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:TokenEfficaciousTime];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     failure:^(AFHTTPRequestOperation *operation, id error)
@@ -85,23 +74,9 @@
         NSLog(@"deviceToken fail");
     }];
 }
-
-
-// Upload progress
-- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
-{
-    //NSString *progressStr = [NSString stringWithFormat:@"Progress Updated: - %f\n", percent];
-    
+-(long long)getCurrentTime{
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    nowTime = nowTime*1000;
+    return (long long)nowTime;
 }
-- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
-{
-    //NSString *succeedMsg = [NSString stringWithFormat:@"Upload Succeeded: - Ret: %@\n", ret];
-    
-}
-// Upload failed
-- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
-{
-    //NSString *failMsg = [NSString stringWithFormat:@"Upload Failed: %@  - Reason: %@", theFilePath, error];
-}
-
 @end
