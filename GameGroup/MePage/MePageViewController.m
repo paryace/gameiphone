@@ -500,17 +500,18 @@
             
             if ([failedmsg intValue] ==404)//角色不存在
             {
+                cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
                 cell.realmLabel.text = @"角色不存在";
             }
             else
             {
+                if ([GameCommon isEmtity:img]) {
+                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+                }
+                else{
+                    cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
+                }
                 cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
-            }
-            if ([GameCommon isEmtity:img]) {
-                cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
-            }
-            else{
-                cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
             }
             if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
                 cell.authBg.hidden = NO;

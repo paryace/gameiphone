@@ -155,24 +155,26 @@
 
     if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
     {
+        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
         cell.realmLabel.text = @"角色不存在";
         cell.editBtn.hidden = NO;
         cell.authBtn.hidden = YES;
     }
     else
     {
+        NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
+        if ([GameCommon isEmtity:gameImageId]) {
+            cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+        }else{
+            cell.heardImg.imageURL = [ImageService getImageUrl4:gameImageId];
+        }
         NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
         cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
         cell.editBtn.hidden = YES;
     }
     
     
-    NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
-    if ([GameCommon isEmtity:gameImageId]) {
-        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-    }else{
-        cell.heardImg.imageURL = [ImageService getImageUrl4:gameImageId];
-    }
+    
     
     cell.myIndexPath = indexPath;
     cell.myDelegate = self;

@@ -648,6 +648,7 @@
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
     
     NSString * imageId=KISDictionaryHaveKey(tempDic, @"img");
+    NSString * fialMsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
     cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
     
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
@@ -655,7 +656,17 @@
     cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
-    cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
+    if ([fialMsg isEqualToString:@"404"])//角色不存在
+    {
+        cell.gameTitleImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+        cell.serverLabel.text=@"角色不存在";
+    }else{
+        if ([GameCommon isEmtity:gameImageId]) {
+            cell.gameTitleImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+        }else{
+            cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
+        }
+    }
     
     return cell;
 }

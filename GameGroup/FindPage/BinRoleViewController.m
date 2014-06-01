@@ -232,6 +232,13 @@
     }
     ValueLabel.text=[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value")];
     
+    CGSize numberSize = [NumLable.text sizeWithFont:[UIFont boldSystemFontOfSize:20] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    NumLable.frame=CGRectMake(10, 18, numberSize.width, 25);
+    CGRect imageCr=titleImageView.frame;
+    imageCr.origin.x=titleImageView.frame.origin.x+5;
+    titleImageView.frame=imageCr;
+
+    
     CGSize nameSize = [titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     titleLabel.frame=CGRectMake(90, 7, nameSize.width, 20);
     roleImageView.frame=CGRectMake(90+nameSize.width+5, 10, 15, 15);
