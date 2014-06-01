@@ -1197,11 +1197,6 @@
    [hud show:YES];
    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-    
-//        m_step3Scroll.hidden = YES;
-//        m_step4Scroll.hidden = NO;
-//        m_topImage.image = KUIImage(@"register_step_4");
-    
         [[NSUserDefaults standardUserDefaults] setValue:m_phoneNumText.text forKey:PhoneNumKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
@@ -1214,10 +1209,11 @@
        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
        [app.xmppHelper connect];
        [[UserManager singleton]getSayHiUserId];//获取打招呼id
-
+       NSMutableDictionary *userDic=KISDictionaryHaveKey(dic, @"gameproUser");
+       [userDic setObject:KISDictionaryHaveKey(userDic, @"id") forKey:@"userid"];
+       [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
+       [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:@"unknow"] ;
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
-       
-       
        
         [self dismissViewControllerAnimated:YES completion:^{
             if (_delegate && [_delegate respondsToSelector:@selector(RegisterViewControllerFinishRegister)]) {

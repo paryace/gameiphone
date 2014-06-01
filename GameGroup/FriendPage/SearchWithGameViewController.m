@@ -205,7 +205,7 @@
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
             binRole.dataDic=[self getBinDic:dic];;
             binRole.type=@"1";
-            binRole.gameId=KISDictionaryHaveKey(dic, @"id");
+            binRole.gameId=self.gameid;
             [self.navigationController pushViewController:binRole animated:YES];
             
             NSLog(@"通知好友绑定");
@@ -229,7 +229,7 @@
             BinRoleViewController *binRole=[[BinRoleViewController alloc] init];
             binRole.dataDic=[self getBinDic:dic];
             binRole.type=@"2";
-            binRole.gameId = KISDictionaryHaveKey(dic, @"id");
+            binRole.gameId = self.gameid;
             [self.navigationController pushViewController:binRole animated:YES];
         }
     }

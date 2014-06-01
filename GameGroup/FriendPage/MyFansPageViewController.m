@@ -59,11 +59,10 @@
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
     [self.view addSubview:m_myFansTableView];
-//    [self getFansList];
     [self addFooter];
     [self addHeader];
     [m_fansheader beginRefreshing];
-    [self getFansBySort];
+    [m_fansfooter endRefreshing];
 }
 
 - (void)reloadFansList:(NSNotification*)notification
@@ -104,7 +103,7 @@
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
                 m_otherSortFansArray=fans;
                 [self endLoad];
-                [self saveFansList:fans];
+//                [self saveFansList:fans];
             }
             else{
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");

@@ -98,19 +98,17 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
             if (m_pageNum ==0) {
-                NSArray *array = responseObject;
-                if (![KISDictionaryHaveKey(responseObject, @"users") isKindOfClass:[NSArray class]]||array.count<1) {
-                    NSLog(@"没东西");
+                NSMutableArray *userArray=KISDictionaryHaveKey(responseObject, @"users");
+                if (userArray.count<1) {
                     backpopAlertView = [[UIAlertView alloc]initWithTitle:nil message:@"用户不存在" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
                     [backpopAlertView show];
-
+                    return ;
                 }
                 m_titleLabel.text =[NSString stringWithFormat: @"查询结果%@",KISDictionaryHaveKey(responseObject,@"userTotalNum")];
                 [m_tabelData removeAllObjects];
                 [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
             }
             else{
-                
                 [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
 
             }

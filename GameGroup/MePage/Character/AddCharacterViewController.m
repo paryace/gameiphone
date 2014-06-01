@@ -136,7 +136,7 @@
             break;
     }
     
-    helplable = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 280, 30)];
+    helplable = [[UILabel alloc]initWithFrame:CGRectMake(10, startX+35+65, 280, 30)];
     helplable.backgroundColor =[ UIColor clearColor];
     helplable.textColor =kColorWithRGB(41, 164, 246, 1.0);
     helplable.font = [UIFont systemFontOfSize:12];
@@ -189,8 +189,6 @@
             cell.gameImg.hidden = NO;
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL=[ImageService getImageUrl4:imageId];
-//            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
-            
             m_serverNamePick.tag = indexPath.row;
             toolbar_server.tag = indexPath.row;
             

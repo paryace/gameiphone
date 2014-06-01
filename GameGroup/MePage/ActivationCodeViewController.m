@@ -262,12 +262,20 @@
         cell =[[CharaterOfmCell alloc ]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIndef];
     }
     NSDictionary *dic = [charaArray objectAtIndex:indexPath.row];
-    cell.heardImg.image  =[UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", [KISDictionaryHaveKey(dic, @"clazz") intValue]]];
+    NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+    NSString * gameid=KISDictionaryHaveKey(dic, @"gameid");
+    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:imageId]]) {
+        cell.heardImg.image  =[UIImage imageNamed:[NSString stringWithFormat:@"clazz_0"]];
+    }else{
+        cell.heardImg.imageURL=[ImageService getImageUrl4:imageId];
+    }
+    
     NSString* realm = [KISDictionaryHaveKey(dic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"raceObj"), @"sidename") : @"";
 
     cell.nameLabel.text = KISDictionaryHaveKey(dic, @"name");
     cell.realmLabel.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dic, @"realm"),realm];
-    cell.gameImg.image = KUIImage(@"wow");
+    NSString * gameImageid=[GameCommon putoutgameIconWithGameId:gameid];
+    cell.gameImg.imageURL=[ImageService getImageUrl4:gameImageid];
     return cell;
     
 }

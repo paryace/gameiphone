@@ -87,11 +87,11 @@
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?64:44))];
+    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?60:40))];
 
     [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
 
-    m_charaDetailsView.contentSize = CGSizeMake(320, 630);
+    m_charaDetailsView.contentSize = CGSizeMake(320, 640);
     m_charaDetailsView.myCharaterDelegate = self;
     
     m_charaDetailsView.topImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"gameTopImg_%@.jpg",self.gameId]];
@@ -124,20 +124,20 @@
     if (self.myViewType ==CHARA_INFO_MYSELF) {
         m_charaDetailsView.isComeTo = YES;
         
-        m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
+        m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_contentTableView];
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
         m_contentTableView.bounces = NO;
         m_contentTableView.scrollEnabled = NO;
-        m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(640, 0, 320, 300) style:UITableViewStylePlain];
+        m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(640, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_countryTableView];
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
         m_countryTableView.bounces = NO;
         m_countryTableView.scrollEnabled = NO;
 
-        m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 300) style:UITableViewStylePlain];
+        m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_reamlTableView];
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
@@ -146,7 +146,7 @@
 
     }else if(self.myViewType ==CHARA_INFO_PERSON){
         m_charaDetailsView.isComeTo = NO;
-        m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
+        m_contentTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_contentTableView];
         m_contentTableView.dataSource = self;
         m_contentTableView.delegate = self;
@@ -155,7 +155,7 @@
         m_contentTableView.scrollEnabled = NO;
 
         
-        m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 300) style:UITableViewStylePlain];
+        m_countryTableView = [[UITableView alloc] initWithFrame:CGRectMake(320, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_countryTableView];
         m_countryTableView.dataSource = self;
         m_countryTableView.delegate = self;
@@ -163,7 +163,7 @@
         m_countryTableView.scrollEnabled = NO;
 
         
-        m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 300) style:UITableViewStylePlain];
+        m_reamlTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 310) style:UITableViewStylePlain];
         [m_charaDetailsView.listScrollView addSubview:m_reamlTableView];
         m_reamlTableView.dataSource = self;
         m_reamlTableView.delegate = self;
@@ -503,9 +503,9 @@
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"value1");
     cell.topImgView.image = KUIImage(@"paiming_ico");
     cell.CountLabel.text = KISDictionaryHaveKey(dic, @"value2");
-    CGSize size = [cell.CountLabel.text sizeWithFont:cell.CountLabel.font constrainedToSize:CGSizeMake(150, 60) lineBreakMode:NSLineBreakByCharWrapping];
+    CGSize size = [cell.CountLabel.text sizeWithFont:cell.CountLabel.font constrainedToSize:CGSizeMake(150, 55) lineBreakMode:NSLineBreakByCharWrapping];
     
-    cell.CountLabel.frame = CGRectMake(58, 35, 150, size.height);
+    cell.CountLabel.frame = CGRectMake(58, 33, 150, size.height);
     
     NSLog(@"cell.........%@",cell.CountLabel);
     NSDictionary *contentDic = [NSDictionary dictionary];
@@ -548,7 +548,7 @@
 
     CGSize size =[ KISDictionaryHaveKey(dic, @"value2") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(150, 60) lineBreakMode:NSLineBreakByCharWrapping];
     if (size.height>30) {
-        return 37+size.height;
+        return 35+size.height;
     }else {
         return 55;
     }

@@ -461,8 +461,6 @@ UINavigationControllerDelegate>
             {
                 cell.msgImageView.imageURL = nil;
             }
-            
-            
             cell.msgImageView.hidden = NO;
             
             //msgImageView响应手势
@@ -1164,55 +1162,6 @@ UINavigationControllerDelegate>
     NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
     return imageData;
 }
-
-//#pragma mark 图片聊天上传图片
-//-(void)uploadImage:(UIImage*)image cellIndex:(int)index
-//{
-//    //开启进度条 - 在最后一个ＣＥＬＬ处。
-//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
-//    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//    cell.progressView.hidden = NO;
-//    cell.progressView.progress = 0.0f;
-//   
-//    NetManager *netmanager=[[NetManager alloc] init];
-//    [netmanager uploadImage:image WithURLStr:BaseUploadImageUrl ImageName:@"1" TheController:self
-//    Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)
-//    {
-//        @synchronized (self) {
-//            double progress = (double)totalBytesWritten/(double)totalBytesExpectedToWrite;
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                NSLog(@"fafafaf-------->>>%f",progress);
-//                cell.progressView.progress = progress;
-//                if (progress == 1) {
-//                    cell.progressView.progress = 1.0f;
-//                    cell.progressView.hidden = YES;
-//                }
-//            });
-//        }
-//    }
-//    Success:^(AFHTTPRequestOperation *operation, id responseObject)
-//     {
-//         NSString *imageMsg = [NSString stringWithFormat:@"%@",responseObject];
-//         dispatch_async(dispatch_get_main_queue(), ^{
-//             cell.progressView.hidden = YES;
-//             if(index < messages.count){
-//                 [self sendImageMsg:imageMsg UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];    //改图片地址，并发送消息
-//             }
-//         });
-//     }
-//    failure:^(AFHTTPRequestOperation *operation, NSError *error)
-//     {
-//         dispatch_async(dispatch_get_main_queue(), ^{
-//             cell.progressView.hidden = YES;
-//             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil
-//                                                   cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
-//             [alert show];
-//             [self refreMessageStatus:index Status:@"0"];
-//         });
-//     }];
-//}
-
-
 // 刷新消息状态
 -(void)refreMessageStatus:(int)index Status:(NSString*)status
 {
@@ -1244,7 +1193,6 @@ UINavigationControllerDelegate>
         [UnActionAlertV show];
         return ;
     }
-    //    if (!ifEmoji||self.kkchatInputType != KKChatInputTypeEmoji) {
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
         self.kkchatInputType = KKChatInputTypeEmoji;
@@ -1323,7 +1271,9 @@ UINavigationControllerDelegate>
         case KKChatInputTypeAdd:
         {
             [self.textView resignFirstResponder];
+            
             self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            NSLog(@"-----%f",self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
             self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
@@ -1431,7 +1381,6 @@ UINavigationControllerDelegate>
 	self.inPutView.frame = containerFrame;
 
     if (messages.count<4) {//有点不太合理的做法
-//        CGRect cgmm1=CGRectMake(0.0f,startX,320.0f,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h-20);
         CGRect cgmm = self.tView.frame;
         cgmm.size.height=self.view.frame.size.height-startX-55-h;
         self.tView.frame=cgmm;
@@ -1439,6 +1388,9 @@ UINavigationControllerDelegate>
         CGRect cgmm = self.tView.frame;
         if (cgmm.size.height<(self.view.frame.size.height-startX-55)) {
             cgmm.size.height=self.view.frame.size.height-startX-55;
+        }
+        if (self.inPutView.frame.size.height>50) {
+            h+=(self.inPutView.frame.size.height-50);
         }
         cgmm.origin.y = startX-h;
         self.tView.frame=cgmm;
@@ -1474,9 +1426,6 @@ UINavigationControllerDelegate>
                                                    cancelButtonTitle:@"取消"
                                                    otherButtonTitles:@"去激活", nil];
     [UnActionAlertV show];
-    
-//    [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]
-//                          forState:UIControlStateNormal];
     return NO;
 }
 
@@ -1763,9 +1712,6 @@ UINavigationControllerDelegate>
     return YES;
 }
 -(BOOL)canPerformAction:(SEL)action withSender:(id)sender{
-    //    return (action == @selector(copyMsg));
-    //    return (action == @selector(transferMsg));
-    //    return (action == @selector(deleteMsg));
     if (action == @selector(copyMsg) || action == @selector(transferMsg) || action == @selector(deleteMsg))
     {
         return YES;
@@ -1839,7 +1785,6 @@ UINavigationControllerDelegate>
 
 #pragma mark 发送图片消息
 - (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{
-    NSLog(@"图片上传成功， 开始发送图片消息+++++%@",[imageMsg class]);
     if (imageMsg.length==0)
     {
         return;
@@ -1854,6 +1799,7 @@ UINavigationControllerDelegate>
     NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
     NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
     NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
+    [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
     [self refreWX];

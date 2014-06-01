@@ -647,50 +647,18 @@
     
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
     
-//    int imageId = [KISDictionaryHaveKey(tempDic, @"clazz") intValue];
-    
-//    if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
-//    {
-//        cell.headerImageView.image = [UIImage imageNamed:@"clazz_0.png"];
-//        cell.serverLabel.text = @"角色不存在";
-//    }
-//    else{
-//    
-//    if (imageId > 0 && imageId < 12) {//1~11
-//        cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d", imageId]];
-//    }
-//    else
-//        cell.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(tempDic, @"img")]];
     NSString * imageId=KISDictionaryHaveKey(tempDic, @"img");
     cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
-    
-    
     
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
     NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
     cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
-    
-//    cell.gameTitleImage.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]]];
-    
     NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
     cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
     
     return cell;
 }
-////头像地址
-//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-//{
-//    if ([imageUrl isEqualToString:@""]|| [imageUrl isEqualToString:@" "]) {
-//        return nil;
-//    }else{
-//        if ([GameCommon getNewStringWithId:imageUrl]) {
-//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/80/80"]];
-//        }else{
-//            return  nil;
-//        }
-//    }
-//}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *tempDic =[m_characterArray objectAtIndex:indexPath.row];

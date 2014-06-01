@@ -27,7 +27,7 @@
     
         [self buildRoleView];
 
-        self.listScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 236, 320, 300)];
+        self.listScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 236, 320, 310)];
         self.listScrollView.pagingEnabled = YES;
         self.listScrollView.contentOffset = CGPointMake(m_pageNum*self.listScrollView.bounds.size.width, 0);
         self.listScrollView.delegate = self;
@@ -36,14 +36,14 @@
 
         [self addSubview:self.listScrollView];
 
-        self.unlessLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 306, 320, 55)];
+        self.unlessLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 310, 320, 55)];
         self.unlessLabel.text = @"正在向英雄榜获取数据中...";
         self.unlessLabel.textAlignment = NSTextAlignmentCenter;
         self.unlessLabel.backgroundColor = [UIColor whiteColor];
         self.unlessLabel.hidden =NO;
         [self addSubview:self.unlessLabel];
 
-        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 536, 320, 45)];
+        self.helpLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 546, 320, 45)];
         self.helpLabel.text = @"如何获得PVP/PVE战斗力";
         self.helpLabel.backgroundColor = [UIColor whiteColor];
         self.helpLabel.userInteractionEnabled = YES;

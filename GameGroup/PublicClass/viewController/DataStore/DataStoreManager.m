@@ -450,6 +450,15 @@
     }];
 }
 
++(void)changeMyMessage:(NSString *)messageuuid PayLoad:(NSString*)payload
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",messageuuid];
+        DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
+        commonMsg.payload = payload;//动态 消息json
+    }];
+}
+
 
 
 +(NSString *)queryMsgRemarkNameForUser:(NSString *)userid

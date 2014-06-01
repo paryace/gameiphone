@@ -170,5 +170,7 @@
 
 +(DSThumbMsgs*)qureySayHiMsg:(NSString *)type;
 
++(void)changeMyMessage:(NSString *)messageuuid PayLoad:(NSString*)payload;
+
 
 @end
