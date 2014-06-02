@@ -299,7 +299,12 @@
         if (firstSayHiMsg) {
             NSString *nickName=[firstSayHiMsg senderNickname];
             NSString *msgContent=[firstSayHiMsg msgContent];
-            cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
+            if (nickName&&msgContent) {
+                cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
+            }else{
+                cell.contentLabel.text =@"";
+            }
+            
             cell.nameLabel.text = @"有新的打招呼信息";
         }
         

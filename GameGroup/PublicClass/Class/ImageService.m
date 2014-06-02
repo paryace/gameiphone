@@ -13,16 +13,21 @@
 +(NSURL*)getImageUrl:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height
 {
     if ([GameCommon isPureInt:imageid]) {
+         NSLog(@"ImageUrl－－>>%@",[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]);
         return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]];
+       
     }
+    NSLog(@"ImageUrl－－>>%@",[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height]);
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height]];
 }
 //返回带宽高的图片地址String
 +(NSString*)getImageUrlString:(NSString*)imageid Width:(NSInteger)width Height:(NSInteger)height
 {
     if ([GameCommon isPureInt:imageid]) {
+         NSLog(@"ImageUrl－－>>%@",[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height]);
         return [NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"/",width,@"/",height];
     }
+      NSLog(@"ImageUrl－－>>%@",[NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height]);
     return [NSString stringWithFormat:@"%@%@%d%@%d",[self getImgUrl:imageid],@"?imageView2/1/w/",width,@"/h/",height];
 }
 //传入单个图片id，返回默认宽高相等的完整图片路径
