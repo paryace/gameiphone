@@ -127,9 +127,16 @@
     }else{
         if (allUrl) {//返回完整路径
             if (width>0) {//指定宽高
-                [imageList addObject:[self getImageUrl3:imgs Width:width]];
+                NSURL *url1=[self getImageUrl3:imgs Width:width];
+                if (url1) {
+                    [imageList addObject:url1];
+                }
+                
             }else{//没有指定宽高
-                [imageList addObject:[self getImageUrl4:imgs]];
+                NSURL *url2=[self getImageUrl4:imgs];
+                if (url2) {
+                    [imageList addObject:url2];
+                }
             }
         }else{//仅返回图片id
             [imageList addObject:imgs];

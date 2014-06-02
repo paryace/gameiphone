@@ -649,25 +649,25 @@
     
     NSString * imageId=KISDictionaryHaveKey(tempDic, @"img");
     NSString * fialMsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
-    cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
-    
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
-    NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
-    cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
-    cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
-    NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+     NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
     if ([fialMsg isEqualToString:@"404"])//角色不存在
     {
-        cell.gameTitleImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+        cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
         cell.serverLabel.text=@"角色不存在";
     }else{
-        if ([GameCommon isEmtity:gameImageId]) {
-            cell.gameTitleImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+        if ([GameCommon isEmtity:imageId]) {
+            cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
         }else{
-            cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
+            cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
         }
+        cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
     }
     
+   
+    cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
+    NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+   cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

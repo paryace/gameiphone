@@ -24,6 +24,7 @@
 +(UIImage*)compressImage:(UIImage*)theImage targetSizeX:(CGFloat) sizeX targetSizeY:(CGFloat) sizeY; //图片压缩 设置最宽，按比例压缩
 
 + (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
++ (UIImage *) image2: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
 
 +(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion;
 

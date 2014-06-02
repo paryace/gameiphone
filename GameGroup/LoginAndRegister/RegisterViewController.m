@@ -498,11 +498,6 @@
         [self showAlertViewWithTitle:@"提示" message:@"请输入验证码！" buttonTitle:@"确定"];
         return;
     }
-    if ([m_verCodeTimer isValid]) {
-        [m_verCodeTimer invalidate];
-        m_verCodeTimer = nil;
-    }
-
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     [params setObject:m_phoneNumText.text forKey:@"phoneNum"];
     [params setObject:m_verCodeTextField.text forKey:@"xcode"];
@@ -517,6 +512,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
+        if ([m_verCodeTimer isValid]) {
+            [m_verCodeTimer invalidate];
+            m_verCodeTimer = nil;
+        }
 
         NSLog(@"%@", responseObject);
     

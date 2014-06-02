@@ -753,8 +753,10 @@
 //    CGImageRef cgimg = CGImageCreateWithImageInRect([selectImage CGImage], rect);
 //    imgV.image = [UIImage imageWithCGImage:cgimg];
 //    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
-
+    
+    
     UIImage * afterImage= [NetManager image:selectImage centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
+    
     imgV.image = afterImage;
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];

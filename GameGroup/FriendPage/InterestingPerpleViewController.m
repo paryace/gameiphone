@@ -607,6 +607,7 @@ typedef enum : NSUInteger {
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
+        hud.labelText = @"加载中...";
         [self getInfoWithNet];
         
     };

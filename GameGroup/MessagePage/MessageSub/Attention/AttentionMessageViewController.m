@@ -41,6 +41,10 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self initTableList];
+}
+-(void)initTableList
+{
     self.dataArray = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"2"];
     titleLabel.text =[NSString stringWithFormat:@"打招呼(%d)",self.dataArray.count];
     [m_myTableView reloadData];
@@ -185,11 +189,8 @@
 {
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
-        //NSDictionary* tempDic = [self.dataArray objectAtIndex:indexPath.row];
-
             [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]]];
-        [self.dataArray removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        [self initTableList];
     }
 }
 

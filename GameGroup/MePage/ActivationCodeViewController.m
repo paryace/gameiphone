@@ -264,17 +264,23 @@
     NSDictionary *dic = [charaArray objectAtIndex:indexPath.row];
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
     NSString * gameid=KISDictionaryHaveKey(dic, @"gameid");
-    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:imageId]]) {
+    NSString * failedmsg=KISDictionaryHaveKey(dic, @"failedmsg");
+      NSString* realm = [KISDictionaryHaveKey(dic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"raceObj"), @"sidename") : @"";
+    if ([failedmsg isEqualToString:@"404"]) {
         cell.heardImg.image  =[UIImage imageNamed:[NSString stringWithFormat:@"clazz_0"]];
+        cell.realmLabel.text =@"角色不存在";
     }else{
-        cell.heardImg.imageURL=[ImageService getImageUrl4:imageId];
+        if ([GameCommon isEmtity:[GameCommon getNewStringWithId:imageId]]) {
+            cell.heardImg.image  =[UIImage imageNamed:[NSString stringWithFormat:@"clazz_0"]];
+        }else{
+            cell.heardImg.imageURL=[ImageService getImageUrl4:imageId];
+        }
+        cell.realmLabel.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dic, @"realm"),realm];
     }
-    
-    NSString* realm = [KISDictionaryHaveKey(dic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"raceObj"), @"sidename") : @"";
-
     cell.nameLabel.text = KISDictionaryHaveKey(dic, @"name");
-    cell.realmLabel.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dic, @"realm"),realm];
+    
     NSString * gameImageid=[GameCommon putoutgameIconWithGameId:gameid];
+    
     cell.gameImg.imageURL=[ImageService getImageUrl4:gameImageid];
     return cell;
     

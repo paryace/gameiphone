@@ -198,22 +198,13 @@ typedef enum : NSUInteger {
     //头像
     headImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(230, 280, 80, 80)];
     headImageView.placeholderImage = KUIImage(@"placeholder");
-    
-//    headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,self.imageStr]];
-    
     headImageView.imageURL = [ImageService getImageUrl4:self.imageStr];
     
     headImageView.layer.cornerRadius = 5;
     headImageView.layer.masksToBounds=YES;
     [headImageView addTarget:self action:@selector(enterPersonViewController:) forControlEvents:UIControlEventTouchDown];
-    
-    
-//    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
-    
     NSString * headImageIds=KISDictionaryHaveKey(user, @"img");
     headImageView.imageURL = [ImageService getImageStr2:headImageIds];
-    
-    
     
     [topVIew addSubview:headImageView];
 
@@ -290,8 +281,6 @@ typedef enum : NSUInteger {
         {
             aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
             
-            
-//           aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img")],@"/60/60"]];
         }
         
         
@@ -319,8 +308,6 @@ typedef enum : NSUInteger {
     m_loginActivity.center = CGPointMake(110, KISHighVersion_7?42:22);
     m_loginActivity.color = [UIColor whiteColor];
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
-    // [m_loginActivity startAnimating];
-
     
     
     
@@ -336,7 +323,7 @@ typedef enum : NSUInteger {
     
     //创建评论框
     [self buildcommentView];
-    NSString * path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+    NSString * path = [[RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx_"]stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if ([NSMutableArray arrayWithContentsOfFile:path]) {
         m_dataArray= [NSMutableArray arrayWithContentsOfFile:path];
         if (m_dataArray.count<1) {
@@ -679,7 +666,7 @@ typedef enum : NSUInteger {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
             NSArray *arraaay =KISDictionaryHaveKey(responseObject, @"dynamicMsgList");
-            if (([arraaay isKindOfClass:[NSArray class]]||arraaay.count>0)&&ishavehuancun) {
+            if (([arraaay isKindOfClass:[NSArray class]]&&arraaay.count>0)&&ishavehuancun) {
                 
                 [UIView beginAnimations:nil context:nil];
                 [UIView setAnimationDuration:0.4];
@@ -1677,7 +1664,7 @@ typedef enum : NSUInteger {
 -(void)saveinfoToUserDefaults:(NSMutableArray *)array
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx"];
+    NSString *path = [[RootDocPath stringByAppendingString:@"/circleFriend_huancun_01_wx_"] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
     NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
     
