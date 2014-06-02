@@ -547,11 +547,6 @@
 	
     return newimg;
 }
-
-
-
-
-
 //将原图显示为指定大小。先按比例缩放，再居中裁剪
 + (UIImage *) image2: (UIImage *) image centerInSize: (CGSize) viewsize
 {
@@ -560,20 +555,18 @@
     float dheight = 0.0f;
     float rate = 0.0f;
     
-    if (size.width> size.height)//宽为长边
-    {
-        rate = viewsize.height / size.height;
+    float rate1 = viewsize.height / size.height;
+    float rate2  = viewsize.width / size.width;
+    if(rate1>rate2){
+        rate=rate1;
         float w = rate * size.width;
         dwidth = (viewsize.width - w) / 2.0f;
         dheight = 0;
-    }
-    else    //长为长边
-    {
-        rate = viewsize.width / size.width;
-        float h = rate * size.height;
+    }else{
+        rate=rate2;
+        float w = rate * size.height;
+        dheight = (viewsize.height - w) / 2.0f;
         dwidth = 0;
-        dheight = (viewsize.height - h) /2.0f;
-        
     }
     CGRect rect = CGRectMake(dwidth, dheight, size.width*rate, size.height*rate);
 	UIGraphicsBeginImageContext(viewsize);

@@ -755,7 +755,7 @@
 //    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
     
     
-    UIImage * afterImage= [NetManager image:selectImage centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
+    UIImage * afterImage= [NetManager image2:selectImage centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
     
     imgV.image = afterImage;
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);

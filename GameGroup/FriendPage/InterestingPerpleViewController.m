@@ -629,6 +629,7 @@ typedef enum : NSUInteger {
     footer.activityView.center = footer.arrowImage.center;
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        hud.labelText = @"加载中...";
         [self getInfoWithNet];
     };
     m_footer = footer;

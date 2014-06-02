@@ -289,6 +289,12 @@
 {
     NSDictionary *dic = [charaArray objectAtIndex:indexPath.row];
     NSString* realm = [KISDictionaryHaveKey(dic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"raceObj"), @"sidename") : @"";
+    NSString * faileMsg=KISDictionaryHaveKey(dic, @"failedmsg");
+    if ([faileMsg isEqualToString:@"404"])//角色不存在
+    {
+        return;
+    }
+  
     [textField1 resignFirstResponder];
     textField1.text =[NSString stringWithFormat:@"%@ %@ %@",KISDictionaryHaveKey(dic,@"name"),KISDictionaryHaveKey(dic,@"realm"),realm];
     charaterId = KISDictionaryHaveKey(dic, @"id");
