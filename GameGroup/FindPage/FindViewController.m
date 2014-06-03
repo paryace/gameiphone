@@ -205,7 +205,7 @@
         imgV.image = image;
 
     }else{
-         UIImage * afterImage= [NetManager image:KUIImage(@"bg") centerInSize:CGSizeMake(kScreenWidth, kScreenHeigth)];
+        UIImage * afterImage= [NetManager image2:KUIImage(@"bg") centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
         imgV.image = afterImage;
     }
     imgV.center = self.view.center;
@@ -779,7 +779,7 @@
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
-        m_menuButton.center = CGPointMake(160,KISHighVersion_7?430:340);
+        m_menuButton.center = CGPointMake(160,iPhone5?430:330);
 
         [UIView commitAnimations];
 
