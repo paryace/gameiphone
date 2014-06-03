@@ -795,10 +795,13 @@
 }
 +(DSThumbMsgs*)qureySayHiMsg:(NSString *)type
 {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sayHiType==[c]%@", type];
-        DSThumbMsgs * firstSayHiMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate sortedBy:@"receiveTime" ascending:NO];
-        return firstSayHiMsg;
+    NSArray * hh=[self qureyAllThumbMessagesWithType:type];
+    if(hh.count>0){
+        return [hh objectAtIndex:hh.count-1];
+    }
+    return nil;
 }
+
 //检查消息是否存在
 +(BOOL)isHaveSayHiMsg:(NSString *)type
 {
