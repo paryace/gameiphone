@@ -143,6 +143,7 @@
     helplable.textAlignment = NSTextAlignmentRight;
     helplable.text = @"角色为何无法添加/绑定?";
     helplable.userInteractionEnabled = YES;
+    helplable.hidden =YES;
     [helplable addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHelp:)]];
     [self.view addSubview:helplable];
     
@@ -271,6 +272,7 @@
         [m_dataArray addObjectsFromArray:sarchArray];
         m_okButton.hidden = NO;
         m_myTableView.frame = CGRectMake(0, startX+44, 320, 44*m_dataArray.count);
+        helplable.hidden =NO;
         helplable.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 280, 30);
         m_okButton.frame = CGRectMake(10, startX+94+44*m_dataArray.count, 300, 40);
         [m_myTableView reloadData];
