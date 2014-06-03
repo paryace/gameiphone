@@ -207,6 +207,23 @@
             m_infoDic = KISDictionaryHaveKey(responseObject, @"ranking");
             m_tabListArray = KISDictionaryHaveKey(responseObject, @"tabList");
             
+            float tabHeight = 0;
+            for (int i = 0; i<m_nameArray.count; i++) {
+                NSDictionary *dic = m_nameArray[i];
+                CGSize size =[ KISDictionaryHaveKey(dic, @"value2") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(150, 60) lineBreakMode:NSLineBreakByCharWrapping];
+                float height =0;
+                
+                if (size.height>30) {
+                    height =  35+size.height;
+                }else {
+                    height = 55;
+                }
+                tabHeight +=height;
+            }
+
+            
+            
+            
             if (self.myViewType ==CHARA_INFO_PERSON){
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
@@ -454,20 +471,12 @@
             alertView1.tag = 56;
             [alertView1 show];
         }
-
     }];
 
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView ==m_contentTableView) {
-        return m_nameArray.count;
-    }else if (tableView ==m_contentTableView)
-    {
-        return m_nameArray.count;
-    }else{
-        return m_nameArray.count;
-    }
+    return m_nameArray.count;
 }
 
 -(NSMutableArray *)finishingDisgustingDataWithDic:(NSDictionary *)dic num:(NSString *)num
@@ -578,6 +587,7 @@
             ranking.server = KISDictionaryHaveKey(dicta, @"name");
         }
     }
+    ranking.gameId = self.gameId;
     ranking.characterid =self.characterId;
     ranking.userId = self.userId;
     ranking.pageCount1 = -1;

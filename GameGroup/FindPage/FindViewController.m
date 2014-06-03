@@ -187,8 +187,6 @@
     self.view.backgroundColor = [UIColor darkGrayColor];
     isDidClick = YES;
     curren_hieght =kScreenHeigth;
-    // Do any additional setup after loading the view.
-//    self.view.backgroundColor = [UIColor blackColor];
     manDic = [NSDictionary new];
     
     //初始化背景图片 并且添加点击换图方法
@@ -198,10 +196,6 @@
         NSData *data =[[NSUserDefaults standardUserDefaults]objectForKey:@"bgImgForFinder_wx"];
         
         UIImage *image =[UIImage imageWithData:data];
-//        CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*image.size.width,  image.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
-//        CGImageRef cgimg = CGImageCreateWithImageInRect([image CGImage], rect);
-//        imgV.image = [UIImage imageWithCGImage:cgimg];
-//        CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
         imgV.image = image;
 
     }else{
@@ -647,6 +641,7 @@
     if (sender ==encoBtn) {  //许愿
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         EncoXHViewController *enco = [[EncoXHViewController alloc]init];
+        enco.gameId = KISDictionaryHaveKey(manDic, @"id");
         [self.navigationController pushViewController:enco animated:YES];
         
     }
@@ -756,7 +751,7 @@
 //    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
     
     
-    UIImage * afterImage= [NetManager image2:selectImage centerInSize:CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height+10)];
+    UIImage * afterImage= [NetManager image2:selectImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
     
     imgV.image = afterImage;
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);

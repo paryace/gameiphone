@@ -50,6 +50,7 @@
 #define BaseHelpUrl @"http://58.83.193.120/faq/"
 #define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
 #define BinRoleUrl @"http://58.83.193.120/share/role.html?"
+#define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
 
 
 //#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
@@ -60,6 +61,9 @@
 //#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
 //#define BaseHelpUrl @"http://211.122.66.243/h5/help/"
 //#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
+//#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
+//#define BaseAuthRoleUrl @"http://221.122.66.243/share/certificate.html?"//角色认证
+
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

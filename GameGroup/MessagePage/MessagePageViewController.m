@@ -296,8 +296,8 @@
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
         if (firstSayHiMsg) {
-            NSString *nickName=[firstSayHiMsg senderNickname];
-            NSString *msgContent=[firstSayHiMsg msgContent];
+            NSString *nickName=[GameCommon getNewStringWithId:[firstSayHiMsg senderNickname]];
+            NSString *msgContent=[GameCommon getNewStringWithId:[firstSayHiMsg msgContent]];
             if (nickName&&msgContent) {
                 cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
             }else{

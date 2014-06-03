@@ -71,11 +71,6 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
     
-    
-    
-    
-    
-    
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -689,7 +684,7 @@
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
-            if([gameId isEqualToString:@"1"])
+            if([gameId isEqualToString:@"1"]||[gameId isEqualToString:@"2"])
             {
                 [[Custom_tabbar showTabBar] hideTabBar:YES];
                 CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
