@@ -1006,7 +1006,7 @@
                 [theDict setObject:remarkName forKey:@"displayName"];
             }
             else if(![nickName isEqualToString:@""]){
-                [theDict setObject:nickName forKey:@"displayName"];
+                [theDict setObject:nickName?nickName:@"" forKey:@"displayName"];
             }
             else
             {
@@ -1830,7 +1830,7 @@ return @"";
                 [theDict setObject:remarkName forKey:@"displayName"];
             }
             else if(![nickName isEqualToString:@""]){
-                [theDict setObject:nickName forKey:@"displayName"];
+                [theDict setObject:nickName?nickName:@"" forKey:@"displayName"];
             }
             else
             {
