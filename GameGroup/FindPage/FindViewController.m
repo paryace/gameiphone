@@ -205,7 +205,7 @@
         imgV.image = image;
 
     }else{
-        UIImage * defaultImage=KUIImage(@"bg_04");
+        UIImage * defaultImage=KUIImage(@"bg");
         UIImage * afterImage= [NetManager image2:defaultImage centerInSize:CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)];
         imgV.image = afterImage;
     }
