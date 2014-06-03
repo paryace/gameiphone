@@ -306,7 +306,7 @@
             
             
         }
-        cell.titleImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d",[KISDictionaryHaveKey(dic,@"characterclassid")intValue]]];
+        cell.titleImageView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(dic,@"characterImg")];
         
         cell.NumLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"rank")];
         
@@ -385,7 +385,7 @@
         
         
         
-        cell.titleImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d",[KISDictionaryHaveKey(dic,@"characterclassid")intValue]]];
+        cell.titleImageView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(dic,@"characterImg")];
         
         cell.NumLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"rank")];
         
@@ -449,7 +449,7 @@
         
         
         NSLog(@"服务器%@",KISDictionaryHaveKey(dic,@"realm"));
-        cell.titleImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_%d",[KISDictionaryHaveKey(dic,@"characterclassid")intValue]]];
+        cell.titleImageView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(dic,@"characterImg")];
         cell.NumLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"rank")];
         cell.titleLabel.text = KISDictionaryHaveKey(dic, @"charactername");
         

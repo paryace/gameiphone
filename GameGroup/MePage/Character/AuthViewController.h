@@ -14,7 +14,7 @@
 
 @end
 
-@interface AuthViewController : BaseViewController<UIAlertViewDelegate>
+@interface AuthViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate>
 
 @property(nonatomic,strong)NSString* gameId;
 

@@ -517,8 +517,13 @@
        else if (COME_TYPE ==3) {
            NSArray *array = responseObject;
             if ([array isKindOfClass:[NSArray class]]&&array.count>0) {
-                [m_characterArray addObjectsFromArray:responseObject];
-                
+                for (NSDictionary *dic  in array) {
+                    NSString *gameidStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
+                    if ([gameidStr intValue] ==[self.gameId intValue]) {
+                        [m_characterArray addObject:dic];
+                    }
+                    NSLog(@"-------->%@---->%@",gameidStr,self.gameId);
+                }
                 
                 if (m_characterArray.count ==1) {
                     m_tableView.hidden = YES;

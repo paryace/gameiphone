@@ -138,6 +138,7 @@
             [thumbMsgs MR_deleteInContext:localContext];
         }
     }];
+    
 }
 +(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType
 {
@@ -796,7 +797,7 @@
 +(DSThumbMsgs*)qureySayHiMsg:(NSString *)type
 {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sayHiType==[c]%@", type];
-        DSThumbMsgs * firstSayHiMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate sortedBy:@"receiveTime" ascending:NO];
+        DSThumbMsgs * firstSayHiMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate sortedBy:@"receiveTime" ascending:YES];
         return firstSayHiMsg;
 }
 //检查消息是否存在
