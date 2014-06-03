@@ -47,7 +47,7 @@
     addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [addButton setBackgroundImage:KUIImage(@"add_button_normal") forState:UIControlStateNormal];
     [addButton setBackgroundImage:KUIImage(@"add_button_click") forState:UIControlStateHighlighted];
-    [self.view addSubview:addButton];
+//    [self.view addSubview:addButton];
     [addButton addTarget:self action:@selector(addButtonClick:) forControlEvents:UIControlEventTouchUpInside];
 
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];

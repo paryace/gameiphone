@@ -78,7 +78,7 @@
         }
     }
     CGSize ageSize = [self.ageLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:10.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    CGFloat w=(gameIds.count*18)+(gameIds.count*4)-4;
+    CGFloat w=(gameIds.count*18)+(gameIds.count*6)-6;
     UIView * gV=[self getGameIconUIView:gameIds X:95 + ageSize.width Y:26 Width:w Height:18];
     gV.tag=122222;
     [self.backgroudImageV addSubview:gV];

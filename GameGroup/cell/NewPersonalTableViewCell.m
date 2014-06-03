@@ -50,7 +50,7 @@
             [uv removeFromSuperview];
         }
     }
-    CGFloat w=(gameIds.count*20)+(gameIds.count*4)-4;
+    CGFloat w=(gameIds.count*20)+(gameIds.count*6)-6;
     UIView *gV=[self getGameIconUIView:gameIds X:320-30-w Y:20 Width:w Height:20];
     gV.tag=122222;
     [self.bgView addSubview:gV];
