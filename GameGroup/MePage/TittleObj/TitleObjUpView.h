@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
 
-@interface TitleObjUpView : UIView
+@interface TitleObjUpView : UIView<EGOImageViewDelegate>
 
 @property(nonatomic,strong)NSString* rightImageId;
 @property(nonatomic,strong)NSString* gameId;

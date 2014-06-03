@@ -35,7 +35,7 @@
 
 -(void)getRightImageFromNet
 {
-    self.rightBgImage.image = KUIImage(@"title_bg_default.jpg");
+    self.rightBgImage.placeholderImage=KUIImage(@"title_bg_default.jpg");
     self.waitImageView = [[UIImageView alloc] initWithFrame:CGRectMake(kScreenHeigth - 110, 300/2 - 45/2, 45, 45)];
     NSMutableArray *arr = [[NSMutableArray alloc] initWithCapacity:1];
     for (int i = 1; i < 8; i++) {
@@ -48,19 +48,28 @@
     [self.waitImageView startAnimating];
     self.rightBgImage.imageURL = [ImageService getImageUrl4:self.rightImageId];
 //    [self getImageByNetWithImageId:self.rightImageId];
-    
     [self addSubview:self.rightBgImage];
-    
-//    [self addSubview:self.waitImageView];
+    [self addSubview:self.waitImageView];
     
     self.waitLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(kScreenHeigth - 120, 300/2 - 45/2 + 45, 64, 30) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:15.0] text:@"加载中..." textAlignment:NSTextAlignmentCenter];
 //    [self addSubview:self.waitLabel];
+}
+- (void)imageViewLoadedImage:(EGOImageView*)imageView
+{
+    self.waitLabel.hidden = YES;
+    [self.waitImageView stopAnimating];
+}
+- (void)imageViewFailedToLoadImage:(EGOImageView*)imageView error:(NSError*)error
+{
+    self.waitLabel.hidden = YES;
+    [self.waitImageView stopAnimating];
 }
 - (void)setMainView
 {
     float viewWidth = self.frame.size.width;//568 480
     self.rightBgImage = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, self.frame.size.height)];
     self.rightBgImage.backgroundColor = [UIColor clearColor];
+    self.rightBgImage.delegate=self;
     NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",self.rightImageId]];
     NSLog(@"path%@",path);
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -70,6 +79,7 @@
         if (imageData==nil) {
             [self getRightImageFromNet];
         }else{
+            
             self.rightBgImage.image = imageData;
             [self addSubview:self.rightBgImage];
         }
@@ -216,14 +226,4 @@
      }
      ];
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
-
 @end
