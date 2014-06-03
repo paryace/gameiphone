@@ -241,14 +241,13 @@
     }
 }
 
-
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {
     [allMsgArray removeAllObjects];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
-    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     allMsgArray = [array mutableCopy];
+    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }
