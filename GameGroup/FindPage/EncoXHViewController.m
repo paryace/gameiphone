@@ -541,7 +541,16 @@
                     
                     charaterId =KISDictionaryHaveKey([m_characterArray objectAtIndex:0], @"id");
                     [self getEncoXhinfoWithNet:[m_characterArray objectAtIndex:0]];
-                }else{
+                }
+                else if (m_characterArray.count==0)
+                {
+                    alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
+                    alertView.tag = 10001;
+                    [alertView show];
+
+                }
+                else
+                {
                     tf.hidden = NO;
                     m_tableView.hidden =NO;
                     if (m_characterArray.count>1&&m_characterArray.count<4) {

@@ -133,6 +133,16 @@
              [hud hide: YES];
         if ([responseObject isKindOfClass:[NSArray class]])
         {
+            NSArray *array = responseObject;
+            if (array.count==0) {
+                alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
+                alertView1.tag = 10001;
+                [alertView1 show];
+                [m_loadImageView stopAnimating];
+
+                return ;
+            }
+            
             NSMutableArray* selectArray = [[NSMutableArray alloc] init];
             for (NSString *str in responseObject)
             {

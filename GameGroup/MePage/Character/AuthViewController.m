@@ -12,6 +12,7 @@
 @interface AuthViewController ()
 {
     UIWebView * m_myWebView;
+    UIAlertView * webViewAlert;
 }
 @end
 
@@ -36,9 +37,11 @@
     m_myWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     m_myWebView.delegate = self;
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-//    [m_myWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid]]]];
     
     
+    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],self.realm,self.character,self.gameId];
+    NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
     [(UIScrollView *)[[m_myWebView subviews] objectAtIndex:0] setBounces:NO];
     [self.view addSubview:m_myWebView];
@@ -47,9 +50,31 @@
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    hud.labelText = @"查询中...";
+    hud.labelText = @"加载中...";
     
     
+}
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    [hud show:YES];
+}
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [hud hide:YES];
+}
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+    [hud hide:YES];
+    [webView stopLoading];
+    webViewAlert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"加载失败" delegate:self cancelButtonTitle:@"知道了" otherButtonTitles:@"重新加载", nil];
+    [webViewAlert show];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==1) {
+        [m_myWebView reload];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 //- (void)getDataByNet
@@ -281,7 +306,15 @@
 //        [hud hide:YES];
 //    }];
 //}
+- (void)closeWindows
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
+- (void)dealloc
+{
+    webViewAlert.delegate = nil;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
