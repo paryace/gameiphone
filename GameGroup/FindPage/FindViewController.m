@@ -199,8 +199,8 @@
         imgV.image = image;
 
     }else{
-        UIImage * defaultImage=iPhone5?KUIImage(@"bg"):KUIImage(@"bg");
-        UIImage * afterImage= [NetManager image2:defaultImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
+        UIImage * defaultImage=iPhone5?KUIImage(@"bg"):KUIImage(@"bg_4");
+        UIImage * afterImage= [NetManager image2:defaultImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2+80)];
         imgV.image = afterImage;
     }
     imgV.center = self.view.center;

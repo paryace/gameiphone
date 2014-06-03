@@ -87,10 +87,18 @@
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?60:40))];
+  
 
-    [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
-
+    if ([self.gameId isEqualToString:@"2"]) {
+          m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height)];
+        m_charaDetailsView.helpLabel.hidden=YES;
+         m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, 546, 320, 50);
+    }else if([self.gameId isEqualToString:@"1"]) {
+          m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?60:40))];
+        m_charaDetailsView.helpLabel.hidden=NO;
+          m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, m_charaDetailsView.helpLabel.frame.origin.y+m_charaDetailsView.helpLabel.frame.size.height, 320, 50);
+        [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
+    }
     m_charaDetailsView.contentSize = CGSizeMake(320, 640);
     m_charaDetailsView.myCharaterDelegate = self;
     
@@ -281,10 +289,7 @@
             if ([GameCommon isEmtity:charaInfoImageId]) {
                 m_charaDetailsView.headerImageView.imageURL = nil;
             }else{
-//                NSString * imageId=m_charaInfo.thumbnail;
                 m_charaDetailsView.headerImageView.imageURL=[ImageService getImageUrl3:charaInfoImageId Width:80];
-                
-//                m_charaDetailsView.headerImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",m_charaInfo.thumbnail]];
             }
             
             if ([[KISDictionaryHaveKey(responseObject, @"ranking") allKeys] containsObject:@"rankingtime"]) {
@@ -348,15 +353,24 @@
     [postDict setObject:@"159" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
-    //[hud show:YES];
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.detailsLabelText = nil;
+    [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"res%@",responseObject);
+        if(!responseObject ||![responseObject isKindOfClass:[NSDictionary class]]){
+            [hud hide:YES];
+             m_charaDetailsView.reloadingBtn.userInteractionEnabled =YES;
+            return ;
+        }
         if ([KISDictionaryHaveKey(responseObject, @"systemstate")isEqualToString:@"ok"]) {
-            
+            [hud hide:YES];
             [self reLoadingUserInfoFromNet];
             return ;
         }
         if ([KISDictionaryHaveKey(responseObject, @"systemstate")isEqualToString:@"busy"]) {
+            [hud hide:YES];
             m_charaDetailsView.reloadingBtn.userInteractionEnabled =YES;
             
             NSString *timeStr =[NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(responseObject, @"time")intValue]/60000];
@@ -379,6 +393,7 @@
             }];
             return;
         }
+        [hud hide:YES];
             m_charaDetailsView.reloadingBtn.userInteractionEnabled = YES;
         
         m_infoDic = responseObject;
@@ -503,9 +518,6 @@
         cell = [[CharaDaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     NSDictionary *dic  =m_nameArray[indexPath.row];
-    
-//    cell.titleImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
-    
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
     cell.titleImgView.imageURL = [ImageService getImageUrl4:imageId];
     
