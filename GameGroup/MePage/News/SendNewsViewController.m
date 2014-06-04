@@ -17,10 +17,6 @@
     NSInteger  m_maxZiShu;//发表字符数量
     UILabel *m_ziNumLabel;//提示文字
     UIAlertView* alert1;
-    UIButton *emojiBtn;
-    EmojiView *theEmojiView;
-    
-    
     NSMutableArray * uploadImagePathArray;
     NSMutableDictionary * reponseStrArray;
     NSInteger imageImdex;
@@ -35,10 +31,6 @@
 @end
 
 @implementation SendNewsViewController
-
-//-(UIStatusBarStyle)preferredStatusBarStyle{
-//    return UIStatusBarStyleLightContent;
-//}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -67,14 +59,11 @@
 
 - (void)setMainView
 {
-    UIImage* bgImage = [[UIImage imageNamed:@"edit_bg"]
-                        stretchableImageWithLeftCapWidth:0 topCapHeight:10];
-    
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(13.75, 21.75+startX, 292.5, 128)];
-    editIV.image = bgImage;
+    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 40+startX, 320-5, 128)];
+    editIV.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:editIV];
     
-    self.dynamicTV = [[UITextView alloc]initWithFrame:CGRectMake(13.75, 21.75+startX, 292.5, 128)];
+    self.dynamicTV = [[UITextView alloc]initWithFrame:CGRectMake(5, 40+startX, 320-5, 108)];
     _dynamicTV.backgroundColor = [UIColor clearColor];
     _dynamicTV.font = [UIFont systemFontOfSize:13];
     _dynamicTV.delegate = self;
@@ -84,49 +73,7 @@
     [self.view addSubview:_dynamicTV];
     [self.dynamicTV becomeFirstResponder];
     
-    UIImageView* tool = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    if (startX==64) {
-        tool.image = [UIImage imageNamed:@"inputbg"];
-    }
-    else
-    {
-        tool.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
-        tool.layer.borderColor = [[UIColor grayColor] CGColor];
-        tool.layer.borderWidth = 1;
-    }
-    tool.userInteractionEnabled = YES;
-    _dynamicTV.inputAccessoryView = tool;
-    
-    UIButton* imageB = [UIButton buttonWithType:UIButtonTypeCustom];
-    imageB.frame = CGRectMake(270, 4, 35, 30);
-    [imageB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
-    [imageB setBackgroundImage:[UIImage imageNamed:@"picBtn_normal"] forState:UIControlStateNormal];
-    [imageB setBackgroundImage:[UIImage imageNamed:@"picBtn_click"] forState:UIControlStateHighlighted];
-    [tool addSubview:imageB];
-    
-//    emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [emojiBtn setFrame:CGRectMake(30, 0, 45, 45)];
-//    [emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-//    [tool addSubview:emojiBtn];
-//    [emojiBtn addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-
-    
-    theEmojiView = [[EmojiView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253) WithSendBtn:YES];
-    theEmojiView.delegate = self;
-    [self.view addSubview:theEmojiView];
-    theEmojiView.hidden = YES;
-
-    if (self.isComeFromMe ==YES) {
-        imageB.hidden = NO;
-        tool.hidden = NO;
-    }else{
-        imageB.hidden = YES;
-        tool.hidden = YES;
-    }
-    
-    self.placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(23, 28.75+startX, 200, 20)];
-    
-    
+    self.placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(10, 41+startX, 200, 20)];
     _placeholderL.backgroundColor = [UIColor clearColor];
     _placeholderL.textColor = [UIColor grayColor];
     if (self.defaultContent && ![self.defaultContent isEqualToString:@""]) {//不是分享头衔
@@ -138,14 +85,14 @@
     [self.view addSubview:_placeholderL];
     
     PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
-    PhotoB.frame = CGRectMake(13, startX + 155, 48.5, 48.5);
+    PhotoB.frame = CGRectMake(5, startX + 180, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5);
     [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
     [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
-    PhotoB.hidden = YES;
+    PhotoB.hidden = NO;
     [self.view addSubview:PhotoB];
 
     if (self.titleImage) {
-        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(13, 155 + startX, 48.5, 48.5)];
+        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180 + startX, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5)];
         titleimg.image = self.titleImage;
         titleimg.userInteractionEnabled = YES;
         [self.view addSubview:titleimg];
@@ -153,7 +100,7 @@
         UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
         [titleimg addGestureRecognizer:tapGR];
 
-        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX  + 155, 48.5, 48.5);
+        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 180, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5);
         if (self.pictureArray == nil) {
             self.pictureArray = [[NSMutableArray alloc]init];
         }
@@ -161,11 +108,29 @@
         [uploadImagePathArray addObject:self.titleImageName];
     }
     
-    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(23, startX, 200, 20)];
+    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(23, startX+148, 200, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     [self.view addSubview:m_ziNumLabel];
+    
+    
+    UIButton * topView=[[UIButton alloc] initWithFrame:CGRectMake(15, startX,320, 40)];
+    UILabel * topLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 320-15-8, 20)];
+    topLable.backgroundColor = [UIColor clearColor];
+    topLable.font= [UIFont systemFontOfSize:12];
+    topLable.text=@"如何使用网页发表长动态";
+    topLable.userInteractionEnabled = YES;
+    topLable.textColor = kColorWithRGB(41, 164, 246, 1.0);
+    [topView addSubview:topLable];
+    
+    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-25-8, 16, 8, 12)];
+    topimageView.image = KUIImage(@"right_arrow");
+    topimageView.backgroundColor = [UIColor clearColor];
+    [topView addSubview:topimageView];
+    [self.view addSubview:topView];
+    
+    [topView addTarget:self action:@selector(HelpAction:) forControlEvents:UIControlEventTouchUpInside];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
@@ -174,7 +139,10 @@
     
 }
 
-
+-(void)HelpAction:(id)sender
+{
+    
+}
 - (void)dealloc
 {
     alert1.delegate = nil;
@@ -243,51 +211,11 @@
         if (uploadImagePathArray.count>0) {
             [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
         }
-//        [self publishOnePicture:0 image:imageArray imageName:nameArray reponseStrDic:[NSMutableDictionary dictionaryWithCapacity:1]];
     }else
     {
         [self publishWithImageString:@""];
     }
 }
-
-
-/**
- *	@brief	依次上传一组图片，如果成功前一张，才会传后一张
- *
- *	@param 	picIndex 	从哪张图片开始传， 一般设置为0
- *	@param 	imageArray 	图片们
- *	@param 	imageNameArray 	图片的序号， 必须是从0开始（很莫名其妙吧， 要改）
- *	@param 	reponseStrArray 	上传图片 返回的图片ID，数值， 形如 53878, 53879, 53880
- */
-//-(void)publishOnePicture:(NSInteger)picIndex image:(NSArray*)imageArray imageName:(NSArray*)imageNameArray reponseStrDic:(NSMutableDictionary*)reponseStrArray
-//
-//{
-//    [NetManager uploadImage:[imageArray objectAtIndex:picIndex] WithURLStr:BaseUploadImageUrl ImageName:[imageNameArray objectAtIndex:picIndex]  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-//        hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.2f％", picIndex+1,((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-//    }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSString *response = [GameCommon getNewStringWithId:responseObject];//图片id
-//        [reponseStrArray setObject:response forKey:[imageNameArray objectAtIndex:picIndex]];
-//     //   [imageIndex addObject:response];
-//        if (reponseStrArray.count != imageArray.count) {
-//            [self publishOnePicture:(picIndex+1) image:imageArray imageName:imageNameArray reponseStrDic:reponseStrArray];
-//        }
-//        else
-//        {
-//            [hud hide:YES];
-//            self.imageId = [[NSMutableString alloc]init];
-//            
-//            for (int i=0; i<reponseStrArray.count; i++) {
-//                NSString *aString = [NSString stringWithFormat:@"%d", i];
-//                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:aString]];
-//            }
-//            [self publishWithImageString:_imageId];
-//        }
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        [hud hide:YES];
-//        [self showAlertViewWithTitle:@"提示" message:@"上传图片失败" buttonTitle:@"确定"];
-//    }];
-//}
-
 
 -(void)uploadPicture:(NSString*)imageName
 {
@@ -308,20 +236,14 @@
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
-    
     [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
-    
-
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         self.imageId = [[NSMutableString alloc]init];
-//        for (NSString*a in reponseStrArray) {
-            for (int i=0; i<reponseStrArray.count; i++) {
-                NSString * a=[uploadImagePathArray objectAtIndex:i];
-                [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
-            }
-        
-//        }
+        for (int i=0; i<reponseStrArray.count; i++) {
+            NSString * a=[uploadImagePathArray objectAtIndex:i];
+            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+        }
         [self publishWithImageString:_imageId];
     }else{
         [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
@@ -350,8 +272,6 @@
     
     [paramDict setObject:trimmedString forKey:@"msg"];
     [paramDict setObject:imageID forKey:@"img"];
-//    [paramDict setObject:@"" forKey:@"urlLink"];
-
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"134" forKey:@"method"];
@@ -367,7 +287,6 @@
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"dynamicFromMe_wx"];
             
             [[NSNotificationCenter defaultCenter]postNotificationName:@"dynamicFromMe_wx_notification" object:nil userInfo:nil];
-//            [self addNewNewsToStore:responseObject];
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
                 [self.delegate dynamicListAddOneDynamic:responseObject];
         }
@@ -390,19 +309,6 @@
     }];
     
 }
-
-//- (void)addNewNewsToStore:(NSDictionary*)dic
-//{
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSArray * dMyNews = [DSMyNewsList MR_findAllInContext:localContext];
-//        if ([dMyNews count] >= 20) {
-//            DSMyNewsList* news = [dMyNews lastObject];
-//            [news deleteInContext:localContext];//删除最后面一个
-//        }
-//    }];
-//    [DataStoreManager saveMyNewsWithData:dic];
-//}
-
 #pragma mark 照片
 -(void)getAnActionSheet
 {
@@ -477,8 +383,6 @@
             PhotoB.hidden = NO;
         }
     }
-//    [self.dynamicTV becomeFirstResponder];
-    
 }
 #pragma mark - imagePickerController delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -504,9 +408,9 @@
     imageV.image = selectImage;
     [self.view addSubview:imageV];
     if (PhotoB.frame.origin.x < 250) {
-        PhotoB.frame = CGRectMake(PhotoB.frame.origin.x+ PhotoB.frame.size.width +12.875, PhotoB.frame.origin.y, PhotoB.frame.size.width, PhotoB.frame.size.height);
+        PhotoB.frame = CGRectMake(PhotoB.frame.origin.x+ PhotoB.frame.size.width +5, PhotoB.frame.origin.y, PhotoB.frame.size.width, PhotoB.frame.size.height);
     }else{
-        PhotoB.frame = CGRectMake(13, 280.5, PhotoB.frame.size.width, PhotoB.frame.size.height);
+        PhotoB.frame = CGRectMake(5, PhotoB.frame.origin.y+PhotoB.frame.size.height+5, PhotoB.frame.size.width, PhotoB.frame.size.height);
     }
     [_pictureArray addObject:imageV];
     if (_pictureArray.count == 9) {
@@ -515,7 +419,6 @@
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
     selectImage =nil;
-//    [self.dynamicTV becomeFirstResponder];
 }
 
 //将图片保存到本地，返回保存的路径
@@ -568,74 +471,35 @@
     }else{
         _placeholderL.text = @"今天想跟别人说点什么……";
     }
-    if (textView.text.length>500)
-    {
-        textView.text=[textView.text substringToIndex:500];
+    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    NSInteger res = m_maxZiShu*2-[new length];
+    if(res >= 0){
+        return YES;
     }
-    return YES;
+    else{
+        NSRange rg = {0,[text length]+res};
+        if (rg.length>0) {
+            NSString *s = [text substringWithRange:rg];
+            [textView setText:[textView.text stringByReplacingCharactersInRange:range withString:s]];
+        }
+        return NO;
+    }
+
 }
 
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
-    
-    if(ziNum >= 0)
-    {
-        m_ziNumLabel.text = [NSString stringWithFormat:@"还可以输入%d字", ziNum];
-        m_ziNumLabel.textColor = [UIColor grayColor];
-    }
-    else
-    {
-        m_ziNumLabel.text = [NSString stringWithFormat:@"已超过%d字", [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text] - m_maxZiShu];
-        m_ziNumLabel.textColor = [UIColor redColor];
-    }
+    m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
+    CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    m_ziNumLabel.frame=CGRectMake(320-5-nameSize.width, startX+148,nameSize.width,20);
+    m_ziNumLabel.backgroundColor=[UIColor clearColor];
 }
 #pragma mark - touch
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [_dynamicTV resignFirstResponder];
 }
--(void)emojiBtnClicked:(UIButton *)sender
-{
-//    if (!myActive) {
-//        UIAlertView * UnActionAlertV = [[UIAlertView alloc]initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去激活", nil];
-//        [UnActionAlertV show];
-//        return ;
-//    }
-//    if (!ifEmoji) {
-//        [self.textView resignFirstResponder];
-//        ifEmoji = YES;
-//        ifAudio = NO;
-//        [sender setImage:[UIImage imageNamed:@"keyboard.png"] forState:UIControlStateNormal];
-//        [audioBtn setImage:[UIImage imageNamed:@"audioBtn.png"] forState:UIControlStateNormal];
-//        self.textView.hidden = NO;
-//        audioRecordBtn.hidden = YES;
-//        [self showEmojiScrollView];
-//        
-//    }
-//    else
-//    {
-//        [self.textView.internalTextView becomeFirstResponder];
-//        ifEmoji = NO;
-//        theEmojiView.hidden = YES;
-//        [m_EmojiScrollView removeFromSuperview];
-//        [emojiBGV removeFromSuperview];
-//        [m_Emojipc removeFromSuperview];
-//        [sender setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-//    }
-}
-//-(void)showEmojiScrollView
-//{
-//    [self.textView resignFirstResponder];
-//    [inPutView setFrame:CGRectMake(0, self.view.frame.size.height-227-inPutView.frame.size.height, 320, inPutView.frame.size.height)];
-//    theEmojiView.hidden = NO;
-//    [theEmojiView setFrame:CGRectMake(0, self.view.frame.size.height-253, 320, 253)];
-//    [self autoMovekeyBoard:253];
-//    
-//}
-
-
-
 
 - (void)didReceiveMemoryWarning
 {
