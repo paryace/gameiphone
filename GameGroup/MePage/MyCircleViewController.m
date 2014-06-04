@@ -163,13 +163,10 @@
   
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        
             
             NSString *strImg = KISDictionaryHaveKey(responseObject, @"coverImg");
-//            NSString *strImgID = [NSString stringWithFormat:BaseImageUrl@"%@",strImg];
-//            topImgaeView.imageURL = [NSURL URLWithString:strImgID];
             topImgaeView.imageURL = [ImageService getImageUrl4:strImg];
-            
-           // [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"coverImg") forKey:@"friendCircle_topImg_wx"];
             if (m_currPageCount==0) {
                 [dataArray removeAllObjects];
                 [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];

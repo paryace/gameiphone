@@ -10,6 +10,7 @@
 #import "Emoji.h"
 #import "EmojiView.h"
 #import "UpLoadFileService.h"
+#import "HelpViewController.h"
 @interface SendNewsViewController ()<UITextViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MBProgressHUDDelegate>
 {
     UIButton* PhotoB;
@@ -141,7 +142,9 @@
 
 -(void)HelpAction:(id)sender
 {
-    
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"content.html?2";
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 - (void)dealloc
 {
