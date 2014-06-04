@@ -485,8 +485,13 @@
 
 -(void)enterHelp:(id)sender
 {
+    NSDictionary *dic = [gameInfoArray objectAtIndex:[m_serverNamePick selectedRowInComponent:0]];
     HelpViewController *helpVC = [[HelpViewController alloc]init];
+    if ([KISDictionaryHaveKey(dic, @"id")intValue]==1) {
         helpVC.myUrl = @"content.html?7";
+    }else{
+        helpVC.myUrl = @"content.html?8";
+    }
     [self.navigationController pushViewController:helpVC animated:YES];
 
 }

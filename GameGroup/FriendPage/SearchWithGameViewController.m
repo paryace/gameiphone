@@ -46,7 +46,7 @@
     }else{
     m_dataArray =[self.dataDic objectForKey:@"characters"];
     }
-    UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-30) style:UITableViewStylePlain];
     tableView.delegate = self;
     tableView.dataSource = self;
     tableView.rowHeight = 60;
@@ -62,7 +62,7 @@
         tableView.tableHeaderView = titleLabel;
     }
 
-    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 30)];
+    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0,kScreenHeigth-30, 320, 30)];
     if (self.myInfoType ==COME_GUILD) {
 
     helpLbel.text = @"查不到公会?";
@@ -75,7 +75,7 @@
     helpLbel.userInteractionEnabled = YES;
     helpLbel.textAlignment = NSTextAlignmentCenter;
     [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
-    tableView.tableFooterView = helpLbel;
+    [self.view addSubview:helpLbel];
 }
 -(void)enterToHelpPage:(id)sender
 {
