@@ -275,7 +275,8 @@
         }else{
             cell.heardImg.imageURL=[ImageService getImageUrl4:imageId];
         }
-        cell.realmLabel.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dic, @"realm"),realm];
+//        cell.realmLabel.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dic, @"realm"),realm];
+        cell.realmLabel.text =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"realm")];
     }
     cell.nameLabel.text = KISDictionaryHaveKey(dic, @"name");
     

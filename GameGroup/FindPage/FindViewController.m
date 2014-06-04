@@ -166,7 +166,8 @@
 
     }else{
         UIImage * defaultImage=iPhone5?KUIImage(@"bg"):KUIImage(@"bg_4");
-        UIImage * afterImage= [NetManager image2:defaultImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2+80)];
+        UIImage * afterImage= [self dealDefaultImage:defaultImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
+        
         imgV.image = afterImage;
     }
     imgV.center = self.view.center;
@@ -314,7 +315,33 @@
     [self.view addSubview:m_menuButton];
    // [self didClickMenu:nil];
 }
-
+- (UIImage *) dealDefaultImage: (UIImage *) image centerInSize: (CGSize) viewsize
+{
+	CGSize size = image.size;
+    float dwidth = 0.0f;
+    float dheight = 0.0f;
+    float rate = 0.0f;
+    
+    float rate1 = viewsize.height / size.height;
+    float rate2  = viewsize.width / size.width;
+    if(rate1>rate2){
+        rate=rate1;
+        float w = rate * size.width;
+        dwidth = (viewsize.width - w) / 2.0f;
+        dheight = 0;
+    }else{
+        rate=rate2;
+        float w = rate * size.height;
+        dheight = (viewsize.height - w) / 2.0f;
+        dwidth = 0;
+    }
+    CGRect rect = CGRectMake(dwidth, dheight-70, size.width*rate, size.height*rate);
+	UIGraphicsBeginImageContext(viewsize);
+	[image drawInRect:rect];
+	UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+    return newimg;
+}
 -(void)dropdown
 {
     [drawView dropdown];
