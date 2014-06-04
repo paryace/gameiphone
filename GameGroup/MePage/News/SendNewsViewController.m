@@ -85,14 +85,14 @@
     [self.view addSubview:_placeholderL];
     
     PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
-    PhotoB.frame = CGRectMake(5, startX + 180, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5);
+    PhotoB.frame = CGRectMake(5, startX + 180, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
     [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
     [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
     PhotoB.hidden = NO;
     [self.view addSubview:PhotoB];
 
     if (self.titleImage) {
-        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180 + startX, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5)];
+        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180 + startX, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4)];
         titleimg.image = self.titleImage;
         titleimg.userInteractionEnabled = YES;
         [self.view addSubview:titleimg];
@@ -100,7 +100,7 @@
         UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
         [titleimg addGestureRecognizer:tapGR];
 
-        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 180, (self.view.bounds.size.width-10-20)/5, (self.view.bounds.size.width-10-20)/5);
+        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 180, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
         if (self.pictureArray == nil) {
             self.pictureArray = [[NSMutableArray alloc]init];
         }
@@ -402,12 +402,11 @@
         [uploadImagePathArray addObject:imageName];
     }
     
-    
     UIImageView* imageV = [[UIImageView alloc]initWithFrame:PhotoB.frame];
     imageV.userInteractionEnabled = YES;
     imageV.image = selectImage;
     [self.view addSubview:imageV];
-    if (PhotoB.frame.origin.x < 250) {
+    if (PhotoB.frame.origin.x < PhotoB.frame.size.width*3) {
         PhotoB.frame = CGRectMake(PhotoB.frame.origin.x+ PhotoB.frame.size.width +5, PhotoB.frame.origin.y, PhotoB.frame.size.width, PhotoB.frame.size.height);
     }else{
         PhotoB.frame = CGRectMake(5, PhotoB.frame.origin.y+PhotoB.frame.size.height+5, PhotoB.frame.size.width, PhotoB.frame.size.height);
