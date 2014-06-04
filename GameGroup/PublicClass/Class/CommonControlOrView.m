@@ -167,12 +167,10 @@
     UIView* myView = [[UIView alloc] init];
     EGOImageView* heardImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     heardImg.backgroundColor = [UIColor clearColor];
-    if (!image ||[image isEqualToString:@""]||[image isEqualToString:@" "]) {
-        heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+    if ([GameCommon isEmtity:image]) {
+        heardImg.image = KUIImage(@"clazz_icon.png");
     }
     else{
-//        heardImg.imageURL=[NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:image]] stringByAppendingString:@"/80"]];
-        
         heardImg.imageURL = [ImageService getImageUrl3:image Width:80];
     }
 
