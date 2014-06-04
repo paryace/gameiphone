@@ -93,11 +93,14 @@
           m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height)];
         m_charaDetailsView.helpLabel.hidden=YES;
          m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, 546, 320, 50);
+        m_charaDetailsView.unlessLabel.text=@"正在获取数据中...";
+        
     }else if([self.gameId intValue]==1) {
           m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?60:40))];
         m_charaDetailsView.helpLabel.hidden=NO;
           m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, m_charaDetailsView.helpLabel.frame.origin.y+m_charaDetailsView.helpLabel.frame.size.height, 320, 50);
         [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
+        m_charaDetailsView.unlessLabel.text=@"正在向英雄榜获取数据中...";
     }
     m_charaDetailsView.contentSize = CGSizeMake(0, 640);
     m_charaDetailsView.myCharaterDelegate = self;
@@ -120,7 +123,7 @@
     loginActivity.center = CGPointMake(160, 290);
     loginActivity.color = [UIColor blackColor];
     [loginActivity startAnimating];
-
+    
     
     [self getUserInfoByNet];
 

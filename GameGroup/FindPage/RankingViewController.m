@@ -107,7 +107,12 @@
     
     
     UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 170, 320, 50)];
-    lb1.text = @"正在向英雄榜请求数据...";
+    if([self.gameId intValue] ==1){
+        lb1.text = @"正在向英雄榜请求数据...";
+    }else if ([self.gameId intValue]==2){
+        lb1.text=@"正在获取数据中...";
+    }
+    
     lb1.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:lb1];
 

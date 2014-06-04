@@ -462,34 +462,32 @@
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if (textView.text.length>2&&[[Emoji allEmoji] containsObject:[textView.text substringFromIndex:textView.text.length-2]]) {
-        textView.text = [textView.text substringToIndex:textView.text.length-2];
-    }
     if (textView.text.length>0 || text.length != 0) {
         _placeholderL.text = @"";
     }else{
         _placeholderL.text = @"今天想跟别人说点什么……";
     }
+
     NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    NSInteger res = m_maxZiShu*2-[new length];
+    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
     if(res >= 0){
         return YES;
     }
     else{
-        NSRange rg = {0,[text length]+res};
-        if (rg.length>0) {
-            NSString *s = [text substringWithRange:rg];
-            [textView setText:[textView.text stringByReplacingCharactersInRange:range withString:s]];
-        }
         return NO;
+        
     }
-
 }
 
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
+    if (ziNum<0) {
+        ziNum=0;
+    }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
+    
+    
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     m_ziNumLabel.frame=CGRectMake(320-5-nameSize.width, startX+148,nameSize.width,20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
