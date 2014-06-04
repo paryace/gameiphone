@@ -63,7 +63,6 @@
             NSString * gameid=[gameIds objectAtIndex:i];
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
-//            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
             NSString * gameImageId=[GameCommon putoutgameIconWithGameId:gameid];
             gameImg_one.imageURL= [ImageService getImageUrl4:gameImageId];
             [gameIconView addSubview:gameImg_one];

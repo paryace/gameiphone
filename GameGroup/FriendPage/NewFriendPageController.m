@@ -19,6 +19,7 @@
 #import "ImageService.h"
 #import "InterestingPerpleViewController.h"
 #import "MJRefresh.h"
+#import "FriendTopCell.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
@@ -28,8 +29,9 @@
     
     UITableView*  m_myTableView;
     NSString *fansNum;
+    NSString *fanstr;
 }
-@property (nonatomic, strong) UIView *topView;
+//@property (nonatomic, strong) UIView *topView;
 @end
 
 @implementation NewFriendPageController
@@ -76,7 +78,7 @@
     }
     
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
-    m_myTableView.tableHeaderView=self.topView;
+//    m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
@@ -90,38 +92,38 @@
 {
     [self getFriendDateFromDataSore];
 }
-- (UIView *)topView{
-    if (!_topView) {
-        _topView = [[UIView alloc] init];
-        _topView.frame = CGRectMake(0,0,320,60);
-        _topView.backgroundColor = [UIColor blackColor];
-        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
-        for (int i = 0; i < 4; i++) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.tag = i;
-            button.frame = CGRectMake(i*80, 0, 80, 60);
-            [button addTarget:self action:@selector(topBtnAction:)
-             forControlEvents:UIControlEventTouchUpInside];
-            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",i+1]]
-                    forState:UIControlStateNormal];
-            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",i+1]]
-                    forState:UIControlStateHighlighted];
-            [button setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
-            [_topView addSubview:button];
-            UILabel *titleLable = [[UILabel alloc] init];
-            CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-            CGFloat textWidth = textSize.width;
-            titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
-            titleLable.font = [UIFont systemFontOfSize:11];
-            titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
-            titleLable.backgroundColor=[UIColor clearColor];
-            titleLable.text=[topTitle objectAtIndex:i];
-            [_topView addSubview:titleLable];
-           
-        }
-    }
-    return _topView;
-}
+//- (UIView *)topView{
+//    if (!_topView) {
+//        _topView = [[UIView alloc] init];
+//        _topView.frame = CGRectMake(0,0,320,60);
+//        _topView.backgroundColor = [UIColor blackColor];
+//        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
+//        for (int i = 0; i < 4; i++) {
+//            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+//            button.tag = i;
+//            button.frame = CGRectMake(i*80, 0, 80, 60);
+//            [button addTarget:self action:@selector(topBtnAction:)
+//             forControlEvents:UIControlEventTouchUpInside];
+//            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",i+1]]
+//                    forState:UIControlStateNormal];
+//            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",i+1]]
+//                    forState:UIControlStateHighlighted];
+//            [button setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+//            [_topView addSubview:button];
+//            UILabel *titleLable = [[UILabel alloc] init];
+//            CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+//            CGFloat textWidth = textSize.width;
+//            titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
+//            titleLable.font = [UIFont systemFontOfSize:11];
+//            titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
+//            titleLable.backgroundColor=[UIColor clearColor];
+//            titleLable.text=[topTitle objectAtIndex:i];
+//            [_topView addSubview:titleLable];
+//           
+//        }
+//    }
+//    return _topView;
+//}
 
 - (void)topBtnAction:(UIButton *)sender{
     switch (sender.tag) {
@@ -169,6 +171,9 @@
 //返回每个组里面的数据条数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section==0) {
+        return 1;
+    }
     return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -178,6 +183,19 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    
+    if (indexPath.section==0) {
+        static NSString * stringCellTop = @"cellTop";
+        FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
+        cellTop.friendTabDelegate=self;
+        cellTop.lable1.text=fanstr;
+        CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+        cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
+
+        return cellTop;
+    }
+    
     static NSString * stringCell3 = @"cell";
     NewPersonalTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
     if (!cell) {
@@ -185,7 +203,6 @@
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
     if (resultArray.count==0||keyArr.count==0) {
         return nil;
     }
@@ -223,7 +240,7 @@
     }
     else
     {
-        return @"people_woman.png";//
+        return @"people_woman.png";
     }
 }
 //性别图标
@@ -240,6 +257,9 @@
 //点击Table进入个人详情
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    if (indexPath.section==0) {
+        return;
+    }
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
@@ -251,6 +271,9 @@
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
+    if (section==0) {
+        return @"";
+    }
     NSString * keyName =[keyArr objectAtIndex:section];
     return keyName;
 }
@@ -259,9 +282,14 @@
 {
     return keyArr;
 }
-
-
-
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section==0) {
+        return 0;
+    }else{
+        return 30;
+    }
+}
 #pragma mark 请求数据
 - (void)getFriendListFromNet
 {
@@ -280,7 +308,9 @@
                         [keys sortUsingSelector:@selector(compare:)];
                         [keyArr removeAllObjects];
                         [resultArray removeAllObjects];
-                        keyArr = keys;
+                        [keyArr addObject:@"^"];
+                        [keyArr addObjectsFromArray:keys];
+//                        keyArr = keys;
                         resultArray = result;
                         [m_myTableView reloadData];
                         [self setFansNum];
@@ -328,11 +358,13 @@
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
         [keyArr removeAllObjects];
         [resultArray removeAllObjects];
-        keyArr = keys;
+        [keyArr addObject:@"^"];
+        [keyArr addObjectsFromArray:keys];
+//        keyArr = keys;
         resultArray = result;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self setFansNum];
             [m_myTableView reloadData];
+            [self setFansNum];
         });
     });
 }
@@ -353,7 +385,6 @@
     [self refreTitle];
     
     fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    NSString *fanstr;
     if ([GameCommon isEmtity:fansNum]) {
         fanstr=@"粉丝";
     }else {
@@ -364,13 +395,12 @@
             fanstr=[fansNum stringByAppendingString:@"位粉丝"];
         }
     }
-    NSArray *viewArray=[[self topView] subviews];
-    UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];
-    fansLable.text=fanstr;
-    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-    fansLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
+//    NSArray *viewArray=[[self topView] subviews];
+//    UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];
+//    fansNumLable.text=fanstr;
+//    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+//    fansNumLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
-
 
 -(void)addheadView
 {
@@ -391,11 +421,6 @@
     };
     m_header = header;
 }
-
-
-
-
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
