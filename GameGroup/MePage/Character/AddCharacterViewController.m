@@ -295,6 +295,7 @@
         }else{
             UITextField *tf  = (UITextField *)[self.view viewWithTag:i];
             [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            [tf resignFirstResponder];
             if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
                 return;
