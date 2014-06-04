@@ -216,11 +216,6 @@
     if (indexPath.row>0) {
         dict = [dataArray objectAtIndex:indexPath.row-1];
     }
-//    if ([self.imageStr isEqualToString:@""]||[self.imageStr isEqualToString:@" "]) {
-//        cell.headImageView.imageURL = nil;
-//    }else{
-//     headImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:self.imageStr],@"/160/160"]];
-//    }
     if ([[self getDataWithTimeDataInterval:
           [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")]]
          isEqualToString:
@@ -284,7 +279,6 @@
 
     cell.imgCountLabel.text = [NSString stringWithFormat:@"(共%d张)",arr.count];
     
-//    cell.thumbImageView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")],@"/140/140"]];
     NSString * imageIds=KISDictionaryHaveKey(dic, @"img");
     cell.thumbImageView.imageURL = [ImageService getImageStr:imageIds Width:140];
    // [cell getImageWithCount:KISDictionaryHaveKey(dic, @"img")];
