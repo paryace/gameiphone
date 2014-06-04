@@ -89,11 +89,11 @@
 
   
 
-    if ([self.gameId isEqualToString:@"2"]) {
+    if ([self.gameId intValue]== 2) {
           m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height)];
         m_charaDetailsView.helpLabel.hidden=YES;
          m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, 546, 320, 50);
-    }else if([self.gameId isEqualToString:@"1"]) {
+    }else if([self.gameId intValue]==1) {
           m_charaDetailsView =[[CharacterDetailsView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, self.view.frame.size.height - (KISHighVersion_7?60:40))];
         m_charaDetailsView.helpLabel.hidden=NO;
           m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, m_charaDetailsView.helpLabel.frame.origin.y+m_charaDetailsView.helpLabel.frame.size.height, 320, 50);
@@ -240,19 +240,23 @@
             }
             m_charaDetailsView.helpLabel.frame = CGRectMake(0, 236+tabHeight, 320, 20);
             m_charaDetailsView.listScrollView.frame = CGRectMake(0, 236, 320, tabHeight);
-            m_charaDetailsView.listScrollView.contentSize = CGSizeMake(320*3, tabHeight);
+            
 
             m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, 236+tabHeight+20, 320, 50);
             
             
             
             if (self.myViewType ==CHARA_INFO_PERSON){
+                m_charaDetailsView.listScrollView.contentSize = CGSizeMake(320*2, tabHeight);
+
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateSelected];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateSelected];
                 
             }else{
+                m_charaDetailsView.listScrollView.contentSize = CGSizeMake(320*3, tabHeight);
+
                 [m_charaDetailsView.myFriendBtn setTitle:KISDictionaryHaveKey(m_tabListArray[0], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.realmBtn setTitle:KISDictionaryHaveKey(m_tabListArray[1], @"name") forState:UIControlStateNormal];
                 [m_charaDetailsView.countryBtn setTitle:KISDictionaryHaveKey(m_tabListArray[2], @"name") forState:UIControlStateNormal];

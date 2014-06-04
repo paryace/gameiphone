@@ -80,8 +80,12 @@
 -(void)enterToHelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    
+    if ([self.gameid intValue]==1) {
         helpVC.myUrl = @"content.html?5";
+    }else {
+        helpVC.myUrl = @"content.html?8";
+    }
+
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 
@@ -114,6 +118,12 @@
         NSDictionary *dict = m_dataArray[indexPath.row];
         
 //        cell.glazzImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
+        
+        if ([self.gameid intValue]==2) {
+            cell.glazzImgView.placeholderImage = KUIImage(@"clazz_icon");
+        }else{
+            cell.glazzImgView.placeholderImage = KUIImage(@"clazz_0");
+        }
         
         
         NSString * imageIds=KISDictionaryHaveKey(dict, @"img");

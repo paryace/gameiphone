@@ -102,10 +102,10 @@
         else
             page = i;
         if (iPhone5) {
-            NSString* imageName = [NSString stringWithFormat:@"second_%d.jpg", page];
+            NSString* imageName = [NSString stringWithFormat:@"second_%d", page];
             bgImage.image = KUIImage(imageName);
         }else{
-            NSString* imageName = [NSString stringWithFormat:@"first_%d.jpg", page];
+            NSString* imageName = [NSString stringWithFormat:@"first_%d", page];
 
             bgImage.image = KUIImage(imageName);
         }

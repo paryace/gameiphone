@@ -416,8 +416,11 @@
 -(void)enterHelp:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    
-    helpVC.myUrl = @"content.html?5";
+    if ([KISDictionaryHaveKey(m_dataArray[0], @"gameid")intValue]==1) {
+        helpVC.myUrl = @"content.html?5";
+    }else{
+        helpVC.myUrl = @"content.html?8";
+    }
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 

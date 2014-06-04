@@ -721,7 +721,7 @@
     NSArray* characterArray = self.hostInfo.charactersArr;
     NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
     NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
-    if ([gameId isEqualToString:@"1"]) {
+    if ([gameId intValue]==1||[gameId intValue]==2) {
         CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
         CVC.characterId = KISDictionaryHaveKey(dic, @"id");
         CVC.gameId = gameId;

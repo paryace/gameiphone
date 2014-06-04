@@ -91,7 +91,7 @@
     for (int i=0 ; i<gameIds.count;i++) {
         if (i<3) {
             NSString * gameid=[gameIds objectAtIndex:i];
-            EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*20, 0, 20, 20)];
+            EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*23, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
 //            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
             

@@ -181,7 +181,7 @@
     
     
     // 建立标头和下拉菜单
-    drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?110:90 )];
+    drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?79:59 )];
     drawView.myViewDelegate = self;
     
     
@@ -202,14 +202,14 @@
     [self.view addSubview:drawView];
 
     
-    //简历朋友圈view
+    //建立朋友圈view
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
     [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
 
     [self.view addSubview:bottomView];
     
-    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 4, 80, 24)];
+    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 10, 80, 18)];
     bottomTitleLabel.backgroundColor = [UIColor clearColor];
     bottomTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     bottomTitleLabel.text  = @"朋友圈";
@@ -265,7 +265,7 @@
     }
 
     
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 28, 170, 20)];
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 30, 170, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentLeft;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
@@ -349,7 +349,7 @@
 }
 -(void)buildMenuButton
 {
-    sameRealmBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"samerealm_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    sameRealmBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"samerealm_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
     sameRealmBtn.hidden = YES;
     
 //    添加退拽手势
@@ -359,7 +359,7 @@
     
     [self.view addSubview:sameRealmBtn];
     
-    nearByBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"nearby_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    nearByBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"nearby_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
     nearByBtn.hidden = YES;
     //    添加退拽手势
 
@@ -371,7 +371,7 @@
     [self.view addSubview:nearByBtn];
     
     
-    encoBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"enxo_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    encoBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"enxo_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
     encoBtn.hidden = YES;
     //    添加退拽手势
 
@@ -383,7 +383,7 @@
     [self.view addSubview:encoBtn];
     
     
-    moGirlBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"mogirl_highlight" center:CGPointMake(160, KISHighVersion_7?110:90)];
+    moGirlBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"mogirl_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
     moGirlBtn.hidden = YES;
     //    添加退拽手势
 
@@ -447,13 +447,13 @@
             NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"];
             float i =[centerArray[1]floatValue];
             
-            NSLog(@"%d",KISHighVersion_7?130:110);
-            if (i>curren_hieght-110||i<(KISHighVersion_7?130:110)) {
+            NSLog(@"%d",KISHighVersion_7?79:59);
+            if (i>curren_hieght-110||i<(KISHighVersion_7?79:59)) {
                 if ([centerArray[1]floatValue]>curren_hieght-110) {
                     nearByBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-                }else if (i<KISHighVersion_7?130:110)
+                }else if (i<KISHighVersion_7?79:59)
                 {
-                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
                 }
             }
             else{
@@ -475,10 +475,10 @@
         
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:1];
-        sameRealmBtn.center = CGPointMake(160, KISHighVersion_7?110:90);
-        nearByBtn.center = CGPointMake(160, KISHighVersion_7?110:90);
-        moGirlBtn.center = CGPointMake(160, KISHighVersion_7?110:90);
-        encoBtn.center = CGPointMake(160, KISHighVersion_7?110:90);
+        sameRealmBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        nearByBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        moGirlBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        encoBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
         [UIView commitAnimations];
     }
 }
@@ -496,9 +496,9 @@
         
         if (i>curren_hieght-110) {
             sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-        }else if (i<(KISHighVersion_7?130:110))
+        }else if (i<(KISHighVersion_7?79:59))
         {
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
             
 
         }else{
@@ -527,9 +527,9 @@
 
         if (i>curren_hieght-110) {
             moGirlBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-        }else if (i<(KISHighVersion_7?130:110))
+        }else if (i<(KISHighVersion_7?79:59))
         {
-            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
         }else{
         moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
         }
@@ -555,9 +555,9 @@
         if (i>curren_hieght-110) {
             encoBtn.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
             
-        }else if (i<(KISHighVersion_7?130:110))
+        }else if (i<(KISHighVersion_7?79:59))
         {
-            encoBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?130:110);
+            encoBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
 
         }else{
         encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
@@ -753,7 +753,7 @@
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
-        m_menuButton.center = CGPointMake(160,KISHighVersion_7?110:90);
+        m_menuButton.center = CGPointMake(160,KISHighVersion_7?79:59);
         [self.view bringSubviewToFront:m_menuButton];
         [UIView commitAnimations];
 
@@ -761,7 +761,7 @@
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
-        m_menuButton.center = CGPointMake(160,iPhone5?430:330);
+        m_menuButton.center = CGPointMake(160,kScreenHeigth-80);
 
         [UIView commitAnimations];
 
@@ -791,7 +791,7 @@
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
-    m_menuButton.center = CGPointMake(160, KISHighVersion_7?110:90);
+    m_menuButton.center = CGPointMake(160, KISHighVersion_7?79:59);
     [self.view bringSubviewToFront:m_menuButton];
 
     [UIView commitAnimations];

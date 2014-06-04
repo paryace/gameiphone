@@ -514,6 +514,7 @@
     }
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
+    selectImage =nil;
 //    [self.dynamicTV becomeFirstResponder];
 }
 

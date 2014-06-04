@@ -19,14 +19,14 @@
 
 -(id)initWithFrame:(CGRect)frame
 {
-    if (frame.size.height<390-(KISHighVersion_7?64:44)) {
-        frameHeight = 390-(KISHighVersion_7?64:44);
+    if (frame.size.height<390-(KISHighVersion_7?79:59)) {
+        frameHeight = 390-(KISHighVersion_7?79:59);
     }else{
         frameHeight = frame.size.height;
     }
     tabheight = frameHeight-30;
     
-    frame.size.height = KISHighVersion_7?130:110;
+    frame.size.height = KISHighVersion_7?79:59;
     
     self=[super initWithFrame:frame];
     
@@ -35,7 +35,7 @@
 
         self.showList = NO; //默认不显示下拉框
         self.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
-        tv = [[UITableView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?64:44,320, 0)];
+        tv = [[UITableView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?79:59,320, 0)];
         tv.delegate = self;
         tv.dataSource = self;
         tv.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -48,15 +48,15 @@
         tv.hidden = YES;
         [self addSubview:tv];
         
-        titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?20:0, 320, 44)];
-        titleLabel.font = [UIFont boldSystemFontOfSize:20];
-        titleLabel.textColor = [UIColor whiteColor];
-        titleLabel.text  = @"发现";
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.backgroundColor = [ UIColor clearColor];
-        [self addSubview:titleLabel];
+//        titleLabel  = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?20:0, 320, 44)];
+//        titleLabel.font = [UIFont boldSystemFontOfSize:20];
+//        titleLabel.textColor = [UIColor whiteColor];
+//        titleLabel.text  = @"发现";
+//        titleLabel.textAlignment = NSTextAlignmentCenter;
+//        titleLabel.backgroundColor = [ UIColor clearColor];
+//        [self addSubview:titleLabel];
         
-        textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,self.bounds.size.height-66, 320, 20)];
+        textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?35:15, 320, 20)];
         textLabel.text = @"选择游戏 开始您的游戏社交";
         textLabel.textColor =[UIColor whiteColor];
         textLabel.textAlignment = NSTextAlignmentCenter;
@@ -80,7 +80,7 @@
         tv.hidden = YES;
         
         CGRect sf = self.frame;
-        sf.size.height = KISHighVersion_7?110:90;
+        sf.size.height = KISHighVersion_7?79:59;
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         
@@ -192,7 +192,7 @@
     tv.hidden = YES;
     
     CGRect sf = self.frame;
-    sf.size.height =  KISHighVersion_7?110:90;
+    sf.size.height =  KISHighVersion_7?79:59;
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 

@@ -11,6 +11,7 @@
 #import "AddCharacterViewController.h"
 #import "MJRefresh.h"
 #import "BinRoleViewController.h"
+#import "HelpViewController.h"
 @interface GuildMembersViewController ()
 {
     MJRefreshHeaderView *m_head;
@@ -42,7 +43,7 @@
     m_dataArray = [NSMutableArray array];
     m_pageCount = 0;
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-25) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight = 60;
@@ -51,6 +52,18 @@
     topImg.image = KUIImage(@"guildTop.jpg");
     m_myTableView.tableHeaderView = topImg;
     
+    
+    UILabel *helplabel = [[UILabel alloc]initWithFrame:CGRectMake(0, kScreenHeigth-25, 320, 25)];
+    helplabel.backgroundColor = [UIColor whiteColor];
+    helplabel.font = [UIFont systemFontOfSize:12];
+    helplabel.textAlignment = NSTextAlignmentCenter;
+    helplabel.textColor=kColorWithRGB(41, 164, 246, 1.0);
+    helplabel.text = @"角色在公会里查不到？";
+    helplabel.userInteractionEnabled = YES;
+    [helplabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickHelp:)]];
+    [self.view addSubview:helplabel];
+    
+    
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"获取中...";
@@ -58,6 +71,13 @@
     [self addFootView];
     [self getguildMembersFromNet];
     
+}
+-(void)didClickHelp:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"content.html?3";
+    [self.navigationController pushViewController:helpVC animated:YES];
+ 
 }
 -(void)getguildMembersFromNet
 {
