@@ -81,24 +81,7 @@
     myDunamicmsgCount ++;
     //添加Tab上的小红点
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
-    
     //显示头像
-//    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
-//    if ([fruits isEqualToString:@""]) {
-//        headImgView.imageURL =nil;
-//    }else{
-//        NSArray  * array= [fruits componentsSeparatedByString:@","];
-//        self.friendImgStr =[array objectAtIndex:0];
-//        
-//        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
-//        if (_friendImgStr) {
-//            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",_friendImgStr]];
-//        }else{
-//            headImgView.imageURL = nil;
-//        }
-//    }
-    
-    
     NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
     headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
     
@@ -136,25 +119,8 @@
     
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     //显示头像
-//    NSString * fruits = KISDictionaryHaveKey(sender.userInfo, @"img");
-//    if ([fruits isEqualToString:@""]) {
-//        headImgView.imageURL =nil;
-//    }else{
-//        NSArray  * array= [fruits componentsSeparatedByString:@","];
-//        self.friendImgStr =[array objectAtIndex:0];
-//        
-//        [[NSUserDefaults standardUserDefaults]setValue:self.friendImgStr forKey:@"preload_img_wx_dongtai"];
-//        if (_friendImgStr) {
-//            headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
-//        }else{
-//            headImgView.imageURL = nil;
-//        }
-//    }
-    
     NSString * headImage = KISDictionaryHaveKey(sender.userInfo, @"img");
     headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
-    
-
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
@@ -256,10 +222,8 @@
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
         
-//        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/120/120",imageId]];
         headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
     }else{
-//        headImgView.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80",_friendImgStr]];
         headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
     }
     [bottomView addSubview:headImgView];
@@ -342,17 +306,12 @@
     [m_menuButton addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
-        //            menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
-        
         NSString * imageId= KISDictionaryHaveKey(dic, @"img");
         m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
     }else{
         [m_menuButton setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
     }
     [self.view addSubview:m_menuButton];
-
-
-    
    // [self didClickMenu:nil];
 }
 

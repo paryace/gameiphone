@@ -18,37 +18,41 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
         
-        self.backgroundColor = [UIColor blackColor];
+       UIView *topView = [[UIView alloc] init];
+        topView.frame = CGRectMake(0,0,320,60);
+        topView.backgroundColor = [UIColor blackColor];
+
+        topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
         self.btn1 = [self getUIBtn:0];
-        [self addSubview:self.btn1];
+        [topView addSubview:self.btn1];
         
         self.lable1=[self getUILable:0];
-        [self addSubview:self.lable1];
+        [topView addSubview:self.lable1];
         
         //---
          self.btn2 = [self getUIBtn:1];
-        [self addSubview:self.btn2];
+        [topView addSubview:self.btn2];
         
          self.lable2=[self getUILable:1];
-        [self addSubview:self.lable2];
+        [topView addSubview:self.lable2];
         
         
         //---
         self.btn3 = [self getUIBtn:2];
-        [self addSubview:self.btn3];
+        [topView addSubview:self.btn3];
         
         self.lable3=[self getUILable:2];
-        [self addSubview:self.lable3];
+        [topView addSubview:self.lable3];
         
         
         //---
         self.btn4 = [self getUIBtn:3];
-        [self addSubview:self.btn4];
+        [topView addSubview:self.btn4];
         
         self.lable4=[self getUILable:3];
-        [self addSubview:self.lable4];
+        [topView addSubview:self.lable4];
+        [self addSubview:topView];
     }
     return self;
 }
