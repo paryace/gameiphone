@@ -1312,6 +1312,18 @@ typedef enum : NSUInteger {
         destuserId = KISDictionaryHaveKey(KISDictionaryHaveKey(dict,@"commentUser"), @"userid");
     }
 }
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(actionSheet.tag ==888888){
+        if (buttonIndex==0) {
+            
+            [self delcomment];
+        }else{
+            return;
+        }
+    }
+}
+
 //tableView定位
 -(void)keyboardLocation:(NewNearByCell *)mycell
 {
