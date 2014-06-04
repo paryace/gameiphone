@@ -775,19 +775,6 @@
     }
     return array;
 }
-//----
-//+(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
-//{
-//    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO];
-//    NSMutableArray *allMsgArray = [NSMutableArray array];
-//    for (int i = 0; i<array.count; i++) {
-//        if ([[[array objectAtIndex:i]sayHiType]isEqualToString:type]) {
-//            [allMsgArray addObject:[array objectAtIndex:i]];
-//        }
-//    }
-//    return allMsgArray;
-//}
-
 +(NSArray *)qureyAllThumbMessagesWithType:(NSString *)type
 {
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
@@ -799,11 +786,6 @@
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sayHiType==[c]%@", type];
         DSThumbMsgs * firstSayHiMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate sortedBy:@"receiveTime" ascending:YES];
         return firstSayHiMsg;
-//    NSArray * hh=[self qureyAllThumbMessagesWithType:type];
-//    if(hh.count>0){
-//        return [hh objectAtIndex:hh.count-1];
-//    }
-//    return nil;
 }
 
 //检查消息是否存在
@@ -816,7 +798,6 @@
     }
     return NO;
 }
-
 //----
 +(void)refreshMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status
 {
