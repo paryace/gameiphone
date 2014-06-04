@@ -99,9 +99,9 @@
           m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, m_charaDetailsView.helpLabel.frame.origin.y+m_charaDetailsView.helpLabel.frame.size.height, 320, 50);
         [m_charaDetailsView.helpLabel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterTohelpPage:)]];
     }
-    m_charaDetailsView.contentSize = CGSizeMake(320, 640);
+    m_charaDetailsView.contentSize = CGSizeMake(0, 640);
     m_charaDetailsView.myCharaterDelegate = self;
-    
+    m_charaDetailsView.backgroundColor = [UIColor whiteColor];  
     m_charaDetailsView.topImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"gameTopImg_%@.jpg",self.gameId]];
     if (self.myViewType ==CHARA_INFO_MYSELF) {
         [m_charaDetailsView comeFromMy];
@@ -228,7 +228,21 @@
                 }
                 tabHeight +=height;
             }
+            m_contentTableView.frame  = CGRectMake(m_contentTableView.frame.origin.x, m_contentTableView.frame.origin.y, m_contentTableView.frame.size.width, tabHeight);
+            m_reamlTableView.frame  = CGRectMake(m_reamlTableView.frame.origin.x, m_reamlTableView.frame.origin.y, m_reamlTableView.frame.size.width, tabHeight);
+            
+            m_countryTableView.frame  = CGRectMake(m_countryTableView.frame.origin.x, m_countryTableView.frame.origin.y, m_countryTableView.frame.size.width, tabHeight);
+            
+            if ([self.gameId intValue]==2) {
+                m_charaDetailsView.helpLabel.hidden = YES;
+            }else{
+                m_charaDetailsView.helpLabel.hidden  =NO;
+            }
+            m_charaDetailsView.helpLabel.frame = CGRectMake(0, 236+tabHeight, 320, 20);
+            m_charaDetailsView.listScrollView.frame = CGRectMake(0, 236, 320, tabHeight);
+            m_charaDetailsView.listScrollView.contentSize = CGSizeMake(320*3, tabHeight);
 
+            m_charaDetailsView.reloadingBtn.frame = CGRectMake(0, 236+tabHeight+20, 320, 50);
             
             
             
