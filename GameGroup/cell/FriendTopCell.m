@@ -8,118 +8,76 @@
 
 #import "FriendTopCell.h"
 
+@interface FriendTopCell (){
+    NSArray *topTitle;
+}
+@end
 @implementation FriendTopCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
+        topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
+        
         self.backgroundColor = [UIColor blackColor];
-        self.btn1 = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btn1.tag = 0;
-        self.btn1.frame = CGRectMake(0*80, 0, 80, 60);
-        [self.btn1 addTarget:self action:@selector(btnAction:)
-         forControlEvents:UIControlEventTouchUpInside];
-        [self.btn1 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",0+1]]
-                forState:UIControlStateNormal];
-        [self.btn1 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",0+1]]
-                forState:UIControlStateHighlighted];
-        [self.btn1 setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+        self.btn1 = [self getUIBtn:0];
         [self addSubview:self.btn1];
         
-        
-       self.lable1= [[UILabel alloc] init];
-        CGSize textSize1 =[[topTitle objectAtIndex:0] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        CGFloat textWidth1 = textSize1.width;
-        self.lable1.frame=CGRectMake(0*80+((80-textWidth1)/2),40, 80 ,20);
-        self.lable1.font = [UIFont systemFontOfSize:11];
-        self.lable1.textColor=UIColorFromRGBA(0xf7f7f7, 1);
-        self.lable1.backgroundColor=[UIColor clearColor];
-        self.lable1.text=[topTitle objectAtIndex:0];
+        self.lable1=[self getUILable:0];
         [self addSubview:self.lable1];
         
         //---
-        
-        self.btn2 = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btn2.tag = 1;
-        self.btn2.frame = CGRectMake(1*80, 0, 80, 60);
-        [self.btn2 addTarget:self action:@selector(btnAction:)
-            forControlEvents:UIControlEventTouchUpInside];
-        [self.btn2 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",1+1]]
-                   forState:UIControlStateNormal];
-        [self.btn2 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",1+1]]
-                   forState:UIControlStateHighlighted];
-        [self.btn2 setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+         self.btn2 = [self getUIBtn:1];
         [self addSubview:self.btn2];
         
-        
-        self.lable2= [[UILabel alloc] init];
-        CGSize textSize2 =[[topTitle objectAtIndex:1] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        CGFloat textWidth2 = textSize2.width;
-        self.lable2.frame=CGRectMake(1*80+((80-textWidth2)/2),40, 80 ,20);
-        self.lable2.font = [UIFont systemFontOfSize:11];
-        self.lable2.textColor=UIColorFromRGBA(0xf7f7f7, 1);
-        self.lable2.backgroundColor=[UIColor clearColor];
-        self.lable2.text=[topTitle objectAtIndex:1];
+         self.lable2=[self getUILable:1];
         [self addSubview:self.lable2];
         
         
         //---
-        
-        self.btn3 = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btn3.tag = 2;
-        self.btn3.frame = CGRectMake(2*80, 0, 80, 60);
-        [self.btn3 addTarget:self action:@selector(btnAction:)
-            forControlEvents:UIControlEventTouchUpInside];
-        [self.btn3 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",2+1]]
-                   forState:UIControlStateNormal];
-        [self.btn3 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",2+1]]
-                   forState:UIControlStateHighlighted];
-        [self.btn3 setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+        self.btn3 = [self getUIBtn:2];
         [self addSubview:self.btn3];
         
-        
-        self.lable3= [[UILabel alloc] init];
-        CGSize textSize3 =[[topTitle objectAtIndex:2] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        CGFloat textWidth3 = textSize3.width;
-        self.lable3.frame=CGRectMake(2*80+((80-textWidth3)/2),40, 80 ,20);
-        self.lable3.font = [UIFont systemFontOfSize:11];
-        self.lable3.textColor=UIColorFromRGBA(0xf7f7f7, 2);
-        self.lable3.backgroundColor=[UIColor clearColor];
-        self.lable3.text=[topTitle objectAtIndex:2];
+        self.lable3=[self getUILable:2];
         [self addSubview:self.lable3];
         
         
         //---
-        
-        
-        self.btn4 = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.btn4.tag = 3;
-        self.btn4.frame = CGRectMake(3*80, 0, 80, 60);
-        [self.btn4 addTarget:self action:@selector(btnAction:)
-            forControlEvents:UIControlEventTouchUpInside];
-        [self.btn4 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",3+1]]
-                   forState:UIControlStateNormal];
-        [self.btn4 setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",3+1]]
-                   forState:UIControlStateHighlighted];
-        [self.btn4 setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+        self.btn4 = [self getUIBtn:3];
         [self addSubview:self.btn4];
         
-        
-        self.lable4= [[UILabel alloc] init];
-        CGSize textSize4 =[[topTitle objectAtIndex:3] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        CGFloat textWidth4 = textSize4.width;
-        self.lable4.frame=CGRectMake(3*80+((80-textWidth4)/2),40, 80 ,20);
-        self.lable4.font = [UIFont systemFontOfSize:11];
-        self.lable4.textColor=UIColorFromRGBA(0xf7f7f7, 2);
-        self.lable4.backgroundColor=[UIColor clearColor];
-        self.lable4.text=[topTitle objectAtIndex:3];
+        self.lable4=[self getUILable:3];
         [self addSubview:self.lable4];
     }
     return self;
 }
 
+
+-(UIButton *)getUIBtn:(NSInteger)i{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.tag = i;
+    button.frame = CGRectMake(i*80, 0, 80, 60);
+    [button addTarget:self action:@selector(btnAction:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",i+1]]
+            forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",i+1]]
+            forState:UIControlStateHighlighted];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+    return button;
+}
+-(UILabel *)getUILable:(NSInteger)i{
+    UILabel *titleLable = [[UILabel alloc] init];
+    CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+    CGFloat textWidth = textSize.width;
+    titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
+    titleLable.font = [UIFont systemFontOfSize:11];
+    titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
+    titleLable.backgroundColor=[UIColor clearColor];
+    titleLable.text=[topTitle objectAtIndex:i];
+    return titleLable;
+}
 - (void)btnAction:(UIButton *)sender{
     if (self.friendTabDelegate) {
         [self.friendTabDelegate topBtnAction:sender];
