@@ -21,6 +21,8 @@
     NSMutableArray * uploadImagePathArray;
     NSMutableDictionary * reponseStrArray;
     NSInteger imageImdex;
+    NSInteger imageWidth;
+    NSInteger imageHeight;
 }
 @property (nonatomic,strong)UITextView* dynamicTV;
 @property (nonatomic,strong)UILabel* placeholderL;
@@ -43,6 +45,9 @@
 {
     [super viewDidLoad];
     m_maxZiShu = 225;
+    imageWidth = (self.view.bounds.size.width-10-20)/4;
+    imageHeight = (self.view.bounds.size.width-10-20)/4;
+    
     [self setTopViewWithTitle:@"发表动态" withBackButton:YES];
 
     uploadImagePathArray = [NSMutableArray array];
@@ -86,14 +91,14 @@
     [self.view addSubview:_placeholderL];
     
     PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
-    PhotoB.frame = CGRectMake(5, startX + 173, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
+    PhotoB.frame = CGRectMake(5, startX + 173, imageWidth, imageHeight);
     [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
     [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
     PhotoB.hidden = NO;
     [self.view addSubview:PhotoB];
 
     if (self.titleImage) {
-        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 173 + startX, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4)];
+        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 173 + startX, imageWidth, imageHeight)];
         titleimg.image = self.titleImage;
         titleimg.userInteractionEnabled = YES;
         [self.view addSubview:titleimg];
@@ -101,7 +106,7 @@
         UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
         [titleimg addGestureRecognizer:tapGR];
 
-        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 173, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
+        PhotoB.frame = CGRectMake(5 + imageWidth +5, startX + 173, imageWidth, imageHeight);
         if (self.pictureArray == nil) {
             self.pictureArray = [[NSMutableArray alloc]init];
         }
@@ -187,14 +192,13 @@
     }
     
     //判断字数是否超出限制
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
-    
-    if (ziNum<0) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您发布的字数已超出限制" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-        alert.tag = 67;
-        [alert show];
-        return;
-    }
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
+//    if (ziNum<0) {
+//        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您发布的字数已超出限制" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+//        alert.tag = 67;
+//        [alert show];
+//        return;
+//    }
 
     [hud show:YES];
     [self.dynamicTV resignFirstResponder];
@@ -477,8 +481,8 @@
         return YES;
     }
     else{
+        [self showAlertViewWithTitle:@"提示" message:@"最多不能超过225个字" buttonTitle:@"确定"];
         return NO;
-        
     }
 }
 
