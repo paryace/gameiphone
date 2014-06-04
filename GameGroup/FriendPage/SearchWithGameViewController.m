@@ -80,12 +80,15 @@
 -(void)enterToHelpPage:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
+    if (self.myInfoType ==COME_GUILD) {
+        helpVC.myUrl =@"content.html?5";
+    }else{
     if ([self.gameid intValue]==1) {
         helpVC.myUrl = @"content.html?5";
     }else {
         helpVC.myUrl = @"content.html?8";
     }
-
+    }
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 
