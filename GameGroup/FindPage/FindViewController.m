@@ -761,7 +761,7 @@
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 
-        m_menuButton.center = CGPointMake(160,kScreenHeigth-80);
+        m_menuButton.center = CGPointMake(160,kScreenHeigth-90);
 
         [UIView commitAnimations];
 

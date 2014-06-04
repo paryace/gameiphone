@@ -143,7 +143,7 @@
 -(void)HelpAction:(id)sender
 {
     HelpViewController *helpVC = [[HelpViewController alloc]init];
-    helpVC.myUrl = @"content.html?2";
+    helpVC.myUrl = @"release.html";
     [self.navigationController pushViewController:helpVC animated:YES];
 }
 - (void)dealloc
