@@ -85,14 +85,14 @@
     [self.view addSubview:_placeholderL];
     
     PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
-    PhotoB.frame = CGRectMake(5, startX + 180, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
+    PhotoB.frame = CGRectMake(5, startX + 173, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
     [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
     [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
     PhotoB.hidden = NO;
     [self.view addSubview:PhotoB];
 
     if (self.titleImage) {
-        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180 + startX, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4)];
+        UIImageView* titleimg = [[UIImageView alloc] initWithFrame:CGRectMake(5, 173 + startX, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4)];
         titleimg.image = self.titleImage;
         titleimg.userInteractionEnabled = YES;
         [self.view addSubview:titleimg];
@@ -100,7 +100,7 @@
         UITapGestureRecognizer*tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
         [titleimg addGestureRecognizer:tapGR];
 
-        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 180, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
+        PhotoB.frame = CGRectMake(13 + 48.5 +12.875, startX + 173, (self.view.bounds.size.width-10-20)/4, (self.view.bounds.size.width-10-20)/4);
         if (self.pictureArray == nil) {
             self.pictureArray = [[NSMutableArray alloc]init];
         }

@@ -455,7 +455,7 @@
     if ([self.gameId isEqualToString:@"1"]) {
         hud.labelText = @"正拼命从英雄榜获取中...";
     }else if([self.gameId isEqualToString:@"2"]){
-        hud.labelText = @"正再请求数据中...";
+        hud.labelText = @"正在请求数据中...";
     }
     
     hud.detailsLabelText = nil;
