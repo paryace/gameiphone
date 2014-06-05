@@ -15,6 +15,7 @@
 #import "ShowTextViewController.h"
 #import "ActivationCodeViewController.h"
 #import "MessageInformationViewController.h"
+#import "BlackListViewController.h"
 
 @interface SetViewController ()
 {
@@ -73,7 +74,7 @@
 {
     switch (section) {
         case 0:
-            return 5;
+            return 6;
             break;
         case 1:
             return 1;
@@ -133,7 +134,9 @@
                     cell.titleLable.text = @"兑换码";
                     
                     break;
-                    
+                  case 5:
+                    cell.leftImageView.image = KUIImage(@"blacklist");
+                    cell.titleLable.text = @"我的黑名单";
                 default:
                     break;
             }
@@ -197,6 +200,9 @@
             {
                 ActivationCodeViewController* VC = [[ActivationCodeViewController alloc] init];
                 [self.navigationController pushViewController:VC animated:YES];
+            }else{
+                BlackListViewController *bl =[[BlackListViewController alloc]init];
+                [self.navigationController pushViewController:bl animated:YES];
             }
             
         } break;

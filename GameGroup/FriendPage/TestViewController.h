@@ -20,7 +20,7 @@ typedef enum
 }MyViewType1;
 @protocol testViewDelegate;
 
-@interface TestViewController : BaseViewController<HGPhotoWallDelegate, UIAlertViewDelegate>
+@interface TestViewController : BaseViewController<HGPhotoWallDelegate, UIAlertViewDelegate,UIActionSheetDelegate>
 @property(nonatomic, assign)id<testViewDelegate>myDelegate;
 @property(nonatomic, assign)MyViewType1    viewType;
 @property(nonatomic, strong)HostInfo*     hostInfo;

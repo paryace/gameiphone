@@ -36,7 +36,6 @@ static ReconnectMessage *my_reconectMessage = NULL;
 }
 
 
-#pragma mark - 获得好友、关注、粉丝列表
 
 - (void)sendDeviceToken
 {
@@ -46,9 +45,9 @@ static ReconnectMessage *my_reconectMessage = NULL;
     [locationDict setObject:appType forKey:@"appType"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]? [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]:@""forKey:@"userid"];
     [postDict setObject:@"140" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]:@"" forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {

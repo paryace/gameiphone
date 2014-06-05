@@ -198,6 +198,17 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSLog(@"消息已存在");
         return;
     }
+    
+    NSArray *array = [DataStoreManager queryAllBlackListUserid];
+    
+    if ([array containsObject:sender]) {
+        NSLog(@"黑名单用户 不作操作");
+
+        return;
+    }
+    
+    
+    
     //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
         NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
