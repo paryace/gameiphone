@@ -19,6 +19,7 @@
 #import "MJRefresh.h"
 #import "PhotoViewController.h"
 #import "UpLoadFileService.h"
+#import "MessageService.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -1777,7 +1778,7 @@ UINavigationControllerDelegate>
 - (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
     
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* payloadStr=[self createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
+    NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
     NSMutableDictionary *dictionary =  [self createMsgDictionary:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"1"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
@@ -1798,7 +1799,7 @@ UINavigationControllerDelegate>
     NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
     NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
-    NSString * payloadStr=[self createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
+    NSString * payloadStr=[MessageService createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
@@ -1894,7 +1895,7 @@ UINavigationControllerDelegate>
 #pragma mark 发送Xmpp消息
 -(void)sendMessage:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to MsgType:(NSString*)msgType FileType:(NSString*)fileTyp Type:(NSString*)type Payload:(NSString*)payloadStr
 {
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
     if(payloadStr!=nil&&![payloadStr isEqualToString:@""]){
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
         [payload setStringValue:payloadStr];
@@ -1928,37 +1929,37 @@ UINavigationControllerDelegate>
     }
 }
 
-#pragma mark 创建payload
--(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
-{
-    NSDictionary * dic = @{@"thumb":thumbImage,
-                           @"title":bigImagePath,
-                           @"shiptype": @"",
-                           @"messageid":@"",
-                           @"msg":imageId,
-                           @"type":@"img"};
-    return [dic JSONFragment];
-}
-#pragma mark 生成XML消息文档
--(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
-{
-    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-    [body setStringValue:message];
-    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    //消息类型
-    [mes addAttributeWithName:@"type" stringValue:type];
-    //发送给谁
-    [mes addAttributeWithName:@"to" stringValue:to];
-    //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:from];
-    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
-    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
-    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
-    [mes addAttributeWithName:@"id" stringValue:uuid];
-    [mes addChild:body];
-    NSLog(@"消息uuid ~!~~ %@", uuid);
-    return mes;
-}
+//#pragma mark 创建payload
+//-(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
+//{
+//    NSDictionary * dic = @{@"thumb":thumbImage,
+//                           @"title":bigImagePath,
+//                           @"shiptype": @"",
+//                           @"messageid":@"",
+//                           @"msg":imageId,
+//                           @"type":@"img"};
+//    return [dic JSONFragment];
+//}
+//#pragma mark 生成XML消息文档
+//-(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
+//{
+//    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+//    [body setStringValue:message];
+//    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+//    //消息类型
+//    [mes addAttributeWithName:@"type" stringValue:type];
+//    //发送给谁
+//    [mes addAttributeWithName:@"to" stringValue:to];
+//    //由谁发送
+//    [mes addAttributeWithName:@"from" stringValue:from];
+//    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
+//    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
+//    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
+//    [mes addAttributeWithName:@"id" stringValue:uuid];
+//    [mes addChild:body];
+//    NSLog(@"消息uuid ~!~~ %@", uuid);
+//    return mes;
+//}
 
 #pragma mark 创建消息对象
 -(NSMutableDictionary*)createMsgDictionary:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid MsgStatus:(NSString *)status
@@ -2148,7 +2149,7 @@ UINavigationControllerDelegate>
     NSString *from=[fromUserId stringByAppendingString:domain];
     NSString *to=[sender stringByAppendingString:domain];
     
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     
     if (![self.appDel.xmppHelper sendMessage:mes]) {
         return;

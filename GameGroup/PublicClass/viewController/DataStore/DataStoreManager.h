@@ -37,6 +37,7 @@
 + (BOOL)savedNewsMsgWithID:(NSString*)msgId;//每日一闻消息是否已存
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
 +(void)saveDSNewsMsgs:(NSDictionary*)msgDict;//保存每日一闻消息
++(void)saveDSCommonMsg:(NSDictionary *)msg;
 //ThumbMsg
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 + (void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;

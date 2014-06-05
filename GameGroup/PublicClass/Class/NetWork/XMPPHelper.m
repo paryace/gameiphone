@@ -193,7 +193,7 @@
 -(NSString*)getMsgType:(NSString*)payload
 {
     if ([GameCommon isEmtity:payload]) {
-        return @"";
+        return @"normalchat";
     }
     if ([[GameCommon getNewStringWithId:[payload JSONValue][@"type"]] isEqualToString:@"3"]) {
         return @"payloadchat";
@@ -401,32 +401,32 @@
     NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
     NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     if (![self sendMessage:mes]) {
         return;
     }
 }
-#pragma mark 生成XML消息文档
--(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
-{
-    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-    [body setStringValue:message];
-    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    //消息类型
-    [mes addAttributeWithName:@"type" stringValue:type];
-    //发送给谁
-    [mes addAttributeWithName:@"to" stringValue:to];
-    //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:from];
-    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
-    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
-    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
-    [mes addAttributeWithName:@"id" stringValue:uuid];
-    
-    [mes addChild:body];
-    NSLog(@"消息uuid ~!~~ %@", uuid);
-    return mes;
-}
+//#pragma mark 生成XML消息文档
+//-(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
+//{
+//    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+//    [body setStringValue:message];
+//    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+//    //消息类型
+//    [mes addAttributeWithName:@"type" stringValue:type];
+//    //发送给谁
+//    [mes addAttributeWithName:@"to" stringValue:to];
+//    //由谁发送
+//    [mes addAttributeWithName:@"from" stringValue:from];
+//    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
+//    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
+//    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
+//    [mes addAttributeWithName:@"id" stringValue:uuid];
+//    
+//    [mes addChild:body];
+//    NSLog(@"消息uuid ~!~~ %@", uuid);
+//    return mes;
+//}
 
 
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence

@@ -143,7 +143,7 @@ static UserManager *userManager = NULL;
             dispatch_async(queue, ^{
                 if ([responseObject isKindOfClass:[NSArray class]]) {
                     NSArray *array = responseObject;
-                    [DataStoreManager deleteAllBlackList];
+//                    [DataStoreManager deleteAllBlackList];
                     if (array.count>0) {
                         for (NSDictionary *dic in array) {
                             [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];

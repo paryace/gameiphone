@@ -173,8 +173,34 @@
         }
     }];
 }
-#pragma mark - 存储消息相关
 
+
+#pragma mark - 保存聊天记录
++(void)saveDSCommonMsg:(NSDictionary *)msg
+{
+    NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
+    NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
+    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
+    NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
+    NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+    NSDictionary* user= [[UserManager singleton] getUser:sender];
+    NSString * senderNickname = [user objectForKey:@"nickname"];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+        commonMsg.sender = sender;
+        commonMsg.senderNickname = senderNickname?senderNickname:@"";
+        commonMsg.msgContent = msgContent?msgContent:@"";
+        commonMsg.senTime = sendTime;
+        commonMsg.msgType = msgType;
+        commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+        commonMsg.messageuuid = msgId;
+        commonMsg.status = @"1";//已发送
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+    }];
+}
+#pragma mark - 存储消息相关
 +(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
 {
     NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
@@ -191,19 +217,18 @@
         NSString * senderNickname = [user objectForKey:@"nickname"];
 
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
-            commonMsg.sender = sender;
-            commonMsg.senderNickname = senderNickname?senderNickname:@"";
-            commonMsg.msgContent = msgContent?msgContent:@"";
-            commonMsg.senTime = sendTime;
-            commonMsg.msgType = msgType;
-            commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-            commonMsg.messageuuid = msgId;
-            commonMsg.status = @"1";//已发送
-            commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+//            DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+//            commonMsg.sender = sender;
+//            commonMsg.senderNickname = senderNickname?senderNickname:@"";
+//            commonMsg.msgContent = msgContent?msgContent:@"";
+//            commonMsg.senTime = sendTime;
+//            commonMsg.msgType = msgType;
+//            commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+//            commonMsg.messageuuid = msgId;
+//            commonMsg.status = @"1";//已发送
+//            commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
-            
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -245,16 +270,16 @@
         NSString * senderNickname = [user objectForKey:@"nickname"];
 
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
-            commonMsg.sender = sender;
-            commonMsg.senderNickname = senderNickname?senderNickname:@"";
-            commonMsg.msgContent = msgContent?msgContent:@"";
-            commonMsg.senTime = sendTime;
-            commonMsg.msgType = msgType;
-            commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-            commonMsg.messageuuid = msgId;
-            commonMsg.status = @"1";//已发送
-            commonMsg.receiveTime=[GameCommon getCurrentTime];
+//            DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+//            commonMsg.sender = sender;
+//            commonMsg.senderNickname = senderNickname?senderNickname:@"";
+//            commonMsg.msgContent = msgContent?msgContent:@"";
+//            commonMsg.senTime = sendTime;
+//            commonMsg.msgType = msgType;
+//            commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+//            commonMsg.messageuuid = msgId;
+//            commonMsg.status = @"1";//已发送
+//            commonMsg.receiveTime=[GameCommon getCurrentTime];
             
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容

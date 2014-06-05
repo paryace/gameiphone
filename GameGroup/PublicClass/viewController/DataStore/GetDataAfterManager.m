@@ -194,6 +194,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self getSayHiUserIdWithInfo:messageContent];
     }
     [self storeNewMessage:messageContent];//保存消息
+    [DataStoreManager saveDSCommonMsg:messageContent];
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];

@@ -735,50 +735,156 @@
     m_shareView.hidden = YES;
 }
 
+//- (void)okShareClick:(id)sender
+//{
+//    if (shareType == 0) {
+//        NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
+//        
+//        
+//        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")].length > 0) {
+//            title =[GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")];
+//        }
+//        NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+//        [body setStringValue:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]]];
+//        NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
+//        NSDictionary * dic = @{@"thumb":_dataDic[@"thumb"],@"title":title,@"shiptype": @"1",@"messageid":_dataDic[@"id"],@"msg":_dataDic[@"msg"],@"type": @"3"};
+//        [payload setStringValue:[dic JSONFragment]];
+//        //生成XML消息文档
+//        NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+//        //   [mes addAttributeWithName:@"nickname" stringValue:@"aaaa"];
+//        //消息类型
+//        [mes addAttributeWithName:@"type" stringValue:@"chat"];
+//        
+//        //发送给谁
+//        [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+//        //由谁发送
+//        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+//        
+//        [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
+//        [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
+//        [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
+//        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+//        [mes addAttributeWithName:@"id" stringValue:uuid];
+//        
+//        //组合
+//        [mes addChild:body];
+//        [mes addChild:payload];
+//        
+//        //发送消息
+//        if ([((AppDelegate*)[[UIApplication sharedApplication] delegate]).xmppHelper sendMessage:mes]) {
+//            [self showMessageWindowWithContent:@"发送成功" imageType:0];
+//            NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+//            [dictionary setObject:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]] forKey:@"msg"];
+//            [dictionary setObject:@"you" forKey:@"sender"];
+//            [dictionary setObject:[GameCommon getCurrentTime] forKey:@"time"];
+//            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"userid") forKey:@"receiver"];
+//            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"nickname") forKey:@"nickname"];
+//            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"img") forKey:@"img"];
+//            [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
+//            [dictionary setObject:@"payloadchat" forKey:@"msgType"];
+//            [dictionary setObject:uuid forKey:@"messageuuid"];
+//            [dictionary setObject:@"2" forKey:@"status"];
+//            [DataStoreManager storeMyPayloadmsg:dictionary];
+//        }else{
+//            [self showMessageWindowWithContent:@"发送失败" imageType:0];
+//        }
+//    }else{
+//        NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+//        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+//        [paramDict setObject:self.messageid forKey:@"messageid"];
+//        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+//        [postDict setObject:@"145" forKey:@"method"];
+//        [postDict setObject:paramDict forKey:@"params"];
+//        [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+//        [self.view bringSubviewToFront:hud];
+//        hud.labelText = @"发送中...";
+//        [hud show:YES];
+//        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//            [hud hide:YES];
+//            m_shareViewBg.hidden = YES;
+//            m_shareView.hidden = YES;
+//            [self showMessageWindowWithContent:@"成功" imageType:0];
+//        } failure:^(AFHTTPRequestOperation *operation, id error) {
+//            if ([error isKindOfClass:[NSDictionary class]]) {
+//                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+//                {
+//                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+//                        [alert show];
+//                }
+//            }
+//            [hud hide:YES];
+//       }];
+//    }
+//    m_shareViewBg.hidden = YES;
+//    m_shareView.hidden = YES;
+//}
+
+
+
+
+
 - (void)okShareClick:(id)sender
 {
     if (shareType == 0) {
+//        NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
+//
+//        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")].length > 0) {
+//            title =[GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")];
+//        }
+//        NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+//        [body setStringValue:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]]];
+//        NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
+//        NSDictionary * dic = @{@"thumb":_dataDic[@"thumb"],@"title":title,@"shiptype": @"1",@"messageid":_dataDic[@"id"],@"msg":_dataDic[@"msg"],@"type": @"3"};
+//        [payload setStringValue:[dic JSONFragment]];
+//  
+//        //生成XML消息文档
+//        NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+//        //   [mes addAttributeWithName:@"nickname" stringValue:@"aaaa"];
+//        //消息类型
+//        [mes addAttributeWithName:@"type" stringValue:@"chat"];
+//        
+//        //发送给谁
+//        [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+//        //由谁发送
+//        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+//        
+//        [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
+//        [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
+//        [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
+//        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+//        [mes addAttributeWithName:@"id" stringValue:uuid];
+//        
+//        //组合
+//        [mes addChild:body];
+        
         NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")].length > 0) {
-            title =[GameCommon getNewStringWithId:KISDictionaryHaveKey(_dataDic, @"title")];
-        }
-        NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-        [body setStringValue:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]]];
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
-        NSDictionary * dic = @{@"thumb":_dataDic[@"thumb"],@"title":title,@"shiptype": @"1",@"messageid":_dataDic[@"id"],@"msg":_dataDic[@"msg"],@"type": @"3"};
-        [payload setStringValue:[dic JSONFragment]];
-        //生成XML消息文档
-        NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-        //   [mes addAttributeWithName:@"nickname" stringValue:@"aaaa"];
-        //消息类型
-        [mes addAttributeWithName:@"type" stringValue:@"chat"];
+         NSString *payloadStr = [MessageService createPayLoadStr:_dataDic[@"thumb"] title:title shiptype:@"1" messageid:_dataDic[@"id"] msg:_dataDic[@"msg"] type:@"3"];
+        [payload setStringValue:payloadStr];
         
-        //发送给谁
-        [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
-        //由谁发送
-        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
-        
-        [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
-        [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里
-        [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
+        NSString * nowTime = [GameCommon getCurrentTime];
+        NSString * message = [NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]];
+        NSString * fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        NSString * domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+        NSString * from = [fromUserId stringByAppendingString:domain];
+        NSString * toUserid = KISDictionaryHaveKey(self.shareUserDic, @"userid");
+        NSString * to = [toUserid stringByAppendingString:domain];
         NSString* uuid = [[GameCommon shareGameCommon] uuid];
-        [mes addAttributeWithName:@"id" stringValue:uuid];
         
-        //组合
-        [mes addChild:body];
+        NSXMLElement *mes =[MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"normalchat" Type:@"chat"];
         [mes addChild:payload];
         
         //发送消息
         if ([((AppDelegate*)[[UIApplication sharedApplication] delegate]).xmppHelper sendMessage:mes]) {
             [self showMessageWindowWithContent:@"发送成功" imageType:0];
             NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-            [dictionary setObject:[NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]] forKey:@"msg"];
+            [dictionary setObject:title forKey:@"msg"];
             [dictionary setObject:@"you" forKey:@"sender"];
-            [dictionary setObject:[GameCommon getCurrentTime] forKey:@"time"];
-            [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"userid") forKey:@"receiver"];
+            [dictionary setObject:nowTime forKey:@"time"];
+            [dictionary setObject:toUserid forKey:@"receiver"];
             [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"nickname") forKey:@"nickname"];
             [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"img") forKey:@"img"];
-            [dictionary setObject:[dic JSONFragment] forKey:@"payload"];
+            [dictionary setObject:payloadStr forKey:@"payload"];
             [dictionary setObject:@"payloadchat" forKey:@"msgType"];
             [dictionary setObject:uuid forKey:@"messageuuid"];
             [dictionary setObject:@"2" forKey:@"status"];
@@ -806,16 +912,18 @@
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
                 {
-                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                        [alert show];
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
                 }
             }
             [hud hide:YES];
-       }];
+        }];
     }
     m_shareViewBg.hidden = YES;
     m_shareView.hidden = YES;
 }
+
+
 
 #pragma mark 举报 或评论
 - (void)reportButtonClick:(id)sender
