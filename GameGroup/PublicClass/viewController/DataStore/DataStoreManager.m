@@ -29,16 +29,16 @@
     [MagicalRecord setDefaultModelNamed:[NSString stringWithFormat:@"%@.momd",modelName]];
     [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:[NSString stringWithFormat:@"%@.sqlite",dataBaseName]];
 }
-+ (BOOL)savedMsgWithID:(NSString*)msgId//消息是否已存
-{
-    NSArray * array = [DSCommonMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
-    if (array.count > 0) {
-        return YES;
-    }
-    return NO;
-}
+//+ (BOOL)savedMsgWithID:(NSString*)msgId//正常聊天消息是否已存
+//{
+//    NSArray * array = [DSCommonMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
+//    if (array.count > 0) {
+//        return YES;
+//    }
+//    return NO;
+//}
 
-+ (BOOL)isHaveMsgOnDb:(NSString*)msgId//消息是否已存
++ (BOOL)savedMsgWithID:(NSString*)msgId//正常聊天消息是否已存
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
     DSCommonMsgs * msg = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
@@ -48,18 +48,40 @@
     }
     return NO;
 }
-+ (BOOL)savedOtherMsgWithID:(NSString *)msgID
+//+ (BOOL)savedOtherMsgWithID:(NSString *)msgID//其他消息是否存在
+//{
+//    NSArray * array = [DSOtherMsgs MR_findByAttribute:@"messageuuid" withValue:msgID];
+//    if (array.count > 0) {
+//        return YES;
+//    }
+//    return NO;
+//}
+
++ (BOOL)savedOtherMsgWithID:(NSString *)msgID//其他消息是否存在
 {
-    NSArray * array = [DSOtherMsgs MR_findByAttribute:@"messageuuid" withValue:msgID];
-    if (array.count > 0) {
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgID];
+    DSOtherMsgs * msg = [DSOtherMsgs MR_findFirstWithPredicate:predicate];
+    if (msg)
+    {
         return YES;
     }
     return NO;
 }
-+ (BOOL)savedNewsMsgWithID:(NSString*)msgId//消息是否已存
+//+ (BOOL)savedNewsMsgWithID:(NSString*)msgId//每日一闻消息是否已存
+//{
+//    NSArray * array = [DSNewsMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
+//    if (array.count > 0) {
+//        return YES;
+//    }
+//    return NO;
+//}
+
++ (BOOL)savedNewsMsgWithID:(NSString*)msgId//每日一闻消息是否已存
 {
-    NSArray * array = [DSNewsMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
-    if (array.count > 0) {
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
+    DSNewsMsgs * msg = [DSNewsMsgs MR_findFirstWithPredicate:predicate];
+    if (msg)
+    {
         return YES;
     }
     return NO;
@@ -163,12 +185,6 @@
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
     
-    
-//    NSString * receiver;
-//    if ([msg objectForKey:@"receicer"]) {
-//        NSRange range2 = [[msg objectForKey:@"receicer"] rangeOfString:@"@"];
-//        receiver = [[msg objectForKey:@"receicer"] substringToIndex:range2.location];
-//    }
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
         NSDictionary* user= [[UserManager singleton] getUser:sender];
@@ -322,17 +338,8 @@
     }
     else if([sendertype isEqualToString:DAILYNEWS])//新闻
     {
-        NSString* title = KISDictionaryHaveKey(msg, @"title");
-        NSDictionary *dic =[title JSONValue];
-        NSString *gameid =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            DSNewsMsgs * newsMsg = [DSNewsMsgs MR_createInContext:localContext];//所有消息
-            newsMsg.messageuuid = msgId;
-            newsMsg.msgcontent = msgContent;
-            newsMsg.msgtype = msgType;
-            newsMsg.mytitle = title;
-            newsMsg.gameid = gameid;
-            newsMsg.sendtime = sendTime;
+
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
@@ -348,14 +355,6 @@
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = @"1";
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-            
-            NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"gameid=[c]%@",gameid];
-            DSNewsGameList * dnews = [DSNewsGameList MR_findFirstWithPredicate:predicate1];
-            if (!dnews)
-                dnews = [DSNewsGameList MR_createInContext:localContext];
-            dnews.gameid = gameid;
-            dnews.mytitle = title;
-            dnews.time =[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
     }
 }
@@ -2409,12 +2408,7 @@ return @"";
 
 +(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict
 {
-    
-    
-    NSLog(@"userinfoDict%@",userInfoDict);
-  //  NSString* messageuuid = [[GameCommon shareGameCommon] uuid];
     NSString* messageuuid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msgId")];
-
     NSString* msgContent = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msg")];
     NSString* msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"msgType")];
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"time")] doubleValue]];
@@ -2422,12 +2416,40 @@ return @"";
 
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSOtherMsgs * otherMsgs = [DSOtherMsgs MR_createInContext:localContext];
-
         otherMsgs.messageuuid = messageuuid;
         otherMsgs.msgContent = msgContent;
         otherMsgs.msgType = msgType;
         otherMsgs.sendTime = sendTime;
         otherMsgs.myTitle = myTitle;
+    }];
+}
+#pragma mark 保存每日一闻消息
++(void)saveDSNewsMsgs:(NSDictionary*)msgDict
+{
+    NSString * msgContent = KISDictionaryHaveKey(msgDict, @"msg");
+    NSString * msgType = KISDictionaryHaveKey(msgDict, @"msgType");
+    NSString * msgId = KISDictionaryHaveKey(msgDict, @"msgId");
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msgDict objectForKey:@"time"] doubleValue]];
+    NSString* title = KISDictionaryHaveKey(msgDict, @"title");
+    NSDictionary *dic =[title JSONValue];
+    NSString *gameid =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        DSNewsMsgs * newsMsg = [DSNewsMsgs MR_createInContext:localContext];//所有消息
+        newsMsg.messageuuid = msgId;
+        newsMsg.msgcontent = msgContent;
+        newsMsg.msgtype = msgType;
+        newsMsg.mytitle = title;
+        newsMsg.gameid = gameid;
+        newsMsg.sendtime = sendTime;
+        
+        NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"gameid=[c]%@",gameid];
+        DSNewsGameList * dnews = [DSNewsGameList MR_findFirstWithPredicate:predicate1];
+        if (!dnews)
+            dnews = [DSNewsGameList MR_createInContext:localContext];
+        dnews.gameid = gameid;
+        dnews.mytitle = title;
+        dnews.time =[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
 

@@ -98,100 +98,78 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return YES;
     }
 }
-
+//根据类型保存消息
 -(void)storeNewMessage:(NSDictionary *)messageContent
 {
     BOOL isVibrationopen=[self isVibrationopen];;
     BOOL isSoundOpen = [self isSoundOpen];
+    if (isSoundOpen) {
+        [SoundSong soundSong];
+    }
+    if (isVibrationopen) {
+        [VibrationSong vibrationSong];
+    }
     
-    NSLog(@"messageContent==%@",messageContent);
     NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
     type = type?type:@"notype";
-    NSLog(@"%@",type);
+    NSString * msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    if ([GameCommon isEmtity:msgId]) {
+        return;
+    }
     
-    if([type isEqualToString:@"normalchat"])
+    if([type isEqualToString:@"normalchat"])//正常聊天
     {
-        NSLog(@"%@",KISDictionaryHaveKey(messageContent, @"msgId"));
-        if (isSoundOpen) {
-             [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
         [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
     }
-    else if([type isEqualToString:@"payloadchat"])
+    else if([type isEqualToString:@"payloadchat"])//分享动态消息
     {
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
-
         [DataStoreManager storeNewMsgs:messageContent senderType:PAYLOADMSG];//动态消息
     }
-    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])
+    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//加好友或者删除好友
     {
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
-
         [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//关注和取消关注
     }
-    else if([type isEqualToString:@"recommendfriend"])
+    else if([type isEqualToString:@"recommendfriend"])//好友推荐
     {
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
         [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];//好友推荐
     }
-    else if([type isEqualToString:@"dailynews"])
+    else if([type isEqualToString:@"dailynews"])//每日一闻
     {
-        NSLog(@"%@",KISDictionaryHaveKey(messageContent, @"msgId"));
-        if ([DataStoreManager savedNewsMsgWithID:KISDictionaryHaveKey(messageContent, @"msgId")]) {
-            NSLog(@"消息已存在");
-            return;
-        }
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
-
         [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
+        
+    }else if ([type isEqualToString:@"character"] || [type isEqualToString:@"pveScore"]
+              || [type isEqualToString:@"title"])//头衔，角色，战斗力
+    {
+        [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
+        
     }
 }
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
+    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     [messageContent setValue:@"1" forKey:@"sayHiType"];
+    if ([DataStoreManager savedNewsMsgWithID:msgId]) {
+        return;
+    }
     [self storeNewMessage:messageContent];
+    [DataStoreManager saveDSNewsMsgs:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
-#pragma mark --收到与我相关动态消息代理回调
+#pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
-    NSLog(@"messageContent%@",messageContent);
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
 
-#pragma mark 收到聊天消息代理回调
+#pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
     NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
 
-    if ([DataStoreManager isHaveMsgOnDb:msgId]) {
-        NSLog(@"消息已存在");
+    if ([DataStoreManager savedMsgWithID:msgId]) {
         return;
     }
     //1 打过招呼，2 未打过招呼
@@ -205,8 +183,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    
     [self storeNewMessage:messageContent];//保存消息
+    
+    
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];
     }else{//更新消息表
@@ -216,9 +195,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
-
-
-#pragma mark 收到验证好友请求代理回调
+#pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
@@ -226,23 +203,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
+    
+    
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
-
-    if ([shiptype isEqualToString:@"1"]) {//成为好友
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-    }
-   else if([shiptype isEqualToString:@"2"])//粉丝
-    {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-    }
-   else
-    {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];
 }
 
-#pragma mark 收到取消关注 删除好友请求代理回调
+#pragma mark 收到取消关注 删除好友请求消息
 -(void)deletePersonReceived:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
@@ -250,59 +218,38 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
+    
+    
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
-    DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
+     DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
     [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
 
-
-    if ([shiptype isEqualToString:@"2"]) {//移到关注表
-//      ß[[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-    }
-    else if ([shiptype isEqualToString:@"unkown"])
-    {
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
-    }
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
 
-#pragma mark - 其他消息 头衔、角色等代理回调
+#pragma mark - 头衔、角色、战斗力变化等消息
 -(void)otherMessageReceived:(NSDictionary *)info
 {
-
-    BOOL isVibrationopen=[self isVibrationopen];;
-    BOOL isSoundOpen = [self isSoundOpen];
-
-    if ([DataStoreManager savedOtherMsgWithID:info[@"msgId"]]) {
-        return;
-    }
     [info setValue:@"1" forKey:@"sayHiType"];
-    [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
+    [self storeNewMessage:info];
+    
     [DataStoreManager saveOtherMsgsWithData:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
-    if (isSoundOpen) {
-        [SoundSong soundSong];
-    }
-    if (isVibrationopen) {
-        [VibrationSong vibrationSong];
-    }
 }
 
-#pragma mark 收到推荐好友代理回调
+#pragma mark 收到推荐好友消息
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];
-    [DataStoreManager storeNewMsgs:info senderType:RECOMMENDFRIEND];//其他消息
-    NSArray* recommendArr = [KISDictionaryHaveKey(info, @"msg") JSONValue];
+    [self storeNewMessage:info];//保存消息
     
+    NSArray* recommendArr = [KISDictionaryHaveKey(info, @"msg") JSONValue];
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendFriendReceived object:nil userInfo:info];
 }
-
 
 #pragma mark --获取你和谁说过话
 -(void)getSayHiUserIdWithInfo:(NSDictionary *)info
@@ -329,7 +276,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
-        
     }];
     
 }

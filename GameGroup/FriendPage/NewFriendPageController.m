@@ -31,7 +31,6 @@
     NSString *fansNum;
     NSString *fanstr;
 }
-//@property (nonatomic, strong) UIView *topView;
 @end
 
 @implementation NewFriendPageController
@@ -76,9 +75,7 @@
     if(KISHighVersion_7){
         m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     }
-    
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
-//    m_myTableView.tableHeaderView=self.topView;
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
@@ -92,38 +89,6 @@
 {
     [self getFriendDateFromDataSore];
 }
-//- (UIView *)topView{
-//    if (!_topView) {
-//        _topView = [[UIView alloc] init];
-//        _topView.frame = CGRectMake(0,0,320,60);
-//        _topView.backgroundColor = [UIColor blackColor];
-//        NSArray *topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
-//        for (int i = 0; i < 4; i++) {
-//            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-//            button.tag = i;
-//            button.frame = CGRectMake(i*80, 0, 80, 60);
-//            [button addTarget:self action:@selector(topBtnAction:)
-//             forControlEvents:UIControlEventTouchUpInside];
-//            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_normal_%d",i+1]]
-//                    forState:UIControlStateNormal];
-//            [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"new_friend_click_%d",i+1]]
-//                    forState:UIControlStateHighlighted];
-//            [button setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
-//            [_topView addSubview:button];
-//            UILabel *titleLable = [[UILabel alloc] init];
-//            CGSize textSize =[[topTitle objectAtIndex:i] sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-//            CGFloat textWidth = textSize.width;
-//            titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
-//            titleLable.font = [UIFont systemFontOfSize:11];
-//            titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
-//            titleLable.backgroundColor=[UIColor clearColor];
-//            titleLable.text=[topTitle objectAtIndex:i];
-//            [_topView addSubview:titleLable];
-//           
-//        }
-//    }
-//    return _topView;
-//}
 
 - (void)topBtnAction:(UIButton *)sender{
     switch (sender.tag) {
@@ -183,8 +148,6 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     if (indexPath.section==0) {
         static NSString * stringCellTop = @"cellTop";
         FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
@@ -300,22 +263,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
                     if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                        fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
-                        [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-                        [[NSUserDefaults standardUserDefaults] synchronize];
-                        NSMutableDictionary* result = [responseObject objectForKey:@"contacts"];
-                        NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
-                        [keys sortUsingSelector:@selector(compare:)];
-                        [keyArr removeAllObjects];
-                        [resultArray removeAllObjects];
-                        [keyArr addObject:@"^"];
-                        [keyArr addObjectsFromArray:keys];
-//                        keyArr = keys;
-                        resultArray = result;
-                        [m_myTableView reloadData];
-                        [self setFansNum];
-                        //保存
-                        [self saveFriendsList:result Keys:keys];
+                        [self dealResponse:responseObject];
                         [m_header endRefreshing];
                     }
                 }
@@ -330,6 +278,25 @@
                     [m_header endRefreshing];
                 }];
 }
+//处理返回结果
+-(void)dealResponse:(id)responseObject
+{
+    fansNum=[[responseObject objectForKey:@"fansnum"] stringValue];
+    [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSMutableDictionary* result = [responseObject objectForKey:@"contacts"];
+    NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
+    [keys sortUsingSelector:@selector(compare:)];
+    [keyArr removeAllObjects];
+    [resultArray removeAllObjects];
+    [keyArr addObject:@"^"];
+    [keyArr addObjectsFromArray:keys];
+    resultArray = result;
+    [m_myTableView reloadData];
+    [self setFansNum];
+    [self saveFriendsList:result Keys:keys];
+}
+
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
@@ -360,7 +327,6 @@
         [resultArray removeAllObjects];
         [keyArr addObject:@"^"];
         [keyArr addObjectsFromArray:keys];
-//        keyArr = keys;
         resultArray = result;
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myTableView reloadData];
@@ -395,11 +361,6 @@
             fanstr=[fansNum stringByAppendingString:@"位粉丝"];
         }
     }
-//    NSArray *viewArray=[[self topView] subviews];
-//    UILabel *fansLable=(UILabel *)[viewArray objectAtIndex:1];
-//    fansNumLable.text=fanstr;
-//    CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-//    fansNumLable.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
 }
 
 -(void)addheadView

@@ -32,10 +32,10 @@
 @interface DataStoreManager : NSObject
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
-+ (BOOL)savedMsgWithID:(NSString*)msgId;//消息是否已存
-+ (BOOL)savedNewsMsgWithID:(NSString*)msgId;//消息是否已存
++ (BOOL)savedMsgWithID:(NSString*)msgId;//正常聊天消息是否已存
++ (BOOL)savedNewsMsgWithID:(NSString*)msgId;//每日一闻消息是否已存
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
-
++(void)saveDSNewsMsgs:(NSDictionary*)msgDict;//保存每日一闻消息
 //ThumbMsg
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 + (void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
@@ -156,7 +156,6 @@
 
 +(BOOL)isHaveSayHiMsg:(NSString *)type;//是否有打招呼的消息
 
-+ (BOOL)isHaveMsgOnDb:(NSString*)msgId;//消息是否存在
 
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 
