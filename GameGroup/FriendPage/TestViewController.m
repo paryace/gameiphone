@@ -861,10 +861,9 @@
         [alter show];
     }else if (buttonIndex ==1){
         NSLog(@"拉黑么");
-        UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"您确定拉黑该吗？" message:@"拉黑之后该用户将无法与您进行聊天,并且无法对您发表的动态进行评论" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"您确定要拉黑该用户吗？" message:@"拉黑之后该用户将无法与您进行聊天,并且无法对您发表的动态进行评论" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
         alter.tag = 28;
         [alter show];
-   
     }
 }
 
@@ -1221,6 +1220,12 @@
             if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
                 [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
             }
+            NSArray *array = [DataStoreManager queryAllBlackListUserid];
+            
+            if ([array containsObject:self.hostInfo.userId]) {
+                [DataStoreManager deletePersonFromBlackListWithUserid:self.hostInfo.userId];
+            }
+
             [self showMessageWindowWithContent:@"关注成功" imageType:0];
         }
         if ([type isEqualToString:@"2"]) {
