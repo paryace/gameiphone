@@ -141,7 +141,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
               || [type isEqualToString:@"title"])//头衔，角色，战斗力
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
-        
     }
 }
 #pragma mark 收到新闻消息
@@ -184,7 +183,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self getSayHiUserIdWithInfo:messageContent];
     }
     [self storeNewMessage:messageContent];//保存消息
-    
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];

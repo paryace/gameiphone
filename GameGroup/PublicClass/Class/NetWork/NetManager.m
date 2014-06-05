@@ -60,22 +60,22 @@
 }
 
 //下载图片
-+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion
-{
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
-    NSURL *URL = [NSURL URLWithString:downLoadUrl];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil
-    destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
-         NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
-         NSURL *pathUrl = [[NSURL alloc]initFileURLWithPath:path];
-        return pathUrl;
-    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-        completion(response,filePath,error);
-    }];
-    [downloadTask resume];
+//+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion
+//{
+//    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+//    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
+//    NSURL *URL = [NSURL URLWithString:downLoadUrl];
+//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+//    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil
+//    destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+//         NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
+//         NSURL *pathUrl = [[NSURL alloc]initFileURLWithPath:path];
+//        return pathUrl;
+//    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+//        completion(response,filePath,error);
+//    }];
+//    [downloadTask resume];
     
     
     
@@ -93,7 +93,7 @@
 //           
 //       }];
 //    [operation start];
-}
+//}
 
 
 

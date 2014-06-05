@@ -189,7 +189,7 @@
 //下载图片
 - (void)getImageByNetWithImageId:(NSString*)imageid
 {
-    NSString * urlStr= [ImageService getImgUrl:imageid];
+//    NSString * urlStr= [ImageService getImgUrl:imageid];
 //    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:@""
 //                                    success:^(NSURLRequest *request,
 //                                              NSHTTPURLResponse *response,
@@ -212,18 +212,18 @@
 //    }];
     
     
-    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageid
-                                 completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
-     {
-         NSString * path=[filePath path];
-         NSFileManager *fm = [NSFileManager defaultManager];
-         if([fm fileExistsAtPath:path])
-         {
-             self.rightBgImage.image = [UIImage imageWithContentsOfFile:path];
-         }
-         [self.waitImageView stopAnimating];
-         self.waitLabel.hidden = YES;
-     }
-     ];
+//    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageid
+//                                 completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
+//     {
+//         NSString * path=[filePath path];
+//         NSFileManager *fm = [NSFileManager defaultManager];
+//         if([fm fileExistsAtPath:path])
+//         {
+//             self.rightBgImage.image = [UIImage imageWithContentsOfFile:path];
+//         }
+//         [self.waitImageView stopAnimating];
+//         self.waitLabel.hidden = YES;
+//     }
+//     ];
 }
 @end
