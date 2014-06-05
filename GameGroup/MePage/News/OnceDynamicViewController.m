@@ -754,9 +754,9 @@
         [mes addAttributeWithName:@"type" stringValue:@"chat"];
         
         //发送给谁
-        [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+        [mes addAttributeWithName:@"to" stringValue:[KISDictionaryHaveKey(self.shareUserDic, @"userid") stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
         //由谁发送
-        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
+        [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
         
         [mes addAttributeWithName:@"msgtype" stringValue:@"normalchat"];
         [mes addAttributeWithName:@"fileType" stringValue:@"text"];  //如果发送图片音频改这里

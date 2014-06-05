@@ -893,4 +893,9 @@ static GameCommon *my_gameCommon = NULL;
     return[scan scanInt:&val] && [scan isAtEnd];
 }
 
++(NSString*)getGroupDomain:(NSString*)domain
+{
+    return [domain stringByReplacingOccurrencesOfString:@"@" withString:@"@group."];
+}
+
 @end

@@ -211,7 +211,6 @@
                     thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
                     thumbMsgs.msgContent = msgContent;//打招呼内容
                     thumbMsgs.sender = @"1234567wxxxxxxxxx";
-//                    thumbMsgs.senderNickname = @"有新的打招呼信息";
                     thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
                     thumbMsgs.senderType = sendertype;
                     int unread = [thumbMsgs.unRead intValue];

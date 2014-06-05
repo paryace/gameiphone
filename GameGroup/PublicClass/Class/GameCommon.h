@@ -72,4 +72,6 @@
 
 
 -(void)firtOpen;
+
++(NSString*)getGroupDomain:(NSString*)domain;
 @end

@@ -189,11 +189,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
     NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    
-//    if ([DataStoreManager savedMsgWithID:msgId]) {
-//        NSLog(@"消息已存在");
-//        return;
-//    }
+
     if ([DataStoreManager isHaveMsgOnDb:msgId]) {
         NSLog(@"消息已存在");
         return;
@@ -229,9 +225,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSRange range = [fromUser rangeOfString:@"@"];
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
-  //  NSString * msg = KISDictionaryHaveKey(userInfo, @"msg");
     [self storeNewMessage:userInfo];
-   // NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
 
     if ([shiptype isEqualToString:@"1"]) {//成为好友
@@ -255,25 +249,20 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSRange range = [fromUser rangeOfString:@"@"];
     fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
-  //  NSString * msg = KISDictionaryHaveKey(userInfo, @"msg");
-    
     [self storeNewMessage:userInfo];
-   // NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithCapacity:1];
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
-    
-    
     DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
     [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
 
 
     if ([shiptype isEqualToString:@"2"]) {//移到关注表
-//            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+//      ß[[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     }
     else if ([shiptype isEqualToString:@"unkown"])
     {
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"2"];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
@@ -282,37 +271,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark - 其他消息 头衔、角色等代理回调
 -(void)otherMessageReceived:(NSDictionary *)info
 {
-//    BOOL isVibrationopen;
-//    BOOL isSoundOpen;
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
-//    {
-//        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
-//            isSoundOpen =YES;
-//        }else{
-//            isSoundOpen =NO;
-//        }
-//    }else{
-//        isSoundOpen =YES;
-//    }
-//    
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
-//    {
-//        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
-//            isVibrationopen =YES;
-//        }else{
-//            isVibrationopen =NO;
-//        }
-//    }else{
-//        isVibrationopen =YES;
-//    }
+
     BOOL isVibrationopen=[self isVibrationopen];;
     BOOL isSoundOpen = [self isSoundOpen];
 
     if ([DataStoreManager savedOtherMsgWithID:info[@"msgId"]]) {
         return;
     }
-    NSLog(@"info%@",info);
-     [info setValue:@"1" forKey:@"sayHiType"];
+    [info setValue:@"1" forKey:@"sayHiType"];
     [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
     [DataStoreManager saveOtherMsgsWithData:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
@@ -322,14 +288,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if (isVibrationopen) {
         [VibrationSong vibrationSong];
     }
-
 }
 
 #pragma mark 收到推荐好友代理回调
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];
-
     [DataStoreManager storeNewMsgs:info senderType:RECOMMENDFRIEND];//其他消息
     NSArray* recommendArr = [KISDictionaryHaveKey(info, @"msg") JSONValue];
     

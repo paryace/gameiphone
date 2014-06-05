@@ -78,7 +78,7 @@
         NSLog(@"连接不成功");
     }
     
-    [self.xmppStream setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]]] ;
+    [self.xmppStream setMyJID:[XMPPJID jidWithString:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]]] ;
     NSString* host=[[NSUserDefaults standardUserDefaults] objectForKey:@"host"];
     
     NSArray* hostArray = [host componentsSeparatedByString:@":"];
@@ -186,59 +186,26 @@
 }
 
 
-// 发送反馈消息
-- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
-{
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
-//    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-//    [body setStringValue:[dic JSONRepresentation]];
-//    //生成XML消息文档
-//    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-//    [mes addAttributeWithName:@"id" stringValue:msgId];
-//    [mes addAttributeWithName:@"msgtype" stringValue:@"msgStatus"];
-//    //消息类型
-//    [mes addAttributeWithName:@"type" stringValue:@"normal"];
-//    //发送给谁
-//    [mes addAttributeWithName:@"to" stringValue:sender];
-//    //由谁发送
-//    [mes addAttributeWithName:@"from" stringValue:[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]]];
-//    [mes addAttributeWithName:@"msgTime" stringValue:[GameCommon getCurrentTime]];
-//    [mes addChild:body];
-//    if (![self sendMessage:mes]) {
-//        return;
-//    }
-    NSString *to=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
-    NSString * nowTime=[GameCommon getCurrentTime];
-    NSString * message=[dic JSONRepresentation];
-    NSString * from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
-    if (![self sendMessage:mes]) {
-        return;
-    }
-}
-#pragma mark 生成XML消息文档
--(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
-{
-    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
-    [body setStringValue:message];
-    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
-    //消息类型
-    [mes addAttributeWithName:@"type" stringValue:type];
-    //发送给谁
-    [mes addAttributeWithName:@"to" stringValue:to];
-    //由谁发送
-    [mes addAttributeWithName:@"from" stringValue:from];
-    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
-    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
-    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
-    [mes addAttributeWithName:@"id" stringValue:uuid];
-    
-    [mes addChild:body];
-    NSLog(@"消息uuid ~!~~ %@", uuid);
-    return mes;
-}
 - (void)xmppStreamWillConnect:(XMPPStream *)sender{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
+}
+
+-(NSString*)getMsgType:(NSString*)payload
+{
+    if ([GameCommon isEmtity:payload]) {
+        return @"";
+    }
+    if ([[GameCommon getNewStringWithId:[payload JSONValue][@"type"]] isEqualToString:@"3"]) {
+        return @"payloadchat";
+    }else if ([payload JSONValue][@"active"]){
+        //发送通知 判断账号是否激活
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
+        return @"normalchat";
+        
+    }else if ([[payload JSONValue][@"type"] isEqualToString:@"img"]){//如果 payload 的type 是 img 的话
+        return @"normalchat";
+    }
+    return @"normalchat";
 }
 
 #pragma mark 收到消息后调用
@@ -254,13 +221,14 @@
     NSRange range = [from rangeOfString:@"@"];
     NSString * fromName = [from substringToIndex:(range.location == NSNotFound) ? 0 : range.location];
     NSString *type = [[message attributeForName:@"type"] stringValue];
-    NSString *msgTime = [[message attributeForName:@"msgTime"] stringValue]?[[message attributeForName:@"msgTime"] stringValue]:[GameCommon getCurrentTime];
+    NSString * time = [[message attributeForName:@"msgTime"] stringValue];
+    NSString *msgTime = time?time:[GameCommon getCurrentTime];
+    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:msg forKey:@"msg"];
-    [dict setObject:from forKey:@"sender"];
-    [dict setObject:msgId forKey:@"msgId"];
-    //消息接收到的时间
-    [dict setObject: msgTime forKey:@"time"];
+    [dict setObject:msg forKey:@"msg"];//消息内容
+    [dict setObject:from forKey:@"sender"];//发送者用户id
+    [dict setObject:msgId forKey:@"msgId"];//消息id
+    [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
     
     NSLog(@"theDict%@",dict);
     if ([type isEqualToString:@"chat"])
@@ -271,30 +239,12 @@
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            if (payload.length > 0&&[[NSString stringWithFormat:@"%@",[payload JSONValue][@"type"]] isEqualToString:@"3"]) {
-                [dict setObject:@"payloadchat" forKey:@"msgType"];
-                
-            }else if (payload.length > 0&&[payload JSONValue][@"active"]){
-                //发送通知 判断账号是否激活
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
-                [dict setObject:@"normalchat" forKey:@"msgType"];
-                
-            }else if (payload.length>0&&[[payload JSONValue][@"type"] isEqualToString:@"img"]){
-                //如果 payload 的type 是 img 的话
-                [dict setObject:@"normalchat" forKey:@"msgType"];
-                
-            }else {
-                [dict setObject:@"normalchat" forKey:@"msgType"];
-            }
-            
+            [dict setObject:[self getMsgType:payload] forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-//            [[NSNotificationCenter defaultCenter]postNotificationName:receiveregularMsg object:nil userInfo:dict];
-
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
             [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:@"sayHello" forKey:@"msgType"];
             NSString * shiptype = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if (shiptype.length > 0) {
@@ -327,7 +277,6 @@
             title = KISDictionaryHaveKey([title JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
             
-//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverOtherChrarterMsg object:nil userInfo:dict];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
@@ -344,15 +293,14 @@
                 }
             }
             [dict setObject:dis forKey:@"disStr"];
-//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverFriendRecommended object:nil userInfo:dict];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
         }
         else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {    //新的朋友圈动态
-                NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
                     int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
                     i++;
@@ -368,7 +316,6 @@
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])
             {
-                NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
                 
@@ -401,7 +348,6 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-//            [[NSNotificationCenter defaultCenter]postNotificationName:receiverNewsMsg object:nil userInfo:dict];
         }
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
@@ -421,11 +367,12 @@
             if (src_id.length <= 0) {
                 return;
             }
-            if ([KISDictionaryHaveKey(bodyDic, @"msgStatus") isEqualToString:@"Delivered"]) {//是否送达
+            NSString * msgStatus = KISDictionaryHaveKey(bodyDic, @"msgStatus");
+            if ([msgStatus isEqualToString:@"Delivered"]) {//是否送达
                 [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
-            else if ([KISDictionaryHaveKey(bodyDic, @"msgStatus") isEqualToString:@"Displayed"]) {//是否已读
+            else if ([msgStatus isEqualToString:@"Displayed"]) {//是否已读
                 [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
@@ -442,35 +389,52 @@
         [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
     }
-    
 }
-
+//sender:@"10000202@gamepro.com/862933025698753"
+#pragma mark 发送反馈消息
+- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
+{
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
+    NSString *to=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
+    NSString * nowTime=[GameCommon getCurrentTime];
+    NSString * message=[dic JSONRepresentation];
+    NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
+    NSXMLElement *mes = [self createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    if (![self sendMessage:mes]) {
+        return;
+    }
+}
+#pragma mark 生成XML消息文档
+-(NSXMLElement*)createMes:(NSString *)nowTime Message:(NSString*)message UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to FileType:(NSString*)fileType MsgType:(NSString*)msgType Type:(NSString*)type
+{
+    NSXMLElement *body = [NSXMLElement elementWithName:@"body"];
+    [body setStringValue:message];
+    NSXMLElement *mes = [NSXMLElement elementWithName:@"message"];
+    //消息类型
+    [mes addAttributeWithName:@"type" stringValue:type];
+    //发送给谁
+    [mes addAttributeWithName:@"to" stringValue:to];
+    //由谁发送
+    [mes addAttributeWithName:@"from" stringValue:from];
+    [mes addAttributeWithName:@"msgtype" stringValue:msgType];
+    [mes addAttributeWithName:@"fileType" stringValue:fileType];  //如果发送图片音频改这里
+    [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
+    [mes addAttributeWithName:@"id" stringValue:uuid];
+    
+    [mes addChild:body];
+    NSLog(@"消息uuid ~!~~ %@", uuid);
+    return mes;
+}
 
 
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence
 {
-    //取得好友状态
-    NSString *presenceType = [NSString stringWithFormat:@"%@", [presence type]]; //online/offline
-    //请求的用户
-//    NSString *presenceFromUser =[NSString stringWithFormat:@"%@", [[presence from] user]];
-//    NSString *fromnickName = [presence fromName];
-//    NSString *additionMsg = [presence additionMsg];
-//    NSString *headID = [presence headID];
-//    NSLog(@"presenceType:%@,fromNickName:%@,additionMsg:%@",presenceType,fromnickName,additionMsg);
-//    NSDictionary * uDict = [NSDictionary dictionaryWithObjectsAndKeys:presenceFromUser,@"fromUser",fromnickName,@"fromNickname",additionMsg,@"addtionMsg",headID,@"headID", nil];
-    NSLog(@"presence2:%@  sender2:%@",presence,sender);
-    if ([presenceType isEqualToString:@"subscribe"]) {
-//        [self.addReqDelegate newAddReq:uDict];
-    }
-    
-   // [self.addReq newAddReq:@""];
-//    XMPPJID *jid = [XMPPJID jidWithString:presenceFromUser];
-//    [self.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
 }
 
 //接受到好友状态更新
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence{
-    
 }
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveError:(id)error

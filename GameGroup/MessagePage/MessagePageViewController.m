@@ -62,24 +62,25 @@
     }
     else
     {
-         firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
-        //如果没有打招呼消息 删除打招呼的条目
-        if (!firstSayHiMsg) {
-            [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
+        if([self.appDel.xmppHelper isConnected]){
+            self.titleLabel.text = @"消息";
+        }else if([self.appDel.xmppHelper isConnecting]){
+            self.titleLabel.text = @"消息(连接中)";
+        }else if([self.appDel.xmppHelper isDisconnected]){
+            self.titleLabel.text = @"消息(未连接)";
         }
-        
         [self.view bringSubviewToFront:hud];
-            if([self.appDel.xmppHelper isConnected]){
-                self.titleLabel.text = @"消息";
-            }else if([self.appDel.xmppHelper isConnecting]){
-                self.titleLabel.text = @"消息(连接中)";
-            }else if([self.appDel.xmppHelper isDisconnected]){
-                self.titleLabel.text = @"消息(未连接)";
-            }
-        
-        
+        [self setFirstSayHiMsg];
         [self displayMsgsForDefaultView];
-        
+    }
+}
+
+//如果没有打招呼消息 删除打招呼的条目
+-(void)setFirstSayHiMsg
+{
+    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
+    if (!firstSayHiMsg) {
+        [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
     }
 }
 -(void)RegisterViewControllerFinishRegister
@@ -127,9 +128,6 @@
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
 
-    
-    
-    
     m_messageTable = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - ( 50 + startX)) style:UITableViewStylePlain];
     [self.view addSubview:m_messageTable];
     m_messageTable.dataSource = self;
@@ -146,7 +144,6 @@
     
     self.appDel = (AppDelegate *)[UIApplication sharedApplication] .delegate;
     
-    //    hud = [[MBProgressHUD alloc] initWithView:self.view];
     UIWindow* window = [UIApplication sharedApplication].keyWindow;
     if (!window)
     {
@@ -181,9 +178,6 @@
     [m_messageTable reloadData];
 
 }
-
-
-
 - (void)dailynewsReceived:(NSNotificationCenter*)notification
 {
     [self displayMsgsForDefaultView];
@@ -245,13 +239,12 @@
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {
-    [allMsgArray removeAllObjects];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
-//    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }
+//红点通知
 -(void)displayTabbarNotification
 {
     int allUnread = 0;
@@ -266,7 +259,6 @@
         [[Custom_tabbar showTabBar] removeNotificatonOfIndex:0];
     }
 }
-
 
 #pragma mark 表格
 
@@ -307,11 +299,6 @@
             
             cell.nameLabel.text = @"有新的打招呼信息";
         }
-        
-//        NSString *nickName=[[allMsgArray objectAtIndex:indexPath.row] senderNickname];
-//        NSString *msgContent=[[allMsgArray objectAtIndex:indexPath.row] msgContent];
-//        cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
-//        cell.nameLabel.text = @"有新的打招呼信息";
     }
     else if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
              [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
