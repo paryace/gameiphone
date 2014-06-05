@@ -2516,6 +2516,81 @@ return @"";
     }];
 }
 
+#pragma mark ---------黑名单操作
+
+
++(void)SaveBlackListWithDic:(NSDictionary *)dic WithType:(NSString *)type
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        DSBlackList * blackList = [DSBlackList MR_createInContext:localContext];//所有消息
+        if (!blackList)
+            blackList = [DSBlackList MR_createInContext:localContext];
+        blackList.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+        blackList.nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
+        blackList.headimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
+        blackList.time = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")];
+        blackList.type = type;
+            }];
+    
+}
+
++(void)deletePersonFromBlackListWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSBlackList * dblack = [DSBlackList MR_findFirstWithPredicate:predicate];
+
+        if (dblack) {
+            [dblack MR_deleteInContext:localContext];
+        }
+
+    }];
+
+}
+
++(void)changeBlackListTypeWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSBlackList * dblack = [DSBlackList MR_findFirstWithPredicate:predicate];
+        
+        if (dblack) {
+            dblack.type = @"2";
+        }
+    }];
+}
+
+
+
+
++(void)deleteAllBlackList
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * dBlack = [DSBlackList MR_findAllInContext:localContext];
+        for (DSBlackList* bl in dBlack) {
+            [bl MR_deleteInContext:localContext];
+        }
+    }];
+
+}
+
++(NSMutableArray *)queryAllBlackListInfo
+{
+    NSArray *array = [DSBlackList MR_findAll];
+    return array;
+}
+
+
++(NSArray *)queryAllBlackListUserid
+{
+    NSMutableArray *arr = [NSMutableArray array];
+    
+    NSArray *array = [DSBlackList MR_findAll];
+    for (DSBlackList *bl in array) {
+        [arr addObject:bl.userid];
+    }
+    return arr;
+}
 
 
 @end

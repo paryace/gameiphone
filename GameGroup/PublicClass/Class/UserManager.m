@@ -126,6 +126,44 @@ static UserManager *userManager = NULL;
     }];
 }
 
++(void)getBlackListFromNet
+{
+    
+        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+        NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [postDict setObject:@"228" forKey:@"method"];
+        [postDict setObject:paramDict forKey:@"params"];
+        
+        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+        
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
+            dispatch_async(queue, ^{
+                if ([responseObject isKindOfClass:[NSArray class]]) {
+                    NSArray *array = responseObject;
+                    [DataStoreManager deleteAllBlackList];
+                    if (array.count>0) {
+                        for (NSDictionary *dic in array) {
+                            [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];
+                        }
+                    }
+                }
+            });
+
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            NSLog(@"deviceToken fail");
+            
+        }];
+ 
+
+
+}
+
+
+
+
 -(void) onUserUpdate:(NSNotification*)notification{
 
 }

@@ -847,10 +847,27 @@
 #pragma mark -举报
 - (void)reportButtonClick:(id)sender
 {
-    UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定举报该用户吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-    alter.tag = 23;
-    [alter show];
+    
+    UIActionSheet *acs =[[ UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"举报" otherButtonTitles:@"拉黑", nil];
+    [acs showInView:self.view];
+    
 }
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex ==0) {
+        UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定举报该用户吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        alter.tag = 23;
+        [alter show];
+    }else if (buttonIndex ==1){
+        NSLog(@"拉黑么");
+        UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"您确定拉黑该吗？" message:@"拉黑之后该用户将无法与您进行聊天,并且无法对您发表的动态进行评论" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        alter.tag = 28;
+        [alter show];
+   
+    }
+}
+
 
 #pragma mark -按钮布局
 - (void)setBottomView
@@ -1029,6 +1046,40 @@
             }];
         }
     }
+    else if (alertView.tag == 28)//拉黑
+    {
+        if (buttonIndex ==1) {
+            
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.hostInfo.userId,@"userid",self.hostInfo.nickName,@"nickname",self.hostInfo.headImgStr,@"img",[GameCommon getCurrentTime],@"createDate", nil];
+            [DataStoreManager SaveBlackListWithDic:dic WithType:@"1"];
+            
+            NSMutableDictionary *tempDict = [NSMutableDictionary dictionary];
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+            
+            [tempDict setObject:self.hostInfo.userId forKey:@"userid"];
+            
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:@"226" forKey:@"method"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+            [postDict setObject:tempDict forKey:@"params"];
+            
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                
+                [DataStoreManager changeBlackListTypeWithUserid:self.hostInfo.userId];
+                
+                [self showAlertViewWithTitle:@"提示" message:@"拉黑成功" buttonTitle:@"确定"];
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                }
+                [hud hide:YES];
+            }];
+        }
+    }
 }
 
 -(void)begin
@@ -1194,8 +1245,6 @@
             }
         }
     }];
-    
-
 }
 
 - (void)cancelAttentionClick:(id)sender

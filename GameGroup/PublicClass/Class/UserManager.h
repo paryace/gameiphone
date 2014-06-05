@@ -14,4 +14,5 @@
 - (NSMutableDictionary*)getUser:(NSString* )userId;
 - (void)requestUserFromNet:(NSString*)userId;
 -(void)getSayHiUserId;
++(void)getBlackListFromNet;
 @end

@@ -14,6 +14,7 @@
 #import "DSReceivedHellos.h"
 #import "DSUnreadCount.h"
 #import "DSNameIndex.h"
+#import "DSBlackList.h"
 
 #import "DSAttentionNameIndex.h"
 #import "DSFansNameIndex.h"
@@ -172,5 +173,25 @@
 
 +(void)changeMyMessage:(NSString *)messageuuid PayLoad:(NSString*)payload;
 
+//黑名单操作
 
+/*
+ *-* 1. 保存拉入黑名单的用户
+ *-* 2. 从黑名单中删除用户
+ *-* 3. 删除黑名单中的所有用户
+ *-* 4. 改变黑名单中的type值
+ *-* 5. 取出所有的黑名单信息
+ *-* 6. 取出所有黑名单用户的userid
+ */
+
+
++(void)SaveBlackListWithDic:(NSDictionary *)dic WithType:(NSString *)type;
++(void)deletePersonFromBlackListWithUserid:(NSString *)userid;
+
++(void)deleteAllBlackList;
++(void)changeBlackListTypeWithUserid:(NSString *)userid;
+
++(NSMutableArray *)queryAllBlackListInfo;
+
++(NSArray *)queryAllBlackListUserid;
 @end
