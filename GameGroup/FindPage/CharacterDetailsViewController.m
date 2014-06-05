@@ -455,9 +455,9 @@
 {
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    if ([self.gameId isEqualToString:@"1"]) {
+    if ([self.gameId intValue] ==1) {
         hud.labelText = @"正拼命从英雄榜获取中...";
-    }else if([self.gameId isEqualToString:@"2"]){
+    }else if([self.gameId intValue]==2){
         hud.labelText = @"正在请求数据中...";
     }
     
