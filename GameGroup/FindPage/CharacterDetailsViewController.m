@@ -462,7 +462,6 @@
     }
     
     hud.detailsLabelText = nil;
-    
     m_charaDetailsView.reloadingBtn.userInteractionEnabled =NO;
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
