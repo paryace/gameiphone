@@ -62,8 +62,9 @@
     }
     else
     {
+         firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
         //如果没有打招呼消息 删除打招呼的条目
-        if (![DataStoreManager isHaveSayHiMsg:@"2"]) {
+        if (!firstSayHiMsg) {
             [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
         }
         
@@ -247,7 +248,7 @@
     [allMsgArray removeAllObjects];
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
-    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
+//    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }

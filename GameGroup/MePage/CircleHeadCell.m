@@ -79,24 +79,24 @@
         self.layout.itemSize = CGSizeMake(80, 80);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
-//        self.customPhotoCollectionView.scrollEnabled = NO;
-//        self.customPhotoCollectionView.delegate = self;
-//        self.customPhotoCollectionView.dataSource = self;
-//        [self.customPhotoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
-//        self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
-//        [self addSubview:self.customPhotoCollectionView];
-//        [self.customPhotoCollectionView reloadData];
+        self.customPhotoCollectionView.scrollEnabled = NO;
+        self.customPhotoCollectionView.delegate = self;
+        self.customPhotoCollectionView.dataSource = self;
+        [self.customPhotoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
+        self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
+        [self addSubview:self.customPhotoCollectionView];
+        [self.customPhotoCollectionView reloadData];
 
         
         
-        __weak UICollectionView *photoCollectionView = self.customPhotoCollectionView;
-        
-        photoCollectionView.scrollEnabled = NO;
-        photoCollectionView.delegate = self;
-        photoCollectionView.dataSource = self;
-        [photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
-        photoCollectionView.backgroundColor = [UIColor clearColor];
-        [self addSubview:photoCollectionView];
+//        __weak UICollectionView *photoCollectionView = self.customPhotoCollectionView;
+//        
+//        photoCollectionView.scrollEnabled = NO;
+//        photoCollectionView.delegate = self;
+//        photoCollectionView.dataSource = self;
+//        [photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
+//        photoCollectionView.backgroundColor = [UIColor clearColor];
+//        [self addSubview:photoCollectionView];
 
         
         
@@ -176,7 +176,7 @@
 -(void)getImgWithArray:(NSArray *)array
 {
     self.collArray = array;
-//    [self.customPhotoCollectionView reloadData];
+    [self.customPhotoCollectionView reloadData];
 }
 
 -(void)getCommentArray:(NSArray *)array
