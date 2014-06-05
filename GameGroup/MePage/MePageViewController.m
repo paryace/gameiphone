@@ -15,7 +15,6 @@
 #import "CharacterDetailsViewController.h"//角色详情界面
 #import "CircleWithMeViewController.h"
 #import "HostInfo.h"
-//#import "ContactsCell.h"
 #import "PersonTableCell.h"
 #import "MyCharacterCell.h"
 #import "MyNormalTableCell.h"
@@ -32,7 +31,6 @@
 {
     UITableView*  m_myTableView;
     HostInfo*     m_hostInfo;
-    
     NSInteger     m_refreshCharaIndex;
 }
 @end
@@ -64,7 +62,6 @@
     [self getUserInfoByNet];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
 }
-
 
 - (void)viewDidLoad
 {
@@ -177,47 +174,41 @@
 
     UIButton* setButton = [CommonControlOrView setButtonWithFrame:CGRectMake(250, 0, 70, 30) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"set_normal") HighImage:KUIImage(@"set_click") selectImage:Nil];
     setButton.backgroundColor = [UIColor clearColor];
-    
     UILabel* titleLabel;
     
     switch (section) {
         case 1:
         {
-//            if(![m_hostInfo.state isEqualToString:@""])//动态
-//            {
-                titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"我的动态" textAlignment:NSTextAlignmentLeft];
-//            }
-//            else
-//            {
-//                topBg.frame = CGRectZero;
-//            }
+            titleLabel =[self getHeadTitleLable:@"我的动态"];
         } break;
         case 2:
         {
-            titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"我的角色" textAlignment:NSTextAlignmentLeft];
+            titleLabel =[self getHeadTitleLable:@"我的角色"];
             [heardView addSubview:setButton];
             [setButton addTarget:self action:@selector(characterSetClick:) forControlEvents:UIControlEventTouchUpInside];
   
         }break;
         case 3:
         {
-//           if([m_hostInfo.achievementArray count] != 0)//头衔
-//           {
-                titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"我的头衔" textAlignment:NSTextAlignmentLeft];
-               [heardView addSubview:setButton];
-               [setButton addTarget:self action:@selector(achievementSetClick:) forControlEvents:UIControlEventTouchUpInside];
-//           }
-//            else
-//                topBg.frame = CGRectZero;
+            titleLabel =[self getHeadTitleLable:@"我的头衔"];
+            [heardView addSubview:setButton];
+            [setButton addTarget:self action:@selector(achievementSetClick:) forControlEvents:UIControlEventTouchUpInside];
+
         }break;
         case 4://有动态和头衔
-            titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"我的操作" textAlignment:NSTextAlignmentLeft];
+            titleLabel =[self getHeadTitleLable:@"我的操作"];
             break;
         default:
             break;
     }
     [topBg addSubview:titleLabel];
     return heardView;
+}
+
+-(UILabel*)getHeadTitleLable:(NSString*)lableText
+{
+    UILabel *titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 30) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:lableText textAlignment:NSTextAlignmentLeft];
+    return titleLabel;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -255,18 +246,10 @@
             break;
         case 1:
         {
-            //动态
-//            if(![m_hostInfo.state isEqualToString:@""])//动态
                 return 1;
-//            else
-//               return 0;
         } break;
         case 2:
         {
-//            if ([KISDictionaryHaveKey(m_hostInfo.characters, @"1") isKindOfClass:[NSArray class]]) {
-//                return [KISDictionaryHaveKey(m_hostInfo.characters, @"1") count];//角色
-//            }
-            
             if ([m_hostInfo.charactersArr count] != 0) {
                 return [m_hostInfo.charactersArr count];//角色
             }
@@ -302,7 +285,6 @@
         
         cell.nameLabel.text = m_hostInfo.nickName;
         
-        
         if ([m_hostInfo.gender isEqualToString:@"0"]) {//男♀♂
             cell.ageLabel.text = [@"♂ " stringByAppendingString:m_hostInfo.age?m_hostInfo.age:@""];
             cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
@@ -323,7 +305,6 @@
             cell.distLabel.text = @"暂无头衔";
         }
         if (m_hostInfo.headImgArray.count>0) {
-//            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[m_hostInfo.headImgArray objectAtIndex:0]]];
             cell.headImageV.imageURL = [ImageService getImageUrl4:[m_hostInfo.headImgArray objectAtIndex:0]];
         }else
         {
@@ -345,71 +326,18 @@
         }
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-//        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"]) {
-//            NSDictionary *dic=[[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
-//            cell.headImageV.hidden =NO;
-//            cell.titleLabel.text = @"我发表了";
-//            cell.nameLabel.text = KISDictionaryHaveKey(dic, @"msg");
-//            cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-//            NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"img")];
-//            if ([imgStr isEqualToString:@" "]||[imgStr isEqualToString:@""]) {
-//                cell.headImageV.imageURL =nil;
-//            }else{
-//            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@/80/80",BaseImageUrl,[GameCommon getHeardImgId:imgStr]]];
-//            }
-//        }else{
-//            cell.titleLabel.text = @"";
-//            cell.nameLabel.text = @"暂无新的动态";
-//            cell.timeLabel.text = @"";
-//            cell.headImageV.hidden = YES;
-//        }
-//        
-//        cell.fansLabel.text = [GameCommon getNewStringWithId:m_hostInfo.fanNum];
-//        cell.zanLabel.text = [GameCommon getNewStringWithId:m_hostInfo.zanNum];
-//        [cell.cellButton addTarget:self action:@selector(myStateClick:) forControlEvents:UIControlEventTouchUpInside];
-//
-//           return cell;
-
-        
-        
-        
         if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
         {
             if ([KISDictionaryHaveKey(m_hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
                 NSDictionary* destDic = KISDictionaryHaveKey(m_hostInfo.state, @"destUser");
                 NSString * imageIds=KISDictionaryHaveKey(destDic, @"userimg");
-//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
-//                if (imgid) {
-//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-//                }else
-//                {
-//                    cell.headImageV.imageURL = nil;
-//                }
-                
                 cell.headImageV.imageURL = [ImageService getImageStr2:imageIds];
-                
                 cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
             }
             else
             {
                 NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
-//                NSString * imgid = [GameCommon getHeardImgId: KISDictionaryHaveKey(m_hostInfo.state, @"userimg")];
-//                if ([imgid isEqualToString:@""]||[imgid isEqualToString:@" "]) {
-//                     cell.headImageV.imageURL = nil;
-//                }else{
-//                if (imgid) {
-//                    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:imgid]];
-//                }else
-//                {
-//                    cell.headImageV.imageURL = nil;
-//                }
-//                
-//                }
                 cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
-                
-                
-                
                 if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
                 {
                     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
@@ -431,11 +359,6 @@
                 cell.nameLabel.text = [NSString stringWithFormat:@"「%@」", tit];
             }
             cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
-//            if ([[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] && [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] isEqualToString:@"1"]){
-//                cell.notiBgV.hidden = NO;
-//            }
-//            else
-//                cell.notiBgV.hidden = YES;
         }
         else
         {
@@ -495,13 +418,13 @@
             
             if ([failedmsg intValue] ==404)//角色不存在
             {
-                cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+                cell.heardImg.image = KUIImage(@"clazz_icon.png");
                 cell.realmLabel.text = @"角色不存在";
             }
             else
             {
                 if ([GameCommon isEmtity:img]) {
-                    cell.heardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
+                     cell.heardImg.image = KUIImage(@"clazz_icon.png");
                 }
                 else{
                     cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
@@ -582,70 +505,10 @@
     }
     return Nil;
 }
-//---
-//-(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-//{
-//    if ([GameCommon isEmtity:imageUrl]) {
-//        return nil;
-//    }else{
-//        if ([GameCommon getNewStringWithId:imageUrl]) {
-//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-//        }else{
-//            return  nil;
-//        }
-//    }
-//}
-//- (NSString*)getCellTitleWithType:(NSString*)type withNick:(NSString*)nickName withUserId:(NSString*)userid
-//{
-//    NSInteger typeInt = [type intValue];
-//    if (type == 0) {
-//        return nickName;
-//    }
-//    NSString* titleStr = @"";
-//
-//    switch (typeInt) {
-//        case 3://发表
-//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//                titleStr = [titleStr stringByAppendingString:@"我发表了该内容"];
-//            }
-//            break;
-//        case 4://赞
-//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//                titleStr = [titleStr stringByAppendingString:@"我赞了该内容"];
-//            }
-//            else
-//            {
-//                titleStr = [titleStr stringByAppendingFormat:@"%@赞了该内容", nickName];
-//            }
-//            break;
-//        case 5://评论
-//            if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//                titleStr = [titleStr stringByAppendingString:@"我评论了该内容"];
-//            }
-//            else
-//            {
-//                titleStr = [titleStr stringByAppendingFormat:@"%@评论了该内容", nickName];
-//            }
-//            break;
-//        default:
-//            break;
-//    }
-//    return titleStr;
-//}
 
 - (void)myStateClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-//    //进入与我相关
-//    CircleWithMeViewController *cirMe = [[CircleWithMeViewController alloc]init];
-//    cirMe.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-//
-//    [self.navigationController pushViewController:cirMe animated:YES];
-    
-    //消除红点
-    //[[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
-    //[[NSUserDefaults standardUserDefaults] synchronize];
-    //[[GameCommon shareGameCommon] displayTabbarNotification];
 
     MyCircleViewController* VC = [[MyCircleViewController alloc] init];
     NSString * myUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
@@ -655,10 +518,7 @@
     NSString * myImg = [user objectForKey:@"img"];
     VC.nickNmaeStr = myNickName;
     VC.imageStr = myImg;
-    // VC.myViewType = ME_NEWS_TYPE;  暂时不能识别是自己的还是别人的
     [self.navigationController pushViewController:VC animated:YES];
-    
-
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -731,7 +591,6 @@
 - (void)characterSetClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
     CharacterEditViewController* VC = [[CharacterEditViewController alloc] init];
     [self.navigationController pushViewController:VC animated:YES];
 }

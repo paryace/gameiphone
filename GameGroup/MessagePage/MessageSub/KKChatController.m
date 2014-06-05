@@ -1809,8 +1809,11 @@ UINavigationControllerDelegate>
 {
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
+    NSString * domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString * toUserId = self.chatWithUser;
+    NSString *from=[fromUserid stringByAppendingString:domain];
+    NSString *to=[toUserId stringByAppendingString:domain];
     NSMutableDictionary *dictionary=[self createMsgDictionary:message NowTime:nowTime UUid:uuid MsgStatus:@"2"];
     [self addNewMessageToTable:dictionary];
     [self sendMessage:message NowTime:nowTime UUid:uuid From:from To:to MsgType:@"normalchat" FileType:@"text" Type:@"chat" Payload:nil];
@@ -1836,10 +1839,10 @@ UINavigationControllerDelegate>
     NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
     NSString* msgType = KISDictionaryHaveKey(messageDict, @"msgType");
     NSString* payloadStr = KISDictionaryHaveKey(messageDict, @"payload");
-    
-
-    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSString *to=[self.chatWithUser stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
+    NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString *from=[fromUserId stringByAppendingString:domain];
+    NSString *to=[self.chatWithUser stringByAppendingString:domain];
     
     [messageDict setObject:@"2" forKey:@"status"];
     if (payloadStr!=nil&&![payloadStr isEqualToString:@""]) {
@@ -1864,9 +1867,8 @@ UINavigationControllerDelegate>
         [self reSendMsg:messageDict];
     }
     else{//如果之前没上传成功,读取本地图片，再次上传
-        UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
+//        UIImage *imgFromUrl=[[UIImage alloc]initWithContentsOfFile:thumb];
         [self refreMessageStatus2:messageDict Status:@"2"];
-        
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
         KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
 //        [self uploadImage:imgFromUrl cellIndex:cellIndex];
@@ -1875,6 +1877,7 @@ UINavigationControllerDelegate>
         
     }
 }
+
 /*
  * 判端图片是否上传成功
  */
@@ -2140,8 +2143,10 @@ UINavigationControllerDelegate>
     NSString* message=[dic JSONRepresentation];
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
-    NSString *to=[sender stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:@"domain"]];
+    NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString *from=[fromUserId stringByAppendingString:domain];
+    NSString *to=[sender stringByAppendingString:domain];
     
     NSXMLElement *mes = [self createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     

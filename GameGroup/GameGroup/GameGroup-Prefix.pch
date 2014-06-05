@@ -105,6 +105,8 @@
 #define kMYUSERID @"MyUserId"//我的userid
 #define PhoneNumKey @"phoneKey"//用于判断是否自动登陆
 
+#define kDOMAIN @"domain"//xmpp服务器连接domain
+
 #define UploadImageToken @"uploadImageToken"//上传图片的token
 #define TokenEfficaciousTime @"tokenEfficaciousTime"//token剩余时间
 

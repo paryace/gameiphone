@@ -173,34 +173,36 @@
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"user"]objectForKey:@"active" ] forKey:@"active_wx"];
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"userid"] forKey:kMYUSERID];
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:kMyToken];
+        
         [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
         
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"address") forKey:@"host"];
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name") forKey:@"domain"];
+        NSString * host = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"address");
+         NSString * domain = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name");
+        
+        [[NSUserDefaults standardUserDefaults] setObject:host forKey:@"host"];
+        [[NSUserDefaults standardUserDefaults] setObject:domain forKey:kDOMAIN];
+        
+        
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         
         AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
         
         [app.xmppHelper connect];
+        
         NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
         [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];
-        
         [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
         
         [[UserManager singleton]getSayHiUserId];//获取打招呼id
         
         [UserManager getBlackListFromNet];//获取黑名单信息
-
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:phoneTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:passwordTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-      
-        
-        
        // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
 
         [self loginSuccess];
@@ -215,7 +217,6 @@
         }
         [hud hide:YES];
     }];
-
 }
 
 - (void)loginSuccess
