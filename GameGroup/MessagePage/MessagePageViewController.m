@@ -229,9 +229,11 @@
         if (alertView.cancelButtonIndex != buttonIndex) {
 //            [DataStoreManager deleteAllThumbMsg];//删除会话列表记录
 //            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
+            
             [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
             [DataStoreManager deleteMsgByMsgType:@"payloadchat"];//删除所有的链接消息
             [self displayMsgsForDefaultView];
+
         }
     }
 }
@@ -241,6 +243,7 @@
 {
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qureyAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
+    firstSayHiMsg = [DataStoreManager qureySayHiMsg:@"2"];
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }

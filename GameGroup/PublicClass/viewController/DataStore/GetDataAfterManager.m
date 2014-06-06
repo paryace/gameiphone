@@ -172,15 +172,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     
-    NSArray *array = [DataStoreManager queryAllBlackListUserid];
-    
-    if ([array containsObject:sender]) {
+//    NSArray *array = [DataStoreManager queryAllBlackListUserid];
+//    if ([array containsObject:sender]) {
+//        NSLog(@"黑名单用户 不作操作");
+//        return;
+//    }
+    if ([DataStoreManager isBlack:sender]) {
         NSLog(@"黑名单用户 不作操作");
-
         return;
     }
-    
-    
     
     //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
@@ -194,6 +194,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self getSayHiUserIdWithInfo:messageContent];
     }
     [self storeNewMessage:messageContent];//保存消息
+    [DataStoreManager saveDSCommonMsg:messageContent];
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];

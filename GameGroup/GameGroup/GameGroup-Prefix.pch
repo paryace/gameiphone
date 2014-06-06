@@ -33,6 +33,7 @@
     #import "PBEmojiLabel.h"
     #import "ImageService.h"
     #import "UpLoadFileService.h"
+    #import "MessageService.h"
 
    #endif
 

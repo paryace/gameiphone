@@ -15,4 +15,6 @@
 - (void)requestUserFromNet:(NSString*)userId;
 -(void)getSayHiUserId;
 +(void)getBlackListFromNet;
++(void)createGroup:(NSString*)groupName Info:(NSString*)info GroupIconImg:(NSString*)groupIconImg;
++(void)getGroupListFromNet;
 @end
