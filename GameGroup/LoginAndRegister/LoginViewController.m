@@ -198,6 +198,9 @@
         [[UserManager singleton]getSayHiUserId];//获取打招呼id
         
         [UserManager getBlackListFromNet];//获取黑名单信息
+        
+//        [UserManager getGroupListFromNet];//获取群列表
+        
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:phoneTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];

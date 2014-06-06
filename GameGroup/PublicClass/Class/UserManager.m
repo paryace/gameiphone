@@ -156,9 +156,41 @@ static UserManager *userManager = NULL;
             NSLog(@"deviceToken fail");
             
         }];
- 
+}
 
-
+//创建群
++(void)createGroup:(NSString*)groupName Info:(NSString*)info GroupIconImg:(NSString*)groupIconImg
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:groupName forKey:@"groupName"];
+    [paramDict setObject:info forKey:@"info"];
+    [paramDict setObject:groupIconImg forKey:@"groupIconImg"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"229" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+         NSLog(@"success%@",responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+         NSLog(@"fail");
+    }];
+}
+//获取群列表
++(void)getGroupListFromNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"230" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"success%@",responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+    }];
 }
 
 
