@@ -103,7 +103,6 @@
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
                 m_otherSortFansArray=fans;
                 [self endLoad];
-//                [self saveFansList:fans];
             }
             else{
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
@@ -144,24 +143,6 @@
     [m_fansfooter endRefreshing];
 }
 
--(void)saveFansList:(NSMutableArray*)result
-{
-    for (NSDictionary * dict in result) {
-        [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:@"3"];
-    }
-}
--(void)getFansList
-{
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game", NULL);
-    dispatch_async(queue, ^{
-        m_otherSortFansArray = [DataStoreManager newQueryAllFansWithOtherSortType:@"3"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myFansTableView reloadData];
-             NSString *fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-            [self refreTitle:fansNum];
-        });
-    });
-}
 //刷新title
 -(void)refreTitle:(NSString*)fansNum
 {

@@ -75,20 +75,17 @@
 + (NSArray *)queryAllReceivedHellos;
 + (NSDictionary *)qureyLastReceivedHello;
 
-//+(void)saveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;//（旧）
 +(NSString *)queryFirstHeadImageForUser_userManager:(NSString *)userid;
-+(NSMutableArray*)queryAllUserManagerWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;
-+(NSMutableDictionary*)queryAllUserManagerWithshipType:(NSString *)shiptype;//取出好友或者关注或者粉丝
+
 +(BOOL)ifHaveThisUserInUserManager:(NSString *)userId;//储存的用户中是否有这个用户的信息
-+(NSString *)queryRemarkNameForUserManager:(NSString *)userid;
-+(void)deleteAllUserWithUserId:(NSString*)userid;//删除userid是这个的
-+(NSMutableArray*)queryAllFansWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend;//取出粉丝
+
+
 +(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type;//好友关系改变的时候改变他的shiptype值
-+(void)deleteAllUserWithShipType:(NSString*)shiptype;
+
 +(BOOL)ifIsShipTypeWithUserId:(NSString*)userId type:(NSString*)shiptype;//判断关系（好友 关注 粉丝 自己 陌生人）
 +(DSuser *)getInfoWithUserId:(NSString *)userId;//用ID获得表中的某个人的信息
 //存储“好友”的关注人列表
-+(NSMutableArray *)queryAttentionSections;
+
 +(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
 
 
@@ -146,10 +143,10 @@
 +(void)cleanOtherMsg;
 +(void)deleteOtherMsgWithUUID:(NSString *)uuid;
 
-+(NSMutableDictionary*)newQueryAllUserManagerWithshipType:(NSString *)shiptype ShipType2:(NSString*) shiptype2;//取出好友和关注的数量
 +(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2;//取出好友和关注的字母
+
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
-+(NSMutableArray*)newQueryAllFansWithOtherSortType:(NSString*)shipType;
+
 +(NSDictionary *)queryUserInfo:(NSString*)userId;
 
 +(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType;//根据senderType和sayHiType删除消息
