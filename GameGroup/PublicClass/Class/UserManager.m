@@ -141,18 +141,15 @@ static UserManager *userManager = NULL;
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
             
-            dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
-            dispatch_async(queue, ^{
-                if ([responseObject isKindOfClass:[NSArray class]]) {
-                    NSArray *array = responseObject;
-//                    [DataStoreManager deleteAllBlackList];
-                    if (array.count>0) {
-                        for (NSDictionary *dic in array) {
-                            [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];
-                        }
+            if ([responseObject isKindOfClass:[NSArray class]]) {
+                NSArray *array = responseObject;
+                //                    [DataStoreManager deleteAllBlackList];
+                if (array.count>0) {
+                    for (NSDictionary *dic in array) {
+                        [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];
                     }
                 }
-            });
+            }
 
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             NSLog(@"deviceToken fail");

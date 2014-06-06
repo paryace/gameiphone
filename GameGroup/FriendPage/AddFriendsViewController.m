@@ -40,7 +40,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"添加好友" withBackButton:YES];
-    sjArray = [NSArray arrayWithObjects:@"查找游戏角色",@"搜索游戏组织",@"手机通讯录", nil];
+    sjArray = [NSArray arrayWithObjects:@"查找游戏角色",@"搜索游戏组织",@"手机通讯录",@"创建群组", nil];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(resignFirstResponder:)];
     tap.cancelsTouchesInView = NO;
@@ -159,7 +159,11 @@
     if (indexPath.row ==2) {
         MessageAddressViewController *aaa = [[MessageAddressViewController alloc]init];
         [self.navigationController pushViewController:aaa animated:YES];
-    }else{
+    }
+    else if (indexPath.row ==3){
+        
+    }
+    else{
     if(indexPath.row==0){
         searchp.myViewType = SEARCH_TYPE_ROLE;
 

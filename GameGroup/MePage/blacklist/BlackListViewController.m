@@ -159,6 +159,13 @@
     return [messageDateStr substringFromIndex:5];
 }
 
+- (void)dealloc
+{
+    m_myTableView.delegate = nil;
+    m_myTableView.dataSource = nil;
+}
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

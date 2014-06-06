@@ -1899,15 +1899,20 @@
 +(void)SaveBlackListWithDic:(NSDictionary *)dic WithType:(NSString *)type
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        DSBlackList * blackList = [DSBlackList MR_createInContext:localContext];//所有消息
+        
+        NSString *userid = KISDictionaryHaveKey(dic, @"userid");
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSBlackList * blackList = [DSBlackList MR_findFirstWithPredicate:predicate];
+        
         if (!blackList)
             blackList = [DSBlackList MR_createInContext:localContext];
+        
         blackList.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
         blackList.nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
         blackList.headimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
         blackList.time = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")];
         blackList.type = type;
-            }];
+    }];
     
 }
 
