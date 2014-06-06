@@ -263,36 +263,31 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        [[UserManager singleton] saveUserInfo:responseObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
 
-        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {
-//            [recDict setObject:[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0] forKey:@"title"];
+//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
+//        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
+//        [recDict setObject:gameids forKey:@"gameids"];
+//        
+//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
+//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
+//            
+//            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
+//            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
+//            [recDict setObject:titleObj forKey:@"titleName"];
+//            [recDict setObject:titleObjLevel forKey:@"rarenum"];
 //        }
-        
-        
-        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
-        [recDict setObject:gameids forKey:@"gameids"];
-        
-        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-            
-            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
-            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
-            [recDict setObject:titleObj forKey:@"titleName"];
-            [recDict setObject:titleObjLevel forKey:@"rarenum"];
-        }
-        
-        if ([recDict isKindOfClass:[NSDictionary class]]) {
-            if (type == 2) {//关注
-                [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-            }
-            else if (type == 1)
-            {
-                [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-            }
-        }
+//         [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+//        if ([recDict isKindOfClass:[NSDictionary class]]) {
+//            if (type == 2) {//关注
+//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
+//            }
+//            else if (type == 1)
+//            {
+//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+//            }
+//        }
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [hud hide:YES];

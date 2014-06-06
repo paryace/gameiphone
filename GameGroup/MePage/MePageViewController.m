@@ -54,11 +54,6 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-//    if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
-//        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstIntoMePage];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//        [self getUserInfoByNet];
-//    }
     [self getUserInfoByNet];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
 }
@@ -108,20 +103,7 @@
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
             
-            NSMutableDictionary * recDict=KISDictionaryHaveKey(responseObject, @"user");
-            NSString * shipTyep=KISDictionaryHaveKey(responseObject, @"shiptype");
-            NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
-            [recDict setObject:gameids forKey:@"gameids"];
-            if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-                NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-                
-                NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
-                NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
-                [recDict setObject:titleObj forKey:@"titleName"];
-                [recDict setObject:titleObjLevel forKey:@"rarenum"];
-            }
-
-            [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:shipTyep];
+            [[UserManager singleton] saveUserInfo:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

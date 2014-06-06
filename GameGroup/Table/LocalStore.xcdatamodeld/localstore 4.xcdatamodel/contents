@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="DSAttentionNameIndex" representedClassName="DSAttentionNameIndex" syncable="YES">
         <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -24,6 +24,19 @@
         <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSCharacters" representedClassName="DSCharacters" syncable="YES">
+        <attribute name="auth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="charactersId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="failedmsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value3" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
         <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
@@ -208,6 +221,40 @@
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unRead" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSTitle" representedClassName="DSTitle" syncable="YES">
+        <attribute name="characterid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="charactername" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clazz" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hasDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hide" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ids" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortnum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userimg" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSTitleObject" representedClassName="DSTitleObject" syncable="YES">
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="evolution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rank" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ranktype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rankvaltype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rarememo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rarenum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkDetail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="simpletitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortnum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titlekey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titletype" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSUnreadCount" representedClassName="DSUnreadCount" syncable="YES">
         <attribute name="publicUnread" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receivedHellosUnread" optional="YES" attributeType="String" syncable="YES"/>
@@ -243,6 +290,7 @@
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
+        <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
@@ -262,6 +310,8 @@
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="255"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
+        <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="208"/>
+        <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>
+        <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
     </elements>
 </model>

@@ -95,8 +95,6 @@ UINavigationControllerDelegate>
 - (void)loadView
 {
     [super loadView];
-    // If you create your views manually, you MUST override this method and use it to create your views.
-    // If you use Interface Builder to create your views, then you must NOT override this method.
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
@@ -109,7 +107,6 @@ UINavigationControllerDelegate>
     if (![[DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser] isEqualToString:@""]) {
         self.nickName = [DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser];//刷新别名
         self.titleLabel.text = self.nickName;
-        //[self.tView reloadData];
     }
     
 }
@@ -145,7 +142,6 @@ UINavigationControllerDelegate>
     [self.view addSubview:bgV];
     //从数据库中取出与这个人的聊天记录
     messages = [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
-    
     NSLog(@"从数据库中取出与 %@ 的聊天纪律:messages%@",self.chatWithUser, messages);
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
@@ -226,7 +222,6 @@ UINavigationControllerDelegate>
     NSString *msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString *status = KISDictionaryHaveKey(dict, @"status");
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    //NSString *uuid = KISDictionaryHaveKey(payload, @"messageid");
     //动态消息
     if ([msgType isEqualToString:@"payloadchat"]) {
         
@@ -264,8 +259,6 @@ UINavigationControllerDelegate>
         }
         else
         {
-            //            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/70/70",imgStr]];
-            //            cell.thumbImgV.imageURL = titleImage;
             cell.thumbImgV.imageURL = [ImageService getImageUrl3:dImageId Width:70];
         }
         

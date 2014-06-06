@@ -53,7 +53,6 @@
 + (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
 + (void)deleteMsgInCommentWithUUid:(NSString *)uuid;   //删除指定uuid的消息
 + (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer;//根据userid分页查询
-+ (NSMutableArray *)qureyAllCommonMessages:(NSString *)userid;
 + (NSString*)queryMessageStatusWithId:(NSString*)msgUUID;
 + (void)deleteAllCommonMsg;
 
@@ -126,7 +125,6 @@
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type;//获取角色等 nickName
 +(NSString *)queryRemarkNameForUser:(NSString *)userid;//获得别名
 +(NSDictionary *)queryMyInfo;
-+(NSMutableDictionary *)queryOneFriendInfoWithUserName:(NSString *)userName;
 +(NSString *)qureyUnreadForReceivedHellos;
 +(void)blankReceivedHellosUnreadCount;
 
@@ -197,4 +195,17 @@
 +(NSArray *)queryAllBlackListUserid;
 
 + (BOOL)isBlack:(NSString*)userId;
+
+
+
+//
++(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid;//保存角色列表
+
++(void)saveDSTitle:(NSDictionary *)titles;//保存头衔列表
+
++(NSMutableArray *)queryCharacters:(NSString*)userId;//查找角色列表
+
++(NSMutableArray *)queryTitle:(NSString*)userId Hide:(NSString*)hide;//查找头衔列表
+
++(NSMutableDictionary *)getUserInfoFromDbByUserid:(NSString*)userid;//查询用户信息
 @end

@@ -54,7 +54,7 @@
     m_titleLabel.text = self.hostInfo.nickName;
     
     if ([self.headImgArray count] == 0) {
-        [self getHead:self.hostInfo.headImgID];//相册 小图_大图,
+        self.headImgArray = [ImageService getImageIds:self.hostInfo.headImgID];
         [m_photoWall setPhotos:[self imageToURL:self.headImgArray]];
         [m_photoWall setEditModel:YES];
     }
@@ -113,19 +113,6 @@
     hud.labelText = @"修改中...";
 }
 
--(void)getHead:(NSString *)headImgStr
-{
-    NSMutableArray * littleHeadArray = [NSMutableArray array];
-    NSArray* i = [headImgStr componentsSeparatedByString:@","];
-    if (i.count>0) {
-        for (NSString* a in i) {
-            if (a.length > 0 && ![a isEqualToString:@" "])  {
-                [littleHeadArray addObject:a];
-            }
-        }
-    }//动态大图ID数组和小图ID数组
-    self.headImgArray = littleHeadArray;//47,39
-}
 - (void)dealloc
 {
     alter1.delegate = nil;

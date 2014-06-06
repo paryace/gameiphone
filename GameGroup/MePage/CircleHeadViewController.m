@@ -109,7 +109,6 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     ishaveAboutMe =NO;
     ishavehuancun = NO;
-//    self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -121,13 +120,8 @@ typedef enum : NSUInteger {
     
     NSDictionary* user=[[UserManager singleton] getUser:self.userId];
     NSString * nickName=KISDictionaryHaveKey(user, @"nickname");
-    nickNameLabel.text = nickName;
-    
-    
-//    headImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(user, @"img")]]];
-    
-    
     NSString * imageIds=KISDictionaryHaveKey(user, @"img");
+    nickNameLabel.text = nickName;
     headImageView.imageURL = [ImageService getImageStr2:imageIds];
     
     

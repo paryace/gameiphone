@@ -36,13 +36,6 @@ static UserManager *userManager = NULL;
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
     if (dUser) {
-        [dict setObject:dUser.userName forKey:@"username"];
-        [dict setObject:dUser.userId?dUser.userId:@"" forKey:@"userid"];
-        [dict setObject:dUser.gender?dUser.gender:@"" forKey:@"gender"];
-        [dict setObject:dUser.signature?dUser.signature:@"" forKey:@"signature"];
-        [dict setObject:@"0" forKey:@"latitude"];
-        [dict setObject:@"0" forKey:@"longitude"];
-        [dict setObject:dUser.age?dUser.age:@"" forKey:@"birthdate"];
         [dict setObject:dUser.headImgID?dUser.headImgID:@"" forKey:@"img"];
         NSString * alis =dUser.remarkName;
         if ([GameCommon isEmtity:alis]) {
@@ -66,31 +59,46 @@ static UserManager *userManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self saveUserInfo:responseObject UserId:userId];
+        [self saveUserInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
     }];
 }
 
 //保存用户信息  新接口
--(void)saveUserInfo:(id)responseObject UserId:(NSString*)userId
+-(void)saveUserInfo:(id)responseObject
 {
-    NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-    [recDict setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
-    if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-        NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-        
-        NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
-        NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
-        [recDict setObject:titleObj forKey:@"titleName"];
-        [recDict setObject:titleObjLevel forKey:@"rarenum"];
+    NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
+    if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
+        [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
     }
-    [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-    [self updateMsgInfo:recDict];
+    
+    NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
+//    NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
+    
+    [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
+    
+    if ([titles isKindOfClass:[NSArray class]] && [titles count] != 0) {//头衔
+        NSDictionary *titleDictionary=[titles objectAtIndex:0];
+        NSMutableDictionary * titleObjectDic = KISDictionaryHaveKey(titleDictionary, @"titleObj");
+        NSString * titleObj = KISDictionaryHaveKey(titleObjectDic, @"title");
+        NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjectDic, @"rarenum")];
+        [dicUser setObject:titleObj forKey:@"titleName"];
+        [dicUser setObject:titleObjLevel forKey:@"rarenum"];
+    }
+    [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+
+//    for (NSMutableDictionary *characher in charachers) {
+//        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"id")];
+//    }
+//    for (NSMutableDictionary *title in titles) {
+//        [DataStoreManager saveDSTitle:title];
+//    }
+//    NSMutableArray * titlessss= [DataStoreManager queryTitle:KISDictionaryHaveKey(dicUser, @"id") Hide:@"0"];
+//    NSMutableArray * chasss= [DataStoreManager queryCharacters:KISDictionaryHaveKey(dicUser, @"id")];
+    [self updateMsgInfo:dicUser];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
 }
-
-
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict
 {
@@ -103,10 +111,6 @@ static UserManager *userManager = NULL;
     [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:nickName andImg:userImg];
     [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];
 }
-
-
-
-
 -(void)getSayHiUserId
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

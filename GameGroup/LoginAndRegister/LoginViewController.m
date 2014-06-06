@@ -190,13 +190,14 @@
         
         [app.xmppHelper connect];
         
-        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
-        [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];
-        [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
+        [[UserManager singleton] saveUserInfo:responseObject];
+        
+//        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
+//        [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];
+//        [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
 //        [[UserManager singleton]getSayHiUserId];//获取打招呼id
-        
         [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"sayhellolist") forKey:@"sayHello_wx_info_id"];
 
         

@@ -150,18 +150,6 @@
     return cell;
 }
 
--(NSString *)getHead:(NSString *)headImgStr
-{
-    NSArray* i = [headImgStr componentsSeparatedByString:@","];
-    if (i.count>0) {
-        for (NSString* a in i) {
-            if (a.length > 0 && ![a isEqualToString:@" "])
-                return a;
-        }
-    }
-    return @"";
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     KKChatController *kkchat = [[KKChatController alloc]init];

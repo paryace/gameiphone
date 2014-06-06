@@ -72,19 +72,7 @@
     
     return myView;
 }
-//---
-//+(NSURL*)getHeadImageUrl:(NSString*)imageUrl
-//{
-//    if ([GameCommon isEmtity:imageUrl]) {
-//        return nil;
-//    }else{
-//        if ([GameCommon getNewStringWithId:imageUrl]) {
-//            return [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageUrl]] stringByAppendingString:@"/40/40"]];
-//        }else{
-//            return  nil;
-//        }
-//    }
-//}
+
 +(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
@@ -93,8 +81,6 @@
             NSString * gameid=[gameIds objectAtIndex:i];
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*23, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
-//            gameImg_one.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:gameid]];
-            
             NSString * imageId=[GameCommon putoutgameIconWithGameId:gameid];
             gameImg_one.imageURL = [ImageService getImageUrl3:imageId Width:40];
             [gameIconView addSubview:gameImg_one];
@@ -181,12 +167,8 @@
     [myView addSubview:oneLabel];
     //---
     EGOImageView* gameIg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
-//    gameIg.imageURL=[self getHeadImageUrl:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]]];
-    
     NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameId]];
     gameIg.imageURL = [ImageService getImageUrl4:imageId];
-    
-//    gameIg.image = [gameId isEqualToString:@"1"] ? KUIImage(@"wow") : nil;
     [myView addSubview:gameIg];
     //---
     UILabel* twoLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(75, 30, 130, 20) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:14.0] text:realm textAlignment:NSTextAlignmentLeft];

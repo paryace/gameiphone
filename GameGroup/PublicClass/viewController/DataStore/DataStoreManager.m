@@ -12,6 +12,9 @@
 #import "UserManager.h"
 #import "DSCircleWithMe.h"
 #import "DSOfflineComments.h"
+#import "DSCharacters.h"
+#import "DSTitle.h"
+#import "DSTitleObject.h"
 @implementation DataStoreManager
 -(void)nothing
 {}
@@ -29,14 +32,6 @@
     [MagicalRecord setDefaultModelNamed:[NSString stringWithFormat:@"%@.momd",modelName]];
     [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:[NSString stringWithFormat:@"%@.sqlite",dataBaseName]];
 }
-//+ (BOOL)savedMsgWithID:(NSString*)msgId//正常聊天消息是否已存
-//{
-//    NSArray * array = [DSCommonMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
-//    if (array.count > 0) {
-//        return YES;
-//    }
-//    return NO;
-//}
 
 + (BOOL)savedMsgWithID:(NSString*)msgId//正常聊天消息是否已存
 {
@@ -48,14 +43,6 @@
     }
     return NO;
 }
-//+ (BOOL)savedOtherMsgWithID:(NSString *)msgID//其他消息是否存在
-//{
-//    NSArray * array = [DSOtherMsgs MR_findByAttribute:@"messageuuid" withValue:msgID];
-//    if (array.count > 0) {
-//        return YES;
-//    }
-//    return NO;
-//}
 
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID//其他消息是否存在
 {
@@ -67,14 +54,6 @@
     }
     return NO;
 }
-//+ (BOOL)savedNewsMsgWithID:(NSString*)msgId//每日一闻消息是否已存
-//{
-//    NSArray * array = [DSNewsMsgs MR_findByAttribute:@"messageuuid" withValue:msgId];
-//    if (array.count > 0) {
-//        return YES;
-//    }
-//    return NO;
-//}
 
 + (BOOL)savedNewsMsgWithID:(NSString*)msgId//每日一闻消息是否已存
 {
@@ -614,72 +593,6 @@
     }
     return msgArray;
 }
-+(NSMutableArray *)qureyAllCommonMessages:(NSString *)userid
-{
-    NSMutableArray * allMsgArray = [[NSMutableArray alloc] initWithCapacity:1];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ OR receiver==[c]%@",userid,userid];
-    NSArray * commonMsgsArray = [DSCommonMsgs MR_findAllSortedBy:@"senTime" ascending:YES withPredicate:predicate];
-//    //取前20条...
-//    for (int i = (commonMsgsArray.count>20?(commonMsgsArray.count-20):0); i<commonMsgsArray.count; i++) {
-//        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-//        NSDate * tt = [[commonMsgsArray objectAtIndex:i] senTime];
-//        NSTimeInterval uu = [tt timeIntervalSince1970];
-//        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgType]?[[commonMsgsArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] payload]?[[commonMsgsArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] messageuuid]?[[commonMsgsArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
-//        [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] status]?[[commonMsgsArray objectAtIndex:i] status] : @"" forKey:@"status"];
-//
-//        [allMsgArray addObject:thumbMsgsDict];
-//        
-//    }
-    NSInteger allCount = [commonMsgsArray count];
-    if (allCount == 0) {
-        return allMsgArray;
-    }
-    NSInteger allPage = allCount/20 + (allCount%20 > 0 ? 1 : 0);//每页20条 总共几页 第一页下标为allPage－1 最后一页为0
-    for (int p = 1; p <= allPage; p++) {
-        NSMutableArray* pageDataArray = [[NSMutableArray alloc] initWithCapacity:1];
-        if (p != allPage) {//不是最后一页
-            for (int i = allCount - 20 * p; i < (allCount - 20 * p) + 20; i++) {
-                NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-                NSDate * tt = [[commonMsgsArray objectAtIndex:i] senTime];
-                NSTimeInterval uu = [tt timeIntervalSince1970];
-                [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgType]?[[commonMsgsArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] payload]?[[commonMsgsArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] messageuuid]?[[commonMsgsArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] status]?[[commonMsgsArray objectAtIndex:i] status] : @"" forKey:@"status"];
-                
-                [pageDataArray addObject:thumbMsgsDict];
-            }
-        }
-        else
-        {
-            for (int i = 0; i < allCount - (20 * (p - 1)); i++) {//最后一页
-                NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] sender] forKey:@"sender"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgContent] forKey:@"msg"];
-                NSDate * tt = [[commonMsgsArray objectAtIndex:i] senTime];
-                NSTimeInterval uu = [tt timeIntervalSince1970];
-                [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] msgType]?[[commonMsgsArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] payload]?[[commonMsgsArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] messageuuid]?[[commonMsgsArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
-                [thumbMsgsDict setObject:[[commonMsgsArray objectAtIndex:i] status]?[[commonMsgsArray objectAtIndex:i] status] : @"" forKey:@"status"];
-                
-                [pageDataArray addObject:thumbMsgsDict];
-            }
-        }
-        [allMsgArray addObject:pageDataArray];
-    }
-    return allMsgArray;
-}
-
 +(NSString*)queryMessageStatusWithId:(NSString*)msgUUID
 {
     if (msgUUID && msgUUID.length > 0) {
@@ -1688,6 +1601,13 @@ return @"";
     [userInfo setObject:userList forKey:@"userList"];
     return userInfo;
 }
+//根据userid查用户信息
++(NSMutableDictionary *)getUserInfoFromDbByUserid:(NSString*)userid
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userid];
+    DSuser *dbUser = [ DSuser MR_findFirstWithPredicate:predicate];
+    return [self getUserDictionary:dbUser];
+}
 
 +(NSMutableDictionary *)getUserDictionary:(id)dbUser
 {
@@ -1706,6 +1626,17 @@ return @"";
     [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
     [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shiptype"];
     [user setObject:[dbUser remarkName]?[dbUser remarkName]:@"" forKey:@"alias"];
+    [user setObject:[dbUser action] forKey:@"action"];
+    [user setObject:[dbUser backgroundImg]?[dbUser backgroundImg]:@""forKey:@"backgroundImg"];
+    [user setObject:[dbUser birthday]?[dbUser birthday] :@"" forKey:@"birthday"];
+    [user setObject:[dbUser createTime]?[dbUser createTime] :@"" forKey:@"createTime"];
+    [user setObject:[dbUser hobby]?[dbUser hobby] :@""forKey:@"hobby"];
+    [user setObject:[dbUser nameKey]?[dbUser nameKey]:@"" forKey:@"nameKey"];
+    [user setObject:[dbUser phoneNumber]?[dbUser phoneNumber] :@""forKey:@"phoneNumber"];
+    [user setObject:[dbUser signature]?[dbUser signature] :@""forKey:@"signature"];
+    [user setObject:[dbUser starSign]?[dbUser starSign] :@""forKey:@"starSign"];
+    [user setObject:[dbUser superremark]?[dbUser superremark]:@"" forKey:@"superremark"];
+    [user setObject:[dbUser superstar]?[dbUser superstar] :@""forKey:@"superstar"];
     return user;
 }
 
@@ -1780,58 +1711,6 @@ return @"";
     return array;
 }
 
-+(NSMutableArray*)queryAllFriendsWithOtherSortType:(NSString*)sorttype ascend:(BOOL)ascend
-{
-    NSArray * fri = [DSuser MR_findAllSortedBy:sorttype ascending:ascend];
-    NSMutableArray * nameKeyArray = [NSMutableArray array];
-    NSMutableArray * theArr = [NSMutableArray array];
-    for (int i = 0; i<fri.count; i++) {
-        NSString * nameK = [[fri objectAtIndex:i]nameKey];
-        if (nameK)
-            [nameKeyArray addObject:nameK];
-        NSString * userName = [[fri objectAtIndex:i] userName];
-        NSString * userid = [[fri objectAtIndex:i] userId];
-        NSString * nickName = [[fri objectAtIndex:i] nickName];
-        NSString * remarkName = [[fri objectAtIndex:i] remarkName];
-        NSString * headImg = [DataStoreManager queryFirstHeadImageForUser_userManager:userid];
-        NSString * age = [[fri objectAtIndex:i] age];
-        NSString * sex = [[fri objectAtIndex:i] gender];//性别
-        NSString * achievement = [[fri objectAtIndex:i] achievement];//头衔
-        NSString * achievementLevel = [[fri objectAtIndex:i] achievementLevel];//头衔
-        NSString * modTime = [[fri objectAtIndex:i] refreshTime];//
-        double distance = [[[fri objectAtIndex:i] distance] doubleValue];//
-
-        if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
-        {
-            NSMutableDictionary* theDict = [NSMutableDictionary dictionary];
-
-            [theDict setObject:userName forKey:@"username"];
-            [theDict setObject:userid forKey:@"userid"];
-            [theDict setObject:nickName?nickName:@"" forKey:@"nickname"];
-            if (![remarkName isEqualToString:@""]) {
-                [theDict setObject:remarkName forKey:@"displayName"];
-            }
-            else if(![nickName isEqualToString:@""]){
-                [theDict setObject:nickName?nickName:@"" forKey:@"displayName"];
-            }
-            else
-            {
-                [theDict setObject:userName forKey:@"displayName"];
-            }
-            [theDict setObject:headImg ? headImg:@"" forKey:@"img"];
-            [theDict setObject:age ? age:@"" forKey:@"age"];
-            [theDict setObject:sex ? sex:@"" forKey:@"sex"];
-            [theDict setObject:achievement ? achievement:@"" forKey:@"achievement"];
-            [theDict setObject:achievementLevel ? achievementLevel:@"" forKey:@"achievementLevel"];
-            [theDict setObject:modTime ? modTime:@"" forKey:@"updateUserLocationDate"];
-            [theDict setObject:[NSString stringWithFormat:@"%.f", distance] forKey:@"distance"];
-
-            [theArr addObject:theDict];
-        }
-    }
-    return theArr;
-}
-
 +(BOOL)ifIsShipTypeWithUserId:(NSString*)userId type:(NSString*)shiptype
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -1894,8 +1773,6 @@ return @"";
 
 +(NSString *)getOtherMessageTitleWithUUID:(NSString*)uuid type:(NSString*)type
 {
-//    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[times doubleValue]];
-
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@ AND msgType==[c]%@",uuid,type];
     DSThumbMsgs *msg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
     if (msg) {
@@ -1938,26 +1815,6 @@ return @"";
     }
     return @"";
 }
-+(NSMutableDictionary *)queryOneFriendInfoWithUserName:(NSString *)userName
-{
-    NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
-    DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
-    if (dUser) {
-        [dict setObject:dUser.userName forKey:@"username"];
-        [dict setObject:dUser.userId?dUser.userId:@"" forKey:@"userid"];
-        [dict setObject:dUser.nickName?dUser.nickName:@"" forKey:@"nickname"];
-        [dict setObject:dUser.gender?dUser.gender:@"" forKey:@"gender"];
-        [dict setObject:dUser.signature?dUser.signature:@"" forKey:@"signature"];
-        [dict setObject:@"0" forKey:@"latitude"];
-        [dict setObject:@"0" forKey:@"longitude"];
-        [dict setObject:dUser.age?dUser.age:@"" forKey:@"birthdate"];
-        [dict setObject:dUser.headImgID?dUser.headImgID:@"" forKey:@"img"];
-    }
-    return dict;
-    
-}
-
 
 +(NSDictionary *)queryMyInfo
 {
@@ -2159,45 +2016,6 @@ return @"";
         }
     }];
 }
-
-//+(void)saveCharacterWithData:(NSDictionary*)dataDic
-//{
-//    NSString * name = [GameCommon getNewStringWithId:[dataDic objectForKey:@"name"]];
-//    NSString * characterId = [GameCommon getNewStringWithId:[dataDic objectForKey:@"id"]];
-//    NSString * gameid = [GameCommon getNewStringWithId:[dataDic objectForKey:@"gameid"]];
-//    NSString * realm = [GameCommon getNewStringWithId:[dataDic objectForKey:@"realm"]];
-//    NSString * clazzid = [GameCommon getNewStringWithId:[dataDic objectForKey:@"clazz"]];
-//    NSString * pveScore = [GameCommon getNewStringWithId:[dataDic objectForKey:@"pveScore"]];
-//    NSString * auth = [GameCommon getNewStringWithId:[dataDic objectForKey:@"auth"]];
-//    
-//    if (characterId) {
-//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"characterId==[c]%@",characterId];
-//            DSCharacterList * dCharacter = [DSCharacterList MR_findFirstWithPredicate:predicate];
-//            if (!dCharacter)
-//                dCharacter = [DSCharacterList MR_createInContext:localContext];
-//            dCharacter.name = name;
-//            dCharacter.characterId = characterId;
-//            dCharacter.gameid = gameid;
-//            dCharacter.realm = realm;
-//            dCharacter.clazzid = clazzid;
-//            dCharacter.pveScore = pveScore;
-//            dCharacter.auth = auth;//是否认证
-//        }];
-//    }
-//}
-//
-//+(void)cleanCharacterList
-//{
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSArray * dCharacter = [DSCharacterList MR_findAllInContext:localContext];
-//        for (DSCharacterList* character in dCharacter) {
-//                [character deleteInContext:localContext];
-//        }
-//    }];
-//}
-
-
 
 #pragma mark - 打招呼存储相关
 +(void)deleteAllHello
@@ -2604,4 +2422,200 @@ return @"";
     return NO;
 }
 
+
+
+#pragma mark - 保存角色
++(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid
+{
+    NSString * auth = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"auth")];
+    NSString * failedmsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"failedmsg")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"gameid")];
+    NSString * charactersId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
+    NSString * name = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"name")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"realm")];
+    NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value1")];
+    NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
+    NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
+
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
+        if (!dscharacters)
+            dscharacters = [DSCharacters MR_createInContext:localContext];
+        dscharacters.userid=userid;
+        dscharacters.auth=auth;
+        dscharacters.failedmsg=failedmsg;
+        dscharacters.gameid=gameid;
+        dscharacters.charactersId=charactersId;
+        dscharacters.img=img;
+        dscharacters.name=name;
+        dscharacters.realm=realm;
+        dscharacters.value1=value1;
+        dscharacters.value2=value2;
+        dscharacters.value3=value3;
+    }];
+}
+
+#pragma mark - 保存头衔
++(void)saveDSTitle:(NSDictionary *)titles
+{
+    NSString * characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"characterid")];
+    NSString * charactername = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"charactername")];
+    NSString * clazz = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"clazz")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"gameid")];
+    NSString * hasDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"hasDate")];
+    NSString * hide = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"hide")];
+    NSString * titleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"titleid")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"realm")];
+    NSString * sortnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"sortnum")];
+    NSString * ids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"id")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"userid")];
+    NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titles, @"userimg")];
+    NSDictionary * titleObjects = KISDictionaryHaveKey(titles, @"titleObj");
+    [self saveDSTitleObject:titleObjects];
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@",ids];
+        DSTitle * titles = [DSTitle MR_findFirstWithPredicate:predicate];
+        if (!titles)
+            titles = [DSTitle MR_createInContext:localContext];
+        titles.characterid=characterid;
+        titles.charactername=charactername;
+        titles.clazz=clazz;
+        titles.gameid=gameid;
+        titles.hasDate=hasDate;
+        titles.hide=hide;
+        titles.titleId=titleId;
+        titles.realm=realm;
+        titles.sortnum=sortnum;
+        titles.ids=ids;
+        titles.userid=userid;
+        titles.userimg=userimg;
+    }];
+}
+
+#pragma mark - 保存TitleObject
++(void)saveDSTitleObject:(NSDictionary *)titleObjects
+{
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"createDate")];
+    NSString * evolution = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"evolution")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"gameid")];
+    NSString * icon = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"icon")];
+    NSString * titleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"id")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"img")];
+    NSString * rank = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rank")];
+    NSString * ranktype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"ranktype")];
+    NSString * rankvaltype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rankvaltype")];
+    NSString * rarememo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rarememo")];
+    NSString * rarenum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rarenum")];
+    NSString * remark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"remark")];
+    NSString * remarkDetail = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"remarkDetail")];
+    NSString * simpletitle = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"simpletitle")];
+    NSString * sortnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"sortnum")];
+    NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"title")];
+    NSString * titlekey = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"titlekey")];
+    NSString * titletype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"titletype")];
+
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"titleId==[c]%@",titleId];
+        DSTitleObject * titleObject = [DSTitleObject MR_findFirstWithPredicate:predicate];
+        if (!titleObject)
+            titleObject = [DSTitleObject MR_createInContext:localContext];
+        titleObject.createDate=createDate;
+        titleObject.evolution=evolution;
+        titleObject.gameid=gameid;
+        titleObject.icon=icon;
+        titleObject.titleId=titleId;
+        titleObject.img=img;
+        titleObject.rank=rank;
+        titleObject.ranktype=ranktype;
+        titleObject.rankvaltype=rankvaltype;
+        titleObject.rarememo=rarememo;
+        titleObject.rarenum=rarenum;
+        titleObject.remark=remark;
+        titleObject.remarkDetail=remarkDetail;
+        titleObject.simpletitle=simpletitle;
+        titleObject.sortnum=sortnum;
+        titleObject.title=title;
+        titleObject.titlekey=titlekey;
+        titleObject.titletype=titletype;
+    }];
+}
+//查找所有的角色
++(NSMutableArray *)queryCharacters:(NSString*)userId
+{
+    NSMutableArray *charactersArray = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
+    NSArray *array = [DSCharacters MR_findAllWithPredicate:predicate];
+    for (DSCharacters *character in array) {
+        NSMutableDictionary * characterDic = [NSMutableDictionary dictionary];
+        [characterDic setObject:character.auth forKey:@"auth"];
+         [characterDic setObject:character.failedmsg forKey:@"failedmsg"];
+         [characterDic setObject:character.gameid forKey:@"gameid"];
+         [characterDic setObject:character.charactersId forKey:@"id"];
+         [characterDic setObject:character.img forKey:@"img"];
+         [characterDic setObject:character.name forKey:@"name"];
+         [characterDic setObject:character.realm forKey:@"realm"];
+         [characterDic setObject:character.value1 forKey:@"value1"];
+         [characterDic setObject:character.value2 forKey:@"value2"];
+         [characterDic setObject:character.value3 forKey:@"value3"];
+        [charactersArray addObject:characterDic];
+    }
+    return charactersArray;
+}
+
+
+//查找所有的角色
++(NSMutableArray *)queryTitle:(NSString*)userId Hide:(NSString*)hide
+{
+    
+    NSMutableArray *titlesArray = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and hide==[c]%@",userId,hide];
+    NSArray *array = [DSTitle MR_findAllWithPredicate:predicate];
+    for (DSTitle *title in array) {
+        NSMutableDictionary * titleDic = [NSMutableDictionary dictionary];
+        NSMutableDictionary * titleObjectDic = [self queryDSTitleObject:title.titleId];
+        [titleDic setObject:title.characterid forKey:@"characterid"];
+        [titleDic setObject:title.charactername forKey:@"charactername"];
+        [titleDic setObject:title.clazz forKey:@"clazz"];
+        [titleDic setObject:title.gameid forKey:@"gameid"];
+        [titleDic setObject:title.hasDate forKey:@"hasDate"];
+        [titleDic setObject:title.hide forKey:@"hide"];
+        [titleDic setObject:title.titleId forKey:@"titleId"];
+        [titleDic setObject:title.realm forKey:@"realm"];
+        [titleDic setObject:title.ids forKey:@"id"];
+        [titleDic setObject:title.userid forKey:@"userid"];
+        [titleDic setObject:title.userimg forKey:@"userimg"];
+        [titleDic setObject:titleObjectDic forKey:@"titleObj"];
+        [titlesArray addObject:titleDic];
+    }
+    return titlesArray;
+}
+
++(NSMutableDictionary*)queryDSTitleObject:(NSString*)titleId
+{
+    NSMutableDictionary * titleObjectDic = [NSMutableDictionary dictionary];
+    NSPredicate * predicateObject = [NSPredicate predicateWithFormat:@"titleId==[c]%@",titleId];
+    DSTitleObject * titleObject = [DSTitleObject MR_findFirstWithPredicate:predicateObject];
+    [titleObjectDic setObject:titleObject.createDate forKey:@"createDate"];
+    [titleObjectDic setObject:titleObject.evolution forKey:@"evolution"];
+    [titleObjectDic setObject:titleObject.gameid forKey:@"gameid"];
+    [titleObjectDic setObject:titleObject.icon forKey:@"icon"];
+    [titleObjectDic setObject:titleObject.titleId forKey:@"id"];
+    [titleObjectDic setObject:titleObject.img forKey:@"img"];
+    [titleObjectDic setObject:titleObject.rank forKey:@"rank"];
+    [titleObjectDic setObject:titleObject.ranktype forKey:@"ranktype"];
+    [titleObjectDic setObject:titleObject.rankvaltype forKey:@"rankvaltype"];
+    [titleObjectDic setObject:titleObject.rarememo forKey:@"rarememo"];
+    [titleObjectDic setObject:titleObject.rarenum forKey:@"rarenum"];
+    [titleObjectDic setObject:titleObject.remark forKey:@"remark"];
+    [titleObjectDic setObject:titleObject.remarkDetail forKey:@"remarkDetail"];
+    [titleObjectDic setObject:titleObject.simpletitle forKey:@"simpletitle"];
+    [titleObjectDic setObject:titleObject.sortnum forKey:@"sortnum"];
+    [titleObjectDic setObject:titleObject.title forKey:@"title"];
+    [titleObjectDic setObject:titleObject.titlekey forKey:@"titlekey"];
+    [titleObjectDic setObject:titleObject.titletype forKey:@"titletype"];
+    return titleObjectDic;
+}
 @end

@@ -368,9 +368,6 @@
     return temp;
 }
 
-
-
-
 -(void)ltttt:(id)sender
 {
     NSLog(@"1111");
@@ -404,7 +401,6 @@
 
     [littleImgArray removeAllObjects];
     for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
-//        NSString *str = [[self.hostInfo.headImgArray objectAtIndex:i]stringByAppendingString:@"/160/160"];
         NSString *str = [self.hostInfo.headImgArray objectAtIndex:i];
         [littleImgArray addObject:str];
     }

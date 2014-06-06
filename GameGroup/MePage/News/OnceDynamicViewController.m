@@ -222,7 +222,7 @@
             
             self.messageid = KISDictionaryHaveKey(responseObject, @"id");
             
-            [self getHead:KISDictionaryHaveKey(responseObject, @"img")];
+            self.headImgArray = [ImageService getImageIds:KISDictionaryHaveKey(responseObject, @"img")];
             [self setUpView];
             [self setButtomView];
             
@@ -497,20 +497,6 @@
     commentLabel.text = [NSString stringWithFormat:@"评论 %d", allPL];
     commentLabel.backgroundColor = [UIColor clearColor];
     [self.view addSubview:commentLabel];
-}
-
--(void)getHead:(NSString *)headImgStr
-{
-    NSMutableArray * littleHeadArray = [NSMutableArray array];
-    NSArray* i = [headImgStr componentsSeparatedByString:@","];
-    if (i.count>0) {
-        for (NSString* a in i) {
-            if (a.length > 0 && ![a isEqualToString:@" "]) {
-                [littleHeadArray addObject:a];
-            }
-        }
-    }//动态大图ID数组和小图ID数组
-    self.headImgArray = littleHeadArray;//47,39
 }
 
 - (void)imageClick:(UIButton*)imageButton
