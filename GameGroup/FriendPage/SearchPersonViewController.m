@@ -356,7 +356,6 @@
             [self showAlertViewWithTitle:@"提示" message:@"您不能对自己进行搜索！" buttonTitle:@"确定"];
             return;
         }
-//       PersonDetailViewController* VC = [[PersonDetailViewController alloc] init];
         TestViewController* VC = [[TestViewController alloc] init];
         
         VC.userId = KISDictionaryHaveKey(recDict, @"userid");
@@ -365,10 +364,6 @@
         VC.hostInfo = hostInfo;
         NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
         [dic addEntriesFromDictionary:hostInfo.infoDic];
-//        if (hostInfo.achievementArray&&hostInfo.achievementArray.count !=0) {
-//            [dic setObject:[hostInfo.achievementArray objectAtIndex:0] forKey:@"title"];
-//        }else{
-//        }
 
         [DataStoreManager newSaveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 

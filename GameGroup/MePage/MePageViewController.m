@@ -74,10 +74,32 @@
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
     
+ 
+    m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
+    [m_myTableView reloadData];
+    
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
         [self getUserInfoByNet];
     }
 }
+
+//加在本地数据
+-(NSMutableDictionary*)getLocalInfo
+{
+    NSMutableDictionary * info = [NSMutableDictionary dictionary];
+    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    NSMutableArray * titlessss= [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
+    NSMutableArray * chasss= [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [info setObject:userDic forKey:@"user"];
+    [info setObject:chasss forKey:@"characters"];
+    [info setObject:titlessss forKey:@"title"];
+    [info setObject:KISDictionaryHaveKey(userDic, @"gameids") forKey:@"gameids"];
+    [info setObject:KISDictionaryHaveKey(userDic, @"shiptype") forKey:@"shiptype"];
+    [info setObject:@"0" forKey:@"zannum"];
+    [info setObject:@"0" forKey:@"fansnum"];
+    return info;
+}
+
 -(void)reloadTableView:(id)sender
 {
     [m_myTableView reloadData];

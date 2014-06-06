@@ -165,7 +165,6 @@
 {
     NSDictionary* tempDict = [m_tableData objectAtIndex:myCell.myIndexPath.row];
 
-    //PersonDetailViewController* detailV = [[PersonDetailViewController alloc] init];
     TestViewController *detailV = [[TestViewController alloc] init];
     
     detailV.userId = KISDictionaryHaveKey(tempDict, @"userid");

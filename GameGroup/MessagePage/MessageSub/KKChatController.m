@@ -1287,7 +1287,6 @@ UINavigationControllerDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
-    //PersonDetailViewController* detailV = [[PersonDetailViewController alloc] init];
     TestViewController *detailV = [[TestViewController alloc]init];
     detailV.userId = self.chatWithUser;
     detailV.nickName = self.nickName;

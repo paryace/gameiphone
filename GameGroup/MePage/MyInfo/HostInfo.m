@@ -17,7 +17,9 @@
         self.state = KISDictionaryHaveKey(info, @"latestDynamicMsg");//动态
         self.charactersArr=KISDictionaryHaveKey(info, @"characters");//新角色
         self.gameids=KISDictionaryHaveKey(info, @"gameids");//游戏
-        
+        self.zanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"zannum")];
+        self.fanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"fansnum")];
+        self.relation = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(info, @"shiptype")];// 1 好友，2 关注 3 粉丝 4 陌生人
         if (![self.state isKindOfClass:[NSDictionary class]]) {
             ;
         }else{
@@ -31,9 +33,6 @@
                 NSLog(@"字典为空");
             }
         }
-        self.zanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"zannum")];
-        self.fanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"fansnum")];
-        self.relation = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(info, @"shiptype")];// 1 好友，2 关注 3 粉丝 4 陌生人
         NSDictionary* userInfo = KISDictionaryHaveKey(info, @"user");
         if (![userInfo isKindOfClass:[NSDictionary class]]) {
             return self;

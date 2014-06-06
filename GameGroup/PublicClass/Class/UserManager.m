@@ -74,7 +74,7 @@ static UserManager *userManager = NULL;
     }
     
     NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
-//    NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
+    NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
     
     [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
     
@@ -88,14 +88,12 @@ static UserManager *userManager = NULL;
     }
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
-//    for (NSMutableDictionary *characher in charachers) {
-//        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"id")];
-//    }
-//    for (NSMutableDictionary *title in titles) {
-//        [DataStoreManager saveDSTitle:title];
-//    }
-//    NSMutableArray * titlessss= [DataStoreManager queryTitle:KISDictionaryHaveKey(dicUser, @"id") Hide:@"0"];
-//    NSMutableArray * chasss= [DataStoreManager queryCharacters:KISDictionaryHaveKey(dicUser, @"id")];
+    for (NSMutableDictionary *characher in charachers) {
+        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"id")];
+    }
+    for (NSMutableDictionary *title in titles) {
+        [DataStoreManager saveDSTitle:title];
+    }
     [self updateMsgInfo:dicUser];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
 }

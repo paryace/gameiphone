@@ -1142,69 +1142,6 @@
         return NO;
 }
 
-//+(NSMutableArray *)querySections
-//{
-//    NSMutableArray * sectionArray = [NSMutableArray array];
-//    NSMutableArray * nameIndexArray = [self queryNameIndex];
-//    for (int i = 0; i<nameIndexArray.count; i++) {
-//        NSMutableArray * array = [NSMutableArray array];
-//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
-//        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
-//        NSMutableArray * nameKeyArray = [NSMutableArray array];
-//        for (int i = 0; i<fri.count; i++) {
-//            NSString * shipType = [[fri objectAtIndex:i]shiptype];
-//            NSString * thename = [[fri objectAtIndex:i]userId];
-//            NSString * nameK = [[fri objectAtIndex:i]nameKey];
-//            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:@"1"])) {
-//                [nameKeyArray addObject:nameK];
-//            }
-//        }
-//        [array addObject:[nameIndexArray objectAtIndex:i]];//M
-//        [array addObject:nameKeyArray];//数组（Marss+Marss）
-//        [sectionArray addObject:array];
-//    }
-//    return sectionArray;
-//
-//}
-
-//+(NSMutableArray *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
-//{
-//    NSMutableArray * sectionArray = [NSMutableArray array];
-//    NSMutableArray * nameIndexArray = [self queryNameIndex];
-//    for (int i = 0; i<nameIndexArray.count; i++) {
-//        NSMutableArray * array = [NSMutableArray array];
-//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"nameIndex==[c]%@",[nameIndexArray objectAtIndex:i]];
-//        NSArray * fri = [DSuser MR_findAllSortedBy:@"nameKey" ascending:YES withPredicate:predicate];
-//        NSMutableArray * nameKeyArray = [NSMutableArray array];
-//        for (int i = 0; i<fri.count; i++) {
-//            NSString * shipType = [[fri objectAtIndex:i]shiptype];
-//            NSString * thename = [[fri objectAtIndex:i]userId];
-//            NSString * nameK = [[fri objectAtIndex:i]nameKey];
-//            if (![thename isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]&&([shipType isEqualToString:shipType]||[shipType isEqualToString:shipType2])) {
-//                [nameKeyArray addObject:nameK];
-//            }
-//        }
-//        [array addObject:[nameIndexArray objectAtIndex:i]];//M
-//        [array addObject:nameKeyArray];//数组（Marss+Marss）
-//        [sectionArray addObject:array];
-//    }
-//    return sectionArray;
-//    
-//}
-//
-//
-//+(NSMutableArray *)queryNameIndex
-//{
-//    NSArray * nameIndexArray2 = [DSNameIndex MR_findAll];
-//    NSMutableArray * nameIndexArray = [NSMutableArray array];
-//    for (int i = 0; i<nameIndexArray2.count; i++) {
-//        DSNameIndex * di = [nameIndexArray2 objectAtIndex:i];
-//        [nameIndexArray addObject:di.index];
-//    }
-//    [nameIndexArray sortUsingSelector:@selector(compare:)];
-//    return nameIndexArray;
-//}
-//---------------------------------------
 //查询好友
 +(NSMutableDictionary *)newQuerySections:(NSString*)shipType ShipType2:(NSString*)shipType2
 {
@@ -1243,6 +1180,8 @@
     return [self getUserDictionary:dbUser];
 }
 
+
+
 +(NSMutableDictionary *)getUserDictionary:(id)dbUser
 {
     NSMutableDictionary *user=[[NSMutableDictionary alloc]init];
@@ -1260,17 +1199,23 @@
     [user setObject:[dbUser nameIndex]?[dbUser nameIndex]:@"" forKey:@"nameIndex"];
     [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shiptype"];
     [user setObject:[dbUser remarkName]?[dbUser remarkName]:@"" forKey:@"alias"];
-    [user setObject:[dbUser action] forKey:@"action"];
+    
+    [user setObject:[dbUser action] forKey:@"active"];
     [user setObject:[dbUser backgroundImg]?[dbUser backgroundImg]:@""forKey:@"backgroundImg"];
-    [user setObject:[dbUser birthday]?[dbUser birthday] :@"" forKey:@"birthday"];
+    [user setObject:[dbUser birthday]?[dbUser birthday] :@"" forKey:@"birthdate"];
     [user setObject:[dbUser createTime]?[dbUser createTime] :@"" forKey:@"createTime"];
-    [user setObject:[dbUser hobby]?[dbUser hobby] :@""forKey:@"hobby"];
+    [user setObject:[dbUser hobby]?[dbUser hobby] :@""forKey:@"remark"];
     [user setObject:[dbUser nameKey]?[dbUser nameKey]:@"" forKey:@"nameKey"];
     [user setObject:[dbUser phoneNumber]?[dbUser phoneNumber] :@""forKey:@"phoneNumber"];
     [user setObject:[dbUser signature]?[dbUser signature] :@""forKey:@"signature"];
-    [user setObject:[dbUser starSign]?[dbUser starSign] :@""forKey:@"starSign"];
+    [user setObject:[dbUser starSign]?[dbUser starSign] :@""forKey:@"constellation"];
     [user setObject:[dbUser superremark]?[dbUser superremark]:@"" forKey:@"superremark"];
     [user setObject:[dbUser superstar]?[dbUser superstar] :@""forKey:@"superstar"];
+//    [user setObject:[dbUser clazz]?[dbUser clazz] :@""forKey:@"clazz"];
+    [user setObject:@"未知" forKey:@"city"];
+    [user setObject:@"0" forKey:@"latitude"];
+    [user setObject:@"0" forKey:@"longitude"];
+    
     return user;
 }
 
@@ -1279,12 +1224,6 @@
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     return [DSuser MR_findFirstWithPredicate:predicate];
-}
-
-//根据用户id查询用户信息
-+(NSDictionary *)queryUserInfo:(NSString*)userId
-{
-    return [self getUserDictionary:[self queryDUser:userId]];
 }
 
 //----------------------------------------

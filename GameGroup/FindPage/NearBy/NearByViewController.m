@@ -335,7 +335,6 @@
     
     NSDictionary* recDict = [m_tabelData objectAtIndex:indexPath.row];
     
-    // PersonDetailViewController* VC = [[PersonDetailViewController alloc] init];
     TestViewController* VC = [[TestViewController alloc] init];
     
     if([KISDictionaryHaveKey(recDict, @"active")intValue] ==2){
