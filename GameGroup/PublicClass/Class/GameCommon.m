@@ -690,7 +690,7 @@ static GameCommon *my_gameCommon = NULL;
     }else{
         [paramsDic setObject:@"" forKey:@"gamelist_millis"];
     }
-    
+   [paramsDic setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]:@"" forKey:@"token"];
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -698,11 +698,43 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"203" forKey:@"method"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        
+        if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
+            NSLog(@"token invalid");
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
+            [NetManager  getTokenStatusMessage];
+            [GameCommon loginOut];
+ 
+        }
+        
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
 }
+
+#pragma mark ---登陆成功重新获取open接口数据
+-(void)LoginOpen
+{
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"225" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]:@"" forKey:@"token"];
+
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        
+        [self openSuccessWithInfo:responseObject From:@"firstOpen"];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+}
+
+
+
+
 
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {

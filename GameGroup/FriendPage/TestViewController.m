@@ -860,10 +860,18 @@
         alter.tag = 23;
         [alter show];
     }else if (buttonIndex ==1){
+        
+        
+        NSArray *array = [DataStoreManager queryAllBlackListUserid];
+        if ([array containsObject:self.hostInfo.userId]) {
+            [self showAlertViewWithTitle:@"提示" message:@"该用户已在您黑名单中" buttonTitle:@"确定"];
+        }else{
+        
         NSLog(@"拉黑么");
         UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"您确定要拉黑该用户吗？" message:@"拉黑之后该用户将无法与您进行聊天,并且无法对您发表的动态进行评论" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
         alter.tag = 28;
         [alter show];
+        }
     }
 }
 

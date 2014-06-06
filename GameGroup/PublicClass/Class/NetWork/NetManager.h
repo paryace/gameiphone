@@ -23,6 +23,10 @@
 
 + (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
 + (UIImage *) image2: (UIImage *) image centerInSize: (CGSize) viewsize; //剪裁中央区域
+
+
++ (void)getTokenStatusMessage;
+
 //+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion;//下载文件
 //+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion;
 

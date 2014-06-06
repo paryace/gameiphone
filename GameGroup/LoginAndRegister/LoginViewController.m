@@ -160,7 +160,7 @@
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];
-    [body setObject:@"101" forKey:@"method"];
+    [body setObject:@"200" forKey:@"method"];
 
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -195,9 +195,16 @@
         [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
         
         
-        [[UserManager singleton]getSayHiUserId];//获取打招呼id
+//        [[UserManager singleton]getSayHiUserId];//获取打招呼id
+        
+        [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"sayhellolist") forKey:@"sayHello_wx_info_id"];
+
         
         [UserManager getBlackListFromNet];//获取黑名单信息
+        
+        [[GameCommon shareGameCommon]LoginOpen];
+        
+        
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
 //        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:phoneTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
