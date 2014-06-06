@@ -825,9 +825,9 @@
 
 - (void)okShareClick:(id)sender
 {
-    if (shareType == 0) {
+    if (shareType == 0) {//好友
         [self sendToFriend];
-    }else{
+    }else{//粉丝
         [self broadcastToFans];
     }
     m_shareViewBg.hidden = YES;
