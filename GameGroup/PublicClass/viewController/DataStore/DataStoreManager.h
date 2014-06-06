@@ -195,4 +195,6 @@
 +(NSMutableArray *)queryAllBlackListInfo;
 
 +(NSArray *)queryAllBlackListUserid;
+
++ (BOOL)isBlack:(NSString*)userId;
 @end
