@@ -81,6 +81,7 @@ UINavigationControllerDelegate>
 @synthesize chatWithUser;
 @synthesize nickName;
 @synthesize session;
+
 @synthesize recorder;
 @synthesize messages;
 
@@ -103,12 +104,15 @@ UINavigationControllerDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self refreTitleText];
+}
 
+-(void)refreTitleText
+{
     if (![[DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser] isEqualToString:@""]) {
         self.nickName = [DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser];//刷新别名
         self.titleLabel.text = self.nickName;
     }
-    
 }
 
 //初始化会话界面UI
@@ -142,7 +146,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:bgV];
     //从数据库中取出与这个人的聊天记录
     messages = [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
-    NSLog(@"从数据库中取出与 %@ 的聊天纪律:messages%@",self.chatWithUser, messages);
+    NSLog(@"从数据库中取出与 %@ 的聊天纪录:messages%@",self.chatWithUser, messages);
     [self normalMsgToFinalMsg];
     [self sendReadedMesg];//发送已读消息
     
@@ -216,12 +220,12 @@ UINavigationControllerDelegate>
 {
     //数据读取
     NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
-   
     NSString *sender = KISDictionaryHaveKey(dict, @"sender");
     NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
     NSString *msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString *status = KISDictionaryHaveKey(dict, @"status");
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+   
     //动态消息
     if ([msgType isEqualToString:@"payloadchat"]) {
         
@@ -321,8 +325,10 @@ UINavigationControllerDelegate>
                                                 40,40)];
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            
+//             NSMutableDictionary * userInfo = [[UserManager singleton] getUser:sender];
+//            NSString * userHeadImage = KISDictionaryHaveKey(userInfo, @"img");
             [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:userHeadImage]; //头像设置成对方
             
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]
                        stretchableImageWithLeftCapWidth:15
@@ -438,8 +444,10 @@ UINavigationControllerDelegate>
             //设置时间
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            
+//            NSMutableDictionary * userInfo = [[UserManager singleton] getUser:sender];
+//            NSString * userHeadImage = KISDictionaryHaveKey(userInfo, @"img");
             [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:userHeadImage]; //头像设置成对方
             
             [cell.bgImageView setTag:(indexPath.row+1)];
           
@@ -545,8 +553,10 @@ UINavigationControllerDelegate>
         }else { //不是你，是对方
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            
+//             NSMutableDictionary * userInfo = [[UserManager singleton] getUser:sender];
+//            NSString * userHeadImage = KISDictionaryHaveKey(userInfo, @"img");
             [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:userHeadImage]; //头像设置成对方
             
             //设置背景气泡
             bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
@@ -1441,8 +1451,7 @@ UINavigationControllerDelegate>
     if ([clearView superview]) {
         [clearView setFrame:CGRectMake(0,startX,320,clearView.frame.size.height+diff)];
     }
-//    self.tView.frame = CGRectMake(0.0f, startX,320.0f,self.tView.frame.size.height+diff);
-    
+
     CGRect tvRect=self.tView.frame;
     tvRect.origin.y = tvRect.origin.y+diff;
     self.tView.frame=tvRect;
@@ -1452,7 +1461,6 @@ UINavigationControllerDelegate>
                           atScrollPosition:UITableViewScrollPositionBottom
                                   animated:YES];
     }
-    //    [senBtn setFrame:CGRectMake(282, inPutView.frame.size.height-37.5, 28, 27.5)];
     [picBtn setFrame:CGRectMake(285,self.inPutView.frame.size.height-12-27,25,27)];
     [self.emojiBtn setFrame:CGRectMake(277,self.inPutView.frame.size.height-12-36,45,45)];
     [self.kkChatAddButton setFrame:CGRectMake(242,self.inPutView.frame.size.height-12-36,45,45)];
@@ -2100,8 +2108,8 @@ UINavigationControllerDelegate>
 {
     
     NSDictionary* tempDic = notification.userInfo;
-    NSRange range = [KISDictionaryHaveKey(tempDic,  @"sender")rangeOfString:@"@"];
-    NSString * sender = [KISDictionaryHaveKey(tempDic,  @"sender")substringToIndex:range.location];
+    NSRange range = [KISDictionaryHaveKey(tempDic,@"sender")rangeOfString:@"@"];
+    NSString * sender = [KISDictionaryHaveKey(tempDic, @"sender")substringToIndex:range.location];
 
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
