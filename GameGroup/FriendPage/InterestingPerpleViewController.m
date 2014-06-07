@@ -1372,7 +1372,9 @@ typedef enum : NSUInteger {
     }
     else{
         [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
+            if (![responseObject isKindOfClass:[NSDictionary class]]) {
+                return ;
+            }
             for (int i = 0; i <m_dataArray.count; i++) {
                 NSDictionary *dic = [m_dataArray objectAtIndex:i];
                 if ([KISDictionaryHaveKey(dic, @"id")intValue]==[msgid intValue]) {
