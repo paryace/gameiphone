@@ -204,8 +204,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)newAddReq:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
-    NSRange range = [fromUser rangeOfString:@"@"];
-    fromUser = [fromUser substringToIndex:range.location];
+//    NSRange range = [fromUser rangeOfString:@"@"];
+//    fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
     
@@ -219,8 +219,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)deletePersonReceived:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
-    NSRange range = [fromUser rangeOfString:@"@"];
-    fromUser = [fromUser substringToIndex:range.location];
+//    NSRange range = [fromUser rangeOfString:@"@"];
+//    fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
     
@@ -253,7 +253,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendFriendReceived object:nil userInfo:info];
 }
 
 #pragma mark --获取你和谁说过话

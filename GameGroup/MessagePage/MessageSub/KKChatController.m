@@ -281,7 +281,12 @@ UINavigationControllerDelegate>
             [cell.thumbImgV setFrame:CGRectMake(70,40 + titleSize.height,40,40)];
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+            
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:self.chatWithUser];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            [cell setHeadImgByChatUser:userImage];
+            
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15,size.width+35,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -364,7 +369,11 @@ UINavigationControllerDelegate>
             //设置时间
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:self.chatWithUser];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            [cell setHeadImgByChatUser:userImage];
+            
             [cell.bgImageView setTag:(indexPath.row+1)];
             [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15,100,100)];
             cell.msgImageView.tag = indexPath.row;
@@ -441,7 +450,10 @@ UINavigationControllerDelegate>
         }else { //不是你，是对方
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@ %@", self.nickName, timeStr];
-            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+//            [cell setHeadImgByChatUser:self.chatUserImg]; //头像设置成对方
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:self.chatWithUser];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            [cell setHeadImgByChatUser:userImage];
             //设置背景气泡
             bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15,size.width+25,size.height+20)];
@@ -1457,8 +1469,7 @@ UINavigationControllerDelegate>
         }
         else if([msgType isEqualToString:@"normalchat"] && [status isEqualToString:@"0"])   //是否重发 （普通消息，且status=0)
         {
-            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"delegate:self cancelButtonTitle:@"取消"
-                                                 destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
+            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
             sheet.tag = 124;
             [sheet showInView:self.view];
         }
@@ -1842,9 +1853,9 @@ UINavigationControllerDelegate>
 {
     
     NSDictionary* tempDic = notification.userInfo;
-    NSRange range = [KISDictionaryHaveKey(tempDic,@"sender")rangeOfString:@"@"];
-    NSString * sender = [KISDictionaryHaveKey(tempDic, @"sender")substringToIndex:range.location];
-
+//    NSRange range = [KISDictionaryHaveKey(tempDic,@"sender")rangeOfString:@"@"];
+//    NSString * sender = [KISDictionaryHaveKey(tempDic, @"sender")substringToIndex:range.location];
+    NSString * sender = KISDictionaryHaveKey(tempDic, @"sender");
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];

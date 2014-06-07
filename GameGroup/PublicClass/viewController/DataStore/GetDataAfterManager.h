@@ -14,7 +14,6 @@
 #define kNewsMessage @"newsMessage"
 #define kDeleteAttention @"deleteAttentionReceived"
 #define kOtherMessage    @"otherMessage"
-#define kRecommendFriendReceived @"recommendFriendReceived"
 
 #define kMessageAck @"messageAck"
 

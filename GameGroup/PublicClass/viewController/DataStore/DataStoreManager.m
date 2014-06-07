@@ -157,8 +157,9 @@
 #pragma mark - 保存聊天记录
 +(void)saveDSCommonMsg:(NSDictionary *)msg
 {
-    NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
-    NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
+//    NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
+//    NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
+    NSString * sender = [msg objectForKey:@"sender"];//userid
     NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
