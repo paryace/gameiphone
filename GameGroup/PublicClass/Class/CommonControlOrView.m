@@ -82,7 +82,11 @@
             EGOImageView *gameImg_one = [[EGOImageView alloc] initWithFrame:CGRectMake(i*23, 0, 20, 20)];
             gameImg_one.backgroundColor = [UIColor clearColor];
             NSString * imageId=[GameCommon putoutgameIconWithGameId:gameid];
-            gameImg_one.imageURL = [ImageService getImageUrl3:imageId Width:40];
+            if ([GameCommon isEmtity:imageId]) {
+                gameImg_one.image=KUIImage(@"clazz_0");
+            }else{
+               gameImg_one.imageURL = [ImageService getImageUrl3:imageId Width:40];
+            }
             [gameIconView addSubview:gameImg_one];
         }
     }

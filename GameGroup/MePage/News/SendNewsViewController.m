@@ -121,10 +121,12 @@
     [self.view addSubview:m_ziNumLabel];
     
     
-    UIView * topView=[[UIView alloc] initWithFrame:CGRectMake(15, startX,320, 40)];
-    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320-15-8, 40)];
-    topBtn.backgroundColor = [UIColor clearColor];
+    UIView * topView=[[UIView alloc] initWithFrame:CGRectMake(0, startX,320, 40)];
+    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 40)];
+    [topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+    [topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [topBtn setTitle:@"如何使用网页发表长动态" forState:UIControlStateNormal];
+    topBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
     [topBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
     topBtn.titleLabel.font = [UIFont systemFontOfSize:12];
     topBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -132,7 +134,7 @@
     [topBtn addTarget:self action:@selector(HelpAction:) forControlEvents:UIControlEventTouchUpInside];
     [topView addSubview:topBtn];
     
-    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-25-8, 16, 8, 12)];
+    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16, 8, 12)];
     topimageView.image = KUIImage(@"right_arrow");
     topimageView.backgroundColor = [UIColor clearColor];
     [topView addSubview:topimageView];
