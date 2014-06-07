@@ -10,7 +10,7 @@
 #import "DSuser.h"
 
 @interface UserManager : NSObject
-@property(nonatomic, strong) NSMutableArray* userCache;
+@property(nonatomic, strong) NSMutableDictionary* userCache;
 
 + (UserManager*)singleton;
 - (NSMutableDictionary*)getUser:(NSString* )userId;

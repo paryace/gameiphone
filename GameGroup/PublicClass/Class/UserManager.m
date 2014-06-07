@@ -25,13 +25,17 @@ static UserManager *userManager = NULL;
 -(id)init
 {  self = [super init];
     if (self) {
-        self.userCache = [NSMutableArray arrayWithCapacity:10];
+        self.userCache = [NSMutableDictionary dictionaryWithCapacity:10];
     }
     return self;
 }
 
 - (NSMutableDictionary*)getUser:(NSString* )userId
 {
+    NSMutableDictionary * userDic = [self.userCache objectForKey:userId];
+    if (userDic) {
+        return userDic;
+    }
     NSMutableDictionary * dict = [NSMutableDictionary dictionary];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
@@ -42,6 +46,7 @@ static UserManager *userManager = NULL;
             alis = dUser.nickName;
         }
         [dict setObject:alis?alis:@"" forKey:@"nickname"];
+        [self.userCache setObject:dict forKey:userId];
     }
     else{
         [self requestUserFromNet:userId];
