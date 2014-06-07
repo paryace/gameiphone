@@ -35,6 +35,9 @@ typedef enum : NSUInteger {
     MJRefreshFooterView *m_footer;
 
     BOOL isComeBackComment;
+    
+    
+    NSMutableDictionary *commentOffLineDict;
 }
 @property (strong,nonatomic) HPGrowingTextView *textView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -80,6 +83,7 @@ typedef enum : NSUInteger {
     
     [self setTopViewWithTitle:@"评论" withBackButton:YES];
     m_pageIndex = 0;
+    commentOffLineDict = [NSMutableDictionary dictionary];
     m_dataReply = [[NSMutableArray alloc] initWithCapacity:1];
     
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
@@ -358,6 +362,34 @@ typedef enum : NSUInteger {
     [self hideEmoji];
     [self hideKeyBoard];
     
+    
+    
+    //离线评论
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+//    NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    NSMutableDictionary * userInfo = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    NSString * nickName = KISDictionaryHaveKey(userInfo, @"nickname");
+    [commentUser setObject:KISDictionaryHaveKey(userInfo, @"img") forKey:@"img"];
+    [commentUser setObject:nickName forKey:@"nickname"];
+    [commentUser setObject:KISDictionaryHaveKey(userInfo, @"superstar") forKey:@"superstar"];
+    [commentUser setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
+    [commentUser setObject:KISDictionaryHaveKey(userInfo, @"username") forKey:@"username"];
+    NSString* comment = self.textView.text;
+    
+    if (self.textView.placeholder!=nil) {
+        NSMutableDictionary *destUser = [NSMutableDictionary dictionary];
+        [destUser setObject:KISDictionaryHaveKey(commentOffLineDict, @"id") forKey:@"id"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"nickname") forKey:@"nickname"];
+        [destUser setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(commentOffLineDict, @"commentUser"), @"userid") forKey:@"userid"];
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",destUser,@"destUser", [GameCommon getCurrentTime],@"createDate",nil];
+    }else{
+        dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",[GameCommon getCurrentTime],@"createDate", nil];
+    }
+    [m_dataReply addObject:dict];
+    [m_replyTabel reloadData];
+    
     if (self.textView.placeholder) {
         [self postCommentWithMsgId:self.messageid destUserid:KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"), @"userid") destCommentId:KISDictionaryHaveKey(commentDic, @"id") comment:self.textView.text];
     }else{
@@ -539,21 +571,7 @@ typedef enum : NSUInteger {
     NSString * userimageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img");
     
     cell.headImageV.imageURL = [ImageService getImageStr:userimageIds Width:80];
-    
-    
-//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"commentUser"), @"img")];
-//    if ([imageName isEqualToString:@""]||[imageName isEqualToString:@" "]) {
-//        cell.headImageV.imageURL = nil;
-//    }else{
-//        if (imageName) {
-//            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:imageName] stringByAppendingString:@"/80/80"]];;
-//        }else
-//        {
-//            cell.headImageV.imageURL = nil;
-//        }
-//    }
-    
-    
+ 
     NSMutableDictionary *commentD =KISDictionaryHaveKey(tempDic,@"commentUser");
     NSString * nickName=KISDictionaryHaveKey(commentD, @"alias");
     if ([GameCommon isEmtity:nickName]) {
@@ -617,6 +635,8 @@ typedef enum : NSUInteger {
     isComeBackComment = YES;
     self.textView.placeholder = [NSString stringWithFormat:@"回复 %@：", nickName];
     [self.textView becomeFirstResponder];
+    
+    [commentOffLineDict setDictionary:commentDic];
 }
 
 -(void)CellHeardButtonClick:(int)rowIndex
