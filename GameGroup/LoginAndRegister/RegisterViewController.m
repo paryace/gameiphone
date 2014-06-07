@@ -1207,13 +1207,16 @@
        [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
        AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
        [app.xmppHelper connect];
+       
        [[UserManager singleton]getSayHiUserId];//获取打招呼id
+       [UserManager getBlackListFromNet];//获取黑名单信息
+       [[GameCommon shareGameCommon]LoginOpen];//获取游戏列表信息
+       
        NSMutableDictionary *userDic=KISDictionaryHaveKey(dic, @"gameproUser");
        [userDic setObject:KISDictionaryHaveKey(userDic, @"id") forKey:@"userid"];
        [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
        [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:@"unknow"] ;
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
-       
         [self dismissViewControllerAnimated:YES completion:^{
             if (_delegate && [_delegate respondsToSelector:@selector(RegisterViewControllerFinishRegister)]) {
                 [_delegate RegisterViewControllerFinishRegister];

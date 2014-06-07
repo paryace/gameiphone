@@ -121,22 +121,22 @@
     [self.view addSubview:m_ziNumLabel];
     
     
-    UIButton * topView=[[UIButton alloc] initWithFrame:CGRectMake(15, startX,320, 40)];
-    UILabel * topLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 320-15-8, 20)];
-    topLable.backgroundColor = [UIColor clearColor];
-    topLable.font= [UIFont systemFontOfSize:12];
-    topLable.text=@"如何使用网页发表长动态";
-    topLable.userInteractionEnabled = YES;
-    topLable.textColor = kColorWithRGB(41, 164, 246, 1.0);
-    [topView addSubview:topLable];
+    UIView * topView=[[UIView alloc] initWithFrame:CGRectMake(15, startX,320, 40)];
+    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320-15-8, 40)];
+    topBtn.backgroundColor = [UIColor clearColor];
+    [topBtn setTitle:@"如何使用网页发表长动态" forState:UIControlStateNormal];
+    [topBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+    topBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+    topBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    topBtn.userInteractionEnabled = YES;
+    [topBtn addTarget:self action:@selector(HelpAction:) forControlEvents:UIControlEventTouchUpInside];
+    [topView addSubview:topBtn];
     
     UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-25-8, 16, 8, 12)];
     topimageView.image = KUIImage(@"right_arrow");
     topimageView.backgroundColor = [UIColor clearColor];
     [topView addSubview:topimageView];
     [self.view addSubview:topView];
-    
-    [topView addTarget:self action:@selector(HelpAction:) forControlEvents:UIControlEventTouchUpInside];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];

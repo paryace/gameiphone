@@ -722,10 +722,7 @@ static GameCommon *my_gameCommon = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"225" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]:@"" forKey:@"token"];
-
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
