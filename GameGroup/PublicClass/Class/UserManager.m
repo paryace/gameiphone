@@ -25,7 +25,7 @@ static UserManager *userManager = NULL;
 -(id)init
 {  self = [super init];
     if (self) {
-
+        self.userCache = [NSMutableArray arrayWithCapacity:10];
     }
     return self;
 }
