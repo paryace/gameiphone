@@ -387,7 +387,8 @@ typedef enum : NSUInteger {
     }else{
         dict =[ NSMutableDictionary dictionaryWithObjectsAndKeys:comment,@"comment",commentUser,@"commentUser",uuid,@"uuid",@"",@"id",@(0),@"commentCellHieght",[GameCommon getCurrentTime],@"createDate", nil];
     }
-    [m_dataReply addObject:dict];
+//    [m_dataReply addObject:dict];
+    [m_dataReply insertObject:dict atIndex:0];
     [m_replyTabel reloadData];
     
     if (self.textView.placeholder) {
@@ -425,14 +426,16 @@ typedef enum : NSUInteger {
                 
                 if ([destUserid isEqualToString:@""]||[destUserid isEqualToString:@" "]) {
                     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:commentStr,@"comment",commentUser,@"commentUser",KISDictionaryHaveKey(responseObject, @"createDate"),@"createDate",KISDictionaryHaveKey(responseObject, @"id"),@"id", nil];
-                    [m_dataReply insertObject:dic atIndex:0];
+//                    [m_dataReply insertObject:dic atIndex:0];
+                     [m_dataReply replaceObjectAtIndex:0 withObject:dic];
                     [m_replyTabel reloadData];
                     
                 }else{
                     NSDictionary *destUser = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"), @"img"),@"img",KISDictionaryHaveKey(KISDictionaryHaveKey(commentDic, @"commentUser"), @"nickname"),@"nickname",KISDictionaryHaveKey(responseObject, @"destUserid"),@"usesrid", nil];
                     
                     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:commentStr,@"comment",commentUser,@"commentUser",KISDictionaryHaveKey(responseObject, @"createDate"),@"createDate",KISDictionaryHaveKey(responseObject, @"id"),@"id", destUser,@"destUser",nil];
-                    [m_dataReply insertObject:dic atIndex:0];
+//                    [m_dataReply insertObject:dic atIndex:0];
+                    [m_dataReply replaceObjectAtIndex:0 withObject:dic];
                     [m_replyTabel reloadData];
                 }
             }
