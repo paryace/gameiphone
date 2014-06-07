@@ -182,8 +182,9 @@
 #pragma mark - 存储消息相关
 +(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
 {
-    NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
-    NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
+//    NSRange range = [[msg objectForKey:@"sender"] rangeOfString:@"@"];
+//    NSString * sender = [[msg objectForKey:@"sender"] substringToIndex:range.location];//userid
+    NSString * sender = [msg objectForKey:@"sender"];//userid
     NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
     NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");

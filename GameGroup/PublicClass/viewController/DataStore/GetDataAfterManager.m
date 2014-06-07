@@ -164,8 +164,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
-    NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
-    NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
+//    NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
+//    NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
+     NSString * sender = [messageContent objectForKey:@"sender"];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
 
     if ([DataStoreManager savedMsgWithID:msgId]) {
@@ -269,8 +270,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {
-            NSRange range = [[info objectForKey:@"sender"] rangeOfString:@"@"];
-            NSString * sender = [[info objectForKey:@"sender"] substringToIndex:range.location];
+//            NSRange range = [[info objectForKey:@"sender"] rangeOfString:@"@"];
+//            NSString * sender = [[info objectForKey:@"sender"] substringToIndex:range.location];
+            NSString * sender = [info objectForKey:@"sender"];
             if ([responseObject containsObject:sender]) {
                 [info setValue:@"1" forKey:@"sayHiType"];
             }else{
