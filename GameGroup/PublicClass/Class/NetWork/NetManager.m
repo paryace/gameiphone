@@ -32,7 +32,6 @@
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"errorcode")] isEqualToString:@"100001"])
             {//token无效
                 NSLog(@"token invalid");
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
                 [self getTokenStatusMessage];
                 [GameCommon loginOut];
             }

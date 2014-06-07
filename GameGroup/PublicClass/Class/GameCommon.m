@@ -698,16 +698,13 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"203" forKey:@"method"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        
         if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
-            NSLog(@"token invalid");
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"tokeninvalid" object:Nil];
-            [NetManager  getTokenStatusMessage];
+            if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken])//本地没有token的情况下不需要请求登陆失败的原因
+            {
+                [NetManager  getTokenStatusMessage];
+            }
             [GameCommon loginOut];
- 
         }
-        
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
