@@ -118,6 +118,7 @@ UINavigationControllerDelegate>
 //初始化会话界面UI
 - (void)viewDidLoad
 {
+    NSLog(@"chat init");
     [super viewDidLoad];
     //监听通知（收到新消息，与发送消息成功）
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
