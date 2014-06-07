@@ -1229,7 +1229,7 @@
             if ([array containsObject:self.hostInfo.userId]) {
                 [DataStoreManager deletePersonFromBlackListWithUserid:self.hostInfo.userId];
             }
-
+            
             [self showMessageWindowWithContent:@"关注成功" imageType:0];
         }
         if ([type isEqualToString:@"2"]) {

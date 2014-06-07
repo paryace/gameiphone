@@ -26,27 +26,24 @@
     }
     return self;
 }
-
+- (void)viewWillAppear:(BOOL)animated
+{
+     m_dataArray =[DataStoreManager queryAllBlackListInfo];
+    [m_myTableView reloadData];
+    if (m_dataArray.count<1) {
+        [self showAlertViewWithTitle:@"提示" message:@"您的黑名单是空的哟" buttonTitle:@"确定"];
+    }
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"黑名单" withBackButton:YES];
     
     m_dataArray = [NSMutableArray array];
-    
-    
-    m_dataArray =[DataStoreManager queryAllBlackListInfo];
-    
-    if (m_dataArray.count<1) {
-        [self showAlertViewWithTitle:@"提示" message:@"您的黑名单是空的哟" buttonTitle:@"确定"];
-    }
-    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    
-    // Do any additional setup after loading the view.
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
