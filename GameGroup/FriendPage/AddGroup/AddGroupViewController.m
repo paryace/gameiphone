@@ -7,7 +7,7 @@
 //
 
 #import "AddGroupViewController.h"
-
+#import "AddGroupView.h"
 @interface AddGroupViewController ()
 
 @end
@@ -28,6 +28,10 @@
 {
     [super viewDidLoad];
     
+    [self setTopViewWithTitle:@"创建群组" withBackButton:YES];
+    AddGroupView *addGroup = [[AddGroupView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
+    
+    [self.view addSubview:addGroup];
     // Do any additional setup after loading the view.
 }
 
