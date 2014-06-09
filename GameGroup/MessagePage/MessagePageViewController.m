@@ -345,7 +345,9 @@
         cell.nameLabel.text = nickName;
     }else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])
     {//群组消息
-        NSString * nickName = @"Group001";
+        NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
+        
+        NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = content;
@@ -441,6 +443,7 @@
     for (int i = 0; i<allMsgArray.count; i++) {
         allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
     }
+
     MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
     NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];

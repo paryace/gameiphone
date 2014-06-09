@@ -16,6 +16,7 @@
 #import "DSTitle.h"
 #import "DSTitleObject.h"
 #import "DSGroupMsgs.h"
+#import "DSGroupList.h"
 @implementation DataStoreManager
 -(void)nothing
 {}
@@ -2310,5 +2311,58 @@
     [titleObjectDic setObject:titleObject.titlekey forKey:@"titlekey"];
     [titleObjectDic setObject:titleObject.titletype forKey:@"titletype"];
     return titleObjectDic;
+}
+
+
+
+#pragma mark - 保存群组列表信息
++(void)saveDSGroupList:(NSDictionary *)groupList
+{
+    NSString * backgroundImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"backgroundImg")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"groupId")];
+    NSString * groupName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"groupName")];
+    NSString * state = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"state")];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
+        if (!groupInfo)
+            groupInfo = [DSGroupList MR_createInContext:localContext];
+        groupInfo.backgroundImg = backgroundImg;
+        groupInfo.groupId = groupId;
+        groupInfo.groupName = groupName;
+        groupInfo.state = state;
+    }];
+}
+
+//查找所有的角色
++(NSMutableArray *)queryGroupInfoList
+{
+    
+    NSMutableArray *titlesArray = [NSMutableArray array];
+    NSArray *array = [DSGroupList MR_findAll];
+    for (DSGroupList * group in array) {
+        NSMutableDictionary * grouoDic = [self queryGroupInfo:group];
+        [titlesArray addObject:grouoDic];
+    }
+    return titlesArray;
+}
+
++(NSMutableDictionary*)queryGroupInfo:(DSGroupList*)group
+{
+    NSMutableDictionary * groupInfo = [NSMutableDictionary dictionary];
+    [groupInfo setObject:group.backgroundImg forKey:@"backgroundImg"];
+    [groupInfo setObject:group.groupId forKey:@"groupId"];
+    [groupInfo setObject:group.groupName forKey:@"groupName"];
+    [groupInfo setObject:group.state forKey:@"state"];
+    return groupInfo;
+}
+
++(NSMutableDictionary*)queryGroupInfoByGroupId:(NSString*)groupId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+    DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate];
+    NSMutableDictionary * groupInfo = [self queryGroupInfo:group];
+    return groupInfo;
 }
 @end

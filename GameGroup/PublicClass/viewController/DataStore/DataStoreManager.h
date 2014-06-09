@@ -221,4 +221,10 @@
 +(void)changeMyGroupMessage:(NSString *)messageuuid PayLoad:(NSString*)payload;//更改群组发送图片的payload
 
 +(void)deleteGroupMsgInCommentWithUUid:(NSString *)uuid;//删除某条群组消息
+
++(void)saveDSGroupList:(NSDictionary *)groupList;//保存群列表
+
++(NSMutableArray *)queryGroupInfoList;//查找群列表
+
++(NSMutableDictionary*)queryGroupInfoByGroupId:(NSString*)groupId;//查找单个群信息
 @end

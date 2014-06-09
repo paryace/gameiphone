@@ -200,6 +200,11 @@ static UserManager *userManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"success%@",responseObject);
+        if ([responseObject isKindOfClass:[NSMutableArray class]]) {
+            for (NSMutableDictionary * groupInfo in responseObject) {
+                [DataStoreManager saveDSGroupList:groupInfo];
+            }
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
