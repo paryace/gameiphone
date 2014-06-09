@@ -2350,6 +2350,9 @@
 
 +(NSMutableDictionary*)queryGroupInfo:(DSGroupList*)group
 {
+    if (!group) {
+        return nil;
+    }
     NSMutableDictionary * groupInfo = [NSMutableDictionary dictionary];
     [groupInfo setObject:group.backgroundImg forKey:@"backgroundImg"];
     [groupInfo setObject:group.groupId forKey:@"groupId"];

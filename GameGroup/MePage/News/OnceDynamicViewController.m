@@ -250,7 +250,6 @@
     
     EGOImageButton* headBtn = [[EGOImageButton alloc] initWithFrame:CGRectMake(10, 10 + startX, 40, 40)];
     headBtn.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-//    headBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(self.dataDic, @"userimg")]]];
     
     NSString * imageIds=KISDictionaryHaveKey(self.dataDic, @"userimg");
     headBtn.imageURL = [ImageService getImageStr2:imageIds];
@@ -396,10 +395,10 @@
 
 - (NSString*)imageHtmlWithId:(NSString*)imageid
 {
-//    NSString* imageStr = [NSString stringWithFormat:@"<img src=\"%@%@\\305\" width=\"305\"></img>", BaseImageUrl, imageid];
-    NSString* imageStr = [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"?imageView2/2/w/305"];
-
-    return imageStr;
+    if ([GameCommon isPureInt:imageid]) {
+        [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"/305"];
+    }
+    return [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"?imageView2/2/w/305"];
 }
 
 - (void)setButtomView
