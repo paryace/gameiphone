@@ -7,7 +7,9 @@
 //
 
 #import "BaseViewController.h"
-
-@interface AddGroupViewController : BaseViewController
+#import "AddGroupView.h"
+#import "RealmsSelectViewController.h"
+#import "CardViewController.h"
+@interface AddGroupViewController : BaseViewController<groupViewDelegate,RealmSelectDelegate,CardListDelegate>
 
 @end

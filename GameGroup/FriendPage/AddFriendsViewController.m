@@ -10,6 +10,7 @@
 #import "SearchResultViewController.h"
 #import "SearchJSViewController.h"
 #import "MessageAddressViewController.h"
+#import "AddGroupViewController.h"
 @interface AddFriendsViewController ()
 {
     UITextField * searchContent;
@@ -98,7 +99,7 @@
 
     // Do any additional setup after loading the view.
     
-    m_myTableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 132)];
+    m_myTableview = [[UITableView alloc]initWithFrame:CGRectMake(0, 110+startX, 320, 176)];
     m_myTableview.delegate = self;
     m_myTableview.dataSource = self;
     m_myTableview.rowHeight = 44;
@@ -133,7 +134,7 @@
 {
     UITableViewCell *cell =[[ UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     
-    NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild",@"find_address", nil];
+    NSArray *array = [NSArray arrayWithObjects:@"find_role",@"find_guild",@"find_address", @"find_group",nil];
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 24, 24)];
     iconImageView.image = KUIImage(array[indexPath.row]);
     [cell.contentView addSubview:iconImageView];
@@ -161,7 +162,8 @@
         [self.navigationController pushViewController:aaa animated:YES];
     }
     else if (indexPath.row ==3){
-        
+        AddGroupViewController *addGroup = [[AddGroupViewController alloc]init];
+        [self.navigationController pushViewController:addGroup animated:YES];
     }
     else{
     if(indexPath.row==0){

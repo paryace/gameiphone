@@ -232,6 +232,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    
     [m_myFansTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary * tempDict= [m_otherSortFansArray objectAtIndex:indexPath.row];
     [[Custom_tabbar showTabBar] hideTabBar:YES];

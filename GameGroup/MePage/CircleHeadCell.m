@@ -11,6 +11,7 @@
 #import "ImgCollCell.h"
 @interface CircleHeadCell(){
     int nickNameLenght;
+    
 }
 @end
 @implementation CircleHeadCell
