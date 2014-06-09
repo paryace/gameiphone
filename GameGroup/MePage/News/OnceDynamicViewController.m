@@ -761,10 +761,11 @@
         [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"nickname") forKey:@"nickname"];
         [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"img") forKey:@"img"];
         [dictionary setObject:payloadStr forKey:@"payload"];
-        [dictionary setObject:@"payloadchat" forKey:@"msgType"];
+        [dictionary setObject:@"normalchat" forKey:@"msgType"];
         [dictionary setObject:uuid forKey:@"messageuuid"];
         [dictionary setObject:@"2" forKey:@"status"];
         [DataStoreManager storeMyPayloadmsg:dictionary];
+        [DataStoreManager storeMyNormalMessage:dictionary];
     }else{
         [self showMessageWindowWithContent:@"发送失败" imageType:0];
     }

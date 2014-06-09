@@ -23,6 +23,9 @@
 @property(assign,nonatomic)id<KKChatCellDelegate> myChatCellDelegate;   //头像点击代理
 
 @property(nonatomic, retain) UILabel *senderAndTimeLabel;     //时间与发送人 标签
+
+@property(nonatomic, retain) UILabel *senderNickName;
+
 @property(nonatomic, retain) UIButton *bgImageView; //气泡背景
 
 //重连相关

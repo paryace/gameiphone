@@ -43,12 +43,9 @@ EmojiViewDelegate,
 QiniuUploadDelegate,
 SendMsgDeleGate>
 {
-    //    UILabel    *titleLabel;
     NSString * userName;
-    // NSMutableDictionary * userDefaults;
     NSUserDefaults * uDefault;
     NSMutableDictionary * peopleDict;
-    //    UIView * inPutView;
     UILongPressGestureRecognizer *btnLongTap;
     UIButton * tempBtn; //被点击的按钮
     UIView * popLittleView;
@@ -73,19 +70,13 @@ SendMsgDeleGate>
     BOOL ifEmoji;
     
     UIButton * audioBtn;
-    //UIButton * emojiBtn;
     UIButton * picBtn;
-    //UIButton * audioRecordBtn;
     
-    //NSTimeInterval beginTime;
     UIButton * audioplayButton;
-    //UIImageView *recordAnimationIV;
     
     UIScrollView *m_EmojiScrollView;
     UIPageControl *m_Emojipc;
     UIView * emojiBGV;
-    
-    //    EmojiView * theEmojiView;
     
     NSMutableDictionary *recordSetting;
     AVAudioPlayer * audioPlayer;
@@ -106,11 +97,10 @@ SendMsgDeleGate>
 @property (strong, nonatomic)  NSMutableDictionary *finalImage; //消息的图片
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
 @property (strong, nonatomic)  UITextField *messageTextField;
-//@property (strong, nonatomic)  UIButton * sendBtn;
 @property(nonatomic, retain) NSString *chatWithUser;
-@property(nonatomic, assign) BOOL ifFriend;
 @property(nonatomic, retain) NSString *nickName;
-@property(nonatomic, retain) NSString *friendStatus;
+
+@property(nonatomic, retain) NSString *type;
 
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;

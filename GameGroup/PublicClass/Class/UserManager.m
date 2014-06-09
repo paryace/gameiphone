@@ -25,7 +25,8 @@ static UserManager *userManager = NULL;
 -(id)init
 {  self = [super init];
     if (self) {
-        self.userCache = [NSMutableDictionary dictionaryWithCapacity:10];
+        self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
+        self.cacheUserids = [NSMutableArray array];
     }
     return self;
 }
@@ -54,6 +55,11 @@ static UserManager *userManager = NULL;
     return dict;
 }
 - (void)requestUserFromNet:(NSString*)userId {
+    [self.userCache removeObjectForKey:userId];
+    if ([self.cacheUserids containsObject:userId]) {
+        return;
+    }
+    [self.cacheUserids addObject:userId];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -64,8 +70,10 @@ static UserManager *userManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.cacheUserids removeObject:userId];
         [self saveUserInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.cacheUserids removeObject:userId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
     }];
 }

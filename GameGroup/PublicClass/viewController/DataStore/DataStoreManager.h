@@ -203,4 +203,22 @@
 +(NSMutableArray *)queryTitle:(NSString*)userId Hide:(NSString*)hide;//查找头衔列表
 
 +(NSMutableDictionary *)getUserInfoFromDbByUserid:(NSString*)userid;//查询用户信息
+
++ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer;//查询群组历史消息
+
++(void)saveDSGroupMsg:(NSDictionary *)msg;//保存群组消息
+
++ (BOOL)isHasdGroMsg:(NSString*)msgId;//判断群组消息是否存在
+
++(void)deleteGroupMsgByMsgType:(NSString *)msgType;//删除所有的群组消息
+
++(void)storeMyNormalMessage:(NSDictionary *)message;//保存我发送的正常消息
+
++(void)storeMyGroupMessage:(NSDictionary *)message;//保存我发送的群消息
+
++(void)refreshGroupMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;//刷新群组消息
+
++(void)changeMyGroupMessage:(NSString *)messageuuid PayLoad:(NSString*)payload;//更改群组发送图片的payload
+
++(void)deleteGroupMsgInCommentWithUUid:(NSString *)uuid;//删除某条群组消息
 @end

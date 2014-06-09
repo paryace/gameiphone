@@ -229,9 +229,9 @@
         if (alertView.cancelButtonIndex != buttonIndex) {
 //            [DataStoreManager deleteAllThumbMsg];//删除会话列表记录
 //            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
-            
             [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
-            [DataStoreManager deleteMsgByMsgType:@"payloadchat"];//删除所有的链接消息
+            [DataStoreManager deleteMsgByMsgType:@"groupchat"];//删除所有的groupchat消息
+            [DataStoreManager deleteGroupMsgByMsgType:@"groupchat"];//删除所有的groupchat历史消息
             [self displayMsgsForDefaultView];
 
         }
@@ -299,7 +299,6 @@
             }else{
                 cell.contentLabel.text =@"";
             }
-            
             cell.nameLabel.text = @"有新的打招呼信息";
         }
     }
@@ -327,12 +326,30 @@
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
-    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
+    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"])
     {//正常聊天
-        NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
-        cell.headImageV.imageURL=[ImageService getImageStr:sendImageId Width:80];
-        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
-        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+        NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
+        
+        NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+        NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
+        NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+        
+//        NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
+//        cell.headImageV.imageURL=[ImageService getImageStr:sendImageId Width:80];
+//        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+//        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+        
+        
+        cell.headImageV.imageURL=[ImageService getImageStr:userImage Width:80];
+        cell.contentLabel.text = content;
+        cell.nameLabel.text = nickName;
+    }else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])
+    {//群组消息
+        NSString * nickName = @"Group001";
+        NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+        cell.headImageV.image = KUIImage(@"every_data_news");
+        cell.contentLabel.text = content;
+        cell.nameLabel.text = nickName;
     }
     
     //设置红点 start
@@ -431,8 +448,17 @@
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
     kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]senderNickname];
     kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]senderimg];
+    kkchat.type = [self getChatType:[[allMsgArray objectAtIndex:indexPath.row] msgType]];
     [self.navigationController pushViewController:kkchat animated:YES];
-
+}
+-(NSString*)getChatType:(NSString*)msgType
+{
+    if ([msgType isEqualToString:@"normalchat"]) {
+        return @"normal";
+    }else if([msgType isEqualToString:@"groupchat"]){
+        return @"group";
+    }
+    return @"normal";
 }
 
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr

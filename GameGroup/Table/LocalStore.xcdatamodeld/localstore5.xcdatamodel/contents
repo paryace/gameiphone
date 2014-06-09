@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="12F45" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="DSAttentionNameIndex" representedClassName="DSAttentionNameIndex" syncable="YES">
+        <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSAttentions" representedClassName="DSAttentions" syncable="YES">
+        <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameKey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="refreshTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSBlackList" representedClassName="DSBlackList" syncable="YES">
+        <attribute name="headimg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSCharacters" representedClassName="DSCharacters" syncable="YES">
+        <attribute name="auth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="charactersId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="failedmsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value3" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
+        <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMsgImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unRead" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSCommonMsgs" representedClassName="DSCommonMsgs" syncable="YES">
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgFilesID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSFans" representedClassName="DSFans" syncable="YES">
+        <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameKey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="refreshTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSFansNameIndex" representedClassName="DSFansNameIndex" syncable="YES">
+        <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSFriendCircle" syncable="YES"/>
+    <entity name="DSFriends" representedClassName="DSFriends" syncable="YES">
+        <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="action" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="birthday" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hobby" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameKey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="refreshTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="signature" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="starSign" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superremark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSFriendsNewsList" representedClassName="DSFriendsNewsList" syncable="YES">
+        <attribute name="bigTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commentObj" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="detailPageId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="heardImgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="newsId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="showTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="urlLink" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSGroupMsgs" representedClassName="DSGroupMsgs" syncable="YES">
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgFilesID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSMyNewsList" representedClassName="DSMyNewsList" syncable="YES">
+        <attribute name="bigTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commentObj" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="detailPageId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="heardImgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="newsId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="showTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="urlLink" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSNameIndex" representedClassName="DSNameIndex" syncable="YES">
+        <attribute name="index" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSNewsGameList" representedClassName="DSNewsGameList" syncable="YES">
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSNewsMsgs" representedClassName="DSNewsMsgs" syncable="YES">
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgcontent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgtype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mytitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sendtime" optional="YES" attributeType="Date" syncable="YES"/>
+    </entity>
+    <entity name="DSOfflineComments" representedClassName="DSOfflineComments" syncable="YES">
+        <attribute name="comments" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destCommentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="destUserid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSOfflineZan" representedClassName="DSOfflineZan" syncable="YES">
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSOtherMsgs" representedClassName="DSOtherMsgs" syncable="YES">
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sendTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="temp" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSReceivedHellos" representedClassName="DSReceivedHellos" syncable="YES">
+        <attribute name="acceptStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addtionMsg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ifFriend" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="unreadCount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSRecommendList" representedClassName="DSRecommendList" syncable="YES">
+        <attribute name="fromID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recommendReason" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSThumbMsgs" representedClassName="DSThumbMsgs" syncable="YES">
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sayHiType" optional="YES" attributeType="String" defaultValueString="1" syncable="YES"/>
+        <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderimg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sendTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="sendTimeStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unRead" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSTitle" representedClassName="DSTitle" syncable="YES">
+        <attribute name="characterid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="charactername" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clazz" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hasDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hide" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ids" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortnum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userimg" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSTitleObject" representedClassName="DSTitleObject" syncable="YES">
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="evolution" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rank" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ranktype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rankvaltype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rarememo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rarenum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkDetail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="simpletitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sortnum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titlekey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titletype" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSUnreadCount" representedClassName="DSUnreadCount" syncable="YES">
+        <attribute name="publicUnread" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receivedHellosUnread" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subscribedUnread" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSuser" representedClassName="DSuserManager" syncable="YES">
+        <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="action" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="birthday" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gameids" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hobby" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameIndex" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nameKey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="refreshTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarkName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shiptype" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="signature" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="starSign" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superremark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
+        <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
+        <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
+        <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="208"/>
+        <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
+        <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
+        <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
+        <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
+        <element name="DSFriendCircle" positionX="-81" positionY="-45" width="128" height="45"/>
+        <element name="DSFriends" positionX="252" positionY="54" width="128" height="390"/>
+        <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
+        <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
+        <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
+        <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="88"/>
+        <element name="DSNewsMsgs" positionX="-18" positionY="234" width="128" height="135"/>
+        <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
+        <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
+        <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
+        <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
+        <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="165"/>
+        <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="255"/>
+        <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>
+        <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
+        <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
+        <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="223"/>
+    </elements>
+</model>

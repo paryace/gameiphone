@@ -331,6 +331,7 @@
 //        kkchat.chatWithUser =KISDictionaryHaveKey(getDic, @"userid");
 //        kkchat.nickName = KISDictionaryHaveKey(getDic, @"nickname");
 //        kkchat.chatUserImg = [GameCommon getHeardImgId:KISDictionaryHaveKey(getDic, @"img")];
+//        kkchat.type = @"normal";
 //        [self.navigationController pushViewController:kkchat animated:YES];
 
         

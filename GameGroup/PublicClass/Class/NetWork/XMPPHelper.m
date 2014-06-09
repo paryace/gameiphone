@@ -190,24 +190,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
 }
 
--(NSString*)getMsgType:(NSString*)payload
-{
-    if ([GameCommon isEmtity:payload]) {
-        return @"normalchat";
-    }
-    if ([[GameCommon getNewStringWithId:[payload JSONValue][@"type"]] isEqualToString:@"3"]) {
-        return @"payloadchat";
-    }else if ([payload JSONValue][@"active"]){
-        //发送通知 判断账号是否激活
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
-        return @"normalchat";
-        
-    }else if ([[payload JSONValue][@"type"] isEqualToString:@"img"]){//如果 payload 的type 是 img 的话
-        return @"normalchat";
-    }
-    return @"normalchat";
-}
-
 #pragma mark 收到消息后调用
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
@@ -239,7 +221,10 @@
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [dict setObject:[self getMsgType:payload] forKey:@"msgType"];
+            if ([payload JSONValue][@"active"]){//发送通知 判断账号是否激活
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
+            }
+            [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [self.chatDelegate newMessageReceived:dict];
         }
@@ -355,7 +340,15 @@
             NSString * groupid = [[message attributeForName:@"groupid"] stringValue];
             NSString * domain=[[from componentsSeparatedByString:@"@"] objectAtIndex:1];
             NSString * to=[NSString stringWithFormat:@"%@%@%@",groupid,@"@group.",domain];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            [dict setObject:groupid forKey:@"groupId"];
             
+            [self.chatDelegate newGroupMessageReceived:dict];
             [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
         }
     }
@@ -370,10 +363,15 @@
             NSString * msgStatus = KISDictionaryHaveKey(bodyDic, @"msgStatus");
             if ([msgStatus isEqualToString:@"Delivered"]) {//是否送达
                 [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0"];
+                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0"];
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
             else if ([msgStatus isEqualToString:@"Displayed"]) {//是否已读
+                
                 [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
+                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
         }
@@ -387,6 +385,7 @@
             return;
         }
         [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
+         [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
     }
 }

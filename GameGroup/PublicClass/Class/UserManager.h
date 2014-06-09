@@ -11,6 +11,7 @@
 
 @interface UserManager : NSObject
 @property(nonatomic, strong) NSMutableDictionary* userCache;
+@property(nonatomic, strong) NSMutableArray* cacheUserids;
 
 + (UserManager*)singleton;
 - (NSMutableDictionary*)getUser:(NSString* )userId;
