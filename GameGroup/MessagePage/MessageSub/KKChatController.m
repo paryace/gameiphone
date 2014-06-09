@@ -145,8 +145,6 @@ UINavigationControllerDelegate>
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)
         name:@"wxr_myActiveBeChanged"object:nil];
-//    self.type = @"group";
-//    self.chatWithUser = @"00000005";
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
