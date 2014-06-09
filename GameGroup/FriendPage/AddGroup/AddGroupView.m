@@ -214,6 +214,7 @@
     
     UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 280, 280, 150)];
     editIV.backgroundColor=[UIColor whiteColor];
+    editIV.image = KUIImage(@"group_info");
     [self.secondScrollView addSubview:editIV];
 
     
