@@ -13,6 +13,7 @@
 #import "SameRealmViewController.h"
 #import "EncoXHViewController.h"
 #import "MagicGirlViewController.h"
+#import "GroupListViewController.h"
 @interface FindViewController ()
 {
     UIButton *menuButotn;
@@ -205,36 +206,58 @@
     //建立朋友圈view
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
-    [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
+//    [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
 
     [self.view addSubview:bottomView];
     
-    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 10, 80, 18)];
+
+    
+    UIView *groupView = [[UIView alloc]initWithFrame:CGRectMake(80, 0 , 100, 60)];
+    groupView.backgroundColor =[UIColor clearColor];
+    [groupView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+    [bottomView addSubview:groupView];
+    
+    UILabel *groupTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
+    groupTitleLabel.backgroundColor = [UIColor clearColor];
+    groupTitleLabel.font = [UIFont boldSystemFontOfSize:18];
+    groupTitleLabel.text  = @"群组织";
+    groupTitleLabel.textColor = [UIColor whiteColor];
+    groupTitleLabel.textAlignment = NSTextAlignmentLeft;
+    [groupView addSubview:groupTitleLabel];
+    
+    UILabel *groupLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
+    groupLable.backgroundColor = [UIColor clearColor];
+    groupLable.textAlignment = NSTextAlignmentLeft;
+    groupLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
+    groupLable.font = [UIFont systemFontOfSize:11];
+    groupLable.text = @"GroupList";
+    
+    [groupView addSubview:groupLable];
+    
+    
+    
+    UIView *circleView = [[UIView alloc]initWithFrame:CGRectMake(180, 0 , 100, 60)];
+    circleView.backgroundColor =[UIColor clearColor];
+    [circleView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
+    [bottomView addSubview:circleView];
+    
+    
+    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
     bottomTitleLabel.backgroundColor = [UIColor clearColor];
     bottomTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     bottomTitleLabel.text  = @"朋友圈";
     bottomTitleLabel.textColor = [UIColor whiteColor];
     bottomTitleLabel.textAlignment = NSTextAlignmentLeft;
     
-    [bottomView addSubview:bottomTitleLabel];
+    [circleView addSubview:bottomTitleLabel];
     
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
-    headImgView.frame = CGRectMake(260, 10, 40, 40);
-    if (_friendImgStr ==nil) {
-        NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
-        
-        headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
-    }else{
-        headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
-    }
-    [bottomView addSubview:headImgView];
+
 
     
     
     
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
     iconImageView.image = KUIImage(@"circleIcon");
-   // iconImageView.backgroundColor =[ UIColor clearColor];
     [bottomView addSubview:iconImageView];
     
     //红点 - 朋友圈
@@ -265,7 +288,7 @@
     }
 
     
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 30, 170, 20)];
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentLeft;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
@@ -300,7 +323,23 @@
         m_notibgInfoImageView.hidden = YES;
         m_notibgCircleNewsImageView.hidden = YES;
     }
-    [bottomView addSubview:commentLabel];
+    [circleView addSubview:commentLabel];
+    
+    
+    
+    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+    headImgView.frame = CGRectMake(260, 10, 40, 40);
+    if (_friendImgStr ==nil) {
+        NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
+        
+        headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
+    }else{
+        headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
+    }
+    [bottomView addSubview:headImgView];
+    
+    
+    
     
     m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 44, 44)];
     m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
@@ -671,9 +710,15 @@
     commentLabel.text = @"暂无新的动态";
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
-    
-
 }
+
+-(void)enterGroupList:(id)sender
+{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    GroupListViewController * gruupV = [[GroupListViewController alloc] init];
+    [self.navigationController pushViewController:gruupV animated:YES];
+}
+
 #pragma mark --改变顶部图片
 -(void)changeTopImage:(UILongPressGestureRecognizer*)sender
 {

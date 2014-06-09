@@ -8,6 +8,6 @@
 
 #import "BaseViewController.h"
 
-@interface GroupListViewController : BaseViewController
+@interface GroupListViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
 
 @end

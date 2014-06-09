@@ -21,8 +21,8 @@
 #import "ReconnectMessage.h"
 #import "UserManager.h"
 #import "DataNewsViewController.h"
-//#import "Reachability.h"
 #import "ImageService.h"
+#import "GroupListViewController.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
 {
@@ -227,13 +227,10 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-//            [DataStoreManager deleteAllThumbMsg];//删除会话列表记录
-//            [DataStoreManager deleteAllDSCommonMsgs];//删除聊天记录
             [DataStoreManager deleteMsgByMsgType:@"normalchat"];//删除所有的normalchat消息
             [DataStoreManager deleteMsgByMsgType:@"groupchat"];//删除所有的groupchat消息
             [DataStoreManager deleteGroupMsgByMsgType:@"groupchat"];//删除所有的groupchat历史消息
             [self displayMsgsForDefaultView];
-
         }
     }
 }
