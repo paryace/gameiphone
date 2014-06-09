@@ -156,6 +156,7 @@
     kkchat.nickName = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
     kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row]senderimg];
+    kkchat.type = @"normal";
 
     [self.navigationController pushViewController:kkchat animated:YES];
     

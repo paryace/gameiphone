@@ -375,6 +375,7 @@
         kkchat.chatWithUser = self.hostInfo.userId;
         kkchat.nickName = m_titleLabel.text;
         kkchat.chatUserImg = [GameCommon getHeardImgId:self.titleImage];
+        kkchat.type = @"normal";
         [self.navigationController pushViewController:kkchat animated:YES];
 }
 - (void)buildMainView
@@ -1170,6 +1171,7 @@
         kkchat.chatWithUser = self.hostInfo.userId;
         kkchat.nickName = m_titleLabel.text;
         kkchat.chatUserImg = [GameCommon getHeardImgId:self.hostInfo.headImgStr];
+        kkchat.type = @"normal";
         [self.navigationController pushViewController:kkchat animated:YES];
     }
 }

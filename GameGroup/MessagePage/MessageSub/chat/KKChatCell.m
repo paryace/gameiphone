@@ -24,7 +24,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.accessoryType = UITableViewCellAccessoryNone;  //cell的为无样式
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [UIColor clearColor];
@@ -36,6 +35,13 @@
         self.senderAndTimeLabel.font = [UIFont systemFontOfSize:11.0];
         self.senderAndTimeLabel.textColor = [UIColor lightGrayColor];
         [self.contentView addSubview:self.senderAndTimeLabel];
+        
+        //中央文字Label - 用来显示聊天时间[self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
+        self.senderNickName = [[UILabel alloc] initWithFrame:CGRectMake(10+40+10, padding*2-16, 100, 20)];
+        self.senderNickName.backgroundColor = [UIColor clearColor];
+        self.senderNickName.font = [UIFont systemFontOfSize:11.0];
+        self.senderNickName.textColor = [UIColor lightGrayColor];
+        [self.contentView addSubview:self.senderNickName];
         
         self.bgImageView = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];

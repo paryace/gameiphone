@@ -454,14 +454,13 @@ typedef enum : NSUInteger {
         
         NSString * imageId=KISDictionaryHaveKey(dict, @"img");
         //无图文章
-        if ([GameCommon isPureInt:imageId]) {
+        if ([GameCommon isEmtity:imageId]) {
             cell.shareImageView.imageURL =nil;
             cell.shareImageView.hidden =YES;
             cell.shareInfoLabel.frame = CGRectMake(5, 5, 245, 40);
             cell.shareInfoLabel.numberOfLines =2;
         }else{  //有图文章
             cell.shareImageView.hidden =NO;
-//            cell.shareImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dict, @"img")]];
             cell.shareImageView.imageURL = [ImageService getImageUrl4:imageId];
             cell.shareInfoLabel.frame = CGRectMake(60, 5, 190, 40);
             cell.shareInfoLabel.numberOfLines = 2;

@@ -121,10 +121,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
     }
-    else if([type isEqualToString:@"payloadchat"])//分享动态消息
-    {
-        [DataStoreManager storeNewMsgs:messageContent senderType:PAYLOADMSG];//动态消息
-    }
     else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//加好友或者删除好友
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//关注和取消关注
@@ -141,6 +137,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
               || [type isEqualToString:@"title"])//头衔，角色，战斗力
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
+    }
+    else if ([type isEqualToString:@"groupchat"])//群组消息
+    {
+        [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];//其他消息
     }
 }
 #pragma mark 收到新闻消息
@@ -164,8 +164,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
-    NSRange range = [[messageContent objectForKey:@"sender"] rangeOfString:@"@"];
-    NSString * sender = [[messageContent objectForKey:@"sender"] substringToIndex:range.location];
+     NSString * sender = [messageContent objectForKey:@"sender"];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
 
     if ([DataStoreManager savedMsgWithID:msgId]) {
@@ -198,13 +197,32 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+#pragma mark 收到聊天消息
+-(void)newGroupMessageReceived:(NSDictionary *)messageContent
+{
+    NSString * sender = [messageContent objectForKey:@"sender"];
+    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    
+    if ([DataStoreManager isHasdGroMsg:msgId]) {
+        return;
+    }
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [self storeNewMessage:messageContent];
+    [DataStoreManager saveDSGroupMsg:messageContent];
+    
+    if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
+        [[UserManager singleton]requestUserFromNet:sender];
+    }else{//更新消息表
+        NSDictionary* user=[[UserManager singleton] getUser:sender];
+        [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
 
 #pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
-    NSRange range = [fromUser rangeOfString:@"@"];
-    fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
     
@@ -218,8 +236,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)deletePersonReceived:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
-    NSRange range = [fromUser rangeOfString:@"@"];
-    fromUser = [fromUser substringToIndex:range.location];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
     
@@ -252,7 +268,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendFriendReceived object:nil userInfo:info];
 }
 
 #pragma mark --获取你和谁说过话
@@ -269,8 +284,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {
-            NSRange range = [[info objectForKey:@"sender"] rangeOfString:@"@"];
-            NSString * sender = [[info objectForKey:@"sender"] substringToIndex:range.location];
+//            NSRange range = [[info objectForKey:@"sender"] rangeOfString:@"@"];
+//            NSString * sender = [[info objectForKey:@"sender"] substringToIndex:range.location];
+            NSString * sender = [info objectForKey:@"sender"];
             if ([responseObject containsObject:sender]) {
                 [info setValue:@"1" forKey:@"sayHiType"];
             }else{

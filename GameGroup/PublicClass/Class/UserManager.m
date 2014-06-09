@@ -25,13 +25,18 @@ static UserManager *userManager = NULL;
 -(id)init
 {  self = [super init];
     if (self) {
-
+        self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
+        self.cacheUserids = [NSMutableArray array];
     }
     return self;
 }
 
 - (NSMutableDictionary*)getUser:(NSString* )userId
 {
+    NSMutableDictionary * userDic = [self.userCache objectForKey:userId];
+    if (userDic) {
+        return userDic;
+    }
     NSMutableDictionary * dict = [NSMutableDictionary dictionary];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate];
@@ -42,6 +47,7 @@ static UserManager *userManager = NULL;
             alis = dUser.nickName;
         }
         [dict setObject:alis?alis:@"" forKey:@"nickname"];
+        [self.userCache setObject:dict forKey:userId];
     }
     else{
         [self requestUserFromNet:userId];
@@ -49,6 +55,11 @@ static UserManager *userManager = NULL;
     return dict;
 }
 - (void)requestUserFromNet:(NSString*)userId {
+    [self.userCache removeObjectForKey:userId];
+    if ([self.cacheUserids containsObject:userId]) {
+        return;
+    }
+    [self.cacheUserids addObject:userId];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
@@ -59,8 +70,10 @@ static UserManager *userManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.cacheUserids removeObject:userId];
         [self saveUserInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.cacheUserids removeObject:userId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
     }];
 }
