@@ -9,8 +9,5 @@
 #import "BaseViewController.h"
 
 @interface GroupListViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
-@property(nonatomic, retain) NSString *type;//类型
-
-@property(nonatomic, retain) NSString * conditiona;//条件
 
 @end

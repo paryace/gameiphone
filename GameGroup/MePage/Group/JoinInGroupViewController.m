@@ -8,6 +8,7 @@
 
 #import "JoinInGroupViewController.h"
 #import "GroupListViewController.h"
+#import "SearchGroupViewController.h"
 @interface JoinInGroupViewController ()
 {
     UITextField *m_searchTf;
@@ -54,9 +55,8 @@
 }
 
 -(void)searchStrToNextPage:(id)sender
-{
-    GroupListViewController *groupView = [[GroupListViewController alloc]init];
-    groupView.type = @"search";
+{    
+    SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
     groupView.conditiona = m_searchTf.text;
     [self.navigationController pushViewController:groupView animated:YES];
 }

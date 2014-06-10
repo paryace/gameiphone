@@ -20,6 +20,8 @@
 #import "InterestingPerpleViewController.h"
 #import "MJRefresh.h"
 #import "FriendTopCell.h"
+#import "MyGroupCell.h"
+#import "GroupListViewController.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
@@ -137,7 +139,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        return 1;
+        return 2;
     }
     return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
 }
@@ -149,14 +151,21 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==0) {
-        static NSString * stringCellTop = @"cellTop";
-        FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
-        cellTop.friendTabDelegate=self;
-        cellTop.lable1.text=fanstr;
-        CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
-
-        return cellTop;
+        if (indexPath.row == 0) {
+            static NSString * stringCellTop = @"cellTop";
+            FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
+            cellTop.friendTabDelegate=self;
+            cellTop.lable1.text=fanstr;
+            CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+            cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
+            return cellTop;
+        }else if(indexPath.row == 1){
+            static NSString * stringCellGroup = @"cellGroup";
+            MyGroupCell * cellgroup = [[MyGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellGroup];
+            cellgroup.headImageV.image = KUIImage(@"people_man.png");
+            cellgroup.titleLable.text = @"我的群组";
+            return cellgroup;
+        }
     }
     
     static NSString * stringCell3 = @"cell";
@@ -221,6 +230,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     if (indexPath.section==0) {
+        if (indexPath.row == 1) {
+            GroupListViewController *groupView = [[GroupListViewController alloc]init];
+            [self.navigationController pushViewController:groupView animated:YES];
+        }
         return;
     }
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
