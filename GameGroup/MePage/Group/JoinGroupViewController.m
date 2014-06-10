@@ -59,7 +59,7 @@
      - (void)okButtonClick:(id)sender
     {
         if (KISEmptyOrEnter(m_contentTextView.text)) {
-            [self showAlertViewWithTitle:@"提示" message:@"请输入您的反馈意见，谢谢！" buttonTitle:@"确定"];
+            [self showAlertViewWithTitle:@"提示" message:@"请输入申请理由" buttonTitle:@"确定"];
             return;
         }
         [m_contentTextView resignFirstResponder];

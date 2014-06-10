@@ -9,6 +9,8 @@
 #import "GroupListViewController.h"
 #import "GroupCell.h"
 #import "KKChatController.h"
+#import "JoinGroupViewController.h"
+#import "GroupInformationViewController.h"
 
 @interface GroupListViewController ()
 {
@@ -82,10 +84,16 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
      NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
-    KKChatController * kkchat = [[KKChatController alloc] init];
-    kkchat.chatWithUser = KISDictionaryHaveKey(cellDic, @"groupId");
-    kkchat.type = @"group";
-    [self.navigationController pushViewController:kkchat animated:YES];
+//    KKChatController * kkchat = [[KKChatController alloc] init];
+//    kkchat.chatWithUser = KISDictionaryHaveKey(cellDic, @"groupId");
+//    kkchat.type = @"group";
+//    [self.navigationController pushViewController:kkchat animated:YES];
+    
+    
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+    gr.groupId = KISDictionaryHaveKey(cellDic, @"groupId");
+    [self.navigationController pushViewController:gr animated:YES];
 }
 
 -(void)getGroupList

@@ -259,7 +259,6 @@
     
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
     iconImageView.image = KUIImage(@"circleIcon");
-    [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(joinGroup:)]];
     [bottomView addSubview:iconImageView];
     
     //红点 - 朋友圈
@@ -718,13 +717,6 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     GroupListViewController * gruupV = [[GroupListViewController alloc] init];
-    [self.navigationController pushViewController:gruupV animated:YES];
-}
-
--(void)joinGroup:(id)sender
-{
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    JoinGroupViewController * gruupV = [[JoinGroupViewController alloc] init];
     [self.navigationController pushViewController:gruupV animated:YES];
 }
 

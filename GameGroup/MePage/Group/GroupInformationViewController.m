@@ -8,6 +8,7 @@
 
 #import "GroupInformationViewController.h"
 #import "EGOImageView.h"
+#import "JoinGroupViewController.h"
 
 @interface GroupInformationViewController ()
 {
@@ -45,7 +46,14 @@
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [self.view addSubview:m_myTableView];
-
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(wlgc:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+    
     UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
     topImg.image = KUIImage(@"groupinfo_top");
     m_myTableView.tableHeaderView = topImg;
@@ -59,6 +67,16 @@
     
     // Do any additional setup after loading the view.
 }
+
+-(void)wlgc:(id)sender
+{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    JoinGroupViewController * gruupV = [[JoinGroupViewController alloc] init];
+    gruupV.groupId = self.groupId;
+    [self.navigationController pushViewController:gruupV animated:YES];
+}
+
+
 
 -(void)buildmemberisAudit:(BOOL)isAudit title:(NSString *)title imgArray:(NSArray *)array
 {
@@ -115,8 +133,7 @@
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-//    [paramDict setObject:self.groupId forKey:@"groupId"];
-    [paramDict setObject:@"00000045" forKey:@"groupId"];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
 
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"231" forKey:@"method"];
