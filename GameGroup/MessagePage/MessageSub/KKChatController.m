@@ -1706,7 +1706,6 @@ UINavigationControllerDelegate>
 {
     [messages addObject:dictionary];//添加到当前消息集合 内存
     [self newMsgToArray:dictionary];//计算高度，添加高度到内存
-    
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager storeMyMessage:dictionary];//添加到数据库
         [DataStoreManager storeMyNormalMessage:dictionary];

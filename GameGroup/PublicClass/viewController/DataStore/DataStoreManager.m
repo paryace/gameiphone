@@ -416,6 +416,8 @@
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+    NSString* groupId = KISDictionaryHaveKey(message, @"groupId");
+    
 
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
 
@@ -434,7 +436,8 @@
         int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
-        thumbMsgs.status = @"2";//发送中
+        thumbMsgs.status = @"2";
+        thumbMsgs.groupId = groupId;
         thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
