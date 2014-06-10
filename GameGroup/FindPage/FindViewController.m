@@ -14,6 +14,7 @@
 #import "EncoXHViewController.h"
 #import "MagicGirlViewController.h"
 #import "GroupListViewController.h"
+#import "MyGroupViewController.h"
 #import "JoinGroupViewController.h"
 @interface FindViewController ()
 {
@@ -717,7 +718,7 @@
 -(void)enterGroupList:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    GroupListViewController * gruupV = [[GroupListViewController alloc] init];
+    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
     [self.navigationController pushViewController:gruupV animated:YES];
 }
 

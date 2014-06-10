@@ -42,12 +42,22 @@
     m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
     m_searchTf.delegate = nil;
     [self.view addSubview:m_searchTf];
+    
+    UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(10, startX+80, 300, 40)];
+    [okbutton setTitle:@"搜索" forState:UIControlStateNormal];
+    [okbutton addTarget:self action:@selector(searchStrToNextPage:) forControlEvents:UIControlEventTouchUpInside];
+    okbutton.backgroundColor =[UIColor grayColor];
+    [self.view addSubview:okbutton];
+    
+    
     // Do any additional setup after loading the view.
 }
 
 -(void)searchStrToNextPage:(id)sender
 {
     GroupListViewController *groupView = [[GroupListViewController alloc]init];
+    groupView.type = @"search";
+    groupView.conditiona = m_searchTf.text;
     [self.navigationController pushViewController:groupView animated:YES];
 }
 
