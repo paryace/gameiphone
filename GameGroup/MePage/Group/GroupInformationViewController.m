@@ -9,7 +9,8 @@
 #import "GroupInformationViewController.h"
 #import "EGOImageView.h"
 #import "JoinGroupViewController.h"
-
+#import "SetUpGroupViewController.h"
+#import "KKChatController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -17,6 +18,8 @@
     NSMutableDictionary *m_mainDict;
     UIView *boView;
     UIView *aoView;
+    UILabel* m_titleLabel;
+    NSInteger shiptypeCount;
 }
 @end
 
@@ -36,7 +39,16 @@
     [super viewDidLoad];
     
     
-    [self setTopViewWithTitle:@"2b公会" withBackButton:YES];
+    [self setTopViewWithTitle:@"" withBackButton:YES];
+    
+    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
+    m_titleLabel.textColor = [UIColor whiteColor];
+    m_titleLabel.backgroundColor = [UIColor clearColor];
+    m_titleLabel.textAlignment = NSTextAlignmentCenter;
+    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.view addSubview:m_titleLabel];
+
+    
     
     m_mainDict =[ NSMutableDictionary dictionary];
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
@@ -63,10 +75,58 @@
     aoView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f  blue:0/255.0f  alpha:0.5];
     [topImg addSubview:aoView];
     
-
     
     // Do any additional setup after loading the view.
 }
+
+-(void)didClickGroup:(UIButton *)sender
+{
+    
+    if (shiptypeCount==0) {//群主
+        
+        if (sender.tag ==100) {//发消息
+            KKChatController * kkchat = [[KKChatController alloc] init];
+            kkchat.chatWithUser = self.groupId;
+            kkchat.type = @"group";
+            [self.navigationController pushViewController:kkchat animated:YES];
+        }else{
+            NSLog(@"群设置");
+        }
+        
+    }
+   else if (shiptypeCount==1) {//管理员
+       if (sender.tag ==100) {//发消息
+           KKChatController * kkchat = [[KKChatController alloc] init];
+           kkchat.chatWithUser = self.groupId;
+           kkchat.type = @"group";
+           [self.navigationController pushViewController:kkchat animated:YES];
+       }
+       else if(sender.tag ==101){
+           NSLog(@"群设置");
+       }else{
+           NSLog(@"退出群");
+       }
+   
+    }
+   else if (shiptypeCount==2) {//成员
+       if (sender.tag ==100) {//发消息
+           KKChatController * kkchat = [[KKChatController alloc] init];
+           kkchat.chatWithUser = self.groupId;
+           kkchat.type = @"group";
+           [self.navigationController pushViewController:kkchat animated:YES];
+       }else{
+           NSLog(@"退出群");
+       }
+       
+    }
+    else{//陌生人
+        SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
+        setupVC.mySetupType = SETUP_JOIN;
+        [self.navigationController pushViewController:setupVC animated:YES];
+    }
+    
+}
+
 
 -(void)wlgc:(id)sender
 {
@@ -128,6 +188,22 @@
 }
 
 
+-(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
+{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
+    [self.view addSubview:view];
+    for (int i = 0; i<array.count; i++) {
+        float width = 320/(i+1);
+        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
+        [button setTitle:array[i] forState:UIControlStateNormal];
+        button.tag = i+100;
+        button.backgroundColor = [UIColor grayColor];
+        [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:button];
+    }
+    
+}
+
 
 -(void)getInfoWithNet
 {
@@ -142,13 +218,33 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
-            Memb.text = [NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")];
+            m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
             [m_myTableView reloadData];
             
             BOOL isAuth = [KISDictionaryHaveKey(responseObject, @"state")boolValue];
             
-            NSLog(@"%hhd",isAuth);
             [self buildmemberisAudit:isAuth title:[KISDictionaryHaveKey(responseObject, @"state")boolValue]?KISDictionaryHaveKey(responseObject, @"rank"):[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
+            
+            NSString *identity = KISDictionaryHaveKey( responseObject, @"groupUsershipType");
+            if ([identity intValue]==0) {//群主
+                NSArray *array = @[@"发消息",@"群设置"];
+                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
+            }
+            if ([identity intValue]==1) {//管理员
+                NSArray *array = @[@"发消息",@"群设置",@"退出群"];
+                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
+            }
+            if ([identity intValue]==2) {//普通成员
+                NSArray *array = @[@"发消息",@"退出群"];
+                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
+   
+            }else{//陌生人
+                NSArray *array = @[@"申请加入"];
+                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
+   
+            }
+
+            
             
         }
         
@@ -264,14 +360,14 @@
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
         }
         
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 100, 20)]
+        UILabel *tLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 20)]
         ;
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:titleLabel];
+        tLabel.text = @"创建时间";
+        tLabel.textColor = [UIColor grayColor];
+        tLabel.font = [UIFont systemFontOfSize:14];
+        tLabel.textAlignment = NSTextAlignmentCenter;
+        [cell.contentView addSubview:tLabel];
 
-        titleLabel.text = @"创建时间";
         
         UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)]
         ;

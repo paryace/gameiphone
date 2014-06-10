@@ -73,6 +73,8 @@
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             [myGroupArray removeAllObjects];
             [myGroupArray addObjectsFromArray:responseObject];
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
+            [myGroupArray addObject:dic];
             [groupCollectionView reloadData];
             
             for (NSMutableDictionary * groupInfo in responseObject) {
@@ -93,17 +95,29 @@
 {
     GroupOfMineCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     NSMutableDictionary * cellDic = [myGroupArray objectAtIndex:indexPath.row];
+    if (indexPath.row ==myGroupArray.count-1) {
+        cell.headImgView.placeholderImage =nil;
+        cell.headImgView.imageURL = nil;
+        NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+        cell.headImgView.image = KUIImage(imgStr);
+    }else{
     cell.headImgView.placeholderImage = KUIImage(@"people_man.png");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
-
+    }
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
+    if (indexPath.row ==myGroupArray.count-1) {
+        JoinInGroupViewController *joinIn = [[JoinInGroupViewController alloc]init];
+        [self.navigationController pushViewController:joinIn animated:YES];
+  
+    }else{
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
     gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
     [self.navigationController pushViewController:gr animated:YES];
+    }
 }
 
 
