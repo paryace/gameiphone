@@ -23,6 +23,7 @@
 #import "DataNewsViewController.h"
 #import "ImageService.h"
 #import "GroupListViewController.h"
+#import "JoinApplyViewController.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
 {
@@ -450,6 +451,9 @@
     }
     if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"applicationofgroup"])//申请加入群
     {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+        JoinApplyViewController *newsVC = [[JoinApplyViewController alloc]init];
+        [self.navigationController pushViewController:newsVC animated:YES];
         [self cleanUnReadCountWithType:6 Content:@"" typeStr:@""];
         return;
     }
