@@ -379,6 +379,25 @@
             thumbMsgs.sayHiType = sayhiType;
             thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         }];
+    }else if([sendertype isEqualToString:JOINGROUPMSG])//加入群组消息
+    {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            if (!thumbMsgs)
+                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            thumbMsgs.sender = sender;
+            thumbMsgs.senderNickname = @"加入群申请";
+            thumbMsgs.msgContent = @"我想加入群";
+            thumbMsgs.sendTime = sendTime;
+            thumbMsgs.senderType = sendertype;
+            thumbMsgs.msgType = msgType;
+            thumbMsgs.unRead = @"1";
+            thumbMsgs.messageuuid = msgId;
+            thumbMsgs.status = @"1";
+            thumbMsgs.sayHiType = @"1";
+            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        }];
     }
 }
 +(void)storeMyPayloadmsg:(NSDictionary *)message

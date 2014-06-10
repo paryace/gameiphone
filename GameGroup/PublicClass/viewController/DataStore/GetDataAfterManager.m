@@ -142,6 +142,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];//其他消息
     }
+    else if ([type isEqualToString:@"applicationofgroup"])//群组消息
+    {
+        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
+    }
 }
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
@@ -217,6 +221,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
+-(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
+{
+    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    if ([DataStoreManager savedMsgWithID:msgId]) {
+        return;
+    }
+    
+    [self storeNewMessage:messageContent];//保存消息
+    [DataStoreManager saveDSCommonMsg:messageContent];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
 
 #pragma mark 收到验证好友请求消息

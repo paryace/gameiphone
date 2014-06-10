@@ -14,4 +14,5 @@
 -(void)dailynewsReceived:(NSDictionary * )messageContent;
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent;
+-(void)JoinGroupMessageReceived:(NSDictionary *)messageContent;
 @end

@@ -333,6 +333,16 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
+        }else if([msgtype isEqualToString:@"applicationofgroup"]){
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+             [self.chatDelegate JoinGroupMessageReceived:dict];
         }
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息

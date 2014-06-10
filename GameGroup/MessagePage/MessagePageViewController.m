@@ -104,6 +104,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kOtherMessage object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
@@ -211,11 +212,16 @@
 {
    // [self displayMsgsForDefaultView];
 }
+-(void)joinGroupReceived:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
 #pragma mark 收到下线
 - (void)catchStatus:(NSNotification *)notification
 {
     self.titleLabel.text = @"消息(未连接)";
 }
+
 #pragma mark -清空
 - (void)cleanBtnClick:(id)sender
 {
@@ -289,9 +295,11 @@
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
         if (firstSayHiMsg) {
-            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
+            NSString *sender=[GameCommon getNewStringWithId:[firstSayHiMsg sender]];
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",sender]];
             NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             NSString *msgContent=[GameCommon getNewStringWithId:[firstSayHiMsg msgContent]];
+            
             if (nickName&&msgContent) {
                 cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
             }else{
@@ -349,6 +357,11 @@
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
         cell.nameLabel.text =nickName;
+    } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"applicationofgroup"]){//申请加入群组
+        cell.headImageV.imageURL =nil;
+        cell.headImageV.image = KUIImage(@"every_data_news");
+        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     
     
@@ -435,6 +448,11 @@
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;
     }
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"applicationofgroup"])//申请加入群
+    {
+        [self cleanUnReadCountWithType:6 Content:@"" typeStr:@""];
+        return;
+    }
     if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"character"] ||
         [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"title"] ||
         [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"pveScore"])
@@ -443,7 +461,6 @@
         OtherMsgsViewController* VC = [[OtherMsgsViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
-        
         return;
     }
     int allUnread = 0;
@@ -511,8 +528,14 @@
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             thumbMsgs.unRead = @"0";
         }];//清数字
- 
-        
+    }
+    else if (6 == type)//申请加入群
+    {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000013"];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            thumbMsgs.unRead = @"0";
+        }];//清数字
     }
     
 }

@@ -14,6 +14,7 @@
 #define kNewsMessage @"newsMessage"
 #define kDeleteAttention @"deleteAttentionReceived"
 #define kOtherMessage    @"otherMessage"
+#define kJoinGroupMessage    @"joinGroupMessage"
 
 #define kMessageAck @"messageAck"
 

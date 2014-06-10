@@ -99,6 +99,7 @@
 #define DAILYNEWS @"dailynews"//每日一文闻
 #define OTHERMESSAGE  @"otherMessage"//头衔 角色 战斗力
 #define GROUPMSG  @"groupmsg"//群组
+#define JOINGROUPMSG  @"joingroupmsg"//群组
 
 
 
