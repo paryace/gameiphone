@@ -122,6 +122,7 @@
         
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =[GameCommon getNewStringWithId: KISDictionaryHaveKey(responseObject, @"groupId")];
         [self.navigationController pushViewController:gr animated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

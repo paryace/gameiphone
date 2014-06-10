@@ -7,7 +7,7 @@
 //
 
 #import "BaseViewController.h"
-
-@interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
-
+#import "GroupInfomationJsCell.h"
+@interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,GroupInfoCellDelegate>
+@property(nonatomic,copy)NSString *groupId;
 @end

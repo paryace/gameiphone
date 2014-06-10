@@ -10,10 +10,8 @@
 #import "MyProfileViewController.h"
 #import "MyTitleObjViewController.h"
 #import "TitleObjDetailViewController.h"
-#import "FeedBackViewController.h"
 #import "CharacterEditViewController.h"
 #import "CharacterDetailsViewController.h"//角色详情界面
-#import "CircleWithMeViewController.h"
 #import "HostInfo.h"
 #import "PersonTableCell.h"
 #import "MyCharacterCell.h"
@@ -23,7 +21,7 @@
 #import "MyStateTableCell.h"
 #import "NewsViewController.h"
 #import "UserManager.h"
-
+#import "GroupInformationViewController.h"
 #import "FunsOfOtherViewController.h"
 #import "MyCircleViewController.h"
 
@@ -63,6 +61,14 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
     
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(wlgc:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
+    
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -81,6 +87,14 @@
     if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
         [self getUserInfoByNet];
     }
+}
+
+-(void)wlgc:(id)sender
+{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
+    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+    [self.navigationController pushViewController:gr animated:YES];
 }
 
 //加在本地数据
