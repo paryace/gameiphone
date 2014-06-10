@@ -388,13 +388,14 @@
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
             thumbMsgs.senderNickname = @"加入群申请";
-            thumbMsgs.msgContent = @"我想加入群";
+            thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
             thumbMsgs.msgType = msgType;
+            int unread = [thumbMsgs.unRead intValue];
             thumbMsgs.unRead = @"1";
             thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = @"1";
+            thumbMsgs.status = [NSString stringWithFormat:@"%d",unread+1];
             thumbMsgs.sayHiType = @"1";
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
