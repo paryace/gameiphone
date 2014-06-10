@@ -65,6 +65,7 @@
         cell = [[GroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
     cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];

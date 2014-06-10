@@ -55,37 +55,37 @@
     [self.view addSubview:hud];
     hud.labelText = @"提交中...";
 }
-     
-     - (void)okButtonClick:(id)sender
-    {
-        if (KISEmptyOrEnter(m_contentTextView.text)) {
-            [self showAlertViewWithTitle:@"提示" message:@"请输入申请理由" buttonTitle:@"确定"];
-            return;
-        }
-        [m_contentTextView resignFirstResponder];
-        [hud show:YES];
 
-        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-        NSMutableDictionary * paramsDict = [NSMutableDictionary dictionary];
-        [paramsDict setObject:self.groupId forKey:@"groupId"];
-        [paramsDict setObject:m_contentTextView.text forKey:@"msg"];
-        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [postDict setObject:@"232" forKey:@"method"];
-        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-        [postDict setObject:paramsDict forKey:@"params"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [hud hide:YES];
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }
-            }
-            [hud hide:YES];
-        }];
+- (void)okButtonClick:(id)sender
+{
+    if (KISEmptyOrEnter(m_contentTextView.text)) {
+        [self showAlertViewWithTitle:@"提示" message:@"请输入申请理由" buttonTitle:@"确定"];
+        return;
     }
+    [m_contentTextView resignFirstResponder];
+    [hud show:YES];
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * paramsDict = [NSMutableDictionary dictionary];
+    [paramsDict setObject:self.groupId forKey:@"groupId"];
+    [paramsDict setObject:m_contentTextView.text forKey:@"msg"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"232" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:paramsDict forKey:@"params"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+}
 
 - (void)didReceiveMemoryWarning
 {

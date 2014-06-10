@@ -7,7 +7,5 @@
 //
 
 #import "BaseViewController.h"
-
-@interface MyGroupViewController : BaseViewController
-
+@interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate>
 @end
