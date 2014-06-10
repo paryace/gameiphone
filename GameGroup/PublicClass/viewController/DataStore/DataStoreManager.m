@@ -783,6 +783,31 @@
 }
 
 
++ (NSMutableArray *)qureyCommonMessagesWithMsgType:(NSString *)msgType
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
+    NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"receiveTime" ascending:NO];
+    NSFetchRequest * fetchRequest = [DSCommonMsgs MR_requestAllWithPredicate:predicate];
+    fetchRequest.sortDescriptors = @[sortDescriptor];
+    NSArray * DSArray = [DSCommonMsgs MR_executeFetchRequest:fetchRequest];
+    NSMutableArray * msgArray = [NSMutableArray array];
+    NSInteger count = DSArray.count;
+    for (int i = 0; i<count; i++) {
+        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] sender] forKey:@"sender"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] msgContent] forKey:@"msg"];
+        NSDate * tt = [[DSArray objectAtIndex:i] senTime];
+        NSTimeInterval uu = [tt timeIntervalSince1970];
+        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] msgType]?[[DSArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] payload]?[[DSArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] messageuuid]?[[DSArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] status]?[[DSArray objectAtIndex:i] status] : @"" forKey:@"status"];
+        [msgArray addObject:thumbMsgsDict];
+    }
+    return msgArray;
+}
+
 
 +(NSString*)queryMessageStatusWithId:(NSString*)msgUUID
 {

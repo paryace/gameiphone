@@ -142,7 +142,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];//其他消息
     }
-    else if ([type isEqualToString:@"applicationofgroup"])//群组消息
+    else if ([type isEqualToString:@"joinGroupApplication"])//群组消息
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }

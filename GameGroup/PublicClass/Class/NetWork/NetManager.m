@@ -21,6 +21,9 @@
     success:^(AFHTTPRequestOperation *operation, id dict) {
 //        NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
 //        NSDictionary * dict = [receiveStr JSONValue];
+        if (!dict) {
+            failure(operation, @"");
+        }
         NSLog(@"获得数据：%@", dict);
         int status = [[dict objectForKey:@"errorcode"] intValue];
         if (status==0) {

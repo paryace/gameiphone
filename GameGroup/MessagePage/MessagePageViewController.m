@@ -358,7 +358,7 @@
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
         cell.nameLabel.text =nickName;
-    } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"applicationofgroup"]){//申请加入群组
+    } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"joinGroupApplication"]){//申请加入群组
         cell.headImageV.imageURL =nil;
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
@@ -449,7 +449,7 @@
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;
     }
-    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"applicationofgroup"])//申请加入群
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"joinGroupApplication"])//申请加入群
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         JoinApplyViewController *newsVC = [[JoinApplyViewController alloc]init];

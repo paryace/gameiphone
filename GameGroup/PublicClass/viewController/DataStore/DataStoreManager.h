@@ -233,4 +233,6 @@
 +(void)storeMyGroupThumbMessage:(NSDictionary *)message;//保存我发送的群组消息
 
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId;//清除群组的未读消息
+
++ (NSMutableArray *)qureyCommonMessagesWithMsgType:(NSString *)msgType;//根据msgType查询消息
 @end

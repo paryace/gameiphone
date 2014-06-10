@@ -7,8 +7,9 @@
 //
 
 #import "BaseViewController.h"
+#import "JoinApplyCell.h"
 
-@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
+@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,DetailDeleGate>
 
 
 @end

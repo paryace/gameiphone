@@ -333,7 +333,7 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-        }else if([msgtype isEqualToString:@"applicationofgroup"]){
+        }else if([msgtype isEqualToString:@"joinGroupApplication"]){
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             
             [dict setObject:msgtype forKey:@"msgType"];
