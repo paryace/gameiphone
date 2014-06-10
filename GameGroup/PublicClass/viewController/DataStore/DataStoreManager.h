@@ -230,5 +230,7 @@
 
 +(void)deleteGroupMsgWithSenderAndSayType:(NSString *)groupId;//删除群消息记录
 
-+(void)storeMyGroupThumbMessage:(NSDictionary *)message;
++(void)storeMyGroupThumbMessage:(NSDictionary *)message;//保存我发送的群组消息
+
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId;//清除群组的未读消息
 @end

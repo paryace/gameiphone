@@ -234,16 +234,12 @@
     
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
-//        NSDictionary* user= [[UserManager singleton] getUser:sender];
-//        NSString * senderNickname = [user objectForKey:@"nickname"];
-//        NSString * senderImage = [user objectForKey:@"img"];
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
-//            thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
             thumbMsgs.senderNickname = @"";
             thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
@@ -254,7 +250,6 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
-//            thumbMsgs.senderimg = senderImage;
             thumbMsgs.senderimg = @"";
             thumbMsgs.receiveTime=[GameCommon getCurrentTime];
                 
@@ -602,6 +597,18 @@
         }
     }];
 }
+
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (thumbMsgs) {
+            thumbMsgs.unRead = @"0";
+        }
+    }];
+}
+
 +(NSArray *)queryUnreadCountForCommonMsg
 {
     NSMutableArray * unreadArray = [NSMutableArray array];

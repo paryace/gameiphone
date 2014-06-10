@@ -461,15 +461,6 @@
     kkchat.type = @"normal";
     [self.navigationController pushViewController:kkchat animated:YES];
 }
--(NSString*)getChatType:(NSString*)msgType
-{
-    if ([msgType isEqualToString:@"normalchat"]) {
-        return @"normal";
-    }else if([msgType isEqualToString:@"groupchat"]){
-        return @"group";
-    }
-    return @"normal";
-}
 
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
 {

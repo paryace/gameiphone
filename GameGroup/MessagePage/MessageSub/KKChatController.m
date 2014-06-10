@@ -110,7 +110,11 @@ UINavigationControllerDelegate>
 -(void)viewWillDisappear:(BOOL)animated
 {
     //清除未读
-    [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
     
 }
 
@@ -188,7 +192,12 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
         object:nil];
     //清空此人所有的未读消息
-    [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
+    
     //图片与表情按钮
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
@@ -256,7 +265,7 @@ UINavigationControllerDelegate>
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
    
     //动态消息
-    if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"3"]) {
+    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"3"]) {
         static NSString *identifier = @"newsCell";
         KKNewsCell *cell =(KKNewsCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         
@@ -344,7 +353,7 @@ UINavigationControllerDelegate>
     }
     
     //图片消息
-    else if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"img"]) {
+    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"img"]) {
         static NSString *identifier = @"imgCell";
         KKImgCell *cell = (KKImgCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
@@ -684,7 +693,7 @@ UINavigationControllerDelegate>
         NSString *msgType = KISDictionaryHaveKey(plainEntry, @"msgType");
         NSString *status = KISDictionaryHaveKey(plainEntry, @"status");
         NSString *sender = KISDictionaryHaveKey(plainEntry, @"sender");
-        if ([msgType isEqualToString:@"normalchat"] && ![status isEqualToString:@"4"] && ![sender isEqualToString:@"you"]) {
+        if ([msgType isEqualToString:@"normalchat"] && ![[NSString stringWithString:status] isEqualToString:@"4"] && ![sender isEqualToString:@"you"]) {
             NSString*readMagIdString = KISDictionaryHaveKey(plainEntry, @"messageuuid");
             [self comeBackDisplayed:self.chatWithUser msgId:readMagIdString];
         }
@@ -882,11 +891,16 @@ UINavigationControllerDelegate>
 //返回消息类型枚举
 -(KKChatMsgType)msgType:(NSDictionary*) plainEntry
 {
-    if ([KISDictionaryHaveKey([KISDictionaryHaveKey(plainEntry, @"payload") JSONValue],@"type") isEqualToString:@"3"]) {
+    NSDictionary * payloadDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
+    if(!payloadDic){
+        return KKChatMsgTypeText;
+    }
+    NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
+    if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"]) {
         return KKChatMsgTypeLink;
     }
     //图片
-    else if ([KISDictionaryHaveKey([KISDictionaryHaveKey(plainEntry, @"payload") JSONValue],@"type") isEqualToString:@"img"])
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"img"])
     {
         return KKChatMsgTypeImage;
     }
@@ -1517,7 +1531,7 @@ UINavigationControllerDelegate>
         NSString* status = KISDictionaryHaveKey(dict, @"status");
         NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
         
-        if ([KISDictionaryHaveKey(payload, @"type") isEqualToString:@"3"]) {
+        if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"3"]) {
             NSDictionary* msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
             OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
             detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
