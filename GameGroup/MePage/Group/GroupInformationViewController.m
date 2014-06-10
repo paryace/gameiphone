@@ -11,6 +11,7 @@
 #import "JoinGroupViewController.h"
 #import "SetUpGroupViewController.h"
 #import "KKChatController.h"
+#import "MembersListViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -69,6 +70,7 @@
     UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
     topImg.image = KUIImage(@"groupinfo_top");
     m_myTableView.tableHeaderView = topImg;
+    topImg.userInteractionEnabled = YES;
     [self getInfoWithNet];
     
     aoView =[[ UIView alloc]initWithFrame:CGRectMake(0, 142, 320, 50)];
@@ -188,6 +190,14 @@
     }
 }
 
+
+#pragma mark ---进入组织成员界面
+-(void)enterMembersPage:(id)sender
+{
+    MembersListViewController *memberVC = [[MembersListViewController alloc]init];
+    memberVC.groupId = self.groupId ;
+    [self.navigationController pushViewController:memberVC animated:YES];
+}
 
 -(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
 {
