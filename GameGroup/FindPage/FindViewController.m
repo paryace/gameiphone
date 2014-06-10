@@ -220,7 +220,7 @@
     UILabel *groupTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
     groupTitleLabel.backgroundColor = [UIColor clearColor];
     groupTitleLabel.font = [UIFont boldSystemFontOfSize:18];
-    groupTitleLabel.text  = @"群组织";
+    groupTitleLabel.text  = @"我的组织";
     groupTitleLabel.textColor = [UIColor whiteColor];
     groupTitleLabel.textAlignment = NSTextAlignmentLeft;
     [groupView addSubview:groupTitleLabel];
@@ -230,7 +230,7 @@
     groupLable.textAlignment = NSTextAlignmentLeft;
     groupLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     groupLable.font = [UIFont systemFontOfSize:11];
-    groupLable.text = @"GroupList";
+    groupLable.text = @"1条新的群动态";
     
     [groupView addSubview:groupLable];
     

@@ -344,11 +344,12 @@
     {//群组消息
         NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
         
+        
         NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = content;
-        cell.nameLabel.text = nickName;
+        cell.nameLabel.text =nickName;
     }
     
     //设置红点 start
