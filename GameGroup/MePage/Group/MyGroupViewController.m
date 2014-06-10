@@ -8,7 +8,7 @@
 
 #import "MyGroupViewController.h"
 #import "JoinInGroupViewController.h"
-#import "MyGroupCell.h"
+#import "GroupOfMineCell.h"
 #import "GroupInformationViewController.h"
 @interface MyGroupViewController ()
 {
@@ -53,7 +53,7 @@
     groupCollectionView.scrollEnabled = NO;
     groupCollectionView.delegate = self;
     groupCollectionView.dataSource = self;
-    [groupCollectionView registerClass:[MyGroupCell class] forCellWithReuseIdentifier:@"titleCell"];
+    [groupCollectionView registerClass:[GroupOfMineCell class] forCellWithReuseIdentifier:@"titleCell"];
     groupCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:groupCollectionView];
 
@@ -91,7 +91,7 @@
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MyGroupCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
+    GroupOfMineCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     NSMutableDictionary * cellDic = [myGroupArray objectAtIndex:indexPath.row];
     cell.headImgView.placeholderImage = KUIImage(@"people_man.png");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];

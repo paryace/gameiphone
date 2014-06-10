@@ -1,5 +1,5 @@
 //
-//  MyGroupCell.h
+//  GroupOfMineCell.h
 //  GameGroup
 //
 //  Created by 魏星 on 14-6-10.
@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
-
-@interface MyGroupCell : UICollectionViewCell
+@interface GroupOfMineCell : UICollectionViewCell
 @property(nonatomic,strong)EGOImageView *headImgView;
 
 @end

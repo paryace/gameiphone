@@ -1,14 +1,14 @@
 //
-//  MyGroupCell.m
+//  GroupOfMineCell.m
 //  GameGroup
 //
 //  Created by 魏星 on 14-6-10.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
-#import "MyGroupCell.h"
+#import "GroupOfMineCell.h"
 
-@implementation MyGroupCell
+@implementation GroupOfMineCell
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -17,6 +17,7 @@
         // Initialization code
         self.headImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         [self addSubview:self.headImgView];
+
     }
     return self;
 }
