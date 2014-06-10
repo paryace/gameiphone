@@ -178,14 +178,21 @@
     [self.secondScrollView addSubview:self.topImageView];
 
     
-    UIView *cardView = [[UIView alloc]initWithFrame:CGRectMake(0, 155, 320, 40)];
-    cardView.backgroundColor = UIColorFromRGBA(0xf1f1f1, 1);
-    [cardView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
+//    UIView *cardView = [[UIView alloc]initWithFrame:CGRectMake(0, 155, 320, 40)];
+//    cardView.backgroundColor = UIColorFromRGBA(0xf1f1f1, 1);
+//    [cardView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
+//
+//    [self.secondScrollView addSubview:cardView];
+    
+    
+    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 155, 300, 40)];
+    carimg.image = KUIImage(@"group_cardtf");
+    carimg.userInteractionEnabled = YES;
+    [carimg addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
 
-    [self.secondScrollView addSubview:cardView];
+    [self.secondScrollView addSubview:carimg];
     
-    
-    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 40)];
+    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(5, 0, 290, 40)];
     self.cardTF.userInteractionEnabled = NO;
     self.cardTF.textColor = [UIColor grayColor];
     self.cardTF.numberOfLines = 0;
@@ -193,7 +200,7 @@
     self.cardTF.userInteractionEnabled = YES;
     self.cardTF.backgroundColor = [UIColor clearColor];
     self.cardTF.font = [UIFont systemFontOfSize:14];
-    [cardView addSubview:self.cardTF];
+    [carimg addSubview:self.cardTF];
     
     
    UICollectionViewFlowLayout* layout1 = [[UICollectionViewFlowLayout alloc]init];

@@ -7,6 +7,7 @@
 //
 
 #import "AddGroupViewController.h"
+#import "GroupInformationViewController.h"
 @interface AddGroupViewController ()
 {
     NSMutableDictionary * m_updataDic;
@@ -118,6 +119,10 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        
+        [self showMessageWindowWithContent:@"创建成功" imageType:0];
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        [self.navigationController pushViewController:gr animated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
