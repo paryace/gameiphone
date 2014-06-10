@@ -341,17 +341,17 @@
         NSString * sender = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
         
         NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:groupId];
-        NSMutableDictionary * simpleUserDic= [[UserManager singleton] getUser:sender];
-        
-        NSString * senderNickname = [simpleUserDic objectForKey:@"nickname"];
+       
         NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         
-        
+        NSString * senderNickname =[self getNickUserNameBySender:sender];
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
         cell.nameLabel.text =nickName;
     }
+    
+    
     
     //设置红点 start
     if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
@@ -389,6 +389,15 @@
     NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
     return cell;
+}
+
+-(NSString*)getNickUserNameBySender:(NSString*)sender
+{
+    if ([sender isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        return  @"我";
+    }
+    NSMutableDictionary * simpleUserDic= [[UserManager singleton] getUser:sender];
+    return [simpleUserDic objectForKey:@"nickname"];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
