@@ -16,5 +16,9 @@
 @property (nonatomic, retain) NSString * groupId;
 @property (nonatomic, retain) NSString * groupName;
 @property (nonatomic, retain) NSString * state;
+@property (nonatomic, retain) NSString * currentMemberNum;
+@property (nonatomic, retain) NSString * gameid;
+@property (nonatomic, retain) NSString * level;
+@property (nonatomic, retain) NSString * maxMemberNum;
 
 @end

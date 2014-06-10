@@ -25,5 +25,6 @@
 @dynamic unRead;
 @dynamic sayHiType;
 @dynamic receiveTime;
+@dynamic groupId;
 
 @end

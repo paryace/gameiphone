@@ -12,5 +12,12 @@
 @interface GroupCell : UITableViewCell
 @property (strong,nonatomic) EGOImageView * headImageV;
 @property (strong,nonatomic) UILabel * nameLabel;
+@property (strong,nonatomic) EGOImageView * gameImageV;
+
+@property (strong,nonatomic) UILabel * numberLable;
+
+@property (strong,nonatomic) UILabel * cricleLable;
+
+@property (strong,nonatomic) UILabel * levelLable;
 
 @end

@@ -15,5 +15,9 @@
 @dynamic groupId;
 @dynamic groupName;
 @dynamic state;
+@dynamic currentMemberNum;
+@dynamic gameid;
+@dynamic level;
+@dynamic maxMemberNum;
 
 @end

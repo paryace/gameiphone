@@ -7,7 +7,6 @@
 //
 
 #import "AttentionMessageViewController.h"
-//#import "MyNormalTableCell.h"
 #import "MessageCell.h"
 #import "TestViewController.h"
 #import "KKChatController.h"
@@ -15,9 +14,7 @@
 @interface AttentionMessageViewController ()
 {
     UITableView*  m_myTableView;
-    
     NSMutableArray * allMsgUnreadArray;
-    
     NSMutableArray * allSayHelloArray;//id
     NSMutableArray * sayhellocoArray;//内容
     UILabel* titleLabel;
@@ -29,9 +26,7 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
+    if (self) {    }
     return self;
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -62,13 +57,6 @@
     titleLabel.text = @"打招呼";
     titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:titleLabel];
-
-    
-    
-    
-    
-    
-//    [NSString stringWithFormat:@"打招呼(%d)",self.personCount]
     self.dataArray = [NSMutableArray array];
 
     allSayHelloArray = [NSMutableArray array];
@@ -79,7 +67,6 @@
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight = 70;
     [self.view addSubview:m_myTableView];
-   // [self getSayHelloUserInfo];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];
     
 }
@@ -91,7 +78,6 @@
 }
 - (void)backButtonClick:(id)sender
 {
-   // m_myTableView.editing = NO;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -139,12 +125,13 @@
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-    NSString * headImageId=[[self.dataArray objectAtIndex:indexPath.row]senderimg];
+    NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]]];
+    NSString * headImageId = KISDictionaryHaveKey(simpleUserDic, @"img");
+    NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
     cell.headImageV.imageURL=[ImageService getImageStr:headImageId Width:80];
     cell.contentLabel.text = [[self.dataArray objectAtIndex:indexPath.row]msgContent];
-    cell.nameLabel.text = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
+    cell.nameLabel.text = nickName;
     NSTimeInterval uu = [[[self.dataArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
-
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
 
     return cell;
@@ -153,9 +140,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     KKChatController *kkchat = [[KKChatController alloc]init];
-    kkchat.nickName = [[self.dataArray objectAtIndex:indexPath.row]senderNickname];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
-    kkchat.chatUserImg = [[self.dataArray objectAtIndex:indexPath.row]senderimg];
     kkchat.type = @"normal";
 
     [self.navigationController pushViewController:kkchat animated:YES];

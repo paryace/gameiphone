@@ -289,7 +289,8 @@
         cell.headImageV.imageURL =nil;
         [cell.headImageV setImage:KUIImage(@"mess_guanzhu")];
         if (firstSayHiMsg) {
-            NSString *nickName=[GameCommon getNewStringWithId:[firstSayHiMsg senderNickname]];
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
+            NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             NSString *msgContent=[GameCommon getNewStringWithId:[firstSayHiMsg msgContent]];
             if (nickName&&msgContent) {
                 cell.contentLabel.text =[NSString stringWithFormat:@"%@:%@",nickName,msgContent];
@@ -330,25 +331,25 @@
         NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
         NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
-        
-//        NSString * sendImageId=[[allMsgArray objectAtIndex:indexPath.row] senderimg];
-//        cell.headImageV.imageURL=[ImageService getImageStr:sendImageId Width:80];
-//        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
-//        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
-        
-        
-        cell.headImageV.imageURL=[ImageService getImageStr:userImage Width:80];
         cell.contentLabel.text = content;
         cell.nameLabel.text = nickName;
+        cell.headImageV.imageURL=[ImageService getImageStr:userImage Width:80];
+
     }else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])
     {//群组消息
-        NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
+        NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
+        NSString * sender = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
         
+        NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:groupId];
+        NSMutableDictionary * simpleUserDic= [[UserManager singleton] getUser:sender];
         
+        NSString * senderNickname = [simpleUserDic objectForKey:@"nickname"];
         NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+        
+        
         cell.headImageV.image = KUIImage(@"every_data_news");
-        cell.contentLabel.text = content;
+        cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
         cell.nameLabel.text =nickName;
     }
     
@@ -365,7 +366,6 @@
         else
         {
             [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
-            
             if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
                 [cell.unreadCountLabel setText:@"99+"];
                 cell.notiBgV.image = KUIImage(@"redCB_big");
@@ -441,15 +441,24 @@
     for (int i = 0; i<allMsgArray.count; i++) {
         allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
     }
-
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])//新闻
+    {
+        MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
+        NSInteger no = [cell.unreadCountLabel.text intValue];
+        KKChatController * kkchat = [[KKChatController alloc] init];
+        kkchat.unreadNo = allUnread-no;
+        kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
+        kkchat.type = @"group";
+        [self.navigationController pushViewController:kkchat animated:YES];
+        return;
+    }
+    
     MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
     NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.unreadNo = allUnread-no;
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
-    kkchat.nickName = [[allMsgArray objectAtIndex:indexPath.row]senderNickname];
-    kkchat.chatUserImg = [[allMsgArray objectAtIndex:indexPath.row]senderimg];
-    kkchat.type = [self getChatType:[[allMsgArray objectAtIndex:indexPath.row] msgType]];
+    kkchat.type = @"normal";
     [self.navigationController pushViewController:kkchat animated:YES];
 }
 -(NSString*)getChatType:(NSString*)msgType
@@ -522,6 +531,12 @@
         else if ([[[allMsgArray objectAtIndex:indexPath.row]sender] isEqual:@"sys00000011"])
         {
             [DataStoreManager deleteAllNewsMsgs];
+        }
+        else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:@"groupchat"]){
+            NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
+            [DataStoreManager deleteThumbMsgWithSender:groupId];
+            [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+            
         }
         else{
             if ([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1234567wxxxxxxxxx"])

@@ -165,6 +165,18 @@
     }];
 }
 
++(void)deleteGroupMsgWithSenderAndSayType:(NSString *)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ ",groupId];
+        NSArray * thumbMsg = [DSGroupMsgs MR_findAllWithPredicate:predicate];
+        for (int i = 0; i<thumbMsg.count; i++) {
+            DSGroupMsgs * thumb = [thumbMsg objectAtIndex:i];
+            [thumb MR_deleteInContext:localContext];
+        }
+    }];
+}
+
 
 #pragma mark - 保存聊天记录
 +(void)saveDSCommonMsg:(NSDictionary *)msg
@@ -222,16 +234,17 @@
     
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
-        NSDictionary* user= [[UserManager singleton] getUser:sender];
-        NSString * senderNickname = [user objectForKey:@"nickname"];
-
+//        NSDictionary* user= [[UserManager singleton] getUser:sender];
+//        NSString * senderNickname = [user objectForKey:@"nickname"];
+//        NSString * senderImage = [user objectForKey:@"img"];
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
-            thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
+//            thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
+            thumbMsgs.senderNickname = @"";
             thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
@@ -241,6 +254,8 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";//已发送
             thumbMsgs.sayHiType = sayhiType;
+//            thumbMsgs.senderimg = senderImage;
+            thumbMsgs.senderimg = @"";
             thumbMsgs.receiveTime=[GameCommon getCurrentTime];
                 
             if ([sayhiType isEqualToString:@"2"]){//自定义一条用于显示打招呼的消息
@@ -250,7 +265,7 @@
                     thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
                     thumbMsgs.msgContent = msgContent;//打招呼内容
                     thumbMsgs.sender = @"1234567wxxxxxxxxx";
-                    thumbMsgs.senderNickname = senderNickname?senderNickname:@"";
+                    thumbMsgs.senderNickname = @"";
                     thumbMsgs.senderType = sendertype;
                     int unread = [thumbMsgs.unRead intValue];
                     thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
@@ -348,14 +363,17 @@
     }else if([sendertype isEqualToString:GROUPMSG])//群组消息
     {
         NSString * groupId = KISDictionaryHaveKey(msg, @"groupId");
+        NSDictionary* user= [[UserManager singleton] getUser:sender];
+        NSString * senderNickname = [user objectForKey:@"nickname"];
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",groupId];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.sender = groupId;
-            thumbMsgs.senderNickname = @"Group1";
+            thumbMsgs.sender = sender;
+            thumbMsgs.senderNickname = senderNickname;
             thumbMsgs.msgContent = msgContent;
+            thumbMsgs.groupId = groupId;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
             int unread = [thumbMsgs.unRead intValue];
@@ -370,13 +388,10 @@
 }
 +(void)storeMyPayloadmsg:(NSDictionary *)message
 {
-    NSLog(@"message==%@",message);
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");
-    NSString * receicerNickname = KISDictionaryHaveKey(message, @"nickname");
     NSString * msgContent = KISDictionaryHaveKey(message, @"msg");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
-    NSString* heardimg = KISDictionaryHaveKey(message, @"img");
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
@@ -384,17 +399,17 @@
         if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
         thumbMsgs.sender = receicer;
-        thumbMsgs.senderNickname = receicerNickname;
+        thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = msgContent;
         thumbMsgs.sendTime = sendTime;
         thumbMsgs.senderType = COMMONUSER;
         thumbMsgs.msgType = msgType;
-        thumbMsgs.senderimg = heardimg;
+        thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";
         int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.messageuuid = messageuuid;
-        thumbMsgs.status = @"2";//发送中
+        thumbMsgs.status = @"2";
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
     }];
 }
@@ -402,27 +417,24 @@
 {
     NSLog(@"message==%@",message);
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");
-    NSString * receicerNickname = KISDictionaryHaveKey(message, @"nickname");
     NSString * msgContent = KISDictionaryHaveKey(message, @"msg");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
-    NSString* heardimg = KISDictionaryHaveKey(message, @"img");
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
 
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
 
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
-        
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
         thumbMsgs.sender = receicer;
-        thumbMsgs.senderNickname = receicerNickname;
+        thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = msgContent;
         thumbMsgs.sendTime = sendTime;
         thumbMsgs.senderType = COMMONUSER;
         thumbMsgs.msgType = msgType;
-        thumbMsgs.senderimg = heardimg;
+        thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";
         int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
@@ -431,6 +443,42 @@
         thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
+
+
++(void)storeMyGroupThumbMessage:(NSDictionary *)message
+{
+    NSLog(@"message==%@",message);
+    NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString * msgContent = KISDictionaryHaveKey(message, @"msg");
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
+    NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
+    NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+    NSString* groupId = KISDictionaryHaveKey(message, @"groupId");
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender = fromUserid;
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = msgContent;
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = COMMONUSER;
+        thumbMsgs.msgType = msgType;
+        thumbMsgs.senderimg = @"";
+        thumbMsgs.sayHiType = @"1";
+        int unread = [thumbMsgs.unRead intValue];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.messageuuid = messageuuid;
+        thumbMsgs.status = @"2";//发送中
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+    }];
+}
+
 
 +(void)storeMyNormalMessage:(NSDictionary *)message
 {
@@ -466,6 +514,7 @@
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
     NSString * payloadStr = KISDictionaryHaveKey(message, @"payload");
+    NSString * groupId = KISDictionaryHaveKey(message, @"groupId");
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSGroupMsgs * commonMsg = [DSGroupMsgs MR_createInContext:localContext];
@@ -479,6 +528,7 @@
         commonMsg.messageuuid = messageuuid;
         commonMsg.status = @"2";
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        commonMsg.groupId = groupId;
     }];
 }
 
@@ -1313,7 +1363,7 @@
 
 
 
-+(NSMutableDictionary *)getUserDictionary:(id)dbUser
++(NSMutableDictionary *)getUserDictionary:(DSuser*)dbUser
 {
     NSMutableDictionary *user=[[NSMutableDictionary alloc]init];
     [user setObject:[dbUser gameids]?[dbUser gameids]:@"" forKey:@"gameids"];
@@ -1331,7 +1381,6 @@
     [user setObject:[dbUser shiptype]?[dbUser shiptype]:@"" forKey:@"shiptype"];
     [user setObject:[dbUser remarkName]?[dbUser remarkName]:@"" forKey:@"alias"];
     
-    [user setObject:[dbUser action] forKey:@"active"];
     [user setObject:[dbUser backgroundImg]?[dbUser backgroundImg]:@""forKey:@"backgroundImg"];
     [user setObject:[dbUser birthday]?[dbUser birthday] :@"" forKey:@"birthdate"];
     [user setObject:[dbUser createTime]?[dbUser createTime] :@"" forKey:@"createTime"];
@@ -1342,7 +1391,6 @@
     [user setObject:[dbUser starSign]?[dbUser starSign] :@""forKey:@"constellation"];
     [user setObject:[dbUser superremark]?[dbUser superremark]:@"" forKey:@"superremark"];
     [user setObject:[dbUser superstar]?[dbUser superstar] :@""forKey:@"superstar"];
-//    [user setObject:[dbUser clazz]?[dbUser clazz] :@""forKey:@"clazz"];
     [user setObject:@"未知" forKey:@"city"];
     [user setObject:@"0" forKey:@"latitude"];
     [user setObject:@"0" forKey:@"longitude"];
@@ -2323,6 +2371,11 @@
     NSString * groupName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"groupName")];
     NSString * state = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"state")];
     
+    NSString * currentMemberNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"currentMemberNum")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"gameid")];
+    NSString * level = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"level")];
+    NSString * maxMemberNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"maxMemberNum")];
+    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
@@ -2332,6 +2385,10 @@
         groupInfo.groupId = groupId;
         groupInfo.groupName = groupName;
         groupInfo.state = state;
+        groupInfo.currentMemberNum = currentMemberNum;
+        groupInfo.gameid = gameid;
+        groupInfo.level = level;
+        groupInfo.maxMemberNum = maxMemberNum;
     }];
 }
 
@@ -2358,6 +2415,10 @@
     [groupInfo setObject:group.groupId forKey:@"groupId"];
     [groupInfo setObject:group.groupName forKey:@"groupName"];
     [groupInfo setObject:group.state forKey:@"state"];
+    [groupInfo setObject:group.currentMemberNum forKey:@"currentMemberNum"];
+    [groupInfo setObject:group.gameid forKey:@"gameid"];
+    [groupInfo setObject:group.level forKey:@"level"];
+    [groupInfo setObject:group.maxMemberNum forKey:@"maxMemberNum"];
     return groupInfo;
 }
 

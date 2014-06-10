@@ -227,4 +227,8 @@
 +(NSMutableArray *)queryGroupInfoList;//查找群列表
 
 +(NSMutableDictionary*)queryGroupInfoByGroupId:(NSString*)groupId;//查找单个群信息
+
++(void)deleteGroupMsgWithSenderAndSayType:(NSString *)groupId;//删除群消息记录
+
++(void)storeMyGroupThumbMessage:(NSDictionary *)message;
 @end

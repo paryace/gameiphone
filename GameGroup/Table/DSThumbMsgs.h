@@ -26,5 +26,6 @@
 @property (nonatomic, retain) NSString * unRead;
 @property (nonatomic, retain) NSString * sayHiType;
 @property (nonatomic, retain) NSString * receiveTime;
+@property (nonatomic, retain) NSString * groupId;
 
 @end

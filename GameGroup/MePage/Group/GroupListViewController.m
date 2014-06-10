@@ -52,7 +52,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70;
+    return 75;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -66,7 +66,16 @@
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
     cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
-    cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupId");
+    cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
+    NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
+    NSString * level = KISDictionaryHaveKey(cellDic, @"level");
+    NSString * maxMemberNum = KISDictionaryHaveKey(cellDic, @"maxMemberNum");
+    NSString * currentMemberNum = KISDictionaryHaveKey(cellDic, @"currentMemberNum");
+    NSString * gameImageId = [GameCommon putoutgameIconWithGameId:gameId];
+    cell.gameImageV.image = KUIImage(@"clazz_00.png");
+    cell.gameImageV.imageURL = [ImageService getImageUrl4:gameImageId];
+    cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
+    cell.levelLable.text = [NSString stringWithFormat:@"%@%@",@"lv.",level];
     return cell;
 }
 
@@ -75,7 +84,6 @@
      NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.chatWithUser = KISDictionaryHaveKey(cellDic, @"groupId");
-    kkchat.nickName = KISDictionaryHaveKey(cellDic, @"groupName");
     kkchat.type = @"group";
     [self.navigationController pushViewController:kkchat animated:YES];
 }
