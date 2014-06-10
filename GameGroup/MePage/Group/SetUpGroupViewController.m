@@ -38,8 +38,8 @@
     [self.view addSubview:titleLabel];
 
     
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(20, startX+30, 280, 30)];
-    label.backgroundColor =[ UIColor grayColor];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(20, startX+20, 280, 30)];
+    label.backgroundColor =[ UIColor clearColor];
     label.textColor = [UIColor blackColor];
     label.text = @"请填写入群申请";
     label.font = [UIFont systemFontOfSize:13];
@@ -95,6 +95,7 @@
             return;
         }
         [dic setObject:m_textView.text forKey:@"msg"];
+        [dic setObject:self.groupid forKey:@"groupId"];
        [ self getInfoToNetWithparamDict:dic method:@"232"];
     }
     else if (self.mySetupType ==SETUP_NAME) {
@@ -121,6 +122,9 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [self showMessageWindowWithContent:@"提交成功!请等待确认" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");

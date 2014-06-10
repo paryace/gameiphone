@@ -59,12 +59,12 @@
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [self.view addSubview:m_myTableView];
     
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(wlgc:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
+//    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+//    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
+//    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+//    shareButton.backgroundColor = [UIColor clearColor];
+//    [shareButton addTarget:self action:@selector(wlgc:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:shareButton];
     
     UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
     topImg.image = KUIImage(@"groupinfo_top");
@@ -122,6 +122,7 @@
     else{//陌生人
         SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
         setupVC.mySetupType = SETUP_JOIN;
+        setupVC.groupid = self.groupId;
         [self.navigationController pushViewController:setupVC animated:YES];
     }
     
@@ -143,7 +144,7 @@
     boView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
     boView.backgroundColor =[ UIColor clearColor];
     [aoView addSubview:boView];
-    if (isAudit) {
+    if (!isAudit) {
         UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(20, 20, 40, 20)];
         [boView addSubview:imageView];
         UILabel *label =[[ UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 40)];
@@ -192,8 +193,8 @@
 {
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
     [self.view addSubview:view];
+    float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
-        float width = 320/(i+1);
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
         [button setTitle:array[i] forState:UIControlStateNormal];
         button.tag = i+100;
@@ -225,16 +226,21 @@
             
             [self buildmemberisAudit:isAuth title:[KISDictionaryHaveKey(responseObject, @"state")boolValue]?KISDictionaryHaveKey(responseObject, @"rank"):[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             
+            
+            
             NSString *identity = KISDictionaryHaveKey( responseObject, @"groupUsershipType");
+            
+            shiptypeCount = [identity intValue];
+            
             if ([identity intValue]==0) {//群主
                 NSArray *array = @[@"发消息",@"群设置"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
             }
-            if ([identity intValue]==1) {//管理员
+            else if ([identity intValue]==1) {//管理员
                 NSArray *array = @[@"发消息",@"群设置",@"退出群"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
             }
-            if ([identity intValue]==2) {//普通成员
+            else if ([identity intValue]==2) {//普通成员
                 NSArray *array = @[@"发消息",@"退出群"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
    
