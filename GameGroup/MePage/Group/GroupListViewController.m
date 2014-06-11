@@ -11,6 +11,7 @@
 #import "KKChatController.h"
 #import "JoinGroupViewController.h"
 #import "GroupInformationViewController.h"
+#import "GroupSettingController.h"
 
 @interface GroupListViewController ()
 {

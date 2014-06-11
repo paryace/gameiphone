@@ -12,6 +12,7 @@
 #import "SetUpGroupViewController.h"
 #import "KKChatController.h"
 #import "MembersListViewController.h"
+#import "GroupSettingController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -93,6 +94,10 @@
             [self.navigationController pushViewController:kkchat animated:YES];
         }else{
             NSLog(@"群设置");
+            GroupSettingController *gr = [[GroupSettingController alloc]init];
+            gr.groupId = self.groupId;
+            gr.shiptypeCount = shiptypeCount;
+            [self.navigationController pushViewController:gr animated:YES];
         }
         
     }
@@ -104,6 +109,10 @@
            [self.navigationController pushViewController:kkchat animated:YES];
        }
        else if(sender.tag ==101){
+           GroupSettingController *gr = [[GroupSettingController alloc]init];
+           gr.groupId = self.groupId;
+           gr.shiptypeCount = shiptypeCount;
+           [self.navigationController pushViewController:gr animated:YES];
            NSLog(@"群设置");
        }else{
            NSLog(@"退出群");
@@ -117,6 +126,10 @@
            kkchat.type = @"group";
            [self.navigationController pushViewController:kkchat animated:YES];
        }else{
+           GroupSettingController *gr = [[GroupSettingController alloc]init];
+           gr.groupId = self.groupId;
+           gr.shiptypeCount = shiptypeCount;
+           [self.navigationController pushViewController:gr animated:YES];
            NSLog(@"群设置");
        }
        

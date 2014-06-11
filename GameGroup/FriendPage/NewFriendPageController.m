@@ -231,6 +231,7 @@
 {
     if (indexPath.section==0) {
         if (indexPath.row == 1) {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             GroupListViewController *groupView = [[GroupListViewController alloc]init];
             [self.navigationController pushViewController:groupView animated:YES];
         }
