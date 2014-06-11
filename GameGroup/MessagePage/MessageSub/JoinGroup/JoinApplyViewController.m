@@ -34,7 +34,7 @@
     [self setTopViewWithTitle:@"申请列表" withBackButton:YES];
     
     m_applyArray = [NSMutableArray array];
-    m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX-10, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_ApplyTableView.separatorColor = [UIColor clearColor];
     m_ApplyTableView.dataSource = self;
     m_ApplyTableView.delegate = self;
@@ -56,13 +56,17 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
+    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
+    if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
+        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        return 100;
+    }
     return 135;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
