@@ -59,6 +59,15 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
+     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
+    NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
+    NSString * nickname = KISDictionaryHaveKey(dict, @"nickname");
+    NSString * msg = KISDictionaryHaveKey(dict, @"msg");
+    NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
+    NSString * userImg = KISDictionaryHaveKey(dict, @"userImg");
+    NSString * state = KISDictionaryHaveKey(dict, @"state");
+    NSString * msgContent = KISDictionaryHaveKey(dict, @"msgContent");
     static NSString *identifier = @"joinApplyCell";
     JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
@@ -68,14 +77,17 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.detailDeleGate=self;
     cell.tag = indexPath.row;
-    NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
-   
-    NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
-    NSString * nickname = KISDictionaryHaveKey(dict, @"nickname");
-    NSString * msg = KISDictionaryHaveKey(dict, @"msg");
-    NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
-    NSString * userImg = KISDictionaryHaveKey(dict, @"userImg");
-    NSString * state = KISDictionaryHaveKey(dict, @"state");
+    if ([msgType isEqualToString:@"joinGroupApplication"]) {
+        cell.applicationState.hidden=YES;
+        cell.agreeBtn.hidden=NO;
+        cell.desAgreeBtn.hidden=NO;
+        cell.ignoreBtn.hidden=NO;
+    }else{
+        cell.applicationState.hidden=NO;
+        cell.agreeBtn.hidden=YES;
+        cell.desAgreeBtn.hidden=YES;
+        cell.ignoreBtn.hidden=YES;
+    }
     
     if ([state isEqualToString:@"0"]) {
         cell.agreeBtn.selected=NO;
@@ -101,6 +113,8 @@
     cell.userImageV.imageURL = [ImageService getImageStr:userImg Width:160];
     cell.userNameLable.text = nickname;
     cell.joinReasonLable.text = msg;
+    
+    cell.applicationState.text = msgContent;
     return cell;
 }
 

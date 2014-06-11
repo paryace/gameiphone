@@ -21,10 +21,11 @@
 @property(nonatomic,strong)UILabel * joinReasonLable;
 
 @property(nonatomic,strong)UIButton *agreeBtn ;
-
 @property(nonatomic,strong)UIButton * desAgreeBtn;
-
 @property(nonatomic,strong)UIButton * ignoreBtn;
+
+
+@property(nonatomic,strong)UILabel * applicationState;
 
 @property(nonatomic,assign)id<DetailDeleGate>detailDeleGate;
 

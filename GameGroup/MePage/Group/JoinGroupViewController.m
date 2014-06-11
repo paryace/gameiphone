@@ -68,7 +68,8 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * paramsDict = [NSMutableDictionary dictionary];
     [paramsDict setObject:self.groupId forKey:@"groupId"];
-    [paramsDict setObject:m_contentTextView.text forKey:@"msg"];
+//    [paramsDict setObject:m_contentTextView.text forKey:@"msg"];
+    [paramsDict setObject:@"I Want To Join To Your Group" forKey:@"msg"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"232" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];

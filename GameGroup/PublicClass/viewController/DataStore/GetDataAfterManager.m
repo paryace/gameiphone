@@ -146,6 +146,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
+    else if ([type isEqualToString:@"JoinGroupApplicationReject"])//群组消息
+    {
+        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
+    }
+    else if ([type isEqualToString:@"JoinGroupApplicationAccept"])//群组消息
+    {
+        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
+    }
 }
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent

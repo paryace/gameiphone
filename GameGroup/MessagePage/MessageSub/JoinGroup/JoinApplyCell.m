@@ -59,7 +59,7 @@
         self.joinReasonLable.text = @"申请理由";
         self.joinReasonLable.font =[ UIFont systemFontOfSize:12];
         [bgV addSubview:self.joinReasonLable];
-        
+    
         
         self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -74,7 +74,7 @@
         [bgV addSubview:self.agreeBtn];
         
         
-        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35-1)];
+        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35)];
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
@@ -89,7 +89,7 @@
        
         [bgV addSubview:self.desAgreeBtn];
         
-        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35-1)];
+        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
@@ -101,6 +101,15 @@
         self.ignoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [bgV addSubview:self.ignoreBtn];
+        
+        
+        self.applicationState = [[UILabel alloc]initWithFrame:CGRectMake(0, 95, 310, 35)];
+        self.applicationState.backgroundColor = [UIColor clearColor];
+        self.applicationState.textColor = [UIColor grayColor];
+        self.applicationState.text = @"入群申请已经被通过";
+        self.applicationState.textAlignment = NSTextAlignmentCenter;
+        self.applicationState.font =[ UIFont systemFontOfSize:12];
+//        [bgV addSubview:self.applicationState];
         [self addSubview:bgV];
     }
     return self;

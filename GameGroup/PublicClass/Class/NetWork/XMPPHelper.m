@@ -333,16 +333,6 @@
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
-        }else if([msgtype isEqualToString:@"joinGroupApplication"]){
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-             [self.chatDelegate JoinGroupMessageReceived:dict];
         }
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
@@ -360,6 +350,40 @@
             
             [self.chatDelegate newGroupMessageReceived:dict];
             [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
+        }
+        
+        else if([msgtype isEqualToString:@"joinGroupApplication"]){//入群申请
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate JoinGroupMessageReceived:dict];
+        }
+        else if([msgtype isEqualToString:@"JoinGroupApplicationAccept"]){//入群申请通过
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate JoinGroupMessageReceived:dict];
+        }
+        
+        else if([msgtype isEqualToString:@"JoinGroupApplicationReject"]){//入群申请拒绝
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate JoinGroupMessageReceived:dict];
         }
     }
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])

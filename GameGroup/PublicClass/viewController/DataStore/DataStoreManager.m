@@ -386,7 +386,7 @@
     }else if([sendertype isEqualToString:JOINGROUPMSG])//加入群组消息
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -395,11 +395,11 @@
             thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = msgType;
+            thumbMsgs.msgType = @"groupApplicationState";
             int unread = [thumbMsgs.unRead intValue];
-            thumbMsgs.unRead = @"1";
+            thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
             thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = [NSString stringWithFormat:@"%d",unread+1];
+            thumbMsgs.status = @"1";
             thumbMsgs.sayHiType = @"1";
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
