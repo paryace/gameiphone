@@ -20,7 +20,7 @@
         self.headImageV.layer.masksToBounds=YES;
         [self addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 5, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 5, 150, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
@@ -41,10 +41,10 @@
         [self.cricleLable setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.cricleLable];
         
-        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(320-35, 5, 35, 20)];
+        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(225, 5, 70, 20)];
         leveImageV.image = KUIImage(@"level_image.png");
         self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
-        [self.levelLable setTextAlignment:NSTextAlignmentCenter];
+        [self.levelLable setTextAlignment:NSTextAlignmentRight];
         [self.levelLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [leveImageV addSubview:self.levelLable];
         [self addSubview:leveImageV];

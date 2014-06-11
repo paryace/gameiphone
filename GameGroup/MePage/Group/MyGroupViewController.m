@@ -11,6 +11,8 @@
 #import "GroupOfMineCell.h"
 #import "GroupInformationViewController.h"
 #import "ReusableView.h"
+#import "SearchGroupViewController.h"
+
 @interface MyGroupViewController ()
 {
     UICollectionViewFlowLayout *m_layout;
@@ -52,7 +54,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake(65, 65);
+    m_layout.itemSize = CGSizeMake(60, 60);
     m_layout.headerReferenceSize = CGSizeMake(320, 60);
     m_layout.sectionInset = UIEdgeInsetsMake(10,10,0,10);
     
@@ -71,9 +73,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 //    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headView"];
     NSArray *arr1 = @[@"XXX开始,找个群一起聊",@"附近的组织",@"同服的组织"];
     NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
-    NSArray *arr3 =@[@"1",@"2",@"3"];
+    NSArray *arr3 =@[@"mess_news",@"mess_news",@"mess_news"];
     for (int i =0; i<3; i++) {
         UIView *view = [self bulidCellWithFrame:CGRectMake(0, 250+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
+        view.tag = 100+i;
+        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
         [self.view addSubview:view];
     }
     
@@ -119,7 +123,27 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
 }
 
+-(void)didClickNormal:(UIGestureRecognizer *)sender
+{
+    SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
 
+    switch (sender.view.tag) {
+        case 100:
+            [self showAlertViewWithTitle:@"嘟嘟嘟嘟" message:@"我都不知道这个标签是干什么的！没事不要乱点!" buttonTitle:@"跪求原谅"];
+            break;
+        case 101:
+            groupView.ComeType = SETUP_NEARBY;
+            [self.navigationController pushViewController:groupView animated:YES];
+            break;
+     
+        default:
+            [self showAlertViewWithTitle:@"嘟嘟嘟嘟" message:@"难道你不知道同服现在不能点呢嘛！！没事不要乱点!" buttonTitle:@"跪求原谅"];
+ 
+//            groupView.ComeType = SETUP_SAMEREALM;
+//            [self.navigationController pushViewController:groupView animated:YES];
+            break;
+    }
+}
 
 -(void)getGroupListFromNet
 {

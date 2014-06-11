@@ -34,7 +34,7 @@
         self.contentLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.contentLabel.backgroundColor = [UIColor clearColor];
-        self.contentLabel.textAlignment = NSTextAlignmentCenter;
+        self.contentLabel.textAlignment = NSTextAlignmentLeft;
         self.contentLabel.font = [UIFont boldSystemFontOfSize:13.0f];
         self.contentLabel.textColor = [UIColor whiteColor];
         [self addSubview:self.contentLabel];

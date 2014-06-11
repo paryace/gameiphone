@@ -8,6 +8,7 @@
 
 #import "CardViewController.h"
 #import "CardCell.h"
+#import "CardTitleView.h"
 @interface CardViewController ()
 {
     UICollectionViewFlowLayout *layout;
@@ -48,10 +49,8 @@
     layout = [[UICollectionViewFlowLayout alloc]init];
     layout.minimumInteritemSpacing = 10;
     layout.minimumLineSpacing =10;
-    layout.sectionInset = UIEdgeInsetsMake(70,0, 0, 0);
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
-    //    layout.itemSize = CGSizeMake(60, 15);
-    
+    layout.headerReferenceSize = CGSizeMake(300, 40);
     // 3.设置整个collectionView的内边距
     
     // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
@@ -62,6 +61,7 @@
     customPhotoCollectionView.delegate = self;
     customPhotoCollectionView.dataSource = self;
     [customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    [customPhotoCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headViewww"];
     customPhotoCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:customPhotoCollectionView];
     
@@ -81,18 +81,13 @@
 }
 -(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-        NSArray *array = [self.listDict allKeys];
-        UICollectionReusableView *header = [[UICollectionReusableView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
-        header.backgroundColor = [UIColor greenColor];
-        if([kind isEqual:UICollectionElementKindSectionHeader]){
-            header = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-            UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 20)];
-            label.text = array[indexPath.section];
-            label.backgroundColor = [UIColor clearColor];
-            label.textColor = [UIColor grayColor];
-            [header addSubview:label];
-        }
-        return header;
+    UICollectionReusableView *titleView;
+    
+    if (kind == UICollectionElementKindSectionHeader) {
+        titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headViewww" forIndexPath:indexPath];
+        ((CardTitleView *)titleView).cardTitleLabel.text =[[self.listDict allKeys]objectAtIndex:indexPath.section];
+    }
+    return titleView;
 }
 
 
@@ -188,7 +183,6 @@
     
  
 }
-
 -(void)successClick:(id)sender
 {
     [self.myDelegate senderCkickInfoWithDel:self array:cardArray];

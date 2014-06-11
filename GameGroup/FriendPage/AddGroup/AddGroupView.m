@@ -8,6 +8,7 @@
 
 #import "AddGroupView.h"
 #import "CardCell.h"
+#import "CardTitleView.h"
 @implementation AddGroupView
 {
     UICollectionViewFlowLayout *layout;
@@ -206,7 +207,7 @@
    UICollectionViewFlowLayout* layout1 = [[UICollectionViewFlowLayout alloc]init];
     layout1.minimumInteritemSpacing = 10;
     layout1.minimumLineSpacing =5;
-
+    layout1.headerReferenceSize = CGSizeMake(320,40);
     
    self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 200, 300, 50) collectionViewLayout:layout1];
     self.titleCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
@@ -214,6 +215,8 @@
     self.titleCollectionView.delegate = self;
     self.titleCollectionView.dataSource = self;
     [self.titleCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"titleCell"];
+    
+    [self.titleCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headviewwww"];
     self.titleCollectionView.backgroundColor = [UIColor clearColor];
     [self.secondScrollView addSubview:self.titleCollectionView];
 

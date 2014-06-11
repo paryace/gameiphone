@@ -117,7 +117,7 @@
            kkchat.type = @"group";
            [self.navigationController pushViewController:kkchat animated:YES];
        }else{
-           NSLog(@"退出群");
+           NSLog(@"群设置");
        }
        
     }

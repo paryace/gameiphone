@@ -7,7 +7,18 @@
 //
 
 #import "BaseViewController.h"
+typedef enum
+{
+    SETUP_Search = 0,
+    SETUP_Tags,
+    SETUP_NEARBY,
+    SETUP_SAMEREALM,
+}setUpType;
 
 @interface SearchGroupViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
 @property(nonatomic, retain) NSString * conditiona;//条件
+@property(nonatomic, assign)setUpType ComeType;
+@property(nonatomic,copy)NSString *tagsId;
+@property(nonatomic,copy)NSString *realmStr;
+@property(nonatomic,copy)NSString *gameid;
 @end
