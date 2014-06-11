@@ -21,6 +21,8 @@
 @property(nonatomic,strong)UIButton * desAgreeBtn;
 @property(nonatomic,strong)UIButton * ignoreBtn;
 
+@property(nonatomic,strong)UILabel * stateLable;
+
 @property(nonatomic,assign)id<DetailDeleGate>detailDeleGate;
 
 @end

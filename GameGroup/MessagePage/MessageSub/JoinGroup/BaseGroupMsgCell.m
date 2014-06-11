@@ -42,7 +42,11 @@
     }
     return self;
 }
-
+-(void)refreTimeLable
+{
+    CGSize nameSize = [self.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    self.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
+}
 - (void)awakeFromNib
 {
 }

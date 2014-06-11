@@ -26,8 +26,7 @@
         self.oneBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98, (300-1)/2, 33)];
         [self.oneBtn addTarget:self action:@selector(oneButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.oneBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
         [self.oneBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
         self.oneBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
         [self.oneBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
@@ -39,8 +38,7 @@
         self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-1)/2+6, 98, (300-1)/2, 33)];
         [self.twoBtn addTarget:self action:@selector(twoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.twoBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-        [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
         
         [self.twoBtn setTitle:@"群组小技巧" forState:UIControlStateNormal];
         self.twoBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);

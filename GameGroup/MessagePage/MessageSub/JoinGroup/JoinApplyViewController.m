@@ -86,21 +86,34 @@
         cell.detailDeleGate=self;
         cell.tag = indexPath.row;
         if ([state isEqualToString:@"0"]) {
-            cell.agreeBtn.selected=NO;
-            cell.desAgreeBtn.selected=NO;
-            cell.ignoreBtn.selected=NO;
+            cell.agreeBtn.hidden=NO;
+            cell.desAgreeBtn.hidden=NO;
+            cell.ignoreBtn.hidden=NO;
+            cell.stateLable.hidden=YES;
         }else if([state isEqualToString:@"1"]){
-            cell.agreeBtn.selected=YES;
-            cell.desAgreeBtn.selected=NO;
-            cell.ignoreBtn.selected=NO;
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
+            cell.stateLable.hidden=NO;
+            cell.stateLable.text=@"已同意";
         }else if([state isEqualToString:@"2"]){
-            cell.agreeBtn.selected=NO;
-            cell.desAgreeBtn.selected=YES;
-            cell.ignoreBtn.selected=NO;
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
+            cell.stateLable.hidden=NO;
+            cell.stateLable.text=@"已拒绝";
         }else if([state isEqualToString:@"3"]){
-            cell.agreeBtn.selected=NO;
-            cell.desAgreeBtn.selected=NO;
-            cell.ignoreBtn.selected=YES;
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
+            cell.stateLable.hidden=NO;
+            cell.stateLable.text=@"已忽略";
+        }else if([state isEqualToString:@"4"]){
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
+            cell.stateLable.hidden=NO;
+            cell.stateLable.text=@"已被其他管理员同意（或者拒绝）";
         }
         cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
         cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
@@ -111,8 +124,7 @@
         cell.userNameLable.text = nickname;
         cell.joinReasonLable.text = msg;
         
-        CGSize nameSize = [cell.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        cell.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
+        [cell refreTimeLable];
         return cell;
     }
     //简单cell（通过，拒绝）
@@ -132,6 +144,7 @@
         cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
         cell.groupNameLable.text = groupName;
         cell.contentLable.text=msgContent;
+        [cell refreTimeLable];
         return cell;
     }
     
@@ -165,7 +178,7 @@
             cell.twoBtn.hidden=NO;
             cell.threeBtn.hidden=YES;
         }
-        
+        [cell refreTimeLable];
         return cell;
     }else{
         return nil;

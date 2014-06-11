@@ -14,4 +14,5 @@
 @property(nonatomic,strong)EGOImageView * groupImageV;
 @property(nonatomic,strong)UILabel * groupNameLable;
 @property(nonatomic,strong)UILabel * groupCreateTimeLable;
+-(void)refreTimeLable;
 @end

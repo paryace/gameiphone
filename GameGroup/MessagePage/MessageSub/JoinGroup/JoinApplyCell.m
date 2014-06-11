@@ -38,7 +38,6 @@
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         [self.agreeBtn setTitle:@"同意" forState:UIControlStateNormal];
         self.agreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
         [self.agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
@@ -51,7 +50,6 @@
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        [self.desAgreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         
         [self.desAgreeBtn setTitle:@"拒绝" forState:UIControlStateNormal];
         self.desAgreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
@@ -66,7 +64,6 @@
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        [self.ignoreBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         
         [self.ignoreBtn setTitle:@"忽略" forState:UIControlStateNormal];
         self.ignoreBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
@@ -75,6 +72,14 @@
         self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [self.bgV addSubview:self.ignoreBtn];
 
+        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(5, 95, 300, 35)];
+        self.stateLable.backgroundColor = kColorWithRGB(230,230,230, 0.7);
+        self.stateLable.textColor = [UIColor grayColor];
+        self.stateLable.text = @"已同意";
+        self.stateLable.font =[ UIFont systemFontOfSize:14];
+        self.stateLable.textAlignment = NSTextAlignmentCenter;
+        [self.bgV addSubview:self.stateLable];
+        
         [self addSubview:self.bgV];
     }
     return self;
