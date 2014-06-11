@@ -131,6 +131,24 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSGroupApplyMsg" representedClassName="DSGroupApplyMsg" syncable="YES">
+        <attribute name="applicationId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userImg" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSGroupList" representedClassName="DSGroupList" syncable="YES">
         <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="currentMemberNum" optional="YES" attributeType="String" syncable="YES"/>
@@ -340,5 +358,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="283"/>
     </elements>
 </model>

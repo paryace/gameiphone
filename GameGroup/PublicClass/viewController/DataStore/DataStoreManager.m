@@ -17,6 +17,7 @@
 #import "DSTitleObject.h"
 #import "DSGroupMsgs.h"
 #import "DSGroupList.h"
+#import "DSGroupApplyMsg.h"
 @implementation DataStoreManager
 -(void)nothing
 {}
@@ -198,6 +199,9 @@
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
+
+
+
 
 
 #pragma mark - 保存聊天记录
@@ -2483,5 +2487,94 @@
     DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate];
     NSMutableDictionary * groupInfo = [self queryGroupInfo:group];
     return groupInfo;
+}
+
+
+#pragma mark - 保存申请假如群的消息
++(void)saveDSGroupApplyMsg:(NSDictionary *)msg
+{
+    NSString * sender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"sender")];
+    NSString * msgContent = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msg")];
+    NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgType")];
+    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgId")];
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * applicationId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"applicationId")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * groupName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupName")];
+    NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"nickname")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
+    NSString * backgroundImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"backgroundImg")];
+    NSString * userImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userImg")];
+    NSString * msgText = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"msg")];
+    
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
+        DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
+        if (!commonMsg)
+            commonMsg = [DSGroupApplyMsg MR_createInContext:localContext];
+        commonMsg.state = @"0";
+        commonMsg.msgId = msgId;
+        commonMsg.msgType = msgType;
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        commonMsg.senTime = sendTime;
+        commonMsg.payload = payloadStr;
+        commonMsg.msgContent = msgContent;
+        commonMsg.senderId = sender;
+        commonMsg.applicationId = applicationId;
+        commonMsg.groupId= groupId;
+        commonMsg.groupName = groupName;
+        commonMsg.nickname = nickname;
+        commonMsg.userid= userid;
+        commonMsg.userImg = userImg;
+        commonMsg.backgroundImg = backgroundImg;
+        commonMsg.msg = msgText;
+    }];
+}
+#pragma mark - 查询申请加入群的消息列表
++(NSMutableArray*)queryDSGroupApplyMsg
+{
+    NSMutableArray * msgList = [NSMutableArray array];
+    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAll];
+    for (DSGroupApplyMsg * apm in groupArrlyList) {
+        [msgList addObject:[self queryDSGroupApplyMsg:apm]];
+    }
+    return msgList;
+}
+
++(NSMutableDictionary*)queryDSGroupApplyMsg:(DSGroupApplyMsg*)msgDS
+{
+    if (!msgDS) {
+        return nil;
+    }
+    NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
+    [msgDic setObject:msgDS.state forKey:@"state"];
+    [msgDic setObject:msgDS.msgId forKey:@"msgId"];
+    [msgDic setObject:msgDS.msgType forKey:@"msgType"];
+    [msgDic setObject:msgDS.receiveTime forKey:@"receiveTime"];
+    [msgDic setObject:msgDS.senTime forKey:@"senTime"];
+    [msgDic setObject:msgDS.payload forKey:@"payload"];
+    [msgDic setObject:msgDS.msgContent forKey:@"msgContent"];
+    [msgDic setObject:msgDS.senderId forKey:@"senderId"];
+    [msgDic setObject:msgDS.applicationId forKey:@"applicationId"];
+    [msgDic setObject:msgDS.groupId forKey:@"groupId"];
+    [msgDic setObject:msgDS.groupName forKey:@"groupName"];
+    [msgDic setObject:msgDS.nickname forKey:@"nickname"];
+    [msgDic setObject:msgDS.userid forKey:@"userid"];
+    [msgDic setObject:msgDS.userImg forKey:@"userImg"];
+    [msgDic setObject:msgDS.backgroundImg forKey:@"backgroundImg"];
+    [msgDic setObject:msgDS.msg forKey:@"msg"];
+    return msgDic;
+}
+
++(void)updateMsgState:(NSString*)msgId State:(NSString*)state
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
+    DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
+    if (commonMsg) {
+        commonMsg.state = state;
+    }
 }
 @end

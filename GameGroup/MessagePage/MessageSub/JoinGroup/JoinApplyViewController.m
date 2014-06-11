@@ -32,19 +32,18 @@
     [self setTopViewWithTitle:@"申请列表" withBackButton:YES];
     
     m_applyArray = [NSMutableArray array];
-    
     m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_ApplyTableView.separatorColor = [UIColor clearColor];
     m_ApplyTableView.dataSource = self;
     m_ApplyTableView.delegate = self;
     [self.view addSubview:m_ApplyTableView];
-    
     [self getJoinGroupMsg];
 }
 
 -(void)getJoinGroupMsg
 {
-    m_applyArray = [DataStoreManager qureyCommonMessagesWithMsgType:@"joinGroupApplication"];
+    m_applyArray = [DataStoreManager queryDSGroupApplyMsg];
+    [m_ApplyTableView reloadData];
 }
 #pragma mark 表格
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -55,7 +54,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 125;
+    return 135;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -68,51 +67,72 @@
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.detailDeleGate=self;
-     cell.tag = indexPath.row;
-     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
+    cell.tag = indexPath.row;
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
    
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
+    NSString * nickname = KISDictionaryHaveKey(dict, @"nickname");
+    NSString * msg = KISDictionaryHaveKey(dict, @"msg");
+    NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
+    NSString * userImg = KISDictionaryHaveKey(dict, @"userImg");
+    NSString * state = KISDictionaryHaveKey(dict, @"state");
     
+    if ([state isEqualToString:@"0"]) {
+        cell.agreeBtn.selected=NO;
+        cell.desAgreeBtn.selected=NO;
+        cell.ignoreBtn.selected=NO;
+    }else if([state isEqualToString:@"1"]){
+        cell.agreeBtn.selected=YES;
+        cell.desAgreeBtn.selected=NO;
+        cell.ignoreBtn.selected=NO;
+    }else if([state isEqualToString:@"2"]){
+        cell.agreeBtn.selected=NO;
+        cell.desAgreeBtn.selected=YES;
+        cell.ignoreBtn.selected=NO;
+    }else if([state isEqualToString:@"3"]){
+        cell.agreeBtn.selected=NO;
+        cell.desAgreeBtn.selected=NO;
+        cell.ignoreBtn.selected=YES;
+    }
     cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
-     cell.groupImageV.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(payload, @"backgroundImg") Width:160];
-    cell.groupNameLable.text = KISDictionaryHaveKey(payload, @"groupName");
-    
+    cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
+    cell.groupNameLable.text = groupName;
     cell.userImageV.placeholderImage = KUIImage(@"placeholder.png");
-    cell.userImageV.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(payload, @"userImg") Width:160];
-    cell.userNameLable.text = KISDictionaryHaveKey(payload, @"nickname");
-    cell.joinReasonLable.text = KISDictionaryHaveKey(payload, @"msg");
-    
-    
+    cell.userImageV.imageURL = [ImageService getImageStr:userImg Width:160];
+    cell.userNameLable.text = nickname;
+    cell.joinReasonLable.text = msg;
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-{
-
-}
+//同意
 -(void)agreeMsg:(JoinApplyCell*)sender
 {
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString * applicationId = KISDictionaryHaveKey(payload, @"applicationId");
-    [self msgEdit:@"1" ApplicationId:applicationId];
+    NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
+    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    [self msgEdit:@"1" ApplicationId:applicationId MsgId:msgId];
 }
-
+//拒绝
 -(void)desAgreeMsg:(JoinApplyCell*)sender
 {
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString * applicationId = KISDictionaryHaveKey(payload, @"applicationId");
-    [self msgEdit:@"2" ApplicationId:applicationId];
+    NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
+    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    [self msgEdit:@"2" ApplicationId:applicationId MsgId:msgId];
 }
-
+//忽略
 -(void)ignoreMsg:(JoinApplyCell*)sender
 {
+    NSInteger index  =  sender.tag ;
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
+    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    [DataStoreManager updateMsgState:msgId State:@"3"];
+    [self getJoinGroupMsg];
 }
-
--(void)msgEdit:(NSString*)state ApplicationId:(NSString*)applicationId
+// 同意，拒绝申请
+-(void)msgEdit:(NSString*)state ApplicationId:(NSString*)applicationId MsgId:(NSString*)msgId
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
@@ -124,6 +144,8 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
+        [DataStoreManager updateMsgState:msgId State:state];
+        [self getJoinGroupMsg];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经同意加入群的申请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {

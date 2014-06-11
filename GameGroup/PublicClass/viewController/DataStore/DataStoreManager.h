@@ -235,4 +235,10 @@
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId;//清除群组的未读消息
 
 + (NSMutableArray *)qureyCommonMessagesWithMsgType:(NSString *)msgType;//根据msgType查询消息
+
++(void)saveDSGroupApplyMsg:(NSDictionary *)msg;//保存申请假如群的消息
+
++(NSMutableArray*)queryDSGroupApplyMsg;//查询申请加入群的消息列表
+
++(void)updateMsgState:(NSString*)msgId State:(NSString*)state;//改变消息状态
 @end

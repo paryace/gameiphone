@@ -14,7 +14,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        UIImageView *bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 125)];
+        UIImageView *bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 135)];
         bgV.image = KUIImage(@"group_cell_bg");
         bgV.userInteractionEnabled =YES;
         
@@ -61,59 +61,64 @@
         [bgV addSubview:self.joinReasonLable];
         
         
-        UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 25)];
-        [agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        [agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        [agreeBtn setTitle:@"同意" forState:UIControlStateNormal];
-        agreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-        [agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
-        agreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-        agreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [bgV addSubview:agreeBtn];
+        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
+        [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.agreeBtn setTitle:@"同意" forState:UIControlStateNormal];
+        self.agreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        [self.agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+        self.agreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.agreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        [bgV addSubview:self.agreeBtn];
         
         
-        UIButton * desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 25-1)];
-        [desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        [desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        [desAgreeBtn setTitle:@"拒绝" forState:UIControlStateNormal];
-        desAgreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-        [desAgreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
-        desAgreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-        desAgreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35-1)];
+        [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.desAgreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+        [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        
+        [self.desAgreeBtn setTitle:@"拒绝" forState:UIControlStateNormal];
+        self.desAgreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        [self.desAgreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+        self.desAgreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.desAgreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
 
        
-        [bgV addSubview:desAgreeBtn];
+        [bgV addSubview:self.desAgreeBtn];
         
-        UIButton *ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 25-1)];
-         [ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        [ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35-1)];
+         [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.ignoreBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+        [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
         
-        [ignoreBtn setTitle:@"忽略" forState:UIControlStateNormal];
-        ignoreBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-        [ignoreBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
-        ignoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-        ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [bgV addSubview:ignoreBtn];
+        [self.ignoreBtn setTitle:@"忽略" forState:UIControlStateNormal];
+        self.ignoreBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        [self.ignoreBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+        self.ignoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        [bgV addSubview:self.ignoreBtn];
         [self addSubview:bgV];
     }
     return self;
 }
--(void)agreeButtonClick:(id)sender
+-(void)agreeButtonClick:(UIButton*)sender
 {
+//    sender.selected = !sender.selected;
     if (self.detailDeleGate) {
         [self.detailDeleGate agreeMsg:self];
     }
 }
--(void)desAgreeButtonClick:(id)sender
+-(void)desAgreeButtonClick:(UIButton*)sender
 {
     if (self.detailDeleGate) {
         [self.detailDeleGate desAgreeMsg:self];
     }
 }
--(void)ignoreButtonClick:(id)sender
+-(void)ignoreButtonClick:(UIButton*)sender
 {
     if (self.detailDeleGate) {
         [self.detailDeleGate ignoreMsg:self];

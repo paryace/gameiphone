@@ -222,16 +222,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+#pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
-    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    if ([DataStoreManager savedMsgWithID:msgId]) {
-        return;
-    }
-    
-    [self storeNewMessage:messageContent];//保存消息
-    [DataStoreManager saveDSCommonMsg:messageContent];
+    [self storeNewMessage:messageContent];
+    [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
 
