@@ -2580,9 +2580,9 @@
     return msgDic;
 }
 
-+(void)updateMsgState:(NSString*)msgId State:(NSString*)state
++(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and msgType==[c]%@",msgType];
     DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
     if (commonMsg) {
         commonMsg.state = state;

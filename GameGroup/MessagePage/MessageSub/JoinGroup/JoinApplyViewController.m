@@ -34,7 +34,7 @@
     [self setTopViewWithTitle:@"申请列表" withBackButton:YES];
     
     m_applyArray = [NSMutableArray array];
-    m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX-10, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_ApplyTableView.separatorColor = [UIColor clearColor];
     m_ApplyTableView.dataSource = self;
     m_ApplyTableView.delegate = self;
@@ -204,43 +204,41 @@
 {
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
-    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
-    NSString * state = KISDictionaryHaveKey(dict, @"state");
-    if (![state isEqualToString:@"0"]) {
-        return;
-    }
-    [self msgEdit:@"1" ApplicationId:applicationId MsgId:msgId];
+    [self msgEdit:@"1" Dic:dict];
 }
 //拒绝
 -(void)desAgreeMsg:(JoinApplyCell*)sender
 {
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
-    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
-    NSString * state = KISDictionaryHaveKey(dict, @"state");
-    if (![state isEqualToString:@"0"]) {
-        return;
-    }
-    [self msgEdit:@"2" ApplicationId:applicationId MsgId:msgId];
+
+    [self msgEdit:@"2" Dic:dict];
 }
 //忽略
 -(void)ignoreMsg:(JoinApplyCell*)sender
 {
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
+    NSString * userid = KISDictionaryHaveKey(dict, @"userid");
     NSString * state = KISDictionaryHaveKey(dict, @"state");
     if (![state isEqualToString:@"0"]) {
         return;
     }
-    [DataStoreManager updateMsgState:msgId State:@"3"];
+    [DataStoreManager updateMsgState:userid State:@"3" MsgType:msgType];
     [self getJoinGroupMsg];
 }
 // 同意，拒绝申请
--(void)msgEdit:(NSString*)state ApplicationId:(NSString*)applicationId MsgId:(NSString*)msgId
+-(void)msgEdit:(NSString*)state Dic:(NSMutableDictionary*)dict
 {
+    NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
+    NSString * clickstate = KISDictionaryHaveKey(dict, @"state");
+    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
+    NSString * userid = KISDictionaryHaveKey(dict, @"userid");
+    if (![clickstate isEqualToString:@"0"]) {
+        return;
+    }
+
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:applicationId forKey:@"applicationId"];
@@ -251,14 +249,14 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
-        [DataStoreManager updateMsgState:msgId State:state];
+        [DataStoreManager updateMsgState:userid State:state MsgType:msgType];
         for (NSMutableDictionary * clickDic in m_applyArray) {
-            if ([KISDictionaryHaveKey(clickDic, @"msgId") isEqualToString:msgId]) {
+            if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:userid]
+                &&[KISDictionaryHaveKey(clickDic, @"msgType") isEqualToString:msgType]) {
                 [clickDic setObject:state forKey:@"state"];
             }
         }
         [m_ApplyTableView reloadData];
-        
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经同意加入群的申请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
