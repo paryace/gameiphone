@@ -536,7 +536,7 @@
     else if (6 == type)//申请加入群
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000013"];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             thumbMsgs.unRead = @"0";
         }];//清数字

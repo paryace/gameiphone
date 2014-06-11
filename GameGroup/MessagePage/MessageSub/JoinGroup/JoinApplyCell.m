@@ -37,8 +37,8 @@
         self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         [self.agreeBtn setTitle:@"同意" forState:UIControlStateNormal];
         self.agreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
         [self.agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
@@ -50,8 +50,8 @@
         self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35)];
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.desAgreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-        [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.desAgreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         
         [self.desAgreeBtn setTitle:@"拒绝" forState:UIControlStateNormal];
         self.desAgreeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
@@ -65,8 +65,8 @@
         self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.ignoreBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-        [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.ignoreBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateSelected];
         
         [self.ignoreBtn setTitle:@"忽略" forState:UIControlStateNormal];
         self.ignoreBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
