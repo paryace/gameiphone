@@ -324,8 +324,13 @@ UINavigationControllerDelegate>
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@", timeStr];
             [cell setHeadImgByChatUser:userImage];
-            cell.senderNickName.hidden=NO;
-            cell.senderNickName.text = userNickName;
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
+            
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+35,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -412,8 +417,12 @@ UINavigationControllerDelegate>
             NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
             cell.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@", timeStr];
             [cell setHeadImgByChatUser:userImage];
-            cell.senderNickName.hidden=NO;
-            cell.senderNickName.text = userNickName;
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
             [cell.bgImageView setTag:(indexPath.row+1)];
             [cell.msgImageView setFrame:CGRectMake(220-size.width - padding-38,padding*2-15+offHight,100,100)];
             cell.msgImageView.tag = indexPath.row;
@@ -500,8 +509,12 @@ UINavigationControllerDelegate>
             [cell setHeadImgByChatUser:userImage];
             //设置背景气泡
             bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-             cell.senderNickName.hidden =NO;
-            cell.senderNickName.text = userNickName;
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];

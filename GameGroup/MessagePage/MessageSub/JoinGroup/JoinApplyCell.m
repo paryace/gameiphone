@@ -13,36 +13,9 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
-        UIImageView *bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 135)];
-        bgV.image = KUIImage(@"group_cell_bg");
-        bgV.userInteractionEnabled =YES;
-        
-       
-        
-        self.groupImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 5, 25, 25)];
-        [bgV addSubview:self.groupImageV];
-        
-        self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(40, 7, 100, 20)];
-        self.groupNameLable.backgroundColor = [UIColor clearColor];
-        self.groupNameLable.textColor = [UIColor grayColor];
-        self.groupNameLable.text = @"群名";
-        self.groupNameLable.font =[ UIFont systemFontOfSize:12];
-        [bgV addSubview:self.groupNameLable];
-        
-        self.groupCreateTimeLable = [[UILabel alloc]initWithFrame:CGRectMake(300-50-5, 7, 50, 20)];
-        self.groupCreateTimeLable.backgroundColor = [UIColor clearColor];
-        self.groupCreateTimeLable.textColor = [UIColor grayColor];
-        self.groupCreateTimeLable.text = @"昨天20:09";
-        self.groupCreateTimeLable.font =[ UIFont systemFontOfSize:12];
-        [bgV addSubview:self.groupCreateTimeLable];
-        
-        UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 310-20, 1)];
-        lineView1.backgroundColor = kColorWithRGB(200,200,200, 0.7);
-        [bgV addSubview:lineView1];
-        
+
         self.userImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(30, 40, 50, 50)];
-        [bgV addSubview:self.userImageV];
+        [self.bgV addSubview:self.userImageV];
         
         
         self.userNameLable = [[UILabel alloc]initWithFrame:CGRectMake(85, 40, 100, 20)];
@@ -50,7 +23,7 @@
         self.userNameLable.textColor = [UIColor grayColor];
         self.userNameLable.text = @"用户昵称";
         self.userNameLable.font =[ UIFont systemFontOfSize:12];
-        [bgV addSubview:self.userNameLable];
+        [self.bgV addSubview:self.userNameLable];
         
         
         self.joinReasonLable = [[UILabel alloc]initWithFrame:CGRectMake(85, 65, 100, 20)];
@@ -58,7 +31,7 @@
         self.joinReasonLable.textColor = [UIColor grayColor];
         self.joinReasonLable.text = @"申请理由";
         self.joinReasonLable.font =[ UIFont systemFontOfSize:12];
-        [bgV addSubview:self.joinReasonLable];
+        [self.bgV addSubview:self.joinReasonLable];
     
         
         self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
@@ -71,7 +44,7 @@
         [self.agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.agreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.agreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [bgV addSubview:self.agreeBtn];
+        [self.bgV addSubview:self.agreeBtn];
         
         
         self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35)];
@@ -87,7 +60,7 @@
         self.desAgreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
 
        
-        [bgV addSubview:self.desAgreeBtn];
+        [self.bgV addSubview:self.desAgreeBtn];
         
         self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -100,16 +73,9 @@
         [self.ignoreBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.ignoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [bgV addSubview:self.ignoreBtn];
-        
-        
-        self.applicationState = [[UILabel alloc]initWithFrame:CGRectMake(0, 95, 310, 35)];
-        self.applicationState.backgroundColor = [UIColor clearColor];
-        self.applicationState.textColor = [UIColor grayColor];
-        self.applicationState.text = @"入群申请已经被通过";
-        self.applicationState.textAlignment = NSTextAlignmentCenter;
-        self.applicationState.font =[ UIFont systemFontOfSize:12];
-        [self addSubview:bgV];
+        [self.bgV addSubview:self.ignoreBtn];
+
+        [self addSubview:self.bgV];
     }
     return self;
 }

@@ -7,14 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EGOImageView.h"
+#import "BaseGroupMsgCell.h"
 @protocol CreateGroupDetailDeleGate;
 
-@interface CreateGroupMsgCell : UITableViewCell
-
-@property(nonatomic,strong)EGOImageView * groupImageV;
-@property(nonatomic,strong)UILabel * groupNameLable;
-@property(nonatomic,strong)UILabel * groupCreateTimeLable;
+@interface CreateGroupMsgCell : BaseGroupMsgCell
 
 @property(nonatomic,strong)UILabel * contentLable;
 

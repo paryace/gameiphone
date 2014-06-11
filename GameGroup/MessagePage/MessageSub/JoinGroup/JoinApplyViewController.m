@@ -9,6 +9,7 @@
 #import "JoinApplyViewController.h"
 #import "JoinApplyCell.h"
 #import "CreateGroupMsgCell.h"
+#import "SimpleMsgCell.h"
 
 @interface JoinApplyViewController ()
 {
@@ -73,9 +74,7 @@
     NSString * msgContent = KISDictionaryHaveKey(dict, @"msgContent");
     NSString * senTime = KISDictionaryHaveKey(dict, @"senTime");
     //申请加入群消息
-    if ([msgType isEqualToString:@"joinGroupApplication"]
-        ||[msgType isEqualToString:@"joinGroupApplicationAccept"]
-        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+    if ([msgType isEqualToString:@"joinGroupApplication"]) {
         
         static NSString *identifier = @"ApplicationCell";
         JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -87,12 +86,10 @@
         cell.detailDeleGate=self;
         cell.tag = indexPath.row;
         if ([msgType isEqualToString:@"joinGroupApplication"]) {
-            cell.applicationState.hidden=YES;
             cell.agreeBtn.hidden=NO;
             cell.desAgreeBtn.hidden=NO;
             cell.ignoreBtn.hidden=NO;
         }else{
-            cell.applicationState.hidden=NO;
             cell.agreeBtn.hidden=YES;
             cell.desAgreeBtn.hidden=YES;
             cell.ignoreBtn.hidden=YES;
@@ -126,9 +123,26 @@
         
         CGSize nameSize = [cell.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
-        cell.applicationState.text = msgContent;
         return cell;
     }
+    else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
+        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        static NSString *identifier = @"simpleApplicationCell";
+        SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[SimpleMsgCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            cell.backgroundColor = [UIColor clearColor];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
+        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
+        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
+        cell.groupNameLable.text = groupName;
+        cell.contentLable.text=msgContent;
+        return cell;
+    }
+    
     //创建群消息
     else if ([msgType isEqualToString:@"groupApplicationUnderReview"]
              ||[msgType isEqualToString:@"groupApplicationAccept"]
@@ -149,7 +163,7 @@
         if ([msgType isEqualToString:@"groupApplicationUnderReview"]) {
             cell.oneBtn.hidden=YES;
             cell.twoBtn.hidden=YES;
-             cell.threeBtn.hidden=NO;
+            cell.threeBtn.hidden=NO;
         }else if([msgType isEqualToString:@"groupApplicationReject"]){
             cell.oneBtn.hidden=YES;
             cell.twoBtn.hidden=YES;
