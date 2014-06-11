@@ -255,10 +255,9 @@
         for (NSMutableDictionary * clickDic in m_applyArray) {
             if ([KISDictionaryHaveKey(clickDic, @"msgId") isEqualToString:msgId]) {
                 [clickDic setObject:state forKey:@"state"];
-                [self getJoinGroupMsg];
-                [m_ApplyTableView reloadData];
             }
         }
+        [m_ApplyTableView reloadData];
         
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经同意加入群的申请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
