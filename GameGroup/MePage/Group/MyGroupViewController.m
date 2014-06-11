@@ -10,6 +10,7 @@
 #import "JoinInGroupViewController.h"
 #import "GroupOfMineCell.h"
 #import "GroupInformationViewController.h"
+#import "ReusableView.h"
 @interface MyGroupViewController ()
 {
     UICollectionViewFlowLayout *m_layout;
@@ -28,6 +29,8 @@
     }
     return self;
 }
+NSString *const RAMCollectionViewFlemishBondHeaderKind = @"RAMCollectionViewFlemishBondHeaderKind";
+static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 - (void)viewDidLoad
 {
@@ -35,6 +38,7 @@
     
     [self setTopViewWithTitle:@"我的群组" withBackButton:YES];
     
+
     myGroupArray = [NSMutableArray array];
     
 //    UIButton*button  = [UIButton buttonWithType: UIButtonTypeCustom];
@@ -43,23 +47,79 @@
 //    [button addTarget:self action:@selector(enterSearchGroupPage:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:button];
     
+    
+    
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake(60, 60);
+    m_layout.itemSize = CGSizeMake(65, 65);
+    m_layout.headerReferenceSize = CGSizeMake(320, 60);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,10,0,10);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+60, 300, 70) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     groupCollectionView.scrollEnabled = NO;
     groupCollectionView.delegate = self;
     groupCollectionView.dataSource = self;
     [groupCollectionView registerClass:[GroupOfMineCell class] forCellWithReuseIdentifier:@"titleCell"];
+    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:HeaderIdentifier];
+
     groupCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:groupCollectionView];
 
+    
+//    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headView"];
+    NSArray *arr1 = @[@"XXX开始,找个群一起聊",@"附近的组织",@"同服的组织"];
+    NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
+    NSArray *arr3 =@[@"1",@"2",@"3"];
+    for (int i =0; i<3; i++) {
+        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 250+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
+        [self.view addSubview:view];
+    }
+    
+    
+    
     [self getGroupListFromNet];
     // Do any additional setup after loading the view.
 }
+
+-(UIView *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
+{
+    UIView *view = [[UIView alloc]initWithFrame:frame];
+    view.backgroundColor = [UIColor whiteColor];
+    
+    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(10,10, 40, 40)];
+    imageView.image = KUIImage(img);
+    [view addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60,10, 200, 20)];
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [UIColor blackColor];
+    label.font = [UIFont boldSystemFontOfSize:17];
+    label.textAlignment = NSTextAlignmentLeft;
+    label.text = title1;
+    [view addSubview:label];
+    
+    UILabel *label1 = [[UILabel alloc]initWithFrame:CGRectMake(60, 35, 200, 20)];
+    label1.backgroundColor = [UIColor clearColor];
+    label1.textColor = [UIColor grayColor];
+    label1.font = [UIFont systemFontOfSize:14];
+    label1.textAlignment = NSTextAlignmentLeft;
+    label1.text = title2;
+    [view addSubview:label1];
+
+    UIImageView *rightImg = [[UIImageView alloc]initWithFrame:CGRectMake(300, 25, 10, 10)];
+    rightImg.image = KUIImage(@"right");
+    [view addSubview:rightImg];
+    
+    UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(0, frame.origin.y+59, 320, 1)];
+    lineView.backgroundColor = [UIColor grayColor];
+    [self.view addSubview:lineView];
+    return view;
+    
+}
+
+
 
 -(void)getGroupListFromNet
 {
@@ -75,6 +135,9 @@
             [myGroupArray addObjectsFromArray:responseObject];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
+            if (myGroupArray.count>3) {
+                groupCollectionView.frame = CGRectMake(0, 0, 320, 230);
+            }
             [groupCollectionView reloadData];
             
             for (NSMutableDictionary * groupInfo in responseObject) {
@@ -101,12 +164,13 @@
         NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
         cell.headImgView.image = KUIImage(imgStr);
     }else{
-    cell.headImgView.placeholderImage = KUIImage(@"people_man.png");
+    cell.headImgView.placeholderImage = KUIImage(@"mess_news");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
     }
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+
 {
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
     if (indexPath.row ==myGroupArray.count-1) {
@@ -120,6 +184,20 @@
     }
 }
 
+-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionReusableView *titleView;
+    
+    if (kind == UICollectionElementKindSectionHeader) {
+        titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
+        ((ReusableView *)titleView).label.text = @"晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑";
+        ((ReusableView *)titleView).contentLabel.text = @"大家一起坑晨星";
+        ((ReusableView *)titleView).timeLabel.text = @"06-11";
+        ((ReusableView *)titleView).headImageView.imageURL = nil;
+
+    }
+    return titleView;
+}
 
 -(void)enterSearchGroupPage:(id)sender
 {
