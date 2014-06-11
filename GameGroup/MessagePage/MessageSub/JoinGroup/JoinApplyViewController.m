@@ -77,7 +77,7 @@
     NSString * state = KISDictionaryHaveKey(dict, @"state");
     NSString * msgContent = KISDictionaryHaveKey(dict, @"msgContent");
     NSString * senTime = KISDictionaryHaveKey(dict, @"senTime");
-    //申请加入群消息
+    //申请加入群
     if ([msgType isEqualToString:@"joinGroupApplication"]) {
         
         static NSString *identifier = @"ApplicationCell";
@@ -131,9 +131,10 @@
         [cell refreTimeLable];
         return cell;
     }
-    //简单cell（通过，拒绝）
+    //（通过，拒绝,群升级）
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
-        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        ||[msgType isEqualToString:@"joinGroupApplicationReject"]
+             ||[msgType isEqualToString:@"groupLevelUp"]) {
         
         static NSString *identifier = @"simpleApplicationCell";
         SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -152,7 +153,7 @@
         return cell;
     }
     
-    //创建群消息
+    //创建群，群审核通过，群审核失败
     else if ([msgType isEqualToString:@"groupApplicationUnderReview"]
              ||[msgType isEqualToString:@"groupApplicationAccept"]
              ||[msgType isEqualToString:@"groupApplicationReject"]) {

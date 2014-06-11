@@ -2508,6 +2508,10 @@
     NSString * userImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userImg")];
     NSString * msgText = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"msg")];
     
+    NSString * billboard = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"billboard")];
+    NSString * billboardId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"billboardId")];
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"createDate")];
+    
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -2531,6 +2535,9 @@
         commonMsg.userImg = userImg;
         commonMsg.backgroundImg = backgroundImg;
         commonMsg.msg = msgText;
+        commonMsg.billboard=billboard;
+        commonMsg.billboardId= billboardId;
+        commonMsg.createDate= createDate;
     }];
 }
 #pragma mark - 查询申请加入群的消息列表
@@ -2567,6 +2574,9 @@
     [msgDic setObject:msgDS.userImg forKey:@"userImg"];
     [msgDic setObject:msgDS.backgroundImg forKey:@"backgroundImg"];
     [msgDic setObject:msgDS.msg forKey:@"msg"];
+    [msgDic setObject:msgDS.billboard forKey:@"billboard"];
+    [msgDic setObject:msgDS.billboardId forKey:@"billboardId"];
+    [msgDic setObject:msgDS.createDate forKey:@"createDate"];
     return msgDic;
 }
 

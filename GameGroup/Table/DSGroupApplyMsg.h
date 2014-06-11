@@ -30,4 +30,8 @@
 @property (nonatomic, retain) NSString * msgContent;
 @property (nonatomic, retain) NSString * senderId;
 
+@property (nonatomic, retain) NSString * billboard;
+@property (nonatomic, retain) NSString * billboardId;
+@property (nonatomic, retain) NSString * createDate;
+
 @end

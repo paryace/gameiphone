@@ -27,4 +27,8 @@
 @dynamic msgContent;
 @dynamic senderId;
 
+@dynamic billboard;
+@dynamic billboardId;
+@dynamic createDate;
+
 @end

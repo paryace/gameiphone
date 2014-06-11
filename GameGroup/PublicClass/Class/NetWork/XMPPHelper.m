@@ -363,13 +363,17 @@
             }
             [self.chatDelegate JoinGroupMessageReceived:dict];
         }
-        else if([msgtype isEqualToString:@"joinGroupApplication"]
-                ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]
-                ||[msgtype isEqualToString:@"joinGroupApplicationReject"]
+        else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
+                ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]//入群申请通过
+                ||[msgtype isEqualToString:@"joinGroupApplicationReject"]//入群申请拒绝
                 
-                ||[msgtype isEqualToString:@"groupApplicationUnderReview"]
-                ||[msgtype isEqualToString:@"groupApplicationAccept"]
-                ||[msgtype isEqualToString:@"groupApplicationReject"]){//入群申请通过
+                ||[msgtype isEqualToString:@"groupApplicationUnderReview"]//群审核已提交
+                ||[msgtype isEqualToString:@"groupApplicationAccept"]///群审核通过
+                ||[msgtype isEqualToString:@"groupApplicationReject"]//群审核被拒绝
+                
+                ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升
+                ||[msgtype isEqualToString:@"groupBillboard"]//群公告
+                ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             
             [dict setObject:msgtype forKey:@"msgType"];
