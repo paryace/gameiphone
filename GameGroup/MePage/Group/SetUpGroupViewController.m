@@ -90,12 +90,11 @@
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     
     if (self.mySetupType ==SETUP_JOIN) {
-//        if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
-//            [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
-//            return;
-//        }
-//        [dic setObject:m_textView.text forKey:@"msg"];
-         [dic setObject:@"I Want To Join To Your Group" forKey:@"msg"];
+        if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
+            [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
+            return;
+        }
+        [dic setObject:m_textView.text forKey:@"msg"];
         [dic setObject:self.groupid forKey:@"groupId"];
        [ self getInfoToNetWithparamDict:dic method:@"232"];
     }

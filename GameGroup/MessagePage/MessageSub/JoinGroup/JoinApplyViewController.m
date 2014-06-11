@@ -125,6 +125,10 @@
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
     NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
     NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    NSString * state = KISDictionaryHaveKey(dict, @"state");
+    if (![state isEqualToString:@"0"]) {
+        return;
+    }
     [self msgEdit:@"1" ApplicationId:applicationId MsgId:msgId];
 }
 //拒绝
@@ -134,6 +138,10 @@
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
     NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
     NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    NSString * state = KISDictionaryHaveKey(dict, @"state");
+    if (![state isEqualToString:@"0"]) {
+        return;
+    }
     [self msgEdit:@"2" ApplicationId:applicationId MsgId:msgId];
 }
 //忽略
@@ -142,6 +150,10 @@
     NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
     NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+    NSString * state = KISDictionaryHaveKey(dict, @"state");
+    if (![state isEqualToString:@"0"]) {
+        return;
+    }
     [DataStoreManager updateMsgState:msgId State:@"3"];
     [self getJoinGroupMsg];
 }
