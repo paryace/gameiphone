@@ -85,16 +85,6 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.detailDeleGate=self;
         cell.tag = indexPath.row;
-        if ([msgType isEqualToString:@"joinGroupApplication"]) {
-            cell.agreeBtn.hidden=NO;
-            cell.desAgreeBtn.hidden=NO;
-            cell.ignoreBtn.hidden=NO;
-        }else{
-            cell.agreeBtn.hidden=YES;
-            cell.desAgreeBtn.hidden=YES;
-            cell.ignoreBtn.hidden=YES;
-        }
-        
         if ([state isEqualToString:@"0"]) {
             cell.agreeBtn.selected=NO;
             cell.desAgreeBtn.selected=NO;
@@ -125,8 +115,10 @@
         cell.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
         return cell;
     }
+    //简单cell（通过，拒绝）
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        
         static NSString *identifier = @"simpleApplicationCell";
         SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -242,7 +234,14 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
         [DataStoreManager updateMsgState:msgId State:state];
-        [self getJoinGroupMsg];
+        for (NSMutableDictionary * clickDic in m_applyArray) {
+            if ([KISDictionaryHaveKey(clickDic, @"msgId") isEqualToString:msgId]) {
+                [clickDic setObject:state forKey:@"state"];
+                [self getJoinGroupMsg];
+                [m_ApplyTableView reloadData];
+            }
+        }
+        
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经同意加入群的申请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -252,14 +251,20 @@
 
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"邀请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
 }
 
 -(void)skillClick:(CreateGroupMsgCell*)sender
 {
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"帮助"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
 }
 
 -(void)detailClick:(CreateGroupMsgCell*)sender
 {
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"查看详情"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
 }
 
 - (void)didReceiveMemoryWarning
