@@ -31,10 +31,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"申请列表" withBackButton:YES];
-    
+    [self setTopViewWithTitle:@"群消息列表" withBackButton:YES];
     m_applyArray = [NSMutableArray array];
     m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_ApplyTableView.backgroundColor = UIColorFromRGBA(0xf9f9f9, 1);
     m_ApplyTableView.separatorColor = [UIColor clearColor];
     m_ApplyTableView.dataSource = self;
     m_ApplyTableView.delegate = self;

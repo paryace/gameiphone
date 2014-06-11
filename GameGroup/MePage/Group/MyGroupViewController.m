@@ -160,7 +160,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
             if (myGroupArray.count>3) {
-                groupCollectionView.frame = CGRectMake(0, 0, 320, 230);
+                groupCollectionView.frame = CGRectMake(0, startX, 320, 230);
             }
             [groupCollectionView reloadData];
             
