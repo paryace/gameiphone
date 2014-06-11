@@ -8,8 +8,9 @@
 
 #import "BaseViewController.h"
 #import "JoinApplyCell.h"
+#import "CreateGroupMsgCell.h"
 
-@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,DetailDeleGate>
+@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,DetailDeleGate,CreateGroupDetailDeleGate>
 
 
 @end

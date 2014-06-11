@@ -2554,7 +2554,8 @@
     [msgDic setObject:msgDS.msgId forKey:@"msgId"];
     [msgDic setObject:msgDS.msgType forKey:@"msgType"];
     [msgDic setObject:msgDS.receiveTime forKey:@"receiveTime"];
-    [msgDic setObject:msgDS.senTime forKey:@"senTime"];
+    NSTimeInterval uu = [msgDS.senTime timeIntervalSince1970];
+    [msgDic setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"senTime"];
     [msgDic setObject:msgDS.payload forKey:@"payload"];
     [msgDic setObject:msgDS.msgContent forKey:@"msgContent"];
     [msgDic setObject:msgDS.senderId forKey:@"senderId"];

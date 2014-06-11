@@ -38,7 +38,7 @@
         [bgV addSubview:self.groupCreateTimeLable];
         
         UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 310-20, 1)];
-        lineView1.backgroundColor = [UIColor grayColor];
+        lineView1.backgroundColor = kColorWithRGB(200,200,200, 0.7);
         [bgV addSubview:lineView1];
         
         self.userImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(30, 40, 50, 50)];
@@ -109,7 +109,6 @@
         self.applicationState.text = @"入群申请已经被通过";
         self.applicationState.textAlignment = NSTextAlignmentCenter;
         self.applicationState.font =[ UIFont systemFontOfSize:12];
-//        [bgV addSubview:self.applicationState];
         [self addSubview:bgV];
     }
     return self;

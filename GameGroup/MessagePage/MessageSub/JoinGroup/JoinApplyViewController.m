@@ -8,6 +8,7 @@
 
 #import "JoinApplyViewController.h"
 #import "JoinApplyCell.h"
+#import "CreateGroupMsgCell.h"
 
 @interface JoinApplyViewController ()
 {
@@ -59,8 +60,10 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
-     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
+    
+    
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
+    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
     NSString * nickname = KISDictionaryHaveKey(dict, @"nickname");
     NSString * msg = KISDictionaryHaveKey(dict, @"msg");
@@ -68,54 +71,108 @@
     NSString * userImg = KISDictionaryHaveKey(dict, @"userImg");
     NSString * state = KISDictionaryHaveKey(dict, @"state");
     NSString * msgContent = KISDictionaryHaveKey(dict, @"msgContent");
-    static NSString *identifier = @"joinApplyCell";
-    JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell = [[JoinApplyCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.backgroundColor = [UIColor clearColor];
+    NSString * senTime = KISDictionaryHaveKey(dict, @"senTime");
+    //申请加入群消息
+    if ([msgType isEqualToString:@"joinGroupApplication"]
+        ||[msgType isEqualToString:@"joinGroupApplicationAccept"]
+        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        
+        static NSString *identifier = @"ApplicationCell";
+        JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[JoinApplyCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            cell.backgroundColor = [UIColor clearColor];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.detailDeleGate=self;
+        cell.tag = indexPath.row;
+        if ([msgType isEqualToString:@"joinGroupApplication"]) {
+            cell.applicationState.hidden=YES;
+            cell.agreeBtn.hidden=NO;
+            cell.desAgreeBtn.hidden=NO;
+            cell.ignoreBtn.hidden=NO;
+        }else{
+            cell.applicationState.hidden=NO;
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
+        }
+        
+        if ([state isEqualToString:@"0"]) {
+            cell.agreeBtn.selected=NO;
+            cell.desAgreeBtn.selected=NO;
+            cell.ignoreBtn.selected=NO;
+        }else if([state isEqualToString:@"1"]){
+            cell.agreeBtn.selected=YES;
+            cell.desAgreeBtn.selected=NO;
+            cell.ignoreBtn.selected=NO;
+        }else if([state isEqualToString:@"2"]){
+            cell.agreeBtn.selected=NO;
+            cell.desAgreeBtn.selected=YES;
+            cell.ignoreBtn.selected=NO;
+        }else if([state isEqualToString:@"3"]){
+            cell.agreeBtn.selected=NO;
+            cell.desAgreeBtn.selected=NO;
+            cell.ignoreBtn.selected=YES;
+        }
+        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
+        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
+        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
+        cell.groupNameLable.text = groupName;
+        cell.userImageV.placeholderImage = KUIImage(@"placeholder.png");
+        cell.userImageV.imageURL = [ImageService getImageStr:userImg Width:160];
+        cell.userNameLable.text = nickname;
+        cell.joinReasonLable.text = msg;
+        
+        CGSize nameSize = [cell.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
+        cell.applicationState.text = msgContent;
+        return cell;
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.detailDeleGate=self;
-    cell.tag = indexPath.row;
-    if ([msgType isEqualToString:@"joinGroupApplication"]) {
-        cell.applicationState.hidden=YES;
-        cell.agreeBtn.hidden=NO;
-        cell.desAgreeBtn.hidden=NO;
-        cell.ignoreBtn.hidden=NO;
+    //创建群消息
+    else if ([msgType isEqualToString:@"groupApplicationUnderReview"]
+             ||[msgType isEqualToString:@"groupApplicationAccept"]
+             ||[msgType isEqualToString:@"groupApplicationReject"]) {
+        
+        static NSString *identifier = @"ApplicationUnderCell";
+        CreateGroupMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[CreateGroupMsgCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            cell.backgroundColor = [UIColor clearColor];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.detailDeleGate=self;
+        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
+        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
+        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
+        cell.contentLable.text=msgContent;
+        if ([msgType isEqualToString:@"groupApplicationUnderReview"]) {
+            cell.oneBtn.hidden=YES;
+            cell.twoBtn.hidden=YES;
+             cell.threeBtn.hidden=NO;
+        }else if([msgType isEqualToString:@"groupApplicationReject"]){
+            cell.oneBtn.hidden=YES;
+            cell.twoBtn.hidden=YES;
+            cell.threeBtn.hidden=YES;
+        }else if([msgType isEqualToString:@"groupApplicationAccept"]){
+            cell.oneBtn.hidden=NO;
+            cell.twoBtn.hidden=NO;
+            cell.threeBtn.hidden=YES;
+        }
+        
+        return cell;
     }else{
-        cell.applicationState.hidden=NO;
-        cell.agreeBtn.hidden=YES;
-        cell.desAgreeBtn.hidden=YES;
-        cell.ignoreBtn.hidden=YES;
+        return nil;
     }
-    
-    if ([state isEqualToString:@"0"]) {
-        cell.agreeBtn.selected=NO;
-        cell.desAgreeBtn.selected=NO;
-        cell.ignoreBtn.selected=NO;
-    }else if([state isEqualToString:@"1"]){
-        cell.agreeBtn.selected=YES;
-        cell.desAgreeBtn.selected=NO;
-        cell.ignoreBtn.selected=NO;
-    }else if([state isEqualToString:@"2"]){
-        cell.agreeBtn.selected=NO;
-        cell.desAgreeBtn.selected=YES;
-        cell.ignoreBtn.selected=NO;
-    }else if([state isEqualToString:@"3"]){
-        cell.agreeBtn.selected=NO;
-        cell.desAgreeBtn.selected=NO;
-        cell.ignoreBtn.selected=YES;
-    }
-    cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
-    cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
-    cell.groupNameLable.text = groupName;
-    cell.userImageV.placeholderImage = KUIImage(@"placeholder.png");
-    cell.userImageV.imageURL = [ImageService getImageStr:userImg Width:160];
-    cell.userNameLable.text = nickname;
-    cell.joinReasonLable.text = msg;
-    
-    cell.applicationState.text = msgContent;
-    return cell;
+}
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
 
 //同意
@@ -176,6 +233,19 @@
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
+}
+
+
+-(void)inviteClick:(CreateGroupMsgCell*)sender
+{
+}
+
+-(void)skillClick:(CreateGroupMsgCell*)sender
+{
+}
+
+-(void)detailClick:(CreateGroupMsgCell*)sender
+{
 }
 
 - (void)didReceiveMemoryWarning

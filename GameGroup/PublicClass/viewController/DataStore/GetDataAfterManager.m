@@ -146,11 +146,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
-    else if ([type isEqualToString:@"JoinGroupApplicationReject"])//群组消息
-    {
-        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
-    }
-    else if ([type isEqualToString:@"JoinGroupApplicationAccept"])//群组消息
+    else if ([type isEqualToString:@"joinGroupApplication"]
+             ||[type isEqualToString:@"joinGroupApplicationAccept"]
+             ||[type isEqualToString:@"joinGroupApplicationReject"]
+             
+             ||[type isEqualToString:@"groupApplicationUnderReview"]
+             ||[type isEqualToString:@"groupApplicationAccept"]
+             ||[type isEqualToString:@"groupApplicationReject"])//群组消息
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
