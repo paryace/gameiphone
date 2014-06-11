@@ -25,16 +25,23 @@
     [topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [topBtn setTitle:@"群组消息提示" forState:UIControlStateNormal];
     topBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [topBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+    [topBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
     topBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     topBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     topBtn.userInteractionEnabled = YES;
     [topBtn addTarget:self action:@selector(hint:) forControlEvents:UIControlEventTouchUpInside];
     [itemone addSubview:topBtn];
-    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16, 8, 12)];
+    
+    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20-34, 14, 25, 20)];
+    soundimageView.image = KUIImage(@"nor_soundSong");
+    soundimageView.backgroundColor = [UIColor clearColor];
+    [itemone addSubview:soundimageView];
+    
+    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
     topimageView.image = KUIImage(@"right_arrow");
     topimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:topimageView];
+    
     [self.view addSubview:itemone];
     
     
@@ -44,13 +51,13 @@
     [twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [twoBtn setTitle:@"我的群角色" forState:UIControlStateNormal];
     twoBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [twoBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+    [twoBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
     twoBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     twoBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     twoBtn.userInteractionEnabled = YES;
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
-    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16, 8, 12)];
+    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
     twoimageView.image = KUIImage(@"right_arrow");
     twoimageView.backgroundColor = [UIColor clearColor];
     [itemtwo addSubview:twoimageView];
@@ -62,13 +69,13 @@
     [threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [threeBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
     threeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [threeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+    [threeBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
     threeBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     threeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     threeBtn.userInteractionEnabled = YES;
     [threeBtn addTarget:self action:@selector(new:) forControlEvents:UIControlEventTouchUpInside];
     [itemthree addSubview:threeBtn];
-    UIImageView *threeimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16, 8, 12)];
+    UIImageView *threeimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
     threeimageView.image = KUIImage(@"right_arrow");
     threeimageView.backgroundColor = [UIColor clearColor];
     [itemthree addSubview:threeimageView];
@@ -81,13 +88,13 @@
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [fourBtn setTitle:@"举报该群" forState:UIControlStateNormal];
     fourBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [fourBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+    [fourBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
     fourBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     fourBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     fourBtn.userInteractionEnabled = YES;
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
     [itemfour addSubview:fourBtn];
-    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16, 8, 12)];
+    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
     fourimageView.image = KUIImage(@"right_arrow");
     fourimageView.backgroundColor = [UIColor clearColor];
     [itemfour addSubview:fourimageView];
@@ -95,7 +102,7 @@
     
     
     UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+300,280, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+    [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -127,13 +134,36 @@
 -(void)leave:(id)sender
 {
     if (self.shiptypeCount ==0) {//群主
-        [self dissolveGroup];
+        [self dissolveAlert];
     }if (self.shiptypeCount ==1) {//管理员
-        [self leaveGroup];
+        [self leaveAlert];
     }if (self.shiptypeCount ==2) {//群成员
-        [self leaveGroup];
+        [self leaveAlert];
     }if (self.shiptypeCount ==3) {//陌生人
+        [self leaveAlert];
+    }
+}
+
+#pragma mark -清空
+- (void)leaveAlert
+{
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确定要退出该群吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    alert.tag = 345;
+    [alert show];
+}
+
+- (void)dissolveAlert
+{
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确定要解散该群吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    alert.tag = 678;
+    [alert show];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 345) {
         [self leaveGroup];
+    }else if(alertView.tag == 678){
+        [self dissolveGroup];
     }
 }
 

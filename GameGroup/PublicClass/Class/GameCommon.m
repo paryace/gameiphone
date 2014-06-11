@@ -840,6 +840,9 @@ static GameCommon *my_gameCommon = NULL;
 #pragma mark ----把所有游戏的图标以key为游戏id写入文件
 -(void)saveGameIconInfo:(NSDictionary*)openData
 {
+    if (![openData isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
     NSMutableDictionary *gameiconDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *gameListDic=KISDictionaryHaveKey(openData, @"gamelist");
     NSArray *keysArr =[gameListDic allKeys];
