@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
+
 @protocol DetailDeleGate;
 
 @interface JoinApplyCell : UITableViewCell
@@ -25,8 +26,10 @@
 
 @protocol DetailDeleGate <NSObject>
 
--(void)agreeMsg:(id)sender;
--(void)desAgreeMsg:(id)sender;
--(void)ignoreMsg:(id)sender;
+-(void)agreeMsg:(JoinApplyCell*)sender;
+
+-(void)desAgreeMsg:(JoinApplyCell*)sender;
+
+-(void)ignoreMsg:(JoinApplyCell*)sender;
 
 @end

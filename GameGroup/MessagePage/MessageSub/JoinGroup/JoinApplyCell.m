@@ -15,8 +15,8 @@
     if (self) {
         
         UIImageView *bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 125)];
-         bgV.image = KUIImage(@"group_cell_bg");
-        
+        bgV.image = KUIImage(@"group_cell_bg");
+        bgV.userInteractionEnabled =YES;
         
        
         
@@ -61,7 +61,7 @@
         [bgV addSubview:self.joinReasonLable];
         
         
-        UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, 100, 25)];
+        UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 25)];
         [agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -70,10 +70,10 @@
         [agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         agreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         agreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-
         [bgV addSubview:agreeBtn];
         
-        UIButton * desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5+100, 95, 100, 25)];
+        
+        UIButton * desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 25-1)];
         [desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -86,7 +86,7 @@
        
         [bgV addSubview:desAgreeBtn];
         
-        UIButton *ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(5+200, 95, 100, 25)];
+        UIButton *ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 25-1)];
          [ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];

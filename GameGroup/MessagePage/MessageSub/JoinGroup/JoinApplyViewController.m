@@ -67,6 +67,7 @@
         cell.backgroundColor = [UIColor clearColor];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.detailDeleGate=self;
      cell.tag = indexPath.row;
      NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
    
@@ -87,30 +88,29 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-//    NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
-//    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-//    NSString * applicationId = KISDictionaryHaveKey(payload, @"applicationId");
-//    [self msgEdit:@"1" ApplicationId:applicationId];
-}
 
--(void)agreeButtonClick:(id)sender
+}
+-(void)agreeMsg:(JoinApplyCell*)sender
 {
-    JoinApplyCell * jc = (JoinApplyCell*)sender;
-    NSInteger index  =  jc.tag ;
+    NSInteger index  =  sender.tag ;
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     NSString * applicationId = KISDictionaryHaveKey(payload, @"applicationId");
-    [self msgEdit:@"" ApplicationId:applicationId];
-}
--(void)desAgreeButtonClick:(id)sender
-{
-    
-}
--(void)ignoreButtonClick:(id)sender
-{
-    
+    [self msgEdit:@"1" ApplicationId:applicationId];
 }
 
+-(void)desAgreeMsg:(JoinApplyCell*)sender
+{
+    NSInteger index  =  sender.tag ;
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    NSString * applicationId = KISDictionaryHaveKey(payload, @"applicationId");
+    [self msgEdit:@"2" ApplicationId:applicationId];
+}
+
+-(void)ignoreMsg:(JoinApplyCell*)sender
+{
+}
 
 -(void)msgEdit:(NSString*)state ApplicationId:(NSString*)applicationId
 {
