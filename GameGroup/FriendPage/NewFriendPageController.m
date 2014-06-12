@@ -139,7 +139,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        return 2;
+        return 1;
     }
     return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
 }
@@ -159,12 +159,6 @@
             CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
             cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
             return cellTop;
-        }else if(indexPath.row == 1){
-            static NSString * stringCellGroup = @"cellGroup";
-            MyGroupCell * cellgroup = [[MyGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellGroup];
-            cellgroup.headImageV.image = KUIImage(@"people_man.png");
-            cellgroup.titleLable.text = @"我的群组";
-            return cellgroup;
         }
     }
     
@@ -230,11 +224,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     if (indexPath.section==0) {
-        if (indexPath.row == 1) {
-            [[Custom_tabbar showTabBar] hideTabBar:YES];
-            GroupListViewController *groupView = [[GroupListViewController alloc]init];
-            [self.navigationController pushViewController:groupView animated:YES];
-        }
         return;
     }
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
