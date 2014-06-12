@@ -124,7 +124,6 @@
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
-    
     cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     
     
