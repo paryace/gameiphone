@@ -2508,7 +2508,7 @@
 }
 
 
-#pragma mark - 保存申请假如群的消息
+#pragma mark - 保存申请加入群的消息
 +(void)saveDSGroupApplyMsg:(NSDictionary *)msg
 {
     NSString * sender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"sender")];
@@ -2630,6 +2630,11 @@
             if (commonMsg) {
                 [commonMsg MR_deleteInContext:localContext];
             }
+        }
+        DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
+        if (groupInfo)
+        {
+            [groupInfo MR_deleteInContext:localContext];
         }
     }];
 }
