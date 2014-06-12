@@ -177,6 +177,24 @@
         }
     }];
 }
+//
++(void)deleteJoinGroupApplication
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * msgs = [DSGroupApplyMsg MR_findAll];
+        for (int i = 0; i<msgs.count; i++) {
+            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
+            [msg MR_deleteInContext:localContext];
+        }
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (thumbMsgs)
+        {
+            [thumbMsgs deleteInContext:localContext];
+        }
+    }];
+}
 
 
 #pragma mark - 保存聊天记录

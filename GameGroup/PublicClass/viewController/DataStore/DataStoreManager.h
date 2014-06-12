@@ -241,4 +241,6 @@
 +(NSMutableArray*)queryDSGroupApplyMsg;//查询申请加入群的消息列表
 
 +(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType;//改变消息状态
+
++(void)deleteJoinGroupApplication;//删除所有的群组消息
 @end
