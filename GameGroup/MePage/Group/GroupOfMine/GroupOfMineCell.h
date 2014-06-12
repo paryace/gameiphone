@@ -10,5 +10,5 @@
 #import "EGOImageView.h"
 @interface GroupOfMineCell : UICollectionViewCell
 @property(nonatomic,strong)EGOImageView *headImgView;
-
+@property(nonatomic,strong)UILabel *titleLabel;
 @end

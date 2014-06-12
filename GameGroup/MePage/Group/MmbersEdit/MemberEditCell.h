@@ -11,5 +11,5 @@
 @interface MemberEditCell : UITableViewCell
 @property(nonatomic,strong)EGOImageView *headImageView;
 @property(nonatomic,strong)UILabel *nameLable;
-
+@property(nonatomic,strong)UILabel *sfLb;
 @end

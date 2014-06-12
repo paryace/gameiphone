@@ -41,7 +41,6 @@
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(20, startX+20, 280, 30)];
     label.backgroundColor =[ UIColor clearColor];
     label.textColor = [UIColor blackColor];
-    label.text = @"请填写入群申请";
     label.font = [UIFont systemFontOfSize:13];
     [self.view addSubview:label];
     
@@ -69,9 +68,13 @@
     
     if (self.mySetupType ==SETUP_JOIN) {
         titleLabel.text = @"申请加入";
+        label.text = @"请填写入群申请";
+
     }
     else if (self.mySetupType ==SETUP_NAME) {
         titleLabel.text = @"修改群名称";
+        label.text = @"请填写群名称";
+
     }
     else if (self.mySetupType ==SETUP_IMG) {
         titleLabel.text = @"修改群资料";
@@ -99,18 +102,25 @@
        [ self getInfoToNetWithparamDict:dic method:@"232"];
     }
     else if (self.mySetupType ==SETUP_NAME) {
-        [ self getInfoToNetWithparamDict:nil method:nil];
+        if (self.delegate &&[self.delegate respondsToSelector:@selector(comeBackInfoWithController:type:info:)]) {
+            [self.delegate comeBackInfoWithController:self type:self.mySetupType info:m_textView.text];
+        }
     }
     else if (self.mySetupType ==SETUP_IMG) {
         [ self getInfoToNetWithparamDict:nil method:nil];
     }
     else if (self.mySetupType ==SETUP_INFO) {
-        [ self getInfoToNetWithparamDict:nil method:nil];
+        if (self.delegate &&[self.delegate respondsToSelector:@selector(comeBackInfoWithController:type:info:)]) {
+            [self.delegate comeBackInfoWithController:self type:self.mySetupType info:m_textView.text];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
     }
     else  {
         [ self getInfoToNetWithparamDict:nil method:nil];
     }
 
+    
+    
 }
 
 -(void)getInfoToNetWithparamDict:(NSMutableDictionary *)paramDict method:(NSString *)method

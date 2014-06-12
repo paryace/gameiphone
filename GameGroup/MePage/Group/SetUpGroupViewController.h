@@ -15,8 +15,15 @@ typedef enum
     SETUP_IMG,//陌生人
     SETUP_EDIT,
 }setUpType;
-
+@protocol SetupDelegate;
 @interface SetUpGroupViewController : BaseViewController<UITextViewDelegate>
 @property(nonatomic,assign)setUpType  mySetupType;
 @property(nonatomic,copy)NSString *groupid;
+@property(nonatomic,assign)id<SetupDelegate>delegate;
+
+@end
+@protocol SetupDelegate <NSObject>
+
+-(void)comeBackInfoWithController:(SetUpGroupViewController *)controller type:(setUpType)mysetupType info:(NSString *)info;
+
 @end

@@ -9,6 +9,7 @@
 #import "GroupSettingController.h"
 #import "MembersListViewController.h"
 #import "MemberEditViewController.h"
+#import "GroupInfoEditViewController.h"
 #import "PublishBillboardViewController.h"
 
 @interface GroupSettingController ()
@@ -226,14 +227,17 @@
 //管理群成员
 -(void)managerGroup:(id)sender
 {
-    MembersListViewController *member = [[MembersListViewController alloc]init];
+    MemberEditViewController *member = [[MemberEditViewController alloc]init];
     member.groupId = self.groupId;
+    member.shiptype = self.shiptypeCount;
     [self.navigationController pushViewController:member animated:YES];
 }
 //编辑群资料
 -(void)editGroupInfo:(id)sender
 {
-    
+    GroupInfoEditViewController *memberEidt =[[ GroupInfoEditViewController alloc]init];
+    memberEidt.groupId = self.groupId;
+    [self.navigationController pushViewController:memberEidt animated:YES];
 }
 
 
