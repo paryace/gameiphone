@@ -37,8 +37,8 @@
     [self setTopViewWithTitle:@"标签" withBackButton:YES];
     
     UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [okbutton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [okbutton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+    [okbutton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [okbutton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     okbutton.backgroundColor = [UIColor clearColor];
     [okbutton addTarget:self action:@selector(successClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okbutton];
@@ -51,6 +51,7 @@
     layout.minimumLineSpacing =10;
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.headerReferenceSize = CGSizeMake(300, 40);
+    layout.itemSize = CGSizeMake(88, 30);
     // 3.设置整个collectionView的内边距
     
     // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
@@ -92,19 +93,18 @@
             }
         }
     }];
-    
 }
 
 
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-        NSArray *array = [self.listDict allKeys];
-        NSDictionary *dic = [[self.listDict objectForKey:[array objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row];
-        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-        return CGSizeMake(size.width+10, 30);
-    
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
+//{
+//        NSArray *array = [self.listDict allKeys];
+//        NSDictionary *dic = [[self.listDict objectForKey:[array objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row];
+//        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
+//        return CGSizeMake(size.width+10, 30);
+//    
+//}
 -(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionReusableView *titleView;
@@ -134,14 +134,13 @@
 {
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"card_click_no");
+    cell.bgImgView.image = KUIImage(@"card_show");
     cell.tag = indexPath.section*1000+indexPath.row;
-    cell.backgroundColor = [UIColor redColor];
     NSArray *keysArray = [self.listDict allKeys];
     NSDictionary* dic = [[self.listDict objectForKey:[keysArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     
-    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-    cell.titleLabel.frame = CGRectMake(0, 0, size.width+5, 30);
+//    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
+//    cell.titleLabel.frame = CGRectMake(0, 0, size.width+5, 30);
     cell.titleLabel.textAlignment = NSTextAlignmentCenter;
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
     return cell;

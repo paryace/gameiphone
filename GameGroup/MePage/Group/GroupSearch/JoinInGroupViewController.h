@@ -8,6 +8,6 @@
 
 #import "BaseViewController.h"
 
-@interface JoinInGroupViewController : BaseViewController<UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
+@interface JoinInGroupViewController : BaseViewController<UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UIGestureRecognizerDelegate>
 
 @end

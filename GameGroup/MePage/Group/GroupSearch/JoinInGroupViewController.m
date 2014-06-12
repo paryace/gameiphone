@@ -51,8 +51,10 @@
     m_searchTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
     m_searchTf.delegate = self;
+    m_searchTf.returnKeyType =UIReturnKeyGo;
     [self.view addSubview:m_searchTf];
     
+//
 //    UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(10, startX+80, 300, 40)];
 //    [okbutton setTitle:@"搜索" forState:UIControlStateNormal];
 //    [okbutton addTarget:self action:@selector(searchStrToNextPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -63,6 +65,7 @@
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 10;
     m_layout.minimumLineSpacing =5;
+    m_layout.itemSize = CGSizeMake(88, 30);
 //    m_layout.sectionInset = UIEdgeInsetsMake(30,0, 0, 0);
     m_layout.headerReferenceSize = CGSizeMake(300, 40);
     
@@ -82,6 +85,7 @@
     
     // Do any additional setup after loading the view.
 }
+
 -(void)getCardWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -123,15 +127,15 @@
     
     return YES;
 }
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-    NSArray *arr = [listDict allKeys];
-    NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
-    NSDictionary *dic = [arry objectAtIndex:indexPath.row];
-    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-    return CGSizeMake(size.width+25, 30);
-    
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
+//{
+//    NSArray *arr = [listDict allKeys];
+//    NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
+//    NSDictionary *dic = [arry objectAtIndex:indexPath.row];
+//    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
+//    return CGSizeMake(size.width+25, 30);
+//    
+//}
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -150,14 +154,14 @@
 {
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"selectednormal-big");
+    cell.bgImgView.image = KUIImage(@"card_show");
     NSArray *arr = [listDict allKeys];
     NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
     
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
     
-    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-    cell.titleLabel.frame = CGRectMake(0, 0, size.width+20, 30);
+//    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
+//    cell.titleLabel.frame = CGRectMake(0, 0, size.width+20, 30);
     
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
     

@@ -207,7 +207,6 @@
    UICollectionViewFlowLayout* layout1 = [[UICollectionViewFlowLayout alloc]init];
     layout1.minimumInteritemSpacing = 10;
     layout1.minimumLineSpacing =5;
-    layout1.headerReferenceSize = CGSizeMake(320,40);
     
    self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 200, 300, 50) collectionViewLayout:layout1];
     self.titleCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
