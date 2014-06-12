@@ -42,6 +42,7 @@
     }
     return self;
 }
+
 //刷新时间控件
 -(void)refreTimeLable
 {

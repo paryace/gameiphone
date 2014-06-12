@@ -68,7 +68,7 @@
     groupNameLable.backgroundColor = [UIColor clearColor];
     groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
     groupNameLable.text = @"marss";
-    groupNameLable.font =[ UIFont systemFontOfSize:12];
+    groupNameLable.font =[ UIFont systemFontOfSize:14];
     [itemtwo addSubview:groupNameLable];
     
     [self.view addSubview:itemtwo];
@@ -194,21 +194,18 @@
     if (self.shiptypeCount ==0) {//群主
         okButton.frame  = CGRectMake(20,startX+431,280, 40);
         itemfour.hidden = NO;
-        [fourBtn setTitle:@"群成员管理" forState:UIControlStateNormal];
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
         itemfive.hidden=YES;
          explainLable.hidden=YES;
          sixeBtn.hidden=YES;
          sevenBtn.hidden=YES;
-        [fourBtn setTitle:@"群成员管理" forState:UIControlStateNormal];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==2) {//群成员
         itemfive.hidden=YES;
         explainLable.hidden=YES;
         sixeBtn.hidden=YES;
         sevenBtn.hidden=YES;
-        [fourBtn setTitle:@"举报该群" forState:UIControlStateNormal];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==3) {//陌生人
         itemfive.hidden=YES;

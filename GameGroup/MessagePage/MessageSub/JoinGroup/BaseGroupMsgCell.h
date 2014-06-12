@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
-
 @interface BaseGroupMsgCell : UITableViewCell
 @property(nonatomic,strong)UIImageView *bgV;//背景
 
@@ -20,3 +19,4 @@
 
 -(void)setGroupMsg:(NSString*)groupImage GroupName:(NSString*)groupName MsgTime:(NSString*)msgTime;
 @end
+

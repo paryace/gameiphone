@@ -147,7 +147,6 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
         cell.contentLable.text=msgContent;
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -190,7 +189,6 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
         cell.contentLable.text=msgContent;
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -270,6 +268,11 @@
     }
     return  @"您已经拒绝对方加入该群";
 }
+-(void)groupImageClick:(BaseGroupMsgCell*)sender
+{
+    
+}
+
 //邀请新成员
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
