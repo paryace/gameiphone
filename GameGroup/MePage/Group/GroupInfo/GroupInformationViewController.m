@@ -283,8 +283,25 @@
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag = 789;
+                [alert show];
+            }
+        }
+
     }];
 
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 789)
+    {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 

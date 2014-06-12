@@ -30,7 +30,7 @@
     
     UIScrollView *scV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     scV.scrollEnabled = YES;
-    scV.contentSize=CGSizeMake(320, 550);
+    scV.contentSize=CGSizeMake(320, 500);
     [self.view addSubview:scV];
     
     
@@ -137,7 +137,7 @@
     [scV addSubview:okButton];
     
     if (self.shiptypeCount ==0) {//群主
-        okButton.frame  = CGRectMake(20,startX+421,280, 40);
+        okButton.frame  = CGRectMake(20,421,280, 40);
         itemfour.hidden = NO;
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
