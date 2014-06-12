@@ -247,6 +247,8 @@
             
             BOOL isAuth = [KISDictionaryHaveKey(responseObject, @"state")boolValue];
             
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
+            
             [self buildmemberisAudit:isAuth title:[KISDictionaryHaveKey(responseObject, @"state")boolValue]?KISDictionaryHaveKey(responseObject, @"rank"):[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             
             

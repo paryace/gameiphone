@@ -25,22 +25,18 @@
     }
     return self;
 }
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        m_dataArray = [NSMutableArray array];
-        m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX) style:UITableViewStylePlain];
-        m_myTableView.delegate = self;
-        m_myTableView.dataSource = self;
-        [self.view addSubview:m_myTableView];
-    }
-    return self;
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self setTopViewWithTitle:@"群成员管理" withBackButton:YES];
+    m_dataArray = [NSMutableArray array];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX) style:UITableViewStylePlain];
+    m_myTableView.delegate = self;
+    m_myTableView.dataSource = self;
+    [self.view addSubview:m_myTableView];
+
     
+    [self getNearByDataByNet];
     
     // Do any additional setup after loading the view.
 }
@@ -110,6 +106,22 @@
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
     
+    NSInteger i = [KISDictionaryHaveKey(tempDict, @"type") intValue];
+    switch (i) {
+        case 0:
+         cell.sfLb.text = @"群主";
+            break;
+        case 1:
+            cell.sfLb.text = @"管理员";
+            break;
+        case 2:
+            cell.sfLb.text = @"";
+            break;
+     
+        default:
+            break;
+    }
+    
     
     return cell;
 }
@@ -117,10 +129,31 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     
     if (m_dataArray==nil||m_dataArray.count==0) {
         return;
     }
+    if (self.shiptype ==0) {
+        if ([KISDictionaryHaveKey(dic, @"type")intValue]==1) {
+            UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"取消管理员",@"移除",@"移除并举报", nil];
+            [actionSheet showInView:self.view];
+
+        }else if ([KISDictionaryHaveKey(dic, @"type")intValue] ==2){
+        UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"设置管理员",@"移除",@"移除并举报", nil];
+        [actionSheet showInView:self.view];
+        }
+
+    }else{
+        if ([KISDictionaryHaveKey(dic, @"type")intValue]==2) {
+            UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"移除",@"移除并举报", nil];
+            [actionSheet showInView:self.view];
+            
+        }else {
+            
+        }
+    }
+  
 }
 
 - (void)didReceiveMemoryWarning

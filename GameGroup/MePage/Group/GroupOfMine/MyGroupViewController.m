@@ -187,9 +187,13 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.headImgView.imageURL = nil;
         NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
         cell.headImgView.image = KUIImage(imgStr);
+        cell.titleLabel.backgroundColor = [UIColor clearColor];
     }else{
     cell.headImgView.placeholderImage = KUIImage(@"mess_news");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+        cell.titleLabel.backgroundColor  =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
+        cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
+        
     }
     return cell;
 }
