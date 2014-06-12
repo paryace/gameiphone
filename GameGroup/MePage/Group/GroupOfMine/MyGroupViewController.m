@@ -62,7 +62,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =3;
     m_layout.itemSize = CGSizeMake((320-15)/4, (320-15)/4);
-    m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-10);
+    m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-13);
     m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
@@ -143,7 +143,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [view addSubview:rightImg];
     
     UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(0, frame.origin.y+59, 320, 1)];
-    lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);;
+    lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);
     [cellView addSubview:lineView];
     return view;
     

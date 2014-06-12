@@ -327,13 +327,6 @@
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
 //                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
-                CGFloat x = 80+(i+1)/2*88;
-                CGFloat y = 10+(i)/2*30;
-                
-                NSLog(@"x--->>%f",x);
-                NSLog(@"y--->>%f",y);
-                
-                
                 [self buildImgVWithframe:CGRectMake(80+(i+1)/2*88,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }

@@ -21,7 +21,7 @@
         self.cardTitleLabel.font = [UIFont systemFontOfSize:14];
         [self addSubview:self.cardTitleLabel];
         UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, 35, 300, 1)];
-        lineView.backgroundColor = [UIColor grayColor];
+        lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);;
         [self addSubview:lineView];
     }
     return self;
