@@ -10,6 +10,7 @@
 #import "JoinApplyCell.h"
 #import "CreateGroupMsgCell.h"
 #import "SimpleMsgCell.h"
+#import "GroupInformationViewController.h"
 
 @interface JoinApplyViewController ()
 {
@@ -59,7 +60,9 @@
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
-        ||[msgType isEqualToString:@"joinGroupApplicationReject"]) {
+        ||[msgType isEqualToString:@"joinGroupApplicationReject"]
+        ||[msgType isEqualToString:@"groupLevelUp"]
+        ||[msgType isEqualToString:@"groupBillboard"]) {
         return 100;
     }
     return 135;
@@ -88,6 +91,7 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.groupImageDeleGate=self;
         cell.detailDeleGate=self;
         cell.tag = indexPath.row;
         if ([msgType isEqualToString:@"friendJoinGroup"]) {
@@ -147,6 +151,8 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+         cell.groupImageDeleGate=self;
+         cell.tag = indexPath.row;
         cell.contentLable.text=msgContent;
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -164,7 +170,9 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+         cell.groupImageDeleGate=self;
         cell.detailDeleGate=self;
+         cell.tag = indexPath.row;
         cell.contentLable.text=msgContent;
         if ([msgType isEqualToString:@"groupApplicationUnderReview"]) {
             cell.oneBtn.hidden=YES;
@@ -189,12 +197,21 @@
             cell.backgroundColor = [UIColor clearColor];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.groupImageDeleGate=self;
+         cell.tag = indexPath.row;
         cell.contentLable.text=msgContent;
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }
 }
-
+-(void)groupImageClick:(BaseGroupMsgCell*)sender
+{
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:sender.tag];
+    NSString * groupId = KISDictionaryHaveKey(dict, @"groupId");
+    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+    gr.groupId =[GameCommon getNewStringWithId:groupId];
+    [self.navigationController pushViewController:gr animated:YES];
+}
 //同意
 -(void)agreeMsg:(JoinApplyCell*)sender
 {
@@ -267,10 +284,6 @@
         return @"您已经同意对方加入该群";
     }
     return  @"您已经拒绝对方加入该群";
-}
--(void)groupImageClick:(BaseGroupMsgCell*)sender
-{
-    
 }
 
 //邀请新成员

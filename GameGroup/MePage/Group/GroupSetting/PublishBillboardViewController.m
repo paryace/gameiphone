@@ -63,7 +63,7 @@
     [postDict setObject:paramsDict forKey:@"params"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        [self showMessageWindowWithContent:@"提交成功!请等待确认" imageType:0];
+        [self showMessageWindowWithContent:@"发布成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
