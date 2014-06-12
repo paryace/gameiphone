@@ -10,9 +10,13 @@
 #import "EGOImageView.h"
 
 @interface BaseGroupMsgCell : UITableViewCell
-@property(nonatomic,strong)UIImageView *bgV;
-@property(nonatomic,strong)EGOImageView * groupImageV;
-@property(nonatomic,strong)UILabel * groupNameLable;
-@property(nonatomic,strong)UILabel * groupCreateTimeLable;
--(void)refreTimeLable;
+@property(nonatomic,strong)UIImageView *bgV;//背景
+
+@property(nonatomic,strong)EGOImageView * groupImageV;//群头像
+
+@property(nonatomic,strong)UILabel * groupNameLable;//群名
+
+@property(nonatomic,strong)UILabel * groupCreateTimeLable;//时间
+
+-(void)setGroupMsg:(NSString*)groupImage GroupName:(NSString*)groupName MsgTime:(NSString*)msgTime;
 @end

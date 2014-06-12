@@ -2582,10 +2582,14 @@
 
 +(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and msgType==[c]%@",msgType];
-    DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
-    if (commonMsg) {
-        commonMsg.state = state;
-    }
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@ and msgType==[c]%@ and state!=[c]%@",userid,msgType,@"0"];
+        NSArray * commMsgs = [DSGroupApplyMsg findAllWithPredicate:predicate];
+        for (DSGroupApplyMsg * commonMsg in commMsgs) {
+            if (commonMsg) {
+                commonMsg.state = state;
+            }
+        }
+    }];
 }
 @end

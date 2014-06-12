@@ -26,7 +26,7 @@
         [self.bgV addSubview:self.userNameLable];
         
         
-        self.joinReasonLable = [[UILabel alloc]initWithFrame:CGRectMake(85, 65, 100, 20)];
+        self.joinReasonLable = [[UILabel alloc]initWithFrame:CGRectMake(85, 65, 300-85, 20)];
         self.joinReasonLable.backgroundColor = [UIColor clearColor];
         self.joinReasonLable.textColor = [UIColor grayColor];
         self.joinReasonLable.text = @"申请理由";

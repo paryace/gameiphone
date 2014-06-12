@@ -78,7 +78,8 @@
     NSString * msgContent = KISDictionaryHaveKey(dict, @"msgContent");
     NSString * senTime = KISDictionaryHaveKey(dict, @"senTime");
     //申请加入群
-    if ([msgType isEqualToString:@"joinGroupApplication"]) {
+    if ([msgType isEqualToString:@"joinGroupApplication"]
+        ||[msgType isEqualToString:@"friendJoinGroup"]) {
         
         static NSString *identifier = @"ApplicationCell";
         JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -89,49 +90,52 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.detailDeleGate=self;
         cell.tag = indexPath.row;
-        if ([state isEqualToString:@"0"]) {
-            cell.agreeBtn.hidden=NO;
-            cell.desAgreeBtn.hidden=NO;
-            cell.ignoreBtn.hidden=NO;
+        if ([msgType isEqualToString:@"friendJoinGroup"]) {
+            cell.agreeBtn.hidden=YES;
+            cell.desAgreeBtn.hidden=YES;
+            cell.ignoreBtn.hidden=YES;
             cell.stateLable.hidden=YES;
-        }else if([state isEqualToString:@"1"]){
-            cell.agreeBtn.hidden=YES;
-            cell.desAgreeBtn.hidden=YES;
-            cell.ignoreBtn.hidden=YES;
-            cell.stateLable.hidden=NO;
-            cell.stateLable.text=@"已同意";
-        }else if([state isEqualToString:@"2"]){
-            cell.agreeBtn.hidden=YES;
-            cell.desAgreeBtn.hidden=YES;
-            cell.ignoreBtn.hidden=YES;
-            cell.stateLable.hidden=NO;
-            cell.stateLable.text=@"已拒绝";
-        }else if([state isEqualToString:@"3"]){
-            cell.agreeBtn.hidden=YES;
-            cell.desAgreeBtn.hidden=YES;
-            cell.ignoreBtn.hidden=YES;
-            cell.stateLable.hidden=NO;
-            cell.stateLable.text=@"已忽略";
-        }else if([state isEqualToString:@"4"]){
-            cell.agreeBtn.hidden=YES;
-            cell.desAgreeBtn.hidden=YES;
-            cell.ignoreBtn.hidden=YES;
-            cell.stateLable.hidden=NO;
-            cell.stateLable.text=@"已被其他管理员同意（或者拒绝）";
+            cell.joinReasonLable.text = msgContent;
+        }else{
+            if ([state isEqualToString:@"0"]) {
+                cell.agreeBtn.hidden=NO;
+                cell.desAgreeBtn.hidden=NO;
+                cell.ignoreBtn.hidden=NO;
+                cell.stateLable.hidden=YES;
+            }else if([state isEqualToString:@"1"]){
+                cell.agreeBtn.hidden=YES;
+                cell.desAgreeBtn.hidden=YES;
+                cell.ignoreBtn.hidden=YES;
+                cell.stateLable.hidden=NO;
+                cell.stateLable.text=@"已同意";
+            }else if([state isEqualToString:@"2"]){
+                cell.agreeBtn.hidden=YES;
+                cell.desAgreeBtn.hidden=YES;
+                cell.ignoreBtn.hidden=YES;
+                cell.stateLable.hidden=NO;
+                cell.stateLable.text=@"已拒绝";
+            }else if([state isEqualToString:@"3"]){
+                cell.agreeBtn.hidden=YES;
+                cell.desAgreeBtn.hidden=YES;
+                cell.ignoreBtn.hidden=YES;
+                cell.stateLable.hidden=NO;
+                cell.stateLable.text=@"已忽略";
+            }else if([state isEqualToString:@"4"]){
+                cell.agreeBtn.hidden=YES;
+                cell.desAgreeBtn.hidden=YES;
+                cell.ignoreBtn.hidden=YES;
+                cell.stateLable.hidden=NO;
+                cell.stateLable.text=@"已被其他管理员同意（或者拒绝）";
+            }
+            cell.joinReasonLable.text = msg;
         }
-        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
-        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
-        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
-        cell.groupNameLable.text = groupName;
         cell.userImageV.placeholderImage = KUIImage(@"placeholder.png");
         cell.userImageV.imageURL = [ImageService getImageStr:userImg Width:160];
         cell.userNameLable.text = nickname;
-        cell.joinReasonLable.text = msg;
-        
-        [cell refreTimeLable];
+        [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }
-    //（通过，拒绝,群升级）
+    //（通过，拒绝,群升级,好友加入群）
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]
              ||[msgType isEqualToString:@"groupLevelUp"]) {
@@ -144,12 +148,8 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
-        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
-        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
-        cell.groupNameLable.text = groupName;
         cell.contentLable.text=msgContent;
-        [cell refreTimeLable];
+        [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }
     
@@ -166,9 +166,6 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.detailDeleGate=self;
-        cell.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
-        cell.groupImageV.imageURL = [ImageService getImageStr:backgroundImg Width:160];
-        cell.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:senTime]];
         cell.contentLable.text=msgContent;
         if ([msgType isEqualToString:@"groupApplicationUnderReview"]) {
             cell.oneBtn.hidden=YES;
@@ -183,58 +180,47 @@
             cell.twoBtn.hidden=NO;
             cell.threeBtn.hidden=YES;
         }
-        [cell refreTimeLable];
+        [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }else{
-        return nil;
+        static NSString *identifier = @"simpleApplicationCell";
+        SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[SimpleMsgCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            cell.backgroundColor = [UIColor clearColor];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        cell.contentLable.text=msgContent;
+        [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
+        return cell;
     }
-}
-//格式化时间
--(NSString*)getMsgTime:(NSString*)senderTime
-{
-    NSString *time = [senderTime substringToIndex:10];
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
-    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
-    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
 
 //同意
 -(void)agreeMsg:(JoinApplyCell*)sender
 {
-    NSInteger index  =  sender.tag ;
-    NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    [self msgEdit:@"1" Dic:dict];
+    [self msgEdit:@"1" Dic:[m_applyArray objectAtIndex:sender.tag]];
 }
 //拒绝
 -(void)desAgreeMsg:(JoinApplyCell*)sender
 {
-    NSInteger index  =  sender.tag ;
-    NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-
-    [self msgEdit:@"2" Dic:dict];
+    [self msgEdit:@"2" Dic:[m_applyArray objectAtIndex:sender.tag]];
 }
 //忽略
 -(void)ignoreMsg:(JoinApplyCell*)sender
 {
-    NSInteger index  =  sender.tag ;
-    NSMutableDictionary *dict = [m_applyArray objectAtIndex:index];
-    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
-    NSString * userid = KISDictionaryHaveKey(dict, @"userid");
-    NSString * state = KISDictionaryHaveKey(dict, @"state");
-    if (![state isEqualToString:@"0"]) {
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:sender.tag];
+    if (![KISDictionaryHaveKey(dict, @"state") isEqualToString:@"0"]) {
         return;
     }
-    [DataStoreManager updateMsgState:userid State:@"3" MsgType:msgType];
-    [self getJoinGroupMsg];
+    [self changState:dict State:@"3"];
 }
 // 同意，拒绝申请
 -(void)msgEdit:(NSString*)state Dic:(NSMutableDictionary*)dict
 {
     NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
     NSString * clickstate = KISDictionaryHaveKey(dict, @"state");
-    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
-    NSString * userid = KISDictionaryHaveKey(dict, @"userid");
     if (![clickstate isEqualToString:@"0"]) {
         return;
     }
@@ -248,37 +234,58 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@",responseObject);
-        [DataStoreManager updateMsgState:userid State:state MsgType:msgType];
-        for (NSMutableDictionary * clickDic in m_applyArray) {
-            if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:userid]
-                &&[KISDictionaryHaveKey(clickDic, @"msgType") isEqualToString:msgType]) {
-                [clickDic setObject:state forKey:@"state"];
-            }
-        }
-        [m_ApplyTableView reloadData];
-        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经同意加入群的申请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [self changState:dict State:state];
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[self getSuccessMsg:state]delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            NSString* warn = [error objectForKey:kFailMessageKey];
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", warn] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
     }];
 }
-
-
+//改变消息状态
+-(void)changState:(NSMutableDictionary*)dict State:(NSString*)state
+{
+   
+    for (NSMutableDictionary * clickDic in m_applyArray) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")]
+            &&[KISDictionaryHaveKey(clickDic, @"msgType") isEqualToString:KISDictionaryHaveKey(dict, @"msgType")]
+            &&![KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]) {
+            [clickDic setObject:state forKey:@"state"];
+        }
+    }
+    [m_ApplyTableView reloadData];
+    [DataStoreManager updateMsgState:KISDictionaryHaveKey(dict, @"userid") State:state MsgType:KISDictionaryHaveKey(dict, @"msgType")];
+   
+}
+-(NSString*)getSuccessMsg:(NSString*)state
+{
+    if ([state isEqualToString:@"1"]) {
+        return @"您已经同意对方加入该群";
+    }
+    return  @"您已经拒绝对方加入该群";
+}
+//邀请新成员
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"邀请"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"邀请新成员"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
     [alert show];
 }
-
+//群组小技巧
 -(void)skillClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"帮助"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"群组小技巧"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
     [alert show];
 }
-
+//查看进度
 -(void)detailClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"查看详情"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"查看进度"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
     [alert show];
 }
 

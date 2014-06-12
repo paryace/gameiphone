@@ -25,7 +25,7 @@
     [topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [topBtn setTitle:@"群组消息提示" forState:UIControlStateNormal];
     topBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [topBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
+    [topBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     topBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     topBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     topBtn.userInteractionEnabled = YES;
@@ -51,16 +51,25 @@
     [twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [twoBtn setTitle:@"我的群角色" forState:UIControlStateNormal];
     twoBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [twoBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
+    [twoBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     twoBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     twoBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     twoBtn.userInteractionEnabled = YES;
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
-    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
+    
+    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 18, 8, 12)];
     twoimageView.image = KUIImage(@"right_arrow");
     twoimageView.backgroundColor = [UIColor clearColor];
     [itemtwo addSubview:twoimageView];
+    
+    UILabel *groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 17, 50, 20)];
+    groupNameLable.backgroundColor = [UIColor clearColor];
+    groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
+    groupNameLable.text = @"群名";
+    groupNameLable.font =[ UIFont systemFontOfSize:12];
+    [itemtwo addSubview:groupNameLable];
+    
     [self.view addSubview:itemtwo];
     
     UIView * itemthree=[[UIView alloc] initWithFrame:CGRectMake(0, startX+122,320, 45)];
@@ -69,7 +78,7 @@
     [threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [threeBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
     threeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [threeBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
+    [threeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     threeBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     threeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     threeBtn.userInteractionEnabled = YES;
@@ -88,7 +97,7 @@
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [fourBtn setTitle:@"举报该群" forState:UIControlStateNormal];
     fourBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [fourBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
+    [fourBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     fourBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     fourBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     fourBtn.userInteractionEnabled = YES;

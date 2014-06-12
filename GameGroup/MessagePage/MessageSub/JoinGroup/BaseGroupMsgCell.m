@@ -23,7 +23,7 @@
         
         self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(40, 7, 100, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
-        self.groupNameLable.textColor = [UIColor grayColor];
+        self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.groupNameLable.text = @"群名";
         self.groupNameLable.font =[ UIFont systemFontOfSize:12];
         [self.bgV addSubview:self.groupNameLable];
@@ -42,18 +42,28 @@
     }
     return self;
 }
+//刷新时间控件
 -(void)refreTimeLable
 {
     CGSize nameSize = [self.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     self.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
 }
-- (void)awakeFromNib
+//设置群信息
+-(void)setGroupMsg:(NSString*)groupImage GroupName:(NSString*)groupName MsgTime:(NSString*)msgTime
 {
+    self.groupImageV.placeholderImage = KUIImage(@"placeholder.png");
+    self.groupImageV.imageURL = [ImageService getImageStr:groupImage Width:160];
+    self.groupCreateTimeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:msgTime]];
+    self.groupNameLable.text = groupName;
+    [self refreTimeLable];
 }
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
 {
-    [super setSelected:selected animated:animated];
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
-
 @end
