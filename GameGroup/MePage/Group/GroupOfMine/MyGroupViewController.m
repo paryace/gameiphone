@@ -60,10 +60,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
-    m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake(65, 65);
-    m_layout.headerReferenceSize = CGSizeMake(320, 70);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,10,0,10);
+    m_layout.minimumLineSpacing =3;
+    m_layout.itemSize = CGSizeMake((320-15)/4, (320-15)/4);
+    m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-10);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
@@ -94,7 +94,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self.view addSubview:cellView];
     
     for (int i =0; i<3; i++) {
-        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 60+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
+        UIButton *view = [self bulidCellWithFrame:CGRectMake(0, 60+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
         view.tag = 100+i;
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
         [cellView addSubview:view];
@@ -111,10 +111,12 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
--(UIView *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
+-(UIButton *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
 {
-    UIView *view = [[UIView alloc]initWithFrame:frame];
+    UIButton *view = [[UIButton alloc]initWithFrame:frame];
     view.backgroundColor = [UIColor whiteColor];
+    [view setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+    [view setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(15,15, 30, 30)];
     imageView.image = KUIImage(img);
@@ -141,7 +143,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [view addSubview:rightImg];
     
     UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(0, frame.origin.y+59, 320, 1)];
-    lineView.backgroundColor = [UIColor grayColor];
+    lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);;
     [cellView addSubview:lineView];
     return view;
     
@@ -158,6 +160,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         case 101:
             groupView.ComeType = SETUP_NEARBY;
             [self.navigationController pushViewController:groupView animated:YES];
+            break;
+        case 102:
             break;
      
         default:
