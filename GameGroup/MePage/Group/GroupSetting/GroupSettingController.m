@@ -9,7 +9,13 @@
 #import "GroupSettingController.h"
 #import "MembersListViewController.h"
 #import "MemberEditViewController.h"
+#import "PublishBillboardViewController.h"
+
 @interface GroupSettingController ()
+{
+    UILabel *groupNameLable;
+    UILabel *msgHintLable;
+}
 
 @end
 
@@ -20,25 +26,26 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群组设置" withBackButton:YES];
     //群组消息提示
+    
+    
     UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, startX+20,320, 45)];
-    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [topBtn setTitle:@"群组消息提示" forState:UIControlStateNormal];
-    topBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [topBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    topBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    topBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    topBtn.userInteractionEnabled = YES;
+    UIButton * topBtn = [self getItemBtn:@"群组消息提示"];
     [topBtn addTarget:self action:@selector(hint:) forControlEvents:UIControlEventTouchUpInside];
     [itemone addSubview:topBtn];
     
-    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20-34, 12.5, 25, 20)];
+    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(250-25-10, 12.5, 25, 20)];
     soundimageView.image = KUIImage(@"nor_soundSong");
     soundimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:soundimageView];
     
-    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
+    msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(300-50, 12.5, 40, 20)];
+    msgHintLable.backgroundColor = [UIColor clearColor];
+    msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
+    msgHintLable.text = @"无声.";
+    msgHintLable.font =[ UIFont systemFontOfSize:12];
+    [itemone addSubview:msgHintLable];
+    
+    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 16.5, 8, 12)];
     topimageView.image = KUIImage(@"right_arrow");
     topimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:topimageView];
@@ -47,15 +54,7 @@
     
     // 我的群角色
     UIView * itemtwo=[[UIView alloc] initWithFrame:CGRectMake(0, startX+66,320, 45)];
-    UIButton * twoBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [twoBtn setTitle:@"我的群角色" forState:UIControlStateNormal];
-    twoBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [twoBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    twoBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    twoBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    twoBtn.userInteractionEnabled = YES;
+    UIButton * twoBtn = [self getItemBtn:@"我的群角色"];
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
     
@@ -64,7 +63,7 @@
     twoimageView.backgroundColor = [UIColor clearColor];
     [itemtwo addSubview:twoimageView];
     
-    UILabel *groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 12.5, 50, 20)];
+    groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 12.5, 50, 20)];
     groupNameLable.backgroundColor = [UIColor clearColor];
     groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
     groupNameLable.text = @"marss";
@@ -76,15 +75,7 @@
     
     //邀请新成员
     UIView * itemthree=[[UIView alloc] initWithFrame:CGRectMake(0, startX+112,320, 45)];
-    UIButton * threeBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [threeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [threeBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
-    threeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [threeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    threeBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    threeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    threeBtn.userInteractionEnabled = YES;
+    UIButton * threeBtn = [self getItemBtn:@"邀请新成员"];
     [threeBtn addTarget:self action:@selector(new:) forControlEvents:UIControlEventTouchUpInside];
     [itemthree addSubview:threeBtn];
     
@@ -96,16 +87,9 @@
     [self.view addSubview:itemthree];
     
     //举报该群组
-    UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,startX+223,320, 45)];
-    UIButton * fourBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [fourBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [fourBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [fourBtn setTitle:@"举报该群组" forState:UIControlStateNormal];
-    fourBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,startX+213,320, 45)];
+    UIButton * fourBtn = [self getItemBtn:@"举报该群组"];
     [fourBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    fourBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    fourBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    fourBtn.userInteractionEnabled = YES;
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
     [itemfour addSubview:fourBtn];
 
@@ -121,24 +105,16 @@
     
     
     //发布群公告
-    UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,startX+223,320, 45)];
-    UIButton * fiveBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [fiveBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [fiveBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [fiveBtn setTitle:@"发布群公告" forState:UIControlStateNormal];
-    fiveBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [fiveBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    fiveBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    fiveBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    fiveBtn.userInteractionEnabled = YES;
+    UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,startX+213,320, 45)];
+    UIButton * fiveBtn = [self getItemBtn:@"发布群公告"];
     [fiveBtn addTarget:self action:@selector(publish:) forControlEvents:UIControlEventTouchUpInside];
     [itemfive addSubview:fiveBtn];
     
     [self.view addSubview:itemfive];
     
     
-    //
-    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(20,startX+268,280, 50)];
+    //提示信息
+    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(20,startX+258,280, 50)];
     explainLable.backgroundColor = [UIColor clearColor];
     explainLable.textColor = kColorWithRGB(100,100,100, 0.7);
     explainLable.text = @"陌游群公告会在我的组织中有非常明显的提示，可以很容易的被群成员注意到.";
@@ -148,32 +124,17 @@
     
     
     //管理群成员
-    UIView * itemsixe=[[UIView alloc] initWithFrame:CGRectMake(0,startX+319,320, 45)];
-    UIButton * sixeBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [sixeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [sixeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [sixeBtn setTitle:@"管理群成员" forState:UIControlStateNormal];
-    sixeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [sixeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    sixeBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    sixeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    sixeBtn.userInteractionEnabled = YES;
+    UIView * itemsixe=[[UIView alloc] initWithFrame:CGRectMake(0,startX+309,320, 45)];
+    UIButton * sixeBtn = [self getItemBtn:@"管理群成员"];
+    [sixeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
     [sixeBtn addTarget:self action:@selector(managerGroup:) forControlEvents:UIControlEventTouchUpInside];
     [itemsixe addSubview:sixeBtn];
     
     [self.view addSubview:itemsixe];
     
     //编辑群资料
-    UIView * itemseven=[[UIView alloc] initWithFrame:CGRectMake(0,startX+365,320, 45)];
-    UIButton * sevenBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [sevenBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [sevenBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [sevenBtn setTitle:@"编辑群资料" forState:UIControlStateNormal];
-    sevenBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-    [sevenBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    sevenBtn.titleLabel.font = [UIFont systemFontOfSize:14];
-    sevenBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    sevenBtn.userInteractionEnabled = YES;
+    UIView * itemseven=[[UIView alloc] initWithFrame:CGRectMake(0,startX+355,320, 45)];
+    UIButton * sevenBtn = [self getItemBtn:@"编辑群资料"];
     [sevenBtn addTarget:self action:@selector(editGroupInfo:) forControlEvents:UIControlEventTouchUpInside];
     [itemseven addSubview:sevenBtn];
     
@@ -182,9 +143,9 @@
    
     
     //离开该群,解散群
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+300,280, 40)];
+    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+290,280, 40)];
     [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+    [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     okButton.backgroundColor = [UIColor clearColor];
@@ -192,7 +153,7 @@
     [self.view addSubview:okButton];
     
     if (self.shiptypeCount ==0) {//群主
-        okButton.frame  = CGRectMake(20,startX+431,280, 40);
+        okButton.frame  = CGRectMake(20,startX+421,280, 40);
         itemfour.hidden = NO;
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
@@ -214,6 +175,27 @@
         sevenBtn.hidden=YES;
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }
+    [self setInfo];
+}
+-(void)setInfo
+{
+    groupNameLable.text = @"艾欧尼亚－Marss";
+    CGSize textSize = [groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+     groupNameLable.frame=CGRectMake(300-textSize.width-10, 12, textSize.width, 20);
+}
+
+-(UIButton*)getItemBtn:(NSString*)titleText
+{
+    UIButton * ItemBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
+    [ItemBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+    [ItemBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+    [ItemBtn setTitle:titleText forState:UIControlStateNormal];
+    ItemBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    [ItemBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    ItemBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+    ItemBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    ItemBtn.userInteractionEnabled = YES;
+    return ItemBtn;
 }
 //群组消息设置
 -(void)hint:(id)sender
@@ -237,7 +219,9 @@
 //发布群公告
 -(void)publish:(id)sender
 {
-    
+    PublishBillboardViewController *billboard = [[PublishBillboardViewController alloc]init];
+    billboard.groupId = self.groupId;
+    [self.navigationController pushViewController:billboard animated:YES];
 }
 //管理群成员
 -(void)managerGroup:(id)sender
