@@ -7,7 +7,7 @@
 //
 
 #import "MembersListViewController.h"
-#import "PersonTableCell.h"
+#import "GroupMembersCell.h"
 #import "TestViewController.h"
 @interface MembersListViewController ()
 {
@@ -118,38 +118,39 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"myCell";
-    PersonTableCell *cell = (PersonTableCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+    GroupMembersCell *cell = (GroupMembersCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell == nil) {
-        cell = [[PersonTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[GroupMembersCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
     
-    cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
+    cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     
     
-//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-//        cell.ageLabel.text = [@"♂ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
-//        cell.ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
-//        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-//    }
-//    else
-//    {
-//        cell.ageLabel.text = [@"♀ " stringByAppendingString:[GameCommon getNewStringWithId:[tempDict objectForKey:@"age"]]];
-//        cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
-//        cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-//    }
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+        cell.sexImageView.image = KUIImage(@"");
+        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+    }
+    else
+    {
+        cell.sexImageView.image = KUIImage(@"");
+        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+    }
     
      NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
-    cell.headImageV.imageURL = [ImageService getImageStr:imageIds Width:80];
-    
+    cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
     
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:@""];
     
-    [cell refreshCell];
+    cell.clazzImageView.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(tempDict, @"characterImg")];
+    cell.roleLabel.text = KISDictionaryHaveKey(tempDict, @"characterInfo");
+    cell.numLabel.text = KISDictionaryHaveKey(tempDict, @"value1");
+    cell.numOfLabel.text = KISDictionaryHaveKey(tempDict, @"value2");
+//    [cell refreshCell];
     
-    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
-    [cell setGameIconUIView:gameidss];
+//    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];
+//    [cell setGameIconUIView:gameidss];
     
     return cell;
 }
