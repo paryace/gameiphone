@@ -273,12 +273,13 @@
     for (NSMutableDictionary * clickDic in m_applyArray) {
         if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")]
             &&[KISDictionaryHaveKey(clickDic, @"msgType") isEqualToString:KISDictionaryHaveKey(dict, @"msgType")]
-            &&[KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]) {
+            &&[KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]
+            &&[KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:KISDictionaryHaveKey(dict, @"groupId")]) {
             [clickDic setObject:state forKey:@"state"];
         }
     }
     [m_ApplyTableView reloadData];
-    [DataStoreManager updateMsgState:KISDictionaryHaveKey(dict, @"userid") State:state MsgType:KISDictionaryHaveKey(dict, @"msgType")];
+    [DataStoreManager updateMsgState:KISDictionaryHaveKey(dict, @"userid") State:state MsgType:KISDictionaryHaveKey(dict, @"msgType") GroupId:KISDictionaryHaveKey(dict, @"groupId")];
    
 }
 -(NSString*)getSuccessMsg:(NSString*)state

@@ -2532,6 +2532,9 @@
     
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     
+    if([msgType isEqualToString:@"disbandGroup"]){
+        [self deleteMsgByGroupId:groupId];
+    }
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
         DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
@@ -2598,14 +2601,34 @@
     return msgDic;
 }
 
-+(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType
++(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType GroupId:(NSString*)groupId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@ and msgType==[c]%@ and state==[c]%@",userid,msgType,@"0"];
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@ and msgType==[c]%@ and state==[c]%@ and groupId==[c]%@",userid,msgType,@"0",groupId];
         NSArray * commMsgs = [DSGroupApplyMsg findAllWithPredicate:predicate];
         for (DSGroupApplyMsg * commonMsg in commMsgs) {
             if (commonMsg) {
                 commonMsg.state = state;
+            }
+        }
+    }];
+}
+//删除该群的所有消息
++(void)deleteMsgByGroupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * commMsgs = [DSGroupApplyMsg findAllWithPredicate:predicate];
+        for (DSGroupApplyMsg * commonMsg in commMsgs) {
+            if (commonMsg) {
+                 [commonMsg MR_deleteInContext:localContext];
+            }
+        }
+        
+        NSArray * historyMsg = [DSGroupMsgs findAllWithPredicate:predicate];
+        for (DSGroupMsgs * commonMsg in historyMsg) {
+            if (commonMsg) {
+                [commonMsg MR_deleteInContext:localContext];
             }
         }
     }];
