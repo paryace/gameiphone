@@ -58,7 +58,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout.headerReferenceSize = CGSizeMake(320, 60);
     m_layout.sectionInset = UIEdgeInsetsMake(10,10,0,10);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     groupCollectionView.scrollEnabled = NO;
     groupCollectionView.delegate = self;
@@ -75,7 +75,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
     NSArray *arr3 =@[@"mess_news",@"mess_news",@"mess_news"];
     for (int i =0; i<3; i++) {
-        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 250+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
+        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 280+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
         view.tag = 100+i;
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
         [self.view addSubview:view];
