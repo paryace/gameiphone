@@ -245,34 +245,29 @@
 -(void)getLocationForNet
 {
     
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-    [paramDict setObject:@"20" forKey:@"maxSize"];
-    
-    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-    [self getGroupListFromNetWithParam:paramDict method:@"234"];
+//    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+//    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+//    [paramDict setObject:@"20" forKey:@"maxSize"];
+//    
+//    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+//    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+//    [self getGroupListFromNetWithParam:paramDict method:@"237"];
 
     
-//    if (app.reach.currentReachabilityStatus ==NotReachable) {
-//        return;
-//    }
-//    else{
-//        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-//            [[TempData sharedInstance] setLat:lat Lon:lon];
-//            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-//            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-//            [paramDict setObject:@"20" forKey:@"maxSize"];
-//            
-//            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-//            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-//            [self getGroupListFromNetWithParam:paramDict method:@"234"];
-//
-//        } Failure:^{
-//            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-//        }
-//         ];
-//    }
+        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+            [[TempData sharedInstance] setLat:lat Lon:lon];
+            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+            [paramDict setObject:@"20" forKey:@"maxSize"];
+            
+            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+            [self getGroupListFromNetWithParam:paramDict method:@"237"];
+
+        } Failure:^{
+            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+        }
+         ];
 }
 
 - (void)didReceiveMemoryWarning
