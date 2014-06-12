@@ -371,8 +371,9 @@
                 ||[msgtype isEqualToString:@"groupApplicationAccept"]///群审核通过
                 ||[msgtype isEqualToString:@"groupApplicationReject"]//群审核被拒绝
                 
-                ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升
+                ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升disbandGroup
                 ||[msgtype isEqualToString:@"groupBillboard"]//群公告
+                ||[msgtype isEqualToString:@"disbandGroup"]//解散群
                 ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             
@@ -444,7 +445,10 @@
         return  @"群公告";
     }else if ([msgtype isEqualToString:@"friendJoinGroup"]){
         return  @"好友加入了新的群组";
+    }else if ([msgtype isEqualToString:@"disbandGroup"]){
+        return @"解散群";
     }
+    return @"新的群消息";
 }
 //sender:@"10000202@gamepro.com/862933025698753"
 #pragma mark 发送反馈消息

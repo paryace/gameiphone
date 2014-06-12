@@ -34,7 +34,7 @@
         [self.bgV addSubview:self.joinReasonLable];
     
         
-        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
+        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (310-2)/3, 35)];
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -46,7 +46,7 @@
         [self.bgV addSubview:self.agreeBtn];
         
         
-        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35)];
+        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((310-2)/3+6, 95, (310-2)/3, 35)];
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -60,7 +60,7 @@
        
         [self.bgV addSubview:self.desAgreeBtn];
         
-        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+7, 95, (300-2)/3, 35)];
+        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((310-2)/3)*2+8, 95, (310-2)/3, 35)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -72,7 +72,7 @@
         self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [self.bgV addSubview:self.ignoreBtn];
 
-        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(5, 95, 300, 35)];
+        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(5, 95, 310, 35)];
         self.stateLable.backgroundColor = kColorWithRGB(230,230,230, 0.7);
         self.stateLable.textColor = [UIColor grayColor];
         self.stateLable.text = @"已同意";

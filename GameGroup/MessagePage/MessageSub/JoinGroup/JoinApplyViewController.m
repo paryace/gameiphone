@@ -62,7 +62,8 @@
     if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]
         ||[msgType isEqualToString:@"groupLevelUp"]
-        ||[msgType isEqualToString:@"groupBillboard"]) {
+        ||[msgType isEqualToString:@"groupBillboard"]
+        ||[msgType isEqualToString:@"disbandGroup"]) {
         return 100;
     }
     return 135;
@@ -139,10 +140,12 @@
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }
-    //（通过，拒绝,群升级,好友加入群）
+    //（通过，拒绝,群升级,好友加入群,解散群）
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]
-             ||[msgType isEqualToString:@"groupLevelUp"]) {
+             ||[msgType isEqualToString:@"groupLevelUp"]
+             ||[msgType isEqualToString:@"groupBillboard"]
+             ||[msgType isEqualToString:@"disbandGroup"]) {
         
         static NSString *identifier = @"simpleApplicationCell";
         SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
