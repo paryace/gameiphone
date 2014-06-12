@@ -50,12 +50,6 @@
     msgHintLable.text = @"无声";
     msgHintLable.font =[ UIFont systemFontOfSize:12];
     [itemone addSubview:msgHintLable];
-    
-    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 16.5, 8, 12)];
-    topimageView.image = KUIImage(@"right_arrow");
-    topimageView.backgroundColor = [UIColor clearColor];
-    [itemone addSubview:topimageView];
-    
     [scV addSubview:itemone];
     
     // 我的群角色
@@ -63,11 +57,6 @@
     UIButton * twoBtn = [self getItemBtn:@"我的群角色"];
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
-    
-    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 16.5, 8, 12)];
-    twoimageView.image = KUIImage(@"right_arrow");
-    twoimageView.backgroundColor = [UIColor clearColor];
-    [itemtwo addSubview:twoimageView];
     
     groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 12.5, 50, 20)];
     groupNameLable.backgroundColor = [UIColor clearColor];
@@ -85,11 +74,6 @@
     [threeBtn addTarget:self action:@selector(new:) forControlEvents:UIControlEventTouchUpInside];
     [itemthree addSubview:threeBtn];
     
-    UIImageView *threeimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
-    threeimageView.image = KUIImage(@"right_arrow");
-    threeimageView.backgroundColor = [UIColor clearColor];
-    [itemthree addSubview:threeimageView];
-    
     [scV addSubview:itemthree];
     
     //举报该群组
@@ -98,12 +82,6 @@
     [fourBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
     [itemfour addSubview:fourBtn];
-
-    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
-    fourimageView.image = KUIImage(@"right_arrow");
-    fourimageView.backgroundColor = [UIColor clearColor];
-    [itemfour addSubview:fourimageView];
-    
     
     [scV addSubview:itemfour];
     
@@ -201,6 +179,11 @@
     ItemBtn.titleLabel.font = [UIFont systemFontOfSize:14];
     ItemBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     ItemBtn.userInteractionEnabled = YES;
+    
+    UIImageView *rightimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
+    rightimageView.image = KUIImage(@"right_arrow");
+    rightimageView.backgroundColor = [UIColor clearColor];
+    [ItemBtn addSubview:rightimageView];
     return ItemBtn;
 }
 //群组消息设置
