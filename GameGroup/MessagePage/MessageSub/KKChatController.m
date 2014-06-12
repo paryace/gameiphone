@@ -20,6 +20,7 @@
 #import "PhotoViewController.h"
 #import "UpLoadFileService.h"
 #import "MessageService.h"
+#import "GroupInformationViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -217,9 +218,7 @@ UINavigationControllerDelegate>
     [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
     [self.view addSubview:profileButton];
     [self.view bringSubviewToFront:profileButton];
-    if ([self.type isEqualToString:@"normal"]) {
-        [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
-    }
+   [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
@@ -1184,12 +1183,18 @@ UINavigationControllerDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
-    TestViewController *detailV = [[TestViewController alloc]init];
-    detailV.userId = self.chatWithUser;
-    detailV.nickName = self.nickName;
-    detailV.isChatPage = YES;
-    
-    [self.navigationController pushViewController:detailV animated:YES];
+    if ([self.type isEqualToString:@"normal"]) {
+        TestViewController *detailV = [[TestViewController alloc]init];
+        detailV.userId = self.chatWithUser;
+        detailV.nickName = self.nickName;
+        detailV.isChatPage = YES;
+        [self.navigationController pushViewController:detailV animated:YES];
+    }else if([self.type isEqualToString:@"group"])
+    {
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =[GameCommon getNewStringWithId:self.chatWithUser];
+        [self.navigationController pushViewController:gr animated:YES];
+    }
 }
 
 -(void)toContactProfile:(NSString*)userId
