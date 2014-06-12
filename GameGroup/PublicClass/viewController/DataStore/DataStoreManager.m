@@ -409,7 +409,7 @@
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
             thumbMsgs.sender = sender;
-            thumbMsgs.senderNickname = @"加入群申请";
+            thumbMsgs.senderNickname = KISDictionaryHaveKey(msg, @"msgTitle");
             thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
