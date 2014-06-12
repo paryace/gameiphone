@@ -30,33 +30,33 @@
         [self.nameLable setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.nameLable];
         
-        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(80, 55, 20, 20)];
+        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(80, 25, 20, 20)];
         self.sexImageView.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.sexImageView];
         
-        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 55, 100, 20)];
+        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 25, 100, 20)];
         [self.timeLabel setTextColor:[UIColor blackColor]];
         [self.timeLabel setFont:[UIFont systemFontOfSize:13]];
         [self.timeLabel setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.timeLabel];
 
-        self.clazzImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 80, 20, 20)];
+        self.clazzImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 45, 20, 20)];
         self.clazzImageView.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.clazzImageView];
         
-        self.roleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 80, 240, 20)];
+        self.roleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 45, 240, 20)];
         [self.roleLabel setTextColor:[UIColor blackColor]];
         [self.roleLabel setFont:[UIFont systemFontOfSize:13]];
         [self.roleLabel setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.roleLabel];
 
-        UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(240, 0, 1, self.frame.size.height)];
+        UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(220, 0, 1, 60)];
         lineView.backgroundColor = [UIColor grayColor];
         [self.bgView addSubview:lineView];
         
         self.numLabel = [[UILabel alloc] initWithFrame:CGRectMake(240, 10, 60, 20)];
-        [self.numLabel setTextColor:[UIColor blackColor]];
-        [self.numLabel setFont:[UIFont systemFontOfSize:13]];
+        [self.numLabel setTextColor:[UIColor blueColor]];
+        [self.numLabel setFont:[UIFont systemFontOfSize:18]];
         self.numOfLabel.textAlignment = NSTextAlignmentCenter;
         [self.numLabel setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.numLabel];

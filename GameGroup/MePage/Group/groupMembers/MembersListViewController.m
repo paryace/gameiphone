@@ -122,7 +122,8 @@
     if (cell == nil) {
         cell = [[GroupMembersCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
     cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     
@@ -140,7 +141,7 @@
      NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
     
-    cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:@""];
+    cell.timeLabel.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
     
     cell.clazzImageView.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(tempDict, @"characterImg")];
     cell.roleLabel.text = KISDictionaryHaveKey(tempDict, @"characterInfo");
