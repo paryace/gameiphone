@@ -8,6 +8,7 @@
 
 #import "GroupSettingController.h"
 #import "MembersListViewController.h"
+#import "MemberEditViewController.h"
 @interface GroupSettingController ()
 
 @end
