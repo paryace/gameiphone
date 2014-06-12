@@ -14,20 +14,20 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithRed:76/255.0f green:75/255.0f blue:81/255.0f alpha:1];
+        self.backgroundColor = [UIColor colorWithRed:232/255.0f green:232/255.0f blue:232/255.0f alpha:1];
         
         self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 15, 40, 40)];
         self.headImageView.placeholderImage = KUIImage(@"mess_news");
         [self addSubview:self.headImageView];
         
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 210, 40)];
+        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 210, 40)];
         self.label.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.label.numberOfLines =2;
         self.label.backgroundColor = [UIColor clearColor];
         self.label.textAlignment = NSTextAlignmentCenter;
         self.label.font = [UIFont boldSystemFontOfSize:13.0f];
-        self.label.textColor = [UIColor whiteColor];
+        self.label.textColor = [UIColor grayColor];
         [self addSubview:self.label];
         
         self.contentLabel =  [[UILabel alloc] initWithFrame:CGRectMake(70, 45, 130, 15)];
@@ -35,8 +35,8 @@
         UIViewAutoresizingFlexibleHeight;
         self.contentLabel.backgroundColor = [UIColor clearColor];
         self.contentLabel.textAlignment = NSTextAlignmentLeft;
-        self.contentLabel.font = [UIFont boldSystemFontOfSize:13.0f];
-        self.contentLabel.textColor = [UIColor whiteColor];
+        self.contentLabel.font = [UIFont boldSystemFontOfSize:11.0f];
+        self.contentLabel.textColor = [UIColor grayColor];
         [self addSubview:self.contentLabel];
         
         self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(200, 45, 210, 15)];
@@ -44,8 +44,8 @@
         UIViewAutoresizingFlexibleHeight;
         self.timeLabel.backgroundColor = [UIColor clearColor];
         self.timeLabel.textAlignment = NSTextAlignmentLeft;
-        self.timeLabel.font = [UIFont boldSystemFontOfSize:13.0f];
-        self.timeLabel.textColor = [UIColor whiteColor];
+        self.timeLabel.font = [UIFont boldSystemFontOfSize:11.0f];
+        self.timeLabel.textColor = [UIColor grayColor];
         [self addSubview:self.timeLabel];
 
 

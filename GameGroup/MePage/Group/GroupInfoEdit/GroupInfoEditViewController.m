@@ -50,8 +50,8 @@
     
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+    [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];

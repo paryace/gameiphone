@@ -61,12 +61,6 @@
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [self.view addSubview:m_myTableView];
     
-//    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-//    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-//    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
-//    shareButton.backgroundColor = [UIColor clearColor];
-//    [shareButton addTarget:self action:@selector(wlgc:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:shareButton];
     
     UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
     topImg.image = KUIImage(@"groupinfo_top");
@@ -323,8 +317,8 @@
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
 
             for (int i =0; i<tags.count; i++) {
-                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
-                [self buildImgVWithframe:CGRectMake(80, 10+30*i, size.width+30, 30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+//                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
+                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*80,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
         return cell;
@@ -430,7 +424,7 @@
 
     switch (indexPath.row) {
         case 0:
-            return 120;
+            return tags.count *30+20;
             break;
         case 1:
             return 40;

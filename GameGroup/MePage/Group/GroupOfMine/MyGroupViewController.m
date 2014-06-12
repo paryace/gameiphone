@@ -18,6 +18,7 @@
     UICollectionViewFlowLayout *m_layout;
     UICollectionView *groupCollectionView;
     NSMutableArray *myGroupArray;
+    UIView *cellView;
 }
 @end
 
@@ -38,8 +39,14 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"我的群组" withBackButton:YES];
-    
+    [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+
 
     myGroupArray = [NSMutableArray array];
     
@@ -54,11 +61,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake(60, 60);
-    m_layout.headerReferenceSize = CGSizeMake(320, 60);
+    m_layout.itemSize = CGSizeMake(65, 65);
+    m_layout.headerReferenceSize = CGSizeMake(320, 70);
     m_layout.sectionInset = UIEdgeInsetsMake(10,10,0,10);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?64:44, 320, 150) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     groupCollectionView.scrollEnabled = NO;
     groupCollectionView.delegate = self;
@@ -71,14 +78,26 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
     
 //    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headView"];
-    NSArray *arr1 = @[@"XXX开始,找个群一起聊",@"附近的组织",@"同服的组织"];
+    NSArray *arr1 = @[@"智能推荐",@"附近的组织",@"同服的组织"];
     NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
-    NSArray *arr3 =@[@"mess_news",@"mess_news",@"mess_news"];
+    NSArray *arr3 =@[@"find_role",@"find_role",@"find_group"];
+    
+    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+160, 320, 240)];
+    
+    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 20, 320, 20)];
+    lajiLabel.backgroundColor = [UIColor clearColor];
+    lajiLabel.textColor = [UIColor grayColor];
+    lajiLabel.text = @"立即添加游戏组织,开始更好的游戏体验!";
+    lajiLabel.textAlignment = NSTextAlignmentCenter;
+    lajiLabel.font = [UIFont systemFontOfSize:12];
+    [cellView addSubview:lajiLabel];
+    [self.view addSubview:cellView];
+    
     for (int i =0; i<3; i++) {
-        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 280+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
+        UIView *view = [self bulidCellWithFrame:CGRectMake(0, 60+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
         view.tag = 100+i;
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
-        [self.view addSubview:view];
+        [cellView addSubview:view];
     }
     
     
@@ -87,19 +106,24 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     // Do any additional setup after loading the view.
 }
 
+-(void)backButtonClick:(id)sender
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 -(UIView *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
 {
     UIView *view = [[UIView alloc]initWithFrame:frame];
     view.backgroundColor = [UIColor whiteColor];
     
-    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(10,10, 40, 40)];
+    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(15,15, 30, 30)];
     imageView.image = KUIImage(img);
     [view addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60,10, 200, 20)];
     label.backgroundColor = [UIColor clearColor];
     label.textColor = [UIColor blackColor];
-    label.font = [UIFont boldSystemFontOfSize:17];
+    label.font = [UIFont systemFontOfSize:15];
     label.textAlignment = NSTextAlignmentLeft;
     label.text = title1;
     [view addSubview:label];
@@ -107,7 +131,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     UILabel *label1 = [[UILabel alloc]initWithFrame:CGRectMake(60, 35, 200, 20)];
     label1.backgroundColor = [UIColor clearColor];
     label1.textColor = [UIColor grayColor];
-    label1.font = [UIFont systemFontOfSize:14];
+    label1.font = [UIFont systemFontOfSize:13];
     label1.textAlignment = NSTextAlignmentLeft;
     label1.text = title2;
     [view addSubview:label1];
@@ -118,7 +142,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(0, frame.origin.y+59, 320, 1)];
     lineView.backgroundColor = [UIColor grayColor];
-    [self.view addSubview:lineView];
+    [cellView addSubview:lineView];
     return view;
     
 }
@@ -159,8 +183,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             [myGroupArray addObjectsFromArray:responseObject];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
-            if (myGroupArray.count>3) {
+            if (myGroupArray.count>4) {
                 groupCollectionView.frame = CGRectMake(0, startX, 320, 230);
+                cellView.frame = CGRectMake(0, startX+240, 320, 180);
             }
             [groupCollectionView reloadData];
             
