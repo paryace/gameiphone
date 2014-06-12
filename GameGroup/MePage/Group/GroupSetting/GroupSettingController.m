@@ -41,7 +41,7 @@
     msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(300-50, 12.5, 40, 20)];
     msgHintLable.backgroundColor = [UIColor clearColor];
     msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
-    msgHintLable.text = @"无声.";
+    msgHintLable.text = @"无声";
     msgHintLable.font =[ UIFont systemFontOfSize:12];
     [itemone addSubview:msgHintLable];
     
