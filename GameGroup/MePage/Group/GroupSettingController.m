@@ -7,7 +7,7 @@
 //
 
 #import "GroupSettingController.h"
-
+#import "MembersListViewController.h"
 @interface GroupSettingController ()
 
 @end
@@ -83,10 +83,17 @@
     
     
     UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,startX+223,320, 45)];
+    [self.view addSubview:itemfour];
+
+    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
+    fourimageView.image = KUIImage(@"right_arrow");
+    fourimageView.backgroundColor = [UIColor clearColor];
+    [itemfour addSubview:fourimageView];
+    fourimageView.userInteractionEnabled = YES;
+
     UIButton * fourBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    [fourBtn setTitle:@"举报该群" forState:UIControlStateNormal];
     fourBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
     [fourBtn setTitleColor:kColorWithRGB(100, 100, 100, 1.0) forState:UIControlStateNormal];
     fourBtn.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -94,11 +101,6 @@
     fourBtn.userInteractionEnabled = YES;
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
     [itemfour addSubview:fourBtn];
-    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
-    fourimageView.image = KUIImage(@"right_arrow");
-    fourimageView.backgroundColor = [UIColor clearColor];
-    [itemfour addSubview:fourimageView];
-    [self.view addSubview:itemfour];
     
     
     UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+300,280, 40)];
@@ -110,10 +112,13 @@
     [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okButton];
     if (self.shiptypeCount ==0) {//群主
+        [fourBtn setTitle:@"群成员管理" forState:UIControlStateNormal];
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
+        [fourBtn setTitle:@"群成员管理" forState:UIControlStateNormal];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==2) {//群成员
+        [fourBtn setTitle:@"举报该群" forState:UIControlStateNormal];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==3) {//陌生人
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
@@ -121,6 +126,7 @@
 }
 -(void)hint:(id)sender
 {
+   
 }
 -(void)role:(id)sender
 {
@@ -130,6 +136,14 @@
 }
 -(void)report:(id)sender
 {
+    if (self.shiptypeCount ==0||self.shiptypeCount ==1) {
+        MembersListViewController *member = [[MembersListViewController alloc]init];
+        member.groupId = self.groupId;
+        [self.navigationController pushViewController:member animated:YES];
+    }else{
+        UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:nil cancelButtonTitle:@"取消" destructiveButtonTitle:@"nil" otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
+        [actionSheet showInView:self.view];
+    }
 }
 -(void)leave:(id)sender
 {
@@ -161,9 +175,13 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 345) {
-        [self leaveGroup];
+        if (buttonIndex ==1) {
+            [self leaveGroup];
+        }
     }else if(alertView.tag == 678){
-        [self dissolveGroup];
+        if (buttonIndex ==1) {
+            [self dissolveGroup];
+        }
     }
 }
 
