@@ -14,12 +14,17 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 135)];
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 135)];
         self.bgV.image = KUIImage(@"group_cell_bg");
         self.bgV.userInteractionEnabled =YES;
         
         self.groupImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 5, 25, 25)];
         [self.bgV addSubview:self.groupImageV];
+        
+        
+        UIButton * imageClickBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 5, 25, 25)];
+        [imageClickBtn addTarget:self action:@selector(groupButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bgV addSubview:imageClickBtn];
         
         self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(40, 7, 100, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
@@ -35,19 +40,25 @@
         self.groupCreateTimeLable.font =[ UIFont systemFontOfSize:12];
         [self.bgV addSubview:self.groupCreateTimeLable];
         
-        UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 310-20, 1)];
+        UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 320-20, 1)];
         lineView1.backgroundColor = kColorWithRGB(200,200,200, 0.7);
         [self.bgV addSubview:lineView1];
 
     }
     return self;
 }
+-(void)groupButtonClick:(id)sender
+{
+    if (self.groupImageDeleGate) {
+        [self.groupImageDeleGate groupImageClick:self];
+    }
+}
 
 //刷新时间控件
 -(void)refreTimeLable
 {
     CGSize nameSize = [self.groupCreateTimeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    self.groupCreateTimeLable.frame=CGRectMake(300-nameSize.width-5, 7, nameSize.width, 20);
+    self.groupCreateTimeLable.frame=CGRectMake(310-nameSize.width-5, 7, nameSize.width, 20);
 }
 //设置群信息
 -(void)setGroupMsg:(NSString*)groupImage GroupName:(NSString*)groupName MsgTime:(NSString*)msgTime

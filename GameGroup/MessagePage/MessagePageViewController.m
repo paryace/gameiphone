@@ -564,6 +564,9 @@
             [DataStoreManager deleteThumbMsgWithSender:groupId];
             [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
             
+        }else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:@"groupApplicationState"])
+        {
+            [DataStoreManager deleteJoinGroupApplication];
         }
         else{
             if ([[[allMsgArray objectAtIndex:indexPath.row]sender]isEqual:@"1234567wxxxxxxxxx"])

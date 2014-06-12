@@ -249,7 +249,9 @@
             
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
             
-            [self buildmemberisAudit:isAuth title:[KISDictionaryHaveKey(responseObject, @"state")boolValue]?KISDictionaryHaveKey(responseObject, @"rank"):[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
+
+            
+            [self buildmemberisAudit:isAuth title:isAuth?[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")]:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             
             
             
@@ -314,7 +316,7 @@
             
         EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         gameImg.center = CGPointMake(25, 40);
-        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
             

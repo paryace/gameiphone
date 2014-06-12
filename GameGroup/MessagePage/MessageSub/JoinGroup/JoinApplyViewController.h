@@ -10,7 +10,7 @@
 #import "JoinApplyCell.h"
 #import "CreateGroupMsgCell.h"
 
-@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,DetailDeleGate,CreateGroupDetailDeleGate>
+@interface JoinApplyViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,DetailDeleGate,CreateGroupDetailDeleGate,GroupImageDeleGate>
 
 
 @end

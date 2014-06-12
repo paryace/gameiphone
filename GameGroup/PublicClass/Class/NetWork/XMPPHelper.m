@@ -378,6 +378,7 @@
             
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -420,6 +421,29 @@
         [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
          [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
+    }
+}
+
+-(NSString*)getMsgTitle:(NSString*)msgtype
+{
+    if([msgtype isEqualToString:@"joinGroupApplication"]){
+        return @"申请加入群";
+    }else if ([msgtype isEqualToString:@"joinGroupApplicationAccept"]){
+        return @"入群申请通过";
+    }else if ([msgtype isEqualToString:@"joinGroupApplicationReject"]){
+        return @"入群申请拒绝";
+    }else if ([msgtype isEqualToString:@"groupApplicationUnderReview"]){
+        return @"群审核已提交";
+    }else if ([msgtype isEqualToString:@"groupApplicationAccept"]){
+        return  @"群审核通过";
+    }else if ([msgtype isEqualToString:@"groupApplicationReject"]){
+        return  @"群审核被拒绝";
+    }else if ([msgtype isEqualToString:@"groupLevelUp"]){
+        return  @"群等级提升";
+    }else if ([msgtype isEqualToString:@"groupBillboard"]){
+        return  @"群公告";
+    }else if ([msgtype isEqualToString:@"friendJoinGroup"]){
+        return  @"好友加入了新的群组";
     }
 }
 //sender:@"10000202@gamepro.com/862933025698753"
