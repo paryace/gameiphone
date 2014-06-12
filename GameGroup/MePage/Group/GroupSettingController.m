@@ -20,7 +20,7 @@
     [self setTopViewWithTitle:@"群组设置" withBackButton:YES];
     
     UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, startX+20,320, 45)];
-    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    UIButton * topBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
     [topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [topBtn setTitle:@"群组消息提示" forState:UIControlStateNormal];
@@ -32,12 +32,12 @@
     [topBtn addTarget:self action:@selector(hint:) forControlEvents:UIControlEventTouchUpInside];
     [itemone addSubview:topBtn];
     
-    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20-34, 14, 25, 20)];
+    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20-34, 12.5, 25, 20)];
     soundimageView.image = KUIImage(@"nor_soundSong");
     soundimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:soundimageView];
     
-    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
+    UIImageView *topimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
     topimageView.image = KUIImage(@"right_arrow");
     topimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:topimageView];
@@ -46,7 +46,7 @@
     
     
     UIView * itemtwo=[[UIView alloc] initWithFrame:CGRectMake(0, startX+71,320, 45)];
-    UIButton * twoBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    UIButton * twoBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
     [twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [twoBtn setTitle:@"我的群角色" forState:UIControlStateNormal];
@@ -58,12 +58,12 @@
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
     
-    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 18, 8, 12)];
+    UIImageView *twoimageView=[[UIImageView alloc] initWithFrame:CGRectMake(300, 16.5, 8, 12)];
     twoimageView.image = KUIImage(@"right_arrow");
     twoimageView.backgroundColor = [UIColor clearColor];
     [itemtwo addSubview:twoimageView];
     
-    UILabel *groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 17, 50, 20)];
+    UILabel *groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 12.5, 50, 20)];
     groupNameLable.backgroundColor = [UIColor clearColor];
     groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
     groupNameLable.text = @"群名";
@@ -72,8 +72,10 @@
     
     [self.view addSubview:itemtwo];
     
+    
+    
     UIView * itemthree=[[UIView alloc] initWithFrame:CGRectMake(0, startX+122,320, 45)];
-    UIButton * threeBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    UIButton * threeBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
     [threeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [threeBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
@@ -84,23 +86,18 @@
     threeBtn.userInteractionEnabled = YES;
     [threeBtn addTarget:self action:@selector(new:) forControlEvents:UIControlEventTouchUpInside];
     [itemthree addSubview:threeBtn];
-    UIImageView *threeimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
+    
+    UIImageView *threeimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
     threeimageView.image = KUIImage(@"right_arrow");
     threeimageView.backgroundColor = [UIColor clearColor];
     [itemthree addSubview:threeimageView];
+    
     [self.view addSubview:itemthree];
     
     
     UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,startX+223,320, 45)];
-    [self.view addSubview:itemfour];
-
-    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 18, 8, 12)];
-    fourimageView.image = KUIImage(@"right_arrow");
-    fourimageView.backgroundColor = [UIColor clearColor];
-    [itemfour addSubview:fourimageView];
-    fourimageView.userInteractionEnabled = YES;
-
-    UIButton * fourBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    
+    UIButton * fourBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [fourBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     fourBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
@@ -110,6 +107,15 @@
     fourBtn.userInteractionEnabled = YES;
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
     [itemfour addSubview:fourBtn];
+
+    UIImageView *fourimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
+    fourimageView.image = KUIImage(@"right_arrow");
+    fourimageView.backgroundColor = [UIColor clearColor];
+    [itemfour addSubview:fourimageView];
+    
+    
+    [self.view addSubview:itemfour];
+   
     
     
     UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+300,280, 40)];
@@ -120,6 +126,7 @@
     okButton.backgroundColor = [UIColor clearColor];
     [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okButton];
+    
     if (self.shiptypeCount ==0) {//群主
         [fourBtn setTitle:@"群成员管理" forState:UIControlStateNormal];
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
