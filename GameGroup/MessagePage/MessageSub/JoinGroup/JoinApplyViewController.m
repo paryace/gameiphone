@@ -255,7 +255,7 @@
     for (NSMutableDictionary * clickDic in m_applyArray) {
         if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")]
             &&[KISDictionaryHaveKey(clickDic, @"msgType") isEqualToString:KISDictionaryHaveKey(dict, @"msgType")]
-            &&![KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]) {
+            &&[KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]) {
             [clickDic setObject:state forKey:@"state"];
         }
     }

@@ -312,7 +312,8 @@
             
         EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         gameImg.center = CGPointMake(25, 40);
-        gameImg.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+        gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
             
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
