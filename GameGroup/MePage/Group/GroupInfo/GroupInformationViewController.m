@@ -101,39 +101,39 @@
         }
         
     }
-   else if (shiptypeCount==1) {//管理员
-       if (sender.tag ==100) {//发消息
-           KKChatController * kkchat = [[KKChatController alloc] init];
-           kkchat.chatWithUser = self.groupId;
-           kkchat.type = @"group";
-           [self.navigationController pushViewController:kkchat animated:YES];
-       }
-       else if(sender.tag ==101){
-           GroupSettingController *gr = [[GroupSettingController alloc]init];
-           gr.groupId = self.groupId;
-           gr.shiptypeCount = shiptypeCount;
-           [self.navigationController pushViewController:gr animated:YES];
-           NSLog(@"群设置");
-       }else{
-           NSLog(@"退出群");
-       }
-   
-    }
-   else if (shiptypeCount==2) {//成员
-       if (sender.tag ==100) {//发消息
-           KKChatController * kkchat = [[KKChatController alloc] init];
-           kkchat.chatWithUser = self.groupId;
-           kkchat.type = @"group";
-           [self.navigationController pushViewController:kkchat animated:YES];
-       }else{
-           GroupSettingController *gr = [[GroupSettingController alloc]init];
-           gr.groupId = self.groupId;
-           gr.shiptypeCount = shiptypeCount;
-           [self.navigationController pushViewController:gr animated:YES];
-           NSLog(@"群设置");
-       }
-       
-    }
+//   else if (shiptypeCount==1) {//管理员
+//       if (sender.tag ==100) {//发消息
+//           KKChatController * kkchat = [[KKChatController alloc] init];
+//           kkchat.chatWithUser = self.groupId;
+//           kkchat.type = @"group";
+//           [self.navigationController pushViewController:kkchat animated:YES];
+//       }
+//       else if(sender.tag ==101){
+//           GroupSettingController *gr = [[GroupSettingController alloc]init];
+//           gr.groupId = self.groupId;
+//           gr.shiptypeCount = shiptypeCount;
+//           [self.navigationController pushViewController:gr animated:YES];
+//           NSLog(@"群设置");
+//       }else{
+//           NSLog(@"退出群");
+//       }
+//   
+//    }
+//   else if (shiptypeCount==2) {//成员
+//       if (sender.tag ==100) {//发消息
+//           KKChatController * kkchat = [[KKChatController alloc] init];
+//           kkchat.chatWithUser = self.groupId;
+//           kkchat.type = @"group";
+//           [self.navigationController pushViewController:kkchat animated:YES];
+//       }else{
+//           GroupSettingController *gr = [[GroupSettingController alloc]init];
+//           gr.groupId = self.groupId;
+//           gr.shiptypeCount = shiptypeCount;
+//           [self.navigationController pushViewController:gr animated:YES];
+//           NSLog(@"群设置");
+//       }
+//       
+//    }
     else{//陌生人
         SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
         setupVC.mySetupType = SETUP_JOIN;
@@ -312,7 +312,7 @@
             
         EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
         gameImg.center = CGPointMake(25, 40);
-        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
             
