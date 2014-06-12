@@ -28,8 +28,13 @@
     [self setTopViewWithTitle:@"群组设置" withBackButton:YES];
     //群组消息提示
     
+    UIScrollView *scV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
+    scV.scrollEnabled = YES;
+    scV.contentSize=CGSizeMake(320, 550);
+    [self.view addSubview:scV];
     
-    UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, startX+20,320, 45)];
+    
+    UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, 20,320, 45)];
     UIButton * topBtn = [self getItemBtn:@"群组消息提示"];
     [topBtn addTarget:self action:@selector(hint:) forControlEvents:UIControlEventTouchUpInside];
     [itemone addSubview:topBtn];
@@ -51,10 +56,10 @@
     topimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:topimageView];
     
-    [self.view addSubview:itemone];
+    [scV addSubview:itemone];
     
     // 我的群角色
-    UIView * itemtwo=[[UIView alloc] initWithFrame:CGRectMake(0, startX+66,320, 45)];
+    UIView * itemtwo=[[UIView alloc] initWithFrame:CGRectMake(0, 66,320, 45)];
     UIButton * twoBtn = [self getItemBtn:@"我的群角色"];
     [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
     [itemtwo addSubview:twoBtn];
@@ -71,11 +76,11 @@
     groupNameLable.font =[ UIFont systemFontOfSize:14];
     [itemtwo addSubview:groupNameLable];
     
-    [self.view addSubview:itemtwo];
+    [scV addSubview:itemtwo];
     
     
     //邀请新成员
-    UIView * itemthree=[[UIView alloc] initWithFrame:CGRectMake(0, startX+112,320, 45)];
+    UIView * itemthree=[[UIView alloc] initWithFrame:CGRectMake(0, 112,320, 45)];
     UIButton * threeBtn = [self getItemBtn:@"邀请新成员"];
     [threeBtn addTarget:self action:@selector(new:) forControlEvents:UIControlEventTouchUpInside];
     [itemthree addSubview:threeBtn];
@@ -85,10 +90,10 @@
     threeimageView.backgroundColor = [UIColor clearColor];
     [itemthree addSubview:threeimageView];
     
-    [self.view addSubview:itemthree];
+    [scV addSubview:itemthree];
     
     //举报该群组
-    UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,startX+213,320, 45)];
+    UIView * itemfour=[[UIView alloc] initWithFrame:CGRectMake(0,213,320, 45)];
     UIButton * fourBtn = [self getItemBtn:@"举报该群组"];
     [fourBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [fourBtn addTarget:self action:@selector(report:) forControlEvents:UIControlEventTouchUpInside];
@@ -100,58 +105,58 @@
     [itemfour addSubview:fourimageView];
     
     
-    [self.view addSubview:itemfour];
+    [scV addSubview:itemfour];
     
     
     
     
     //发布群公告
-    UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,startX+213,320, 45)];
+    UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,213,320, 45)];
     UIButton * fiveBtn = [self getItemBtn:@"发布群公告"];
     [fiveBtn addTarget:self action:@selector(publish:) forControlEvents:UIControlEventTouchUpInside];
     [itemfive addSubview:fiveBtn];
     
-    [self.view addSubview:itemfive];
+    [scV addSubview:itemfive];
     
     
     //提示信息
-    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(20,startX+258,280, 50)];
+    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(20,258,280, 50)];
     explainLable.backgroundColor = [UIColor clearColor];
     explainLable.textColor = kColorWithRGB(100,100,100, 0.7);
     explainLable.text = @"陌游群公告会在我的组织中有非常明显的提示，可以很容易的被群成员注意到.";
     explainLable.font =[ UIFont systemFontOfSize:12];
     explainLable.numberOfLines = 2 ;
-    [self.view addSubview:explainLable];
+    [scV addSubview:explainLable];
     
     
     //管理群成员
-    UIView * itemsixe=[[UIView alloc] initWithFrame:CGRectMake(0,startX+309,320, 45)];
+    UIView * itemsixe=[[UIView alloc] initWithFrame:CGRectMake(0,309,320, 45)];
     UIButton * sixeBtn = [self getItemBtn:@"管理群成员"];
     [sixeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
     [sixeBtn addTarget:self action:@selector(managerGroup:) forControlEvents:UIControlEventTouchUpInside];
     [itemsixe addSubview:sixeBtn];
     
-    [self.view addSubview:itemsixe];
+    [scV addSubview:itemsixe];
     
     //编辑群资料
-    UIView * itemseven=[[UIView alloc] initWithFrame:CGRectMake(0,startX+355,320, 45)];
+    UIView * itemseven=[[UIView alloc] initWithFrame:CGRectMake(0,355,320, 45)];
     UIButton * sevenBtn = [self getItemBtn:@"编辑群资料"];
     [sevenBtn addTarget:self action:@selector(editGroupInfo:) forControlEvents:UIControlEventTouchUpInside];
     [itemseven addSubview:sevenBtn];
     
-    [self.view addSubview:itemseven];
+    [scV addSubview:itemseven];
     
    
     
     //离开该群,解散群
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,startX+290,280, 40)];
+    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,290,280, 40)];
     [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     okButton.backgroundColor = [UIColor clearColor];
     [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:okButton];
+    [scV addSubview:okButton];
     
     if (self.shiptypeCount ==0) {//群主
         okButton.frame  = CGRectMake(20,startX+421,280, 40);
