@@ -301,7 +301,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 4;
+    return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -309,7 +309,7 @@
     
 
     if (indexPath.row ==0) {
-        static NSString *cellinde = @"cell1";
+        static NSString *cellinde = @"cell0";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
@@ -324,23 +324,43 @@
 
         titleLabel.text = @"群分类";
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
-            
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
-        gameImg.center = CGPointMake(25, 40);
-            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
-        gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
-        [cell addSubview:gameImg];
-            
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
-
             for (int i =0; i<tags.count; i++) {
 //                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
-                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*80,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                CGFloat x = 80+(i+1)/2*88;
+                CGFloat y = 10+(i)/2*30;
+                
+                NSLog(@"x--->>%f",x);
+                NSLog(@"y--->>%f",y);
+                
+                
+                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*88,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
         return cell;
     }
-    else if (indexPath.row ==1)
+   else if (indexPath.row ==1) {
+        static NSString *cellinde = @"cell1";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+        if (cell ==nil) {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+        }
+        
+        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
+        ;
+        titleLabel.textColor = [UIColor grayColor];
+        titleLabel.font = [UIFont systemFontOfSize:14];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [cell.contentView addSubview:titleLabel];
+        
+        titleLabel.text = @"服务器";
+        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(68, 10, 20, 20)];
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+        gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
+        [cell addSubview:gameImg];
+        return cell;
+    }
+    else if (indexPath.row ==2)
     {    static NSString *cellinde2 = @"cell2";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
         if (cell ==nil) {
@@ -364,7 +384,7 @@
         return cell;
 
     }
-    else if (indexPath.row ==2)
+    else if (indexPath.row ==3)
     {
         static NSString *cellinde3 = @"cell3";
         GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
