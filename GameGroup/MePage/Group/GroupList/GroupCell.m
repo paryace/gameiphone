@@ -41,10 +41,10 @@
         [self.cricleLable setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.cricleLable];
         
-        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(225, 5, 70, 20)];
+        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(320-65, 5, 50, 25)];
         leveImageV.image = KUIImage(@"level_image.png");
-        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 20)];
-        [self.levelLable setTextAlignment:NSTextAlignmentRight];
+        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 50, 20)];
+        [self.levelLable setTextAlignment:NSTextAlignmentCenter];
         [self.levelLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [leveImageV addSubview:self.levelLable];
         [self addSubview:leveImageV];
