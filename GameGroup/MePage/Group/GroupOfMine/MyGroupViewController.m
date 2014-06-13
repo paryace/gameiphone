@@ -40,6 +40,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
+    
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
@@ -60,10 +63,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
-    m_layout.minimumLineSpacing =3;
-    m_layout.itemSize = CGSizeMake((320-15)/4, (320-15)/4);
+    m_layout.minimumLineSpacing =5;
+    m_layout.itemSize = CGSizeMake((260-15)/4, (260-15)/4);
     m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-13);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,10,3,10);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
@@ -104,6 +107,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     [self getGroupListFromNet];
     // Do any additional setup after loading the view.
+}
+-(void)refreshNet:(id)sender
+{
+    [self getGroupListFromNet];
 }
 
 -(void)backButtonClick:(id)sender
@@ -215,8 +222,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.headImgView.placeholderImage =nil;
         cell.headImgView.imageURL = nil;
         NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
-        cell.headImgView.image = KUIImage(imgStr);
+        cell.headImgView.placeholderImage = KUIImage(imgStr);
+        cell.headImgView.imageURL = nil;
         cell.titleLabel.backgroundColor = [UIColor clearColor];
+        cell.titleLabel.text = @"";
     }else{
     cell.headImgView.placeholderImage = KUIImage(@"mess_news");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];

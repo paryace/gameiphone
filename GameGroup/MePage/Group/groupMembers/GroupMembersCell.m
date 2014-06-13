@@ -24,7 +24,7 @@
         self.headImageView.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageView];
         
-        self.nameLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 5, 90, 20)];
+        self.nameLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 5, 135, 20)];
         [self.nameLable setTextAlignment:NSTextAlignmentLeft];
         [self.nameLable setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLable setBackgroundColor:[UIColor clearColor]];
@@ -54,14 +54,14 @@
         lineView.backgroundColor = [UIColor grayColor];
         [self.bgView addSubview:lineView];
         
-        self.numLabel = [[UILabel alloc] initWithFrame:CGRectMake(240, 10, 60, 20)];
+        self.numLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 10, 100, 20)];
         [self.numLabel setTextColor:[UIColor blueColor]];
         [self.numLabel setFont:[UIFont systemFontOfSize:18]];
-        self.numOfLabel.textAlignment = NSTextAlignmentCenter;
+        self.numLabel.textAlignment = NSTextAlignmentCenter;
         [self.numLabel setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.numLabel];
         
-        self.numOfLabel = [[UILabel alloc] initWithFrame:CGRectMake(240, 40, 60, 20)];
+        self.numOfLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 40, 100, 20)];
         [self.numOfLabel setTextColor:[UIColor blackColor]];
         [self.numOfLabel setFont:[UIFont systemFontOfSize:13]];
         self.numOfLabel.textAlignment  = NSTextAlignmentCenter;

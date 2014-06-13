@@ -143,10 +143,10 @@
     
     cell.timeLabel.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
     
-    cell.clazzImageView.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(tempDict, @"characterImg")];
-    cell.roleLabel.text = KISDictionaryHaveKey(tempDict, @"characterInfo");
-    cell.numLabel.text = KISDictionaryHaveKey(tempDict, @"value1");
-    cell.numOfLabel.text = KISDictionaryHaveKey(tempDict, @"value2");
+    cell.clazzImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterImg")]];
+    cell.roleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterInfo")];
+    cell.numLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"value1")];
+    cell.numOfLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"value2")];
 //    [cell refreshCell];
     
 //    NSArray * gameidss=[GameCommon getGameids:[tempDict objectForKey:@"gameids"]];

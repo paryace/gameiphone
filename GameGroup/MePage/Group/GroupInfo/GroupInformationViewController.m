@@ -8,11 +8,13 @@
 
 #import "GroupInformationViewController.h"
 #import "EGOImageView.h"
+#import "EGOImageButton.h"
 #import "JoinGroupViewController.h"
 #import "KKChatController.h"
 #import "MembersListViewController.h"
 #import "GroupSettingController.h"
 #import "SetUpGroupViewController.h"
+
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -39,7 +41,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshNet:) name:@"refelsh_groupInfo_wx" object:nil];
     
     [self setTopViewWithTitle:@"" withBackButton:YES];
     
@@ -76,6 +78,10 @@
     // Do any additional setup after loading the view.
 }
 
+-(void)refreshNet:(id)sender
+{
+    [self getInfoWithNet];
+}
 -(void)didClickGroup:(UIButton *)sender
 {
     
@@ -147,19 +153,29 @@
 
 
 
--(void)buildmemberisAudit:(BOOL)isAudit title:(NSString *)title imgArray:(NSArray *)array
+-(void)buildmemberisAudit:(NSString *)isAudit title:(NSString *)title num:(NSString *)numStr  imgArray:(NSArray *)array
 {
     boView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
     boView.backgroundColor =[ UIColor clearColor];
     [aoView addSubview:boView];
-    if (!isAudit) {
-        UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(20, 20, 40, 20)];
+    if ([isAudit intValue]==0||[isAudit intValue]==3) {
+        
+        aoView.backgroundColor = [UIColor clearColor];
+        UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+        imageView.image = KUIImage(@"shenhezhong");
+        imageView.backgroundColor = [UIColor clearColor];
         [boView addSubview:imageView];
-        UILabel *label =[[ UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 40)];
+        
+        UILabel *label =[[ UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
         label.backgroundColor = [UIColor clearColor];
         label.textColor = [UIColor whiteColor];
-        label.text = [NSString stringWithFormat:@"审核队列:%@",title];
-        label.font = [UIFont systemFontOfSize:14];
+        if ([isAudit intValue]==0) {
+            label.text = [NSString stringWithFormat:@"审核队列中,您排在第%@位",numStr];
+        }else{
+            label.text = @"审核中...";
+        }
+        label.font = [UIFont boldSystemFontOfSize:18];
+        label.textAlignment = NSTextAlignmentCenter;
         [boView addSubview:label];
         
     }else{
@@ -180,9 +196,10 @@
     [boView addSubview:Memb];
         
         for (int i =0; i<array.count; i++) {
-            EGOImageView *headimgView = [[EGOImageView alloc]initWithFrame:CGRectMake(100+45*i, 5, 40, 40)];
+            EGOImageButton *headimgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(100+45*i, 5, 40, 40)];
             headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];
             headimgView.placeholderImage = KUIImage(@"place_girl");
+            [headimgView addTarget:self action:@selector(enterMembersPage:) forControlEvents:UIControlEventTouchUpInside];
             [boView addSubview:headimgView];
         }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -216,12 +233,49 @@
         [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100;
         button.backgroundColor = [UIColor grayColor];
-        [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
+        if (shiptype ==1) {
+            [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
+
+        }else{
+            [button addTarget:self action:@selector(chexiaoGroup:) forControlEvents:UIControlEventTouchUpInside];
+  
+        }
         [view addSubview:button];
     }
     
 }
 
+//撤销群申请
+-(void)chexiaoGroup:(id)sender
+{
+    //251
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"251" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
+        [self showMessageWindowWithContent:@"取消成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag = 789;
+                [alert show];
+            }
+        }
+    }];
+
+}
 
 -(void)getInfoWithNet
 {
@@ -240,38 +294,41 @@
             m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
             [m_myTableView reloadData];
             
-            BOOL isAuth = [KISDictionaryHaveKey(responseObject, @"state")boolValue];
+            NSString * authStr = KISDictionaryHaveKey(responseObject, @"state");
             
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
             
-
             
-            [self buildmemberisAudit:isAuth title:!isAuth?[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")]:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
-            
-            
+            [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             
             NSString *identity = KISDictionaryHaveKey( responseObject, @"groupUsershipType");
             
             shiptypeCount = [identity intValue];
             
-            if ([identity intValue]==0) {//群主
-                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
-                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
-            }
-            else if ([identity intValue]==1) {//管理员
-                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
-                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
-            }
-            else if ([identity intValue]==2) {//普通成员
-                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
-                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
-   
-            }else{//陌生人
-                NSArray *array = @[@"申请加入"];
-                [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
-   
-            }
+            if ([authStr intValue]==0||[authStr intValue]==3) {
+                NSArray *array = @[@"chexiaogroup"];
+                [self buildbelowbutotnWithArray:array shiptype:2];
+  
+            }else{
+                if ([identity intValue]==0) {//群主
+                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    [self buildbelowbutotnWithArray:array shiptype:1];
+                }
+                else if ([identity intValue]==1) {//管理员
+                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    [self buildbelowbutotnWithArray:array shiptype:1];
+                }
+                else if ([identity intValue]==2) {//普通成员
+                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    [self buildbelowbutotnWithArray:array shiptype:1];
+                    
+                }else{//陌生人
+                    NSArray *array = @[@"申请加入"];
+                    [self buildbelowbutotnWithArray:array shiptype:1];
+                    
+                }
 
+            }
             
             
         }
@@ -448,13 +505,14 @@
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
         }
         
-        UILabel *tLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 20)]
+        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
-        tLabel.text = @"创建时间";
-        tLabel.textColor = [UIColor grayColor];
-        tLabel.font = [UIFont systemFontOfSize:14];
-        tLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:tLabel];
+        titleLabel.textColor = [UIColor grayColor];
+        titleLabel.font = [UIFont systemFontOfSize:14];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [cell addSubview:titleLabel];
+        
+        titleLabel.text = @"创建于";
 
         
         UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)]

@@ -11,7 +11,7 @@
 #import "MemberEditViewController.h"
 #import "GroupInfoEditViewController.h"
 #import "PublishBillboardViewController.h"
-
+#import "MyGroupViewController.h"
 @interface GroupSettingController ()
 {
     UILabel *groupNameLable;
@@ -268,7 +268,8 @@
         }
     }else if (alertView.tag == 789)
     {
-        [self.navigationController popViewControllerAnimated:YES];
+        MyGroupViewController *me = nil;
+        [self.navigationController popToViewController:me animated:YES];
     }
 }
 
