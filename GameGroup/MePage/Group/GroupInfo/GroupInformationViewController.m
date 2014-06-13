@@ -327,8 +327,8 @@
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
 //                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*88,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
-                NSLog(@"%d",((i%2==0?i+1:i)/2));
                 NSInteger offY = (i%2==0?i+1:i)/2;
+                 NSLog(@"%d",offY);
                 [self buildImgVWithframe:CGRectMake(80+(i%2)*88+(i%2==1?5:0),10+offY*30  + (offY==0?0:5*offY),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
