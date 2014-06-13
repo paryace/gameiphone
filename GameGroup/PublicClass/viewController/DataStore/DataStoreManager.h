@@ -224,6 +224,10 @@
 
 +(void)saveDSGroupList:(NSDictionary *)groupList;//保存群列表
 
++(void)saveDSGroupUser:(NSDictionary *)groupUser GroupId:(NSString*)groupId;//保存群组的用户列表
+
++(NSMutableArray *)queryGroupUserList:(NSString*)groupId;//查找群用户列表
+
 +(NSMutableArray *)queryGroupInfoList;//查找群列表
 
 +(NSMutableDictionary*)queryGroupInfoByGroupId:(NSString*)groupId;//查找单个群信息
@@ -245,4 +249,7 @@
 +(void)deleteJoinGroupApplication;//删除所有的群组消息
 
 +(void)deleteMsgByGroupId:(NSString*)groupId;//删除该群的所有消息
+
++(void)blankMsgUnreadCountFormsgType:(NSString *)msgType;//根据msgType将未读的消息数量变为0
+
 @end

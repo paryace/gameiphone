@@ -18,6 +18,8 @@
 #import "DSGroupMsgs.h"
 #import "DSGroupList.h"
 #import "DSGroupApplyMsg.h"
+#import "DSGroupUser.h"
+
 @implementation DataStoreManager
 -(void)nothing
 {}
@@ -187,7 +189,7 @@
             [msg MR_deleteInContext:localContext];
         }
         
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs)
         {
@@ -404,7 +406,7 @@
     }else if([sendertype isEqualToString:JOINGROUPMSG])//加入群组消息
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -413,7 +415,7 @@
             thumbMsgs.msgContent = msgContent;
             thumbMsgs.sendTime = sendTime;
             thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = @"groupApplicationState";
+            thumbMsgs.msgType = GROUPAPPLICATIONSTATE;
             int unread = [thumbMsgs.unRead intValue];
             thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
             thumbMsgs.messageuuid = msgId;
@@ -647,6 +649,17 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (thumbMsgs) {
+            thumbMsgs.unRead = @"0";
+        }
+    }];
+}
+
++(void)blankMsgUnreadCountFormsgType:(NSString *)msgType
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
@@ -2452,7 +2465,19 @@
     NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"gameid")];
     NSString * level = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"level")];
     NSString * maxMemberNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"maxMemberNum")];
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"createDate")];
+    NSString * distance = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"distance")];
+    NSString * experience = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"experience")];
+    NSString * gameRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"gameRealm")];
+    NSString * groupUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"groupUsershipType")];
+    NSString * info = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"info")];
+    NSString * infoImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"infoImg")];
+    NSString * location = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"location")];
     
+    NSMutableArray * userList = KISDictionaryHaveKey(groupList, @"memberList");
+    for (NSMutableDictionary * user in userList) {
+        [self saveDSGroupUser:user GroupId:groupId];
+    }
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
@@ -2466,8 +2491,56 @@
         groupInfo.gameid = gameid;
         groupInfo.level = level;
         groupInfo.maxMemberNum = maxMemberNum;
+        groupInfo.createDate = createDate;
+        groupInfo.distance = distance;
+        groupInfo.experience = experience;
+        groupInfo.gameRealm = gameRealm;
+        groupInfo.groupUsershipType = groupUsershipType;
+        groupInfo.info = info;
+        groupInfo.infoImg = infoImg;
+        groupInfo.location = location;
     }];
 }
+#pragma mark - 保存群组用户列表信息
++(void)saveDSGroupUser:(NSDictionary *)groupUser GroupId:(NSString*)groupId
+{
+    NSString * userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupUser, @"userid")];
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userId==[c]%@",groupId,userId];
+        DSGroupUser * groupUserInfo = [DSGroupUser MR_findFirstWithPredicate:predicate];
+        if (!groupUserInfo)
+            groupUserInfo = [DSGroupUser MR_createInContext:localContext];
+        groupUserInfo.groupId = groupId;
+        groupUserInfo.userId = userId;
+    }];
+}
+//查询群用户列表
++(NSMutableArray *)queryGroupUserList:(NSString*)groupId
+{
+    
+    NSMutableArray *userList = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+    NSArray *array = [DSGroupUser MR_findAllWithPredicate:predicate];
+    
+    for (DSGroupUser * groupUser in array) {
+        NSMutableDictionary * grouoDic = [self queryGroupUser:groupUser];
+        [userList addObject:grouoDic];
+    }
+    return userList;
+}
++(NSMutableDictionary*)queryGroupUser:(DSGroupUser*)groupuser
+{
+    if (!groupuser) {
+        return nil;
+    }
+    NSMutableDictionary * groupUserInfo = [NSMutableDictionary dictionary];
+    [groupUserInfo setObject:groupuser.groupId forKey:@"groupId"];
+    [groupUserInfo setObject:groupuser.userId forKey:@"userId"];
+    return groupUserInfo;
+}
+
+
+
 
 //查找所有的角色
 +(NSMutableArray *)queryGroupInfoList
@@ -2496,6 +2569,14 @@
     [groupInfo setObject:group.gameid forKey:@"gameid"];
     [groupInfo setObject:group.level forKey:@"level"];
     [groupInfo setObject:group.maxMemberNum forKey:@"maxMemberNum"];
+    [groupInfo setObject:group.createDate forKey:@"createDate"];
+    [groupInfo setObject:group.distance forKey:@"distance"];
+    [groupInfo setObject:group.experience forKey:@"experience"];
+    [groupInfo setObject:group.gameRealm forKey:@"gameRealm"];
+    [groupInfo setObject:group.groupUsershipType forKey:@"groupUsershipType"];
+    [groupInfo setObject:group.info forKey:@"info"];
+    [groupInfo setObject:group.infoImg forKey:@"infoImg"];
+    [groupInfo setObject:group.location forKey:@"location"];
     return groupInfo;
 }
 
@@ -2565,7 +2646,7 @@
 +(NSMutableArray*)queryDSGroupApplyMsg
 {
     NSMutableArray * msgList = [NSMutableArray array];
-    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAll];
+    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO];
     for (DSGroupApplyMsg * apm in groupArrlyList) {
         [msgList addObject:[self queryDSGroupApplyMsg:apm]];
     }

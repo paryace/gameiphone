@@ -154,11 +154,19 @@
     </entity>
     <entity name="DSGroupList" representedClassName="DSGroupList" syncable="YES">
         <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="currentMemberNum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="experience" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameRealm" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupUsershipType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="info" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="infoImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="level" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="maxMemberNum" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -175,6 +183,10 @@
         <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSGroupUser" representedClassName="DSGroupUser" syncable="YES">
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSMyNewsList" representedClassName="DSMyNewsList" syncable="YES">
         <attribute name="bigTitle" optional="YES" attributeType="String" syncable="YES"/>
@@ -346,7 +358,7 @@
         <element name="DSFriends" positionX="252" positionY="54" width="128" height="390"/>
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="330"/>
-        <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="165"/>
+        <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="285"/>
         <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="223"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
@@ -362,5 +374,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
     </elements>
 </model>

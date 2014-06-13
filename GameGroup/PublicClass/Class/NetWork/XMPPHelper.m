@@ -351,18 +351,6 @@
             [self.chatDelegate newGroupMessageReceived:dict];
             [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
         }
-        
-        else if([msgtype isEqualToString:@"joinGroupApplication"]){//入群申请
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-            [self.chatDelegate JoinGroupMessageReceived:dict];
-        }
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
                 ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]//入群申请通过
                 ||[msgtype isEqualToString:@"joinGroupApplicationReject"]//入群申请拒绝
