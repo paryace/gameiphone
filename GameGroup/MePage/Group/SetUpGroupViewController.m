@@ -59,6 +59,7 @@
     m_searchTf.returnKeyType =UIReturnKeyGo;
     m_searchTf.inputView = m_gamePickerView;
     m_searchTf.inputAccessoryView= toolbar;
+    m_searchTf.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:m_searchTf];
     
 
@@ -78,7 +79,7 @@
 
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, startX+220, 300, 44);
+    button.frame = CGRectMake(10, startX+230, 300, 44);
     [button setTitle:@"提交" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
@@ -90,14 +91,18 @@
 
 -(void)updateInfo:(id)sender
 {
+    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+    
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
-            [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
-            return;
-        }
-        [dic setObject:m_textView.text forKey:@"msg"];
-        [dic setObject:self.groupid forKey:@"groupId"];
-       [ self getInfoToNetWithparamDict:dic method:@"232"];
+    if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
+        [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
+        return;
+    }
+    [dic setObject:m_textView.text forKey:@"msg"];
+    [dic setObject:self.groupid forKey:@"groupId"];
+    [dic setObject:KISDictionaryHaveKey(dict, @"id") forKey:@"characterId"];
+    [dic setObject:KISDictionaryHaveKey(dict, @"gameid") forKey:@"gameid"];
+    [ self getInfoToNetWithparamDict:dic method:@"232"];
 }
 
 -(void)getInfoToNetWithparamDict:(NSMutableDictionary *)paramDict method:(NSString *)method
@@ -110,7 +115,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        [self showMessageWindowWithContent:@"提交成功!请等待确认" imageType:0];
+        [self showMessageWindowWithContent:@"提交成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
