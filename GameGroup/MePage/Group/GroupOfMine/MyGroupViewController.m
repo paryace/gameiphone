@@ -40,6 +40,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
+    
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
@@ -104,6 +107,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     [self getGroupListFromNet];
     // Do any additional setup after loading the view.
+}
+-(void)refreshNet:(id)sender
+{
+    [self getGroupListFromNet];
 }
 
 -(void)backButtonClick:(id)sender
@@ -218,6 +225,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.headImgView.placeholderImage = KUIImage(imgStr);
         cell.headImgView.imageURL = nil;
         cell.titleLabel.backgroundColor = [UIColor clearColor];
+        cell.titleLabel.text = @"";
     }else{
     cell.headImgView.placeholderImage = KUIImage(@"mess_news");
     cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];

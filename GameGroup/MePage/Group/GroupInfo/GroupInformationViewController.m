@@ -244,9 +244,37 @@
     }
     
 }
+
+//撤销群申请
 -(void)chexiaoGroup:(id)sender
 {
+    //251
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
     
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"251" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
+        [self showMessageWindowWithContent:@"取消成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag = 789;
+                [alert show];
+            }
+        }
+    }];
+
 }
 
 -(void)getInfoWithNet
