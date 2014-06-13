@@ -21,4 +21,15 @@
 @property (nonatomic, retain) NSString * level;
 @property (nonatomic, retain) NSString * maxMemberNum;
 
+@property (nonatomic, retain) NSString * createDate;
+@property (nonatomic, retain) NSString * distance;
+@property (nonatomic, retain) NSString * experience;
+@property (nonatomic, retain) NSString * gameRealm;
+@property (nonatomic, retain) NSString * groupUsershipType;
+@property (nonatomic, retain) NSString * info;
+@property (nonatomic, retain) NSString * infoImg;
+@property (nonatomic, retain) NSString * location;
+
+
+
 @end

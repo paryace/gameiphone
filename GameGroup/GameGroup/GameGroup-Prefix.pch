@@ -35,6 +35,7 @@
     #import "UpLoadFileService.h"
     #import "MessageService.h"
     #import "UserManager.h"
+    #import "GroupManager.h";
 
    #endif
 
@@ -100,6 +101,7 @@
 #define OTHERMESSAGE  @"otherMessage"//头衔 角色 战斗力
 #define GROUPMSG  @"groupmsg"//群组
 #define JOINGROUPMSG  @"joingroupmsg"//群组
+#define GROUPAPPLICATIONSTATE @"groupApplicationState"//群关系变化
 
 
 
@@ -142,9 +144,7 @@
 
 #define kLastVersion @"lastVersion"//上个版本的版本号 因1.0是用username登陆 后面版本是userid 必须清掉聊天消息和关注表
 
-//#define receiverFriendRecommended @"wx_receiverFriendRecommended"//接收好友推荐
-//#define receiverNewsMsg @"wx_receiverNewsMsg"//接收新闻消息
-//#define receiverOtherChrarterMsg @"wx_receiverOtherChrarterMsg"//关于角色动态消息
+#define groupInfoUpload @"groupInfoUpload"//更新群信息
 
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])

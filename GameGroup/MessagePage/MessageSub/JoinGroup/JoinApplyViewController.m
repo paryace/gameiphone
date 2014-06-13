@@ -21,18 +21,12 @@
 
 @implementation JoinApplyViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群消息列表" withBackButton:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreMsgList:) name:kJoinGroupMessage object:nil];
+    
     m_applyArray = [NSMutableArray array];
     m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_ApplyTableView.backgroundColor = UIColorFromRGBA(0xfcfcfc, 1);
@@ -42,7 +36,11 @@
     [self.view addSubview:m_ApplyTableView];
     [self getJoinGroupMsg];
 }
-
+-(void)refreMsgList:(NSNotification *)notification
+{
+    [DataStoreManager blankMsgUnreadCountFormsgType:GROUPAPPLICATIONSTATE];
+   [self getJoinGroupMsg];
+}
 -(void)getJoinGroupMsg
 {
     m_applyArray = [DataStoreManager queryDSGroupApplyMsg];

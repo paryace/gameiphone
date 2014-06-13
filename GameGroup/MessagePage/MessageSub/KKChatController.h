@@ -88,6 +88,12 @@ SendMsgDeleGate>
 }
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题
+
+@property (nonatomic, strong) UIButton *groupCircleBtn;  //群动态
+@property (nonatomic, strong) UILabel *groupCircleText;  //群动态数量
+@property (nonatomic, strong) UILabel *groupunReadMsgLable;  //群消息未读条数
+
+
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像

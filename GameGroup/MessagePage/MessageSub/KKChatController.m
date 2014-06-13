@@ -188,6 +188,11 @@ UINavigationControllerDelegate>
     
     [self.view addSubview:self.unReadL]; //未读数量
     
+    if ([self.type isEqualToString:@"group"]) {
+        [self.view addSubview:self.groupCircleImage]; //群动态入口
+        [self.view addSubview:self.groupunReadMsgLable];//群未读消息数
+    }
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
         object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
@@ -615,7 +620,7 @@ UINavigationControllerDelegate>
     }
     return _inPutView;
 }
-
+//未读消息数红点
 - (UILabel *)unReadL{
     if (!_unReadL) {
         
@@ -635,7 +640,36 @@ UINavigationControllerDelegate>
     }
     return _unReadL;
 }
+//群动态入口
+- (UIButton *)groupCircleImage{
+    if(!_groupCircleBtn){
+        _groupCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-60-5,startX+5,60,60)];
+        _groupCircleBtn.backgroundColor = [UIColor clearColor];
+        [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
+        [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_click") forState:UIControlStateHighlighted];
+        [_groupCircleBtn addTarget:self action:@selector(groupCricleButtonClick:)forControlEvents:UIControlEventTouchUpInside];
+        self.groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(20,33,40,20)];
+        self.groupCircleText .text = @"20";
+        self.groupCircleText.textColor = [UIColor whiteColor];
+        [_groupCircleBtn addSubview:self.groupCircleText];
+    }
+    return _groupCircleBtn;
+}
 
+//群的未读消息数
+- (UILabel *)groupunReadMsgLable{
+    if(!_groupunReadMsgLable){
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(100,startX - 20,120,20)];
+        _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
+        _groupunReadMsgLable.text = @"(未读消息65条)";
+        _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;
+        _groupunReadMsgLable.textColor = [UIColor whiteColor];
+        _groupunReadMsgLable.font = [UIFont systemFontOfSize:12.0f];
+    }
+    return _groupunReadMsgLable;
+}
+
+//加号按钮
 - (UIButton *)kkChatAddButton{
     if (!_kkChatAddButton) {
         _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -645,7 +679,7 @@ UINavigationControllerDelegate>
     }
     return _kkChatAddButton;
 }
-
+//表情
 - (UIButton *)emojiBtn{
     if (!_emojiBtn) {
         _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -659,7 +693,7 @@ UINavigationControllerDelegate>
 //导航条标题
 - (UILabel *)titleLabel{
     if(!_titleLabel){
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100,startX - 44,120,44)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100,startX - 37,120,20)];
         _titleLabel.backgroundColor = [UIColor clearColor];
         _titleLabel.text = self.nickName;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -696,7 +730,9 @@ UINavigationControllerDelegate>
     }
     return _textView;
 }
+- (void)groupCricleButtonClick:(UIButton *)sender{
 
+}
 //发送已读消息
 - (void)sendReadedMesg
 {

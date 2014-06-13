@@ -105,7 +105,10 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kOtherMessage object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
+    //申请加入群完成通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
+    //群信息更新完成通知
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
@@ -213,7 +216,13 @@
 {
    // [self displayMsgsForDefaultView];
 }
+//加入群
 -(void)joinGroupReceived:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
+//群信息更新完成
+-(void)groupInfoUploaded:(NSNotification *)notification
 {
     [self displayMsgsForDefaultView];
 }
@@ -348,17 +357,19 @@
     {//群组消息
         NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
         NSString * sender = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
-        
-        NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:groupId];
-       
-        NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+        NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
+        NSString * nickName ;
+        if (groupInfo) {
+            nickName = @"";
+        }
+        nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         
         NSString * senderNickname =[self getNickUserNameBySender:sender];
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
         cell.nameLabel.text =nickName;
-    } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupApplicationState"]){//申请加入群组
+    } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
         cell.headImageV.image = KUIImage(@"every_data_news");
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
@@ -449,7 +460,7 @@
         [self cleanUnReadCountWithType:4 Content:@"" typeStr:@""];
         return;
     }
-    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupApplicationState"])//申请加入群
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE])//申请加入群
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         JoinApplyViewController *newsVC = [[JoinApplyViewController alloc]init];
@@ -536,7 +547,7 @@
     else if (6 == type)//申请加入群
     {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",@"groupApplicationState"];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             thumbMsgs.unRead = @"0";
         }];//清数字
@@ -564,7 +575,7 @@
             [DataStoreManager deleteThumbMsgWithSender:groupId];
             [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
             
-        }else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:@"groupApplicationState"])
+        }else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:GROUPAPPLICATIONSTATE])
         {
             [DataStoreManager deleteJoinGroupApplication];
         }

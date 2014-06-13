@@ -20,4 +20,13 @@
 @dynamic level;
 @dynamic maxMemberNum;
 
+
+@dynamic createDate;
+@dynamic distance;
+@dynamic experience;
+@dynamic gameRealm;
+@dynamic groupUsershipType;
+@dynamic info;
+@dynamic infoImg;
+@dynamic location;
 @end

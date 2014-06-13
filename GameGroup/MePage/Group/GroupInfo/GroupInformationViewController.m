@@ -237,6 +237,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
+            
             m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
             [m_myTableView reloadData];
             
@@ -326,9 +327,12 @@
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
-                NSInteger offY = (i%2==0?i+1:i)/2;
-                 NSLog(@"offY-->%d",offY);
-                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+//<<<<<<< HEAD
+//                NSInteger offY = (i%2==0?i+1:i)/2;
+//                 NSLog(@"offY-->%d",offY);
+//                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+//=======
+                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
         return cell;
@@ -449,13 +453,15 @@
 {
     NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
     if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
-                CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 250) lineBreakMode:NSLineBreakByCharWrapping];
+        CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 250) lineBreakMode:NSLineBreakByCharWrapping];
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
         float height = 0.0;
 
     switch (indexPath.row) {
         case 0:
-            return tags.count *30+20;
+            NSLog(@"--------%d",tags.count/2);
+            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+            return  tagsRowCount*30+tagsRowCount*5+10;
             break;
         case 1:
             return 40;
