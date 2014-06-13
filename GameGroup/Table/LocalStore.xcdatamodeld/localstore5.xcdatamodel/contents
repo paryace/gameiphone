@@ -153,6 +153,7 @@
         <attribute name="userImg" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSGroupList" representedClassName="DSGroupList" syncable="YES">
+        <attribute name="available" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="currentMemberNum" optional="YES" attributeType="String" syncable="YES"/>
@@ -358,7 +359,7 @@
         <element name="DSFriends" positionX="252" positionY="54" width="128" height="390"/>
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="330"/>
-        <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="285"/>
+        <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="298"/>
         <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="223"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>

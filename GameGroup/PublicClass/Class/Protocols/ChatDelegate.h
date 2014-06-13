@@ -11,8 +11,14 @@
 @protocol ChatDelegate <NSObject>
 
 -(void)newMessageReceived:(NSDictionary *)messageContent;
+
 -(void)dailynewsReceived:(NSDictionary * )messageContent;
+
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
--(void)newGroupMessageReceived:(NSDictionary *)messageContent;
--(void)JoinGroupMessageReceived:(NSDictionary *)messageContent;
+
+-(void)newGroupMessageReceived:(NSDictionary *)messageContent;//群聊天
+
+-(void)JoinGroupMessageReceived:(NSDictionary *)messageContent;//创建群，审核群...
+
+-(void)changGroupMessageReceived:(NSDictionary *)messageContent;//加入或者退出群
 @end

@@ -73,6 +73,7 @@ UINavigationControllerDelegate>
 @property (nonatomic, copy) SendImageMessageSuccessBlock sendImageMessageSuccessBlock;
 @property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
+
 @end
 
 @implementation KKChatController
@@ -118,19 +119,28 @@ UINavigationControllerDelegate>
     }
     
 }
-
+//设置Title
 -(void)refreTitleText
 {
     if ([self.type isEqualToString:@"normal"]) {
-        if (![[DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser] isEqualToString:@""]) {
-            self.nickName = [DataStoreManager queryMsgRemarkNameForUser:self.chatWithUser];//刷新别名
-            self.titleLabel.text = self.nickName;
+        NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:self.chatWithUser];
+        if (!simpleUserDic) {
+            self.nickName = @"";
+        }else{
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
+            self.nickName = userNickName;
         }
     }else if([self.type isEqualToString:@"group"]){
-        NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:self.chatWithUser];
-        self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
-         self.titleLabel.text = self.nickName;
+        NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.chatWithUser];
+        if (!groupInfo) {
+            available = @"1";
+            self.nickName = @"";
+        }else{
+            available = KISDictionaryHaveKey(groupInfo, @"available");
+            self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+        }
     }
+    self.titleLabel.text = self.nickName;
 }
 
 //初始化会话界面UI
@@ -148,8 +158,11 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)
-        name:@"wxr_myActiveBeChanged"object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
+    //群信息更新完成通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
+    //用户信息更新完成
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userInfoUploaded:) name:userInfoUpload object:nil];
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
@@ -2035,9 +2048,39 @@ UINavigationControllerDelegate>
     }
 }
 
+#pragma mark 群信息更新完成
+-(void)groupInfoUploaded:(NSNotification *)notification
+{
+    if (![self.type isEqualToString:@"group"]) {
+        return;
+    }
+    NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
+    if (![groupId isEqualToString:self.chatWithUser])
+    {
+        return;
+    }
+    [self refreTitleText];
+    [self.tView reloadData];
+}
+
+#pragma mark 用户信息更新完成
+-(void)userInfoUploaded:(NSNotification *)notification
+{
+    if (![self.type isEqualToString:@"normal"]) {
+        return;
+    }
+    NSDictionary *userDictionary = KISDictionaryHaveKey(notification.userInfo, @"user");
+    NSString * userId = KISDictionaryHaveKey(userDictionary, @"userid");
+    if (![userId isEqualToString:self.chatWithUser])
+    {
+        return;
+    }
+    [self refreTitleText];
+    [self.tView reloadData];
+}
+
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
 {
-    
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];

@@ -55,6 +55,9 @@ static UserManager *userManager = NULL;
     return dict;
 }
 - (void)requestUserFromNet:(NSString*)userId {
+    if ([userId hasPrefix:@"sys"]) {
+        return ;
+    }
     [self.userCache removeObjectForKey:userId];
     if ([self.cacheUserids containsObject:userId]) {
         return;
@@ -108,7 +111,7 @@ static UserManager *userManager = NULL;
         [DataStoreManager saveDSTitle:title];
     }
     [self updateMsgInfo:dicUser];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedSuccess" object:nil userInfo:responseObject];
+    [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict

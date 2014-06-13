@@ -29,6 +29,7 @@
 @property (nonatomic, retain) NSString * info;
 @property (nonatomic, retain) NSString * infoImg;
 @property (nonatomic, retain) NSString * location;
+@property (nonatomic, retain) NSString * available;
 
 
 

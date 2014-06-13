@@ -215,7 +215,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
-#pragma mark 收到聊天消息
+#pragma mark 收到群聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     NSString * sender = [messageContent objectForKey:@"sender"];
@@ -244,7 +244,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
-
+#pragma mark 加入群，退出群，解散群
+-(void)changGroupMessageReceived:(NSDictionary *)messageContent
+{
+    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    if ([DataStoreManager isHasdGroMsg:msgId]) {
+        return;
+    }
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [self storeNewMessage:messageContent];
+    [DataStoreManager saveDSGroupMsg:messageContent];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
 #pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo
 {

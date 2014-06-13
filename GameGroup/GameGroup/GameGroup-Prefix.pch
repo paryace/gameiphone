@@ -144,7 +144,8 @@
 
 #define kLastVersion @"lastVersion"//上个版本的版本号 因1.0是用username登陆 后面版本是userid 必须清掉聊天消息和关注表
 
-#define groupInfoUpload @"groupInfoUpload"//更新群信息
+#define groupInfoUpload @"groupInfoUpdatedSuccess"//更新群信息
+#define userInfoUpload @"userInfoUpdatedSuccess"//更新用户信息
 
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])

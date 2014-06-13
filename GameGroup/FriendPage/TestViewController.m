@@ -70,7 +70,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:YES];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:@"userInfoUpdatedSuccess" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
     wxSDArray = [NSMutableArray array];
     littleImgArray = [NSMutableArray array];

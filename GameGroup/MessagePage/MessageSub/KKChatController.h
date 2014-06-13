@@ -83,8 +83,8 @@ SendMsgDeleGate>
     NSString * rootRecordPath;
     NSMutableArray * animationOne;
     NSMutableArray * animationTwo;
-    
     UIMenuController * menu;
+    NSString * available;//本群是否可用
 }
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题

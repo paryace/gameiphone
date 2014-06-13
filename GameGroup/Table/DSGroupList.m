@@ -19,8 +19,6 @@
 @dynamic gameid;
 @dynamic level;
 @dynamic maxMemberNum;
-
-
 @dynamic createDate;
 @dynamic distance;
 @dynamic experience;
@@ -29,4 +27,5 @@
 @dynamic info;
 @dynamic infoImg;
 @dynamic location;
+@dynamic available;
 @end

@@ -2501,6 +2501,7 @@
         groupInfo.info = info;
         groupInfo.infoImg = infoImg;
         groupInfo.location = location;
+        groupInfo.available = @"1";
     }];
 }
 #pragma mark - 保存群组用户列表信息
@@ -2579,6 +2580,7 @@
     [groupInfo setObject:group.info forKey:@"info"];
     [groupInfo setObject:group.infoImg forKey:@"infoImg"];
     [groupInfo setObject:group.location forKey:@"location"];
+    [groupInfo setObject:group.available forKey:@"available"];
     return groupInfo;
 }
 

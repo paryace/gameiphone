@@ -351,6 +351,24 @@
             [self.chatDelegate newGroupMessageReceived:dict];
             [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
         }
+        else if([msgtype isEqualToString:@"inGroupSystemMsg"])//好友加入或者退出群
+        {
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            NSString* payloadStr = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            NSDictionary *payloadDic = [payloadStr JSONValue];
+            NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+            NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
+            NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"type")];
+
+            if (payloadStr.length>0) {
+                [dict setObject:payloadStr forKey:@"payload"];
+            }
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            [dict setObject:groupId forKey:@"groupId"];
+            
+            [self.chatDelegate changGroupMessageReceived:dict];
+        }
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
                 ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]//入群申请通过
                 ||[msgtype isEqualToString:@"joinGroupApplicationReject"]//入群申请拒绝
