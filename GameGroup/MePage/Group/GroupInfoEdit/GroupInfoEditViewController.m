@@ -40,7 +40,7 @@
     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     
     // Do any additional setup after loading the view.
-    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
+    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth -startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
@@ -72,6 +72,28 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row ==0) {
+        static NSString *cellindientf = @"cell0";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellindientf];
+        if (!cell) {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellindientf];
+        }
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
+        titleLabel.textColor = [UIColor grayColor];
+        titleLabel.font = [UIFont systemFontOfSize:14];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [cell.contentView addSubview:titleLabel];
+        titleLabel.text = @"群名称";
+        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,200, 40)];
+        numLb.font = [UIFont boldSystemFontOfSize:14];
+        numLb.backgroundColor = [UIColor clearColor];
+        numLb.textColor =[ UIColor blackColor];
+        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupName");
+        [cell addSubview:numLb];
+        return cell;
+
+    }
+    if (indexPath.row ==1) {
         static NSString *cellinde = @"cell1";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
         if (cell ==nil) {
@@ -84,13 +106,14 @@
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.text = @"群分类";
         [cell.contentView addSubview:titleLabel];
         
-        titleLabel.text = @"群分类";
+        
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
             
             EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
-            gameImg.center = CGPointMake(25, 40);
+            gameImg.center = CGPointMake(40, 60);
             NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
             gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
             [cell addSubview:gameImg];
@@ -98,13 +121,13 @@
             NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             
             for (int i =0; i<tags.count; i++) {
-                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
-                [self buildImgVWithframe:CGRectMake(80, 10+30*i, size.width+30, 30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                NSInteger offY = (i%2==0?i+1:i)/2;
+                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
-        }
+            }
         return cell;
     }
-    else if (indexPath.row ==1)
+    else if (indexPath.row ==2)
     {    static NSString *cellinde2 = @"cell2";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
         if (cell ==nil) {
@@ -128,7 +151,7 @@
         return cell;
         
     }
-    else if (indexPath.row ==2)
+    else if (indexPath.row ==3)
     {
         static NSString *cellinde3 = @"cell3";
         GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
@@ -141,9 +164,9 @@
             cell.titleLabel.text = @"群介绍";
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
             
-            CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 230) lineBreakMode:NSLineBreakByCharWrapping];
+            CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
             
-            cell.contentLabel.frame = CGRectMake(80, 10, 230, size.height);
+            cell.contentLabel.frame = CGRectMake(80, 5, 220, size.height);
             cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
             
             float height = 0.0;
@@ -216,54 +239,56 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
-    if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
-        CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 250) lineBreakMode:NSLineBreakByCharWrapping];
+        CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
+        
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
-        float height = 0.0;
+        float height = size1.height;
         
         switch (indexPath.row) {
             case 0:
-                return 120;
-                break;
-            case 1:
                 return 40;
                 break;
+            case 1:
+                return 120;
+                break;
             case 2:
+                return 40;
+                break;
+            case 3:
                 if (photoArray.count>0&&photoArray.count<4) {
-                    height=80;
+                    height+=80;
                 }
                 else if (photoArray.count>3&&photoArray.count<7){
-                    height = 160;
+                    height += 160;
                 }
                 else if (photoArray.count>6&&photoArray.count<10){
-                    height = 240;
+                    height += 240;
                 }
                 else{
-                    height = 0;
+                    height += 0;
                 }
                 
-                return 20+size1.height+height;
+                return 20+height;
                 break;
                 
             default:
                 return 40;
                 break;
         }
-    }else{
-        return 40;
-    }
 }
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row ==0) {
+        
+    }
+    else if (indexPath.row ==1) {
         CardViewController *cardView = [[CardViewController alloc]init];
         cardView.myDelegate = self;
         [self.navigationController pushViewController:cardView animated:YES];
     }
-    else if (indexPath.row ==2) {
+    else if (indexPath.row ==3) {
         SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
         setupVC.groupid = self.groupId;
         setupVC.delegate = self;

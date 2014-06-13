@@ -9,6 +9,7 @@
 #import "AddGroupView.h"
 #import "CardCell.h"
 #import "CardTitleView.h"
+#import "EGOImageView.h"
 @implementation AddGroupView
 {
     UICollectionViewFlowLayout *layout;
@@ -33,14 +34,9 @@
         [self addSubview:self.scrollView];
         
         gameInfoArray = [NSMutableArray new];
-        NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-        NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
         
-        NSArray *allkeys = [dict allKeys];
-        for (int i = 0; i <allkeys.count; i++) {
-            NSArray *array = [dict objectForKey:allkeys[i]];
-            [gameInfoArray addObjectsFromArray:array];
-        }
+        gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+        
         [self buildFirstView];
         [self buildSecondView];
         
@@ -72,31 +68,31 @@
     table_arrow.image = KUIImage(@"arrow_bottom");
     [self.firstScrollView addSubview:table_arrow];
     
-    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(10, 198, 300, 40)];
-    table_middle.image = KUIImage(@"table_middle");
-    [self.firstScrollView addSubview:table_middle];
+//    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(10, 198, 300, 40)];
+//    table_middle.image = KUIImage(@"table_middle");
+//    [self.firstScrollView addSubview:table_middle];
     
     UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(290, 214, 12, 8)];
     table_arrow_two.image = KUIImage(@"arrow_bottom");
     [self.firstScrollView addSubview:table_arrow_two];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 238, 300, 40)];
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 199, 300, 40)];
     table_bottom.image = KUIImage(@"table_bottom");
     [self.firstScrollView addSubview:table_bottom];
     
     UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159, 100, 38)];
-    table_label_one.text = @"选择游戏";
+    table_label_one.text = @"选择游戏角色";
     table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
     [self.firstScrollView addSubview:table_label_one];
+//    
+//    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 199, 80, 38)];
+//    table_label_two.text = @"所在服务器";
+//    table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
+//    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
+//    [self.firstScrollView addSubview:table_label_two];
     
-    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 199, 80, 38)];
-    table_label_two.text = @"所在服务器";
-    table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
-    [self.firstScrollView addSubview:table_label_two];
-    
-    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 239, 80, 38)];
+    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 199, 80, 38)];
     table_label_three.text = @"群组名称";
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
@@ -132,21 +128,21 @@
     
     [self.firstScrollView addSubview:self.gameTextField];
     
-    self.realmTextField = [[UITextField alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
-    self.realmTextField.returnKeyType = UIReturnKeyDone;
-    self.realmTextField.textAlignment = NSTextAlignmentRight;
-    self.realmTextField.delegate = self;
-    self.realmTextField.font = [UIFont boldSystemFontOfSize:15.0];
-    self.realmTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    self.realmTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [self.firstScrollView addSubview:self.realmTextField];
+//    self.realmTextField = [[UITextField alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
+//    self.realmTextField.returnKeyType = UIReturnKeyDone;
+//    self.realmTextField.textAlignment = NSTextAlignmentRight;
+//    self.realmTextField.delegate = self;
+//    self.realmTextField.font = [UIFont boldSystemFontOfSize:15.0];
+//    self.realmTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+//    self.realmTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+//    [self.firstScrollView addSubview:self.realmTextField];
     
-    UIButton* serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
-    serverButton.backgroundColor = [UIColor clearColor];
-    [serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.firstScrollView addSubview:serverButton];
+//    UIButton* serverButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
+//    serverButton.backgroundColor = [UIColor clearColor];
+//    [serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.firstScrollView addSubview:serverButton];
     
-    self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 238, 180, 40)];
+    self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
     self.groupNameTf.returnKeyType = UIReturnKeyDone;
     self.groupNameTf.delegate = self;
     self.groupNameTf.textAlignment = NSTextAlignmentRight;
@@ -328,12 +324,25 @@
     return gameInfoArray.count;
 }
 
-- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+//{
+//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+//    return title;
+//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
-    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
-    return title;
+    NSDictionary *dic = [gameInfoArray objectAtIndex:row];
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
+    [customView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    [customView addSubview:label];
+    return customView;
+    
 }
-
 
 
 -(void)playNextGame:(id)sender
@@ -345,8 +354,9 @@
         [al show];
         return;
     }
-    if (self.myDelegate &&[self.myDelegate respondsToSelector:@selector(didClickPageOneWithDel:)]) {
-        [self.myDelegate didClickPageOneWithDel:self];
+    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+    if (self.myDelegate &&[self.myDelegate respondsToSelector:@selector(didClickPageOneWithDel:WithDic:)]) {
+        [self.myDelegate didClickPageOneWithDel:self WithDic:dict];
     }
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
@@ -373,7 +383,7 @@
 {
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        self.gameTextField.text = KISDictionaryHaveKey(dict, @"name");
+        self.gameTextField.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
       
         if (self.myDelegate &&[self.myDelegate respondsToSelector:@selector(didClickGameListWithDel:dic:)]) {
             [self.myDelegate didClickGameListWithDel:self dic:dict];

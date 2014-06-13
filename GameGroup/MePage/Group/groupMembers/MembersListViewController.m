@@ -129,12 +129,12 @@
     
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-        cell.sexImageView.image = KUIImage(@"");
+        cell.sexImageView.image = KUIImage(@"gender_boy");
         cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
     }
     else
     {
-        cell.sexImageView.image = KUIImage(@"");
+        cell.sexImageView.image = KUIImage(@"gender_girl");
         cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     

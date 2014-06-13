@@ -59,9 +59,11 @@
     [self.navigationController pushViewController:realmVC animated:YES];
 
 }
--(void)didClickPageOneWithDel:(AddGroupView *)gro
+-(void)didClickPageOneWithDel:(AddGroupView *)gro WithDic:(NSDictionary *)dic
 {
     [m_updataDic setObject:addGroup.groupNameTf.text forKey:@"groupName"];
+    [m_updataDic setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+    [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
 }
 
 -(void)didClickCardWithDel:(AddGroupView *)gro dic:(NSMutableDictionary *)dic
