@@ -760,13 +760,13 @@
     }];
 }
 
-+ (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer
++ (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ OR receiver==[c]%@",userid,userid];
     NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"receiveTime" ascending:NO];
     NSFetchRequest * fetchRequest = [DSCommonMsgs MR_requestAllWithPredicate:predicate];
     [fetchRequest setFetchOffset:integer];
-    [fetchRequest setFetchLimit:20];
+    [fetchRequest setFetchLimit:pageSize];
     fetchRequest.sortDescriptors = @[sortDescriptor];
     NSArray * DSArray = [DSCommonMsgs MR_executeFetchRequest:fetchRequest];
     NSMutableArray * msgArray = [NSMutableArray array];
@@ -788,13 +788,40 @@
 }
 
 
-+ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer
+//+ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer
+//{
+//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ OR receiver==[c]%@",groupid,groupid];
+//    NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"receiveTime" ascending:NO];
+//    NSFetchRequest * fetchRequest = [DSGroupMsgs MR_requestAllWithPredicate:predicate];
+//    [fetchRequest setFetchOffset:integer];
+//    [fetchRequest setFetchLimit:20];
+//    fetchRequest.sortDescriptors = @[sortDescriptor];
+//    NSArray * DSArray = [DSGroupMsgs MR_executeFetchRequest:fetchRequest];
+//    NSMutableArray * msgArray = [NSMutableArray array];
+//    NSInteger count = DSArray.count;
+//    for (int i = count-1; i>=0; i--) {
+//        NSMutableDictionary * thumbMsgsDict = [NSMutableDictionary dictionary];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] sender] forKey:@"sender"];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] msgContent] forKey:@"msg"];
+//        NSDate * tt = [[DSArray objectAtIndex:i] senTime];
+//        NSTimeInterval uu = [tt timeIntervalSince1970];
+//        [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] msgType]?[[DSArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] payload]?[[DSArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] messageuuid]?[[DSArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
+//        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] status]?[[DSArray objectAtIndex:i] status] : @"" forKey:@"status"];
+//        [msgArray addObject:thumbMsgsDict];
+//    }
+//    return msgArray;
+//}
+
++ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ OR receiver==[c]%@",groupid,groupid];
     NSSortDescriptor * sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"receiveTime" ascending:NO];
     NSFetchRequest * fetchRequest = [DSGroupMsgs MR_requestAllWithPredicate:predicate];
     [fetchRequest setFetchOffset:integer];
-    [fetchRequest setFetchLimit:20];
+    [fetchRequest setFetchLimit:pageSize];
     fetchRequest.sortDescriptors = @[sortDescriptor];
     NSArray * DSArray = [DSGroupMsgs MR_executeFetchRequest:fetchRequest];
     NSMutableArray * msgArray = [NSMutableArray array];

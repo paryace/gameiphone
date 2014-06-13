@@ -493,10 +493,12 @@
     }
     if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])//新闻
     {
+        NSInteger unreadMsgCount = [[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue];
         MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
         NSInteger no = [cell.unreadCountLabel.text intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadNo = allUnread-no;
+        kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
         kkchat.type = @"group";
         [self.navigationController pushViewController:kkchat animated:YES];

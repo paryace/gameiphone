@@ -189,7 +189,7 @@ UINavigationControllerDelegate>
         offHight = 20;
     }
     //从数据库中取出与这个人的聊天记录
-    messages = [self getMsgArray:0];
+    messages = [self getMsgArray:0 PageSize:20];
 
     NSLog(@"从数据库中取出与 %@ 的聊天纪录:messages%@",self.chatWithUser, messages);
     [self normalMsgToFinalMsg];
@@ -208,15 +208,21 @@ UINavigationControllerDelegate>
 	
     [self setTopViewWithTitle:@"" withBackButton:YES];
     
-    [self.view addSubview:self.titleLabel]; //导航条标题
+   
     
     [self.view addSubview:self.unReadL]; //未读数量
     
+    UIButton * titleBtn = self.titleButton;
+    [titleBtn addSubview:self.titleLabel]; //导航条标题
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
-        [self.view addSubview:self.groupunReadMsgLable];//群未读消息数
+        if (self.unreadMsgCount>20) {
+            [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
+        }else{
+            _titleLabel.frame = CGRectMake(0,10,200,20);
+        }
     }
-    
+    [self.view addSubview:titleBtn];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
         object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
@@ -253,13 +259,13 @@ UINavigationControllerDelegate>
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
--(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset
+-(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {
     if([self.type isEqualToString:@"normal"]){
-        return [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:FetchOffset]];
+        return [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:FetchOffset PageSize:pageSize]];
     }else if([self.type isEqualToString:@"group"])
     {
-       return  [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:FetchOffset]];
+       return  [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:FetchOffset PageSize:pageSize]];
     }
     return nil;
 }
@@ -704,12 +710,34 @@ UINavigationControllerDelegate>
     return _groupCircleBtn;
 }
 
+- (UIButton *)titleButton{
+    if(!_titleButton){
+        _titleButton = [[UIButton alloc] initWithFrame:CGRectMake(50,startX-40,200,40)];
+        _titleButton.backgroundColor = [UIColor clearColor];
+        if ([self.type isEqualToString:@"group"]&&self.unreadMsgCount>20) {
+            [_titleButton addTarget:self action:@selector(loadMoreMsg:)forControlEvents:UIControlEventTouchUpInside];
+        }
+    }
+    return _titleButton;
+}
+//导航条标题
+- (UILabel *)titleLabel{
+    if(!_titleLabel){
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,200,20)];
+        _titleLabel.backgroundColor = [UIColor clearColor];
+        _titleLabel.text = self.nickName;
+        _titleLabel.textAlignment = NSTextAlignmentCenter;
+        _titleLabel.textColor = [UIColor whiteColor];
+        [_titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
+    }
+    return _titleLabel;
+}
 //群的未读消息数
 - (UILabel *)groupunReadMsgLable{
     if(!_groupunReadMsgLable){
-        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(100,startX - 20,120,20)];
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,15,200,20)];
         _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
-        _groupunReadMsgLable.text = @"(未读消息65条)";
+        _groupunReadMsgLable.text = [NSString stringWithFormat:@"%@%d%@",@"(未读消息",self.unreadMsgCount,@"条)"];
         _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;
         _groupunReadMsgLable.textColor = [UIColor whiteColor];
         _groupunReadMsgLable.font = [UIFont systemFontOfSize:12.0f];
@@ -738,18 +766,7 @@ UINavigationControllerDelegate>
     return _emojiBtn;
 }
 
-//导航条标题
-- (UILabel *)titleLabel{
-    if(!_titleLabel){
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100,startX - 37,120,20)];
-        _titleLabel.backgroundColor = [UIColor clearColor];
-        _titleLabel.text = self.nickName;
-        _titleLabel.textAlignment = NSTextAlignmentCenter;
-        _titleLabel.textColor = [UIColor whiteColor];
-        [_titleLabel setFont:[UIFont boldSystemFontOfSize:20]];
-    }
-    return _titleLabel;
-}
+
 
 - (UITableView *)tView{
     if(!tView) {
@@ -780,6 +797,22 @@ UINavigationControllerDelegate>
 }
 - (void)groupCricleButtonClick:(UIButton *)sender{
 
+}
+//加载全部
+- (void)loadMoreMsg:(UIButton *)sender{
+    if (self.unreadMsgCount<20) {
+        return;
+    }
+    _groupunReadMsgLable.hidden=YES;
+    _titleLabel.frame = CGRectMake(0,10,200,20);
+    self.unreadMsgCount=0;
+    NSArray *array = [self getMsgArray:messages.count PageSize:self.unreadMsgCount-20];
+    for (int i = 0; i < array.count; i++) {
+        [messages insertObject:array[i] atIndex:i];
+        [self overReadMsgToArray:array[i] Index:i];
+    }
+    [self.tView reloadData];
+    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 //发送已读消息
 - (void)sendReadedMesg
@@ -2062,13 +2095,7 @@ UINavigationControllerDelegate>
     header.arrowImage.center = CGPointMake(160, header.arrowImage.center.y+15);
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-//        if([self.type isEqualToString:@"normal"]){
-//            array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-//        }else
-//        {
-//            array = [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:messages.count]];
-//        }
-    array = [self getMsgArray:messages.count];
+    array = [self getMsgArray:messages.count PageSize:20];
     loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];

@@ -92,6 +92,7 @@ SendMsgDeleGate>
 @property (nonatomic, strong) UIButton *groupCircleBtn;  //群动态
 @property (nonatomic, strong) UILabel *groupCircleText;  //群动态数量
 @property (nonatomic, strong) UILabel *groupunReadMsgLable;  //群消息未读条数
+@property (nonatomic, strong) UIButton *titleButton;  //
 
 
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
@@ -106,7 +107,9 @@ SendMsgDeleGate>
 @property(nonatomic, retain) NSString *chatWithUser;
 @property(nonatomic, retain) NSString *nickName;
 
-@property(nonatomic, retain) NSString *type;
+@property(nonatomic, retain)   NSString *type;
+@property (assign, nonatomic)  NSInteger unreadMsgCount;
+
 
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;

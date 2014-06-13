@@ -52,7 +52,7 @@
 + (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
 + (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
 + (void)deleteMsgInCommentWithUUid:(NSString *)uuid;   //删除指定uuid的消息
-+ (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer;//根据userid分页查询
++ (NSMutableArray *)qureyCommonMessagesWithUserID:(NSString *)userid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize;//根据userid分页查询
 + (NSString*)queryMessageStatusWithId:(NSString*)msgUUID;
 + (void)deleteAllCommonMsg;
 
@@ -204,7 +204,7 @@
 
 +(NSMutableDictionary *)getUserInfoFromDbByUserid:(NSString*)userid;//查询用户信息
 
-+ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer;//查询群组历史消息
++ (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize;//查询群组历史消息
 
 +(void)saveDSGroupMsg:(NSDictionary *)msg;//保存群组消息
 
