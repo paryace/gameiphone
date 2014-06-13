@@ -454,7 +454,7 @@
     switch (indexPath.row) {
         case 0:
             NSLog(@"--------%d",tags.count/2);
-            NSInteger tagsRowCount = tags.count/2+1;//标签行数
+            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
             return  tagsRowCount*30+tagsRowCount*5+10;
             break;
         case 1:
