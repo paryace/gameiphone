@@ -236,7 +236,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
-            
+            [DataStoreManager saveDSGroupList:responseObject];
             m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
             [m_myTableView reloadData];
             

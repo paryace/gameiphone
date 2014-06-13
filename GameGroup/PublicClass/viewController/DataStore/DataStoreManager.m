@@ -2475,8 +2475,10 @@
     NSString * location = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"location")];
     
     NSMutableArray * userList = KISDictionaryHaveKey(groupList, @"memberList");
-    for (NSMutableDictionary * user in userList) {
-        [self saveDSGroupUser:user GroupId:groupId];
+    if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
+        for (NSMutableDictionary * user in userList) {
+            [self saveDSGroupUser:user GroupId:groupId];
+        }
     }
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
