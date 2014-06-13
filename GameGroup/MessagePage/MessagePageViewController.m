@@ -361,7 +361,7 @@
         NSString * nickName ;
         
         NSString * available;//此群是否可用
-        if (groupInfo) {
+        if (!groupInfo) {
             nickName = @"";
             available = @"1";
         }else

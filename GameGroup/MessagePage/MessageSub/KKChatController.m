@@ -21,6 +21,7 @@
 #import "UpLoadFileService.h"
 #import "MessageService.h"
 #import "GroupInformationViewController.h"
+#import "KKSystemMsgCell.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -43,7 +44,8 @@ typedef enum : NSUInteger {
 typedef enum : NSUInteger {
     KKChatMsgTypeText,
     KKChatMsgTypeLink,
-    KKChatMsgTypeImage
+    KKChatMsgTypeImage,
+    KKChatMsgTypeSystem
 } KKChatMsgType;
 
 typedef void(^ChangMessageProgressBlock)(double progress,NSString *uuid);
@@ -474,7 +476,25 @@ UINavigationControllerDelegate>
         }
         return  cell;
     }
-    
+    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
+        static NSString *identifier = @"systemMsgCell";
+        KKSystemMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[KKSystemMsgCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        NSString* msg = KISDictionaryHaveKey(dict, @"msg");
+        NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+        cell.timeLable.text = [NSString stringWithFormat:@"%@", timeStr];
+        cell.msgLable.text = msg;
+        CGSize textSize = [cell.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
+        cell.lineImage1.frame=CGRectMake(5, 10, (320-textSize.width)/2-10, 1);
+        cell.lineImage2.frame=CGRectMake(cell.timeLable.frame.origin.x+cell.timeLable.frame.size.width+5, 10, (320-textSize.width)/2-10, 1);
+        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
+        return cell;
+    }
     //普通消息
     else
     {
@@ -560,6 +580,14 @@ UINavigationControllerDelegate>
 
 //每一行的高度
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
+    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    
+    //动态消息
+    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
+        return 47;
+    }
+    
     float theH = [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue];
     theH += padding*2 + 10+offHight;
     CGFloat height = theH < 65 ? 65 : theH;
@@ -944,6 +972,13 @@ UINavigationControllerDelegate>
             array=[NSArray arrayWithObjects:width,height, nil];
             break;
         }
+        case KKChatMsgTypeSystem:
+        {
+            CGSize size =  CGSizeMake(320, 47);
+            NSNumber * width = [NSNumber numberWithFloat:size.width];
+            NSNumber * height = [NSNumber numberWithFloat:size.height];
+            array=[NSArray arrayWithObjects:width,height, nil];
+        }
         default:
             break;
     }
@@ -954,16 +989,23 @@ UINavigationControllerDelegate>
 {
     NSDictionary * payloadDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
     if(!payloadDic){
+        
         return KKChatMsgTypeText;
     }
     NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
     if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"]) {
+        
         return KKChatMsgTypeLink;
     }
     //图片
     else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"img"])
     {
         return KKChatMsgTypeImage;
+        
+    }//系统消息
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]){
+        
+        return KKChatMsgTypeSystem;
     }
     //文字
     else{
@@ -1780,11 +1822,24 @@ UINavigationControllerDelegate>
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         [DataStoreManager storeMyGroupThumbMessage:dictionary];
         [DataStoreManager storeMyGroupMessage:dictionary];
+        if ([available isEqualToString:@"0"]) {//本群不可用
+            [self groupNotAvailable];
+        }
     }
     [self.tView reloadData];//刷新列表
     if (messages.count>0) {//定位到列表最后
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
+}
+//本群不可用
+-(void)groupNotAvailable
+{
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"inGroupSystemMsg"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"noType"];
+    [dictionary setObject:payloadStr forKey:@"payload"];
+    [DataStoreManager storeMyGroupMessage:dictionary];
 }
 
 #pragma mark 重新发文本消息
@@ -2037,7 +2092,10 @@ UINavigationControllerDelegate>
 {
     NSDictionary* tempDic = notification.userInfo;
     NSString * msgType  = KISDictionaryHaveKey(tempDic, @"msgType");
-    if([msgType isEqualToString:@"groupchat"]){
+    if([msgType isEqualToString:@"groupchat"]
+       ||[msgType isEqualToString:@"disbandGroup"]
+       ||[msgType isEqualToString:@"inGroupSystemMsgJoinGroup"]
+       ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]){
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];
     }else{

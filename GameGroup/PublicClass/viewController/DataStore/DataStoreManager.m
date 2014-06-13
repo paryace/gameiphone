@@ -2591,7 +2591,17 @@
     NSMutableDictionary * groupInfo = [self queryGroupInfo:group];
     return groupInfo;
 }
-
+//更新群的可用状态
++(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate];
+        if (group) {
+            group.available = groupState;
+        }
+    }];
+}
 
 #pragma mark - 保存申请加入群的消息
 +(void)saveDSGroupApplyMsg:(NSDictionary *)msg

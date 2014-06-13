@@ -224,6 +224,8 @@
 
 +(void)saveDSGroupList:(NSDictionary *)groupList;//保存群列表
 
++(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState;//更改群的可用状态
+
 +(void)saveDSGroupUser:(NSDictionary *)groupUser GroupId:(NSString*)groupId;//保存群组的用户列表
 
 +(NSMutableArray *)queryGroupUserList:(NSString*)groupId;//查找群用户列表

@@ -239,20 +239,33 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
+    NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:messageContent];
+    if ([msgType isEqualToString:@"disbandGroup"]) {//解散群
+        [self changGroupMessageReceived:messageContent];
+    }
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
 #pragma mark 加入群，退出群，解散群
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent
 {
+    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
+    NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"type")];
+    NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
+    if ([msgType isEqualToString:@"disbandGroup"]) {//解散群
+        [DataStoreManager updateGroupState:groupId GroupState:@"0"];//更新本地该群的可用状态
+    }
     if ([DataStoreManager isHasdGroMsg:msgId]) {
         return;
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:messageContent];
+    [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
