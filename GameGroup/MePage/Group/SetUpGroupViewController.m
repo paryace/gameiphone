@@ -118,12 +118,11 @@
         [self showMessageWindowWithContent:@"提交成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
-    
 }
-
 -(void)selectServerNameOK:(id)sender
 {
     if ([gameInfoArray count] != 0) {

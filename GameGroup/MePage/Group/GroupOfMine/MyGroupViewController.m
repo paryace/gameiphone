@@ -60,10 +60,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
-    m_layout.minimumLineSpacing =3;
-    m_layout.itemSize = CGSizeMake((320-15)/4, (320-15)/4);
+    m_layout.minimumLineSpacing =5;
+    m_layout.itemSize = CGSizeMake((260-15)/4, (260-15)/4);
     m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-13);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,10,3,10);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
@@ -215,7 +215,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.headImgView.placeholderImage =nil;
         cell.headImgView.imageURL = nil;
         NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
-        cell.headImgView.image = KUIImage(imgStr);
+        cell.headImgView.placeholderImage = KUIImage(imgStr);
+        cell.headImgView.imageURL = nil;
         cell.titleLabel.backgroundColor = [UIColor clearColor];
     }else{
     cell.headImgView.placeholderImage = KUIImage(@"mess_news");

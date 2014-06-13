@@ -39,6 +39,9 @@
     
     
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
+    UIScrollView *scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
+    scrollView.contentSize = CGSizeMake(0,700);
+    [self.view addSubview:scrollView];
     
     listDict  = [NSMutableDictionary dictionary];
     
@@ -52,7 +55,7 @@
     m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
     m_searchTf.delegate = self;
     m_searchTf.returnKeyType =UIReturnKeyGo;
-    [self.view addSubview:m_searchTf];
+    [scrollView addSubview:m_searchTf];
     
 //
 //    UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(10, startX+80, 300, 40)];
@@ -79,7 +82,7 @@
     [groupCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headViewww"];
 
     groupCollectionView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:groupCollectionView];
+    [scrollView addSubview:groupCollectionView];
     
     [ self getCardWithNet];
     
