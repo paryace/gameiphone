@@ -254,12 +254,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
-    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
-    NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"type")];
     NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     if ([msgType isEqualToString:@"disbandGroup"]) {//解散群
-        [DataStoreManager updateGroupState:groupId GroupState:@"0"];//更新本地该群的可用状态
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"0"];
     }
     if ([DataStoreManager isHasdGroMsg:msgId]) {
         return;

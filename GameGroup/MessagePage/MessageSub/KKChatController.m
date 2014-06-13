@@ -165,6 +165,9 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //用户信息更新完成
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userInfoUploaded:) name:userInfoUpload object:nil];
+    
+    //解散该群
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
@@ -476,7 +479,8 @@ UINavigationControllerDelegate>
         }
         return  cell;
     }
-    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
+    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]
+             ||[[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"disbandGroup"]) {
         static NSString *identifier = @"systemMsgCell";
         KKSystemMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -584,7 +588,8 @@ UINavigationControllerDelegate>
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     
     //动态消息
-    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
+    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]
+        ||[[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"disbandGroup"]) {
         return 47;
     }
     
@@ -1003,7 +1008,7 @@ UINavigationControllerDelegate>
         return KKChatMsgTypeImage;
         
     }//系统消息
-    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]){
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"disbandGroup"]){
         
         return KKChatMsgTypeSystem;
     }
@@ -1746,7 +1751,6 @@ UINavigationControllerDelegate>
 
 #pragma mark将发送图片的消息保存数据库
 - (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
-    
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
      NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
@@ -1800,6 +1804,7 @@ UINavigationControllerDelegate>
     }
     return domain;
 }
+
 -(NSString*)getMsgType
 {
     if ([self.type isEqualToString:@"normal"]) {
@@ -1821,15 +1826,24 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         [DataStoreManager storeMyGroupThumbMessage:dictionary];
-        [DataStoreManager storeMyGroupMessage:dictionary];
         if ([available isEqualToString:@"0"]) {//本群不可用
             [self groupNotAvailable];
+            [dictionary setObject:@"1" forKey:@"status"];
         }
+        [DataStoreManager storeMyGroupMessage:dictionary];
     }
     [self.tView reloadData];//刷新列表
     if (messages.count>0) {//定位到列表最后
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
+}
+//群是否可用
+-(BOOL)isGroupAvaitable
+{
+    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"0"]) {
+        return NO;
+    }
+    return YES;
 }
 //本群不可用
 -(void)groupNotAvailable
@@ -1837,8 +1851,11 @@ UINavigationControllerDelegate>
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"inGroupSystemMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"noType"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"noType"];
     [dictionary setObject:payloadStr forKey:@"payload"];
+    [dictionary setObject:self.chatWithUser forKey:@"groupId"];
+    [messages addObject:dictionary];
+    [self newMsgToArray:dictionary];
     [DataStoreManager storeMyGroupMessage:dictionary];
 }
 
@@ -1902,6 +1919,9 @@ UINavigationControllerDelegate>
 #pragma mark 发送Xmpp消息
 -(void)sendMessage:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid From:(NSString*)from To:(NSString*)to MsgType:(NSString*)msgType FileType:(NSString*)fileTyp Type:(NSString*)type Payload:(NSString*)payloadStr
 {
+    if (![self isGroupAvaitable]) {
+        return;
+    }
     NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
     if(payloadStr!=nil&&![payloadStr isEqualToString:@""]){
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
@@ -2135,6 +2155,11 @@ UINavigationControllerDelegate>
     }
     [self refreTitleText];
     [self.tView reloadData];
+}
+
+- (void)onDisbandGroup:(NSNotification*)notification
+{
+    available = @"0";
 }
 
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender

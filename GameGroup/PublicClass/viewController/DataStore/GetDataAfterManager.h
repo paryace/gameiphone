@@ -16,6 +16,8 @@
 #define kOtherMessage    @"otherMessage"
 #define kJoinGroupMessage    @"joinGroupMessage"
 
+#define kDisbandGroup    @"disbandGroup"//解散群组
+
 #define kMessageAck @"messageAck"
 
 @interface GetDataAfterManager : NSObject

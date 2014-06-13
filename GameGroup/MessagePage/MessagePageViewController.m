@@ -109,7 +109,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
     //群信息更新完成通知
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
-    
+    //解散群通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startConnect:) name:@"startConnect" object:nil];
@@ -355,29 +356,28 @@
 
     }else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])
     {//群组聊天消息
+        
+        cell.headImageV.image = KUIImage(@"every_data_news");
         NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
         NSString * sender = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
-        NSString * nickName ;
-        
-        NSString * available;//此群是否可用
         if (!groupInfo) {
-            nickName = @"";
-            available = @"1";
+            cell.contentLabel.text = @"";
+            cell.nameLabel.text =@"";
         }else
         {
-          nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
-          available = KISDictionaryHaveKey(groupInfo, @"available");
+            NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+            NSString * available = KISDictionaryHaveKey(groupInfo, @"available");
+            NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
+            NSString * senderNickname =[self getNickUserNameBySender:sender];
+            if([available isEqualToString:@"0"]){
+                cell.contentLabel.text =  @"本群不可用";
+            }else
+            {
+                cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
+            }
+            cell.nameLabel.text =nickName;
         }
-        
-        NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];;
-        if([available isEqualToString:@"0"]){
-            content = @"本群不可用";
-        }
-        NSString * senderNickname =[self getNickUserNameBySender:sender];
-        cell.headImageV.image = KUIImage(@"every_data_news");
-        cell.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",senderNickname?senderNickname:@"",@":",content];
-        cell.nameLabel.text =nickName;
     } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
         cell.headImageV.image = KUIImage(@"every_data_news");
@@ -428,10 +428,10 @@
 -(NSString*)getNickUserNameBySender:(NSString*)sender
 {
     if ([sender isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        return  @"我";
+        return  [NSString stringWithFormat:@"%@%@",@"我",@":"];
     }
     NSMutableDictionary * simpleUserDic= [[UserManager singleton] getUser:sender];
-    return [simpleUserDic objectForKey:@"nickname"];
+    return [NSString stringWithFormat:@"%@%@",[simpleUserDic objectForKey:@"nickname"],@":"];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;

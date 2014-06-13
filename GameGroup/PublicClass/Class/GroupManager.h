@@ -20,4 +20,8 @@
 
 -(void)getGroupInfoWithNet:(NSString*)groupId;//网络请求群信息
 
+-(void)clearGroupCache:(NSString*)groupId;//清除缓存
+
+-(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state;//更新该群的本地可用状态
+
 @end

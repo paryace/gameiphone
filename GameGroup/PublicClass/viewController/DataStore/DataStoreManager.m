@@ -557,6 +557,7 @@
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
     NSString * payloadStr = KISDictionaryHaveKey(message, @"payload");
     NSString * groupId = KISDictionaryHaveKey(message, @"groupId");
+     NSString * msgState = KISDictionaryHaveKey(message, @"status");
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSGroupMsgs * commonMsg = [DSGroupMsgs MR_createInContext:localContext];
@@ -568,7 +569,7 @@
         commonMsg.msgType = msgType;
         commonMsg.payload = payloadStr;
         commonMsg.messageuuid = messageuuid;
-        commonMsg.status = @"2";
+        commonMsg.status = msgState;
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         commonMsg.groupId = groupId;
     }];
@@ -2501,7 +2502,8 @@
         groupInfo.info = info;
         groupInfo.infoImg = infoImg;
         groupInfo.location = location;
-        groupInfo.available = @"1";
+        NSString * avb = groupInfo.available;
+        groupInfo.available =[avb isEqualToString:@"0"]?@"0": @"1";
     }];
 }
 #pragma mark - 保存群组用户列表信息
@@ -2627,9 +2629,9 @@
     
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     
-    if([msgType isEqualToString:@"disbandGroup"]){
-        [self deleteMsgByGroupId:groupId];
-    }
+//    if([msgType isEqualToString:@"disbandGroup"]){
+//        [self deleteMsgByGroupId:groupId];
+//    }
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
         DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];

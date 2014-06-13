@@ -47,6 +47,10 @@ static GroupManager *groupManager = NULL;
         return nil;
     }
 }
+-(void)clearGroupCache:(NSString*)groupId
+{
+    [self.groupCache removeObjectForKey:groupId];
+}
 
 -(void)getGroupInfoWithNet:(NSString*)groupId
 {
@@ -72,9 +76,24 @@ static GroupManager *groupManager = NULL;
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [self.cacheGroupIds removeObject:groupId];
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100067"])
+            {
+                [DataStoreManager updateGroupState:groupId GroupState:@"0"];//更新本地该群的可用状态
+            }
+        }
+
         NSLog(@"faile");
     }];
-    
+}
+
+//更新本地该群的可用状态
+-(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state
+{
+    [DataStoreManager updateGroupState:grouoId GroupState:state];
+    [[GroupManager singleton] clearGroupCache:grouoId];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:nil];
 }
 
 @end

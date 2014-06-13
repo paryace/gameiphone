@@ -284,6 +284,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
+        [[GroupManager singleton] changGroupState:self.groupId GroupState:@"0"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经解散该群"delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 789;
         [alert show];
