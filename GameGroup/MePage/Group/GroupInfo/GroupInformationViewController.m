@@ -326,8 +326,9 @@
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
-//                CGSize size = [self getStringSizeWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tags[i], @"tagName")] font:[UIFont systemFontOfSize:12]];
-                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*88,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+//                [self buildImgVWithframe:CGRectMake(80+(i+1)/2*88,10+(i+1)/2*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                
+                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+(i%2==1?5:0),10+((i%2==0?i+1:i)/2)*30,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
         return cell;
