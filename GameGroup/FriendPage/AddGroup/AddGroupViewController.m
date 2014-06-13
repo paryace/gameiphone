@@ -63,7 +63,7 @@
 {
     [m_updataDic setObject:addGroup.groupNameTf.text forKey:@"groupName"];
     [m_updataDic setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-    [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
+    [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterId"];
 }
 
 -(void)didClickCardWithDel:(AddGroupView *)gro dic:(NSMutableDictionary *)dic

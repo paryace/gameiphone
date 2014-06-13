@@ -9,10 +9,10 @@
 #import "GroupInformationViewController.h"
 #import "EGOImageView.h"
 #import "JoinGroupViewController.h"
-#import "SetUpGroupViewController.h"
 #import "KKChatController.h"
 #import "MembersListViewController.h"
 #import "GroupSettingController.h"
+#import "SetUpGroupViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -130,7 +130,6 @@
     }
     else{//陌生人
         SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
-        setupVC.mySetupType = SETUP_JOIN;
         setupVC.groupid = self.groupId;
         [self.navigationController pushViewController:setupVC animated:YES];
     }
@@ -327,12 +326,7 @@
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
-//<<<<<<< HEAD
-//                NSInteger offY = (i%2==0?i+1:i)/2;
-//                 NSLog(@"offY-->%d",offY);
-//                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
-//=======
-                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }
         return cell;
@@ -352,10 +346,20 @@
         [cell.contentView addSubview:titleLabel];
         
         titleLabel.text = @"服务器";
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(68, 10, 20, 20)];
+        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(70, 10, 20, 20)];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
+       
+       
+       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(100, 0,100, 40)];
+       numLb.font = [UIFont boldSystemFontOfSize:14];
+       numLb.backgroundColor = [UIColor clearColor];
+       numLb.textColor =[ UIColor blackColor];
+       numLb.text = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
+       [cell addSubview:numLb];
+
+       
         return cell;
     }
     else if (indexPath.row ==2)
@@ -373,14 +377,29 @@
         [cell addSubview:titleLabel];
 
         titleLabel.text = @"群组号";
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,200, 40)];
+        
+        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,100, 40)];
         numLb.font = [UIFont boldSystemFontOfSize:14];
         numLb.backgroundColor = [UIColor clearColor];
         numLb.textColor =[ UIColor blackColor];
         numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
         [cell addSubview:numLb];
+
+        UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+        imageView.image = KUIImage(@"lv_group");
+        [cell addSubview:imageView];
+        
+        UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+        lvLb.font = [UIFont boldSystemFontOfSize:11];
+        lvLb.backgroundColor = [UIColor clearColor];
+        lvLb.textColor =[ UIColor blackColor];
+        lvLb.textAlignment = NSTextAlignmentCenter;
+        lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
+        [cell addSubview:lvLb];
+
         return cell;
 
+        
     }
     else if (indexPath.row ==3)
     {
@@ -394,8 +413,14 @@
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
             
             CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 230) lineBreakMode:NSLineBreakByCharWrapping];
-            
-            cell.contentLabel.frame = CGRectMake(80, 10, 230, size.height);
+            float height1 = 0.0;
+            if (size.height<40) {
+                height1 = 40;
+            }else{
+                height1 =size.height;
+            }
+
+            cell.contentLabel.frame = CGRectMake(80, 0, 230,height1);
             cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
             
             float height = 0.0;
