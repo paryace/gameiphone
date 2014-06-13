@@ -27,6 +27,7 @@
         self.contentLabel.font = [UIFont boldSystemFontOfSize:13];
         self.contentLabel.backgroundColor = [UIColor clearColor];
         self.contentLabel.textAlignment = NSTextAlignmentLeft;
+        self.contentLabel.numberOfLines = 0;
         [self.contentView addSubview:self.contentLabel];
         
         self.layout = [[UICollectionViewFlowLayout alloc]init];

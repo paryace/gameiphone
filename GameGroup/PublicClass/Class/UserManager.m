@@ -102,7 +102,7 @@ static UserManager *userManager = NULL;
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
     for (NSMutableDictionary *characher in charachers) {
-        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"id")];
+        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
     }
     for (NSMutableDictionary *title in titles) {
         [DataStoreManager saveDSTitle:title];

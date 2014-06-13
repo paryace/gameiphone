@@ -213,7 +213,8 @@
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
-        [button setTitle:array[i] forState:UIControlStateNormal];
+//        [button setTitle:array[i] forState:UIControlStateNormal];
+        [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100;
         button.backgroundColor = [UIColor grayColor];
         [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
@@ -246,7 +247,7 @@
             
 
             
-            [self buildmemberisAudit:isAuth title:isAuth?[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")]:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
+            [self buildmemberisAudit:isAuth title:!isAuth?[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")]:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             
             
             
@@ -255,15 +256,15 @@
             shiptypeCount = [identity intValue];
             
             if ([identity intValue]==0) {//群主
-                NSArray *array = @[@"发消息",@"群设置"];
+                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
             }
             else if ([identity intValue]==1) {//管理员
-                NSArray *array = @[@"发消息",@"群设置",@"退出群"];
+                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
             }
             else if ([identity intValue]==2) {//普通成员
-                NSArray *array = @[@"发消息",@"退出群"];
+                NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
                 [self buildbelowbutotnWithArray:array shiptype:[identity intValue]];
    
             }else{//陌生人
@@ -308,7 +309,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-
     if (indexPath.row ==0) {
         static NSString *cellinde = @"cell0";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
@@ -327,6 +327,11 @@
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             for (int i =0; i<tags.count; i++) {
+//<<<<<<< HEAD
+//                NSInteger offY = (i%2==0?i+1:i)/2;
+//                 NSLog(@"offY-->%d",offY);
+//                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+//=======
                 [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
             }
         }

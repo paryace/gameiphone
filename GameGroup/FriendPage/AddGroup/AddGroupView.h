@@ -34,5 +34,5 @@
 -(void)didClickCardWithDel:(AddGroupView *)gro dic:(NSMutableDictionary *)dic;
 -(void)didClickCardImgWithDel:(AddGroupView *)gro;
 -(void)didClickContentWithDel:(AddGroupView *)gro content:(NSString *)content;
--(void)didClickPageOneWithDel:(AddGroupView *)gro;
+-(void)didClickPageOneWithDel:(AddGroupView *)gro WithDic:(NSDictionary *)dic;
 @end
