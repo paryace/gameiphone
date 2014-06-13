@@ -142,9 +142,16 @@
             [self.cellTimer invalidate];
             self.cellTimer = nil;
         }
-        
-        self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
-        self.statusLabel.text = @"已发送";
+    }
+    else if ([status isEqualToString:@"5"])//无状态
+    {
+        self.failImage.hidden = YES;
+        self.statusLabel.hidden = YES;
+        [self.activityView stopAnimating];
+        if ([self.cellTimer isValid]) {
+            [self.cellTimer invalidate];
+            self.cellTimer = nil;
+        }
     }
     else
     {

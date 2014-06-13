@@ -220,11 +220,7 @@
     }];
 }
 
-
-
-
-
-#pragma mark - 保存聊天记录
+#pragma mark - 保存群组聊天记录
 +(void)saveDSGroupMsg:(NSDictionary *)msg
 {
     NSString * sender = [msg objectForKey:@"sender"];
@@ -241,7 +237,7 @@
         groupMsg.msgType = msgType;
         groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
         groupMsg.messageuuid = msgId;
-        groupMsg.status = @"1";
+        groupMsg.status = @"1";//状态5表示未读吧
         groupMsg.groupId = groupId;
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];

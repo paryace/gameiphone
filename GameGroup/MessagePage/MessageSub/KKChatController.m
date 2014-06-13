@@ -181,9 +181,15 @@ UINavigationControllerDelegate>
     UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,320,self.view.frame.size.height)];
     bgV.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
     [self.view addSubview:bgV];
+    
+    if([self.type isEqualToString:@"normal"]){
+        offHight = 0;
+    }else if([self.type isEqualToString:@"group"])
+    {
+        offHight = 20;
+    }
     //从数据库中取出与这个人的聊天记录
-
-    messages = [self getMsgArray];
+    messages = [self getMsgArray:0];
 
     NSLog(@"从数据库中取出与 %@ 的聊天纪录:messages%@",self.chatWithUser, messages);
     [self normalMsgToFinalMsg];
@@ -247,15 +253,13 @@ UINavigationControllerDelegate>
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
--(NSMutableArray*)getMsgArray
+-(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset
 {
     if([self.type isEqualToString:@"normal"]){
-        offHight = 0;
-        return [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:0]];
+        return [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:FetchOffset]];
     }else if([self.type isEqualToString:@"group"])
     {
-        offHight = 20;
-       return  [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:0]];
+       return  [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:FetchOffset]];
     }
     return nil;
 }
@@ -479,8 +483,7 @@ UINavigationControllerDelegate>
         }
         return  cell;
     }
-    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]
-             ||[[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"disbandGroup"]) {
+    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
         static NSString *identifier = @"systemMsgCell";
         KKSystemMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -588,8 +591,7 @@ UINavigationControllerDelegate>
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     
     //动态消息
-    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]
-        ||[[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"disbandGroup"]) {
+    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
         return 47;
     }
     
@@ -1008,7 +1010,7 @@ UINavigationControllerDelegate>
         return KKChatMsgTypeImage;
         
     }//系统消息
-    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"disbandGroup"]){
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]){
         
         return KKChatMsgTypeSystem;
     }
@@ -2060,12 +2062,13 @@ UINavigationControllerDelegate>
     header.arrowImage.center = CGPointMake(160, header.arrowImage.center.y+15);
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-    if([self.type isEqualToString:@"normal"]){
-        array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
-    }else
-    {
-        array = [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:messages.count]];
-    }
+//        if([self.type isEqualToString:@"normal"]){
+//            array = [DataStoreManager qureyCommonMessagesWithUserID:self.chatWithUser FetchOffset:messages.count];
+//        }else
+//        {
+//            array = [[NSMutableArray alloc]initWithArray:[DataStoreManager qureyGroupMessagesGroupID:self.chatWithUser FetchOffset:messages.count]];
+//        }
+    array = [self getMsgArray:messages.count];
     loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
@@ -2107,25 +2110,6 @@ UINavigationControllerDelegate>
     self.kkChatControllerRefreshHeadView = header;
     
 }
-#pragma mark KKMessageDelegate
-- (void)newMesgReceived:(NSNotification*)notification
-{
-    NSDictionary* tempDic = notification.userInfo;
-    NSString * msgType  = KISDictionaryHaveKey(tempDic, @"msgType");
-    if([msgType isEqualToString:@"groupchat"]
-       ||[msgType isEqualToString:@"disbandGroup"]
-       ||[msgType isEqualToString:@"inGroupSystemMsgJoinGroup"]
-       ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]){
-        NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
-        [self setNewMsg:tempDic Sender:groupID];
-    }else{
-        NSString * sender = KISDictionaryHaveKey(tempDic, @"sender");
-        NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
-        [self setNewMsg:tempDic Sender:sender];
-        [self comeBackDisplayed:sender msgId:msgId];//发送已读消息
-    }
-}
-
 #pragma mark 群信息更新完成
 -(void)groupInfoUploaded:(NSNotification *)notification
 {
@@ -2156,10 +2140,30 @@ UINavigationControllerDelegate>
     [self refreTitleText];
     [self.tView reloadData];
 }
-
+#pragma mark 该群组解散通知
 - (void)onDisbandGroup:(NSNotification*)notification
 {
     available = @"0";
+}
+
+
+#pragma mark 接收到新消息
+- (void)newMesgReceived:(NSNotification*)notification
+{
+    NSDictionary* tempDic = notification.userInfo;
+    NSString * msgType  = KISDictionaryHaveKey(tempDic, @"msgType");
+    if([msgType isEqualToString:@"groupchat"]
+       ||[msgType isEqualToString:@"disbandGroup"]
+       ||[msgType isEqualToString:@"inGroupSystemMsgJoinGroup"]
+       ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]){
+        NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
+        [self setNewMsg:tempDic Sender:groupID];
+    }else{
+        NSString * sender = KISDictionaryHaveKey(tempDic, @"sender");
+        NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
+        [self setNewMsg:tempDic Sender:sender];
+        [self comeBackDisplayed:sender msgId:msgId];//发送已读消息
+    }
 }
 
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
