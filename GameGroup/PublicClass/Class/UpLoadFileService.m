@@ -7,8 +7,24 @@
 //
 
 #import "UpLoadFileService.h"
+static UpLoadFileService *upload = NULL;
 
 @implementation UpLoadFileService
+
++ (UpLoadFileService*)singleton
+{
+    @synchronized(self)
+    {
+		if (upload == nil)
+		{
+			upload = [[self alloc] init];
+		}
+	}
+	return upload;
+}
+
+
+
 
 - (void)resumableUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
     NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];

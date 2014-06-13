@@ -152,7 +152,7 @@
     [self.firstScrollView addSubview:self.groupNameTf];
     
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(10, 290, 300, 44)];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(10, 250, 300, 44)];
     [button setTitle:@"下一步" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(playNextGame:) forControlEvents:UIControlEventTouchUpInside];

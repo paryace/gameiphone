@@ -11,5 +11,8 @@
 #import "QiniuResumableUploader.h"
 
 @interface UpLoadFileService : NSObject
+
++(UpLoadFileService *)singleton;
+
 - (void)simpleUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate;
 @end

@@ -8,8 +8,9 @@
 
 #import "BaseViewController.h"
 #import "CardViewController.h"
-#import "SetUpGroupViewController.h"
+#import "EditGroupMessageViewController.h"
+#import "QiniuUploadDelegate.h"
 
-@interface GroupInfoEditViewController : BaseViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,CardListDelegate,SetupDelegate>
+@interface GroupInfoEditViewController : BaseViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,CardListDelegate,GroupEditMessageDelegate,UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,QiniuUploadDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @end

@@ -7,10 +7,13 @@
 //
 
 #import "SetUpGroupViewController.h"
-
+#import "EGOImageView.h"
 @interface SetUpGroupViewController ()
 {
     UITextView *m_textView;
+    UITextField *m_searchTf;
+    UIPickerView *m_gamePickerView;
+    NSMutableArray *gameInfoArray;
 }
 @end
 
@@ -29,29 +32,44 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    [self.view addSubview:titleLabel];
+    [self setTopViewWithTitle:@"申请加入" withBackButton:YES];
+
+    gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(20, startX+20, 280, 30)];
-    label.backgroundColor =[ UIColor clearColor];
-    label.textColor = [UIColor blackColor];
-    label.font = [UIFont systemFontOfSize:13];
-    [self.view addSubview:label];
+    m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+    m_gamePickerView.dataSource = self;
+    m_gamePickerView.delegate = self;
+    m_gamePickerView.showsSelectionIndicator = YES;
     
+    UIToolbar *toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar.items = @[rb_server];
+
+    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, startX+20, 300, 40)];
+    m_searchTf.backgroundColor = [UIColor clearColor];
+    m_searchTf.borderStyle = UITextBorderStyleRoundedRect;
+    m_searchTf.placeholder = @"请选择游戏角色";
+    m_searchTf.clearButtonMode = UITextFieldViewModeUnlessEditing;
+    m_searchTf.autocorrectionType = UITextAutocorrectionTypeNo;
+    m_searchTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    m_searchTf.returnKeyType =UIReturnKeyGo;
+    m_searchTf.inputView = m_gamePickerView;
+    m_searchTf.inputAccessoryView= toolbar;
+    [self.view addSubview:m_searchTf];
     
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, startX+60, 280, 150)];
+
+    
+    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, startX+80, 280, 150)];
     editIV.backgroundColor=[UIColor whiteColor];
     editIV.image = KUIImage(@"group_info");
     [self.view addSubview:editIV];
     
     
-    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, startX+60, 280, 150)];
+    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, startX+80, 280, 150)];
     m_textView.delegate = self;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
     m_textView.backgroundColor = [UIColor clearColor];
@@ -66,33 +84,13 @@
     [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
     
-    if (self.mySetupType ==SETUP_JOIN) {
-        titleLabel.text = @"申请加入";
-        label.text = @"请填写入群申请";
-
-    }
-    else if (self.mySetupType ==SETUP_NAME) {
-        titleLabel.text = @"修改群名称";
-        label.text = @"请填写群名称";
-
-    }
-    else if (self.mySetupType ==SETUP_IMG) {
-        titleLabel.text = @"修改群资料";
-    }
-    else if (self.mySetupType ==SETUP_INFO) {
-        titleLabel.text = @"修改群介绍";
-    }
-    else  {
-        titleLabel.text = @"群设置";
-    }
-
+  
     // Do any additional setup after loading the view.
 }
+
 -(void)updateInfo:(id)sender
 {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    
-    if (self.mySetupType ==SETUP_JOIN) {
         if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
             [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
             return;
@@ -100,27 +98,6 @@
         [dic setObject:m_textView.text forKey:@"msg"];
         [dic setObject:self.groupid forKey:@"groupId"];
        [ self getInfoToNetWithparamDict:dic method:@"232"];
-    }
-    else if (self.mySetupType ==SETUP_NAME) {
-        if (self.delegate &&[self.delegate respondsToSelector:@selector(comeBackInfoWithController:type:info:)]) {
-            [self.delegate comeBackInfoWithController:self type:self.mySetupType info:m_textView.text];
-        }
-    }
-    else if (self.mySetupType ==SETUP_IMG) {
-        [ self getInfoToNetWithparamDict:nil method:nil];
-    }
-    else if (self.mySetupType ==SETUP_INFO) {
-        if (self.delegate &&[self.delegate respondsToSelector:@selector(comeBackInfoWithController:type:info:)]) {
-            [self.delegate comeBackInfoWithController:self type:self.mySetupType info:m_textView.text];
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-    }
-    else  {
-        [ self getInfoToNetWithparamDict:nil method:nil];
-    }
-
-    
-    
 }
 
 -(void)getInfoToNetWithparamDict:(NSMutableDictionary *)paramDict method:(NSString *)method
@@ -139,6 +116,46 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
+    
+}
+
+-(void)selectServerNameOK:(id)sender
+{
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+        m_searchTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        [m_searchTf resignFirstResponder];
+    }
+}
+
+
+#pragma mark 选择器
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return gameInfoArray.count;
+}
+
+//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+//{
+//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+//    return title;
+//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
+{
+    NSDictionary *dic = [gameInfoArray objectAtIndex:row];
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
+    [customView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    [customView addSubview:label];
+    return customView;
     
 }
 

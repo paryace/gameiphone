@@ -9,12 +9,14 @@
 #import "GroupInfoEditViewController.h"
 #import "EGOImageView.h"
 #import "GroupInfomationJsCell.h"
+#import "GroupNameCell.h"
 @interface GroupInfoEditViewController ()
 {
     NSMutableDictionary *m_mainDict;
     UITableView *m_myTableView;
     UIView *aoView;
     NSMutableDictionary *paramDict;
+    UIImageView *topImageView;
 }
 @end
 
@@ -57,39 +59,39 @@
     [self.view addSubview:shareButton];
 
     
-    UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
-    topImg.image = KUIImage(@"groupinfo_top");
-    m_myTableView.tableHeaderView = topImg;
-    topImg.userInteractionEnabled = YES;
+    topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
+    topImageView.image = KUIImage(@"groupinfo_top");
+    topImageView .userInteractionEnabled = YES;
+    topImageView.userInteractionEnabled = YES;
+    [topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
+
+    m_myTableView.tableHeaderView = topImageView;
+    
+    
+    UILabel *promptLb= [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 320, 42)];
+    promptLb.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
+    promptLb.textColor = [UIColor whiteColor];
+    promptLb.textAlignment = NSTextAlignmentCenter;
+    promptLb.text = @"点击图片更换头图";
+    [topImageView addSubview:promptLb];
     
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 4;
+    return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row ==0) {
-        static NSString *cellindientf = @"cell0";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellindientf];
+        static NSString *cellindientf = @"cell12";
+        GroupNameCell *cell = [tableView dequeueReusableCellWithIdentifier:cellindientf];
         if (!cell) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellindientf];
+            cell = [[GroupNameCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellindientf];
         }
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:titleLabel];
-        titleLabel.text = @"群名称";
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,200, 40)];
-        numLb.font = [UIFont boldSystemFontOfSize:14];
-        numLb.backgroundColor = [UIColor clearColor];
-        numLb.textColor =[ UIColor blackColor];
-        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupName");
-        [cell addSubview:numLb];
+        cell.nameLabel.text = KISDictionaryHaveKey(m_mainDict, @"groupName");
         return cell;
 
     }
@@ -165,8 +167,14 @@
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
             
             CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
+            float height1 = 0.0;
+            if (size.height<40) {
+                height1 = 40;
+            }else{
+                height1 =size.height;
+            }
             
-            cell.contentLabel.frame = CGRectMake(80, 5, 220, size.height);
+            cell.contentLabel.frame = CGRectMake(80, 0, 220,height1);
             cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
             
             float height = 0.0;
@@ -212,15 +220,10 @@
         
         timeLabel.text = @"2013-04-16";
         return cell;
-        
     }
-    
 }
-
-
 -(void)saveChanged:(id)sender
 {
-    
     [paramDict setObject:self.groupId forKey:@"groupId"];
     NSMutableDictionary *postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -228,8 +231,12 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSMutableArray class]]) {
-        }
+        
+            [[NSUserDefaults standardUserDefaults]setObject:m_mainDict forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
+            
+            [self showMessageWindowWithContent:@"修改成功" imageType:0];
+            [self.navigationController popViewControllerAnimated:YES];
+            
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
@@ -281,7 +288,12 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row ==0) {
-        
+        EditGroupMessageViewController *editG = [[EditGroupMessageViewController alloc]init];
+        editG.placeHold =[m_mainDict objectForKey:@"groupName"];
+        editG.editType = EDIT_TYPE_nickName;
+        editG.delegate = self;
+
+        [self.navigationController pushViewController:editG animated:YES];
     }
     else if (indexPath.row ==1) {
         CardViewController *cardView = [[CardViewController alloc]init];
@@ -289,11 +301,11 @@
         [self.navigationController pushViewController:cardView animated:YES];
     }
     else if (indexPath.row ==3) {
-        SetUpGroupViewController *setupVC = [[SetUpGroupViewController alloc]init];
-        setupVC.groupid = self.groupId;
-        setupVC.delegate = self;
-        setupVC.mySetupType = SETUP_INFO;
-        [self.navigationController pushViewController:setupVC animated:YES];
+        EditGroupMessageViewController *editG = [[EditGroupMessageViewController alloc]init];
+        editG.placeHold =[m_mainDict objectForKey:@"info"];
+        editG.editType = EDIT_TYPE_signature;
+        editG.delegate = self;
+        [self.navigationController pushViewController:editG animated:YES];
     }
 }
 
@@ -350,15 +362,15 @@
     [m_myTableView reloadData];
 }
 
--(void)comeBackInfoWithController:(SetUpGroupViewController *)controller type:(setUpType)mysetupType info:(NSString *)info
+-(void)comeBackInfoWithController:(EditGroupMessageViewController *)controller type:(EditType)mysetupType info:(NSString *)info
 {
-    if (mysetupType ==SETUP_NAME) {
+    if (mysetupType ==EDIT_TYPE_nickName) {
         [paramDict setObject:info forKey:@"groupName"];
         NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
         [dic setObject:info forKey:@"groupName"];
         m_mainDict = dic;
 
-    }else if (mysetupType ==SETUP_INFO){
+    }else if (mysetupType ==EDIT_TYPE_signature){
         [paramDict setObject:info forKey:@"info"];
         NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
         [dic setObject:info forKey:@"info"];
@@ -367,6 +379,70 @@
     [m_myTableView reloadData];
 
 }
+
+#pragma mark --改变顶部图片
+-(void)changeTopImage:(UITapGestureRecognizer*)sender
+{
+    UIActionSheet *acs = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"相册" otherButtonTitles:@"相机", nil];
+    acs.tag =9999999;
+    [acs showInView:self.view];
+    
+}
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (actionSheet.tag ==9999999) {
+        UIImagePickerController * imagePicker;
+        if (buttonIndex==1)
+            //这里捕捉“毁灭键”,其实该键的index是0，从上到下从0开始，称之为毁灭是因为是红的
+        {
+            if (imagePicker==nil) {
+                imagePicker=[[UIImagePickerController alloc]init];
+                imagePicker.delegate=self;
+                imagePicker.allowsEditing = YES;
+            }
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                [self presentViewController:imagePicker animated:YES completion:^{
+                    
+                }];
+            }
+            else {
+                UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
+                [cameraAlert show];
+            }
+        }
+        else if (buttonIndex==0) {
+            if (imagePicker==nil) {
+                imagePicker=[[UIImagePickerController alloc]init];
+                imagePicker.delegate=self;
+                imagePicker.allowsEditing = YES;
+            }
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+                //                [self presentModalViewController:imagePicker animated:YES];
+                [self presentViewController:imagePicker animated:YES completion:^{
+                    
+                }];
+            }
+            else {
+                UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
+                [libraryAlert show];
+            }
+        }
+        
+    }
+}
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+    //    [self uploadbgImg:upImage];
+    topImageView.image = upImage;
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
