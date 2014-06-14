@@ -189,7 +189,7 @@
 
     [self.secondScrollView addSubview:carimg];
     
-    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(5, 0, 290, 40)];
+    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 300, 40)];
     self.cardTF.userInteractionEnabled = NO;
     self.cardTF.textColor = [UIColor grayColor];
     self.cardTF.numberOfLines = 0;
@@ -210,32 +210,23 @@
     self.titleCollectionView.delegate = self;
     self.titleCollectionView.dataSource = self;
     [self.titleCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"titleCell"];
-    
     [self.titleCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headviewwww"];
     self.titleCollectionView.backgroundColor = [UIColor clearColor];
     [self.secondScrollView addSubview:self.titleCollectionView];
 
     
-    
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 280, 280, 150)];
-    editIV.backgroundColor=[UIColor whiteColor];
-    editIV.image = KUIImage(@"group_info");
-    [self.secondScrollView addSubview:editIV];
-
-    
-    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280, 280, 150)];
+    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, 250, 300, 150)];
     m_textView.delegate = self;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
-    m_textView.backgroundColor = [UIColor clearColor];
     m_textView.textColor = [UIColor blackColor];
+    m_textView.backgroundColor = [UIColor whiteColor];
+    m_textView.layer.cornerRadius = 5;
+    m_textView.layer.masksToBounds = YES;
     [self.secondScrollView addSubview:m_textView];
-    
-    
-    
-    
+
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, 450, 300, 44);
+    button.frame = CGRectMake(10, 420, 300, 44);
     [button setTitle:@"提交" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(enterThirdPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -288,17 +279,12 @@
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-         CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
+    CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
-        NSDictionary* dic = [self.cardArray objectAtIndex:indexPath.row];
-        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-        cell.titleLabel.frame = CGRectMake(0, 0, size.width+5, 30);
-        
-        cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
-    
-        return cell;
-        
+    NSDictionary* dic = [self.cardArray objectAtIndex:indexPath.row];
+    cell.titleLabel.frame = cell.bgImgView.frame;
+    cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
+    return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -416,14 +402,4 @@
     [textField resignFirstResponder];
     return YES;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
-
 @end
