@@ -192,12 +192,15 @@ UINavigationControllerDelegate>
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
     NSLog(@"从数据库中取出与 %@ 的聊天纪录:messages%@",self.chatWithUser, messages);
+    //清空此人所有的未读消息
     if ([self.type isEqualToString:@"normal"]) {
         [self sendReadedMesg];//发送已读消息
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
     }
-    
     [self.view addSubview:self.tView];
-    [self kkChatAddRefreshHeadView];    //添加下拉刷新组件
+    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
@@ -222,12 +225,6 @@ UINavigationControllerDelegate>
         object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
         object:nil];
-    //清空此人所有的未读消息
-    if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
-    }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
-    }
     //图片与表情按钮
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
@@ -246,7 +243,8 @@ UINavigationControllerDelegate>
     [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
     [self.view addSubview:profileButton];
     [self.view bringSubviewToFront:profileButton];
-   [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
+    [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
@@ -1769,8 +1767,8 @@ UINavigationControllerDelegate>
 #pragma mark 发送文本消息
 -(void)sendMsg:(NSString *)message
 {
-    NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * nowTime = [GameCommon getCurrentTime];
+    NSString * uuid = [[GameCommon shareGameCommon] uuid];
     NSString * domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
     NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * toUserId = self.chatWithUser;
