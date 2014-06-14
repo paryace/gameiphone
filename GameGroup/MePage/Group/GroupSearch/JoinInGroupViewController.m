@@ -11,6 +11,7 @@
 #import "SearchGroupViewController.h"
 #import "CardCell.h"
 #import "CardTitleView.h"
+#import "EGOImageView.h"
 @interface JoinInGroupViewController ()
 {
     UITextField *m_searchTf;
@@ -19,6 +20,15 @@
     NSMutableArray *cardArray;
     NSMutableDictionary *listDict;
     UILabel *cardTitleLabel;
+    UILabel *realmLabel;
+    EGOImageView *clazzImg;
+    EGOImageView *gameImg;
+    UIImageView *authBg;
+    UILabel *nameLabel;
+    UIPickerView *m_gamePickerView;
+    UIScrollView *m_baseScrollView;
+    NSMutableArray *gameInfoArray;
+    UIView *m_pickView;
 }
 @end
 
@@ -39,13 +49,14 @@
     
     
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
-    UIScrollView *scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
-    scrollView.contentSize = CGSizeMake(0,700);
-    [self.view addSubview:scrollView];
+    m_baseScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
+    m_baseScrollView.contentSize = CGSizeMake(0,700);
+    [self.view addSubview:m_baseScrollView];
     
     listDict  = [NSMutableDictionary dictionary];
-    
-    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, startX+20, 300, 40)];
+    gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
+    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 20, 300, 40)];
     m_searchTf.backgroundColor = [UIColor clearColor];
     m_searchTf.borderStyle = UITextBorderStyleRoundedRect;
     m_searchTf.placeholder = @"搜索群名称或群号";
@@ -55,15 +66,9 @@
     m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
     m_searchTf.delegate = self;
     m_searchTf.returnKeyType =UIReturnKeyGo;
-    [scrollView addSubview:m_searchTf];
+    [m_baseScrollView addSubview:m_searchTf];
     
-//
-//    UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(10, startX+80, 300, 40)];
-//    [okbutton setTitle:@"搜索" forState:UIControlStateNormal];
-//    [okbutton addTarget:self action:@selector(searchStrToNextPage:) forControlEvents:UIControlEventTouchUpInside];
-//    okbutton.backgroundColor =[UIColor grayColor];
-//    [self.view addSubview:okbutton];
-    
+    [self buildRoleView];
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 10;
@@ -82,12 +87,92 @@
     [groupCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headViewww"];
 
     groupCollectionView.backgroundColor = [UIColor clearColor];
-    [scrollView addSubview:groupCollectionView];
+    [m_baseScrollView addSubview:groupCollectionView];
     
     [ self getCardWithNet];
     
     // Do any additional setup after loading the view.
 }
+
+
+-(void)buildRoleView
+{
+    UIView* myView = [[UIView alloc] initWithFrame:CGRectMake(0, 70, 320, 60)];
+    myView.backgroundColor = [UIColor colorWithRed:180/255.0f green:180/255.0f blue:180/255.0f alpha:1];
+    clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
+    clazzImg.backgroundColor = [UIColor clearColor];
+    clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
+    [myView addSubview:clazzImg];
+    
+    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    authBg.backgroundColor = [UIColor clearColor];
+    BOOL isAuth = [[gameInfoArray[0]objectForKey:@"auth"]boolValue];
+    if (isAuth) {
+        authBg.image = KUIImage(@"auth");
+    }else{
+        authBg.image = KUIImage(@"auth");
+    }
+    [myView addSubview:authBg];
+    authBg.hidden = YES;
+    
+    nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 120, 20)];
+    nameLabel.backgroundColor = [UIColor clearColor];
+    nameLabel.textColor = kColorWithRGB(51, 51, 51, 1.0);
+    nameLabel.font = [UIFont boldSystemFontOfSize:15.0];
+    
+    [myView addSubview:nameLabel];
+    
+    nameLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"name");
+    
+    gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
+    gameImg.backgroundColor = [UIColor clearColor];
+    gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(gameInfoArray[0], @"gameid")]];
+    [myView addSubview:gameImg];
+    
+    realmLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 30, 130, 20)];
+    realmLabel.backgroundColor = [UIColor clearColor];
+    realmLabel.textColor = kColorWithRGB(102, 102, 102, 1.0) ;
+    realmLabel.font = [UIFont boldSystemFontOfSize:14.0];
+    realmLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"realm");
+    [myView addSubview:realmLabel];
+    
+    
+    m_pickView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-224, 320, 200)];
+    m_pickView.hidden = YES;
+    [self.view addSubview:m_pickView];
+    
+    m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 44, 320, 180)];
+    m_gamePickerView.dataSource = self;
+    m_gamePickerView.delegate = self;
+    m_gamePickerView.backgroundColor = [UIColor whiteColor];
+    m_gamePickerView.showsSelectionIndicator = YES;
+    [m_pickView addSubview:m_gamePickerView];
+    
+    UIToolbar *toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar.items = @[rb_server];
+    [m_pickView addSubview:toolbar];
+
+    UILabel *clickLb = [[UILabel alloc]initWithFrame:CGRectMake(260, 0, 50, 60)];
+    clickLb.text =@"切换角色";
+    clickLb.backgroundColor = [UIColor clearColor];
+    clickLb.textColor = [UIColor blueColor];
+    clickLb.font = [UIFont systemFontOfSize:12];
+    [myView addSubview:clickLb];
+     
+    [myView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickChangeRole:)]];
+    
+     [m_baseScrollView addSubview:myView];
+
+}
+-(void)didClickChangeRole:(id)sender
+{
+    m_pickView.hidden = NO;
+
+}
+
 
 -(void)getCardWithNet
 {
@@ -198,7 +283,49 @@
     
     
 }
+-(void)selectServerNameOK:(id)sender
+{
+    m_pickView.hidden = YES;
 
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+        clazzImg.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(dict, @"img")];
+        realmLabel.text = KISDictionaryHaveKey(dict, @"realm");
+        gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")]];
+        nameLabel.text = KISDictionaryHaveKey(dict, @"name");
+        
+    }
+}
+
+#pragma mark 选择器
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return gameInfoArray.count;
+}
+
+//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+//{
+//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+//    return title;
+//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
+{
+    NSDictionary *dic = [gameInfoArray objectAtIndex:row];
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
+    [customView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    [customView addSubview:label];
+    return customView;
+    
+}
 
 - (void)didReceiveMemoryWarning
 {
