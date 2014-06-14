@@ -29,15 +29,6 @@
 
 @implementation GroupInformationViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -77,8 +68,6 @@
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
-    
-    // Do any additional setup after loading the view.
 }
 
 -(void)refreshNet:(id)sender
@@ -207,7 +196,6 @@
         }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         rightBtn.frame = CGRectMake(290, 0, 30, 50);
-//        rightBtn.backgroundColor = [UIColor clearColor];
         [rightBtn setImage:KUIImage(@"right") forState:UIControlStateNormal];
         [rightBtn setImageEdgeInsets:UIEdgeInsetsMake(10, 0, 10, 15)];
 

@@ -20,6 +20,7 @@
     NSMutableArray *myGroupArray;
     UIView *cellView;
     NSDictionary *dict;
+    CGFloat imageHight;
 }
 @end
 
@@ -33,7 +34,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
-    
+    imageHight = (320-15)/4;
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
@@ -42,11 +43,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     backButton.backgroundColor = [UIColor clearColor];
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backButton];
-
-
     myGroupArray = [NSMutableArray array];
-    
-    
 //    UIButton*button  = [UIButton buttonWithType: UIButtonTypeCustom];
 //    button.frame = CGRectMake(20, startX+20, 60, 60);
 //    [button setImage:KUIImage(@"addphoto") forState:UIControlStateNormal];
@@ -59,13 +56,13 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake((260-15)/4, (260-15)/4);
+    m_layout.itemSize = CGSizeMake(imageHight, imageHight);
     m_layout.headerReferenceSize = CGSizeMake(320, 70);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,10,3,10);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 70+10+imageHight+10) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
-    groupCollectionView.scrollEnabled = NO;
+    groupCollectionView.scrollEnabled = YES;
     groupCollectionView.delegate = self;
     groupCollectionView.dataSource = self;
     [groupCollectionView registerClass:[GroupOfMineCell class] forCellWithReuseIdentifier:@"titleCell"];
@@ -78,7 +75,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
     NSArray *arr3 =@[@"find_role",@"find_role",@"find_group"];
     
-    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+160, 320, 240)];
+    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+10), 320, 200)];
     UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
     lajiLabel.backgroundColor = [UIColor clearColor];
     lajiLabel.textColor = [UIColor grayColor];
@@ -94,9 +91,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
         [cellView addSubview:view];
     }
-    
-    
-    
     [self getGroupListFromNet];
 }
 
@@ -208,9 +202,13 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             [myGroupArray addObjectsFromArray:responseObject];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
+            if (myGroupArray.count<4) {
+                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
+                cellView.frame = CGRectMake(0, startX+(70+10+imageHight+10), 320, 200);
+            }
             if (myGroupArray.count>4) {
-                groupCollectionView.frame = CGRectMake(0, startX, 320, 230);
-                cellView.frame = CGRectMake(0, startX+240, 320, 180);
+                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+10);
+                cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+10), 320, 180);
             }
             [groupCollectionView reloadData];
             
