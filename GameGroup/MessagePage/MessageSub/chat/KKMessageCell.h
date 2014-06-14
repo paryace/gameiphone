@@ -16,4 +16,5 @@
 
 //用固定的样式初始化，且Cell可复用
 -(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+
 @end

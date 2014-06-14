@@ -27,9 +27,9 @@
         messageContentView.font = [UIFont systemFontOfSize:16];
         messageContentView.numberOfLines = 0;
         [self.contentView addSubview:messageContentView];
-        
     }
     
     return self;
 }
+
 @end

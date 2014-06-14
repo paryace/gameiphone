@@ -38,6 +38,7 @@
 - (id)initWithMessage:(NSMutableDictionary *)msg reuseIdentifier:(NSString *)reuseIdentifier; //用这个比较好， 直接赋值
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier; //不要用这个
 
+-(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime;
 
 //重连
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status; //在指定位置刷新重连标记
@@ -52,4 +53,5 @@
 
 - (void)myHeadImgClicked:(id)Sender;    //自己的头像被点击
 -(void)chatUserHeadImgClicked:(id)Sender; //对方的头像被点击
+
 @end

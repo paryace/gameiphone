@@ -67,21 +67,29 @@
         [self.contentView addSubview:self.statusLabel];
         
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-       // self.activityView.hidesWhenStopped = YES;
         [self.contentView addSubview:self.activityView];
     }
     return self;
 }
 
--(id)initWithMessage:(NSMutableDictionary *)msg
-   reuseIdentifier:(NSString *)reuseIdentifier
+-(id)initWithMessage:(NSMutableDictionary *)msg reuseIdentifier:(NSString *)reuseIdentifier
 {
-//    self.message = msg;
     return [self initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier];
 }
 -(void)setMessageDictionary:(NSMutableDictionary*)msg
 {
     self.message = msg;
+}
+
+-(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime
+{
+    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<60) {
+        self.senderAndTimeLabel.hidden = YES;
+    }
+    else{
+        self.senderAndTimeLabel.hidden = NO;
+        self.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@", timeStr];
+    }
 }
 
 #pragma mark 重连标识 FailImg
@@ -137,16 +145,6 @@
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES; //这种情况不显示状态
-        [self.activityView stopAnimating];
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
-    }
-    else if ([status isEqualToString:@"5"])//无状态
-    {
-        self.failImage.hidden = YES;
-        self.statusLabel.hidden = YES;
         [self.activityView stopAnimating];
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
