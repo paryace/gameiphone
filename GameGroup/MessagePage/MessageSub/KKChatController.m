@@ -639,8 +639,9 @@ UINavigationControllerDelegate>
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_click") forState:UIControlStateHighlighted];
         [_groupCircleBtn addTarget:self action:@selector(groupCricleButtonClick:)forControlEvents:UIControlEventTouchUpInside];
-        self.groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(20,33,40,20)];
+        self.groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(12,18,30,16)];
         self.groupCircleText .text = @"20";
+        self.groupCircleText.font = [UIFont systemFontOfSize:14];
         self.groupCircleText.textColor = [UIColor whiteColor];
         [_groupCircleBtn addSubview:self.groupCircleText];
     }
