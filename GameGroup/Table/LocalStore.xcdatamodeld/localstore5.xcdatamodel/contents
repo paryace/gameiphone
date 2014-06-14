@@ -18,6 +18,27 @@
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSBillboard" representedClassName="DSBillboard" syncable="YES">
+        <attribute name="applicationId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billboard" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="billboardId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userImg" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSBlackList" representedClassName="DSBlackList" syncable="YES">
         <attribute name="headimg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
@@ -361,6 +382,7 @@
         <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="298"/>
         <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="223"/>
+        <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
         <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="88"/>
@@ -375,6 +397,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
+        <element name="DSBillboard" positionX="-90" positionY="-54" width="128" height="330"/>
     </elements>
 </model>

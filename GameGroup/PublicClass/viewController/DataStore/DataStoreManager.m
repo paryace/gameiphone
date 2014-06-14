@@ -2685,7 +2685,8 @@
 +(NSMutableArray*)queryDSGroupApplyMsg
 {
     NSMutableArray * msgList = [NSMutableArray array];
-    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType!=[c]%@",@"groupBillboard"];//剔除群公告通知
+    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
     for (DSGroupApplyMsg * apm in groupArrlyList) {
         [msgList addObject:[self queryDSGroupApplyMsg:apm]];
     }
