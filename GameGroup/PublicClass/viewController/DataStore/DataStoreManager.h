@@ -244,7 +244,9 @@
 
 +(void)saveDSGroupApplyMsg:(NSDictionary *)msg;//保存申请假如群的消息
 
-+(NSMutableArray*)queryDSGroupApplyMsg;//查询申请加入群的消息列表
++(NSMutableArray*)queryDSGroupApplyMsg;//查询群通知消息
+
++(NSMutableArray*)queryDSGroupApplyMsgByMsgType:(NSString*)msgType;//根据msgType查询群通知消息
 
 +(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType GroupId:(NSString*)groupId;//改变消息状态
 

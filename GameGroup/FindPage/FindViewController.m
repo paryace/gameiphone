@@ -32,6 +32,11 @@
     
     NSInteger    myDunamicmsgCount;
     UILabel *lb;
+    
+    UILabel *groupMsgTitleLable;
+    UILabel *gbMsgCountLable;//公告消息数
+    UIImageView *gbMsgCountImageView; //公告红点
+    
     float button_center_x;
     float button_center_y;
     float curren_hieght;
@@ -62,6 +67,8 @@
                                                     name:@"mydynamicmsg_wx"
                                                   object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
+        
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
     }
     return self;
 }
@@ -111,8 +118,6 @@
 
         }
         commentLabel.text =[commStr1 stringByAppendingString:commStr2];
-    
-    
 }
 //监听消息来临
 -(void)ss:(NSNotification*)sender
@@ -140,7 +145,28 @@
     commentLabel.text = [commStr1 stringByAppendingString:commStr2];
 
 }
-
+#pragma mark -
+#pragma mark 收到公告消息
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    NSNumber *bullboardMsgCount = [[NSUserDefaults standardUserDefaults]objectForKey:Billboard_msg_count];
+    if ([bullboardMsgCount intValue]>0) {
+        gbMsgCountImageView.hidden = NO;
+        int dianCount =[bullboardMsgCount intValue];
+        if (dianCount > 99) {
+            gbMsgCountLable.text = @"99+";
+        }
+        else{
+            gbMsgCountLable.text =[NSString stringWithFormat:@"%d",dianCount] ;
+        }
+         groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",[bullboardMsgCount intValue]];
+    }else
+    {
+        gbMsgCountImageView.hidden = YES;
+        groupMsgTitleLable.text =@"群公告消息";
+    }
+   
+}
 -(void)cleanNews
 {
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
@@ -227,14 +253,13 @@
     groupTitleLabel.textAlignment = NSTextAlignmentLeft;
     [groupView addSubview:groupTitleLabel];
     
-    UILabel *groupLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
-    groupLable.backgroundColor = [UIColor clearColor];
-    groupLable.textAlignment = NSTextAlignmentLeft;
-    groupLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
-    groupLable.font = [UIFont systemFontOfSize:11];
-    groupLable.text = @"1条新的群动态";
-    
-    [groupView addSubview:groupLable];
+    groupMsgTitleLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
+    groupMsgTitleLable.backgroundColor = [UIColor clearColor];
+    groupMsgTitleLable.textAlignment = NSTextAlignmentLeft;
+    groupMsgTitleLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
+    groupMsgTitleLable.font = [UIFont systemFontOfSize:11];
+    groupMsgTitleLable.text = @"群公告消息";
+    [groupView addSubview:groupMsgTitleLable];
     
     
     
@@ -243,14 +268,12 @@
     [circleView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     [bottomView addSubview:circleView];
     
-    
     UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
     bottomTitleLabel.backgroundColor = [UIColor clearColor];
     bottomTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     bottomTitleLabel.text  = @"朋友圈";
     bottomTitleLabel.textColor = [UIColor whiteColor];
     bottomTitleLabel.textAlignment = NSTextAlignmentLeft;
-    
     [circleView addSubview:bottomTitleLabel];
     
 
@@ -261,6 +284,21 @@
     UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
     iconImageView.image = KUIImage(@"circleIcon");
     [bottomView addSubview:iconImageView];
+    
+    //红点 - 公告
+    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(60, 2, 18, 18)];
+    [iconImageView bringSubviewToFront:gbMsgCountImageView];
+    [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
+     gbMsgCountImageView.hidden = YES;
+    [iconImageView addSubview:gbMsgCountImageView];
+    //未读公告消息
+    gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+    [gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
+    [gbMsgCountLable setTextAlignment:NSTextAlignmentCenter];
+    [gbMsgCountLable setTextColor:[UIColor whiteColor]];
+    gbMsgCountLable.font = [UIFont systemFontOfSize:14.0];
+    gbMsgCountLable.text = @"20";
+    [gbMsgCountImageView addSubview:gbMsgCountLable];
     
     //红点 - 朋友圈
     m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(253, 2, 15, 15)];
@@ -716,6 +754,11 @@
 
 -(void)enterGroupList:(id)sender
 {
+    gbMsgCountImageView.hidden = YES;
+    groupMsgTitleLable.text =@"群公告消息";
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
     [self.navigationController pushViewController:gruupV animated:YES];

@@ -634,7 +634,7 @@ UINavigationControllerDelegate>
 //群动态入口
 - (UIButton *)groupCircleImage{
     if(!_groupCircleBtn){
-        _groupCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-60-5,startX+5,60,60)];
+        _groupCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-37-5,startX+5,37,37)];
         _groupCircleBtn.backgroundColor = [UIColor clearColor];
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_click") forState:UIControlStateHighlighted];

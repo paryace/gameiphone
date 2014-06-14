@@ -2681,11 +2681,23 @@
         commonMsg.createDate= createDate;
     }];
 }
-#pragma mark - 查询申请加入群的消息列表
+#pragma mark - 查询群通知消息
 +(NSMutableArray*)queryDSGroupApplyMsg
 {
     NSMutableArray * msgList = [NSMutableArray array];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType!=[c]%@",@"groupBillboard"];//剔除群公告通知
+    NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
+    for (DSGroupApplyMsg * apm in groupArrlyList) {
+        [msgList addObject:[self queryDSGroupApplyMsg:apm]];
+    }
+    return msgList;
+}
+
+#pragma mark - 根据msgType查询群通知消息
++(NSMutableArray*)queryDSGroupApplyMsgByMsgType:(NSString*)msgType
+{
+    NSMutableArray * msgList = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
     NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
     for (DSGroupApplyMsg * apm in groupArrlyList) {
         [msgList addObject:[self queryDSGroupApplyMsg:apm]];

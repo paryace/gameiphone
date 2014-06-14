@@ -25,7 +25,7 @@
         UIViewAutoresizingFlexibleHeight;
         self.label.numberOfLines =2;
         self.label.backgroundColor = [UIColor clearColor];
-        self.label.textAlignment = NSTextAlignmentCenter;
+        self.label.textAlignment = NSTextAlignmentLeft;
         self.label.font = [UIFont boldSystemFontOfSize:13.0f];
         self.label.textColor = [UIColor grayColor];
         [self addSubview:self.label];
@@ -39,7 +39,7 @@
         self.contentLabel.textColor = [UIColor grayColor];
         [self addSubview:self.contentLabel];
         
-        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(200, 45, 210, 15)];
+        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(220, 45, 100, 15)];
         self.timeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.timeLabel.backgroundColor = [UIColor clearColor];
@@ -47,19 +47,8 @@
         self.timeLabel.font = [UIFont boldSystemFontOfSize:11.0f];
         self.timeLabel.textColor = [UIColor grayColor];
         [self addSubview:self.timeLabel];
-
-
     }
     return self;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

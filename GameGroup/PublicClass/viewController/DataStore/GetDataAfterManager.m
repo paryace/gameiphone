@@ -242,8 +242,21 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:messageContent];
-    if ([msgType isEqualToString:@"disbandGroup"]) {//解散群
+    if ([msgType isEqualToString:@"disbandGroup"])
+    {//解散群
         [self changGroupMessageReceived:messageContent];
+    }
+    if([msgType isEqualToString:@"groupBillboard"])
+    {//群公告
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"billboard_msg" object:nil userInfo:messageContent];
+        if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]) {
+            int i=1;
+            [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:Billboard_msg_count];
+        }else{
+            int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]intValue];
+            [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:Billboard_msg_count];
+        }
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];

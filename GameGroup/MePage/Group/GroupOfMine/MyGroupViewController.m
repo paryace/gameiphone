@@ -19,19 +19,12 @@
     UICollectionView *groupCollectionView;
     NSMutableArray *myGroupArray;
     UIView *cellView;
+    NSDictionary *dict;
 }
 @end
 
 @implementation MyGroupViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 NSString *const RAMCollectionViewFlemishBondHeaderKind = @"RAMCollectionViewFlemishBondHeaderKind";
 static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
@@ -42,7 +35,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
@@ -53,14 +46,16 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
     myGroupArray = [NSMutableArray array];
     
+    
 //    UIButton*button  = [UIButton buttonWithType: UIButtonTypeCustom];
 //    button.frame = CGRectMake(20, startX+20, 60, 60);
 //    [button setImage:KUIImage(@"addphoto") forState:UIControlStateNormal];
 //    [button addTarget:self action:@selector(enterSearchGroupPage:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:button];
-    
-    
-    
+    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    if (bills&&bills.count>0) {
+        dict = [bills objectAtIndex:0];
+    }
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
@@ -75,10 +70,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     groupCollectionView.dataSource = self;
     [groupCollectionView registerClass:[GroupOfMineCell class] forCellWithReuseIdentifier:@"titleCell"];
     [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:HeaderIdentifier];
-
     groupCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:groupCollectionView];
-
     
 //    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headView"];
     NSArray *arr1 = @[@"智能推荐",@"附近的组织",@"同服的组织"];
@@ -106,7 +99,29 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     
     [self getGroupListFromNet];
-    // Do any additional setup after loading the view.
+}
+
+#pragma mark 收到公告消息
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    NSDictionary * msg = sender.userInfo;
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * groupName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupName")];
+    NSString * backgroundImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"backgroundImg")];
+    NSString * billboard = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"billboard")];
+    NSString * billboardId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"billboardId")];
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"createDate")];
+
+    [msg setValue:groupId forKey:@"groupId"];
+    [msg setValue:groupName forKey:@"groupName"];
+    [msg setValue:backgroundImg forKey:@"backgroundImg"];
+    [msg setValue:billboard forKey:@"billboard"];
+    [msg setValue:billboardId forKey:@"billboardId"];
+    [msg setValue:createDate forKey:@"createDate"];
+    dict = msg;
+    [groupCollectionView reloadData];
 }
 -(void)refreshNet:(id)sender
 {
@@ -256,15 +271,33 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
-        ((ReusableView *)titleView).label.text = @"晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑晨星是个坑";
-        ((ReusableView *)titleView).contentLabel.text = @"大家一起坑晨星";
-        ((ReusableView *)titleView).timeLabel.text = @"06-11";
-        ((ReusableView *)titleView).headImageView.imageURL = nil;
+        if (dict) {
+            NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
+            NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
+            NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
+            NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
+            ((ReusableView *)titleView).label.text = billboard;
+            ((ReusableView *)titleView).contentLabel.text = groupName;
+            ((ReusableView *)titleView).timeLabel.text = [NSString stringWithFormat:@"%@", [self getMsgTime:createDate]];
+            if ([GameCommon isEmtity:backgroundImg]) {
+                ((ReusableView *)titleView).headImageView.imageURL = nil;
+            }else{
+                ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageStr2:backgroundImg];
+            }
+        }
 
     }
     return titleView;
 }
-
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
+}
 -(void)enterSearchGroupPage:(id)sender
 {
     JoinInGroupViewController *joinIn = [[JoinInGroupViewController alloc]init];
@@ -273,18 +306,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
