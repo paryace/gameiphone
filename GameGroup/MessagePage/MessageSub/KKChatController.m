@@ -60,7 +60,7 @@ UINavigationControllerDelegate>
     UIMenuItem *delItem;
     BOOL myActive;
     NSMutableArray *wxSDArray;
-    NSInteger offHight;
+    NSInteger offHight;//群消息需要多加上的高度
     
 }
 
@@ -595,14 +595,19 @@ UINavigationControllerDelegate>
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    NSString * senderId = KISDictionaryHaveKey(payload, @"sender");
     
     //动态消息
     if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
         return 47;
     }
-    
     float theH = [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue];
-    theH += padding*2 + 10+offHight;
+    if ([self.type isEqualToString:@"group"]) {
+        if (![senderId isEqualToString:@"you"]) {
+            theH+=offHight;
+        }
+    }
+    theH += padding*2 + 10;
     CGFloat height = theH < 65 ? 65 : theH;
     return height;
     
@@ -831,8 +836,14 @@ UINavigationControllerDelegate>
 //计算单条消息的高度
 -(CGFloat)getMsgHight:(NSDictionary*)plainEntry
 {
+    NSString * senderId = KISDictionaryHaveKey(plainEntry, @"sender");
     NSArray * hh = [self cacuMsgSize:plainEntry];
     CGFloat theH = [[hh objectAtIndex:1] floatValue];
+    if ([self.type isEqualToString:@"group"]) {
+        if (![senderId isEqualToString:@"you"]) {
+            theH+=offHight;
+        }
+    }
     theH += padding*2 + 10;
     CGFloat height = theH < 65 ? 65 : theH;
     return height;
@@ -853,6 +864,7 @@ UINavigationControllerDelegate>
     {
         NSDictionary* plainEntry = messages[i];
         NSArray * hh = [self cacuMsgSize:plainEntry];
+        
         [heightArray addObject:hh];
         [times addObject:[self getMsgTime:plainEntry]];
         NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
