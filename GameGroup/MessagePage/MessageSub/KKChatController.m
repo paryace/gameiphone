@@ -152,10 +152,10 @@ UINavigationControllerDelegate>
     [super viewDidLoad];
     //监听通知（收到新消息，与发送消息成功）
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
+    //ack反馈消息通知
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     //接收消息监听
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)
-        name:kNewMessageReceived object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
     //ack消息监听//消息是否发送成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     //激活监听
@@ -294,10 +294,10 @@ UINavigationControllerDelegate>
     NSString *sender = KISDictionaryHaveKey(dict, @"sender");
     NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
     NSString *status = KISDictionaryHaveKey(dict, @"status");
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+    KKChatMsgType kkChatMsgType = [self msgType:dict];
    
     //动态消息
-    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"3"]) {
+    if (kkChatMsgType == KKChatMsgTypeLink) {
         static NSString *identifier = @"newsCell";
         KKNewsCell *cell =(KKNewsCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         
@@ -390,7 +390,9 @@ UINavigationControllerDelegate>
     }
     
     //图片消息
-    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"img"]) {
+    else if (kkChatMsgType == KKChatMsgTypeImage) {
+        NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
+        NSDictionary *payload = [payloadStr JSONValue];
         static NSString *identifier = @"imgCell";
         KKImgCell *cell = (KKImgCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
@@ -489,7 +491,7 @@ UINavigationControllerDelegate>
         }
         return  cell;
     }
-    else if ([[NSString stringWithString:KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
+    else if (kkChatMsgType == KKChatMsgTypeSystem) {
         static NSString *identifier = @"systemMsgCell";
         KKSystemMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -594,23 +596,8 @@ UINavigationControllerDelegate>
 //每一行的高度
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSMutableDictionary *dict = [messages objectAtIndex:indexPath.row];
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString * senderId = KISDictionaryHaveKey(payload, @"sender");
-    
-    //动态消息
-    if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"inGroupSystemMsg"]) {
-        return 47;
-    }
     float theH = [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue];
-    if ([self.type isEqualToString:@"group"]) {
-        if (![senderId isEqualToString:@"you"]) {
-            theH+=offHight;
-        }
-    }
-    theH += padding*2 + 10;
-    CGFloat height = theH < 65 ? 65 : theH;
-    return height;
-    
+    return [self getCellHight:dict msgHight:theH];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -833,19 +820,18 @@ UINavigationControllerDelegate>
         }
     }
 }
-//计算单条消息的高度
--(CGFloat)getMsgHight:(NSDictionary*)plainEntry
+//计算单条Cell的高度
+-(CGFloat)getCellHight:(NSDictionary*)msgDic msgHight:(CGFloat)hight
 {
-    NSString * senderId = KISDictionaryHaveKey(plainEntry, @"sender");
-    NSArray * hh = [self cacuMsgSize:plainEntry];
-    CGFloat theH = [[hh objectAtIndex:1] floatValue];
+    NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
+    CGFloat theH = hight;
     if ([self.type isEqualToString:@"group"]) {
         if (![senderId isEqualToString:@"you"]) {
             theH+=offHight;
         }
     }
     theH += padding*2 + 10;
-    CGFloat height = theH < 65 ? 65 : theH;
+    CGFloat height = theH;
     return height;
 }
 
@@ -885,7 +871,7 @@ UINavigationControllerDelegate>
 }
 
 //单条消息放到集合里
--(void)newMsgToArray:(NSDictionary*)plainEntry
+-(CGFloat)newMsgToArray:(NSDictionary*)plainEntry
 {
     NSArray * hh = [self cacuMsgSize:plainEntry];
     [self.HeightArray addObject:hh];
@@ -893,9 +879,10 @@ UINavigationControllerDelegate>
     [self.finalMessageTime addObject:[self getMsgTime:plainEntry]];
      NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
     [self.finalMessageArray addObject:mas];
+    return  [[hh objectAtIndex:1] floatValue];
 }
 //单条消息放到集合指定位置
--(void)overReadMsgToArray:(NSDictionary*)plainEntry Index:(NSUInteger)index
+-(CGFloat)overReadMsgToArray:(NSDictionary*)plainEntry Index:(NSUInteger)index
 {
     NSArray * hh = [self cacuMsgSize:plainEntry];
     [self.HeightArray insertObject:hh atIndex:index];
@@ -903,6 +890,7 @@ UINavigationControllerDelegate>
     [self.finalMessageTime insertObject:[self getMsgTime:plainEntry] atIndex:index];
     NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
     [self.finalMessageArray insertObject:mas atIndex:index];
+    return  [[hh objectAtIndex:1] floatValue];
 }
 
 //根据消息类型获取消息NSMutableAttributedString
@@ -1018,18 +1006,12 @@ UINavigationControllerDelegate>
         }
         case KKChatMsgTypeImage:
         {
-            CGSize size =  CGSizeMake(100, 100);
-            NSNumber * width = [NSNumber numberWithFloat:size.width];
-            NSNumber * height = [NSNumber numberWithFloat:size.height];
-            array=[NSArray arrayWithObjects:width,height, nil];
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:100],[NSNumber numberWithFloat:100], nil];
             break;
         }
         case KKChatMsgTypeSystem:
         {
-            CGSize size =  CGSizeMake(320, 47);
-            NSNumber * width = [NSNumber numberWithFloat:size.width];
-            NSNumber * height = [NSNumber numberWithFloat:size.height];
-            array=[NSArray arrayWithObjects:width,height, nil];
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
         }
         default:
             break;
@@ -1039,11 +1021,13 @@ UINavigationControllerDelegate>
 //返回消息类型枚举
 -(KKChatMsgType)msgType:(NSDictionary*) plainEntry
 {
-    NSDictionary * payloadDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
-    if(!payloadDic){
+    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
+    
+    if([GameCommon isEmtity:payLoadStr]){
         
         return KKChatMsgTypeText;
     }
+    NSDictionary * payloadDic = [payLoadStr JSONValue];
     NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
     if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"]) {
         
@@ -2111,8 +2095,8 @@ UINavigationControllerDelegate>
     loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
-            [self overReadMsgToArray:array[i] Index:i];
-            loadMoreMsgHeight+=[self getMsgHight:array[i]];
+            CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
+            loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
         }
         loadHistoryArrayCount = array.count;
         [header endRefreshing];
@@ -2288,15 +2272,12 @@ UINavigationControllerDelegate>
 #pragma mark 长按图片
 -(void)longPressImg:(UITapGestureRecognizer*)sender
 {
-    
     EGOImageView* imgV = (EGOImageView*)sender.view;
     readyIndex = imgV.tag ;//设置当前要操作的cell idnex
     indexPathTo = [[NSIndexPath indexPathForRow:(imgV.tag) inSection:0] copy];
     //弹出菜单
     KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
-   // tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
     CGRect rect = [self.view convertRect:imgV.frame fromView:cell.contentView];
-    NSLog(@"----------------------长按tag=%d图片",imgV.tag);
     [menu setMenuItems:[NSArray arrayWithObjects:delItem, nil]];
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
