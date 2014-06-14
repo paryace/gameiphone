@@ -20,7 +20,7 @@
         self.headImageView.placeholderImage = KUIImage(@"mess_news");
         [self addSubview:self.headImageView];
         
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 210, 40)];
+        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 320-80, 40)];
         self.label.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.label.numberOfLines =2;
@@ -47,6 +47,23 @@
         self.timeLabel.font = [UIFont boldSystemFontOfSize:11.0f];
         self.timeLabel.textColor = [UIColor grayColor];
         [self addSubview:self.timeLabel];
+        
+        self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
+        [self.topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
+        [self.topBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        
+        UILabel * topLabel =  [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 320-40, 70)];
+        topLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
+        UIViewAutoresizingFlexibleHeight;
+        topLabel.backgroundColor = [UIColor clearColor];
+        topLabel.textAlignment = NSTextAlignmentCenter;
+        topLabel.font = [UIFont boldSystemFontOfSize:12.0f];
+        topLabel.numberOfLines=2;
+        topLabel.text=@"点击这里，可以通过标签找到与你兴趣相同得群组织，立即收获游戏小伙伴";
+        topLabel.textColor = [UIColor grayColor];
+        [self.topBtn addSubview:topLabel];
+        [self addSubview:self.topBtn];
+        
     }
     return self;
 }

@@ -13,4 +13,6 @@
 @property (nonatomic,strong)EGOImageView *headImageView;
 @property (nonatomic,strong)UILabel *contentLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
+@property(nonatomic,strong)UIButton *topBtn;
+@property(nonatomic,strong)UIButton *topLable;
 @end

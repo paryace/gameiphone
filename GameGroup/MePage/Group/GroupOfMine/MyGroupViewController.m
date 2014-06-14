@@ -60,7 +60,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
     m_layout.itemSize = CGSizeMake((260-15)/4, (260-15)/4);
-    m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-13);
+    m_layout.headerReferenceSize = CGSizeMake(320, 70);
     m_layout.sectionInset = UIEdgeInsetsMake(10,10,3,10);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
@@ -79,8 +79,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     NSArray *arr3 =@[@"find_role",@"find_role",@"find_group"];
     
     cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+160, 320, 240)];
-    
-    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 20, 320, 20)];
+    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
     lajiLabel.backgroundColor = [UIColor clearColor];
     lajiLabel.textColor = [UIColor grayColor];
     lajiLabel.text = @"立即添加游戏组织,开始更好的游戏体验!";
@@ -272,6 +271,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
         if (dict) {
+            ((ReusableView *)titleView).label.hidden=NO;
+            ((ReusableView *)titleView).contentLabel.hidden=NO;
+            ((ReusableView *)titleView).timeLabel.hidden=NO;
+            ((ReusableView *)titleView).headImageView.hidden=NO;
+            ((ReusableView *)titleView).topBtn.hidden=YES;
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
             NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
             NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
@@ -279,15 +283,30 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).label.text = billboard;
             ((ReusableView *)titleView).contentLabel.text = groupName;
             ((ReusableView *)titleView).timeLabel.text = [NSString stringWithFormat:@"%@", [self getMsgTime:createDate]];
+            CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+            ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
             if ([GameCommon isEmtity:backgroundImg]) {
                 ((ReusableView *)titleView).headImageView.imageURL = nil;
             }else{
                 ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageStr2:backgroundImg];
             }
+            
+        }else{
+            ((ReusableView *)titleView).label.hidden=YES;
+            ((ReusableView *)titleView).contentLabel.hidden=YES;
+            ((ReusableView *)titleView).timeLabel.hidden=YES;
+            ((ReusableView *)titleView).headImageView.hidden=YES;
+            ((ReusableView *)titleView).topBtn.hidden=NO;
+            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         }
 
     }
     return titleView;
+}
+
+-(void)topBtnClick:(id)sender
+{
+    [self showAlertViewWithTitle:@"title" message:@"message" buttonTitle:@"OK"];
 }
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
