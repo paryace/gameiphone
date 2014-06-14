@@ -256,9 +256,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         [self.navigationController pushViewController:joinIn animated:YES];
   
     }else{
-    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
-    gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
-    [self.navigationController pushViewController:gr animated:YES];
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
+        [self.navigationController pushViewController:gr animated:YES];
     }
 }
 

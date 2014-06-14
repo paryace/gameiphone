@@ -50,7 +50,7 @@
     
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
     m_baseScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
-    m_baseScrollView.contentSize = CGSizeMake(0,700);
+    m_baseScrollView.contentSize = CGSizeMake(0,600);
     [self.view addSubview:m_baseScrollView];
     
     listDict  = [NSMutableDictionary dictionary];
