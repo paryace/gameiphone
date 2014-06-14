@@ -75,6 +75,9 @@
     [topImg addSubview:aoView];
     
     
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    
     // Do any additional setup after loading the view.
 }
 
@@ -249,32 +252,9 @@
 -(void)chexiaoGroup:(id)sender
 {
     //251
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:self.groupId forKey:@"groupId"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"251" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
-        [self showMessageWindowWithContent:@"取消成功" imageType:0];
-        [self.navigationController popViewControllerAnimated:YES];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"faile");
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                alert.tag = 789;
-                [alert show];
-            }
-        }
-    }];
-
+    UIAlertView *chexiaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认撤销申请吗" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    chexiaoAlert.tag = 777;
+    [chexiaoAlert show];
 }
 
 -(void)getInfoWithNet
@@ -348,11 +328,49 @@
 
 }
 
+-(void)chexiaogroup
+{
+    hud.labelText = @"处理中...";
+    [hud show:YES];
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"251" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
+        [self showMessageWindowWithContent:@"取消成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag = 789;
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 789)
     {
         [self.navigationController popViewControllerAnimated:YES];
+    }
+    else if (alertView.tag == 777)
+    {
+        [self chexiaogroup];
     }
 }
 

@@ -268,8 +268,7 @@
         }
     }else if (alertView.tag == 789)
     {
-        MyGroupViewController *me = nil;
-        [self.navigationController popToViewController:me animated:YES];
+        [self.navigationController popToRootViewControllerAnimated:YES];
     }
 }
 
