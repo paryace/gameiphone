@@ -733,8 +733,9 @@ UINavigationControllerDelegate>
     }
     return _textView;
 }
+//群动态入口
 - (void)groupCricleButtonClick:(UIButton *)sender{
-
+    
 }
 //加载全部
 - (void)loadMoreMsg:(UIButton *)sender{

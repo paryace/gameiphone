@@ -303,8 +303,10 @@
 //查看进度
 -(void)detailClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"查看进度"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-    [alert show];
+    NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];
+    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+    gr.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"groupId")];
+    [self.navigationController pushViewController:gr animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
