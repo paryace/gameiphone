@@ -97,7 +97,6 @@
     if (!cell) {
         cell = [[GroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
-//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
     cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
@@ -110,7 +109,7 @@
     cell.gameImageV.image = KUIImage(@"clazz_00.png");
     cell.gameImageV.imageURL = [ImageService getImageUrl4:gameImageId];
     cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
-    cell.levelLable.text = [NSString stringWithFormat:@"%@%@",@"lv.",level];
+    cell.levelLable.text = [NSString stringWithFormat:@"%@",level];
     cell.cricleLable.text = KISDictionaryHaveKey(cellDic, @"info");
     return cell;
 }
