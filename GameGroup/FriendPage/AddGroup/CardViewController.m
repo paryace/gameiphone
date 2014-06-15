@@ -58,9 +58,6 @@
     [self.view addSubview:customPhotoCollectionView];
     
     [self getCardWithNet];
-    
-
-    // Do any additional setup after loading the view.
 }
 
 -(void)getCardWithNet

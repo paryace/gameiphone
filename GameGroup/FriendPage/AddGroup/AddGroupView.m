@@ -22,7 +22,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
         self.listDict = [NSMutableDictionary dictionary];
         self.cardArray = [NSMutableArray array];
         self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)];
@@ -32,9 +31,7 @@
         self.scrollView.pagingEnabled = YES;
         self.scrollView.contentSize = CGSizeMake(kScreenWidth *2, 0);
         [self addSubview:self.scrollView];
-        
         gameInfoArray = [NSMutableArray new];
-        
         gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
         
         [self buildFirstView];

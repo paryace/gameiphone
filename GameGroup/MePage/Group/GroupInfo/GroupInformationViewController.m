@@ -387,9 +387,19 @@
 
         titleLabel.text = @"群分类";
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
-        NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+            NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+            
+            NSArray * us=cell.contentView.subviews;
+            for(UIImageView *uv in us)
+            {
+                if (uv.tag==122222) {
+                    [uv removeFromSuperview];
+                }
+            }
             for (int i =0; i<tags.count; i++) {
-                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                tagImage.tag=122222;
+                [cell.contentView addSubview:tagImage];
             }
         }
         return cell;
@@ -582,12 +592,11 @@
 }
 
 
--(void)buildImgVWithframe:(CGRect)frame title:(NSString *)title superView:(UIView *)view
+-(UIImageView*)buildImgVWithframe:(CGRect)frame title:(NSString *)title
 {
     UIImageView *imgV =[[ UIImageView alloc]initWithFrame:frame];
     imgV.image = KUIImage(@"card_show");
     imgV.userInteractionEnabled = YES;
-    [view addSubview:imgV];
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-20, frame.size.height)];
 
     label.textAlignment = NSTextAlignmentCenter;
@@ -602,6 +611,7 @@
     [imgV addSubview:label];
     [imgV bringSubviewToFront:label];
     NSLog(@"%@",title);
+    return imgV;
 }
 
 -(CGSize)getStringSizeWithString:(NSString *)str font:(UIFont *)font
@@ -613,18 +623,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
