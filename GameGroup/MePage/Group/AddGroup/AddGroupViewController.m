@@ -22,6 +22,15 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建群组" withBackButton:YES];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
+                                               object:nil];
+    
+
+    
     m_updataDic = [NSMutableDictionary dictionary];
     addGroup = [[AddGroupView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     addGroup.myDelegate = self;
@@ -132,7 +141,42 @@
         
     }];
 }
-
+- (void)keyboardWillShow:(NSNotification *)notification {
+    
+    if ([addGroup.groupNameTf isFirstResponder]) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        addGroup.firstScrollView.contentOffset =CGPointMake(0, 230);
+        [UIView commitAnimations];
+        
+    }
+    else {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        addGroup.secondScrollView.contentOffset = CGPointMake(0, 300);
+        [UIView commitAnimations];
+        
+    }
+}
+- (void)keyboardWillHide:(NSNotification *)notification {
+    
+    if ([addGroup.groupNameTf isFirstResponder]) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        addGroup.firstScrollView.contentOffset =CGPointMake(0, 0);
+        [UIView commitAnimations];
+        
+    }
+    else {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        addGroup.secondScrollView.contentOffset = CGPointMake(0, 0);
+        [UIView commitAnimations];
+        
+    }
+    
+    
+}
 
 
 - (void)didReceiveMemoryWarning
