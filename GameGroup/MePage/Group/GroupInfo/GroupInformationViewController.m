@@ -14,7 +14,8 @@
 #import "MembersListViewController.h"
 #import "GroupSettingController.h"
 #import "SetUpGroupViewController.h"
-
+#import "GroupLeaveViewController.h"
+#import "CreateTimeCell.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -59,6 +60,7 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
+    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [self.view addSubview:m_myTableView];
@@ -347,6 +349,7 @@
         [self showMessageWindowWithContent:@"取消成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -389,7 +392,7 @@
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
-        
+         cell.selectionStyle =UITableViewCellSelectionStyleNone;
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
@@ -412,7 +415,8 @@
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
-        
+       cell.selectionStyle =UITableViewCellSelectionStyleNone;
+
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
@@ -443,7 +447,8 @@
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
         }
-        
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
+
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
@@ -462,6 +467,8 @@
 
         UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
         imageView.image = KUIImage(@"lv_group");
+        imageView.userInteractionEnabled = YES;
+        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
         [cell addSubview:imageView];
         
         UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
@@ -483,6 +490,8 @@
         if (cell ==nil) {
             cell = [[GroupInfomationJsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde3];
         }
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
+
         if (m_mainDict&&[m_mainDict allKeys].count>0) {
             cell.titleLabel.text = @"群介绍";
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
@@ -518,32 +527,26 @@
     else
     {
         static NSString *cellinde4 = @"cell4";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
+        CreateTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
         if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
+            cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
         }
-        
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
-        ;
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell addSubview:titleLabel];
-        
-        titleLabel.text = @"创建于";
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
 
+       
         
-        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)]
-        ;
-        timeLabel.textColor = [UIColor grayColor];
-        timeLabel.font = [UIFont systemFontOfSize:14];
-        timeLabel.textAlignment = NSTextAlignmentRight;
-        [cell.contentView addSubview:timeLabel];
+        double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
+        double gongLi = dis/1000;
         
-        timeLabel.text = @"2013-04-16";
- 
-        
-        
+        NSString* allStr = @"";
+        if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
+            allStr = @"未知";
+        }
+        else{
+        allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
+        }
+        cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
+
         return cell;
 
     }
@@ -621,6 +624,16 @@
     CGSize size = [str sizeWithFont:font constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
     return size;
 }
+
+
+#pragma mark =====查看等级
+-(void)seeLv:(id)sender
+{
+    GroupLeaveViewController *gl = [[GroupLeaveViewController alloc]init];
+    gl.groupId = self.groupId;
+    [self.navigationController pushViewController:gl animated:YES];
+}
+
 
 - (void)didReceiveMemoryWarning
 {

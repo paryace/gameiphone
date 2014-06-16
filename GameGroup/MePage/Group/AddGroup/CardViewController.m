@@ -56,10 +56,12 @@
     
     // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
     
-    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX +30, 300, 500) collectionViewLayout:layout];
+    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX, 300, kScreenHeigth-startX) collectionViewLayout:layout];
     customPhotoCollectionView.backgroundColor = [UIColor blackColor];
-    customPhotoCollectionView.scrollEnabled = NO;
+//    customPhotoCollectionView.scrollEnabled = NO;
     customPhotoCollectionView.delegate = self;
+    customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
+    customPhotoCollectionView.showsVerticalScrollIndicator = NO;
     customPhotoCollectionView.dataSource = self;
     [customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
     [customPhotoCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headViewww"];

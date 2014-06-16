@@ -70,6 +70,14 @@
     
     [self buildRoleView];
     
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 140, 320, 20)];
+    lable.backgroundColor = [UIColor clearColor];
+    lable.text = @"根据角色为您推荐以下分类";
+    lable.font = [UIFont systemFontOfSize:10];
+    lable.textAlignment = NSTextAlignmentCenter;
+    lable.textColor  = [UIColor grayColor];
+    [m_baseScrollView addSubview:lable];
+    
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 10;
     m_layout.minimumLineSpacing =5;
@@ -98,22 +106,23 @@
 -(void)buildRoleView
 {
     UIView* myView = [[UIView alloc] initWithFrame:CGRectMake(0, 70, 320, 60)];
-    myView.backgroundColor = [UIColor colorWithRed:180/255.0f green:180/255.0f blue:180/255.0f alpha:1];
+    myView.backgroundColor = [UIColor whiteColor];
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     clazzImg.backgroundColor = [UIColor clearColor];
     clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
     [myView addSubview:clazzImg];
     
-    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
     authBg.backgroundColor = [UIColor clearColor];
-    BOOL isAuth = [[gameInfoArray[0]objectForKey:@"auth"]boolValue];
-    if (isAuth) {
-        authBg.image = KUIImage(@"auth");
+    NSString *auth =[gameInfoArray[0]objectForKey:@"auth"];
+//    BOOL isAuth = [auth boolValue];
+    if ([auth intValue]==0) {
+        authBg.image = KUIImage(@"chara_auth_2");
     }else{
-        authBg.image = KUIImage(@"auth");
+        authBg.image = KUIImage(@"chara_auth_1");
     }
     [myView addSubview:authBg];
-    authBg.hidden = YES;
+//    authBg.hidden = YES;
     
     nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 120, 20)];
     nameLabel.backgroundColor = [UIColor clearColor];
@@ -170,7 +179,6 @@
 -(void)didClickChangeRole:(id)sender
 {
     m_pickView.hidden = NO;
-
 }
 
 
@@ -293,7 +301,14 @@
         realmLabel.text = KISDictionaryHaveKey(dict, @"realm");
         gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")]];
         nameLabel.text = KISDictionaryHaveKey(dict, @"name");
-        
+        NSString *auth =[dict objectForKey:@"auth"];
+        //    BOOL isAuth = [auth boolValue];
+        if ([auth intValue]==0) {
+            authBg.image = KUIImage(@"chara_auth_2");
+        }else{
+            authBg.image = KUIImage(@"chara_auth_1");
+        }
+
     }
 }
 

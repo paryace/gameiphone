@@ -11,7 +11,6 @@
 #import "MemberEditViewController.h"
 #import "GroupInfoEditViewController.h"
 #import "PublishBillboardViewController.h"
-#import "MyGroupViewController.h"
 @interface GroupSettingController ()
 {
     UILabel *groupNameLable;

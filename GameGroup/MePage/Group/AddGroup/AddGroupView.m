@@ -55,16 +55,16 @@
     self.firstScrollView.contentSize = CGSizeMake(0,150+kScreenHeigth);
     [self.scrollView addSubview:self.firstScrollView];
 
-    self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 138)];
-    self.topImageView.image = KUIImage(@"topImg_youqu.jpg");
+    self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 190)];
+    self.topImageView.image = KUIImage(@"addGroup_top1");
     self.topImageView .backgroundColor = [UIColor grayColor];
     [self.firstScrollView addSubview:self.topImageView];
     
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 158, 300, 40)];
+    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 210, 300, 40)];
     table_top.image = KUIImage(@"table_top");
     [self.firstScrollView addSubview:table_top];
     
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 174, 12, 8)];
+    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 174+52, 12, 8)];
     table_arrow.image = KUIImage(@"arrow_bottom");
     [self.firstScrollView addSubview:table_arrow];
     
@@ -72,15 +72,15 @@
 //    table_middle.image = KUIImage(@"table_middle");
 //    [self.firstScrollView addSubview:table_middle];
     
-    UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(290, 214, 12, 8)];
+    UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(290, 214+52, 12, 8)];
     table_arrow_two.image = KUIImage(@"arrow_bottom");
     [self.firstScrollView addSubview:table_arrow_two];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 199, 300, 40)];
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 199+52, 300, 40)];
     table_bottom.image = KUIImage(@"table_bottom");
     [self.firstScrollView addSubview:table_bottom];
     
-    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159, 100, 38)];
+    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159+52, 100, 38)];
     table_label_one.text = @"选择游戏角色";
     table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
@@ -92,7 +92,7 @@
 //    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
 //    [self.firstScrollView addSubview:table_label_two];
     
-    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 199, 80, 38)];
+    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 199+52, 80, 38)];
     table_label_three.text = @"群组名称";
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
@@ -115,7 +115,7 @@
     toolbar.items = @[rb_server];
 
     
-    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(100, 158, 180, 40)];
+    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(100, 158+52, 180, 40)];
     self.gameTextField.returnKeyType = UIReturnKeyDone;
     self.gameTextField.delegate = self;
     self.gameTextField.inputView = m_gamePickerView;
@@ -142,7 +142,7 @@
 //    [serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.firstScrollView addSubview:serverButton];
     
-    self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 198, 180, 40)];
+    self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 198+52, 180, 40)];
     self.groupNameTf.returnKeyType = UIReturnKeyDone;
     self.groupNameTf.delegate = self;
     self.groupNameTf.textAlignment = NSTextAlignmentRight;
@@ -152,7 +152,7 @@
     [self.firstScrollView addSubview:self.groupNameTf];
     
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(10, 250, 300, 44)];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(10, 250+52, 300, 44)];
     [button setTitle:@"下一步" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(playNextGame:) forControlEvents:UIControlEventTouchUpInside];
@@ -169,8 +169,8 @@
    
     [self getCardWithNet];
     
-    self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 138)];
-    self.topImageView.image = KUIImage(@"topImg_youqu.jpg");
+    self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 190)];
+    self.topImageView.image = KUIImage(@"addGroup_top2");
     self.topImageView .backgroundColor = [UIColor grayColor];
     [self.secondScrollView addSubview:self.topImageView];
 
@@ -182,7 +182,7 @@
 //    [self.secondScrollView addSubview:cardView];
     
     
-    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 155, 300, 40)];
+    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 155+52, 300, 40)];
     carimg.image = KUIImage(@"group_cardtf");
     carimg.userInteractionEnabled = YES;
     [carimg addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
@@ -204,7 +204,7 @@
     layout1.minimumInteritemSpacing = 10;
     layout1.minimumLineSpacing =5;
     
-   self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 200, 300, 50) collectionViewLayout:layout1];
+   self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 200+52, 300, 50) collectionViewLayout:layout1];
     self.titleCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     self.titleCollectionView.scrollEnabled = NO;
     self.titleCollectionView.delegate = self;
@@ -217,13 +217,13 @@
 
     
     
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 280, 280, 150)];
+    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
     editIV.backgroundColor=[UIColor whiteColor];
     editIV.image = KUIImage(@"group_info");
     [self.secondScrollView addSubview:editIV];
 
     
-    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280, 280, 150)];
+    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
     m_textView.delegate = self;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
     m_textView.backgroundColor = [UIColor clearColor];
@@ -235,7 +235,7 @@
     
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, 450, 300, 44);
+    button.frame = CGRectMake(10, 450+52, 300, 44);
     [button setTitle:@"提交" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(enterThirdPage:) forControlEvents:UIControlEventTouchUpInside];
