@@ -52,6 +52,12 @@
 @protocol KKChatCellDelegate <NSObject>
 
 - (void)myHeadImgClicked:(id)Sender;    //自己的头像被点击
+
 -(void)chatUserHeadImgClicked:(id)Sender; //对方的头像被点击
+
+//Cell点击
+-(void)onCellBgClick:(UIButton*)sender;
+//Cell长按
+-(void)onCellBgLongClick:(UITapGestureRecognizer*)sender;
 
 @end
