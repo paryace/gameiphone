@@ -18,15 +18,13 @@
     NSMutableArray *gameInfoArray;
     UIPickerView *m_gamePickerView;
 }
+
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
-                                                   object:nil];
 
         
         self.listDict = [NSMutableDictionary dictionary];
@@ -85,8 +83,8 @@
     [self.firstScrollView addSubview:table_arrow];
 
     
-    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159+52, 100, 38)];
-    table_label_one.text = @"选择游戏角色";
+    UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159+52, 70, 38)];
+    table_label_one.text = @"选择角色";
     table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
     [self.firstScrollView addSubview:table_label_one];
@@ -98,9 +96,9 @@
     [self.firstScrollView addSubview:table_label_three];
     
     UILabel* lb = [[UILabel alloc] initWithFrame:CGRectMake(20, 260, 280, 60)];
-    lb.text = @"选择一个角色来建立组织,该角色所在的角色和服务器将便于其他人找到该组织,你可以在组织创建成功后修改这些设定";
+    lb.text = @"选择一个角色来建立组织,该角色所在的游戏和服务器将便于其他人找到该组织,你可以在组织创建成功后修改这些设定";
     lb.numberOfLines =0;
-    lb.textColor = kColorWithRGB(102, 102, 102, 1.0);
+    lb.textColor = kColorWithRGB(200, 200, 200, 1.0);
     lb.font = [UIFont boldSystemFontOfSize:12.0];
     [self.firstScrollView addSubview:lb];
 
@@ -117,11 +115,12 @@
     toolbar.items = @[rb_server];
 
     
-    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(100, 158+52, 180, 40)];
+    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(80, 158+52, 180, 40)];
     self.gameTextField.returnKeyType = UIReturnKeyDone;
     self.gameTextField.delegate = self;
     self.gameTextField.inputView = m_gamePickerView;
     self.gameTextField.inputAccessoryView= toolbar;
+    self.gameTextField.adjustsFontSizeToFitWidth = YES;
 
     self.gameTextField.textAlignment = NSTextAlignmentRight;
     self.gameTextField.font = [UIFont boldSystemFontOfSize:15.0];
@@ -172,26 +171,30 @@
 //    [self.secondScrollView addSubview:cardView];
     
     
-    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 155+52, 300, 40)];
+    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(20, 155+52, 280, 40)];
     carimg.image = KUIImage(@"group_cardtf");
     carimg.userInteractionEnabled = YES;
     [carimg addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
 
     [self.secondScrollView addSubview:carimg];
     
-    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 40)];
+    UIImageView *rightImg = [[UIImageView alloc]initWithFrame:CGRectMake(260, 15, 10, 10)];
+    rightImg.image = KUIImage(@"right");
+    [carimg addSubview:rightImg];
+
+    self.cardTF =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 200, 40)];
     self.cardTF.userInteractionEnabled = NO;
     self.cardTF.textColor = [UIColor grayColor];
     self.cardTF.numberOfLines = 0;
-    self.cardTF.text = @"选择群标签";
+    self.cardTF.text = @"选择群分类";
     self.cardTF.userInteractionEnabled = YES;
     self.cardTF.backgroundColor = [UIColor clearColor];
     self.cardTF.font = [UIFont systemFontOfSize:14];
     [carimg addSubview:self.cardTF];
     
-    UILabel *lb =[[ UILabel alloc]initWithFrame:CGRectMake(10, 250, 300, 10)];
+    UILabel *lb =[[ UILabel alloc]initWithFrame:CGRectMake(30, 250, 300, 13)];
     lb.backgroundColor = [UIColor clearColor];
-    lb.font = [UIFont systemFontOfSize:10];
+    lb.font = [UIFont systemFontOfSize:12];
     lb.textColor = [UIColor grayColor];
     lb.text = @"选择正确的分类才能让更多的玩家发现本群";
     [self.secondScrollView addSubview:lb];
@@ -199,10 +202,10 @@
     
     
    UICollectionViewFlowLayout* layout1 = [[UICollectionViewFlowLayout alloc]init];
-    layout1.minimumInteritemSpacing = 10;
+    layout1.minimumInteritemSpacing = 3;
     layout1.minimumLineSpacing =5;
-    
-   self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 200+72, 300, 50) collectionViewLayout:layout1];
+    layout1.itemSize = CGSizeMake(88, 30);
+   self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(20, 200+72, 280, 50) collectionViewLayout:layout1];
     self.titleCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     self.titleCollectionView.scrollEnabled = NO;
     self.titleCollectionView.delegate = self;
@@ -222,6 +225,9 @@
     
     m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
     m_textView.delegate = self;
+    m_textView.layer.borderColor = [UIColor grayColor].CGColor;
+    m_textView.layer.borderWidth =1.0;
+    m_textView.layer.cornerRadius =5.0;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
     m_textView.textColor = [UIColor blackColor];
     m_textView.backgroundColor = [UIColor whiteColor];
@@ -264,13 +270,13 @@
     }];
     
 }
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-        NSDictionary *dic = [self.cardArray objectAtIndex:indexPath.row];
-        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-        return CGSizeMake(size.width+25, 30);
-    
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
+//{
+//        NSDictionary *dic = [self.cardArray objectAtIndex:indexPath.row];
+//        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
+//        return CGSizeMake(size.width+25, 30);
+//    
+//}
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -287,7 +293,7 @@
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
     NSDictionary* dic = [self.cardArray objectAtIndex:indexPath.row];
-    cell.titleLabel.frame = cell.bgImgView.frame;
+//    cell.titleLabel.frame = cell.bgImgView.frame;
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
     return cell;
 }
@@ -375,42 +381,7 @@
     
     
 }
-- (void)keyboardWillShow:(NSNotification *)notification {
-    
-    if ([self.groupNameTf isFirstResponder]) {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        self.firstScrollView.contentOffset =CGPointMake(0, 230);
-        [UIView commitAnimations];
 
-    }
-    else if ([m_textView isFirstResponder]){
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        self.secondScrollView.contentOffset = CGPointMake(0, 300);
-        [UIView commitAnimations];
-
-    }
-}
-- (void)keyboardWillHide:(NSNotification *)notification {
-    
-    if ([self.groupNameTf isFirstResponder]) {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        self.firstScrollView.contentOffset =CGPointMake(0, 0);
-        [UIView commitAnimations];
-        
-    }
-    else if ([m_textView isFirstResponder]){
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        self.secondScrollView.contentOffset = CGPointMake(0, 0);
-        [UIView commitAnimations];
-        
-    }
-  
-    
-}
 -(void)selectServerNameOK:(id)sender
 {
     if ([gameInfoArray count] != 0) {
@@ -448,4 +419,9 @@
     [textField resignFirstResponder];
     return YES;
 }
+- (void)dealloc
+{
+    self.groupNameTf.delegate=nil;
+}
+
 @end

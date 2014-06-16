@@ -56,11 +56,17 @@
     titleLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:titleLabel];
     
-    numLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 40, 200, 30)];
+    numLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 40, 120, 30)];
     numLabel.text = @"群号";
     numLabel.textColor = [UIColor grayColor];
     numLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:numLabel];
+    
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(230, 40, 60, 30)];
+    [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(7, 0, 7, 0)];
+    [scrollView addSubview:button];
+    
     
     lvLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 70, 200, 30)];
     lvLabel.text = @"群等级";

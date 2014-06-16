@@ -124,7 +124,7 @@
 {
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"card_show");
+    cell.bgImgView.image = KUIImage(@"card_click");
     cell.tag = indexPath.section*1000+indexPath.row;
     NSArray *keysArray = [self.listDict allKeys];
     NSDictionary* dic = [[self.listDict objectForKey:[keysArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
@@ -156,7 +156,7 @@
             }
         }
         [numArray removeObject:@(indexPath.section *10000+indexPath.row)];
-        cell.bgImgView.image = KUIImage(@"card_click_no");
+        cell.bgImgView.image = KUIImage(@"card_click");
     }else{
         if (cardArray.count==3) {
             [self showAlertViewWithTitle:@"提示" message:@"您最多只能选择3个标签" buttonTitle:@"确定"];
@@ -165,7 +165,7 @@
 
         [numArray addObject:@(indexPath.section*10000+indexPath.row)];
         [cardArray addObject:dic];
-        cell.bgImgView.image = KUIImage(@"card_click_yes");
+        cell.bgImgView.image = KUIImage(@"card_show");
     }
     
     

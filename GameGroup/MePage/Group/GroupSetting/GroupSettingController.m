@@ -204,7 +204,7 @@
 //举报该群组
 -(void)report:(id)sender
 {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:nil cancelButtonTitle:@"取消" destructiveButtonTitle:@"nil" otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:nil cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
     [actionSheet showInView:self.view];
     
  
