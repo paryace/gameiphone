@@ -33,6 +33,7 @@
     scV.contentSize=CGSizeMake(320, 500);
     [self.view addSubview:scV];
     
+   
     
     UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, 20,320, 45)];
     UIButton * topBtn = [self getItemBtn:@"群组消息提示"];
@@ -179,12 +180,12 @@
 -(NSString*)getCellMsgByState:(NSString*)groupMsgSettingState
 {
     if ([groupMsgSettingState isEqualToString:@"0"]) {
-        return @"接收消息";
+        return @"接受推送消息并提示";
         
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
-        return @"不接收该群消息";
+        return @"不接受推送消息且不提示";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"接受消息，不离线推送";
+        return @"不接受推送消息但提示";
     }
     return @"";
 }
@@ -216,7 +217,7 @@
 //群组消息设置
 -(void)hint:(id)sender
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"接收消息",@"不接收该群消息",@"接受消息，不离线推送", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"接受推送消息并提示",@"不接受推送消息且不提示",@"不接受推送消息但提示", nil];
     alertView.tag = 1002;
     [alertView show];
 }

@@ -138,10 +138,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
     }
-    else if ([type isEqualToString:@"groupchat"])//群组聊天消息
-    {
-        [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];
-    }
     else if ([type isEqualToString:@"joinGroupApplication"])//群组消息
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
@@ -154,7 +150,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
              ||[type isEqualToString:@"groupApplicationAccept"]
              ||[type isEqualToString:@"groupApplicationReject"]
              ||[type isEqualToString:@"groupLevelUp"]//群等级提升
-//             ||[type isEqualToString:@"groupBillboard"]//群公告
              ||[type isEqualToString:@"friendJoinGroup"]//群组消息
              ||[type isEqualToString:@"disbandGroup"])//解散群
     {
@@ -225,7 +220,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-//    [self storeNewMessage:messageContent];
+
     if (![[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {
         BOOL isVibrationopen=[self isVibrationopen];;
         BOOL isSoundOpen = [self isSoundOpen];
