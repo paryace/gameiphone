@@ -136,6 +136,12 @@
     [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
     [scV addSubview:okButton];
     
+    NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
+    NSString * message = [self getCellMsgByState:groupMsgSettingState];
+    [self setSettingMsg:message];
+    
+
+    
     if (self.shiptypeCount ==0) {//群主
         okButton.frame  = CGRectMake(10,421,300, 40);
         itemfour.hidden = NO;
@@ -160,6 +166,27 @@
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }
     [self setInfo];
+}
+
+-(void)setSettingMsg:(NSString*)message
+{
+    CGSize textSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    msgHintLable.text = message;
+    msgHintLable.frame = CGRectMake(300-textSize.width-5, 12.5, textSize.width, 20);
+    soundimageView.frame=CGRectMake(300-textSize.width-5-5-25, 12.5, 25, 20);
+}
+
+-(NSString*)getCellMsgByState:(NSString*)groupMsgSettingState
+{
+    if ([groupMsgSettingState isEqualToString:@"0"]) {
+        return @"接收消息";
+        
+    }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
+        return @"不接收该群消息";
+    }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
+        return @"接受消息，不离线推送";
+    }
+    return @"";
 }
 -(void)setInfo
 {
@@ -281,28 +308,25 @@
     {
         if (buttonIndex ==1)
         {
-            msgHintLable.text=@"接收消息";
             [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"0"];
            
         }else if (buttonIndex ==2)
         {
-            msgHintLable.text=@"不接收该群消息";
             [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"1"];
             
         }
         else if (buttonIndex ==3)
         {
-            msgHintLable.text=@"接受消息，不离线推送";
             [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"2"];
-            
         }
         
-        CGSize textSize = [msgHintLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        msgHintLable.frame = CGRectMake(300-textSize.width-5, 12.5, textSize.width, 20);
-        soundimageView.frame=CGRectMake(300-textSize.width-5-5-25, 12.5, 25, 20);
+        NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
+        NSString * message = [self getCellMsgByState:groupMsgSettingState];
+        [self setSettingMsg:message];
+        
     }
 }
 
