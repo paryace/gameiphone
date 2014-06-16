@@ -12,6 +12,7 @@
 {
     UITableView *m_myTableView;
     NSMutableArray *m_dataArray;
+    NSDictionary *didClickDict;
 }
 @end
 
@@ -34,7 +35,7 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-
+    didClickDict = [NSMutableDictionary dictionary];
     
     [self getNearByDataByNet];
     
@@ -130,23 +131,26 @@
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
+    didClickDict = dic;
     if (m_dataArray==nil||m_dataArray.count==0) {
         return;
     }
     if (self.shiptype ==0) {
         if ([KISDictionaryHaveKey(dic, @"type")intValue]==1) {
             UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"取消管理员",@"移除",@"移除并举报", nil];
+            actionSheet.tag = 111;
             [actionSheet showInView:self.view];
 
         }else if ([KISDictionaryHaveKey(dic, @"type")intValue] ==2){
         UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"设置管理员",@"移除",@"移除并举报", nil];
+            actionSheet.tag =222;
         [actionSheet showInView:self.view];
         }
 
     }else{
         if ([KISDictionaryHaveKey(dic, @"type")intValue]==2) {
             UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"移除",@"移除并举报", nil];
+            actionSheet.tag =333;
             [actionSheet showInView:self.view];
             
         }else {
@@ -154,6 +158,101 @@
         }
     }
   
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (actionSheet.tag) {
+        case 111:
+            switch (buttonIndex) {
+                case 0:
+                    [self showAlertViewWithTitle:nil message:@"转让群组" buttonTitle:@"取消"];
+                    break;
+                case 1:
+                    [self editIdentityForNetWithUserid:KISDictionaryHaveKey(didClickDict, @"userid") type:@"2"];
+                    break;
+                case 2:
+                    [self showAlertViewWithTitle:nil message:@"踢人" buttonTitle:@"取消"];
+                    break;
+    
+                default:
+                    [self showAlertViewWithTitle:nil message:@"踢人并且举报" buttonTitle:@"取消"];
+                    break;
+            }
+            break;
+        case 222:
+            switch (buttonIndex) {
+                case 0:
+                    [self showAlertViewWithTitle:nil message:@"转让群组" buttonTitle:@"取消"];
+                    break;
+                case 1:
+                    [self editIdentityForNetWithUserid:KISDictionaryHaveKey(didClickDict, @"userid") type:@"2"];
+                    break;
+                case 2:
+                    [self showAlertViewWithTitle:nil message:@"踢人" buttonTitle:@"取消"];
+                    break;
+                    
+                default:
+                    [self showAlertViewWithTitle:nil message:@"踢人并且举报" buttonTitle:@"取消"];
+                    break;
+            }
+            break;
+        case 333:
+            switch (buttonIndex) {
+                case 0:
+                    [self showAlertViewWithTitle:nil message:@"踢人" buttonTitle:@"取消"];
+                    break;
+                case 1:
+                    [self showAlertViewWithTitle:nil message:@"踢人并且举报" buttonTitle:@"取消"];
+                    break;
+                default:
+                    break;
+            }
+
+            break;
+   
+        default:
+            break;
+    }
+}
+- (void)editIdentityForNetWithUserid:(NSString *)userid type:(NSString *)type
+{
+    [hud show:YES];
+    NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
+    NSMutableDictionary *postDict = [[NSMutableDictionary alloc]init];
+    
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    [paramDict setObject:type forKey:@"type"];
+    [paramDict setObject:userid forKey:@"memberUserid"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon]getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"253" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [hud show:YES];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            [m_dataArray removeAllObjects];
+            [m_dataArray addObjectsFromArray:responseObject];
+            [m_myTableView reloadData];
+            
+        }
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            NSString* warn = [error objectForKey:kFailMessageKey];
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", warn] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+    // [refreshView stopLoading:NO];
+    
 }
 
 - (void)didReceiveMemoryWarning

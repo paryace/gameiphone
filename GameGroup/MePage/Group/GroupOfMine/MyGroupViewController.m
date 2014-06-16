@@ -12,6 +12,7 @@
 #import "GroupInformationViewController.h"
 #import "ReusableView.h"
 #import "SearchGroupViewController.h"
+#import "AddGroupViewController.h"
 #import "BillboardViewController.h"
 
 @interface MyGroupViewController ()
@@ -47,22 +48,31 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"我的群组" withBackButton:NO];
-    imageHight = (320-15)/4;
+    [self setTopViewWithTitle:@"我的群组" withBackButton:YES];
+    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
-    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
-    backButton.backgroundColor = [UIColor clearColor];
-    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backButton];
+    
+
     myGroupArray = [NSMutableArray array];
-//    UIButton*button  = [UIButton buttonWithType: UIButtonTypeCustom];
-//    button.frame = CGRectMake(20, startX+20, 60, 60);
-//    [button setImage:KUIImage(@"addphoto") forState:UIControlStateNormal];
-//    [button addTarget:self action:@selector(enterSearchGroupPage:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:button];
+    
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(didClickCreateGroup:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
+    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    if (bills&&bills.count>0) {
+        dict = [bills objectAtIndex:0];
+    }
+    
+    
+    
+    imageHight = (320-15)/4;
+
 
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
@@ -132,10 +142,18 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self getGroupListFromNet];
 }
 
--(void)backButtonClick:(id)sender
+//-(void)backButtonClick:(id)sender
+//{
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+//}
+
+#pragma mark ---创建群
+-(void)didClickCreateGroup:(id)sender
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
+    [self.navigationController pushViewController:addGroupView animated:YES];
 }
+
 
 -(UIButton *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
 {
@@ -189,7 +207,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             break;
         case 102:
             break;
-     
         default:
             [self showAlertViewWithTitle:@"嘟嘟嘟嘟" message:@"难道你不知道同服现在不能点呢嘛！！没事不要乱点!" buttonTitle:@"跪求原谅"];
  

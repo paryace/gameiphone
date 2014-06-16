@@ -79,6 +79,8 @@
 
 -(void)senderCkickInfoWithDel:(CardViewController *)del array:(NSMutableArray *)array
 {
+    if (array.count>0) {
+        
     
     if (array.count==0) {
         return;
@@ -98,7 +100,7 @@
     [addGroup.cardArray removeAllObjects];
     [addGroup.cardArray addObjectsFromArray:array];
     [addGroup.titleCollectionView reloadData];
-
+    }
 }
 
 -(void)uploadInfoWithNet

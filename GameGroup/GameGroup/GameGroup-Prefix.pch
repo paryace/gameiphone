@@ -35,7 +35,7 @@
     #import "UpLoadFileService.h"
     #import "MessageService.h"
     #import "UserManager.h"
-    #import "GroupManager.h";
+    #import "GroupManager.h"
 
    #endif
 
