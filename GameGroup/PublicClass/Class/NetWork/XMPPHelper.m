@@ -24,7 +24,6 @@
 #import "GameXmppReconnect.h"
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
-
 -(id)init
 {
     self = [super init];
@@ -337,6 +336,9 @@
         
         else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
         {
+            NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
+            [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
+            
             NSString * groupid = [[message attributeForName:@"groupid"] stringValue];
             NSString * domain=[[from componentsSeparatedByString:@"@"] objectAtIndex:1];
             NSString * to=[NSString stringWithFormat:@"%@%@%@",groupid,@"@group.",domain];

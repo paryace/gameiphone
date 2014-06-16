@@ -76,6 +76,7 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
 
+
 @end
 
 @implementation KKChatController
@@ -262,6 +263,7 @@ UINavigationControllerDelegate>
 {
     DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     myActive = [friend.action boolValue];
+    self.myNickName = friend.nickName;
     self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
 }
 //改变我的激活状态
@@ -1132,7 +1134,7 @@ UINavigationControllerDelegate>
     NSString* openImgPath=[self writeImageToFile:thumbImageData];
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
-        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
+        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(messages.count-1) inSection:0];
         KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
         [cell uploadImage:upImagePath cellIndex:(messages.count-1)];
@@ -1702,14 +1704,23 @@ UINavigationControllerDelegate>
         return;
     }
     self.textView.text = @"";
-   [self sendMsg:message];
+    [self sendMsg:message];
+}
+
+-(NSString*)getMsgBody:(NSString*)msgText
+{
+    if ([self.type isEqualToString:@"group"]) {
+        NSDictionary * dic = @{@"userNickName":self.myNickName,@"content":msgText};
+        return [dic JSONFragment];
+    }
+    return msgText;
 }
 
 #pragma mark将发送图片的消息保存数据库
-- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
+- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-     NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
 }
@@ -1878,7 +1889,7 @@ UINavigationControllerDelegate>
     if (![self isGroupAvaitable]) {
         return;
     }
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:[self getMsgBody:message] UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
     if(payloadStr!=nil&&![payloadStr isEqualToString:@""]){
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
         [payload setStringValue:payloadStr];
