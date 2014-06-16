@@ -286,6 +286,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).headImageView.hidden=NO;
             ((ReusableView *)titleView).topLabel.hidden=YES;
             [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+//            [((ReusableView *)titleView).topBtn  setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
             ((ReusableView *)titleView).topBtn.tag=123;
             [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");

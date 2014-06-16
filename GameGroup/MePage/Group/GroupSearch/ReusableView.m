@@ -16,7 +16,6 @@
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:232/255.0f green:232/255.0f blue:232/255.0f alpha:1];
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
-        [self.topBtn  setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
         [self addSubview:self.topBtn];
         self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 15, 40, 40)];
         self.headImageView.placeholderImage = KUIImage(@"mess_news");
