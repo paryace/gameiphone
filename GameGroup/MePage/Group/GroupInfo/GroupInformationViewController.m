@@ -375,37 +375,46 @@
 {
     
     if (indexPath.row ==0) {
-        static NSString *cellinde = @"cell0";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+        
+        static NSString *cellinde2 = @"cell2";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
         if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
         }
-         cell.selectionStyle =UITableViewCellSelectionStyleNone;
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
+        
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:titleLabel];
-
-        titleLabel.text = @"群分类";
-        if (m_mainDict &&[m_mainDict allKeys].count>0) {
-            NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
-            
-            NSArray * us=cell.contentView.subviews;
-            for(UIImageView *uv in us)
-            {
-                if (uv.tag==122222) {
-                    [uv removeFromSuperview];
-                }
-            }
-            for (int i =0; i<tags.count; i++) {
-                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
-                tagImage.tag=122222;
-                [cell.contentView addSubview:tagImage];
-            }
-        }
+        [cell addSubview:titleLabel];
+        
+        titleLabel.text = @"群组号";
+        
+        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,100, 40)];
+        numLb.font = [UIFont boldSystemFontOfSize:14];
+        numLb.backgroundColor = [UIColor clearColor];
+        numLb.textColor =[ UIColor blackColor];
+        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
+        [cell addSubview:numLb];
+        
+        UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+        imageView.image = KUIImage(@"lv_group");
+        imageView.userInteractionEnabled = YES;
+        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
+        [cell addSubview:imageView];
+        
+        UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+        lvLb.font = [UIFont boldSystemFontOfSize:11];
+        lvLb.backgroundColor = [UIColor clearColor];
+        lvLb.textColor =[ UIColor blackColor];
+        lvLb.textAlignment = NSTextAlignmentCenter;
+        lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
+        [cell addSubview:lvLb];
+        
         return cell;
+        
     }
    else if (indexPath.row ==1) {
         static NSString *cellinde = @"cell1";
@@ -440,46 +449,39 @@
         return cell;
     }
     else if (indexPath.row ==2)
-    {    static NSString *cellinde2 = @"cell2";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
+    {
+        static NSString *cellinde = @"cell0";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
         if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
         cell.selectionStyle =UITableViewCellSelectionStyleNone;
-
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell addSubview:titleLabel];
-
-        titleLabel.text = @"群组号";
+        [cell.contentView addSubview:titleLabel];
         
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,100, 40)];
-        numLb.font = [UIFont boldSystemFontOfSize:14];
-        numLb.backgroundColor = [UIColor clearColor];
-        numLb.textColor =[ UIColor blackColor];
-        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
-        [cell addSubview:numLb];
-
-        UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
-        imageView.image = KUIImage(@"lv_group");
-        imageView.userInteractionEnabled = YES;
-        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
-        [cell addSubview:imageView];
-        
-        UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
-        lvLb.font = [UIFont boldSystemFontOfSize:11];
-        lvLb.backgroundColor = [UIColor clearColor];
-        lvLb.textColor =[ UIColor blackColor];
-        lvLb.textAlignment = NSTextAlignmentCenter;
-        lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
-        [cell addSubview:lvLb];
-
+        titleLabel.text = @"群分类";
+        if (m_mainDict &&[m_mainDict allKeys].count>0) {
+            NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+            
+            NSArray * us=cell.contentView.subviews;
+            for(UIImageView *uv in us)
+            {
+                if (uv.tag==122222) {
+                    [uv removeFromSuperview];
+                }
+            }
+            for (int i =0; i<tags.count; i++) {
+                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                tagImage.tag=122222;
+                [cell.contentView addSubview:tagImage];
+            }
+        }
         return cell;
 
-        
     }
     else if (indexPath.row ==3)
     {
@@ -561,14 +563,17 @@
 
     switch (indexPath.row) {
         case 0:
-            NSLog(@"--------%d",tags.count/2);
-            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
-            return  tagsRowCount*30+tagsRowCount*5+10;
+            return 40;
             break;
         case 1:
             return 40;
             break;
         case 2:
+            NSLog(@"--------%d",tags.count/2);
+            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+            return  tagsRowCount*30+tagsRowCount*5+10;
+            break;
+         case 3:
             if (photoArray.count>0&&photoArray.count<4) {
                 height=80;
             }
