@@ -225,15 +225,13 @@ static UserManager *userManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
+        if (![responseObject isKindOfClass:[NSMutableArray class]]) {
+            return;
+        }
+        for (NSMutableDictionary * info in responseObject) {
+            [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(info, @"messageState") forKey:[NSString stringWithFormat:@"id%@",KISDictionaryHaveKey(info, @"groupId")]];
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
-
-
-
-
--(void) onUserUpdate:(NSNotification*)notification{
-
-}
-
 @end

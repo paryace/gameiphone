@@ -281,17 +281,23 @@
     {
         if (buttonIndex ==1)
         {
-            [self settingMsgHint:@"0"];
             msgHintLable.text=@"接收消息";
+            [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:[GameCommon getNewStringWithId:self.groupId]];
+            [self settingMsgHint:@"0"];
+           
         }else if (buttonIndex ==2)
         {
+            msgHintLable.text=@"不接收该群消息";
+            [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"1"];
-             msgHintLable.text=@"不接收该群消息";
+            
         }
         else if (buttonIndex ==3)
         {
+            msgHintLable.text=@"接受消息，不离线推送";
+            [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"2"];
-             msgHintLable.text=@"接受消息，不离线推送";
+            
         }
         
         CGSize textSize = [msgHintLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];

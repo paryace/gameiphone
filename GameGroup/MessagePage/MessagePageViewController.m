@@ -266,7 +266,15 @@
 {
     int allUnread = 0;
     for (int i = 0; i<allMsgArray.count; i++) {
-        allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
+        DSThumbMsgs * message = [allMsgArray objectAtIndex:i];
+        if ([message.msgType isEqualToString:@"groupchat"]) {
+            if ([[GameCommon getMsgSettingStateByGroupId:message.groupId] isEqualToString:@"0"]
+                ||[[GameCommon getMsgSettingStateByGroupId:message.groupId] isEqualToString:@"2"]) {
+                allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
+            }
+        }else{
+            allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
+        }
     }
     if (allUnread>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:allUnread OrDot:NO WithButtonIndex:0];

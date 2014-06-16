@@ -75,4 +75,6 @@
 -(void)LoginOpen;
 
 +(NSString*)getGroupDomain:(NSString*)domain;
+
++(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId;
 @end

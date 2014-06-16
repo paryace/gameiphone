@@ -639,6 +639,10 @@ static GameCommon *my_gameCommon = NULL;
     NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:filePath];
     return [self getNewStringWithId: KISDictionaryHaveKey(dic, str)];
 }
++(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[self getNewStringWithId:groupId]];
+}
 
 #pragma mark 是否由1.0版本升级
 + (void)cleanLastData
