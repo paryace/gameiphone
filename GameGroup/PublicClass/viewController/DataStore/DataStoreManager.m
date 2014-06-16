@@ -182,7 +182,8 @@
 +(void)deleteJoinGroupApplication
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSArray * msgs = [DSGroupApplyMsg MR_findAll];
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgType!=[c]%@ ",@"groupBillboard"];
+        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
         for (int i = 0; i<msgs.count; i++) {
             DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
             [msg MR_deleteInContext:localContext];
@@ -193,6 +194,19 @@
         if (thumbMsgs)
         {
             [thumbMsgs deleteInContext:localContext];
+        }
+    }];
+}
+
+//
++(void)deleteJoinGroupApplicationByMsgType:(NSString*)msgType
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgType==[c]%@ ",msgType];
+        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
+        for (int i = 0; i<msgs.count; i++) {
+            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
+            [msg MR_deleteInContext:localContext];
         }
     }];
 }

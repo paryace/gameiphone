@@ -12,6 +12,7 @@
 #import "GroupInformationViewController.h"
 #import "ReusableView.h"
 #import "SearchGroupViewController.h"
+#import "BillboardViewController.h"
 
 @interface MyGroupViewController ()
 {
@@ -28,6 +29,19 @@
 
 NSString *const RAMCollectionViewFlemishBondHeaderKind = @"RAMCollectionViewFlemishBondHeaderKind";
 static NSString * const HeaderIdentifier = @"HeaderIdentifier";
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    if (bills&&bills.count>0) {
+        dict = [bills objectAtIndex:0];
+    }else{
+        dict=nil;
+    }
+    [groupCollectionView reloadData];
+}
+
 
 - (void)viewDidLoad
 {
@@ -49,10 +63,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 //    [button setImage:KUIImage(@"addphoto") forState:UIControlStateNormal];
 //    [button addTarget:self action:@selector(enterSearchGroupPage:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:button];
-    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
-    if (bills&&bills.count>0) {
-        dict = [bills objectAtIndex:0];
-    }
+
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
@@ -273,7 +284,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).contentLabel.hidden=NO;
             ((ReusableView *)titleView).timeLabel.hidden=NO;
             ((ReusableView *)titleView).headImageView.hidden=NO;
-            ((ReusableView *)titleView).topBtn.hidden=YES;
+            ((ReusableView *)titleView).topLabel.hidden=YES;
+            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+            ((ReusableView *)titleView).topBtn.tag=123;
+            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
             NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
             NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
@@ -295,16 +309,17 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).timeLabel.hidden=YES;
             ((ReusableView *)titleView).headImageView.hidden=YES;
             ((ReusableView *)titleView).topBtn.hidden=NO;
-            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+            ((ReusableView *)titleView).topLabel.hidden=NO;
+            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
         }
-
     }
     return titleView;
 }
 
--(void)topBtnClick:(id)sender
+-(void)topBtnClick:(UIButton*)sender
 {
-    [self showAlertViewWithTitle:@"title" message:@"message" buttonTitle:@"OK"];
+    BillboardViewController *joinIn = [[BillboardViewController alloc]init];
+    [self.navigationController pushViewController:joinIn animated:YES];
 }
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime

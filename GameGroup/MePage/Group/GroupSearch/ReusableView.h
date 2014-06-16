@@ -14,5 +14,5 @@
 @property (nonatomic,strong)UILabel *contentLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UIButton *topBtn;
-@property(nonatomic,strong)UIButton *topLable;
+@property(nonatomic,strong)UILabel * topLabel;
 @end
