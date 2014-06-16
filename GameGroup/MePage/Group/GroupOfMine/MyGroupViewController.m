@@ -13,6 +13,8 @@
 #import "ReusableView.h"
 #import "SearchGroupViewController.h"
 #import "AddGroupViewController.h"
+#import "BillboardViewController.h"
+
 @interface MyGroupViewController ()
 {
     UICollectionViewFlowLayout *m_layout;
@@ -20,6 +22,7 @@
     NSMutableArray *myGroupArray;
     UIView *cellView;
     NSDictionary *dict;
+    CGFloat imageHight;
 }
 @end
 
@@ -27,6 +30,19 @@
 
 NSString *const RAMCollectionViewFlemishBondHeaderKind = @"RAMCollectionViewFlemishBondHeaderKind";
 static NSString * const HeaderIdentifier = @"HeaderIdentifier";
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    if (bills&&bills.count>0) {
+        dict = [bills objectAtIndex:0];
+    }else{
+        dict=nil;
+    }
+    [groupCollectionView reloadData];
+}
+
 
 - (void)viewDidLoad
 {
@@ -37,13 +53,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
     
-//    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-//    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-//    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
-//    backButton.backgroundColor = [UIColor clearColor];
-//    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:backButton];
-
 
     myGroupArray = [NSMutableArray array];
     
@@ -59,16 +68,22 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     if (bills&&bills.count>0) {
         dict = [bills objectAtIndex:0];
     }
+    
+    
+    
+    imageHight = (320-15)/4;
+
+
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
-    m_layout.itemSize = CGSizeMake((260-15)/4, (260-15)/4);
-    m_layout.headerReferenceSize = CGSizeMake(320, (320-15)/4-13);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,10,3,10);
+    m_layout.itemSize = CGSizeMake(imageHight, imageHight);
+    m_layout.headerReferenceSize = CGSizeMake(320, 70);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 150) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 70+10+imageHight+10) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
-    groupCollectionView.scrollEnabled = NO;
+    groupCollectionView.scrollEnabled = YES;
     groupCollectionView.delegate = self;
     groupCollectionView.dataSource = self;
     [groupCollectionView registerClass:[GroupOfMineCell class] forCellWithReuseIdentifier:@"titleCell"];
@@ -81,9 +96,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
     NSArray *arr3 =@[@"find_role",@"find_role",@"find_group"];
     
-    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+160, 320, 240)];
-    
-    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 20, 320, 20)];
+    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+10), 320, 200)];
+    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
     lajiLabel.backgroundColor = [UIColor clearColor];
     lajiLabel.textColor = [UIColor grayColor];
     lajiLabel.text = @"立即添加游戏组织,开始更好的游戏体验!";
@@ -98,9 +112,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
         [cellView addSubview:view];
     }
-    
-    
-    
     [self getGroupListFromNet];
 }
 
@@ -219,9 +230,13 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             [myGroupArray addObjectsFromArray:responseObject];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
+            if (myGroupArray.count<4) {
+                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
+                cellView.frame = CGRectMake(0, startX+(70+10+imageHight+10), 320, 200);
+            }
             if (myGroupArray.count>4) {
-                groupCollectionView.frame = CGRectMake(0, startX, 320, 230);
-                cellView.frame = CGRectMake(0, startX+240, 320, 180);
+                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+10);
+                cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+10), 320, 180);
             }
             [groupCollectionView reloadData];
             
@@ -269,9 +284,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         [self.navigationController pushViewController:joinIn animated:YES];
   
     }else{
-    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
-    gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
-    [self.navigationController pushViewController:gr animated:YES];
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
+        [self.navigationController pushViewController:gr animated:YES];
     }
 }
 
@@ -282,6 +297,14 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
         if (dict) {
+            ((ReusableView *)titleView).label.hidden=NO;
+            ((ReusableView *)titleView).contentLabel.hidden=NO;
+            ((ReusableView *)titleView).timeLabel.hidden=NO;
+            ((ReusableView *)titleView).headImageView.hidden=NO;
+            ((ReusableView *)titleView).topLabel.hidden=YES;
+            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+            ((ReusableView *)titleView).topBtn.tag=123;
+            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
             NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
             NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
@@ -289,15 +312,31 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).label.text = billboard;
             ((ReusableView *)titleView).contentLabel.text = groupName;
             ((ReusableView *)titleView).timeLabel.text = [NSString stringWithFormat:@"%@", [self getMsgTime:createDate]];
+            CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+            ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
             if ([GameCommon isEmtity:backgroundImg]) {
                 ((ReusableView *)titleView).headImageView.imageURL = nil;
             }else{
                 ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageStr2:backgroundImg];
             }
+            
+        }else{
+            ((ReusableView *)titleView).label.hidden=YES;
+            ((ReusableView *)titleView).contentLabel.hidden=YES;
+            ((ReusableView *)titleView).timeLabel.hidden=YES;
+            ((ReusableView *)titleView).headImageView.hidden=YES;
+            ((ReusableView *)titleView).topBtn.hidden=NO;
+            ((ReusableView *)titleView).topLabel.hidden=NO;
+            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
         }
-
     }
     return titleView;
+}
+
+-(void)topBtnClick:(UIButton*)sender
+{
+    BillboardViewController *joinIn = [[BillboardViewController alloc]init];
+    [self.navigationController pushViewController:joinIn animated:YES];
 }
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime

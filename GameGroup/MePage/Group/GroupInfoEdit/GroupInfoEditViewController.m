@@ -114,19 +114,26 @@
         
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
             
-            EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
-            gameImg.center = CGPointMake(40, 60);
-            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
-            gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
-            [cell addSubview:gameImg];
+//            EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
+//            gameImg.center = CGPointMake(40, 45);
+//            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+//            gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
+//            [cell addSubview:gameImg];
             
             NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
-            
+            NSArray * us=cell.contentView.subviews;
+            for(UIImageView *uv in us)
+            {
+                if (uv.tag==122222) {
+                    [uv removeFromSuperview];
+                }
+            }
             for (int i =0; i<tags.count; i++) {
-                NSInteger offY = (i%2==0?i+1:i)/2;
-                [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2),10+offY*30+5*offY,88,30) title:KISDictionaryHaveKey(tags[i], @"tagName") superView:cell.contentView];
+                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                tagImage.tag=122222;
+                [cell.contentView addSubview:tagImage];
             }
-            }
+        }
         return cell;
     }
     else if (indexPath.row ==2)
@@ -248,17 +255,20 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+        NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
         CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
-        
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
         float height = size1.height;
         
         switch (indexPath.row) {
             case 0:
                 return 40;
+
                 break;
             case 1:
-                return 120;
+                NSLog(@"--------%d",tags.count/2);
+                NSInteger tagsRowCount = (tags.count-1)/2+1;
+                return  tagsRowCount*30+tagsRowCount*5+15;
                 break;
             case 2:
                 return 40;
@@ -311,26 +321,23 @@
     }
 }
 
--(void)buildImgVWithframe:(CGRect)frame title:(NSString *)title superView:(UIView *)view
+-(UIImageView*)buildImgVWithframe:(CGRect)frame title:(NSString *)title
 {
     UIImageView *imgV =[[ UIImageView alloc]initWithFrame:frame];
     imgV.image = KUIImage(@"card_show");
     imgV.userInteractionEnabled = YES;
-    [view addSubview:imgV];
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-20, frame.size.height)];
-    
     label.textAlignment = NSTextAlignmentCenter;
     label.font = [UIFont boldSystemFontOfSize:13];
     label.textColor = [UIColor blackColor];
     label.backgroundColor = [UIColor clearColor];
-    
     label.shadowColor = [UIColor colorWithWhite:1.0f alpha:0.7];
     label.shadowOffset = CGSizeMake(.7f, 1.0f);
-    
     label.text = title;
     [imgV addSubview:label];
     [imgV bringSubviewToFront:label];
     NSLog(@"%@",title);
+    return imgV;
 }
 
 -(CGSize)getStringSizeWithString:(NSString *)str font:(UIFont *)font
@@ -340,6 +347,9 @@
 }
 -(void)senderCkickInfoWithDel:(CardViewController *)del array:(NSArray *)array
 {
+    if (array.count==0) {
+        return;
+    }
     NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
     [dic removeObjectForKey:@"tags"];
     [dic setObject:array forKey:@"tags"];
@@ -448,18 +458,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

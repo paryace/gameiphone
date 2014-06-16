@@ -34,23 +34,19 @@
 
 @implementation JoinInGroupViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
+    
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
+    [self.view addGestureRecognizer:tapGr];
+    
+    
     m_baseScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
-    m_baseScrollView.contentSize = CGSizeMake(0,700);
+    m_baseScrollView.contentSize = CGSizeMake(0,600);
     [self.view addSubview:m_baseScrollView];
     
     listDict  = [NSMutableDictionary dictionary];
@@ -98,15 +94,25 @@
     [m_baseScrollView addSubview:groupCollectionView];
     
     [ self getCardWithNet];
-    
-    // Do any additional setup after loading the view.
+}
+
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    if([m_searchTf isFirstResponder]){
+        [m_searchTf resignFirstResponder];
+    }
+    if (m_pickView.tag==222) {
+        [self hideSelectView];
+    }
 }
 
 
 -(void)buildRoleView
 {
-    UIView* myView = [[UIView alloc] initWithFrame:CGRectMake(0, 70, 320, 60)];
-    myView.backgroundColor = [UIColor whiteColor];
+ 
+    UIButton * myView = [[UIButton alloc]initWithFrame:CGRectMake(0, 70, 320, 60)];
+    
+    [myView setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+    [myView setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     clazzImg.backgroundColor = [UIColor clearColor];
     clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
@@ -146,8 +152,9 @@
     [myView addSubview:realmLabel];
     
     
-    m_pickView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-224, 320, 200)];
-    m_pickView.hidden = YES;
+    m_pickView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth, 320, 200)];
+    m_pickView.tag=111;
+//    m_pickView.hidden = YES;
     [self.view addSubview:m_pickView];
     
     m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 44, 320, 180)];
@@ -176,12 +183,42 @@
      [m_baseScrollView addSubview:myView];
 
 }
--(void)didClickChangeRole:(id)sender
+//<<<<<<< HEAD
+//-(void)didClickChangeRole:(id)sender
+//{
+//    m_pickView.hidden = NO;
+//=======
+
+-(void)showSelectView
 {
-    m_pickView.hidden = NO;
+     m_pickView.tag=222;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    m_pickView.frame = CGRectMake(0, kScreenHeigth-224, 320, 200);
+    [UIView commitAnimations];
+}
+-(void)hideSelectView
+{
+    m_pickView.tag=111;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    m_pickView.frame = CGRectMake(0, kScreenHeigth, 320, 0);
+    [UIView commitAnimations];
 }
 
+-(void)didClickChangeRole:(id)sender
+{
+    if([m_searchTf isFirstResponder]){
+        [m_searchTf resignFirstResponder];
+    }
+    if (m_pickView.tag==111) {
+        [self showSelectView];
+    }else
+    {
+        [self hideSelectView];
+    }
 
+}
 -(void)getCardWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -220,7 +257,6 @@
 {
     [textField resignFirstResponder];
     [self searchStrToNextPage:nil];
-    
     return YES;
 }
 //- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
@@ -293,7 +329,12 @@
 }
 -(void)selectServerNameOK:(id)sender
 {
-    m_pickView.hidden = YES;
+    if([m_searchTf isFirstResponder]){
+        [m_searchTf resignFirstResponder];
+    }
+    if (m_pickView.tag==222) {
+        [self hideSelectView];
+    }
 
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
@@ -345,18 +386,5 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end

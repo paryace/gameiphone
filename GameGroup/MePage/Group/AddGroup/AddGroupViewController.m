@@ -17,16 +17,6 @@
 
 @implementation AddGroupViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-        
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -39,7 +29,6 @@
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"提交中...";
-    // Do any additional setup after loading the view.
 }
 -(void)didClickGameListWithDel:(AddGroupView *)gro dic:(NSDictionary *)dic
 {
@@ -70,7 +59,6 @@
 {
     CardViewController *cardView  =[[ CardViewController alloc]init];
     cardView.myDelegate = self;
-//    cardView.listDict = dic;
     [self.navigationController pushViewController:cardView animated:YES];
 }
 -(void)didClickCardImgWithDel:(AddGroupView *)gro
@@ -94,6 +82,9 @@
     if (array.count>0) {
         
     
+    if (array.count==0) {
+        return;
+    }
     NSString *str ;
     for (int i =0; i<array.count; i++) {
         if (str) {
@@ -147,18 +138,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -47,6 +47,10 @@
         [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
         [self.contentView addSubview:self.bgImageView];
         
+        [self.bgImageView  addTarget:self action:@selector(onClick:) forControlEvents:UIControlEventTouchUpInside];
+        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(onLongClick:)];
+        [self.bgImageView addGestureRecognizer:longPress];
+        
         //头像
         self.headImgV = [[EGOImageButton alloc] initWithFrame:CGRectZero];
         self.headImgV.layer.cornerRadius = 5;
@@ -80,7 +84,7 @@
 {
     self.message = msg;
 }
-
+//设置时间
 -(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime
 {
     if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<60) {
@@ -89,6 +93,21 @@
     else{
         self.senderAndTimeLabel.hidden = NO;
         self.senderAndTimeLabel.text = [NSString stringWithFormat:@"%@", timeStr];
+    }
+}
+
+//Cell点击
+-(void)onClick:(UIButton*)sender
+{
+    if (self.myChatCellDelegate) {
+        [self.myChatCellDelegate onCellBgClick:sender];
+    }
+}
+//Cell长按
+-(void)onLongClick:(UITapGestureRecognizer*)sender
+{
+    if (self.myChatCellDelegate) {
+        [self.myChatCellDelegate onCellBgLongClick:sender];
     }
 }
 

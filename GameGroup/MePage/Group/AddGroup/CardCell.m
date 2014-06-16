@@ -14,7 +14,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
         self.bgImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
         [self addSubview:self.bgImgView];
         
@@ -27,14 +26,5 @@
     }
     return self;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

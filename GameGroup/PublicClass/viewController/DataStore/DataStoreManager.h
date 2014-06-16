@@ -256,4 +256,6 @@
 
 +(void)blankMsgUnreadCountFormsgType:(NSString *)msgType;//根据msgType将未读的消息数量变为0
 
++(void)deleteJoinGroupApplicationByMsgType:(NSString*)msgType;//根据msgType删除群通知的消息
+
 @end

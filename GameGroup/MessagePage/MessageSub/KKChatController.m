@@ -76,6 +76,7 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
 
+
 @end
 
 @implementation KKChatController
@@ -171,8 +172,6 @@ UINavigationControllerDelegate>
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
-    touchTimeFinal = 0;
-    touchTimePre = 0;
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -264,6 +263,7 @@ UINavigationControllerDelegate>
 {
     DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     myActive = [friend.action boolValue];
+    self.myNickName = friend.nickName;
     self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
 }
 //改变我的激活状态
@@ -321,6 +321,7 @@ UINavigationControllerDelegate>
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
         cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
         if ([sender isEqualToString:@"you"]) {
             //头像
@@ -330,10 +331,8 @@ UINavigationControllerDelegate>
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
              cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            //响应点击和长按
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:)forControlEvents:UIControlEventTouchUpInside];
-            [cell.bgImageView setTag:(indexPath.row+1)];
+            [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
@@ -354,9 +353,6 @@ UINavigationControllerDelegate>
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+35,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:)forControlEvents:UIControlEventTouchUpInside];
-            [cell.bgImageView setTag:(indexPath.row+1)];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
             [cell.titleLabel setFrame:CGRectMake(padding + 50,33+offHight,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
@@ -378,7 +374,6 @@ UINavigationControllerDelegate>
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         cell.progressView.hidden=YES;
-        
         if (indexPath.row==0) {
             cell.senderAndTimeLabel.hidden=YES;
         }else{
@@ -386,15 +381,15 @@ UINavigationControllerDelegate>
             NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
-        
         if ([sender isEqualToString:@"you"])
         {
             [cell setHeadImgByMe:self.myHeadImg];
             [cell.bgImageView setTag:(indexPath.row+1)];
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchBegin:) forControlEvents:UIControlEventTouchDown];
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchEnd:) forControlEvents:UIControlEventTouchUpInside];
+            
             [cell.failImage setTag:(indexPath.row+1)];
-             cell.msgImageView.placeholderImage = [UIImage imageNamed:@"placeholder.png"];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
+            
+            cell.msgImageView.placeholderImage = [UIImage imageNamed:@"placeholder.png"];
             cell.senderNickName.hidden=YES;
                //根据uuid取缩略图
             NSString* uuid_thumimg = KISDictionaryHaveKey(dict, @"messageuuid");
@@ -447,7 +442,7 @@ UINavigationControllerDelegate>
             cell.msgImageView.hidden = NO;
             cell.msgImageView.userInteractionEnabled = YES;
             UITapGestureRecognizer* tabPress =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(lookBigImg:)];
-            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self                                                                                     action:@selector(longPressImg:)];
+            UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressImg:)];
             [cell.msgImageView addGestureRecognizer:tabPress];
             [cell.msgImageView addGestureRecognizer:longPress];
             cell.statusLabel.hidden = YES;
@@ -493,6 +488,7 @@ UINavigationControllerDelegate>
         }
         NSString* msg = KISDictionaryHaveKey(dict, @"msg");
         [cell.messageContentView setEmojiText:msg];
+        [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
         //你自己发送的消息
         if ([sender isEqualToString:@"you"]) {
@@ -501,12 +497,8 @@ UINavigationControllerDelegate>
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
             bgImage = [[UIImage imageNamed:@"bubble_02.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchEnd:)forControlEvents:UIControlEventTouchUpInside];
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];
-            [cell.failImage addTarget:self action:@selector(offsetButtonTouchEnd:)forControlEvents:UIControlEventTouchUpInside];
             [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2-4,size.width,size.height)];
             cell.messageContentView.hidden = NO;
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
@@ -525,8 +517,6 @@ UINavigationControllerDelegate>
             }
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView addTarget:self action:@selector(offsetButtonTouchBegin:)forControlEvents:UIControlEventTouchDown];
-            [cell.bgImageView setTag:(indexPath.row+1)];
             [cell.messageContentView setFrame:CGRectMake(padding+7+45,padding*2-4+offHight,size.width,size.height)];
             cell.messageContentView.hidden = NO;
             cell.statusLabel.hidden = YES;
@@ -542,11 +532,49 @@ UINavigationControllerDelegate>
     float theH = [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue];
     return [self getCellHight:dict msgHight:theH];
 }
-
+//行数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [messages count];
 }
-
+//点击重发红点
+-(void)resendMsgClick:(UIButton*)sender
+{
+    tempBtn = sender;
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
+    sheet.tag = 124;
+    [sheet showInView:self.view];
+}
+//Cell点击
+-(void)onCellBgClick:(UIButton*)sender
+{
+    NSMutableDictionary *dict = [messages objectAtIndex:(sender.tag-1)];
+    KKChatMsgType kkChatMsgType=[self msgType:dict];
+    if (kkChatMsgType == KKChatMsgTypeLink) {//动态消息
+        NSDictionary* msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+        OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
+        detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
+        detailVC.delegate = nil;
+        [self.navigationController pushViewController:detailVC animated:YES];
+    }
+}
+//Cell长按
+-(void)onCellBgLongClick:(UITapGestureRecognizer*)sender
+{
+    UIButton* bgBtn = (UIButton*)sender.view;
+    tempBtn = bgBtn;
+    readyIndex = bgBtn.tag-1;
+    [self canBecomeFirstResponder];
+    [self becomeFirstResponder];
+    //弹出菜单
+    indexPathTo = [[NSIndexPath indexPathForRow:(readyIndex) inSection:0] copy];
+    KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
+    tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
+    CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
+    
+    [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
+    [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
+    [menu setMenuVisible:YES animated:YES];
+}
 #pragma mark - Views
 //表情按钮
 - (EmojiView *)theEmojiView{
@@ -775,6 +803,11 @@ UINavigationControllerDelegate>
 //计算单条Cell的高度
 -(CGFloat)getCellHight:(NSDictionary*)msgDic msgHight:(CGFloat)hight
 {
+    KKChatMsgType kkChatMsgType = [self msgType:msgDic];
+    if (kkChatMsgType == KKChatMsgTypeSystem)
+    {
+        return 47;
+    }
     NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
     CGFloat theH = hight;
     if ([self.type isEqualToString:@"group"]) {
@@ -1101,7 +1134,7 @@ UINavigationControllerDelegate>
     NSString* openImgPath=[self writeImageToFile:thumbImageData];
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
-        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid]; //一条图片消息写到本地
+        [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(messages.count-1) inSection:0];
         KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
         [cell uploadImage:upImagePath cellIndex:(messages.count-1)];
@@ -1590,11 +1623,6 @@ UINavigationControllerDelegate>
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-
-
-
-
-
 //点击他人的头像
 -(void)chatUserHeadImgClicked:(id)Sender
 {
@@ -1607,44 +1635,12 @@ UINavigationControllerDelegate>
 -(void)myHeadImgClicked:(id)Sender
 {
     TestViewController * detailV = [[TestViewController alloc] init];
-    
     detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     detailV.isChatPage = YES;
     [self.navigationController pushViewController:detailV animated:YES];
 }
-
--(void)offsetButtonTouchBegin:(UIButton *)sender
-{
-    touchTimePre = [[NSDate date] timeIntervalSince1970];
-    tempBtn = sender;
-    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(endIt:) userInfo:nil repeats:NO];
-}
-
-//结束点击
--(void)offsetButtonTouchEnd:(UIButton *)sender
-{
-    if ([[NSDate date] timeIntervalSince1970]-touchTimePre<=1) {    //单击
-        NSMutableDictionary *dict = [messages objectAtIndex:(tempBtn.tag-1)];
-        NSString* msgType = KISDictionaryHaveKey(dict, @"msgType");
-        NSString* status = KISDictionaryHaveKey(dict, @"status");
-        NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-        
-        if ([[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(payload, @"type")] isEqualToString:@"3"]) {
-            NSDictionary* msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-            OnceDynamicViewController* detailVC = [[OnceDynamicViewController alloc] init];
-            detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
-            detailVC.delegate = nil;
-            [self.navigationController pushViewController:detailVC animated:YES];
-        }
-        else if([msgType isEqualToString:@"normalchat"] && [status isEqualToString:@"0"])//是否重发 （普通消息，且status=0)
-        {
-            UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"选择"delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:Nil otherButtonTitles:@"重新发送", nil];
-            sheet.tag = 124;
-            [sheet showInView:self.view];
-        }
-    }
-}
+//跳转激活页面
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 1) {
@@ -1659,8 +1655,6 @@ UINavigationControllerDelegate>
         if (buttonIndex == 1) { //点击取消
             return;
         }
-        
-        
         NSInteger cellIndex = tempBtn.tag-1;
         NSMutableDictionary* dict = [messages objectAtIndex:cellIndex];
         KKChatMsgType kkChatMsgType=[self msgType:dict];
@@ -1683,28 +1677,7 @@ UINavigationControllerDelegate>
     else
         return NO;
 }
-
-//监听bgView的长按
--(void)endIt:(UIButton *)sender
-{
-    if (tempBtn.highlighted == YES) {//长按
-        NSLog(@"haha");
-
-        [self canBecomeFirstResponder];
-        [self becomeFirstResponder];
-    
-        //弹出菜单
-        indexPathTo = [[NSIndexPath indexPathForRow:(tempBtn.tag-1) inSection:0] copy];
-        KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
-        tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
-        CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
-        readyIndex = tempBtn.tag-1; //设置当前要操作的cell idnex
-        [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
-        [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
-        [menu setMenuVisible:YES animated:YES];
-    }
-}
-
+//拷贝消息
 -(void)copyMsg
 {
     [popLittleView removeFromSuperview];
@@ -1716,7 +1689,7 @@ UINavigationControllerDelegate>
 }
 
 
-
+//发送消息
 - (void)sendButton:(id)sender {
     //本地输入框中的信息
     NSString *message = self.textView.text;
@@ -1731,14 +1704,23 @@ UINavigationControllerDelegate>
         return;
     }
     self.textView.text = @"";
-   [self sendMsg:message];
+    [self sendMsg:message];
+}
+
+-(NSString*)getMsgBody:(NSString*)msgText
+{
+    if ([self.type isEqualToString:@"group"]) {
+        NSDictionary * dic = @{@"userNickName":self.myNickName,@"content":msgText};
+        return [dic JSONFragment];
+    }
+    return msgText;
 }
 
 #pragma mark将发送图片的消息保存数据库
-- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid{
+- (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-     NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"[图片]" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
 }
@@ -1907,7 +1889,7 @@ UINavigationControllerDelegate>
     if (![self isGroupAvaitable]) {
         return;
     }
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:[self getMsgBody:message] UUid:uuid From:from To:to FileType:fileTyp MsgType:msgType Type:type];
     if(payloadStr!=nil&&![payloadStr isEqualToString:@""]){
         NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
         [payload setStringValue:payloadStr];
@@ -2062,7 +2044,7 @@ UINavigationControllerDelegate>
         if (loadHistoryArrayCount==0) {
             return;
         }
-        [chat.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight-10,chat.tView.frame.size.width,chat.tView.frame.size.height) animated:NO];
+        [chat.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,chat.tView.frame.size.width,chat.tView.frame.size.height) animated:NO];
     };
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
         

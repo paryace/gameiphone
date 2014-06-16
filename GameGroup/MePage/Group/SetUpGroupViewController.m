@@ -19,21 +19,15 @@
 
 @implementation SetUpGroupViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"申请加入" withBackButton:YES];
-
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGr.cancelsTouchesInView = NO;
+    tapGr.delegate = self;
+    [self.view addGestureRecognizer:tapGr];
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     
@@ -62,32 +56,34 @@
     m_searchTf.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:m_searchTf];
     
-
-    
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, startX+80, 280, 150)];
-    editIV.backgroundColor=[UIColor whiteColor];
-    editIV.image = KUIImage(@"group_info");
-    [self.view addSubview:editIV];
-    
-    
-    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, startX+80, 280, 150)];
+    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, startX+80, 300, 150)];
     m_textView.delegate = self;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
-    m_textView.backgroundColor = [UIColor clearColor];
     m_textView.textColor = [UIColor blackColor];
+    m_textView.backgroundColor = [UIColor whiteColor];
+    m_textView.layer.cornerRadius = 5;
+    m_textView.layer.masksToBounds = YES;
+    m_textView.layer.borderWidth=1;
+    m_textView.layer.borderColor=[kColorWithRGB(200, 200, 200, 1.0) CGColor];
     [self.view addSubview:m_textView];
 
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, startX+230, 300, 44);
+    button.frame = CGRectMake(10, startX+250, 300, 44);
     [button setTitle:@"提交" forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
     [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
-    
-  
-    // Do any additional setup after loading the view.
 }
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    if([m_searchTf isFirstResponder]){
+        [m_searchTf resignFirstResponder];
+    }
+    if([m_textView isFirstResponder]){
+        [m_textView resignFirstResponder];
+    }
+}
+
 
 -(void)updateInfo:(id)sender
 {
@@ -166,18 +162,5 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end

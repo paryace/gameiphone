@@ -138,7 +138,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
     }
-    else if ([type isEqualToString:@"groupchat"])//群组消息
+    else if ([type isEqualToString:@"groupchat"])//群组聊天消息
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];//其他消息
     }
@@ -345,8 +345,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {
-//            NSRange range = [[info objectForKey:@"sender"] rangeOfString:@"@"];
-//            NSString * sender = [[info objectForKey:@"sender"] substringToIndex:range.location];
             NSString * sender = [info objectForKey:@"sender"];
             if ([responseObject containsObject:sender]) {
                 [info setValue:@"1" forKey:@"sayHiType"];
