@@ -140,7 +140,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     else if ([type isEqualToString:@"groupchat"])//群组聊天消息
     {
-        [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];//其他消息
+        [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];
     }
     else if ([type isEqualToString:@"joinGroupApplication"])//群组消息
     {
@@ -220,12 +220,23 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
     NSString * sender = [messageContent objectForKey:@"sender"];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    
+    NSString * groupId = [messageContent objectForKey:@"groupId"];
     if ([DataStoreManager isHasdGroMsg:msgId]) {
         return;
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:messageContent];
+//    [self storeNewMessage:messageContent];
+    if (![[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {
+        BOOL isVibrationopen=[self isVibrationopen];;
+        BOOL isSoundOpen = [self isSoundOpen];
+        if (isSoundOpen) {
+            [SoundSong soundSong];
+        }
+        if (isVibrationopen) {
+            [VibrationSong vibrationSong];
+        }
+    }
+    [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];
     [DataStoreManager saveDSGroupMsg:messageContent];
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
