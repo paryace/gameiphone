@@ -15,6 +15,7 @@
 {
     UILabel *groupNameLable;
     UILabel *msgHintLable;
+    UIImageView *soundimageView;
 }
 
 @end
@@ -38,7 +39,7 @@
     [topBtn addTarget:self action:@selector(hint:) forControlEvents:UIControlEventTouchUpInside];
     [itemone addSubview:topBtn];
     
-    UIImageView *soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(250-25-10, 12.5, 25, 20)];
+    soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(250-25-10, 12.5, 25, 20)];
     soundimageView.image = KUIImage(@"nor_soundSong");
     soundimageView.backgroundColor = [UIColor clearColor];
     [itemone addSubview:soundimageView];
@@ -126,7 +127,7 @@
    
     
     //离开该群,解散群
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(20,290,280, 40)];
+    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10,300,300, 40)];
     [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
@@ -136,7 +137,7 @@
     [scV addSubview:okButton];
     
     if (self.shiptypeCount ==0) {//群主
-        okButton.frame  = CGRectMake(20,421,280, 40);
+        okButton.frame  = CGRectMake(10,421,300, 40);
         itemfour.hidden = NO;
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
@@ -170,7 +171,7 @@
 -(UIButton*)getItemBtn:(NSString*)titleText
 {
     UIButton * ItemBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 45)];
-    [ItemBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+    [ItemBtn setBackgroundColor:[UIColor whiteColor]];
     [ItemBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
     [ItemBtn setTitle:titleText forState:UIControlStateNormal];
     ItemBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
@@ -188,7 +189,9 @@
 //群组消息设置
 -(void)hint:(id)sender
 {
-   
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"接收消息",@"不接收该群消息",@"接受消息，不离线推送", nil];
+    alertView.tag = 1002;
+    [alertView show];
 }
 //我的群角色
 -(void)role:(id)sender
@@ -203,7 +206,10 @@
 {
     UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:nil cancelButtonTitle:@"取消" destructiveButtonTitle:@"nil" otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
     [actionSheet showInView:self.view];
+    
+ 
 }
+
 //发布群公告
 -(void)publish:(id)sender
 {
@@ -261,13 +267,36 @@
         if (buttonIndex ==1) {
             [self leaveGroup];
         }
-    }else if(alertView.tag == 678){
+    }
+    else if(alertView.tag == 678){
         if (buttonIndex ==1) {
             [self dissolveGroup];
         }
-    }else if (alertView.tag == 789)
+    }
+    else if (alertView.tag == 789)
     {
         [self.navigationController popToRootViewControllerAnimated:YES];
+    }
+    else if (alertView.tag ==1002)
+    {
+        if (buttonIndex ==1)
+        {
+            [self settingMsgHint:@"0"];
+            msgHintLable.text=@"接收消息";
+        }else if (buttonIndex ==2)
+        {
+            [self settingMsgHint:@"1"];
+             msgHintLable.text=@"不接收该群消息";
+        }
+        else if (buttonIndex ==3)
+        {
+            [self settingMsgHint:@"2"];
+             msgHintLable.text=@"接受消息，不离线推送";
+        }
+        
+        CGSize textSize = [msgHintLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        msgHintLable.frame = CGRectMake(300-textSize.width-5, 12.5, textSize.width, 20);
+        soundimageView.frame=CGRectMake(300-textSize.width-5-5-25, 12.5, 25, 20);
     }
 }
 
@@ -307,6 +336,25 @@
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经离开该群"delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 789;
         [alert show];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+}
+
+
+
+//设置群消息提示
+-(void)settingMsgHint:(NSString*)state
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    [paramDict setObject:state forKey:@"state"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"240" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@",responseObject);
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }

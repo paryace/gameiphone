@@ -214,6 +214,22 @@ static UserManager *userManager = NULL;
 }
 
 
+//请求群的消息设置状态
++(void)getGroupSettingState
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"254" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@",responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+}
+
+
 
 
 -(void) onUserUpdate:(NSNotification*)notification{

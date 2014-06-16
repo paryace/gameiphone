@@ -205,7 +205,9 @@
         
         [[GameCommon shareGameCommon]LoginOpen];
         
-//        [UserManager getGroupListFromNet];//获取群列表
+        [UserManager getGroupSettingState];
+        
+//        [UserManager getGroupListFromNet];//获取群列表v
         
 //        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
 //        
