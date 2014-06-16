@@ -98,13 +98,12 @@
 +(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",userid];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType=[c]%@",userid,@"normalchat"];
         
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs)
         {
             thumbMsgs.sayHiType = type;
-            NSLog(@"thumbMsgs.sayHiType%@",thumbMsgs.sayHiType);
         }
     }];
 }

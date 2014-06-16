@@ -319,6 +319,7 @@ UINavigationControllerDelegate>
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
         cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
         if ([sender isEqualToString:@"you"]) {
             //头像
@@ -328,7 +329,6 @@ UINavigationControllerDelegate>
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
              cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView  setTag:(indexPath.row+1)];
             [cell.failImage setTag:(indexPath.row+1)];
             [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
@@ -351,7 +351,6 @@ UINavigationControllerDelegate>
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+35,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView setTag:(indexPath.row+1)];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
             [cell.titleLabel setFrame:CGRectMake(padding + 50,33+offHight,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
@@ -487,6 +486,7 @@ UINavigationControllerDelegate>
         }
         NSString* msg = KISDictionaryHaveKey(dict, @"msg");
         [cell.messageContentView setEmojiText:msg];
+        [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
         //你自己发送的消息
         if ([sender isEqualToString:@"you"]) {
@@ -495,8 +495,6 @@ UINavigationControllerDelegate>
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
             bgImage = [[UIImage imageNamed:@"bubble_02.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView setTag:(indexPath.row+1)];
-            
             [cell.failImage setTag:(indexPath.row+1)];
             [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2-4,size.width,size.height)];
@@ -517,7 +515,6 @@ UINavigationControllerDelegate>
             }
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.bgImageView setTag:(indexPath.row+1)];
             [cell.messageContentView setFrame:CGRectMake(padding+7+45,padding*2-4+offHight,size.width,size.height)];
             cell.messageContentView.hidden = NO;
             cell.statusLabel.hidden = YES;
@@ -563,14 +560,15 @@ UINavigationControllerDelegate>
 {
     UIButton* bgBtn = (UIButton*)sender.view;
     tempBtn = bgBtn;
+    readyIndex = bgBtn.tag-1;
     [self canBecomeFirstResponder];
     [self becomeFirstResponder];
     //弹出菜单
-    indexPathTo = [[NSIndexPath indexPathForRow:(bgBtn.tag-1) inSection:0] copy];
+    indexPathTo = [[NSIndexPath indexPathForRow:(readyIndex) inSection:0] copy];
     KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
     tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
     CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
-    readyIndex = tempBtn.tag-1; //设置当前要操作的cell idnex
+    
     [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
