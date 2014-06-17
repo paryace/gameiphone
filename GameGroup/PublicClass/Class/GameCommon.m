@@ -411,6 +411,14 @@ static GameCommon *my_gameCommon = NULL;
     return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
 }
 
++ (void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view =[ [UIView alloc]init];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+}
+
+
 
 + (NSString*)getTimeAndDistWithTime:(NSString*)time Dis:(NSString*)distrance
 {

@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface MemberEditViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate>
+@interface MemberEditViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,UIAlertViewDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property(nonatomic,assign)NSInteger shiptype;
 
