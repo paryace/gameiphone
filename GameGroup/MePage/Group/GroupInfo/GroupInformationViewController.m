@@ -51,9 +51,10 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
-    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
     
     
@@ -71,7 +72,6 @@
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
 }
-
 -(void)refreshNet:(id)sender
 {
     [self getInfoWithNet];
@@ -177,7 +177,7 @@
     m_cy_label.backgroundColor = [UIColor clearColor];
     m_cy_label.font = [UIFont boldSystemFontOfSize:13];
     m_cy_label.textColor = [UIColor whiteColor];
-    m_cy_label.text = @"群成员";
+    m_cy_label.text = @"群组成员";
     m_cy_label.textAlignment = NSTextAlignmentCenter;
     [boView addSubview:m_cy_label];
     
@@ -392,12 +392,21 @@
         
         titleLabel.text = @"群组号";
         
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,100, 40)];
+        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(100, 0,70, 40)];
         numLb.font = [UIFont boldSystemFontOfSize:14];
         numLb.backgroundColor = [UIColor clearColor];
         numLb.textColor =[ UIColor blackColor];
         numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
         [cell addSubview:numLb];
+        
+        
+        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(180, 0, 60, 40)];
+        [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
+        [button setImageEdgeInsets:UIEdgeInsetsMake(13, 0, 10, 0)];
+        [button addTarget:self action:@selector(copyNum:) forControlEvents:UIControlEventTouchUpInside];
+        [cell addSubview:button];
+
+        
         
         UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
         imageView.image = KUIImage(@"lv_group");
@@ -433,13 +442,13 @@
         
         titleLabel.text = @"服务器";
        
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
+        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(100, 10, 20, 20)];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
        
        
-       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
+       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(130, 0,100, 40)];
        numLb.font = [UIFont boldSystemFontOfSize:14];
        numLb.backgroundColor = [UIColor clearColor];
        numLb.textColor =[ UIColor blackColor];
@@ -476,7 +485,7 @@
                 }
             }
             for (int i =0; i<tags.count; i++) {
-                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(100+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
                 tagImage.tag=122222;
                 [cell.contentView addSubview:tagImage];
             }
@@ -505,7 +514,7 @@
                 height1 =size.height;
             }
 
-            cell.contentLabel.frame = CGRectMake(80, 0, 230,height1);
+            cell.contentLabel.frame = CGRectMake(100, 0, 230,height1);
             cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
             
             float height = 0.0;
@@ -521,7 +530,7 @@
             else{
                 height = 0;
             }
-            cell.photoView.frame = CGRectMake(80, size.height+10, 230, height);
+            cell.photoView.frame = CGRectMake(100, size.height+10, 210, height);
         }
         return cell;
     }
@@ -552,6 +561,12 @@
 
     }
 
+}
+-(void)copyNum:(id)sender
+{
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = [m_mainDict objectForKey:@"groupId"];
+    [self showMessageWindowWithContent:@"复制成功" imageType:1];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

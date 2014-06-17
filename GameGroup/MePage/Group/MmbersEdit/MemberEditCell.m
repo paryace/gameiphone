@@ -27,8 +27,8 @@
         [self.nameLable setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.nameLable];
 
-        self.sfLb = [[UILabel alloc]initWithFrame:CGRectMake(250, 20, 40, 20)];
-        self.sfLb.backgroundColor = [UIColor colorWithPatternImage:KUIImage(@"card_click_no")];
+        self.sfLb = [[UILabel alloc]initWithFrame:CGRectMake(250, 20, 50, 20)];
+//        self.sfLb.backgroundColor = [UIColor colorWithPatternImage:KUIImage(@"card_click_no")];
         self.sfLb.textColor  = [UIColor grayColor];
         self.sfLb.textAlignment = NSTextAlignmentCenter;
         self.sfLb.font = [UIFont boldSystemFontOfSize:15];
@@ -42,7 +42,6 @@
 {
     // Initialization code
 }
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];

@@ -77,4 +77,8 @@
 +(NSString*)getGroupDomain:(NSString*)domain;
 
 +(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId;
+
+//去掉tableview的多余分割线(下划线)
++ (void)setExtraCellLineHidden: (UITableView *)tableView;
+
 @end

@@ -38,7 +38,7 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"群组经验" withBackButton:YES];
+    [self setTopViewWithTitle:@"群组等级" withBackButton:YES];
     
     
     UIScrollView *scrollView =[[ UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
@@ -62,10 +62,6 @@
     numLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:numLabel];
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(230, 40, 60, 30)];
-    [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
-    [button setImageEdgeInsets:UIEdgeInsetsMake(7, 0, 7, 0)];
-    [scrollView addSubview:button];
     
     
     lvLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 70, 200, 30)];
