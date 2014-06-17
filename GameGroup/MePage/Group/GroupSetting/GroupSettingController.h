@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface GroupSettingController : BaseViewController
+@interface GroupSettingController : BaseViewController<UIActionSheetDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property (assign, nonatomic)  NSInteger shiptypeCount;
 @end

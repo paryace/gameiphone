@@ -24,7 +24,7 @@
     UIView *boView;
     UIView *aoView;
     UILabel* m_titleLabel;
-    NSInteger shiptypeCount;
+    
 }
 @end
 
@@ -79,7 +79,7 @@
 -(void)didClickGroup:(UIButton *)sender
 {
     
-    if (shiptypeCount==0) {//群主
+    if (self.shiptypeCount==0) {//群主
         
         if (sender.tag ==100) {//发消息
             KKChatController * kkchat = [[KKChatController alloc] init];
@@ -90,12 +90,12 @@
             NSLog(@"群设置");
             GroupSettingController *gr = [[GroupSettingController alloc]init];
             gr.groupId = self.groupId;
-            gr.shiptypeCount = shiptypeCount;
+            gr.shiptypeCount = self.shiptypeCount;
             [self.navigationController pushViewController:gr animated:YES];
         }
         
     }
-   else if (shiptypeCount==1) {//管理员
+   else if (self.shiptypeCount==1) {//管理员
        if (sender.tag ==100) {//发消息
            KKChatController * kkchat = [[KKChatController alloc] init];
            kkchat.chatWithUser = self.groupId;
@@ -105,7 +105,7 @@
        else if(sender.tag ==101){
            GroupSettingController *gr = [[GroupSettingController alloc]init];
            gr.groupId = self.groupId;
-           gr.shiptypeCount = shiptypeCount;
+           gr.shiptypeCount = self.shiptypeCount;
            [self.navigationController pushViewController:gr animated:YES];
            NSLog(@"群设置");
        }else{
@@ -113,7 +113,7 @@
        }
    
     }
-   else if (shiptypeCount==2) {//成员
+   else if (self.shiptypeCount==2) {//成员
        if (sender.tag ==100) {//发消息
            KKChatController * kkchat = [[KKChatController alloc] init];
            kkchat.chatWithUser = self.groupId;
@@ -122,7 +122,7 @@
        }else{
            GroupSettingController *gr = [[GroupSettingController alloc]init];
            gr.groupId = self.groupId;
-           gr.shiptypeCount = shiptypeCount;
+           gr.shiptypeCount = self.shiptypeCount;
            [self.navigationController pushViewController:gr animated:YES];
            NSLog(@"群设置");
        }
@@ -273,7 +273,7 @@
             
             NSString *identity = KISDictionaryHaveKey( responseObject, @"groupUsershipType");
             
-            shiptypeCount = [identity intValue];
+            self.shiptypeCount = [identity intValue];
             
             if ([authStr intValue]==0||[authStr intValue]==3) {
                 NSArray *array = @[@"chexiaogroup"];
@@ -566,7 +566,7 @@
 {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = [m_mainDict objectForKey:@"groupId"];
-    [self showMessageWindowWithContent:@"复制成功" imageType:1];
+    [self showMessageWindowWithContent:@"复制成功" imageType:0];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

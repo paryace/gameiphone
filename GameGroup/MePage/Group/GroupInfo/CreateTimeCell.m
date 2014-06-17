@@ -25,7 +25,7 @@
         
         self.titleLabel.text = @"创建于";
         
-        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 240, 20)]
+        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 210, 20)]
         ;
         self.timeLabel.textColor = [UIColor grayColor];
         self.timeLabel.adjustsFontSizeToFitWidth = YES;

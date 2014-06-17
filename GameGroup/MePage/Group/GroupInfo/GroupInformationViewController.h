@@ -10,4 +10,5 @@
 #import "GroupInfomationJsCell.h"
 @interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,GroupInfoCellDelegate>
 @property(nonatomic,copy)NSString *groupId;
+@property(nonatomic,assign)NSInteger shiptypeCount;
 @end
