@@ -58,6 +58,13 @@
         [self.timeLabel setAdjustsFontSizeToFitWidth:YES];
         [self.contentView addSubview:self.timeLabel];
         
+        
+        self.settingState = [[UIImageView alloc] initWithFrame:CGRectMake(290, 28, 17, 17)];
+        self.settingState.backgroundColor = [UIColor clearColor];
+//        self.settingState.hidden=YES;
+        self.settingState.image=KUIImage(@"nor_soundSong");
+        [self.contentView addSubview:self.settingState];
+        
     }
     return self;
 }

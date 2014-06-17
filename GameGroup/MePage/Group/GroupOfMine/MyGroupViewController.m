@@ -48,7 +48,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"我的群组" withBackButton:YES];
+    [self setTopViewWithTitle:@"我的组织" withBackButton:YES];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];

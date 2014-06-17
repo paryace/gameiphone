@@ -267,7 +267,7 @@
     int allUnread = 0;
     for (int i = 0; i<allMsgArray.count; i++) {
         DSThumbMsgs * message = [allMsgArray objectAtIndex:i];
-        if ([message.msgType isEqualToString:@"groupchat"]) {
+        if ([message.msgType isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
             if ([[GameCommon getMsgSettingStateByGroupId:message.groupId] isEqualToString:@"0"]
                 ||[[GameCommon getMsgSettingStateByGroupId:message.groupId] isEqualToString:@"2"]) {
                 allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
@@ -308,6 +308,7 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    DSThumbMsgs * message = [allMsgArray objectAtIndex:indexPath.row];
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];//@"有新的打招呼信息"
     if ([[[allMsgArray objectAtIndex:indexPath.row] msgType]isEqualToString:@"sayHi"]) {//打招呼
@@ -364,18 +365,20 @@
 
     }else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])
     {//群组聊天消息
-        
-        cell.headImageV.image = KUIImage(@"every_data_news");
         NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
         NSString * sender = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
+        
         if (!groupInfo) {
             cell.contentLabel.text = @"";
             cell.nameLabel.text =@"";
+            cell.headImageV.image = KUIImage(@"moren_people.png");
         }else
         {
             NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
             NSString * available = KISDictionaryHaveKey(groupInfo, @"available");
+            NSString * backgroundImg = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
+            
             NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
             NSString * senderNickname =[self getNickUserNameBySender:sender];
             if([available isEqualToString:@"0"]){
@@ -385,6 +388,7 @@
                 cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
             }
             cell.nameLabel.text =nickName;
+            cell.headImageV.imageURL = [ImageService getImageStr:backgroundImg Width:80];
         }
     } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
@@ -393,40 +397,92 @@
         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     
-    
-    
-    //设置红点 start
-    if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
-        cell.unreadCountLabel.hidden = NO;
-        cell.notiBgV.hidden = NO;
-        if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"] |
-            [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] ||
-            [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {
-            cell.notiBgV.image = KUIImage(@"redpot");
+    if ([[message msgType]isEqualToString:@"groupchat"]) {
+        NSString * groupId = [NSString stringWithFormat:@"%@",[message groupId]];
+        if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {//关闭模式
+            cell.settingState.hidden=NO;
+            cell.settingState.image=KUIImage(@"close_receive");
             cell.unreadCountLabel.hidden = YES;
+            cell.notiBgV.hidden = YES;
+            cell.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条消息"];
+        }else{
+            if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"2"]) {//无声模式
+                 cell.settingState.hidden=NO;
+                cell.settingState.image=KUIImage(@"nor_soundSong");
+            }else{
+                cell.settingState.hidden=YES;
+                cell.settingState.image=KUIImage(@"");
+            }
+            //设置红点 start
+            if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
+                cell.unreadCountLabel.hidden = NO;
+                cell.notiBgV.hidden = NO;
+                if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"] |
+                    [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] ||
+                    [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {
+                    cell.notiBgV.image = KUIImage(@"redpot");
+                    cell.unreadCountLabel.hidden = YES;
+                }
+                else
+                {
+                    [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
+                    if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
+                        [cell.unreadCountLabel setText:@"99+"];
+                        cell.notiBgV.image = KUIImage(@"redCB_big");
+                        cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+                        cell.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+                    }
+                    else{
+                        cell.notiBgV.image = KUIImage(@"redCB.png");
+                        [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
+                        cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+                        cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+                    }
+                }
+            }
+            else
+            {
+                cell.unreadCountLabel.hidden = YES;
+                cell.notiBgV.hidden = YES;
+            }
+        }
+
+    }else{
+        //设置红点 start
+        cell.settingState.hidden=YES;
+        if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
+            cell.unreadCountLabel.hidden = NO;
+            cell.notiBgV.hidden = NO;
+            if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"] |
+                [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] ||
+                [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {
+                cell.notiBgV.image = KUIImage(@"redpot");
+                cell.unreadCountLabel.hidden = YES;
+            }
+            else
+            {
+                [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
+                if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
+                    [cell.unreadCountLabel setText:@"99+"];
+                    cell.notiBgV.image = KUIImage(@"redCB_big");
+                    cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+                    cell.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+                }
+                else{
+                    cell.notiBgV.image = KUIImage(@"redCB.png");
+                    [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
+                    cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+                    cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+                }
+            }
         }
         else
         {
-            [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
-            if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
-                [cell.unreadCountLabel setText:@"99+"];
-                cell.notiBgV.image = KUIImage(@"redCB_big");
-                cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
-                cell.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
-            }
-            else{
-                cell.notiBgV.image = KUIImage(@"redCB.png");
-                [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
-                cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
-                cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
-            }
+            cell.unreadCountLabel.hidden = YES;
+            cell.notiBgV.hidden = YES;
         }
     }
-    else
-    {
-        cell.unreadCountLabel.hidden = YES;
-        cell.notiBgV.hidden = YES;
-    }
+    
     //-- end
     NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
     cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
@@ -499,7 +555,7 @@
     for (int i = 0; i<allMsgArray.count; i++) {
         allUnread = allUnread+[[[allMsgArray objectAtIndex:i]unRead] intValue];
     }
-    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])//新闻
+    if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"groupchat"])// 群组聊天
     {
         NSInteger unreadMsgCount = [[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue];
         MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;

@@ -163,7 +163,7 @@
     }else
     {
         gbMsgCountImageView.hidden = YES;
-        groupMsgTitleLable.text =@"群公告消息";
+        groupMsgTitleLable.text =@"没有群公告";
     }
    
 }
@@ -258,12 +258,14 @@
     groupMsgTitleLable.textAlignment = NSTextAlignmentLeft;
     groupMsgTitleLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     groupMsgTitleLable.font = [UIFont systemFontOfSize:11];
-    groupMsgTitleLable.text = @"群公告消息";
+    groupMsgTitleLable.text = @"没有群公告";
     [groupView addSubview:groupMsgTitleLable];
     
+    UIImageView * lineImage = [[UIImageView alloc] initWithFrame:CGRectMake(165, 10, 1, 40)];
+    lineImage.backgroundColor= UIColorFromRGBA(0xf3f3f3, 1);
+    [bottomView addSubview:lineImage];
     
-    
-    UIView *circleView = [[UIView alloc]initWithFrame:CGRectMake(180, 0 , 100, 60)];
+    UIView *circleView = [[UIView alloc]initWithFrame:CGRectMake(181, 0 , 100, 60)];
     circleView.backgroundColor =[UIColor clearColor];
     [circleView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     [bottomView addSubview:circleView];
@@ -755,7 +757,7 @@
 -(void)enterGroupList:(id)sender
 {
     gbMsgCountImageView.hidden = YES;
-    groupMsgTitleLable.text =@"群公告消息";
+    groupMsgTitleLable.text =@"没有群公告";
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
