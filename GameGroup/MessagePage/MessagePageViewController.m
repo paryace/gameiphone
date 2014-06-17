@@ -413,31 +413,21 @@
                 cell.settingState.hidden=YES;
                 cell.settingState.image=KUIImage(@"");
             }
-            //设置红点 start
             if ([[[allMsgArray objectAtIndex:indexPath.row]unRead]intValue]>0) {
                 cell.unreadCountLabel.hidden = NO;
                 cell.notiBgV.hidden = NO;
-                if ([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"recommendfriend"] |
-                    [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"sayHello"] ||
-                    [[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"deletePerson"]) {
-                    cell.notiBgV.image = KUIImage(@"redpot");
-                    cell.unreadCountLabel.hidden = YES;
+                [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
+                if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
+                    [cell.unreadCountLabel setText:@"99+"];
+                    cell.notiBgV.image = KUIImage(@"redCB_big");
+                    cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+                    cell.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
                 }
-                else
-                {
+                else{
+                    cell.notiBgV.image = KUIImage(@"redCB.png");
                     [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
-                    if ([[[allMsgArray objectAtIndex:indexPath.row]unRead] intValue]>99) {
-                        [cell.unreadCountLabel setText:@"99+"];
-                        cell.notiBgV.image = KUIImage(@"redCB_big");
-                        cell.notiBgV.frame=CGRectMake(40, 8, 22, 18);
-                        cell.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
-                    }
-                    else{
-                        cell.notiBgV.image = KUIImage(@"redCB.png");
-                        [cell.unreadCountLabel setText:[[allMsgArray objectAtIndex:indexPath.row]unRead]];
-                        cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
-                        cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
-                    }
+                    cell.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+                    cell.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
                 }
             }
             else
