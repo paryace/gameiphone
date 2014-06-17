@@ -1052,8 +1052,6 @@ typedef enum : NSUInteger {
     
 }
 
-
-#pragma mark-------
 #pragma mark ---发送评论
 -(void)updateComment
 {
