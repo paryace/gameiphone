@@ -293,7 +293,7 @@
                     [self buildbelowbutotnWithArray:array shiptype:1];
                     
                 }else{//陌生人
-                    NSArray *array = @[@"申请加入"];
+                    NSArray *array = @[@"joinIn"];
                     [self buildbelowbutotnWithArray:array shiptype:1];
                     
                 }
@@ -432,13 +432,14 @@
         [cell.contentView addSubview:titleLabel];
         
         titleLabel.text = @"服务器";
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(70, 10, 20, 20)];
+       
+        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
        
        
-       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(100, 0,100, 40)];
+       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
        numLb.font = [UIFont boldSystemFontOfSize:14];
        numLb.backgroundColor = [UIColor clearColor];
        numLb.textColor =[ UIColor blackColor];
