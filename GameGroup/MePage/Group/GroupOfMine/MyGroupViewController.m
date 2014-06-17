@@ -51,7 +51,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self setTopViewWithTitle:@"我的组织" withBackButton:YES];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
     
 
     myGroupArray = [NSMutableArray array];

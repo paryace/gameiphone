@@ -791,8 +791,8 @@ UINavigationControllerDelegate>
     
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.chatWithUser]];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    self.groupCircleText.text=@"0";
     _groupCricleMsgCount=0;
+    [self setGroupDynamicMsg:_groupCricleMsgCount];
     GroupCricleViewController *addVC = [[GroupCricleViewController alloc]init];
     addVC.groupId=self.chatWithUser;
     [self.navigationController pushViewController:addVC animated:YES];

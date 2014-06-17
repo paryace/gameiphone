@@ -254,7 +254,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     if([msgType isEqualToString:@"groupBillboard"])
     {//群公告
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"billboard_msg" object:nil userInfo:messageContent];
+        [[NSNotificationCenter defaultCenter]postNotificationName:Billboard_msg object:nil userInfo:messageContent];
         if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]) {
             int i=1;
             [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:Billboard_msg_count];

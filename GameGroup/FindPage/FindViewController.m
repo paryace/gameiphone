@@ -31,11 +31,13 @@
     EGOImageView * headImgView;
     
     NSInteger    myDunamicmsgCount;
+    
     UILabel *lb;
     
     UILabel *groupMsgTitleLable;
     UILabel *gbMsgCountLable;//公告消息数
     UIImageView *gbMsgCountImageView; //公告红点
+    NSInteger    billboardMsgCount;//群公告消息
     
     float button_center_x;
     float button_center_y;
@@ -61,7 +63,7 @@
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ss:) name:@"frienddunamicmsgChange_WX"object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];//群公告消息广播接收
     }
     return self;
 }
@@ -138,26 +140,38 @@
     commentLabel.text = [commStr1 stringByAppendingString:commStr2];
 
 }
+
+//初始化公告未读消息数量
+-(void)initMsgCount
+{
+    NSNumber *bullboardMsgCount = [[NSUserDefaults standardUserDefaults]objectForKey:Billboard_msg_count];
+    billboardMsgCount = [bullboardMsgCount intValue];
+    [self setMsgBillBoardConunt:billboardMsgCount];
+}
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
-    NSNumber *bullboardMsgCount = [[NSUserDefaults standardUserDefaults]objectForKey:Billboard_msg_count];
-    if ([bullboardMsgCount intValue]>0) {
+    billboardMsgCount++;
+    [self setMsgBillBoardConunt:billboardMsgCount];
+}
+//设置公告未读消息数量
+-(void)setMsgBillBoardConunt:(NSInteger)msgCount
+{
+    if (msgCount>0) {
         gbMsgCountImageView.hidden = NO;
-        int dianCount =[bullboardMsgCount intValue];
-        if (dianCount > 99) {
+        if (msgCount > 99) {
             gbMsgCountLable.text = @"99+";
         }
         else{
-            gbMsgCountLable.text =[NSString stringWithFormat:@"%d",dianCount] ;
+            gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
         }
-         groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",[bullboardMsgCount intValue]];
+        groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
     }else
     {
         gbMsgCountImageView.hidden = YES;
         groupMsgTitleLable.text =@"没有群公告";
     }
-   
+
 }
 -(void)cleanNews
 {
@@ -748,8 +762,8 @@
 
 -(void)enterGroupList:(id)sender
 {
-    gbMsgCountImageView.hidden = YES;
-    groupMsgTitleLable.text =@"没有群公告";
+    billboardMsgCount=0;
+    [self setMsgBillBoardConunt:billboardMsgCount];
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
