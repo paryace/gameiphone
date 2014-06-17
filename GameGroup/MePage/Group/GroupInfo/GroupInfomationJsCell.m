@@ -14,8 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
         self.titleLabel.font = [UIFont boldSystemFontOfSize:14];
         self.titleLabel.backgroundColor = [UIColor clearColor];
@@ -72,18 +70,6 @@
     if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:WithIndexPath:)]) {
         [self.myCellDelegate  bigImgWithCircle:self WithIndexPath:indexPath.row];
     }
-}
-
-- (void)awakeFromNib
-{
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

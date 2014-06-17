@@ -10,6 +10,7 @@
 #import "EGOImageView.h"
 #import "GroupInfomationJsCell.h"
 #import "GroupNameCell.h"
+#import "EditGroupNameViewController.h"
 @interface GroupInfoEditViewController ()
 {
     NSMutableDictionary *m_mainDict;
@@ -182,7 +183,7 @@
             }
             
             cell.contentLabel.frame = CGRectMake(80, 0, 220,height1);
-            cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
+            cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
             
             float height = 0.0;
             if (cell.photoArray.count>0&&cell.photoArray.count<4) {
@@ -198,6 +199,7 @@
                 height = 0;
             }
             cell.photoView.frame = CGRectMake(80, size.height+10, 230, height);
+            [cell.photoView reloadData];
         }
         return cell;
     }
@@ -302,9 +304,8 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     if (indexPath.row ==0) {
-        EditGroupMessageViewController *editG = [[EditGroupMessageViewController alloc]init];
+        EditGroupNameViewController *editG = [[EditGroupNameViewController alloc]init];
         editG.placeHold =[m_mainDict objectForKey:@"groupName"];
-        editG.editType = EDIT_TYPE_nickName;
         editG.delegate = self;
 
         [self.navigationController pushViewController:editG animated:YES];
@@ -317,7 +318,7 @@
     else if (indexPath.row ==3) {
         EditGroupMessageViewController *editG = [[EditGroupMessageViewController alloc]init];
         editG.placeHold =[m_mainDict objectForKey:@"info"];
-        editG.editType = EDIT_TYPE_signature;
+        editG.headImgArray = [ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
         editG.delegate = self;
         [self.navigationController pushViewController:editG animated:YES];
     }
@@ -376,22 +377,25 @@
     [m_myTableView reloadData];
 }
 
--(void)comeBackInfoWithController:(EditGroupMessageViewController *)controller type:(EditType)mysetupType info:(NSString *)info
+//修改群简介，群图片
+-(void)comeBackInfoWithController:(NSString *)info InfoImg:(NSString*)infoImg
 {
-    if (mysetupType ==EDIT_TYPE_nickName) {
-        [paramDict setObject:info forKey:@"groupName"];
-        NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
-        [dic setObject:info forKey:@"groupName"];
-        m_mainDict = dic;
-
-    }else if (mysetupType ==EDIT_TYPE_signature){
-        [paramDict setObject:info forKey:@"info"];
-        NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
-        [dic setObject:info forKey:@"info"];
-        m_mainDict = dic;
-    }
+    [paramDict setObject:info forKey:@"info"];
+    [paramDict setObject:infoImg forKey:@"infoImg"];
+    NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
+    [dic setObject:info forKey:@"info"];
+    [dic setObject:infoImg forKey:@"infoImg"];
+    m_mainDict = dic;
     [m_myTableView reloadData];
-
+}
+//修改群昵称
+-(void)comeBackGroupNameWithController:(NSString *)groupName
+{
+    [paramDict setObject:groupName forKey:@"groupName"];
+    NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
+    [dic setObject:groupName forKey:@"groupName"];
+    m_mainDict = dic;
+    [m_myTableView reloadData];
 }
 
 #pragma mark --改变顶部图片

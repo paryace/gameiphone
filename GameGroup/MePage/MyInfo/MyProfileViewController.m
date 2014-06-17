@@ -18,10 +18,6 @@
     UITableView*   m_myTableView;
     HGPhotoWall    *m_photoWall;
     
-//    NSMutableArray * waitingUploadImgArray;
-//    NSMutableArray * waitingUploadStrArray;
-    
-    
     NSMutableArray * uploadImagePathArray;
     NSMutableDictionary * reponseStrArray;
     NSInteger imageImdex;
@@ -117,17 +113,6 @@
 {
     alter1.delegate = nil;
 }
-//#pragma mark 返回
-//- (void)backButtonClick:(id)sender
-//{
-//    if ([waitingUploadImgArray count] != 0 || [deleteImageIdArray count] != 0 || m_isSort) {
-//        alter1 = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的相册还未保存，确认要退出吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
-//        alter1.tag = 75;
-//        [alter1 show];
-//    }
-//    else
-//        [self.navigationController popViewControllerAnimated:YES];
-//}
 
 #pragma mark 返回
 - (void)backButtonClick:(id)sender
@@ -160,7 +145,6 @@
             [temp addObject:headID];
         }
         else{
-//            [temp addObject:[NSString stringWithFormat:@"%@%@",BaseImageUrl,headID]];
             [temp addObject:[ImageService getImgUrl:headID]];
         }
     }
@@ -181,37 +165,23 @@
 {
     if (index!=newIndex) {
         NSMutableArray * array1 = [NSMutableArray arrayWithArray:self.headImgArray];
-//        NSMutableArray * array2 = [NSMutableArray arrayWithArray:self.headBigImgArray];
-
         NSString * tempStr = [array1 objectAtIndex:index];
-//        NSString * tempStr2 = [array2 objectAtIndex:index];
         
         if (newIndex<index) {
             [array1 insertObject:tempStr atIndex:newIndex];
-//            [array2 insertObject:tempStr2 atIndex:newIndex];
             [array1 removeObjectAtIndex:index+1];
-//            [array2 removeObjectAtIndex:index+1];
         }
         else{
             [array1 removeObjectAtIndex:index];
-//            [array2 removeObjectAtIndex:index];
             [array1 insertObject:tempStr atIndex:newIndex];
-//            [array2 insertObject:tempStr2 atIndex:newIndex];
         }
         m_isSort = YES;
         self.headImgArray = array1;
-//        self.headBigImgArray = array2;
     }
 }
-
-
 - (void)photoWallAddAction
 {
-    UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil
-                                                                 delegate:self
-                                                        cancelButtonTitle:@"取消"
-                                                   destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"相册选择",@"拍照", nil];
+    UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"相册选择",@"拍照", nil];
     actionSheetTemp.tag = ActionSheetTypeChoosePic;
     [actionSheetTemp showInView:self.view];
 }
@@ -220,33 +190,7 @@
 {
     
 }
-//-(void)photoWallDelPhotoAtIndex:(NSInteger)index
-//{
-//    NSLog(@"%d",index);
-//    NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
-////    NSMutableArray * tempHBig = [NSMutableArray arrayWithArray:self.headBigImgArray];
-//    NSString * tempStr = [tempH objectAtIndex:index];
-//    if ([waitingUploadStrArray containsObject:tempStr]) {
-//        int tempIndex = [waitingUploadStrArray indexOfObject:tempStr];
-//        [waitingUploadStrArray removeObject:tempStr];
-//        [waitingUploadImgArray removeObjectAtIndex:tempIndex];
-//    }
-//    else//需要删除的id
-//    {
-//        [deleteImageIdArray addObject:tempStr];//小图
-//        
-////        NSString* bigStr = [tempHBig objectAtIndex:index];
-////        
-////        [deleteImageIdArray addObject:bigStr];//大图
-//        NSLog(@"需要删除的图片id %@", deleteImageIdArray);
-//    }
-//    [tempH removeObjectAtIndex:index];
-////    [tempHBig removeObjectAtIndex:index];
-//    self.headImgArray = tempH;
-////    self.headBigImgArray = tempHBig;
-//
-//    [m_myTableView reloadData];
-//}
+
 -(void)photoWallDelPhotoAtIndex:(NSInteger)index
 {
     NSLog(@"%d",index);
@@ -307,7 +251,6 @@
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                //                [self presentModalViewController:imagePicker animated:YES];
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
@@ -319,53 +262,6 @@
         }
     }
 }
-//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-//{
-//    NSLog(@"%@",info);
-//    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-//    //    UIImage* a = [NetManager compressImageDownToPhoneScreenSize:image targetSizeX:100 targetSizeY:100];
-//    //    UIImage* upImage = [NetManager image:a centerInSize:CGSizeMake(100, 100)];
-//    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
-//    NSFileManager *fm = [NSFileManager defaultManager];
-//    if([fm fileExistsAtPath:path] == NO)
-//    {
-//        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-//    }
-//    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%d_me.jpg",path,self.headImgArray.count];
-//    
-//    if ([UIImageJPEGRepresentation(upImage, 1.0) writeToFile:openImgPath atomically:YES]) {
-//        NSLog(@"success///");
-//    }
-//    else
-//    {
-//        NSLog(@"fail");
-//    }
-//    NSMutableArray * tempArray;
-//    NSMutableArray * tempBigArray;
-//    if (self.headImgArray) {
-//        tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
-////        tempBigArray = [NSMutableArray arrayWithArray:self.headBigImgArray];
-//    }
-//    else
-//    {
-//        tempArray = [NSMutableArray array];
-//        tempBigArray = [NSMutableArray array];
-//    }
-//    [tempArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-//    [tempBigArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-//    [waitingUploadImgArray addObject:upImage];
-//    [waitingUploadStrArray addObject:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-//    [m_photoWall addPhoto:[NSString stringWithFormat:@"<local>%d_me.jpg",self.headImgArray.count]];
-//    self.headImgArray = tempArray;
-////    self.headBigImgArray = tempBigArray;
-//    NSLog(@"新图 %@", self.headImgArray);// 47,39,"<local>2_me.jpg"
-//
-//    [m_myTableView reloadData];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        
-//    }];
-//    
-//}
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
@@ -373,10 +269,8 @@
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
 
     NSString * imageName=[NSString stringWithFormat:@"%d_me.jpg",self.headImgArray.count];
-    NSString * imagePath=[self writeImageToFile:upImage ImageName:imageName];//完整路径
-
+    [self writeImageToFile:upImage ImageName:imageName];//完整路径
     NSString * imageLocalUrl=[NSString stringWithFormat:@"<local>%@",imageName];//本地文件名
-    
     NSMutableArray * tempArray;
     if (self.headImgArray) {
         tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
@@ -390,10 +284,8 @@
     
     [m_photoWall addPhoto:imageLocalUrl];
     self.headImgArray = tempArray;
-    
     [m_myTableView reloadData];
     [self dismissViewControllerAnimated:YES completion:^{
-        
     }];
 }
 
@@ -448,12 +340,7 @@
     hud.labelText = [NSString stringWithFormat:@"上传第%d张 %.0f％", imageImdex+1,pp];
     
 }
-/**
- {
- hash = Fg1pj8Y3tNOB905kaCeaAUBrEC94;
- key = 340480FC3CD34A26A45A1D8C386D0104;
- }
- **/
+
 //上传成功代理回调
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
@@ -562,10 +449,6 @@
         case 1:
         {
             topBg.image = KUIImage(@"inputbg");
-
-//            UIView* genderView = [CommonControlOrView setGenderAndAgeViewWithFrame:CGRectMake(10, 15/2.0, 40, 15) gender:self.hostInfo.gender age:@""];
-//            [topBg addSubview:genderView];
-            
             m_ageLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 9, 30, 12)];
             [m_ageLabel setTextColor:[UIColor whiteColor]];
             [m_ageLabel setFont:[UIFont boldSystemFontOfSize:10.0]];

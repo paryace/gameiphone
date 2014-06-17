@@ -515,7 +515,7 @@
             }
 
             cell.contentLabel.frame = CGRectMake(100, 0, 230,height1);
-            cell.photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
+            cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
             
             float height = 0.0;
             if (cell.photoArray.count>0&&cell.photoArray.count<4) {
