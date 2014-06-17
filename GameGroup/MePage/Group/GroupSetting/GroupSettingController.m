@@ -11,11 +11,14 @@
 #import "MemberEditViewController.h"
 #import "GroupInfoEditViewController.h"
 #import "PublishBillboardViewController.h"
+#import "EGOImageView.h"
 @interface GroupSettingController ()
 {
-    UILabel *groupNameLable;
+    UITextField *groupNameLable;
     UILabel *msgHintLable;
     UIImageView *soundimageView;
+    UIPickerView *m_rolePickView;
+    NSMutableArray *m_roleArray;
 }
 
 @end
@@ -33,7 +36,9 @@
     scV.contentSize=CGSizeMake(320, 500);
     [self.view addSubview:scV];
     
-   
+    
+    m_roleArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
     
     UIView * itemone=[[UIView alloc] initWithFrame:CGRectMake(0, 20,320, 45)];
     UIButton * topBtn = [self getItemBtn:@"群组消息提示"];
@@ -55,17 +60,52 @@
     
     // 我的群角色
     UIView * itemtwo=[[UIView alloc] initWithFrame:CGRectMake(0, 66,320, 45)];
-    UIButton * twoBtn = [self getItemBtn:@"我的群角色"];
-    [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
-    [itemtwo addSubview:twoBtn];
+    itemtwo.backgroundColor = [UIColor whiteColor];
+
+//    UIButton * twoBtn = [self getItemBtn:@"我的群角色"];
+//    [twoBtn addTarget:self action:@selector(role:) forControlEvents:UIControlEventTouchUpInside];
+//    [itemtwo addSubview:twoBtn];
+   
+    UILabel *tlb = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 90, 45)];
+    tlb.backgroundColor = [UIColor whiteColor];
+    tlb.textColor = [UIColor blackColor];
+    tlb.text = @"我的群角色";
+    tlb.font =[ UIFont systemFontOfSize:14];
+    [itemtwo addSubview:tlb];
+    UIImageView *rightimageView=[[UIImageView alloc] initWithFrame:CGRectMake(320-20, 16.5, 8, 12)];
+    rightimageView.image = KUIImage(@"right_arrow");
+    rightimageView.backgroundColor = [UIColor clearColor];
+    [itemtwo addSubview:rightimageView];
     
-    groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(250, 12.5, 50, 20)];
-    groupNameLable.backgroundColor = [UIColor clearColor];
+    UIToolbar *toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    toolbar.tintColor = [UIColor blackColor];
+    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
+    rb_server.tintColor = [UIColor blackColor];
+    toolbar.items = @[rb_server];
+    
+    m_rolePickView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
+    m_rolePickView.dataSource = self;
+    m_rolePickView.delegate = self;
+    m_rolePickView.showsSelectionIndicator = YES;
+    
+
+    
+    groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(100, 0, 190, 45)];
+    groupNameLable.backgroundColor = [UIColor whiteColor];
     groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
-    groupNameLable.text = @"marss";
+    groupNameLable.text = self.CharacterInfo;
+    groupNameLable.textAlignment = NSTextAlignmentRight;
     groupNameLable.font =[ UIFont systemFontOfSize:14];
+    groupNameLable.inputView = m_rolePickView;
+    groupNameLable.inputAccessoryView = toolbar;
+
     [itemtwo addSubview:groupNameLable];
     
+//    CGSize textSize = [groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+//    groupNameLable.frame=CGRectMake(300-textSize.width-10, 12, textSize.width, 20);
+    
+    
+
     [scV addSubview:itemtwo];
     
     
@@ -169,7 +209,12 @@
         sevenBtn.hidden=YES;
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }
-    [self setInfo];
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"修改中...";
+    
+    
 }
 -(NSString*)getMsgIcon:(NSString*)groupMsgSettingState
 {
@@ -202,12 +247,6 @@
         return @"无声模式";
     }
     return @"";
-}
--(void)setInfo
-{
-    groupNameLable.text = @"艾欧尼亚－Marss";
-    CGSize textSize = [groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-     groupNameLable.frame=CGRectMake(300-textSize.width-10, 12, textSize.width, 20);
 }
 
 -(UIButton*)getItemBtn:(NSString*)titleText
@@ -456,6 +495,77 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
+#pragma mark 选择器
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return m_roleArray.count;
+}
+
+//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
+//{
+//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
+//    return title;
+//}
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
+{
+    NSDictionary *dic = [m_roleArray objectAtIndex:row];
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
+    [customView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    [customView addSubview:label];
+    return customView;
+    
+}
+
+-(void)selectServerNameOK:(id)sender
+{
+    if ([m_roleArray count] != 0) {
+        NSDictionary *dict =[m_roleArray objectAtIndex:[m_rolePickView selectedRowInComponent:0]];
+        groupNameLable.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        
+        NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"id"),@"characterId",self.groupId,@"groupId",KISDictionaryHaveKey(dict, @"gameid"),@"gameid", nil];
+        
+        [self getCardWithNetWithDic:dic];
+        
+        [groupNameLable resignFirstResponder];
+    }
+}
+
+-(void)getCardWithNetWithDic:(NSMutableDictionary *)dic
+{
+    [hud show:YES];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"256" forKey:@"method"];
+    [postDict setObject:dic forKey:@"params"];
+
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        
+        
+        [self showMessageWindowWithContent:@"修改成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+}
+
+
 
 - (void)didReceiveMemoryWarning
 {

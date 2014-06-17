@@ -16,6 +16,7 @@
 #import "SetUpGroupViewController.h"
 #import "GroupLeaveViewController.h"
 #import "CreateTimeCell.h"
+#import "SearchGroupViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -90,6 +91,7 @@
             NSLog(@"群设置");
             GroupSettingController *gr = [[GroupSettingController alloc]init];
             gr.groupId = self.groupId;
+            gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
             gr.shiptypeCount = self.shiptypeCount;
             [self.navigationController pushViewController:gr animated:YES];
         }
@@ -486,7 +488,9 @@
             }
             for (int i =0; i<tags.count; i++) {
                 UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(100+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
-                tagImage.tag=122222;
+                tagImage.tag=100+i;
+                tagImage.userInteractionEnabled = YES;
+                [tagImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterSearchGroupPage:)]];
                 [cell.contentView addSubview:tagImage];
             }
         }
@@ -652,6 +656,18 @@
     gl.groupId = self.groupId;
     [self.navigationController pushViewController:gl animated:YES];
 }
+
+#pragma mark ---点击标签 进入搜索页面
+-(void)enterSearchGroupPage:(UIGestureRecognizer *)sender
+{
+    NSArray *tags = [m_mainDict objectForKey:@"tags"];
+    SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
+    groupView.ComeType = SETUP_Tags;
+    groupView.tagsId =KISDictionaryHaveKey(tags[sender.view.tag-100], @"tagId");
+    [self.navigationController pushViewController:groupView animated:YES];
+
+}
+
 
 
 - (void)didReceiveMemoryWarning
