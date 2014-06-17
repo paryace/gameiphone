@@ -8,8 +8,8 @@
 
 #import "BaseViewController.h"
 
-@interface GroupSettingController : BaseViewController<UIActionSheetDelegate>
+@interface GroupSettingController : BaseViewController<UIActionSheetDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 @property(nonatomic,copy)NSString *groupId;
 @property (assign, nonatomic)  NSInteger shiptypeCount;
-
+@property (nonatomic,copy)NSString *CharacterInfo;
 @end
