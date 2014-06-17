@@ -1,12 +1,12 @@
 //
-//  InterestingPerpleViewController.m
+//  GroupCricleViewController.m
 //  GameGroup
 //
-//  Created by 魏星 on 14-5-29.
+//  Created by Apple on 14-6-17.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
-#import "InterestingPerpleViewController.h"
+#import "GroupCricleViewController.h"
 #import "NearByPhotoCell.h"
 #import "LocationManager.h"
 #import "TestViewController.h"
@@ -19,7 +19,7 @@ typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
 } CommentInputType;
-@interface InterestingPerpleViewController ()
+@interface GroupCricleViewController ()
 {
     UICollectionView *m_photoCollectionView;
     MJRefreshHeaderView *m_header;
@@ -33,7 +33,6 @@ typedef enum : NSUInteger {
     UILabel *nearBylabel;
     UILabel*            m_titleLabel;
     NSInteger           m_searchType;//3全部 0男 1女
-    NSString *citydongtaiStr;
     UIButton *menuButton;
     NSMutableArray *wxSDArray;
     
@@ -56,26 +55,12 @@ typedef enum : NSUInteger {
     float offer;
     int height;
     BOOL _keyboardIsVisible;
-    
-    
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
-
 @end
 
-@implementation InterestingPerpleViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-        
-    }
-    return self;
-}
-
+@implementation GroupCricleViewController
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
@@ -91,11 +76,12 @@ typedef enum : NSUInteger {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
 }
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"有趣的人" withBackButton:YES];
+    
+    
+    [self setTopViewWithTitle:@"群动态" withBackButton:YES];
     
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];
@@ -105,17 +91,13 @@ typedef enum : NSUInteger {
     cellhightarray = [NSMutableDictionary dictionary];
     delcommentDic = [NSMutableDictionary dictionary];
     
-    
-    
-    
-    
-    
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    
+    NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.groupId];
+    NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
     UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
     topImageView.image = KUIImage(@"topImg_youqu.jpg");
     [self.view addSubview:topImageView];
@@ -125,7 +107,7 @@ typedef enum : NSUInteger {
     lb.textColor = [UIColor whiteColor];
     lb.font = [UIFont systemFontOfSize:12];
     lb.textAlignment = NSTextAlignmentCenter;
-    lb.text = @"有趣的人会展示出最近较受欢迎的动态、推荐关注";
+    lb.text = nickName;
     [topImageView addSubview:lb];
     m_myTableView.tableHeaderView = topImageView;
     
@@ -137,25 +119,22 @@ typedef enum : NSUInteger {
     [self getInfoWithNet];
     [self addheadView];
     [self addFootView];
-       NSFileManager *fileManager =[NSFileManager defaultManager];
+    NSFileManager *fileManager =[NSFileManager defaultManager];
     
-       NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
-      BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
-       NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
-       if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-           m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
-        }
+    NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_groupInfoList"];
+    BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
+    NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
+    if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
+    }
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
     
     
     
     [self buildcommentView];
-    
-    citydongtaiStr = @"附近的动态";
-    // Do any additional setup after loading the view.
-    
 }
+
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;
@@ -191,7 +170,7 @@ typedef enum : NSUInteger {
     
 	self.textView.minNumberOfLines = 1;
 	self.textView.maxNumberOfLines = 6;
-	self.textView.returnKeyType = UIReturnKeyDone; //just as an example
+	self.textView.returnKeyType = UIReturnKeyDone;
 	self.textView.font = [UIFont systemFontOfSize:15.0f];
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
@@ -210,8 +189,6 @@ typedef enum : NSUInteger {
     imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    // view hierachy
     [inPutView addSubview:imageView];
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
@@ -226,15 +203,7 @@ typedef enum : NSUInteger {
     [inPutView addSubview:senderBnt];
 }
 
-
-
-
-
-
-#pragma mark ---
 #pragma mark ---- 网络请求
-
-
 -(void)getInfoWithNet
 {
     [hud show:YES];
@@ -242,37 +211,34 @@ typedef enum : NSUInteger {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
-    [dict setObject:@"223" forKey:@"method"];
-    [paramDic setObject:@(m_currPageCount) forKey:@"pageIndex"];
-    
-    
+    [dict setObject:@"248" forKey:@"method"];
+     [paramDic setObject:self.groupId forKey:@"groupId"];
+    [paramDic setObject:@(m_currPageCount) forKey:@"firstResult"];
     [paramDic setObject:@"20" forKey:@"maxSize"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        if ([KISDictionaryHaveKey(responseObject, @"dynamicMsgList") isKindOfClass:[NSArray class]]) {
-            if (m_currPageCount ==0) {
-                [m_dataArray removeAllObjects];
-                [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
-                for (int i =0; i <m_dataArray.count; i++) {
-                    m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
-                }
-                NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
-                    [m_dataArray writeToFile:filePath atomically:YES];
-            }else{
-                NSMutableArray *arr  = [NSMutableArray array];
-                NSArray *arrays = [NSArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
-                for (int i =0; i<arrays.count; i++) {
-                    [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
-                }
-                [m_dataArray addObjectsFromArray:arr];
-                
+        if(!responseObject||![responseObject isKindOfClass:[NSArray class]]){
+            return ;
+        }
+        if (m_currPageCount ==0) {
+            [m_dataArray removeAllObjects];
+            [m_dataArray addObjectsFromArray:responseObject];
+            for (int i =0; i <m_dataArray.count; i++) {
+                m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
             }
-            m_currPageCount ++;
-            [m_myTableView reloadData];
+            NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_groupInfoList"];
+            [m_dataArray writeToFile:filePath atomically:YES];
+        }else{
+            NSMutableArray *arr  = [NSMutableArray array];
+            NSArray *arrays = [NSArray arrayWithArray:responseObject];
+            for (int i =0; i<arrays.count; i++) {
+                [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
+            }
+            [m_dataArray addObjectsFromArray:arr];
             
         }
+        [m_myTableView reloadData];
         [m_footer endRefreshing];
         [m_header endRefreshing];
         [hud hide:YES];
@@ -318,9 +284,6 @@ typedef enum : NSUInteger {
     cell.tag = indexPath.row;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    
-    
-    
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
         cell.focusButton.hidden=NO;
     }else
@@ -329,14 +292,6 @@ typedef enum : NSUInteger {
     }
     NSString * imageIds = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     cell.headImgBtn.imageURL = [ImageService getImageStr:imageIds Width:80];
-    
-//    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
-//        cell.headImgBtn.imageURL = nil;
-//    }else{
-//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
-//    }
-    
-    
     
     //判断赞按钮状态显示相应的图标
     UIButton *button  = cell.zanBtn;
@@ -357,10 +312,8 @@ typedef enum : NSUInteger {
         nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"nickname");
     }
     cell.nickNameLabel.text =nickName;
-    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
-    //cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
+    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;//加上nickName的高度
     cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
-    
     //计算时间
     NSString *time;
     if(![[dict allKeys]containsObject:@"MessageTime"]){
@@ -394,7 +347,6 @@ typedef enum : NSUInteger {
             cell.timeLabel.frame = CGRectMake(60,m_currmagY+10, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
             cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
-            
         }
         //有图动态
         else{
@@ -403,11 +355,7 @@ typedef enum : NSUInteger {
             cell.photoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
-            //            if (cell.photoArray.count<4) {
-            //                cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, cell.photoArray.count *80,imgHeight);
-            //            }else{
             cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
-            //            }
             m_currmagY += imgHeight;
             
             CGFloat paddingY = 2;
@@ -499,19 +447,14 @@ typedef enum : NSUInteger {
     }else{
         cell.zanView.hidden = YES;
     }
-    
     // 评论
     commentArray =KISDictionaryHaveKey(dict, @"commentList");
     cell.commentArray = commentArray;
     cell.commentTabelView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
     [cell.commentTabelView reloadData];
-    
     float commHieght = [KISDictionaryHaveKey(dict, @"commentListHieght") floatValue];
-    
     cell.commentTabelView.frame = CGRectMake(60, m_currmagY, 250,commHieght);
-    
     m_currmagY+= commHieght;
-    
     
     if ([KISDictionaryHaveKey(dict, @"commentNum")intValue]>7) {
         cell.commentMoreBtn.hidden = NO;
@@ -526,28 +469,6 @@ typedef enum : NSUInteger {
     return cell;
     
 }
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //    if([self keyboardIsVisible]==YES){
-    //        [self.textView resignFirstResponder];
-    //        return ;
-    //    }
-    //    if(self.theEmojiView.hidden == NO){
-    //        self.theEmojiView.hidden = YES;
-    //        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-    //        self.commentInputType = CommentInputTypeKeyboard;
-    //        senderBnt.selected = NO;
-    //        return ;
-    //    }
-    //    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    //    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    //    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
-    //    once.messageid =KISDictionaryHaveKey(dic, @"id");
-    //    [self.navigationController pushViewController:once animated:YES];
-    
-}
-
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //用分析器初始化m_dataArray
@@ -569,7 +490,6 @@ typedef enum : NSUInteger {
     if (messageTime.length < 10 || currentString.length < 10) {
         return @"未知";
     }
-    // NSString * finalTime;
     NSString* curStr = [currentString substringToIndex:messageTime.length-3];
     NSString* mesStr = [messageTime substringToIndex:messageTime.length-3];
     
@@ -629,6 +549,7 @@ typedef enum : NSUInteger {
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         hud.labelText = @"加载中...";
+        m_currPageCount = m_dataArray.count;
         [self getInfoWithNet];
     };
     m_footer = footer;
@@ -992,7 +913,6 @@ typedef enum : NSUInteger {
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark ---cell delegate  openMenuCell
@@ -1253,7 +1173,7 @@ typedef enum : NSUInteger {
 -(void)saveinfoToUserDefaults:(NSMutableArray *)array
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path = [RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
+    NSString *path = [RootDocPath stringByAppendingString:@"/HC_groupInfoList"];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
     NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
     
@@ -1278,8 +1198,6 @@ typedef enum : NSUInteger {
         if ([msgid isEqualToString:@""]||[msgid isEqualToString:@" "]) {
             return;
         }
-        
-        
         UIActionSheet *act = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"删除评论" otherButtonTitles: nil];
         act.tag = 888888;
         
@@ -1297,7 +1215,6 @@ typedef enum : NSUInteger {
         commentMsgId =KISDictionaryHaveKey(dic, @"id");
         NSArray *array = [dic objectForKey:@"commentList"];
         NSDictionary *dict = [array objectAtIndex:row];
-        //  self.textView.placeholder = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname") ;
         NSString* nickName = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"alias");
         if ([GameCommon isEmtity:nickName]) {
             nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"commentUser"), @"nickname");
@@ -1414,31 +1331,16 @@ typedef enum : NSUInteger {
     reply.isHaveArticle = YES;
     [self.navigationController pushViewController:reply animated:YES];
 }
-
-
-
 - (void)keyboardWillShow:(NSNotification *)notification {
-    /*
-     Reduce the size of the text view so that it's not obscured by the keyboard.
-     Animate the resize so that it's in sync with the appearance of the keyboard.
-     */
     self.theEmojiView.hidden = YES;
     self.commentInputType = CommentInputTypeKeyboard;
     senderBnt.selected = NO;
     NSDictionary *userInfo = [notification userInfo];
-    
-    // Get the origin of the keyboard when it's displayed.
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    
-    // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
     CGRect keyboardRect = [aValue CGRectValue];
-    
-    // Get the duration of the animation.
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
-    
-    // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
     height = keyboardRect.size.height;
     [self keyboardDidShow];
@@ -1446,13 +1348,7 @@ typedef enum : NSUInteger {
 
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-    
     NSDictionary* userInfo = [notification userInfo];
-    
-    /*
-     Restore the size of the text view (fill self's view).
-     Animate the resize so that it's in sync with the disappearance of the keyboard.
-     */
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
@@ -1461,16 +1357,9 @@ typedef enum : NSUInteger {
     [self keyboardDidHide];
 }
 -(void) autoMovekeyBoard: (float) h{
-    
-    //    [UIView beginAnimations:nil context:nil];
-    //    [UIView setAnimationDuration:0.2];
-	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
-    
+
     CGRect containerFrame = inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
-	// animations settings
-    
-	// set views with new info
 	inPutView.frame = containerFrame;
 }
 - (void)keyboardDidShow
@@ -1634,23 +1523,13 @@ typedef enum : NSUInteger {
     NSString * imageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     detailVC.imgStr = [ImageService getImgUrl:imageIds];
     
-    
-    //    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
-    //    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-    //
-    
     NSMutableDictionary *userDic=KISDictionaryHaveKey(dict, @"user");
     NSString * nickName=KISDictionaryHaveKey(userDic, @"alias");
     if ([GameCommon isEmtity:nickName]) {
         nickName=KISDictionaryHaveKey(userDic, @"nickname");
     }
-    
-    
     detailVC.nickNameStr = [KISDictionaryHaveKey(dict, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]] ? @"我" :nickName;
-    
-    
     detailVC.timeStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"createDate")];
-    
     [self.navigationController pushViewController:detailVC animated:YES];
     
 }

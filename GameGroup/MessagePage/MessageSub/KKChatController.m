@@ -22,6 +22,7 @@
 #import "MessageService.h"
 #import "GroupInformationViewController.h"
 #import "KKSystemMsgCell.h"
+#import "GroupCricleViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -761,7 +762,9 @@ UINavigationControllerDelegate>
 }
 //群动态入口
 - (void)groupCricleButtonClick:(UIButton *)sender{
-    
+    GroupCricleViewController *addVC = [[GroupCricleViewController alloc]init];
+    addVC.groupId=self.chatWithUser;
+    [self.navigationController pushViewController:addVC animated:YES];
 }
 //加载全部
 - (void)loadMoreMsg:(UIButton *)sender{
