@@ -66,9 +66,7 @@
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray: responseObject];
             [m_myTableView reloadData];
-            
         }
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             NSString* warn = [error objectForKey:kFailMessageKey];

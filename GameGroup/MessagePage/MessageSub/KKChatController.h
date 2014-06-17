@@ -88,13 +88,10 @@ SendMsgDeleGate>
 }
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题
-
 @property (nonatomic, strong) UIButton *groupCircleBtn;  //群动态
 @property (nonatomic, strong) UILabel *groupCircleText;  //群动态数量
 @property (nonatomic, strong) UILabel *groupunReadMsgLable;  //群消息未读条数
 @property (nonatomic, strong) UIButton *titleButton;  //
-
-
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  NSString* myNickName; //我的昵称
@@ -107,15 +104,13 @@ SendMsgDeleGate>
 @property (strong, nonatomic)  UITextField *messageTextField;
 @property(nonatomic, retain) NSString *chatWithUser;
 @property(nonatomic, retain) NSString *nickName;
+@property(nonatomic, retain)   NSString *type;//聊天类型normal：跟某个用户聊天 group：群聊
+@property (assign, nonatomic)  NSInteger unreadMsgCount;//未读的消息数
 
-@property(nonatomic, retain)   NSString *type;
-@property (assign, nonatomic)  NSInteger unreadMsgCount;
 
 
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;
-@property (nonatomic,retain) AVAudioSession *session;
-@property (nonatomic,retain) AVAudioRecorder *recorder;
 
 - (void)sendButton:(id)sender;
 

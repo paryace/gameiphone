@@ -221,7 +221,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
 
-    if (![[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {
+    if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"0"]) {//正常模式
         BOOL isVibrationopen=[self isVibrationopen];;
         BOOL isSoundOpen = [self isSoundOpen];
         if (isSoundOpen) {

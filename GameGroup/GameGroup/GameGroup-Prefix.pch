@@ -134,7 +134,9 @@
 
 #define isFirstOpen @"firstOpen"//好友列表等 第一次开启程序时获取 或 换帐号时
 #define FansCount @"fansCount"//粉丝总数
-#define Billboard_msg_count @"billboard_msg_count"
+#define Billboard_msg_count @"billboard_msg_count"//公告的消息数
+#define GroupDynamic_msg_count @"groupDynamic_msg_count"//群动态的消息数量
+#define GroupDynamic_msg @"groupDynamic_msg"//群动态的消息
 
 #define isFirstIntoMePage @"isFirstIntoMePage"//第一次进入“我”的页面
 

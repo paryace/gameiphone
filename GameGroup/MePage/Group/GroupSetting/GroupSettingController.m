@@ -140,7 +140,7 @@
     NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
     NSString * message = [self getCellMsgByState:groupMsgSettingState];
     [self setSettingMsg:message];
-    
+    soundimageView.image= KUIImage([self getMsgIcon:groupMsgSettingState]);
 
     
     if (self.shiptypeCount ==0) {//群主
@@ -168,24 +168,35 @@
     }
     [self setInfo];
 }
-
+-(NSString*)getMsgIcon:(NSString*)groupMsgSettingState
+{
+    if ([groupMsgSettingState isEqualToString:@"0"]) {
+        return @"";
+        
+    }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
+        return @"close_receive";
+    }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
+        return @"nor_soundSong";
+    }
+    return @"";
+}
 -(void)setSettingMsg:(NSString*)message
 {
     CGSize textSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
     msgHintLable.text = message;
     msgHintLable.frame = CGRectMake(300-textSize.width-5, 12.5, textSize.width, 20);
-    soundimageView.frame=CGRectMake(300-textSize.width-5-5-25, 12.5, 25, 20);
+    soundimageView.frame=CGRectMake(300-textSize.width-5-5-25, 13, 17, 17);
 }
 
 -(NSString*)getCellMsgByState:(NSString*)groupMsgSettingState
 {
     if ([groupMsgSettingState isEqualToString:@"0"]) {
-        return @"接受推送消息并提示";
+        return @"正常接收";
         
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
-        return @"不接受推送消息且不提示";
+        return @"关闭模式";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"不接受推送消息但提示";
+        return @"无声模式";
     }
     return @"";
 }
@@ -217,7 +228,7 @@
 //群组消息设置
 -(void)hint:(id)sender
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"接受推送消息并提示",@"不接受推送消息且不提示",@"不接受推送消息但提示", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常接收",@"关闭模式",@"无声模式", nil];
     alertView.tag = 1002;
     [alertView show];
 }
@@ -327,6 +338,7 @@
         NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
         NSString * message = [self getCellMsgByState:groupMsgSettingState];
         [self setSettingMsg:message];
+        soundimageView.image= KUIImage([self getMsgIcon:groupMsgSettingState]);
         
     }
 }

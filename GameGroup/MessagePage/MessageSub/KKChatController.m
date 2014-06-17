@@ -22,6 +22,7 @@
 #import "MessageService.h"
 #import "GroupInformationViewController.h"
 #import "KKSystemMsgCell.h"
+#import "GroupCricleViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -48,8 +49,6 @@ typedef enum : NSUInteger {
     KKChatMsgTypeSystem
 } KKChatMsgType;
 
-typedef void(^ChangMessageProgressBlock)(double progress,NSString *uuid);
-typedef void(^SendImageMessageSuccessBlock)(BOOL isSucces);
 
 @interface KKChatController ()<UIAlertViewDelegate,
 UIImagePickerControllerDelegate,
@@ -71,25 +70,18 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) UIView *inPutView;
 @property (nonatomic, strong) UIView *kkChatAddView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
-@property (nonatomic, copy) ChangMessageProgressBlock changeMessageBlock;
-@property (nonatomic, copy) SendImageMessageSuccessBlock sendImageMessageSuccessBlock;
 @property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
+@property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 
 
 @end
 
 @implementation KKChatController
 
-@synthesize myHeadImg;
 @synthesize tView;
-@synthesize messageTextField;
 @synthesize chatWithUser;
-@synthesize nickName;
-@synthesize session;
 
-@synthesize recorder;
-@synthesize messages;
 
 - (id)init
 {
@@ -169,6 +161,8 @@ UINavigationControllerDelegate>
     
     //解散该群
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
+    //群动态消息
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,self.chatWithUser] object:nil];
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
@@ -218,6 +212,7 @@ UINavigationControllerDelegate>
         }else{
             _titleLabel.frame = CGRectMake(0,10,200,20);
         }
+        [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
     [self.view addSubview:titleBtn];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
@@ -666,7 +661,7 @@ UINavigationControllerDelegate>
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_click") forState:UIControlStateHighlighted];
         [_groupCircleBtn addTarget:self action:@selector(groupCricleButtonClick:)forControlEvents:UIControlEventTouchUpInside];
         self.groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(12,18,30,16)];
-        self.groupCircleText .text = @"20";
+        self.groupCircleText .text = @"0";
         self.groupCircleText.font = [UIFont systemFontOfSize:14];
         self.groupCircleText.textColor = [UIColor whiteColor];
         [_groupCircleBtn addSubview:self.groupCircleText];
@@ -699,7 +694,7 @@ UINavigationControllerDelegate>
 //群的未读消息数
 - (UILabel *)groupunReadMsgLable{
     if(!_groupunReadMsgLable){
-        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,15,200,20)];
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,17,200,20)];
         _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
         _groupunReadMsgLable.text = [NSString stringWithFormat:@"%@%d%@",@"(未读消息",self.unreadMsgCount,@"条)"];
         _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;
@@ -759,9 +754,48 @@ UINavigationControllerDelegate>
     }
     return _textView;
 }
+//初始化群动态的未读消息数
+-(void)initGroupCricleMsgCount
+{
+    NSNumber *bullboardMsgCount = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.chatWithUser]];
+    _groupCricleMsgCount =[bullboardMsgCount intValue];
+    [self setGroupDynamicMsg:_groupCricleMsgCount];
+}
+#pragma mark 收到群动态消息
+-(void)receivedGroupDynamicMsg:(NSNotification*)sender
+{
+    NSDictionary * groupDic = sender.userInfo;
+    NSString * groupMsgId= KISDictionaryHaveKey(groupDic, @"groupId");
+    if ([self.chatWithUser isEqualToString:groupMsgId]) {
+        _groupCricleMsgCount++;
+        [self setGroupDynamicMsg:_groupCricleMsgCount];
+    }
+}
+//设置群动态的未读消息数
+-(void)setGroupDynamicMsg:(NSInteger)msgCount
+{
+    if (msgCount>0) {
+        if (msgCount > 99) {
+            self.groupCircleText.text = @"99+";
+        }
+        else{
+            self.groupCircleText.text =[NSString stringWithFormat:@"%d",msgCount] ;
+        }
+    }else
+    {
+        self.groupCircleText.text=@"0";
+    }
+}
 //群动态入口
 - (void)groupCricleButtonClick:(UIButton *)sender{
     
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.chatWithUser]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    self.groupCircleText.text=@"0";
+    _groupCricleMsgCount=0;
+    GroupCricleViewController *addVC = [[GroupCricleViewController alloc]init];
+    addVC.groupId=self.chatWithUser;
+    [self.navigationController pushViewController:addVC animated:YES];
 }
 //加载全部
 - (void)loadMoreMsg:(UIButton *)sender{

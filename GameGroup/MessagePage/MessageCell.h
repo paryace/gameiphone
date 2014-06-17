@@ -18,4 +18,6 @@
 @property (strong,nonatomic) UILabel * timeLabel;
 @property (strong,nonatomic) UILabel * unreadCountLabel;
 @property (strong,nonatomic) UIImageView * notiBgV;
+
+@property (strong,nonatomic) UIImageView * settingState;
 @end
