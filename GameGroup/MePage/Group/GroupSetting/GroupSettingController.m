@@ -136,6 +136,9 @@
     [scV addSubview:okButton];
     
     NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
+    if ([GameCommon isEmtity:groupMsgSettingState]) {
+        groupMsgSettingState=@"0";
+    }
     NSString * message = [self getCellMsgByState:groupMsgSettingState];
     [self setSettingMsg:message];
     soundimageView.image= KUIImage([self getMsgIcon:groupMsgSettingState]);

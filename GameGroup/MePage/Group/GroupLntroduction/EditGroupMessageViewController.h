@@ -8,7 +8,11 @@
 
 #import "BaseViewController.h"
 #import "QiniuUploadDelegate.h"
-
+typedef  enum
+{
+    ActionSheetTypeChoosePic = 1,
+    ActionSheetTypeOperationPic =2
+}ActionSheetType;
 @protocol GroupEditMessageDelegate;
 
 @interface EditGroupMessageViewController : BaseViewController<UITextViewDelegate,UIAlertViewDelegate,QiniuUploadDelegate,UICollectionViewDataSource,UICollectionViewDelegate>

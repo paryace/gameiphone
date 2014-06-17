@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
+@protocol ImageEditMessageDelegate;
 @interface EditPhotoCell : UICollectionViewCell
 @property(nonatomic,strong)EGOImageView *photoImageView;
 @property(nonatomic,strong)UIButton *delBtn;
+-(void)SetPhotoUrlWithCache:(NSString *)url;
+@property(nonatomic,assign)id<ImageEditMessageDelegate>delegate;
+@end
+@protocol ImageEditMessageDelegate <NSObject>
+
+-(void)EditPhotoCellCallback:(EditPhotoCell *)sender;
 @end

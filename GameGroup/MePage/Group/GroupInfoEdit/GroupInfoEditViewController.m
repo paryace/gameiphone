@@ -187,18 +187,18 @@
             
             float height = 0.0;
             if (cell.photoArray.count>0&&cell.photoArray.count<4) {
-                height=80;
+                height=90;
             }
             else if (cell.photoArray.count>3&&cell.photoArray.count<7){
-                height = 160;
+                height = 170;
             }
             else if (cell.photoArray.count>6&&cell.photoArray.count<10){
-                height = 240;
+                height = 250;
             }
             else{
                 height = 0;
             }
-            cell.photoView.frame = CGRectMake(80, size.height+10, 230, height);
+            cell.photoView.frame = CGRectMake(80, size.height+20, 230, height);
             [cell.photoView reloadData];
         }
         return cell;
@@ -277,13 +277,13 @@
                 break;
             case 3:
                 if (photoArray.count>0&&photoArray.count<4) {
-                    height+=80;
+                    height+=90;
                 }
                 else if (photoArray.count>3&&photoArray.count<7){
-                    height += 160;
+                    height += 170;
                 }
                 else if (photoArray.count>6&&photoArray.count<10){
-                    height += 240;
+                    height += 250;
                 }
                 else{
                     height += 0;

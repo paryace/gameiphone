@@ -530,7 +530,7 @@
             else{
                 height = 0;
             }
-            cell.photoView.frame = CGRectMake(100, size.height+10, 210, height);
+            cell.photoView.frame = CGRectMake(100, size.height+20, 210, height);
         }
         return cell;
     }
@@ -591,13 +591,13 @@
             break;
          case 3:
             if (photoArray.count>0&&photoArray.count<4) {
-                height=80;
+                height=90;
             }
             else if (photoArray.count>3&&photoArray.count<7){
-                height = 160;
+                height = 170;
             }
             else if (photoArray.count>6&&photoArray.count<10){
-                height = 240;
+                height = 250;
             }
             else{
                 height = 0;

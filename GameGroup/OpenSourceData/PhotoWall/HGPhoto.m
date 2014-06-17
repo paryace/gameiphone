@@ -92,7 +92,6 @@
     self.viewPhoto.placeholderImage = [UIImage imageNamed:@"placeholder.png"];
     NSRange range=[url rangeOfString:@"<local>"];
     if (range.location!=NSNotFound) {
-//        self.viewPhoto.image =
         NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
         NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,[url substringFromIndex:7]];
         NSData * nsData= [NSData dataWithContentsOfFile:openImgPath];
