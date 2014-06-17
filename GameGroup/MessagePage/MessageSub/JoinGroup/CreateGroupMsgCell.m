@@ -23,7 +23,7 @@
         [self.bgV addSubview:self.contentLable];
         
         
-        self.oneBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98, (310-1)/2, 33)];
+        self.oneBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98, (300-1)/2, 33)];
         [self.oneBtn addTarget:self action:@selector(oneButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -35,7 +35,7 @@
         [self.bgV addSubview:self.oneBtn];
         
         
-        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((310-1)/2+6, 98, (310-1)/2, 33)];
+        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-1)/2+6, 98, (300-1)/2, 33)];
         [self.twoBtn addTarget:self action:@selector(twoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -47,7 +47,7 @@
         self.twoBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [self.bgV addSubview:self.twoBtn];
         
-        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98,310, 33)];
+        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98,300, 33)];
         [self.threeBtn addTarget:self action:@selector(threeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];

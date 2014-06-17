@@ -24,12 +24,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"群消息列表" withBackButton:YES];
+    [self setTopViewWithTitle:@"群组通知页" withBackButton:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreMsgList:) name:kJoinGroupMessage object:nil];
     
     m_applyArray = [NSMutableArray array];
     m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
-    m_ApplyTableView.backgroundColor = UIColorFromRGBA(0xfcfcfc, 1);
+    m_ApplyTableView.backgroundColor = kColorWithRGB(230,230,230, 0.7);
     m_ApplyTableView.separatorColor = [UIColor clearColor];
     m_ApplyTableView.dataSource = self;
     m_ApplyTableView.delegate = self;
@@ -62,9 +62,9 @@
         ||[msgType isEqualToString:@"groupLevelUp"]
         ||[msgType isEqualToString:@"groupBillboard"]
         ||[msgType isEqualToString:@"disbandGroup"]) {
-        return 100;
+        return 105;
     }
-    return 135;
+    return 140;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -138,12 +138,14 @@
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
     }
-    //（通过，拒绝,群升级,好友加入群,解散群）
+    //（通过，拒绝,群升级,好友加入群,解散群,群成员身份变化,被踢出群的消息）
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]
              ||[msgType isEqualToString:@"groupLevelUp"]
              ||[msgType isEqualToString:@"groupBillboard"]
-             ||[msgType isEqualToString:@"disbandGroup"]) {
+             ||[msgType isEqualToString:@"disbandGroup"]
+             ||[msgType isEqualToString:@"groupUsershipTypeChange"]
+             ||[msgType isEqualToString:@"kickOffGroup"]) {
         
         static NSString *identifier = @"simpleApplicationCell";
         SimpleMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];

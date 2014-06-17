@@ -151,6 +151,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
              ||[type isEqualToString:@"groupApplicationReject"]
              ||[type isEqualToString:@"groupLevelUp"]//群等级提升
              ||[type isEqualToString:@"friendJoinGroup"]//群组消息
+             ||[type isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
+             ||[type isEqualToString:@"kickOffGroup"]//被踢出群的消息
              ||[type isEqualToString:@"disbandGroup"])//解散群
     {
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息

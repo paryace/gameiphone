@@ -14,7 +14,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 135)];
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 135)];
         self.bgV.image = KUIImage(@"group_cell_bg");
         self.bgV.userInteractionEnabled =YES;
         
@@ -40,7 +40,7 @@
         self.groupCreateTimeLable.font =[ UIFont systemFontOfSize:12];
         [self.bgV addSubview:self.groupCreateTimeLable];
         
-        UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 320-20, 1)];
+        UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 35, 320-30, 1)];
         lineView1.backgroundColor = kColorWithRGB(200,200,200, 0.7);
         [self.bgV addSubview:lineView1];
 

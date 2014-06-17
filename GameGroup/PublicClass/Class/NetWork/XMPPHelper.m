@@ -396,6 +396,8 @@
                 ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升disbandGroup
                 ||[msgtype isEqualToString:@"groupBillboard"]//群公告
                 ||[msgtype isEqualToString:@"disbandGroup"]//解散群
+                ||[msgtype isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
+                ||[msgtype isEqualToString:@"kickOffGroup"]//被踢出群的消息
                 ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             
