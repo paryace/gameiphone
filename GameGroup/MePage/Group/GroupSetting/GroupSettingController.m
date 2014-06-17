@@ -92,6 +92,7 @@
     //发布群公告
     UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,213,320, 45)];
     UIButton * fiveBtn = [self getItemBtn:@"发布群公告"];
+    [fiveBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
     [fiveBtn addTarget:self action:@selector(publish:) forControlEvents:UIControlEventTouchUpInside];
     [itemfive addSubview:fiveBtn];
     
@@ -99,7 +100,7 @@
     
     
     //提示信息
-    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(20,258,280, 50)];
+    UILabel *explainLable = [[UILabel alloc]initWithFrame:CGRectMake(10,258,300, 50)];
     explainLable.backgroundColor = [UIColor clearColor];
     explainLable.textColor = kColorWithRGB(100,100,100, 0.7);
     explainLable.text = @"陌游群公告会在我的组织中有非常明显的提示，可以很容易的被群成员注意到.";
@@ -111,7 +112,6 @@
     //管理群成员
     UIView * itemsixe=[[UIView alloc] initWithFrame:CGRectMake(0,309,320, 45)];
     UIButton * sixeBtn = [self getItemBtn:@"管理群成员"];
-    [sixeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
     [sixeBtn addTarget:self action:@selector(managerGroup:) forControlEvents:UIControlEventTouchUpInside];
     [itemsixe addSubview:sixeBtn];
     
