@@ -392,7 +392,7 @@
         }
     } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
-        cell.headImageV.image = KUIImage(@"every_data_news");
+        cell.headImageV.image = KUIImage(@"group_icon");
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
