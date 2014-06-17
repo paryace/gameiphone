@@ -11,7 +11,7 @@
 
 @protocol GroupEditMessageDelegate;
 
-@interface EditGroupMessageViewController : BaseViewController<UITextViewDelegate,UIAlertViewDelegate,QiniuUploadDelegate>
+@interface EditGroupMessageViewController : BaseViewController<UITextViewDelegate,UIAlertViewDelegate,QiniuUploadDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,strong)NSArray*    headImgArray;
 @property(nonatomic,strong)NSString* placeHold;
 @property(nonatomic,assign)id<GroupEditMessageDelegate>delegate;

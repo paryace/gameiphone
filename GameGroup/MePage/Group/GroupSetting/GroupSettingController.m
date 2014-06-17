@@ -87,8 +87,6 @@
     [scV addSubview:itemfour];
     
     
-    
-    
     //发布群公告
     UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,213,320, 45)];
     UIButton * fiveBtn = [self getItemBtn:@"发布群公告"];
