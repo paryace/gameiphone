@@ -404,7 +404,11 @@
             cell.settingState.image=KUIImage(@"close_receive");
             cell.unreadCountLabel.hidden = YES;
             cell.notiBgV.hidden = YES;
-            cell.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条消息"];
+            if([[message unRead]intValue]>0)
+            {
+                cell.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条新消息"];
+            }
+            
         }else{
             if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"2"]) {//无声模式
                  cell.settingState.hidden=NO;

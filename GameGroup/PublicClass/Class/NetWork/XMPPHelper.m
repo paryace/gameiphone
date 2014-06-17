@@ -279,7 +279,9 @@
             [dict setObject:dis forKey:@"disStr"];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
         }
-        else if([msgtype isEqualToString:@"frienddynamicmsg"] || [msgtype isEqualToString:@"mydynamicmsg"])//动态
+        else if([msgtype isEqualToString:@"frienddynamicmsg"]//好友动态
+                || [msgtype isEqualToString:@"mydynamicmsg"]//与我相关
+                || [msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
@@ -302,7 +304,6 @@
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
-                
                 NSMutableData *data= [[NSMutableData alloc]init];
                 NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
                 [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
@@ -321,7 +322,25 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
             }
-            else{   //未知的动态
+            else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
+                NSDictionary* msgDic = [payload JSONValue];
+                NSString * groupId  = KISDictionaryHaveKey(msgDic, @"groupId");
+                if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]]) {
+                    int i=1;
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]];
+                }else{
+                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: [NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]]intValue];
+                    
+                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]];
+                }
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                [[NSNotificationCenter defaultCenter]postNotificationName:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,groupId] object:nil userInfo:msgDic];
+            }
+              //未知的动态
+            else
+            {
+                
             }
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻

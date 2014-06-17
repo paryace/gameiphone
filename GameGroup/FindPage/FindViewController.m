@@ -58,16 +58,9 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
-        [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(ss:) name:@"frienddunamicmsgChange_WX"
-                                                  object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self
-                                                selector:@selector(receivedMyDynamicMsg:)
-                                                    name:@"mydynamicmsg_wx"
-                                                  object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ss:) name:@"frienddunamicmsgChange_WX"object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
-        
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:@"billboard_msg" object:nil];
     }
     return self;
@@ -145,7 +138,6 @@
     commentLabel.text = [commStr1 stringByAppendingString:commStr2];
 
 }
-#pragma mark -
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
@@ -253,7 +245,7 @@
     groupTitleLabel.textAlignment = NSTextAlignmentLeft;
     [groupView addSubview:groupTitleLabel];
     
-    groupMsgTitleLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
+    groupMsgTitleLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 33, 100, 20)];
     groupMsgTitleLable.backgroundColor = [UIColor clearColor];
     groupMsgTitleLable.textAlignment = NSTextAlignmentLeft;
     groupMsgTitleLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
