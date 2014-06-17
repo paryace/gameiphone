@@ -8,6 +8,7 @@
 
 #import "MemberEditViewController.h"
 #import "MemberEditCell.h"
+#import "GroupInformationViewController.h"
 @interface MemberEditViewController ()
 {
     UITableView *m_myTableView;
@@ -17,6 +18,7 @@
     UIAlertView *ascensionGlyAlertView;
     UIAlertView *cancelAlertView;
     UIAlertView *removeAlertView;
+    
 }
 @end
 
@@ -116,21 +118,21 @@
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
     
-    NSInteger i = [KISDictionaryHaveKey(tempDict, @"type") intValue];
-    switch (i) {
-        case 0:
-         cell.sfLb.text = @"群主";
-            break;
-        case 1:
-            cell.sfLb.text = @"管理员";
-            break;
-        case 2:
-            cell.sfLb.text = @"";
-            break;
-     
-        default:
-            break;
-    }
+//    NSInteger i = [KISDictionaryHaveKey(tempDict, @"type") intValue];
+//    switch (i) {
+//        case 0:
+//         cell.sfLb.text = @"群主";
+//            break;
+//        case 1:
+//            cell.sfLb.text = @"管理员";
+//            break;
+//        case 2:
+//            cell.sfLb.text = @"";
+//            break;
+//     
+//        default:
+//            break;
+//    }
     
     
     return cell;
@@ -196,15 +198,15 @@
         else if(buttonIndex ==2){
             
             removeAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确定移除该用户?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-            removeAlertView.tag = 222;
-            
+            removeAlertView.tag = 1002;
+            [removeAlertView show];
         }
  
     }else if(actionSheet.tag ==333){
         if (buttonIndex ==0) {
             removeAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确定移除该用户?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-            removeAlertView.tag = 222;
-
+            removeAlertView.tag = 1002;
+            [removeAlertView show];
         }
     }
 
@@ -219,10 +221,22 @@
     [tempDict setObject:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(didClickDict, @"userid")] forKey:@"memberUserid"];
     switch (alertView.tag) {
         case 1001:
-    [self editIdentityForNetWithDic:tempDict method:@"252" Successinfo:@"转让成功"];
+            if (buttonIndex ==0) {
+                NSLog(@"1");
+            }else{
+                NSLog(@"2");
+            [self editIdentityForNetWithDic:tempDict method:@"252" Successinfo:@"转让成功"];
+
+            }
             break;
         case 1002:
+            if (buttonIndex ==0) {
+                NSLog(@"1");
+            }else{
+                NSLog(@"2");
+
             [self editIdentityForNetWithDic:tempDict method:@"249" Successinfo:@"移除成功"];
+            }
             break;
             
             break;
@@ -277,7 +291,21 @@
     [hud show:YES];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        if ([method isEqualToString:@"252"]) {
+            self.shiptype = [KISDictionaryHaveKey(responseObject, @"type")intValue]?[KISDictionaryHaveKey(responseObject, @"type")intValue ]:2;
+            
+            
+            for(UIViewController *controller in self.navigationController.viewControllers) {
+                if([controller isKindOfClass:[GroupInformationViewController class]]){
+                    GroupInformationViewController*owr = (GroupInformationViewController *)controller;
+                    owr.shiptypeCount =[KISDictionaryHaveKey(responseObject, @"type")intValue]?[KISDictionaryHaveKey(responseObject, @"type")intValue ]:2;
+                    [self.navigationController popToViewController:owr animated:YES];
+                }
+            }
+            
+            
+            
+        }
         [self showMessageWindowWithContent:str imageType:0];
         [self getNearByDataByNet];
         

@@ -7,7 +7,7 @@
 //
 
 #import "EditGroupMessageViewController.h"
-
+#import "EditPhotoCell.h"
 @interface EditGroupMessageViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MBProgressHUDDelegate>
 {
     UITextView*   m_contentTextView;
@@ -22,6 +22,10 @@
     NSInteger imageImdex;
     NSInteger imageWidth;
     NSInteger imageHeight;
+    
+    UICollectionViewFlowLayout *m_layout;
+    UICollectionView *m_photoCollectionView;
+    
 }
 @property (nonatomic,strong)NSMutableArray* pictureArray;
 @property (nonatomic,strong)UIActionSheet* addActionSheet;
@@ -35,6 +39,7 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:225.0/255.0 green:225.0/255.0 blue:225.0/255.0 alpha:1.0];
+    
     imageWidth = (self.view.bounds.size.width-10-20)/4;
     imageHeight = (self.view.bounds.size.width-10-20)/4;
     uploadImagePathArray = [NSMutableArray array];
@@ -64,16 +69,17 @@
     [self.view addSubview:m_ziNumLabel];
     
     
-    PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
-    PhotoB.frame = CGRectMake(10, startX + 130, imageWidth, imageHeight);
-    [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
-    [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
-    PhotoB.hidden = NO;
-    [self.view addSubview:PhotoB];
+//    PhotoB = [UIButton buttonWithType:UIButtonTypeCustom];
+//    PhotoB.frame = CGRectMake(10, startX + 130, imageWidth, imageHeight);
+//    [PhotoB setBackgroundImage:[UIImage imageNamed:@"tianjiazhaopian"] forState:UIControlStateNormal];
+//    [PhotoB addTarget:self action:@selector(getAnActionSheet) forControlEvents:UIControlEventTouchUpInside];
+//    PhotoB.hidden = NO;
+//    [self.view addSubview:PhotoB];
     
+    [self buildCollectionView];
     [self refreshZiLabelText];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 400 + startX, 300, 40)];
+    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 430 + startX, 300, 40)];
     [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"完 成" forState:UIControlStateNormal];
@@ -86,6 +92,71 @@
     [self.view addSubview:hud];
     hud.labelText = @"Login...";
 }
+-(void)buildCollectionView
+{
+    m_layout = [[UICollectionViewFlowLayout alloc]init];
+    m_layout.minimumInteritemSpacing = 10;
+    m_layout.minimumLineSpacing =5;
+    m_layout.itemSize = CGSizeMake(90, 90);
+//    m_layout.headerReferenceSize = CGSizeMake(320, 70);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
+    
+    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 290) collectionViewLayout:m_layout];
+    m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
+    m_photoCollectionView.scrollEnabled = YES;
+    m_photoCollectionView.delegate = self;
+    m_photoCollectionView.dataSource = self;
+    [m_photoCollectionView registerClass:[EditPhotoCell class] forCellWithReuseIdentifier:@"titleCell"];
+    m_photoCollectionView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:m_photoCollectionView];
+
+}
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return 9;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    EditPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
+    cell.photoImageView.imageURL = nil;
+//    NSMutableDictionary * cellDic = [myGroupArray objectAtIndex:indexPath.row];
+//    if (indexPath.row ==myGroupArray.count-1) {
+//        cell.headImgView.placeholderImage =nil;
+//        cell.headImgView.imageURL = nil;
+//        NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+//        cell.headImgView.placeholderImage = KUIImage(imgStr);
+//        cell.headImgView.imageURL = nil;
+//        cell.titleLabel.backgroundColor = [UIColor clearColor];
+//        cell.titleLabel.text = @"";
+//    }else{
+//        cell.headImgView.placeholderImage = KUIImage(@"mess_news");
+//        cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+//        cell.titleLabel.backgroundColor  =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
+//        cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
+//        
+//    }
+    return cell;
+}
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+
+{
+//    NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
+//    if (indexPath.row ==myGroupArray.count-1) {
+//        JoinInGroupViewController *joinIn = [[JoinInGroupViewController alloc]init];
+//        [self.navigationController pushViewController:joinIn animated:YES];
+//        
+//    }else{
+//        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+//        gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
+//        [self.navigationController pushViewController:gr animated:YES];
+//    }
+}
+
+
+
+
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_contentTextView.text];

@@ -87,8 +87,6 @@
     [scV addSubview:itemfour];
     
     
-    
-    
     //发布群公告
     UIView * itemfive=[[UIView alloc] initWithFrame:CGRectMake(0,213,320, 45)];
     UIButton * fiveBtn = [self getItemBtn:@"发布群公告"];
@@ -148,10 +146,12 @@
         itemfour.hidden = NO;
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
-        itemfive.hidden=YES;
-         explainLable.hidden=YES;
-         sixeBtn.hidden=YES;
-         sevenBtn.hidden=YES;
+//        itemfive.hidden=YES;
+//         explainLable.hidden=YES;
+//         sixeBtn.hidden=YES;
+//         sevenBtn.hidden=YES;
+        okButton.frame  = CGRectMake(10,421,300, 40);
+        itemfour.hidden = NO;
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==2) {//群成员
         itemfive.hidden=YES;
@@ -235,6 +235,7 @@
 //我的群角色
 -(void)role:(id)sender
 {
+    
 }
 //邀请新成员
 -(void)new:(id)sender
@@ -243,11 +244,62 @@
 //举报该群组
 -(void)report:(id)sender
 {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:nil cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
     [actionSheet showInView:self.view];
     
  
 }
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex) {
+        case 0:
+            [self getInfoForNetWithType:@"1"];
+            break;
+        case 1:
+            [self getInfoForNetWithType:@"2"];
+            break;
+        case 2:
+            [self getInfoForNetWithType:@"3"];
+            break;
+        case 3:
+            [self getInfoForNetWithType:@"4"];
+            break;
+   
+        default:
+            break;
+    }
+}
+
+-(void)getInfoForNetWithType:(NSString *)type
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    [paramDict setObject:type forKey:@"type"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"255" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [self showMessageWindowWithContent:@"举报成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag = 789;
+                [alert show];
+            }
+        }
+        
+    }];
+    
+}
+
+
 
 //发布群公告
 -(void)publish:(id)sender
