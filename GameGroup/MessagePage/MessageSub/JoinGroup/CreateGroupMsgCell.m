@@ -37,7 +37,7 @@
         
 //        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-1)/2+6, 98, (300-1)/2, 33)];
         
-        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99, 305, 33)];
+        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99, 304, 33)];
         [self.twoBtn addTarget:self action:@selector(twoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -55,7 +55,7 @@
         self.twoBtn.layer.mask = maskLayertwoBtn;
         [self.bgV addSubview:self.twoBtn];
         
-        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99,305, 33)];
+        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99,304, 33)];
         [self.threeBtn addTarget:self action:@selector(threeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
