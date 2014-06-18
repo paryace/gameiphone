@@ -43,8 +43,8 @@
     // Do any additional setup after loading the view.
     [self setTopViewWithTitle:@"" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateSelected];
+    [shareButton setBackgroundImage:KUIImage(@"GroupRoles") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"GroupMembers") forState:UIControlStateSelected];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];

@@ -85,12 +85,15 @@
     
     UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 159+52, 70, 38)];
     table_label_one.text = @"选择角色";
+    table_label_one.backgroundColor = [UIColor clearColor];
     table_label_one.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_one.font = [UIFont boldSystemFontOfSize:15.0];
     [self.firstScrollView addSubview:table_label_one];
     
     UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 320, 80, 38)];
     table_label_three.text = @"群组名称";
+    table_label_three.backgroundColor = [UIColor clearColor];
+
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
     [self.firstScrollView addSubview:table_label_three];
@@ -98,6 +101,7 @@
     UILabel* lb = [[UILabel alloc] initWithFrame:CGRectMake(20, 260, 280, 60)];
     lb.text = @"选择一个角色来建立组织,该角色所在的游戏和服务器将便于其他人找到该组织,你可以在组织创建成功后修改这些设定";
     lb.numberOfLines =0;
+    lb.backgroundColor = [UIColor clearColor];
     lb.textColor = kColorWithRGB(200, 200, 200, 1.0);
     lb.font = [UIFont boldSystemFontOfSize:12.0];
     [self.firstScrollView addSubview:lb];
@@ -335,6 +339,7 @@
     [customView addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.backgroundColor = [UIColor clearColor];
     label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
     [customView addSubview:label];
     return customView;
