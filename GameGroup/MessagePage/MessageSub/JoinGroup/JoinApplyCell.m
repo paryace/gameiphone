@@ -34,7 +34,7 @@
         [self.bgV addSubview:self.joinReasonLable];
     
         
-        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 95, (300-2)/3, 35)];
+        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99, (304-2)/3, 33)];
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -43,10 +43,17 @@
         [self.agreeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.agreeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.agreeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        UIBezierPath *maskPathgreeBtn = [UIBezierPath bezierPathWithRoundedRect:self.agreeBtn.bounds byRoundingCorners:UIRectCornerBottomLeft cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayergreeBtn = [[CAShapeLayer alloc] init];
+        maskLayergreeBtn.frame = self.agreeBtn.bounds;
+        maskLayergreeBtn.path = maskPathgreeBtn.CGPath;
+        self.agreeBtn.layer.mask = maskLayergreeBtn;
+        
         [self.bgV addSubview:self.agreeBtn];
         
         
-        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-2)/3+6, 95, (300-2)/3, 35)];
+        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((304-2)/3+4, 99, (304-2)/3, 33)];
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -60,7 +67,7 @@
        
         [self.bgV addSubview:self.desAgreeBtn];
         
-        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((300-2)/3)*2+8, 95, (300-2)/3, 35)];
+        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((304-2)/3)*2+5, 99, (304-2)/3+3, 33)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -70,14 +77,26 @@
         [self.ignoreBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.ignoreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.ignoreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        UIBezierPath *maskPathignoreBtn = [UIBezierPath bezierPathWithRoundedRect:self.ignoreBtn.bounds byRoundingCorners:UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayerignoreBtn = [[CAShapeLayer alloc] init];
+        maskLayerignoreBtn.frame = self.ignoreBtn.bounds;
+        maskLayerignoreBtn.path = maskPathignoreBtn.CGPath;
+        self.ignoreBtn.layer.mask = maskLayerignoreBtn;
+        
         [self.bgV addSubview:self.ignoreBtn];
 
-        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(5, 95, 300, 35)];
+        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, 310, 33)];
         self.stateLable.backgroundColor = kColorWithRGB(230,230,230, 0.7);
         self.stateLable.textColor = [UIColor grayColor];
         self.stateLable.text = @"已同意";
         self.stateLable.font =[ UIFont systemFontOfSize:14];
         self.stateLable.textAlignment = NSTextAlignmentCenter;
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.stateLable.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.frame = self.stateLable.bounds;
+        maskLayer.path = maskPath.CGPath;
+        self.stateLable.layer.mask = maskLayer;
         [self.bgV addSubview:self.stateLable];
         
         [self addSubview:self.bgV];

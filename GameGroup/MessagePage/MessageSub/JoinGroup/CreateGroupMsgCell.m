@@ -37,19 +37,25 @@
         
 //        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-1)/2+6, 98, (300-1)/2, 33)];
         
-        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98, 300, 33)];
+        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99, 305, 33)];
         [self.twoBtn addTarget:self action:@selector(twoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-        
         [self.twoBtn setTitle:@"群组小技巧" forState:UIControlStateNormal];
         self.twoBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
         [self.twoBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.twoBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.twoBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        
+        UIBezierPath *maskPathtwoBtn = [UIBezierPath bezierPathWithRoundedRect:self.twoBtn.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayertwoBtn = [[CAShapeLayer alloc] init];
+        maskLayertwoBtn.frame = self.twoBtn.bounds;
+        maskLayertwoBtn.path = maskPathtwoBtn.CGPath;
+        self.twoBtn.layer.mask = maskLayertwoBtn;
         [self.bgV addSubview:self.twoBtn];
         
-        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98,300, 33)];
+        self.threeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99,305, 33)];
         [self.threeBtn addTarget:self action:@selector(threeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.threeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
@@ -58,6 +64,13 @@
         [self.threeBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
         self.threeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         self.threeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.threeBtn.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.frame = self.threeBtn.bounds;
+        maskLayer.path = maskPath.CGPath;
+        self.threeBtn.layer.mask = maskLayer;
+        
         [self.bgV addSubview:self.threeBtn];
         
         [self addSubview:self.bgV];

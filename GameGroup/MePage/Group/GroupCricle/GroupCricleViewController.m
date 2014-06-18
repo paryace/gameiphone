@@ -99,7 +99,7 @@ typedef enum : NSUInteger {
     NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.groupId];
     NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
     UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
-    topImageView.image = KUIImage(@"topImg_youqu.jpg");
+    topImageView.image = KUIImage(@"groupinfo_top");
     [self.view addSubview:topImageView];
     
     UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];
