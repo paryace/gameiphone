@@ -56,7 +56,7 @@
     if ([GameCommon isEmtity:imageUrl]) {
         topImageView.image = KUIImage(@"groupinfo_top");
     }else{
-        topImageView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
     }
     topImageView .userInteractionEnabled = YES;
     topImageView.userInteractionEnabled = YES;
@@ -143,6 +143,7 @@
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.backgroundColor = [UIColor clearColor];
         [cell addSubview:titleLabel];
         
         titleLabel.text = @"群组号";
@@ -200,13 +201,14 @@
         ;
         tLabel.text = @"创建时间";
         tLabel.textColor = [UIColor grayColor];
+        tLabel.backgroundColor = [UIColor clearColor];
         tLabel.font = [UIFont systemFontOfSize:14];
         tLabel.textAlignment = NSTextAlignmentCenter;
         [cell.contentView addSubview:tLabel];
         
         
-        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)]
-        ;
+        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)];
+        timeLabel.backgroundColor = [UIColor clearColor];
         timeLabel.textColor = [UIColor grayColor];
         timeLabel.font = [UIFont systemFontOfSize:14];
         timeLabel.textAlignment = NSTextAlignmentRight;
@@ -428,8 +430,10 @@
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     NSString * imagePath=[self writeImageToFile:upImage ImageName:@"groupInfoTopImage.jpg"];
+    UIImage * afterImage= [NetManager image2:upImage centerInSize:CGSizeMake(320*2, 192*2)];
+    topImageView.image = afterImage;
     [self uploadbgImg:imagePath];
-    topImageView.image = upImage;
+    
 }
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName

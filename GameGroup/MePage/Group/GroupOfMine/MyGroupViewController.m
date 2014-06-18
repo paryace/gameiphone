@@ -102,6 +102,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     NSDictionary * msg = sender.userInfo;
     NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
@@ -302,7 +305,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).topLabel.hidden=YES;
             [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
             ((ReusableView *)titleView).topBtn.tag=123;
-            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+            
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
             NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
             NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
@@ -327,6 +330,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).topLabel.hidden=NO;
             [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
         }
+        [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return titleView;
 }

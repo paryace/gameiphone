@@ -595,9 +595,6 @@
     }
     [UIView commitAnimations];
 
-  //  [self changebuttonImgWithButton:sameRealmBtn img:@"realm" durTime:0.2 delay:1.4];
-;
-
 }
 
 -(void)showMoGirl:(id)sender
@@ -706,10 +703,6 @@
         [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
         return;
     }
-
-    NSLog(@"------%@------",manDic);
-    
-    NSLog(@"点击");
     if (sender ==encoBtn) {  //许愿
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         EncoXHViewController *enco = [[EncoXHViewController alloc]init];
@@ -791,7 +784,6 @@
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
                 imagePicker.delegate=self;
-                //imagePicker.allowsEditing = YES;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
@@ -808,11 +800,9 @@
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
                 imagePicker.delegate=self;
-                //imagePicker.allowsEditing = YES;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                //                [self presentModalViewController:imagePicker animated:YES];
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
@@ -826,16 +816,8 @@
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-//    UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-//    CGRect rect =  CGRectMake(0, 0,imgV.frame.size.width/imgV.frame.size.height*selectImage.size.width,  selectImage.size.height);//要裁剪的图片区域，按照原图的像素大小来，超过原图大小的边自动适配
-//    CGImageRef cgimg = CGImageCreateWithImageInRect([selectImage CGImage], rect);
-//    imgV.image = [UIImage imageWithCGImage:cgimg];
-//    CGImageRelease(cgimg);//用完一定要释放，否则内存泄露
-    
-    
     UIImage * afterImage= [NetManager image2:selectImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
-    
     imgV.image = afterImage;
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];

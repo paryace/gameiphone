@@ -105,15 +105,14 @@
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
     cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
-    cell.sfLb.text = @"sadasdadas";
     NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.sexImg.image =KUIImage(genderimage);
     
     CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.nameLable.frame = CGRectMake(65, 25, nameSize.width, 20);
     cell.sexImg.frame = CGRectMake(65+nameSize.width+5, 25, 20, 20);
-    cell.sfLb.text = [NSString stringWithFormat:@"%@", [self getMsgTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")]];
     
+    cell.sfLb.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
     CGSize timeSize = [cell.sfLb.text sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
     cell.sfLb.frame = CGRectMake(320-timeSize.width-10, 25, timeSize.width, 20);
     return cell;

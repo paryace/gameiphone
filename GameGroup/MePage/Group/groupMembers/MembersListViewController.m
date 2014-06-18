@@ -28,19 +28,9 @@
 
 @implementation MembersListViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     [self setTopViewWithTitle:@"" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"GroupRoles") forState:UIControlStateNormal];
@@ -163,29 +153,21 @@
     if (cell == nil) {
         cell = [[GroupMembersCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-//    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-    
-//
-    
     NSDictionary *tempDict = [[m_dataArray[indexPath.section]objectForKey:@"list"]objectAtIndex:indexPath.row];
     
     if ([requestType isEqualToString:@"members"]) {
         cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
-        
-        
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-            cell.sexImageView.image = KUIImage(@"gender_boy");
-            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-        }
-        else
-        {
-            cell.sexImageView.image = KUIImage(@"gender_girl");
-            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-        }
-        
+
+        cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
         NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
         cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
+        
+        NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        cell.sexImageView.image =KUIImage(genderimage);
+        
+        CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.nameLable.frame = CGRectMake(60, 20, nameSize.width, 20);
+        cell.sexImageView.frame = CGRectMake(60+nameSize.width+5, 20, 20, 20);
         
         cell.timeLabel.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
         [cell.timeLabel setTextColor:[UIColor grayColor]];
@@ -193,8 +175,6 @@
 
     }else{
         cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterInfo")];
-        
-        
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
             cell.sexImageView.image = KUIImage(@"gender_boy");
             cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
@@ -210,11 +190,32 @@
         cell.timeLabel.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(tempDict, @"value")];
         [cell.timeLabel setTextColor:[UIColor blueColor]];
         [cell.timeLabel setFont:[UIFont systemFontOfSize:17]];
-
     }
-    
     return cell;
 }
+//头像默认图片
+-(NSString*)headPlaceholderImage:(NSString*)gender
+{
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        return @"people_man.png";
+    }
+    else
+    {
+        return @"people_woman.png";
+    }
+}
+//性别图标
+-(NSString*)genderImage:(NSString*)gender
+{
+    if ([gender intValue]==0)
+    {
+        return @"gender_boy";
+    }else
+    {
+        return @"gender_girl";
+    }
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
@@ -230,18 +231,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

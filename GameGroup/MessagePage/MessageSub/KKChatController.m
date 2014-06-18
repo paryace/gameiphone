@@ -1859,7 +1859,7 @@ UINavigationControllerDelegate>
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"inGroupSystemMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"noType"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
     [messages addObject:dictionary];
@@ -1996,7 +1996,6 @@ UINavigationControllerDelegate>
         [clearView removeFromSuperview];
     }
     //删除聊天消息
-    
     NSString* uuid = KISDictionaryHaveKey(messages[readyIndex], @"messageuuid");
     NSString* userId = KISDictionaryHaveKey(messages[readyIndex], @"sender");
     
@@ -2008,8 +2007,7 @@ UINavigationControllerDelegate>
     }
     [self deleteFinalMsg]; //删除controll里缓存的message相关对象
     [self.finalImage removeObjectForKey:uuid];  //删除图片缓存
-    
-    
+
     if (messages.count>0) {
         [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]ForUser:userId ifDel:NO];
     }
@@ -2148,7 +2146,7 @@ UINavigationControllerDelegate>
     groupUsershipType = @"3";
 }
 
-#pragma mark 被剔出该群通知
+#pragma mark 被剔出该群通知或者收到同意加入群的消息通知
 - (void)onkickOffGroupGroup:(NSNotification*)notification
 {
     if (![self.type isEqualToString:@"group"]) {

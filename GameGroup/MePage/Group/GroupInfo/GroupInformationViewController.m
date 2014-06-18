@@ -70,7 +70,7 @@
     if ([GameCommon isEmtity:imageUrl]) {
         topImg.image = KUIImage(@"groupinfo_top");
     }else{
-        topImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+        topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
     }
     m_myTableView.tableHeaderView = topImg;
     topImg.userInteractionEnabled = YES;
@@ -205,8 +205,8 @@
         
         for (int i =0; i<array.count; i++) {
             EGOImageButton *headimgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(100+45*i, 5, 40, 40)];
-            headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];
-            headimgView.placeholderImage = KUIImage(@"place_girl");
+            headimgView.placeholderImage = KUIImage(@"people_man");
+               headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];
             [headimgView addTarget:self action:@selector(enterMembersPage:) forControlEvents:UIControlEventTouchUpInside];
             [boView addSubview:headimgView];
         }
@@ -279,7 +279,7 @@
             if ([GameCommon isEmtity:imageUrl]) {
                 topImg.image = KUIImage(@"groupinfo_top");
             }else{
-                topImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+                topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
             }
             [m_myTableView reloadData];
             
@@ -402,8 +402,7 @@
         }
         cell.selectionStyle =UITableViewCellSelectionStyleNone;
         
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
-        ;
+        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
@@ -457,10 +456,9 @@
         ;
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
-       titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [cell.contentView addSubview:titleLabel];
-        
         titleLabel.text = @"服务器";
        
         EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
@@ -475,8 +473,6 @@
        numLb.textColor =[ UIColor blackColor];
        numLb.text = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
        [cell addSubview:numLb];
-
-       
         return cell;
     }
     else if (indexPath.row ==2)

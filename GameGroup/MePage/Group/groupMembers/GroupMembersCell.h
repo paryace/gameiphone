@@ -18,7 +18,5 @@
 @property(nonatomic,strong)UILabel *numLabel;
 @property(nonatomic,strong)UILabel *numOfLabel;
 @property(nonatomic,strong)UIImageView *bgView;
-//@property(nonatomic,strong)
-//@property(nonatomic,strong)
-//@property(nonatomic,strong)
+
 @end

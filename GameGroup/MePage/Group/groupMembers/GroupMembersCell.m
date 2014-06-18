@@ -14,7 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.bgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
         [self addSubview:self.bgView];
         
@@ -26,13 +25,14 @@
         
         self.nameLable = [[UILabel alloc] initWithFrame:CGRectMake(60, 10, 200, 40)];
         [self.nameLable setTextAlignment:NSTextAlignmentLeft];
-        [self.nameLable setFont:[UIFont boldSystemFontOfSize:15.0]];
+        [self.nameLable setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLable setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.nameLable];
         
-//        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(23, 23, 20, 20)];
-//        self.sexImageView.backgroundColor = [UIColor clearColor];
-//        [self.headImageView addSubview:self.sexImageView];
+        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(110, 23, 20, 20)];
+        self.sexImageView.backgroundColor = [UIColor clearColor];
+        [self.headImageView addSubview:self.sexImageView];
+        [self.bgView addSubview:self.sexImageView];
         
         self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(250, 10, 60, 40)];
         [self.timeLabel setTextColor:[UIColor grayColor]];
