@@ -11,8 +11,9 @@
 @interface EditGroupMessageViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,MBProgressHUDDelegate>
 {
     UITextView*   m_contentTextView;
-    UILabel*       m_ziNumLabel;
+    UILabel *       m_ziNumLabel;
     NSInteger      m_maxZiShu;
+    UIButton *   okButton;
     UIDatePicker* m_birthDayPick;
 
     
@@ -68,7 +69,7 @@
     [self buildCollectionView];
     [self refreshZiLabelText];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 430 + startX, 300, 40)];
+    okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 430 + startX, 300, 40)];
     [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"完 成" forState:UIControlStateNormal];
@@ -76,19 +77,27 @@
     okButton.backgroundColor = [UIColor clearColor];
     [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okButton];
-    
+    [self refrekoButton];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"Login...";
 }
+
+-(void)refrekoButton
+{
+    NSInteger photoCount = (self.headImgArray.count+1-1)/3+1;
+    if (self.headImgArray.count>=9) {
+        photoCount=3;
+    }
+    okButton.frame =CGRectMake(10, startX+130+photoCount*(292/3)+photoCount*2+10, 300, 40);
+
+}
 -(void)buildCollectionView
 {
     m_layout = [[UICollectionViewFlowLayout alloc]init];
-    m_layout.minimumInteritemSpacing = 10;
-    m_layout.minimumLineSpacing =3;
-    m_layout.itemSize = CGSizeMake(90, 90);
-//    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
-    
+    m_layout.minimumInteritemSpacing = 1;
+    m_layout.minimumLineSpacing =2;
+    m_layout.itemSize = CGSizeMake(292/3, 292/3);
     m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 290) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     m_photoCollectionView.scrollEnabled = YES;
@@ -102,29 +111,45 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    if (self.headImgArray.count>=9) {
+        return 9;
+    }
     return self.headImgArray.count+1;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     EditPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
-    if (indexPath.row ==self.headImgArray.count) {
-        cell.photoImageView.image=KUIImage(@"tianjiazhaopian");
-    }else{
+    if (self.headImgArray.count>=9) {
         [cell SetPhotoUrlWithCache:[self.headImgArray objectAtIndex:indexPath.row]];
+    }else{
+        if (indexPath.row ==self.headImgArray.count) {
+            cell.photoImageView.image=KUIImage(@"tianjiazhaopian");
+        }else{
+            [cell SetPhotoUrlWithCache:[self.headImgArray objectAtIndex:indexPath.row]];
+        }
     }
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row ==self.headImgArray.count) {
-        [self photoWallAddAction];
+    clickImdex = indexPath.row;
+    if (self.headImgArray.count>=9) {
+        [self showEditImage];
     }else{
-        clickImdex = indexPath.row;
-        UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"删除",@"替换", nil];
-        actionSheetTemp.tag = ActionSheetTypeOperationPic;
-        [actionSheetTemp showInView:self.view];
+        if (indexPath.row ==self.headImgArray.count) {
+            [self photoWallAddAction];
+        }else{
+            [self showEditImage];
+        }
     }
+}
+-(void)showEditImage
+{
+    UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"删除",@"替换", nil];
+    actionSheetTemp.tag = ActionSheetTypeOperationPic;
+    [actionSheetTemp showInView:self.view];
+
 }
 
 -(NSArray *)imageToURL:(NSArray *)imageArray;
@@ -236,6 +261,7 @@
     [tempH removeObjectAtIndex:index];
     self.headImgArray = tempH;
     [m_photoCollectionView reloadData];
+    [self refrekoButton];
 }
 
 
@@ -358,6 +384,9 @@
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    if (self.headImgArray.count>=9) {
+        return;
+    }
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
     NSString * imageName=[NSString stringWithFormat:@"%d_group.jpg",self.headImgArray.count];
     [self writeImageToFile:upImage ImageName:imageName];//完整路径
@@ -375,6 +404,7 @@
     
     self.headImgArray = tempArray;
     [m_photoCollectionView reloadData];
+    [self refrekoButton];
     [self dismissViewControllerAnimated:YES completion:^{
     }];
 }
