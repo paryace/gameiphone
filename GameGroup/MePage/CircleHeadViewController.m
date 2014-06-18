@@ -1954,36 +1954,6 @@ typedef enum : NSUInteger {
     
 }
 //#pragma mark --上传顶部图片
-//-(void)uploadbgImg:(UIImage *)image
-//{
-//    [NetManager uploadImage:image
-//                 WithURLStr:BaseUploadImageUrl
-//                  ImageName:@"coverImg"
-//              TheController:self
-//                   Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-//                       
-//                   }
-//                    Success:^(AFHTTPRequestOperation *operation, id responseObject)
-//     {
-//         if (responseObject) {
-//             [self uploadsuccessImg:responseObject];
-//         }
-//     }
-//                    failure:^(AFHTTPRequestOperation *operation, NSError *error)
-//     {
-//         
-//         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-//                                                         message:@"发送图片失败请重新发送"
-//                                                        delegate:nil
-//                                               cancelButtonTitle:@"知道啦"
-//                                               otherButtonTitles:nil];
-//         [alert show];
-//     }
-//];
-//}
-
-
-
 -(void)uploadbgImg:(NSString*)uploadImagePath
 {
     [hud show:YES];

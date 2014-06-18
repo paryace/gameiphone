@@ -2599,7 +2599,8 @@
 {
     
     NSMutableArray *titlesArray = [NSMutableArray array];
-    NSArray *array = [DSGroupList MR_findAll];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@",@"3"];
+    NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     for (DSGroupList * group in array) {
         NSMutableDictionary * grouoDic = [self queryGroupInfo:group];
         [titlesArray addObject:grouoDic];

@@ -17,20 +17,11 @@
     UITableView *m_myTableView;
     UIView *aoView;
     NSMutableDictionary *paramDict;
-    UIImageView *topImageView;
+    EGOImageView *topImageView;
 }
 @end
 
 @implementation GroupInfoEditViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -60,11 +51,17 @@
     [self.view addSubview:shareButton];
 
     
-    topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
-    topImageView.image = KUIImage(@"groupinfo_top");
+    topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
+    NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
+    if ([GameCommon isEmtity:imageUrl]) {
+        topImageView.image = KUIImage(@"groupinfo_top");
+    }else{
+        topImageView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+    }
     topImageView .userInteractionEnabled = YES;
     topImageView.userInteractionEnabled = YES;
     [topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
+    
 
     m_myTableView.tableHeaderView = topImageView;
     
@@ -75,6 +72,10 @@
     promptLb.textAlignment = NSTextAlignmentCenter;
     promptLb.text = @"点击图片更换头图";
     [topImageView addSubview:promptLb];
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"上传中...";
     
 }
 
@@ -386,7 +387,6 @@
     if (actionSheet.tag ==9999999) {
         UIImagePickerController * imagePicker;
         if (buttonIndex==1)
-            //这里捕捉“毁灭键”,其实该键的index是0，从上到下从0开始，称之为毁灭是因为是红的
         {
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
@@ -427,13 +427,67 @@
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+    NSString * imagePath=[self writeImageToFile:upImage ImageName:@"groupInfoTopImage.jpg"];
+    [self uploadbgImg:imagePath];
     topImageView.image = upImage;
+}
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    
+    NSData *data = UIImageJPEGRepresentation(thumbimg, 0.7);
+    
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
-
+    if ([data writeToFile:openImgPath atomically:NO]) {
+        return openImgPath;
+    }
+    return nil;
 }
 
+
+//#pragma mark --上传顶部图片
+-(void)uploadbgImg:(NSString*)uploadImagePath
+{
+    [hud show:YES];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:uploadImagePath UpDeleGate:self];
+    
+}
+// 上传进度
+- (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
+{
+    float pp= percent*100;
+    hud.labelText = [NSString stringWithFormat:@"%.0f％",pp];
+}
+//上传成功代理回调
+- (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
+{
+    [hud hide:YES];
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    if (response) {
+        [self showMessageWindowWithContent:@"上传成功" imageType:0];
+        [paramDict setObject:response forKey:@"backgroundImg"];
+        NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
+        [dic setObject:response forKey:@"backgroundImg"];
+        m_mainDict = dic;
+        [m_myTableView reloadData];
+    }
+}
+//上传失败代理回调
+- (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
+{
+    [hud hide:YES];
+ [self showMessageWindowWithContent:@"上传图片失败，请重新上传" imageType:0];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

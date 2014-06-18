@@ -51,11 +51,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self setTopViewWithTitle:@"我的组织" withBackButton:YES];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
 
     myGroupArray = [NSMutableArray array];
-    
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
@@ -68,12 +67,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     if (bills&&bills.count>0) {
         dict = [bills objectAtIndex:0];
     }
-    
-    
-    
     imageHight = (320-15)/4;
-
-
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =5;
@@ -101,7 +95,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     lajiLabel.font = [UIFont systemFontOfSize:12];
     [cellView addSubview:lajiLabel];
     [self.view addSubview:cellView];
-    
+    [self loadCacheGroupList];
     [self getGroupListFromNet];
 }
 
@@ -206,6 +200,14 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 //    }
 //}
 
+//加载本地缓存数据
+-(void)loadCacheGroupList
+{
+    NSMutableArray * groupList = [DataStoreManager queryGroupInfoList];
+    [self setGroupList:groupList];
+}
+
+//加载服务器数据
 -(void)getGroupListFromNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -216,19 +218,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
-            [myGroupArray removeAllObjects];
-            [myGroupArray addObjectsFromArray:responseObject];
-            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"tianjiazhaopian",@"backgroundImg", nil];
-            [myGroupArray addObject:dic];
-            if (myGroupArray.count<4) {
-                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
-                cellView.frame = CGRectMake(0, startX+(70+10+imageHight+10), 320, 200);
-            }
-            if (myGroupArray.count>4) {
-                groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+10);
-                cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+10), 320, 180);
-            }
-            [groupCollectionView reloadData];
+            [self setGroupList:responseObject];
             
             for (NSMutableDictionary * groupInfo in responseObject) {
                 [DataStoreManager saveDSGroupList:groupInfo];
@@ -237,6 +227,24 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
+}
+
+-(void)setGroupList:(NSMutableArray*)responseObject
+{
+    [myGroupArray removeAllObjects];
+    [myGroupArray addObjectsFromArray:responseObject];
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"tianjiazhaopian",@"backgroundImg", nil];
+    [myGroupArray addObject:dic];
+    if (myGroupArray.count<4) {
+        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
+        cellView.frame = CGRectMake(0, startX+(70+10+imageHight+10), 320, 200);
+    }
+    if (myGroupArray.count>4) {
+        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+10);
+        cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+10), 320, 180);
+    }
+    [groupCollectionView reloadData];
+
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section

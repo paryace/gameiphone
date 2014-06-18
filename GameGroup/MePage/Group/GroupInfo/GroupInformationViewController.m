@@ -21,6 +21,7 @@
 {
     UITableView *m_myTableView;
     UILabel *Memb;
+    EGOImageView *topImg;
     NSMutableDictionary *m_mainDict;
     UIView *boView;
     UIView *aoView;
@@ -31,6 +32,11 @@
 
 @implementation GroupInformationViewController
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self getInfoWithNet];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -48,6 +54,7 @@
     
     
     m_mainDict =[ NSMutableDictionary dictionary];
+     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -58,11 +65,17 @@
     [self.view addSubview:m_myTableView];
     
     
-    UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
-    topImg.image = KUIImage(@"groupinfo_top");
+    topImg = [[EGOImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
+    NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
+    if ([GameCommon isEmtity:imageUrl]) {
+        topImg.image = KUIImage(@"groupinfo_top");
+    }else{
+        topImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+    }
     m_myTableView.tableHeaderView = topImg;
     topImg.userInteractionEnabled = YES;
-    [self getInfoWithNet];
+    [m_myTableView reloadData];
+    
     
     aoView =[[ UIView alloc]initWithFrame:CGRectMake(0, 142, 320, 50)];
     aoView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f  blue:0/255.0f  alpha:0.5];
@@ -262,6 +275,12 @@
             m_mainDict = responseObject;
             [DataStoreManager saveDSGroupList:responseObject];
             m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
+            NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
+            if ([GameCommon isEmtity:imageUrl]) {
+                topImg.image = KUIImage(@"groupinfo_top");
+            }else{
+                topImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320];
+            }
             [m_myTableView reloadData];
             
             NSString * authStr = KISDictionaryHaveKey(responseObject, @"state");
@@ -652,9 +671,6 @@
     [self.navigationController pushViewController:groupView animated:YES];
 
 }
-
-
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
