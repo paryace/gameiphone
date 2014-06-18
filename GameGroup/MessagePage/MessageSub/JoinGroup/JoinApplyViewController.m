@@ -61,7 +61,9 @@
         ||[msgType isEqualToString:@"joinGroupApplicationReject"]
         ||[msgType isEqualToString:@"groupLevelUp"]
         ||[msgType isEqualToString:@"groupBillboard"]
-        ||[msgType isEqualToString:@"disbandGroup"]) {
+        ||[msgType isEqualToString:@"disbandGroup"]
+        ||[msgType isEqualToString:@"groupUsershipTypeChange"]
+        ||[msgType isEqualToString:@"kickOffGroup"]) {
         return 105;
     }
     return 140;

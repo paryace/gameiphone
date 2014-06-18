@@ -14,7 +14,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.headImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 6, 45, 45)];
+        self.headImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 12.5, 45, 45)];
         self.headImageView.backgroundColor = [UIColor whiteColor];
         self.headImageView.layer.cornerRadius = 5;
         self.headImageView.layer.masksToBounds=YES;

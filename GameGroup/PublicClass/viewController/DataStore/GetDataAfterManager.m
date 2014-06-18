@@ -255,12 +255,23 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [self storeNewMessage:messageContent];
     if ([msgType isEqualToString:@"disbandGroup"])
     {//解散群
+        NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
-//        [DataStoreManager deleteThumbMsgWithSender:groupId];
-//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+        NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
+        [DataStoreManager deleteThumbMsgWithSender:groupId];
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"2"];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
+    }
+    if ([msgType isEqualToString:@"joinGroupApplicationAccept"])
+    {//入群申请通过
+        NSDictionary * dic = @{@"groupId":groupId,@"state":@"0"};
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"0"];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
     if([msgType isEqualToString:@"groupBillboard"])
     {//群公告
@@ -286,7 +297,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     if ([msgType isEqualToString:@"disbandGroup"]) {//解散群
-        [[GroupManager singleton] changGroupState:groupId GroupState:@"0"];
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"1"];
     }
     if ([DataStoreManager isHasdGroMsg:msgId]) {
         return;

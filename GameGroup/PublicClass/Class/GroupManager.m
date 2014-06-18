@@ -93,7 +93,6 @@ static GroupManager *groupManager = NULL;
 {
     [DataStoreManager updateGroupState:grouoId GroupState:state];
     [[GroupManager singleton] clearGroupCache:grouoId];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:nil];
 }
 
 @end

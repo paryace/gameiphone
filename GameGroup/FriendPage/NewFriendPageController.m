@@ -21,7 +21,6 @@
 #import "MJRefresh.h"
 #import "FriendTopCell.h"
 #import "MyGroupCell.h"
-#import "GroupListViewController.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;

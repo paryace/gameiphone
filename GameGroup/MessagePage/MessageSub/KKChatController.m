@@ -128,7 +128,7 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"]){
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.chatWithUser];
         if (!groupInfo) {
-            available = @"1";
+            available = @"0";
             self.nickName = @"";
         }else{
             available = KISDictionaryHaveKey(groupInfo, @"available");
@@ -158,9 +158,10 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //用户信息更新完成
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userInfoUploaded:) name:userInfoUpload object:nil];
-    
     //解散该群
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
+    //被剔出该群
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     //群动态消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,self.chatWithUser] object:nil];
     [self initMyInfo];
@@ -1733,6 +1734,10 @@ UINavigationControllerDelegate>
         [alertView show];
         return ;
     }
+    if ([available isEqualToString:@"2"]) {//已被踢出该群
+        [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
+        return ;
+    }
     if (message.length>255) {
         [self showAlertViewWithTitle:nil message:@"发送字数太多，请分条发送" buttonTitle:@"确定"];
         return;
@@ -1827,7 +1832,7 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         [DataStoreManager storeMyGroupThumbMessage:dictionary];
-        if ([available isEqualToString:@"0"]) {//本群不可用
+        if (![self isGroupAvaitable]) {//本群不可用
             [self groupNotAvailable];
             [dictionary setObject:@"1" forKey:@"status"];
         }
@@ -1841,7 +1846,7 @@ UINavigationControllerDelegate>
 //群是否可用
 -(BOOL)isGroupAvaitable
 {
-    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"0"]) {
+    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"1"]) {
         return NO;
     }
     return YES;
@@ -2137,7 +2142,25 @@ UINavigationControllerDelegate>
 #pragma mark 该群组解散通知
 - (void)onDisbandGroup:(NSNotification*)notification
 {
-    available = @"0";
+    available = @"1";
+}
+
+#pragma mark 被剔出该群通知
+- (void)onkickOffGroupGroup:(NSNotification*)notification
+{
+    if (![self.type isEqualToString:@"group"]) {
+        return;
+    }
+    NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
+    NSString * state = KISDictionaryHaveKey(notification.userInfo, @"state");
+    if (![groupId isEqualToString:self.chatWithUser])
+    {
+        return;
+    }
+    available = state;
+    [messages removeAllObjects];
+    [self.tView reloadData];
+    
 }
 
 

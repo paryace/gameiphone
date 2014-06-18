@@ -22,7 +22,6 @@
 #import "UserManager.h"
 #import "DataNewsViewController.h"
 #import "ImageService.h"
-#import "GroupListViewController.h"
 #import "JoinApplyViewController.h"
 
 @interface MessagePageViewController ()<RegisterViewControllerDelegate>
@@ -111,6 +110,7 @@
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //解散群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
+    
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startConnect:) name:@"startConnect" object:nil];
@@ -381,7 +381,7 @@
             
             NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
             NSString * senderNickname =[self getNickUserNameBySender:sender];
-            if([available isEqualToString:@"0"]){
+            if([available isEqualToString:@"1"]){
                 cell.contentLabel.text =  @"本群不可用";
             }else
             {

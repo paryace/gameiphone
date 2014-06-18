@@ -7,7 +7,6 @@
 //
 
 #import "JoinInGroupViewController.h"
-#import "GroupListViewController.h"
 #import "SearchGroupViewController.h"
 #import "CardCell.h"
 #import "CardTitleView.h"

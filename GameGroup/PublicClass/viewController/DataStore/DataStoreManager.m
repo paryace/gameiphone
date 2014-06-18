@@ -2539,7 +2539,7 @@
         groupInfo.infoImg = infoImg;
         groupInfo.location = location;
         NSString * avb = groupInfo.available;
-        groupInfo.available =[avb isEqualToString:@"0"]?@"0": @"1";
+        groupInfo.available =[avb isEqualToString:@"0"]?@"0":avb;
     }];
 }
 #pragma mark - 保存群组用户列表信息

@@ -13,7 +13,6 @@
 #import "SameRealmViewController.h"
 #import "EncoXHViewController.h"
 #import "MagicGirlViewController.h"
-#import "GroupListViewController.h"
 #import "MyGroupViewController.h"
 #import "JoinGroupViewController.h"
 @interface FindViewController ()
