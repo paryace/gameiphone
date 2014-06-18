@@ -84,7 +84,8 @@ SendMsgDeleGate>
     NSMutableArray * animationOne;
     NSMutableArray * animationTwo;
     UIMenuController * menu;
-    NSString * available;//本群状态   0:正常，1:不可用 2:已经被踢出
+    NSString * available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
+    NSString * groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
 }
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题

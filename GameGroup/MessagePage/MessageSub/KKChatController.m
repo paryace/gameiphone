@@ -130,8 +130,10 @@ UINavigationControllerDelegate>
         if (!groupInfo) {
             available = @"0";
             self.nickName = @"";
+            groupUsershipType = @"2";
         }else{
             available = KISDictionaryHaveKey(groupInfo, @"available");
+            groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
             self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
         }
     }
@@ -1734,7 +1736,7 @@ UINavigationControllerDelegate>
         [alertView show];
         return ;
     }
-    if ([available isEqualToString:@"2"]) {//已被踢出该群
+    if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
         [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
         return ;
     }
@@ -1846,7 +1848,7 @@ UINavigationControllerDelegate>
 //群是否可用
 -(BOOL)isGroupAvaitable
 {
-    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"1"]) {
+    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]) {
         return NO;
     }
     return YES;
@@ -2143,6 +2145,7 @@ UINavigationControllerDelegate>
 - (void)onDisbandGroup:(NSNotification*)notification
 {
     available = @"1";
+    groupUsershipType = @"3";
 }
 
 #pragma mark 被剔出该群通知
@@ -2158,9 +2161,11 @@ UINavigationControllerDelegate>
         return;
     }
     available = state;
-    [messages removeAllObjects];
-    [self.tView reloadData];
-    
+    if ([state isEqualToString:@"2"]) {//被踢出了该群
+        groupUsershipType = @"3";
+        [messages removeAllObjects];
+        [self.tView reloadData];
+    }
 }
 
 

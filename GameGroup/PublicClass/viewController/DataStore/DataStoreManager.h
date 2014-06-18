@@ -224,7 +224,7 @@
 
 +(void)saveDSGroupList:(NSDictionary *)groupList;//保存群列表
 
-+(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState;//更改群的可用状态
++(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState GroupUserShipType:(NSString*)groupShipType;//更改群的可用状态
 
 +(void)saveDSGroupUser:(NSDictionary *)groupUser GroupId:(NSString*)groupId;//保存群组的用户列表
 
@@ -257,5 +257,7 @@
 +(void)blankMsgUnreadCountFormsgType:(NSString *)msgType;//根据msgType将未读的消息数量变为0
 
 +(void)deleteJoinGroupApplicationByMsgType:(NSString*)msgType;//根据msgType删除群通知的消息
+
++(void)deleteThumbMsgWithGroupId:(NSString *)groupId;//根据groupId删除ThumbMsg消息表得记录
 
 @end

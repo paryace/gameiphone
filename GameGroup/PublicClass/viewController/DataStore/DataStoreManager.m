@@ -153,7 +153,18 @@
             [thumbMsgs MR_deleteInContext:localContext];
         }
     }];
-    
+}
+
+
++(void)deleteThumbMsgWithGroupId:(NSString *)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (thumbMsgs) {
+            [thumbMsgs MR_deleteInContext:localContext];
+        }
+    }];
 }
 +(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType
 {
@@ -2538,7 +2549,7 @@
         groupInfo.info = info;
         groupInfo.infoImg = infoImg;
         groupInfo.location = location;
-        NSString * avb = groupInfo.available;
+        NSString * avb = groupInfo.available?groupInfo.available:@"0";
         groupInfo.available =[avb isEqualToString:@"0"]?@"0":avb;
     }];
 }
@@ -2630,13 +2641,14 @@
     return groupInfo;
 }
 //更新群的可用状态
-+(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState
++(void)updateGroupState:(NSString*)groupId GroupState:(NSString*)groupState GroupUserShipType:(NSString*)groupShipType
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
         DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate];
         if (group) {
             group.available = groupState;
+            group.groupUsershipType = groupShipType;
         }
     }];
 }

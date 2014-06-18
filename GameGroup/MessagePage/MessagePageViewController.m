@@ -378,10 +378,10 @@
             NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
             NSString * available = KISDictionaryHaveKey(groupInfo, @"available");
             NSString * backgroundImg = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
-            
+            NSString * groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
             NSString * content = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
             NSString * senderNickname =[self getNickUserNameBySender:sender];
-            if([available isEqualToString:@"1"]){
+            if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
                 cell.contentLabel.text =  @"本群不可用";
             }else
             {
@@ -640,8 +640,8 @@
             [DataStoreManager deleteAllNewsMsgs];
         }
         else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:@"groupchat"]){
-            NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]];
-            [DataStoreManager deleteThumbMsgWithSender:groupId];
+            NSString * groupId = [NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]groupId]];
+            [DataStoreManager deleteThumbMsgWithGroupId:groupId];
             [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
             
         }else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:GROUPAPPLICATIONSTATE])

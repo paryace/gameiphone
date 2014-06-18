@@ -80,7 +80,7 @@ static GroupManager *groupManager = NULL;
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100067"])
             {
-                [DataStoreManager updateGroupState:groupId GroupState:@"0"];//更新本地该群的可用状态
+                [DataStoreManager updateGroupState:groupId GroupState:@"0" GroupUserShipType:@"3"];//更新本地该群的可用状态
             }
         }
 
@@ -89,9 +89,9 @@ static GroupManager *groupManager = NULL;
 }
 
 //更新本地该群的可用状态
--(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state
+-(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state GroupShipType:(NSString*)groupShipType
 {
-    [DataStoreManager updateGroupState:grouoId GroupState:state];
+    [DataStoreManager updateGroupState:grouoId GroupState:state GroupUserShipType:groupShipType];
     [[GroupManager singleton] clearGroupCache:grouoId];
 }
 

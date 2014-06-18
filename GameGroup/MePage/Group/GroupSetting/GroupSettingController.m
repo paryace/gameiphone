@@ -442,7 +442,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@",responseObject);
-        [[GroupManager singleton] changGroupState:self.groupId GroupState:@"0"];
+        [[GroupManager singleton] changGroupState:self.groupId GroupState:@"0" GroupShipType:@"3"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经解散该群"delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 789;
         [alert show];
@@ -471,13 +471,13 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
-
+//
 -(void)changGroupState
 {
     NSDictionary * dic = @{@"groupId":self.groupId,@"state":@"2"};
     [DataStoreManager deleteThumbMsgWithSender:self.groupId];
     [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];
-    [[GroupManager singleton] changGroupState:self.groupId GroupState:@"2"];
+    [[GroupManager singleton] changGroupState:self.groupId GroupState:@"2" GroupShipType:@"3"];
     [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
 }
 

@@ -22,6 +22,6 @@
 
 -(void)clearGroupCache:(NSString*)groupId;//清除缓存
 
--(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state;//更新该群的本地可用状态
+-(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state GroupShipType:(NSString*)groupShipType;//更新该群的本地可用状态
 
 @end
