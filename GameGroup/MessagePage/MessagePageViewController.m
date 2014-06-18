@@ -24,7 +24,7 @@
 #import "ImageService.h"
 #import "JoinApplyViewController.h"
 
-@interface MessagePageViewController ()<RegisterViewControllerDelegate>
+@interface MessagePageViewController ()<NewRegisterViewControllerDelegate>
 {
     UITableView * m_messageTable;
     
@@ -83,7 +83,7 @@
         [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
     }
 }
--(void)RegisterViewControllerFinishRegister
+-(void)NewRegisterViewControllerFinishRegister
 {
     AddAddressBookViewController* addressVC = [[AddAddressBookViewController alloc]init];
     UINavigationController * navi = [[UINavigationController alloc] initWithRootViewController:addressVC];

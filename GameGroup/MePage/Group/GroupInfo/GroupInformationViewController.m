@@ -386,6 +386,7 @@
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         titleLabel.textColor = [UIColor grayColor];
+        titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [cell addSubview:titleLabel];
@@ -437,6 +438,7 @@
         ;
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
+       titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [cell.contentView addSubview:titleLabel];
         
@@ -470,6 +472,7 @@
         ;
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
+        titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [cell.contentView addSubview:titleLabel];
         
@@ -607,7 +610,7 @@
     UIImageView *imgV =[[ UIImageView alloc]initWithFrame:frame];
     imgV.image = KUIImage(@"card_show");
     imgV.userInteractionEnabled = YES;
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-20, frame.size.height)];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 
     label.textAlignment = NSTextAlignmentCenter;
     label.font = [UIFont boldSystemFontOfSize:13];

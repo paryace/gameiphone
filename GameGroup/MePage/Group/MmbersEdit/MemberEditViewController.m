@@ -194,7 +194,9 @@
         [self editIdentityForNetWithUserid:KISDictionaryHaveKey(didClickDict, @"userid") type:@"2"];
         }
         else if(buttonIndex ==2){
-            [self showAlertViewWithTitle:nil message:@"踢人" buttonTitle:@"取消"];
+            removeAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确定移除该用户?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            removeAlertView.tag = 1002;
+            [removeAlertView show];
      
         }
 

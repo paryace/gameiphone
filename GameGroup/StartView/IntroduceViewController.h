@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "RegisterViewController.h"
+#import "NewRegisterViewController.h"
 @interface IntroduceViewController : BaseViewController<UIScrollViewDelegate>
-@property (nonatomic,retain) id <RegisterViewControllerDelegate>delegate;
+@property (nonatomic,retain) id <NewRegisterViewControllerDelegate>delegate;
 @end
 
 #define kMAXPAGE  5//启动页数

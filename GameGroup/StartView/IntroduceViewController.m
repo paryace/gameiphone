@@ -151,7 +151,7 @@
 
 - (void)registerButtonClick:(id)sender
 {
-    RegisterViewController* vc = [[RegisterViewController alloc] init];
+    NewRegisterViewController* vc = [[NewRegisterViewController alloc] init];
     vc.delegate = self.delegate;
     [self.navigationController pushViewController:vc animated:YES];
 }
