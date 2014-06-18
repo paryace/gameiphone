@@ -91,10 +91,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     groupCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:groupCollectionView];
     
-//    [groupCollectionView registerClass:[ReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headView"];
-//    NSArray *arr1 = @[@"智能推荐",@"附近的组织",@"同服的组织"];
-//    NSArray *arr2 = @[@"根据你支持的队伍选择群组",@"加入附近的组织,和他们一起玩",@"看看同服有哪些组织"];
-//    NSArray *arr3 =@[@"find_role",@"find_role",@"find_group"];
     
     cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+10), 320, 200)];
     UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
@@ -106,12 +102,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [cellView addSubview:lajiLabel];
     [self.view addSubview:cellView];
     
-//    for (int i =0; i<3; i++) {
-//        UIButton *view = [self bulidCellWithFrame:CGRectMake(0, 60+60*i, 320, 59) title1:arr1[i] title2:arr2[i] img:arr3[i]];
-//        view.tag = 100+i;
-//        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickNormal:)]];
-//        [cellView addSubview:view];
-//    }
     [self getGroupListFromNet];
 }
 
@@ -228,7 +218,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             [myGroupArray removeAllObjects];
             [myGroupArray addObjectsFromArray:responseObject];
-            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"tianjiazhaopian",@"backgroundImg", nil];
             [myGroupArray addObject:dic];
             if (myGroupArray.count<4) {
                 groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
@@ -267,8 +257,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.titleLabel.backgroundColor = [UIColor clearColor];
         cell.titleLabel.text = @"";
     }else{
-    cell.headImgView.placeholderImage = KUIImage(@"mess_news");
-    cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+        cell.headImgView.placeholderImage = KUIImage(@"group_icon");
+        cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
         cell.titleLabel.backgroundColor  =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
         cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
         
@@ -303,7 +293,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             ((ReusableView *)titleView).headImageView.hidden=NO;
             ((ReusableView *)titleView).topLabel.hidden=YES;
             [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-//            [((ReusableView *)titleView).topBtn  setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
             ((ReusableView *)titleView).topBtn.tag=123;
             [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
             NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");

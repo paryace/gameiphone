@@ -263,7 +263,7 @@
                     return (size1.height<40?40:size1.height)+5;
                 }else{
                     NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
-                    return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+5;
+                    return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+10;
                 }
                 break;
                 

@@ -101,9 +101,6 @@
 
     [itemtwo addSubview:groupNameLable];
     
-//    CGSize textSize = [groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-//    groupNameLable.frame=CGRectMake(300-textSize.width-10, 12, textSize.width, 20);
-    
     
 
     [scV addSubview:itemtwo];
@@ -189,10 +186,6 @@
         itemfour.hidden = NO;
        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
     }if (self.shiptypeCount ==1) {//管理员
-//        itemfive.hidden=YES;
-//         explainLable.hidden=YES;
-//         sixeBtn.hidden=YES;
-//         sevenBtn.hidden=YES;
         okButton.frame  = CGRectMake(10,421,300, 40);
         itemfour.hidden = NO;
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
@@ -504,12 +497,6 @@
 {
     return m_roleArray.count;
 }
-
-//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-//{
-//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
-//    return title;
-//}
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
     NSDictionary *dic = [m_roleArray objectAtIndex:row];

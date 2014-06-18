@@ -14,7 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.headImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 6, 45, 45)];
         self.headImageView.backgroundColor = [UIColor whiteColor];
         self.headImageView.layer.cornerRadius = 5;
@@ -28,25 +27,17 @@
         [self addSubview:self.nameLable];
 
         self.sfLb = [[UILabel alloc]initWithFrame:CGRectMake(250, 20, 50, 20)];
-//        self.sfLb.backgroundColor = [UIColor colorWithPatternImage:KUIImage(@"card_click_no")];
         self.sfLb.textColor  = [UIColor grayColor];
         self.sfLb.textAlignment = NSTextAlignmentCenter;
-        self.sfLb.font = [UIFont boldSystemFontOfSize:15];
+        self.sfLb.font = [UIFont boldSystemFontOfSize:12];
         [self addSubview:self.sfLb];
+        
+        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(100, 0, 20, 20)];
+        self.sexImg.backgroundColor = [UIColor clearColor];
+        [self addSubview:self.sexImg];
+        
         
     }
     return self;
 }
-
-- (void)awakeFromNib
-{
-    // Initialization code
-}
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
 @end

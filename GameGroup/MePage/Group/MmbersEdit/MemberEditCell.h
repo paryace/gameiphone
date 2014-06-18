@@ -12,4 +12,5 @@
 @property(nonatomic,strong)EGOImageView *headImageView;
 @property(nonatomic,strong)UILabel *nameLable;
 @property(nonatomic,strong)UILabel *sfLb;
+@property (nonatomic,strong) UIImageView* sexImg;//性别
 @end

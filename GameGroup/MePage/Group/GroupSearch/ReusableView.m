@@ -18,7 +18,7 @@
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
         [self addSubview:self.topBtn];
         self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 15, 40, 40)];
-        self.headImageView.placeholderImage = KUIImage(@"mess_news");
+        self.headImageView.placeholderImage = KUIImage(@"group_icon");
         [self.topBtn addSubview:self.headImageView];
         
         self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 320-80, 40)];

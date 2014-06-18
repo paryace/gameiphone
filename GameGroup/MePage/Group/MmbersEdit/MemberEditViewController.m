@@ -24,14 +24,6 @@
 
 @implementation MemberEditViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -46,8 +38,6 @@
     didClickDict = [NSMutableDictionary dictionary];
     
     [self getNearByDataByNet];
-    
-    // Do any additional setup after loading the view.
 }
 - (void)getNearByDataByNet
 {
@@ -80,7 +70,6 @@
         }
         [hud hide:YES];
     }];
-    // [refreshView stopLoading:NO];
     
 }
 
@@ -111,31 +100,55 @@
     if (cell == nil) {
         cell = [[MemberEditCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    //    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
     NSDictionary* tempDict = [[[m_dataArray objectAtIndex:indexPath.section]objectForKey:@"list"]objectAtIndex:indexPath.row];
     cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
+    cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
     cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
+    cell.sfLb.text = @"sadasdadas";
+    NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+    cell.sexImg.image =KUIImage(genderimage);
     
-//    NSInteger i = [KISDictionaryHaveKey(tempDict, @"type") intValue];
-//    switch (i) {
-//        case 0:
-//         cell.sfLb.text = @"群主";
-//            break;
-//        case 1:
-//            cell.sfLb.text = @"管理员";
-//            break;
-//        case 2:
-//            cell.sfLb.text = @"";
-//            break;
-//     
-//        default:
-//            break;
-//    }
+    CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    cell.nameLable.frame = CGRectMake(65, 25, nameSize.width, 20);
+    cell.sexImg.frame = CGRectMake(65+nameSize.width+5, 25, 20, 20);
+    cell.sfLb.text = [NSString stringWithFormat:@"%@", [self getMsgTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")]];
     
-    
+    CGSize timeSize = [cell.sfLb.text sizeWithFont:[UIFont boldSystemFontOfSize:12.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    cell.sfLb.frame = CGRectMake(320-timeSize.width-10, 25, timeSize.width, 20);
     return cell;
+}
+
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
+}
+//头像默认图片
+-(NSString*)headPlaceholderImage:(NSString*)gender
+{
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        return @"people_man.png";
+    }
+    else
+    {
+        return @"people_woman.png";
+    }
+}
+//性别图标
+-(NSString*)genderImage:(NSString*)gender
+{
+    if ([gender intValue]==0)
+    {
+        return @"gender_boy";
+    }else
+    {
+        return @"gender_girl";
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -275,8 +288,6 @@
         }
         [hud hide:YES];
     }];
-    // [refreshView stopLoading:NO];
-    
 }
 
 
@@ -293,8 +304,6 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([method isEqualToString:@"252"]) {
             self.shiptype = [KISDictionaryHaveKey(responseObject, @"type")intValue]?[KISDictionaryHaveKey(responseObject, @"type")intValue ]:2;
-            
-            
             for(UIViewController *controller in self.navigationController.viewControllers) {
                 if([controller isKindOfClass:[GroupInformationViewController class]]){
                     GroupInformationViewController*owr = (GroupInformationViewController *)controller;
@@ -328,23 +337,11 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 - (void)dealloc
 {
     ascensionGlyAlertView.delegate = nil;
     removeAlertView.delegate = nil;
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

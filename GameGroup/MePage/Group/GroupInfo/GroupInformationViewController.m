@@ -522,7 +522,7 @@
             if (cell.photoArray.count==0) {
                 cell.photoView.frame =  CGRectMake(80, height1+5, 210, 0);
             }else{
-                NSInteger photoCount = (cell.photoArray.count-1)/3+1;//标签行数
+                NSInteger photoCount = (cell.photoArray.count-1)/3+1;
                 cell.photoView.frame =  CGRectMake(80, height1+5, 210, photoCount*68+photoCount*2);
             }
         }
@@ -588,7 +588,7 @@
                 return (size1.height<40?40:size1.height)+5;
             }else{
                 NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
-                return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+5;
+                return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+10;
             }
             break;
      
