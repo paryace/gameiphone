@@ -86,7 +86,7 @@
         
         [self.bgV addSubview:self.ignoreBtn];
 
-        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, 310, 33)];
+        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(2, 100, 306, 33)];
         self.stateLable.backgroundColor = kColorWithRGB(230,230,230, 0.7);
         self.stateLable.textColor = [UIColor grayColor];
         self.stateLable.text = @"已同意";
