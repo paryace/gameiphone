@@ -85,9 +85,9 @@
 {
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 10;
-    m_layout.minimumLineSpacing =5;
+    m_layout.minimumLineSpacing =3;
     m_layout.itemSize = CGSizeMake(90, 90);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
+//    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
     m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 290) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);

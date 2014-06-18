@@ -52,7 +52,6 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
-//    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [GameCommon setExtraCellLineHidden:m_myTableView];
@@ -224,7 +223,6 @@
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
-//        [button setTitle:array[i] forState:UIControlStateNormal];
         [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100;
         button.backgroundColor = [UIColor grayColor];
@@ -394,7 +392,7 @@
         
         titleLabel.text = @"群组号";
         
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(100, 0,70, 40)];
+        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,70, 40)];
         numLb.font = [UIFont boldSystemFontOfSize:14];
         numLb.backgroundColor = [UIColor clearColor];
         numLb.textColor =[ UIColor blackColor];
@@ -444,13 +442,13 @@
         
         titleLabel.text = @"服务器";
        
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(100, 10, 20, 20)];
+        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         [cell addSubview:gameImg];
        
        
-       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(130, 0,100, 40)];
+       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
        numLb.font = [UIFont boldSystemFontOfSize:14];
        numLb.backgroundColor = [UIColor clearColor];
        numLb.textColor =[ UIColor blackColor];
@@ -487,7 +485,7 @@
                 }
             }
             for (int i =0; i<tags.count; i++) {
-                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(100+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
                 tagImage.tag=100+i;
                 tagImage.userInteractionEnabled = YES;
                 [tagImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterSearchGroupPage:)]];
@@ -510,7 +508,8 @@
             cell.titleLabel.text = @"群介绍";
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
             
-            CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 230) lineBreakMode:NSLineBreakByCharWrapping];
+            CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 320) lineBreakMode:NSLineBreakByWordWrapping];
+            
             float height1 = 0.0;
             if (size.height<40) {
                 height1 = 40;
@@ -518,23 +517,14 @@
                 height1 =size.height;
             }
 
-            cell.contentLabel.frame = CGRectMake(100, 0, 230,height1);
+            cell.contentLabel.frame = CGRectMake(80, 5, 210,height1);
             cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
-            
-            float height = 0.0;
-            if (cell.photoArray.count>0&&cell.photoArray.count<4) {
-                height=80;
+            if (cell.photoArray.count==0) {
+                cell.photoView.frame =  CGRectMake(80, height1+5, 210, 0);
+            }else{
+                NSInteger photoCount = (cell.photoArray.count-1)/3+1;//标签行数
+                cell.photoView.frame =  CGRectMake(80, height1+5, 210, photoCount*68+photoCount*2);
             }
-            else if (cell.photoArray.count>3&&cell.photoArray.count<7){
-                height = 160;
-            }
-            else if (cell.photoArray.count>6&&cell.photoArray.count<10){
-                height = 240;
-            }
-            else{
-                height = 0;
-            }
-            cell.photoView.frame = CGRectMake(100, size.height+20, 210, height);
         }
         return cell;
     }
@@ -546,9 +536,6 @@
             cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
         }
         cell.selectionStyle =UITableViewCellSelectionStyleNone;
-
-       
-        
         double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
         double gongLi = dis/1000;
         
@@ -579,8 +566,6 @@
     if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
         CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 250) lineBreakMode:NSLineBreakByCharWrapping];
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
-        float height = 0.0;
-
     switch (indexPath.row) {
         case 0:
             return 40;
@@ -590,24 +575,21 @@
             break;
         case 2:
             NSLog(@"--------%d",tags.count/2);
-            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
-            return  tagsRowCount*30+tagsRowCount*5+10;
+            if (tags.count==0) {
+                return 10;
+            }else{
+                NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+                return  tagsRowCount*30+tagsRowCount*5+10;
+            }
             break;
          case 3:
-            if (photoArray.count>0&&photoArray.count<4) {
-                height=90;
+            NSLog(@"--------%d",photoArray.count/3);
+            if (photoArray.count==0) {
+                return (size1.height<40?40:size1.height)+5;
+            }else{
+                NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
+                return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+5;
             }
-            else if (photoArray.count>3&&photoArray.count<7){
-                height = 170;
-            }
-            else if (photoArray.count>6&&photoArray.count<10){
-                height = 250;
-            }
-            else{
-                height = 0;
-            }
-            
-            return 20+size1.height+height;
             break;
      
         default:

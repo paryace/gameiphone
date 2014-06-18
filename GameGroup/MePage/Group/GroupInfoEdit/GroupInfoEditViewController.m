@@ -42,13 +42,13 @@
     paramDict  = [NSMutableDictionary dictionary];
     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     
-    // Do any additional setup after loading the view.
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth -startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
     
     
@@ -114,13 +114,6 @@
         
         
         if (m_mainDict &&[m_mainDict allKeys].count>0) {
-            
-//            EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 30, 30)];
-//            gameImg.center = CGPointMake(40, 45);
-//            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
-//            gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
-//            [cell addSubview:gameImg];
-            
             NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             NSArray * us=cell.contentView.subviews;
             for(UIImageView *uv in us)
@@ -182,23 +175,14 @@
                 height1 =size.height;
             }
             
-            cell.contentLabel.frame = CGRectMake(80, 0, 220,height1);
+            cell.contentLabel.frame = CGRectMake(80, 5, 210,height1);
             cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
-            
-            float height = 0.0;
-            if (cell.photoArray.count>0&&cell.photoArray.count<4) {
-                height=90;
+            if (cell.photoArray.count==0) {
+                cell.photoView.frame =  CGRectMake(80, height1+5, 210, 0);
+            }else{
+                NSInteger photoCount = (cell.photoArray.count-1)/3+1;//标签行数
+                cell.photoView.frame =  CGRectMake(80, height1+5, 210, photoCount*68+photoCount*2);
             }
-            else if (cell.photoArray.count>3&&cell.photoArray.count<7){
-                height = 170;
-            }
-            else if (cell.photoArray.count>6&&cell.photoArray.count<10){
-                height = 250;
-            }
-            else{
-                height = 0;
-            }
-            cell.photoView.frame = CGRectMake(80, size.height+20, 230, height);
             [cell.photoView reloadData];
         }
         return cell;
@@ -260,8 +244,6 @@
         NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
         CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
-        float height = size1.height;
-        
         switch (indexPath.row) {
             case 0:
                 return 40;
@@ -276,20 +258,13 @@
                 return 40;
                 break;
             case 3:
-                if (photoArray.count>0&&photoArray.count<4) {
-                    height+=90;
+                NSLog(@"--------%d",tags.count/2);
+                if (photoArray.count==0) {
+                    return (size1.height<40?40:size1.height)+5;
+                }else{
+                    NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
+                    return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+5;
                 }
-                else if (photoArray.count>3&&photoArray.count<7){
-                    height += 170;
-                }
-                else if (photoArray.count>6&&photoArray.count<10){
-                    height += 250;
-                }
-                else{
-                    height += 0;
-                }
-                
-                return 20+height;
                 break;
                 
             default:
@@ -437,7 +412,6 @@
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                //                [self presentModalViewController:imagePicker animated:YES];
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
@@ -453,7 +427,6 @@
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
-    //    [self uploadbgImg:upImage];
     topImageView.image = upImage;
     [self dismissViewControllerAnimated:YES completion:^{
         

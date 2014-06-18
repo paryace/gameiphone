@@ -145,7 +145,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     else if ([type isEqualToString:@"joinGroupApplication"]
              ||[type isEqualToString:@"joinGroupApplicationAccept"]
              ||[type isEqualToString:@"joinGroupApplicationReject"]
-             
              ||[type isEqualToString:@"groupApplicationUnderReview"]
              ||[type isEqualToString:@"groupApplicationAccept"]
              ||[type isEqualToString:@"groupApplicationReject"]
@@ -248,11 +247,20 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
     NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
+    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:messageContent];
     if ([msgType isEqualToString:@"disbandGroup"])
     {//解散群
         [self changGroupMessageReceived:messageContent];
+    }
+    if ([msgType isEqualToString:@"kickOffGroup"])
+    {//被T出该群
+//        [DataStoreManager deleteThumbMsgWithSender:groupId];
+//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
     }
     if([msgType isEqualToString:@"groupBillboard"])
     {//群公告

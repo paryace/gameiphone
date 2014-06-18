@@ -14,8 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
         ;
         self.titleLabel.textColor = [UIColor grayColor];
@@ -24,9 +22,7 @@
         [self addSubview:self.titleLabel];
         
         self.titleLabel.text = @"创建于";
-        
-        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 210, 20)]
-        ;
+        self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 10, 210, 20)];
         self.timeLabel.textColor = [UIColor grayColor];
         self.timeLabel.adjustsFontSizeToFitWidth = YES;
         self.timeLabel.font = [UIFont systemFontOfSize:14];
@@ -37,18 +33,6 @@
 
     }
     return self;
-}
-
-- (void)awakeFromNib
-{
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

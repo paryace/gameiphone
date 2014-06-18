@@ -31,15 +31,8 @@
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         
         self.layout.minimumInteritemSpacing = 1;
-        self.layout.minimumLineSpacing = 1;
-        self.layout.itemSize = CGSizeMake(74, 74);
-        //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
-        
-        // 3.设置整个collectionView的内边距
-        
-        // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
-        self.layout.itemSize = CGSizeMake(80, 80);
-        
+        self.layout.minimumLineSpacing = 2;
+        self.layout.itemSize = CGSizeMake(68, 68);
         self.photoView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
         self.photoView.scrollEnabled = NO;
         self.photoView.delegate = self;
@@ -62,7 +55,7 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.photoArray objectAtIndex:indexPath.row];
-    cell.imageView.imageURL =[ImageService getImageUrl3:url Width:160];
+    cell.imageView.imageURL =[ImageService getImageUrl3:url Width:136];
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
