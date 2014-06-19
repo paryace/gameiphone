@@ -17,7 +17,8 @@
 @end
 
 @interface NewRegisterViewController : BaseViewController
-<UITextFieldDelegate,
+<
+UITextFieldDelegate,
 RealmSelectDelegate,
 UIAlertViewDelegate,
 SearchRoleDelegate,
@@ -32,6 +33,19 @@ UITableViewDataSource,
 QiniuUploadDelegate
 >
 @property (nonatomic,retain) id <NewRegisterViewControllerDelegate>delegate;
+@property(nonatomic,strong)UIImageView *topImageView;
+@property(nonatomic,strong)UITextField *gameTextField;
+@property(nonatomic,strong)UITextField *realmTextField;
+@property(nonatomic,strong)UITextField *groupNameTf;
+@property(nonatomic,strong)UIScrollView *scrollView;
+@property(nonatomic,strong)UIScrollView *firstScrollView;
+@property(nonatomic,strong)UIScrollView *secondScrollView;
+@property(nonatomic,strong)UIScrollView *thirdScrollView;
+@property(nonatomic,strong)UILabel *cardTF;
+@property(nonatomic,strong) NSMutableDictionary *listDict;
+@property(nonatomic,copy)   NSString *cardStr;
+@property(nonatomic,strong) NSMutableArray *cardArray;
+@property(nonatomic,strong)   UICollectionView * titleCollectionView;
 
 
 

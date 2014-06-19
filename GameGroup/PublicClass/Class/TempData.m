@@ -32,7 +32,13 @@ static TempData *sharedInstance=nil;
     self.passBindingRole = NO;
     self.isSoundOpen =YES;
     self.isVibration = YES;
+    self.isBindingRoles = YES;
     self.token=[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken];
+}
+
+-(void)isBindingRolesWithBool:(BOOL)isYes
+{
+    self.isBindingRoles = isYes;
 }
 
 -(void)setLat:(double)lat Lon:(double)lon

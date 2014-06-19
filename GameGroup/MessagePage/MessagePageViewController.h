@@ -9,8 +9,8 @@
 #import "BaseViewController.h"
 #import "NotConnectDelegate.h"
 #import "AppDelegate.h"
-
-@interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
+#import "NewRegisterViewController.h"
+@interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,NewRegisterViewControllerDelegate>
 
 @property (assign,nonatomic) AppDelegate * appDel;
 @property(nonatomic,strong)UILabel*   titleLabel;;

@@ -717,12 +717,20 @@ static GameCommon *my_gameCommon = NULL;
             }
             [GameCommon loginOut];
         }
+        else
+        {
+        NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
+        if (!arr||![arr isKindOfClass:[NSArray class]]) {
+            [[TempData sharedInstance]isBindingRolesWithBool:NO];
+        }else{
+            [[TempData sharedInstance]isBindingRolesWithBool:YES];
+        }
+        }
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
 }
-
 #pragma mark ---登陆成功重新获取open接口数据
 -(void)LoginOpen
 {
@@ -732,6 +740,7 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"225" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]:@"" forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         

@@ -13,7 +13,7 @@
 #import "AppDelegate.h"
 #import "MessageCell.h"
 #import "AttentionMessageViewController.h"
-
+#import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
 #import "FriendRecommendViewController.h"
 #import "AddAddressBookViewController.h"
@@ -85,14 +85,28 @@
 }
 -(void)NewRegisterViewControllerFinishRegister
 {
-    AddAddressBookViewController* addressVC = [[AddAddressBookViewController alloc]init];
+    [self enterBangdingView];
+}
+-(void)enterBangdingView
+{
+    
+    BangdingRolesViewController* addressVC = [[BangdingRolesViewController alloc]init];
+    addressVC.delegate = self;
     UINavigationController * navi = [[UINavigationController alloc] initWithRootViewController:addressVC];
     [self presentViewController:navi animated:NO completion:^{
     }];
+ 
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    if (![[TempData sharedInstance]isBindingRoles]) {
+        [self enterBangdingView];
+    }
+
+
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemindBegin) name:@"StartGetFriendListForNet" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemind) name:@"getFriendListForNet_wx" object:nil];
     

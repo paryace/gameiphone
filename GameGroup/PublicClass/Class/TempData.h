@@ -24,8 +24,12 @@
 @property (nonatomic,retain)NSString * token;
 @property(nonatomic,assign)BOOL isSoundOpen;//是否打开声音
 @property(nonatomic,assign)BOOL isVibration;//是否打开震动
+@property(nonatomic,assign)BOOL isBindingRoles;//是否绑定角色
+
+
 + (id)sharedInstance;
 -(void)setLat:(double)lat Lon:(double)lon;
+-(void)isBindingRolesWithBool:(BOOL)isYes;
 -(double)returnLat;//经度
 -(double)returnLon;//纬度
 -(NSString*)getMyUserID;

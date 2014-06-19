@@ -60,7 +60,7 @@
             [self getGroupListFromNetWithParam:paramDict method:@"234"];
             break;
         case SETUP_SAMEREALM:
-            [paramDict setObject:self.gameid forKey:@"gameId"];
+            [paramDict setObject:self.gameid forKey:@"gameid"];
             [paramDict setObject:self.realmStr forKey:@"gameRealm"];
             [self getGroupListFromNetWithParam:paramDict method:@"243"];
 
@@ -69,7 +69,10 @@
             [self getLocationForNet];
 
             break;
-    
+    case SETUP_HOT:
+            [paramDict setObject:self.gameid forKey:@"gameid"];
+            [self getGroupListFromNetWithParam:paramDict method:@"257"];
+            break;
         default:
             break;
     }
@@ -244,29 +247,29 @@
 -(void)getLocationForNet
 {
     
-//    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-//    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-//    [paramDict setObject:@"20" forKey:@"maxSize"];
-//    
-//    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-//    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-//    [self getGroupListFromNetWithParam:paramDict method:@"237"];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
+    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+    [self getGroupListFromNetWithParam:paramDict method:@"237"];
 
     
-        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-            [[TempData sharedInstance] setLat:lat Lon:lon];
-            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-            [paramDict setObject:@"20" forKey:@"maxSize"];
-            
-            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-            [self getGroupListFromNetWithParam:paramDict method:@"237"];
-
-        } Failure:^{
-            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-        }
-         ];
+//        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+//            [[TempData sharedInstance] setLat:lat Lon:lon];
+//            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+//            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+//            [paramDict setObject:@"20" forKey:@"maxSize"];
+//            
+//            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+//            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+//            [self getGroupListFromNetWithParam:paramDict method:@"237"];
+//
+//        } Failure:^{
+//            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+//        }
+//         ];
 }
 
 - (void)didReceiveMemoryWarning
