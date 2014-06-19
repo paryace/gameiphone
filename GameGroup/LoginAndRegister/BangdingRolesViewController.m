@@ -97,7 +97,7 @@
     rb_server.tintColor = [UIColor blackColor];
     toolbar_server1.items = @[rb_server];
     
-    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, startX +200, 300, 30)];
+    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, startX +200, 300, 40)];
     [m_okButton setBackgroundImage:KUIImage(@"bindingrole") forState:UIControlStateNormal];
 //    [step2Button setBackgroundImage:KUIImage(@"zhuce_click") forState:UIControlStateHighlighted];
     //    [step2Button setTitle:@"绑定上述角色" forState:UIControlStateNormal];
@@ -153,7 +153,7 @@
         
         m_okButton.hidden = NO;
         m_myTableView.frame = CGRectMake(0, startX+60+28, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+74+28+44*m_dataArray.count, 300, 30);
+        m_okButton.frame = CGRectMake(10, startX+74+28+44*m_dataArray.count, 300, 40);
         registerButton.frame = CGRectMake(150,  startX+124+28+44*m_dataArray.count, 100, 40);
         findPasButton.frame = CGRectMake(70,  startX+124+28+44*m_dataArray.count, 80, 40);
         [m_myTableView reloadData];
