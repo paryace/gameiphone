@@ -15,6 +15,7 @@
     NSInteger      m_maxZiShu;
     UIButton *   okButton;
     UIDatePicker* m_birthDayPick;
+    UIScrollView *scV;
 
     
     UICollectionViewFlowLayout *m_layout;
@@ -40,6 +41,12 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:225.0/255.0 green:225.0/255.0 blue:225.0/255.0 alpha:1.0];
+    
+    scV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
+    scV.scrollEnabled = YES;
+    scV.contentSize=CGSizeMake(320, 550);
+    [self.view addSubview:scV];
+    
     m_maxZiShu = 100;
     
     [self setTopViewWithTitle:@"群简介" withBackButton:YES];
@@ -54,7 +61,7 @@
     m_contentTextView.layer.cornerRadius = 5;
     m_contentTextView.layer.masksToBounds = YES;
     m_contentTextView.text = self.placeHold ? self.placeHold : @"";
-    [self.view addSubview:m_contentTextView];
+    [scV addSubview:m_contentTextView];
     [m_contentTextView becomeFirstResponder];
     
     
@@ -64,7 +71,7 @@
     m_ziNumLabel.font = [UIFont systemFontOfSize:12.0f];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.text = [NSString stringWithFormat:@"还可输入%d个字", m_maxZiShu];
-    [self.view addSubview:m_ziNumLabel];
+    [scV addSubview:m_ziNumLabel];
     
     [self buildCollectionView];
     [self refreshZiLabelText];
@@ -76,7 +83,7 @@
     [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     okButton.backgroundColor = [UIColor clearColor];
     [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:okButton];
+    [scV addSubview:okButton];
     [self refrekoButton];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
@@ -100,12 +107,12 @@
     m_layout.itemSize = CGSizeMake(292/3, 292/3);
     m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 290) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
-    m_photoCollectionView.scrollEnabled = YES;
+    m_photoCollectionView.scrollEnabled = NO;
     m_photoCollectionView.delegate = self;
     m_photoCollectionView.dataSource = self;
     [m_photoCollectionView registerClass:[EditPhotoCell class] forCellWithReuseIdentifier:@"titleCell"];
     m_photoCollectionView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:m_photoCollectionView];
+    [scV addSubview:m_photoCollectionView];
 
 }
 
