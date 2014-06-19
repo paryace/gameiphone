@@ -197,6 +197,8 @@
     
     AuthViewController* authVC = [[AuthViewController alloc] init];
     NSDictionary* dic = [m_characterArray objectAtIndex:selectRow];
+    authVC.isComeFromFirstOpen = NO;
+
     authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
     authVC.character = KISDictionaryHaveKey(dic, @"name");

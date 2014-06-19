@@ -215,6 +215,16 @@
 //        
 //        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:passwordTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
        // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
+        NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
+        if (!arr||![arr isKindOfClass:[NSArray class]]) {
+            [[TempData sharedInstance]isBindingRolesWithBool:NO];
+        }else{
+            if (arr.count>0) {
+                [[TempData sharedInstance]isBindingRolesWithBool:YES];
+            }else{
+                [[TempData sharedInstance]isBindingRolesWithBool:NO];
+            }
+        }
 
         [self loginSuccess];
 

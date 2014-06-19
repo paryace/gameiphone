@@ -25,8 +25,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-
-        
         self.listDict = [NSMutableDictionary dictionary];
         self.cardArray = [NSMutableArray array];
         self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)];
@@ -159,8 +157,6 @@
     self.secondScrollView.showsVerticalScrollIndicator = NO;
     self.secondScrollView.contentSize = CGSizeMake(0,150+kScreenHeigth);
     [self.scrollView addSubview:self.secondScrollView];
-   
-    [self getCardWithNet];
     
     self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 190)];
     self.topImageView.image = KUIImage(@"addGroup_top2");
@@ -250,37 +246,7 @@
 }
 
 
--(void)getCardWithNet
-{
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"236" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            self.listDict  = responseObject;
-            UICollectionView *coView = (UICollectionView *)[self viewWithTag:1001];
-            [coView reloadData];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-    }];
-    
-}
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
-//{
-//        NSDictionary *dic = [self.cardArray objectAtIndex:indexPath.row];
-//        CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
-//        return CGSizeMake(size.width+25, 30);
-//    
-//}
+
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -397,6 +363,9 @@
             [self.myDelegate didClickGameListWithDel:self dic:dict];
         }
         [self.gameTextField resignFirstResponder];
+        
+           self.listDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
+        
     }
 }
 

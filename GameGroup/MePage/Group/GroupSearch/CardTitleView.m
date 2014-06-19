@@ -20,9 +20,9 @@
         self.cardTitleLabel.font = [UIFont systemFontOfSize:14];
         self.cardTitleLabel.backgroundColor =[UIColor clearColor];
         [self addSubview:self.cardTitleLabel];
-        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, 35, 300, 1)];
-        lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);;
-        [self addSubview:lineView];
+//        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, 35, 300, 1)];
+//        lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);;
+//        [self addSubview:lineView];
     }
     return self;
 }

@@ -59,14 +59,15 @@
     customPhotoCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:customPhotoCollectionView];
     
-    [self getCardWithNet];
+    [self getCardWithNetWithDic:self.infoDict];
 }
 
--(void)getCardWithNet
+-(void)getCardWithNetWithDic:(NSMutableDictionary*)dict
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"236" forKey:@"method"];
+    [postDict setObject:dict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

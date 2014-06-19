@@ -129,15 +129,12 @@
         cell = [[CircleMeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-   // cell.selectionStyle =UITableViewCellSelectionStyleNone;
      DSCircleWithMe *dCircle = [dataArray objectAtIndex:indexPath.row];
     
     if ([GameCommon isEmtity:dCircle.headImg]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:dCircle.headImg],@"/160/160"]];
         cell.headImgBtn.imageURL=[ImageService getImageStr:dCircle.headImg Width:160];
-        
     }
     
     [cell.headImgBtn addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -157,10 +154,6 @@
     }else{
         cell.contentsLabel.hidden =YES;
         cell.contentImageView.hidden = NO;
-//        NSString* imageContet = [BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:dCircle.myMsgImg]];
-//        NSURL *imageContetURL = [NSURL URLWithString:[imageContet stringByAppendingFormat:@"/120/120"]];
-//        cell.contentImageView.imageURL = imageContetURL;
-        
         cell.contentImageView.imageURL = [ImageService getImageStr:dCircle.myMsgImg Width:120];
         
     }
@@ -179,8 +172,6 @@
     
     CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:CGSizeMake(170, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
    float  heigth = size.height;
-    //[cell sizeToFit];
-   // float heigth = [self tableView:m_myTableView heightForRowAtIndexPath:indexPath];
         cell.titleLabel.frame = CGRectMake(60, 30, 170, heigth);
     
     
@@ -197,10 +188,6 @@
     
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
     detailVC.messageid = dCircle.myMsgid;
-    //    detailVC.urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"urlLink")];
-    
-//    NSString* imageName = [GameCommon getHeardImgId:dCircle.headImg];
-//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
     
     detailVC.imgStr = [ImageService getImageString:dCircle.headImg];
     

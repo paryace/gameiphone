@@ -249,6 +249,7 @@
 {
     AuthViewController* authVC = [[AuthViewController alloc] init];
     authVC.gameId = self.gameId;
+    authVC.isComeFromFirstOpen = NO;
     authVC.realm = KISDictionaryHaveKey(self.dataDic, @"realm");
     authVC.character = KISDictionaryHaveKey(self.dataDic, @"charactername");
     [self.navigationController pushViewController:authVC animated:YES];

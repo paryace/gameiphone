@@ -9,6 +9,7 @@
 #import "NewFriendPageController.h"
 #import "MJRefreshHeaderView.h"
 #import "NewPersonalTableViewCell.h"
+
 #import "MessageAddressViewController.h"
 #import "AddContactViewController.h"
 #import "FunsOfOtherViewController.h"
@@ -83,6 +84,24 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendListFromNet];
     }
+    
+    UIView *footView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    footView.backgroundColor = [UIColor whiteColor];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(10, 3, 300,44);
+    [button setTitle:@"手机通讯录" forState:UIControlStateNormal];
+    button.titleLabel.textColor = [UIColor whiteColor];
+    button.backgroundColor = [UIColor grayColor];
+    [button addTarget:self action:@selector(enterPhoneAddress:) forControlEvents:UIControlEventTouchUpInside];
+    [footView addSubview:button];
+    
+
+    m_myTableView.tableFooterView = footView;
+    
+    
+    
+    
+    
     [self addheadView];
 }
 #pragma mark 刷新表格
@@ -384,6 +403,13 @@
     };
     m_header = header;
 }
+
+-(void)enterPhoneAddress:(id)sender
+{
+    MessageAddressViewController *mas = [[MessageAddressViewController alloc]init];
+    [self.navigationController pushViewController:mas animated:YES];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

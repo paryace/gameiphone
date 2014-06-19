@@ -88,6 +88,10 @@
     self.scrollView.showsHorizontalScrollIndicator = NO;
     [self.view addSubview:self.scrollView];
 
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    
+    
     [self buildMainView];
     [self setStep_1View];
     [self setstep1Scroll_verCode];
@@ -858,6 +862,25 @@
         return canChange;
     }
     return YES;
+}
+#pragma mark alertView
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(alertView.tag == 67)
+    {
+        if (buttonIndex != alertView.cancelButtonIndex)
+            [self continueStep3Net:@""];
+    }else
+    {
+        if (buttonIndex != alertView.cancelButtonIndex){
+            m_step2Scroll.hidden = YES;
+            m_step3Scroll.hidden = NO;
+            m_topImage.image = KUIImage(@"register_step_3");
+            //    m_userNameText.text = m_roleNameText.text;
+            m_titleLabel.text = @"个人信息";
+            [[TempData sharedInstance] setPassBindingRole:YES];
+        }
+    }
 }
 
 

@@ -156,26 +156,10 @@
     NSDictionary *tempDict = [[m_dataArray[indexPath.section]objectForKey:@"list"]objectAtIndex:indexPath.row];
     
     if ([requestType isEqualToString:@"members"]) {
+        cell.sexImageView.hidden =NO;
         cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
-
-        cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
-        NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
-        cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
-        
-        NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
-        cell.sexImageView.image =KUIImage(genderimage);
-        
-        CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        cell.nameLable.frame = CGRectMake(60, 20, nameSize.width, 20);
-        cell.sexImageView.frame = CGRectMake(60+nameSize.width+5, 20, 20, 20);
-        
-        cell.timeLabel.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
-        [cell.timeLabel setTextColor:[UIColor grayColor]];
-        [cell.timeLabel setFont:[UIFont systemFontOfSize:13]];
-
-    }else{
-        cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterInfo")];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+            
             cell.sexImageView.image = KUIImage(@"gender_boy");
             cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
         }
@@ -184,11 +168,32 @@
             cell.sexImageView.image = KUIImage(@"gender_girl");
             cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
         }
+
+        cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
+        NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
         
+        cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
+        
+        NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        cell.sexImageView.image =KUIImage(genderimage);
+        
+        CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.nameLable.frame = CGRectMake(60, 20, nameSize.width, 20);
+        cell.sexImageView.frame = CGRectMake(60+nameSize.width+5, 20, 20, 20);
+
+        cell.timeLabel.text = [GameCommon getTimeWithMessageTime:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")];
+        [cell.timeLabel setTextColor:[UIColor grayColor]];
+        [cell.timeLabel setFont:[UIFont systemFontOfSize:13]];
+
+    }else{
+        cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterInfo")];
+        CGSize nameSize = [cell.nameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.nameLable.frame = CGRectMake(60, 20, nameSize.width, 20);
+        cell.sexImageView.hidden = YES;
         NSString * imageIds=  [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"characterImg")];
         cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
         cell.timeLabel.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(tempDict, @"value")];
-        [cell.timeLabel setTextColor:[UIColor blueColor]];
+        [cell.timeLabel setTextColor:UIColorFromRGBA(0x0077ff,1.0)];
         [cell.timeLabel setFont:[UIFont systemFontOfSize:17]];
     }
     return cell;

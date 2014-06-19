@@ -700,6 +700,7 @@ typedef enum : NSUInteger {
                 for (int i=0; i<m_dataArray.count; i++) {
                     m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
                 }
+                
                 [self saveinfoToUserDefaults:m_dataArray];
                 
             }else{

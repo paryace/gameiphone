@@ -39,7 +39,7 @@
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     
-    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],self.realm,self.character,self.gameId];
+    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@&from=from_client_ios",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],self.realm,self.character,self.gameId];
     NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
@@ -76,6 +76,17 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
+-(void)AuthSuccess
+{
+    if (self.isComeFromFirstOpen) {
+        [self dismissViewControllerAnimated:YES completion:^{
+            [self showMessageWindowWithContent:@"认证成功" imageType:0];
+        }];
+    }
+}
+
+
+
 
 //- (void)getDataByNet
 //{

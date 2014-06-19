@@ -723,7 +723,11 @@ static GameCommon *my_gameCommon = NULL;
         if (!arr||![arr isKindOfClass:[NSArray class]]) {
             [[TempData sharedInstance]isBindingRolesWithBool:NO];
         }else{
-            [[TempData sharedInstance]isBindingRolesWithBool:YES];
+            if (arr.count>0) {
+                [[TempData sharedInstance]isBindingRolesWithBool:YES];
+            }else{
+                [[TempData sharedInstance]isBindingRolesWithBool:NO];  
+            }
         }
         }
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];

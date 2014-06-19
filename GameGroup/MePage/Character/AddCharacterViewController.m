@@ -421,6 +421,8 @@
             UITextField *tf = (UITextField *)[self.view viewWithTag:1];
             UITextField*tf1 = (UITextField *)[self.view viewWithTag:2];
             authVC.realm = tf.text;
+            authVC.isComeFromFirstOpen = NO;
+
             authVC.character =tf1.text;
             authVC.authDelegate = self;
             [self.navigationController pushViewController:authVC animated:YES];
