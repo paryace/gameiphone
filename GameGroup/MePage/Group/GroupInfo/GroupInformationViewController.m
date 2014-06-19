@@ -525,23 +525,18 @@
         if (m_mainDict&&[m_mainDict allKeys].count>0) {
             cell.titleLabel.text = @"群介绍";
             cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
-            
-            CGSize size = [cell.contentLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 320) lineBreakMode:NSLineBreakByWordWrapping];
-            
-            float height1 = 0.0;
-            if (size.height<40) {
-                height1 = 40;
-            }else{
-                height1 =size.height;
-            }
 
-            cell.contentLabel.frame = CGRectMake(80, 5, 210,height1);
+            CGSize sizeThatFits = [cell.contentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
+            float height1= sizeThatFits.height;
+            cell.contentLabel.frame = CGRectMake(80, 10, 210, height1);
+            
+            
             cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
             if (cell.photoArray.count==0) {
-                cell.photoView.frame =  CGRectMake(80, height1+5, 210, 0);
+                cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, 0);
             }else{
                 NSInteger photoCount = (cell.photoArray.count-1)/3+1;
-                cell.photoView.frame =  CGRectMake(80, height1+5, 210, photoCount*68+photoCount*2);
+                cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, photoCount*68+photoCount*2);
             }
         }
         return cell;
@@ -582,7 +577,6 @@
 {
     NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
     if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
-        CGSize size1 = [KISDictionaryHaveKey(m_mainDict, @"info") sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT, 250) lineBreakMode:NSLineBreakByCharWrapping];
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
     switch (indexPath.row) {
         case 0:
@@ -601,13 +595,16 @@
             }
             break;
          case 3:
-            NSLog(@"--------%d",photoArray.count/3);
+        {
+            GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
+            float heigth = cell.contentLabel.frame.size.height;
             if (photoArray.count==0) {
-                return (size1.height<40?40:size1.height)+5;
+                return 10+heigth+10;
             }else{
                 NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
-                return photoCount*68+photoCount*2+(size1.height<40?40:size1.height)+10;
+                return photoCount*68+photoCount*2+heigth+10+10;
             }
+        }
             break;
      
         default:
