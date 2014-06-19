@@ -18,6 +18,8 @@
     NSMutableArray *m_dataArray;
     UIButton *m_okButton;
     NSString *m_realmStr;
+    UIButton* findPasButton;
+    UIButton* registerButton;
 }
 @end
 
@@ -37,6 +39,9 @@
     [super viewDidLoad];
     self.navigationController.navigationBarHidden = YES;
     [self setTopViewWithTitle:@"绑定角色" withBackButton:NO];
+    UIImageView *iageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 28)];
+    iageView.image = KUIImage(@"registerStep3");
+    [self.view addSubview:iageView];
     
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
     m_dataArray =[NSMutableArray array];
@@ -53,14 +58,17 @@
         [gameInfoArray addObjectsFromArray:array];
     }
     
-    [self setStep_2View];
     
+    [self setStep_2View];
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+  
     // Do any additional setup after loading the view.
 }
 #pragma mark 第二步
 - (void)setStep_2View
 {
-    UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX, 300, 50)];
+    UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+28, 300, 50)];
     topLabel.numberOfLines = 2;
     topLabel.font = [UIFont boldSystemFontOfSize:12.0];
     topLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
@@ -70,7 +78,7 @@
     
     
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+60, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+88, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.scrollEnabled = NO;
@@ -89,17 +97,17 @@
     rb_server.tintColor = [UIColor blackColor];
     toolbar_server1.items = @[rb_server];
     
-    UIButton* step2Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 230, 300, 30)];
-    [step2Button setBackgroundImage:KUIImage(@"bindingrole") forState:UIControlStateNormal];
+    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, startX +200, 300, 30)];
+    [m_okButton setBackgroundImage:KUIImage(@"bindingrole") forState:UIControlStateNormal];
 //    [step2Button setBackgroundImage:KUIImage(@"zhuce_click") forState:UIControlStateHighlighted];
     //    [step2Button setTitle:@"绑定上述角色" forState:UIControlStateNormal];
-    [step2Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    step2Button.backgroundColor = [UIColor clearColor];
-    [step2Button addTarget:self action:@selector(step2ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:step2Button];
+    [m_okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    m_okButton.backgroundColor = [UIColor clearColor];
+    [m_okButton addTarget:self action:@selector(step2ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_okButton];
     
     
-    UIButton* findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 210 + startX, 80, 40)];
+    findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 238 + startX, 80, 40)];
     [findPasButton setTitle:@"退出登录" forState:UIControlStateNormal];
     [findPasButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     findPasButton.backgroundColor = [UIColor clearColor];
@@ -107,7 +115,7 @@
     [findPasButton addTarget:self action:@selector(backToRegister:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:findPasButton];
     
-    UIButton* registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 210 + startX, 100, 40)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 238 + startX, 100, 40)];
     [registerButton setTitle:@"|     遇到问题" forState:UIControlStateNormal];
     [registerButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     registerButton.backgroundColor = [UIColor clearColor];
@@ -117,6 +125,13 @@
 
     
 }
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    
+    [textField resignFirstResponder];
+    return YES;
+}
+
 -(void)hitRegisterButton:(id)sender
 {
     
@@ -137,12 +152,12 @@
         [m_dataArray addObjectsFromArray:sarchArray];
         
         m_okButton.hidden = NO;
-        m_myTableView.frame = CGRectMake(0, startX+60, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 300, 40);
+        m_myTableView.frame = CGRectMake(0, startX+60+28, 320, 44*m_dataArray.count);
+        m_okButton.frame = CGRectMake(10, startX+74+28+44*m_dataArray.count, 300, 30);
+        registerButton.frame = CGRectMake(150,  startX+124+28+44*m_dataArray.count, 100, 40);
+        findPasButton.frame = CGRectMake(70,  startX+124+28+44*m_dataArray.count, 80, 40);
         [m_myTableView reloadData];
     }
-    
-    
 }
 -(void)backToRegister:(id)sender
 {
@@ -222,12 +237,53 @@
         NSDictionary* dic = responseObject;
         NSLog(@"%@", dic);
         
+        hud.labelText = @"添加中...";
+        
+        NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
+        [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+        [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
+        
+        NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
+        [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [body_two setObject:params_two forKey:@"params"];
+        [body_two setObject:@"118" forKey:@"method"];
+        [body_two setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+        
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [hud hide:YES];
+            
+            NSLog(@"%@", responseObject);
+            
+            
+            [self dismissViewControllerAnimated:YES completion:^{
+            [self showMessageWindowWithContent:@"添加成功" imageType:0];
+ 
+            }];
+            
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+            [hud hide:YES];
+        }];
+
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"该角色已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
+                alert.tag =1001;
                 [alert show];
+            }
+            else if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"200001"]){
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"继续", nil];
+                alert.tag =1002;
+                [alert show];
+ 
             }
             else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -240,6 +296,7 @@
         [hud hide:YES];
     }];
 }
+
 #pragma mark 选择器
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
@@ -319,17 +376,82 @@
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    AuthViewController* authVC = [[AuthViewController alloc] init];
-    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
-    authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
-    authVC.realm = m_realmStr;
-    UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
+    if (alertView.tag ==1001) {
+        if (buttonIndex ==1) {
+            AuthViewController* authVC = [[AuthViewController alloc] init];
+            NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
+            authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+            authVC.realm = m_realmStr;
+            UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
+            authVC.isComeFromFirstOpen = YES;
+            authVC.character = tf.text;
+            
+            [self.navigationController pushViewController:authVC animated:YES];
+        }
+    }else if(alertView.tag ==1002){
+        if (buttonIndex ==1) {
+            [self bindingnonerole];
+        }
+    }
+}
 
-    authVC.character = tf.text;
-    
-    [self.navigationController pushViewController:authVC animated:YES];
+-(void)bindingnonerole
+{
+    NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
+    for (int i =0; i<m_dataArray.count; i++) {
+        NSDictionary *dic = m_dataArray[i];
+        if (i==0) {
+            [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+        }else{
+            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
+            if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+                return;
+            }
+            [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+        }
+    }
+    [params setObject:@"register" forKey:@"type"];
+    NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
+    [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [body setObject:params forKey:@"params"];
+    [body setObject:@"260" forKey:@"method"];
+    [body setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]forKey:@"token"];
+    hud.labelText = @"获取中...";
+    [hud show:YES];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self dismissViewControllerAnimated:YES completion:^{
+            
+        }];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"该角色已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
+                alert.tag =1001;
+                [alert show];
+            }
+            else if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"200001"]){
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alert.tag =1002;
+                [alert show];
+                
+            }
+            else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }else{
+            [self showAlertViewWithTitle:@"提示" message:@"绑定角色失败,请检查网络" buttonTitle:@"确定"];
+        }
+        [hud hide:YES];
+    }];
 
 }
+
+
 
 - (void)didReceiveMemoryWarning
 {

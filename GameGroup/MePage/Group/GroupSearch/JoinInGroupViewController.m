@@ -68,6 +68,11 @@
     
     [self buildRoleView];
     
+    
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(gameInfoArray[0], @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(gameInfoArray[0], @"id")],@"characterId", nil];
+
+    [self getCardWithNetWithDic:dic];
+    
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 140, 320, 20)];
     lable.backgroundColor = [UIColor clearColor];
     lable.text = @"根据角色为您推荐以下分类";
@@ -121,6 +126,15 @@
     
     [myView setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
     [myView setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+    UIView *uplineView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 1)];
+    uplineView.backgroundColor = [UIColor grayColor];
+    [myView addSubview:uplineView];
+    
+    UIView *downView =[[ UIView alloc]initWithFrame:CGRectMake(0, 65, 320, 1)];
+    downView.backgroundColor =[UIColor grayColor];
+    [myView addSubview:downView];
+    
+    
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     clazzImg.backgroundColor = [UIColor clearColor];
     clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
@@ -189,7 +203,6 @@
     [myView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didClickChangeRole:)]];
     
      [m_baseScrollView addSubview:myView];
-
 }
 //<<<<<<< HEAD
 //-(void)didClickChangeRole:(id)sender
@@ -244,7 +257,7 @@
             listDict  = responseObject;
            
             
-            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近的群组",@"tagId":@"nearby"},@{@"tagName":@"热门的群组",@"tagId":@"hot"}, nil];
+            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"最热组织",@"tagId":@"hot"}, nil];
             
             [listDict setObject:array forKey:@"aaaa"];
             

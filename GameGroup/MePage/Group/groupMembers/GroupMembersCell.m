@@ -29,10 +29,10 @@
         [self.nameLable setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.nameLable];
         
-        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(110, 23, 20, 20)];
+        self.sexImageView = [[UIImageView alloc] initWithFrame:CGRectMake(200, 23, 20, 20)];
         self.sexImageView.backgroundColor = [UIColor clearColor];
         [self.headImageView addSubview:self.sexImageView];
-        [self.bgView addSubview:self.sexImageView];
+        [self addSubview:self.sexImageView];
         
         self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(250, 10, 60, 40)];
         [self.timeLabel setTextColor:[UIColor grayColor]];

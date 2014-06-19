@@ -14,7 +14,7 @@
 @interface CardViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,strong)NSMutableDictionary *listDict;
 @property(nonatomic,assign)id<CardListDelegate>myDelegate;
-
+@property(nonatomic,strong)NSMutableDictionary *infoDict;
 @end
 @protocol CardListDelegate <NSObject>
 

@@ -68,6 +68,7 @@
 {
     CardViewController *cardView  =[[ CardViewController alloc]init];
     cardView.myDelegate = self;
+    cardView.infoDict = dic;
     [self.navigationController pushViewController:cardView animated:YES];
 }
 -(void)didClickCardImgWithDel:(AddGroupView *)gro

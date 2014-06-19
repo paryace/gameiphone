@@ -566,6 +566,8 @@
                 if (buttonIndex != alertView.cancelButtonIndex) {
                     AuthViewController* authVC = [[AuthViewController alloc] init];
                     authVC.gameId =self.gameId;
+                    authVC.isComeFromFirstOpen = NO;
+
                     UITextField *tf = (UITextField *)[self.view viewWithTag:1];
                     UITextField*tf1 = (UITextField *)[self.view viewWithTag:2];
                     authVC.realm = tf.text;
