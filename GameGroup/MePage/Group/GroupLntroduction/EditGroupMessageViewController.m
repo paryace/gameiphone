@@ -13,9 +13,10 @@
     UITextView*   m_contentTextView;
     UILabel *       m_ziNumLabel;
     NSInteger      m_maxZiShu;
-    UIButton *   okButton;
     UIDatePicker* m_birthDayPick;
     UIScrollView *scV;
+    
+    UILabel *       placeholderL;
 
     
     UICollectionViewFlowLayout *m_layout;
@@ -29,7 +30,6 @@
     
     
 }
-@property (nonatomic,strong)NSMutableArray* pictureArray;
 @property (nonatomic,strong)UIActionSheet* addActionSheet;
 @property (nonatomic,strong)UIActionSheet* deleteActionSheet;
 
@@ -44,68 +44,78 @@
     
     scV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     scV.scrollEnabled = YES;
-    scV.contentSize=CGSizeMake(320, 550);
+    scV.contentSize=CGSizeMake(320, 500);
     [self.view addSubview:scV];
     
     m_maxZiShu = 100;
+    self.isChang =NO;
     
-    [self setTopViewWithTitle:@"群简介" withBackButton:YES];
+    [self setTopViewWithTitle:@"编辑群介绍" withBackButton:NO];
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+
+    
+    UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [addButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [addButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    [self.view addSubview:addButton];
+    [addButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    
     uploadImagePathArray = [NSMutableArray array];
     reponseStrArray = [[NSMutableDictionary dictionary] init];
     deleteImageIdArray = [NSMutableArray array];
     
-    m_contentTextView = [[UITextView alloc] initWithFrame: CGRectMake(10, 10 + startX, 300, 90)];
+    UIView * bgImage = [[UIView alloc] initWithFrame:CGRectMake(5, 10, 310, 110)];
+    bgImage.backgroundColor = [UIColor whiteColor];
+    [scV addSubview:bgImage];
+    
+    m_contentTextView = [[UITextView alloc] initWithFrame: CGRectMake(0, 0, 310, 90)];
     m_contentTextView.backgroundColor = [UIColor whiteColor];
     m_contentTextView.font = [UIFont boldSystemFontOfSize:15.0];
     m_contentTextView.delegate = self;
-    m_contentTextView.layer.cornerRadius = 5;
-    m_contentTextView.layer.masksToBounds = YES;
     m_contentTextView.text = self.placeHold ? self.placeHold : @"";
-    [scV addSubview:m_contentTextView];
-    [m_contentTextView becomeFirstResponder];
+    [bgImage addSubview:m_contentTextView];
     
     
-    m_ziNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 105 + startX, 150, 20)];
+    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 200, 20)];
+    placeholderL.backgroundColor = [UIColor clearColor];
+    placeholderL.textColor = [UIColor grayColor];
+    if (![GameCommon isEmtity:self.placeHold]) {
+        placeholderL.text = @"";
+    }else{
+        placeholderL.text = @"在这里输入群的简介信息……";
+    }
+    placeholderL.font = [UIFont systemFontOfSize:13.0];
+    [scV addSubview:placeholderL];
+    
+    m_ziNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 100, 150, 20)];
     m_ziNumLabel.textColor = [UIColor grayColor];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     m_ziNumLabel.font = [UIFont systemFontOfSize:12.0f];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
-    m_ziNumLabel.text = [NSString stringWithFormat:@"还可输入%d个字", m_maxZiShu];
+    m_ziNumLabel.text = @"";
     [scV addSubview:m_ziNumLabel];
     
     [self buildCollectionView];
     [self refreshZiLabelText];
-    
-    okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 430 + startX, 300, 40)];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    [okButton setTitle:@"完 成" forState:UIControlStateNormal];
-    [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    okButton.backgroundColor = [UIColor clearColor];
-    [okButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [scV addSubview:okButton];
-    [self refrekoButton];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"Login...";
 }
 
--(void)refrekoButton
-{
-    NSInteger photoCount = (self.headImgArray.count+1-1)/3+1;
-    if (self.headImgArray.count>=9) {
-        photoCount=3;
-    }
-    okButton.frame =CGRectMake(10, startX+130+photoCount*(292/3)+photoCount*2+10, 300, 40);
-
-}
 -(void)buildCollectionView
 {
     m_layout = [[UICollectionViewFlowLayout alloc]init];
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =2;
     m_layout.itemSize = CGSizeMake(292/3, 292/3);
-    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 290) collectionViewLayout:m_layout];
+    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 130, 300, 290) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     m_photoCollectionView.scrollEnabled = NO;
     m_photoCollectionView.delegate = self;
@@ -176,16 +186,10 @@
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_contentTextView.text];
-    if(ziNum >= 0)
-    {
-        m_ziNumLabel.text = [NSString stringWithFormat:@"还可以输入%d字", ziNum];
-        m_ziNumLabel.textColor = [UIColor grayColor];
+    if (ziNum<0) {
+        ziNum=0;
     }
-    else
-    {
-        m_ziNumLabel.text = [NSString stringWithFormat:@"已超过%d字", [[GameCommon shareGameCommon] unicodeLengthOfString:m_contentTextView.text] - m_maxZiShu];
-        m_ziNumLabel.textColor = [UIColor redColor];
-    }
+    m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
 }
 
 
@@ -207,13 +211,13 @@
 #pragma mark 返回
 - (void)backButtonClick:(id)sender
 {
-    if (KISEmptyOrEnter(m_contentTextView.text) || [m_contentTextView.text isEqualToString:self.placeHold]) {
-        [self.navigationController popViewControllerAnimated:YES];
+    if (KISEmptyOrEnter(m_contentTextView.text) || ![m_contentTextView.text isEqualToString:self.placeHold]||self.isChang) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"警告" message:@"您这样返回是没有保存的喔！" delegate:self cancelButtonTitle:@"返回"otherButtonTitles:@"确定", nil];
+        alert.tag = 345;
+        [alert show];
         return;
     }
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"警告" message:@"您这样返回是没有保存的喔！" delegate:self cancelButtonTitle:@"返回"otherButtonTitles:@"确定", nil];
-    alert.tag = 345;
-    [alert show];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -236,6 +240,27 @@
     [m_contentTextView resignFirstResponder];
 }
 
+#pragma mark - text view delegate
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if (textView.text.length>0 || text.length != 0) {
+        placeholderL.text = @"";
+    }else{
+        placeholderL.text = @"在这里输入群的简介信息……";
+    }
+    
+    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+    if(res >= 0){
+        return YES;
+    }
+    else{
+        [self showAlertViewWithTitle:@"提示" message:@"最多不能超过100个字" buttonTitle:@"确定"];
+        return NO;
+    }
+}
+
+
 -(void)conbackImage
 {
     if (self.delegate) {
@@ -252,6 +277,7 @@
 -(void)photoWallDelPhotoAtIndex:(NSInteger)index
 {
     NSLog(@"%d",index);
+    self.isChang = YES;
     NSMutableArray * tempH = [NSMutableArray arrayWithArray:self.headImgArray];
     NSString * tempStr = [tempH objectAtIndex:index];
     if ([tempStr rangeOfString:@"<local>"].location!=NSNotFound) {
@@ -268,7 +294,6 @@
     [tempH removeObjectAtIndex:index];
     self.headImgArray = tempH;
     [m_photoCollectionView reloadData];
-    [self refrekoButton];
 }
 
 
@@ -394,6 +419,7 @@
     if (self.headImgArray.count>=9) {
         return;
     }
+    self.isChang = YES;
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
     NSString * imageName=[NSString stringWithFormat:@"%d_group.jpg",self.headImgArray.count];
     [self writeImageToFile:upImage ImageName:imageName];//完整路径
@@ -411,7 +437,6 @@
     
     self.headImgArray = tempArray;
     [m_photoCollectionView reloadData];
-    [self refrekoButton];
     [self dismissViewControllerAnimated:YES completion:^{
     }];
 }

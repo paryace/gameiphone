@@ -192,16 +192,6 @@
         [alert show];
         return;
     }
-    
-    //判断字数是否超出限制
-//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:_dynamicTV.text];
-//    if (ziNum<0) {
-//        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您发布的字数已超出限制" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//        alert.tag = 67;
-//        [alert show];
-//        return;
-//    }
-
     [hud show:YES];
     [self.dynamicTV resignFirstResponder];
     

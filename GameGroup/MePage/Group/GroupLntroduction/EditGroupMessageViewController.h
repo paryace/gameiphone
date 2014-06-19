@@ -19,6 +19,7 @@ typedef  enum
 @property(nonatomic,strong)NSArray*    headImgArray;
 @property(nonatomic,strong)NSString* placeHold;
 @property(nonatomic,assign)id<GroupEditMessageDelegate>delegate;
+@property (nonatomic, assign) BOOL isChang;
 
 @end
 @protocol GroupEditMessageDelegate <NSObject>

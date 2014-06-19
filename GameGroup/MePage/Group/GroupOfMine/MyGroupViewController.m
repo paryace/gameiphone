@@ -129,11 +129,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self getGroupListFromNet];
 }
 
-//-(void)backButtonClick:(id)sender
-//{
-//    [self.navigationController popToRootViewControllerAnimated:YES];
-//}
-
 #pragma mark ---创建群
 -(void)didClickCreateGroup:(id)sender
 {
@@ -298,11 +293,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
         if (dict) {
-            ((ReusableView *)titleView).label.hidden=NO;
-            ((ReusableView *)titleView).contentLabel.hidden=NO;
-            ((ReusableView *)titleView).timeLabel.hidden=NO;
-            ((ReusableView *)titleView).headImageView.hidden=NO;
-            ((ReusableView *)titleView).topLabel.hidden=YES;
             [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
             ((ReusableView *)titleView).topBtn.tag=123;
             
@@ -312,25 +302,23 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
             ((ReusableView *)titleView).label.text = billboard;
             ((ReusableView *)titleView).contentLabel.text = groupName;
-            ((ReusableView *)titleView).timeLabel.text = [NSString stringWithFormat:@"%@", [self getMsgTime:createDate]];
-            CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-            ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
+            ((ReusableView *)titleView).timeLabel.text = [GameCommon getTimeWithMessageTime:createDate];
             if ([GameCommon isEmtity:backgroundImg]) {
                 ((ReusableView *)titleView).headImageView.imageURL = nil;
             }else{
                 ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageStr2:backgroundImg];
             }
-            
+            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         }else{
-            ((ReusableView *)titleView).label.hidden=YES;
-            ((ReusableView *)titleView).contentLabel.hidden=YES;
-            ((ReusableView *)titleView).timeLabel.hidden=YES;
-            ((ReusableView *)titleView).headImageView.hidden=YES;
-            ((ReusableView *)titleView).topBtn.hidden=NO;
-            ((ReusableView *)titleView).topLabel.hidden=NO;
-            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
+            ((ReusableView *)titleView).label.text = @"还没有公告";
+            ((ReusableView *)titleView).contentLabel.text = @"您还没有加入任何组织";
+            ((ReusableView *)titleView).timeLabel.text = @"";
+            ((ReusableView *)titleView).headImageView.image = KUIImage(@"group_billboard");
+//            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
         }
-        [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
+        
     }
     return titleView;
 }
@@ -340,15 +328,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     BillboardViewController *joinIn = [[BillboardViewController alloc]init];
     [self.navigationController pushViewController:joinIn animated:YES];
 }
-//格式化时间
--(NSString*)getMsgTime:(NSString*)senderTime
-{
-    NSString *time = [senderTime substringToIndex:10];
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
-    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
-    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
-}
+
 -(void)enterSearchGroupPage:(id)sender
 {
     JoinInGroupViewController *joinIn = [[JoinInGroupViewController alloc]init];

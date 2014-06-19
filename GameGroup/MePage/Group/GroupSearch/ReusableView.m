@@ -17,13 +17,11 @@
         self.backgroundColor = [UIColor colorWithRed:232/255.0f green:232/255.0f blue:232/255.0f alpha:1];
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
         [self addSubview:self.topBtn];
-        self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 15, 40, 40)];
+        self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 50, 50)];
         self.headImageView.placeholderImage = KUIImage(@"group_icon");
         [self.topBtn addSubview:self.headImageView];
         
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 320-80, 40)];
-        self.label.autoresizingMask = UIViewAutoresizingFlexibleWidth |
-        UIViewAutoresizingFlexibleHeight;
+        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 320-80, 40)];
         self.label.numberOfLines =2;
         self.label.backgroundColor = [UIColor clearColor];
         self.label.textAlignment = NSTextAlignmentLeft;
@@ -58,7 +56,10 @@
         self.topLabel.numberOfLines=2;
         self.topLabel.text=@"点击这里，可以通过标签找到与你兴趣相同得群组织，立即收获游戏小伙伴";
         self.topLabel.textColor = [UIColor grayColor];
-        [self.topBtn addSubview:self.topLabel];
+//        [self.topBtn addSubview:self.topLabel];
+        UIImageView * lineImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 71, 320, 1)];
+        lineImage.image = KUIImage(@"my_group_line");
+        [self.topBtn addSubview:lineImage];
         [self addSubview:self.topBtn];
         
     }

@@ -239,13 +239,11 @@
     //建立朋友圈view
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
     bottomView.backgroundColor =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.6];
-//    [bottomView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
-
     [self.view addSubview:bottomView];
     
 
     
-    UIView *groupView = [[UIView alloc]initWithFrame:CGRectMake(80, 0 , 100, 60)];
+    UIView *groupView = [[UIView alloc]initWithFrame:CGRectMake(61, 0 , 99, 60)];
     groupView.backgroundColor =[UIColor clearColor];
     [groupView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
     [bottomView addSubview:groupView];
@@ -267,29 +265,25 @@
     [groupView addSubview:groupMsgTitleLable];
     
     UIImageView * lineImage = [[UIImageView alloc] initWithFrame:CGRectMake(165, 10, 1, 40)];
-    lineImage.backgroundColor= UIColorFromRGBA(0xf3f3f3, 1);
+    lineImage.image = KUIImage(@"find_line");
     [bottomView addSubview:lineImage];
     
-    UIView *circleView = [[UIView alloc]initWithFrame:CGRectMake(181, 0 , 100, 60)];
+    UIView *circleView = [[UIView alloc]initWithFrame:CGRectMake(161, 0 , 100, 60)];
     circleView.backgroundColor =[UIColor clearColor];
     [circleView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     [bottomView addSubview:circleView];
     
-    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
+    UILabel *bottomTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 20)];
     bottomTitleLabel.backgroundColor = [UIColor clearColor];
     bottomTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     bottomTitleLabel.text  = @"朋友圈";
     bottomTitleLabel.textColor = [UIColor whiteColor];
-    bottomTitleLabel.textAlignment = NSTextAlignmentLeft;
+    bottomTitleLabel.textAlignment = NSTextAlignmentRight;
     [circleView addSubview:bottomTitleLabel];
-    
-
 
     
-    
-    
-    UIImageView *iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 80, 60)];
-    iconImageView.image = KUIImage(@"circleIcon");
+    UIButton *iconImageView = [[UIButton alloc]initWithFrame:CGRectMake(13.5, 13.5, 33, 33)];
+    [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     [bottomView addSubview:iconImageView];
     
     //红点 - 公告
@@ -337,7 +331,7 @@
     
     commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
-    commentLabel.textAlignment = NSTextAlignmentLeft;
+    commentLabel.textAlignment = NSTextAlignmentRight;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
     NSString *commStr1 = @"";
@@ -375,7 +369,7 @@
     
     
     headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
-    headImgView.frame = CGRectMake(260, 10, 40, 40);
+    headImgView.frame = CGRectMake(320-50, 10, 40, 40);
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
         

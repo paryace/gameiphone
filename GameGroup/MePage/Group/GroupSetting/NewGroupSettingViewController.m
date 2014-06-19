@@ -63,6 +63,25 @@ typedef enum : NSUInteger {
     m_rolePickView.delegate = self;
     m_rolePickView.showsSelectionIndicator = YES;
     
+    soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(250-25-10, 15, 25, 20)];
+    soundimageView.image = KUIImage(@"nor_soundSong");
+    soundimageView.backgroundColor = [UIColor clearColor];
+    
+    msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(320-25-8-50, 15, 40, 20)];
+    msgHintLable.backgroundColor = [UIColor clearColor];
+    msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
+    msgHintLable.text = @"无声";
+    msgHintLable.font =[ UIFont systemFontOfSize:12];
+    
+    
+    NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
+    if ([GameCommon isEmtity:groupMsgSettingState]) {
+        groupMsgSettingState=@"0";
+    }
+    NSString * message = [self getCellMsgByState:groupMsgSettingState];
+    [self setSettingMsg:message];
+    soundimageView.image= KUIImage([self getMsgIcon:groupMsgSettingState]);
+    
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"Login...";
@@ -178,16 +197,7 @@ typedef enum : NSUInteger {
             tlb.font =[ UIFont systemFontOfSize:14];
             [cell.contentView addSubview:tlb];
             
-            soundimageView=[[UIImageView alloc] initWithFrame:CGRectMake(250-25-10, 15, 25, 20)];
-            soundimageView.image = KUIImage(@"nor_soundSong");
-            soundimageView.backgroundColor = [UIColor clearColor];
            [cell.contentView addSubview:soundimageView];
-            
-            msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(320-25-8-50, 15, 40, 20)];
-            msgHintLable.backgroundColor = [UIColor clearColor];
-            msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
-            msgHintLable.text = @"无声";
-            msgHintLable.font =[ UIFont systemFontOfSize:12];
             [cell.contentView addSubview:msgHintLable];
             
             return cell;
