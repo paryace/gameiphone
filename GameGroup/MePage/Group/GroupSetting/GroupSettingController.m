@@ -481,8 +481,6 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
 }
 
-
-
 //设置群消息提示
 -(void)settingMsgHint:(NSString*)state
 {
@@ -548,8 +546,6 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        
-        
         [self showMessageWindowWithContent:@"修改成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

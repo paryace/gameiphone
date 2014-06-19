@@ -17,6 +17,8 @@
 #import "GroupLeaveViewController.h"
 #import "CreateTimeCell.h"
 #import "SearchGroupViewController.h"
+
+#import "NewGroupSettingViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -100,8 +102,10 @@
             kkchat.type = @"group";
             [self.navigationController pushViewController:kkchat animated:YES];
         }else{
-            NSLog(@"群设置");
-            GroupSettingController *gr = [[GroupSettingController alloc]init];
+            NSLog(@"群设置");//
+//            GroupSettingController *gr = [[GroupSettingController alloc]init];
+            
+            NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
             gr.groupId = self.groupId;
             gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
             gr.shiptypeCount = self.shiptypeCount;
@@ -117,10 +121,13 @@
            [self.navigationController pushViewController:kkchat animated:YES];
        }
        else if(sender.tag ==101){
-           GroupSettingController *gr = [[GroupSettingController alloc]init];
+//           GroupSettingController *gr = [[GroupSettingController alloc]init];
+           
+           NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
+
            gr.groupId = self.groupId;
            gr.shiptypeCount = self.shiptypeCount;
-           [self.navigationController pushViewController:gr animated:YES];
+           [self.navigationController pushViewController:gr animated:YES];//
            NSLog(@"群设置");
        }else{
            NSLog(@"退出群");
@@ -134,7 +141,9 @@
            kkchat.type = @"group";
            [self.navigationController pushViewController:kkchat animated:YES];
        }else{
-           GroupSettingController *gr = [[GroupSettingController alloc]init];
+//           GroupSettingController *gr = [[GroupSettingController alloc]init];
+           NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
+
            gr.groupId = self.groupId;
            gr.shiptypeCount = self.shiptypeCount;
            [self.navigationController pushViewController:gr animated:YES];
