@@ -46,22 +46,40 @@
     [super viewDidLoad];
     
     [[GameCommon shareGameCommon]firtOpen];
-    
-    if (iPhone5) {
-        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Default-568h@2x.png"]];
-        splashImageView.frame=CGRectMake(0, 0, 320, self.view.frame.size.height);
-    }
-    else
-    {
-        splashImageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Default.png"]];
-        splashImageView.frame=CGRectMake(0, 0, 320, self.view.frame.size.height);
-    }
+    splashImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height)];
+    splashImageView.image = [self getOpenImage];
+
     [self.view addSubview:splashImageView];
     [self performSelector:@selector(showLoading:) withObject:nil afterDelay:kStartViewShowTime];
-    
-//    [self showLoading:nil];
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
+    [self downloadImageWithID:@""];
+}
+
+-(UIImage*)getOpenImage
+{
+    NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:@"openImage"];
+    if ([GameCommon isEmtity:imageId]) {
+        return [self getDefaultOpenImage];
+    }
+    return [self getOpemImageByImageId:imageId];
+}
+-(UIImage*)getOpemImageByImageId:(NSString*)imageId
+{
+    NSString *openImgPath = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageId]];
+    UIImage *openImage = [[UIImage alloc]initWithContentsOfFile:openImgPath];
+    if (openImage&&![openImage isEqual:@""]) {
+        return [NetManager image2:openImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
+    }
+    return [self getDefaultOpenImage];
+}
+
+-(UIImage*)getDefaultOpenImage
+{
+    if (iPhone5) {
+        return KUIImage(@"Default-568h@2x.png");
+    }
+    return KUIImage(@"Default.png");
 }
 
 #pragma mark 首页或介绍页
@@ -98,34 +116,24 @@
         }];
 }
 
-
-//#pragma mark 下载开机图
-//-(void)downloadImageWithID:(NSString *)imageId Type:(NSString *)theType PicName:(NSString *)picName
-//{
-//    [NetManager downloadImageWithBaseURLStr:imageId ImageId:@"" success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-//        if ([theType isEqualToString:@"open"]) {
-//            NSString *path = [RootDocPath stringByAppendingPathComponent:@"OpenImages"];
-//            NSFileManager *fm = [NSFileManager defaultManager];
-//            if([fm fileExistsAtPath:path] == NO)
-//            {
-//                [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-//            }
-//            NSString  *openImgPath = [NSString stringWithFormat:@"%@/openImage.jpg",path];
-//            
-//            if ([UIImageJPEGRepresentation(image, 1.0) writeToFile:openImgPath atomically:YES]) {
-//                NSLog(@"success///");
-//                [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:@"OpenImg"];
-//                [[NSUserDefaults standardUserDefaults] synchronize];
-//            }
-//            else
-//            {
-//                NSLog(@"fail");
-//            }
-//        }
-//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-//        
-//    }];
-//}
+#pragma mark 下载开机图
+-(void)downloadImageWithID:(NSString *)imageId
+{
+    
+    imageId = @"D7A84010614F46A5A7DE4DCD0352558B";
+    [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:@"openImage"];
+    NSString * urlStr= [ImageService getImgUrl:imageId];
+    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
+     {
+         NSString * openImgPath=[filePath path];
+         NSFileManager *fm = [NSFileManager defaultManager];
+         if([fm fileExistsAtPath:openImgPath])
+         {
+             UIImage *image = [UIImage imageWithContentsOfFile:openImgPath];
+         }
+     }
+     ];
+}
 
 #pragma mark 获取用户位置
 -(void)getUserLocation
@@ -160,7 +168,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
