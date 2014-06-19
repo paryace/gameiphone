@@ -28,6 +28,7 @@
         self.timeLabel.adjustsFontSizeToFitWidth = YES;
         self.timeLabel.font = [UIFont systemFontOfSize:14];
         self.timeLabel.textAlignment = NSTextAlignmentLeft;
+        self.timeLabel.backgroundColor=[UIColor clearColor];
         [self.contentView addSubview:self.timeLabel];
         
         

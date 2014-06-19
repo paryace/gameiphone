@@ -228,10 +228,10 @@
     memberVC.groupId = self.groupId ;
     [self.navigationController pushViewController:memberVC animated:YES];
 }
-
+//创建屏幕底部按钮
 -(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-(KISHighVersion_7?50:60), 320, (KISHighVersion_7?50:60))];
     [self.view addSubview:view];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {

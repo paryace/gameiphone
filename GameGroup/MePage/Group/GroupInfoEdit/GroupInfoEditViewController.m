@@ -33,7 +33,7 @@
     paramDict  = [NSMutableDictionary dictionary];
     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     
-    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth -startX)];
+    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
@@ -110,6 +110,7 @@
         titleLabel.textColor = [UIColor grayColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.text = @"群分类";
         [cell.contentView addSubview:titleLabel];
         
