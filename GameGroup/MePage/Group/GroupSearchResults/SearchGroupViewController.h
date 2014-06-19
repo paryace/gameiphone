@@ -13,6 +13,7 @@ typedef enum
     SETUP_Tags,
     SETUP_NEARBY,
     SETUP_SAMEREALM,
+    SETUP_HOT,
 }setUpType;
 
 @interface SearchGroupViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>

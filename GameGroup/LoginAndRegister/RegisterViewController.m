@@ -1070,46 +1070,6 @@
         [alterView show];
     }
 }
-//
-//#pragma mark 上传头像
-//- (void)upLoadMyPhoto
-//{
-//    if (m_photoImage != nil)
-//    {
-//       // hud.labelText = @"上传头像中...";
-//        if (_imgID ==nil) {
-//            
-//            
-//            [hud show:YES];
-//            
-//            [NetManager uploadImageWithRegister:m_photoImage WithURLStr:BaseUploadImageUrl ImageName:@"1"  TheController:self  Progress:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite){
-//                hud.labelText = [NSString stringWithFormat:@"%.2f％",((double)totalBytesWritten/(double)totalBytesExpectedToWrite) * 100];
-//            }Success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//                NSLog(@"-------------------------------------%@", responseObject);
-//                [hud hide:YES];
-////                if ([responseObject isKindOfClass:[NSNumber class]]) {
-//                    [self continueStep3Net:[NSString stringWithFormat:@"%@", responseObject]];
-//                    _imgID =[NSString stringWithFormat:@"%@", responseObject];
-////                }
-////                else
-////                    [self continueStep3Net:@""];
-//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                [hud hide:YES];
-//                [self continueStep3Net:@""];
-//            }];
-//        }else {
-//            [self continueStep3Net:_imgID];
-//        }
-//    }
-//    else
-//    {
-//        UIAlertView* alterView = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"尚未设置头像, 头像会更方便的让其它玩家注意到你. 建议您点击返回设置您的头像. 点击确定将忽略" delegate:self cancelButtonTitle:@"返回设置" otherButtonTitles:@"确定", nil];
-//        alterView.tag = 67;
-//        [alterView show];
-//    }
-//}
-
-
 
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent

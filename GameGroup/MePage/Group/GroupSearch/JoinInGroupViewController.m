@@ -28,6 +28,8 @@
     UIScrollView *m_baseScrollView;
     NSMutableArray *gameInfoArray;
     UIView *m_pickView;
+    
+    NSMutableArray *allkeysArr;
 }
 @end
 
@@ -45,10 +47,11 @@
     
     
     m_baseScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
-    m_baseScrollView.contentSize = CGSizeMake(0,600);
+    m_baseScrollView.contentSize = CGSizeMake(0,700);
     [self.view addSubview:m_baseScrollView];
     
     listDict  = [NSMutableDictionary dictionary];
+//    allkeysArr = [NSMutableArray array];
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 20, 300, 40)];
@@ -81,7 +84,7 @@
     m_layout.headerReferenceSize = CGSizeMake(300, 40);
     
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 150, 300, 400) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 150, 300, 500) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     groupCollectionView.scrollEnabled = NO;
     groupCollectionView.delegate = self;
@@ -92,7 +95,6 @@
     groupCollectionView.backgroundColor = [UIColor clearColor];
     [m_baseScrollView addSubview:groupCollectionView];
     
-    [ self getCardWithNet];
 }
 
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
@@ -103,7 +105,14 @@
         [self hideSelectView];
     }
 }
-
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    for(UIView *view in gestureRecognizer.view.subviews){
+        if ([view isKindOfClass:[UIButton class]]) {
+            return NO;
+        }
+    }
+    return YES;
+}
 
 -(void)buildRoleView
 {
@@ -218,16 +227,29 @@
     }
 
 }
--(void)getCardWithNet
+
+#pragma mark ---获取网络请求数据
+-(void)getCardWithNetWithDic:(NSMutableDictionary *)paramDict
 {
+    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"236" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             listDict  = responseObject;
+           
             
+            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近的群组",@"tagId":@"nearby"},@{@"tagName":@"热门的群组",@"tagId":@"hot"}, nil];
+            
+            [listDict setObject:array forKey:@"aaaa"];
+            
+            allkeysArr = [NSMutableArray arrayWithArray:[listDict allKeys]];
+            [allkeysArr sortUsingSelector:@selector(compare:)];
             [groupCollectionView reloadData];
         }
         
@@ -276,7 +298,8 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSArray *arr = [listDict allKeys];
+    NSMutableArray *arr =[NSMutableArray arrayWithArray:[listDict allKeys]];
+    [arr sortUsingSelector:@selector(compare:)];
     NSArray *arry =[listDict objectForKey:arr[section]];
     return arry.count;
 }
@@ -286,7 +309,9 @@
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
-    NSArray *arr = [listDict allKeys];
+    NSMutableArray *arr =[NSMutableArray arrayWithArray:[listDict allKeys]];
+    [arr sortUsingSelector:@selector(compare:)];
+    
     NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
     
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
@@ -305,7 +330,12 @@
     
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headViewww" forIndexPath:indexPath];
-        ((CardTitleView *)titleView).cardTitleLabel.text =[[listDict allKeys]objectAtIndex:indexPath.section];
+        NSMutableArray *arr = [NSMutableArray arrayWithArray:[listDict allKeys]];
+        [arr sortUsingSelector:@selector(compare:)];
+        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+
+        arr[0] = [NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]];
+        ((CardTitleView *)titleView).cardTitleLabel.text =[arr objectAtIndex:indexPath.section];
     }
     return titleView;
 }
@@ -313,14 +343,37 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *arr = [listDict allKeys];
+    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+
+    
+    NSMutableArray *arr = [NSMutableArray arrayWithArray:[listDict allKeys]];
+    [arr sortUsingSelector:@selector(compare:)];
+
     NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
     
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
-
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
+
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"realm"]) {
+        groupView.ComeType =SETUP_SAMEREALM;
+        groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+        groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
+    }
+    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"nearby"]) {
+        ;
+        groupView.ComeType  = SETUP_NEARBY;
+        groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+    }
+    else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"hot"]) {
+        ;
+        groupView.ComeType = SETUP_HOT;
+        groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+
+    }else{
+
     groupView.ComeType = SETUP_Tags;
     groupView.tagsId =KISDictionaryHaveKey(dic, @"tagId");
+    }
     [self.navigationController pushViewController:groupView animated:YES];
 
     
@@ -348,7 +401,9 @@
         }else{
             authBg.image = KUIImage(@"chara_auth_1");
         }
-
+        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
+        
+        [self getCardWithNetWithDic:dic];
     }
 }
 

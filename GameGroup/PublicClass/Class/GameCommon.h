@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
 @interface GameCommon : NSObject
 
 @property(nonatomic, assign) BOOL haveNet;//是否有网
@@ -80,5 +79,5 @@
 
 //去掉tableview的多余分割线(下划线)
 + (void)setExtraCellLineHidden: (UITableView *)tableView;
-
+-(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where;
 @end
