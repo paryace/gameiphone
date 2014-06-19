@@ -734,6 +734,7 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     CircleHeadViewController *circleVC  = [[CircleHeadViewController alloc]init];
     circleVC.imageStr = nil;
+    circleVC.msgCount = 4;
     circleVC.userId =[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     [self.navigationController pushViewController:circleVC animated:YES];
     //清除红点

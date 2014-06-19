@@ -18,6 +18,7 @@
 #import "UserManager.h"
 #import "DSOfflineZan.h"
 #import "InterestingPerpleViewController.h"
+#import "FunEntranceCell.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -703,6 +704,12 @@ typedef enum : NSUInteger {
                 
                 [self saveinfoToUserDefaults:m_dataArray];
                 
+                if (self.msgCount<m_dataArray.count) {
+                   NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
+                    [dicccc setValue:@"isYes" forKey:@"isFund"];
+                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
+                }
+                
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSMutableArray *customArr = KISDictionaryHaveKey( responseObject, @"dynamicMsgList");
@@ -722,6 +729,12 @@ typedef enum : NSUInteger {
                     [arr addObject:[self contentAnalyzer:customArr[i] withReAnalyzer:NO]];
                 }
                 [m_dataArray addObjectsFromArray:arr];
+                
+                if (self.msgCount<m_dataArray.count) {
+                    NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
+                    [dicccc setValue:@"isYes" forKey:@"isFund"];
+                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
+                }
             }
             m_currPageCount++;
             [m_header endRefreshing];
@@ -796,6 +809,9 @@ typedef enum : NSUInteger {
 #pragma mark Content分析器
 - (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
+        return contentDict;
+    }
     if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
         return contentDict;
     }
@@ -950,7 +966,15 @@ typedef enum : NSUInteger {
     
     return contentDict;
 }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
 
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+        InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
+        [self.navigationController pushViewController:addVC animated:YES];
+    }
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return m_dataArray.count;
@@ -958,7 +982,18 @@ typedef enum : NSUInteger {
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
 
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+        static NSString *identifier =@"cell111";
+        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell ==nil) {
+            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        return cell;
+    }
+    
     static NSString *identifier =@"cell";
     CircleHeadCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell ==nil) {
@@ -967,7 +1002,7 @@ typedef enum : NSUInteger {
     cell.myCellDelegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+    
     
     int m_currmagY =0;
     
@@ -980,7 +1015,6 @@ typedef enum : NSUInteger {
     if ([GameCommon isEmtity:headImages]) {
         cell.headImgBtn.imageURL = nil;
     }else{
-//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:headImages],@"/80/80"]];
         cell.headImgBtn.imageURL = [ImageService getImageStr:headImages Width:80];
         
     }
@@ -1008,8 +1042,7 @@ typedef enum : NSUInteger {
     }
     
     cell.nickNameLabel.text =nickName;
-    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;   //加上nickName的高度
-    //cell.commentStr = KISDictionaryHaveKey(dict, @"msg");
+    m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;//加上nickName的高度
     cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
     
     //计算时间
@@ -1057,7 +1090,6 @@ typedef enum : NSUInteger {
             else{
             NSArray *imgArray = KISDictionaryHaveKey(dict, @"imgArray");
                 [cell getImgWithArray:imgArray];
-//            cell.collArray = imgArray;
             cell.customPhotoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
@@ -1197,6 +1229,11 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
+    
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+        return 50;
+    }
+    
     dict = [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
         

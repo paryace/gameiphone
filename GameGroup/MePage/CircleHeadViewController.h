@@ -36,6 +36,7 @@ QiniuUploadDelegate
 @property(nonatomic,copy)NSString *imageStr;    //Cover图片
 @property(nonatomic,copy)NSString *nickNmaeStr; //昵称
 @property(nonatomic,copy)NSString *userId;  //userid
+@property(nonatomic,assign)NSInteger msgCount;
 
 @property (assign, nonatomic)  NSInteger msgUnReadCount;//未读的消息数
 

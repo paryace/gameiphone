@@ -543,10 +543,6 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
-//        if ([responseObject isKindOfClass:[NSArray class]]) {
-//        if (KISHighVersion_7) {
-//            m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-//        }
             if (m_currPageCount ==0) {
                 [m_dataArray removeAllObjects];
                 if ([responseObject isKindOfClass:[NSArray class]]) {
@@ -559,6 +555,10 @@ typedef enum : NSUInteger {
                     if (isSaveHcListInfo) {
                         NSString *filePath = [RootDocPath stringByAppendingString:@"/HC_NearByInfoList"];
                         [m_dataArray writeToFile:filePath atomically:YES];
+                        if (m_dataArray.count>0) {
+                            NSMutableDictionary * firstDic = [m_dataArray objectAtIndex:0];
+                            [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(firstDic, @"id")] forKey:@"firstMsgId"];
+                        }
                         isSaveHcListInfo = NO;
                     }
                 }

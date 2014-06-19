@@ -175,7 +175,7 @@
              NSString * openImageId = KISDictionaryHaveKey(responseObject, @"adImg");
              NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
             if (openImageId&&![openImageId isEqualToString:imageId]) {
-                [self downloadImageWithID:openImageId];
+//                [self downloadImageWithID:openImageId];
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
