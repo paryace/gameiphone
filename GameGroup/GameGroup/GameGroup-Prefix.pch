@@ -106,7 +106,7 @@
 
 
 
-
+#define OpenImage @"openImage"//开机图
 
 #define ZhaoHuLan  @"新朋友"
 #define kMyToken  @"MyToken"//我的token

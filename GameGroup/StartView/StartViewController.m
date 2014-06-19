@@ -53,12 +53,13 @@
     [self performSelector:@selector(showLoading:) withObject:nil afterDelay:kStartViewShowTime];
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
-    [self downloadImageWithID:@""];
+    [self getOpenImageFromNet];
+//    [self downloadImageWithID:@""];
 }
 
 -(UIImage*)getOpenImage
 {
-    NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:@"openImage"];
+    NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
     if ([GameCommon isEmtity:imageId]) {
         return [self getDefaultOpenImage];
     }
@@ -116,20 +117,14 @@
         }];
 }
 
-#pragma mark 下载开机图
+//下载开机图
 -(void)downloadImageWithID:(NSString *)imageId
 {
-    
-    imageId = @"D7A84010614F46A5A7DE4DCD0352558B";
-    [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:@"openImage"];
     NSString * urlStr= [ImageService getImgUrl:imageId];
     [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
      {
-         NSString * openImgPath=[filePath path];
-         NSFileManager *fm = [NSFileManager defaultManager];
-         if([fm fileExistsAtPath:openImgPath])
-         {
-             UIImage *image = [UIImage imageWithContentsOfFile:openImgPath];
+         if (!error) {
+             [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:OpenImage];
          }
      }
      ];
@@ -163,6 +158,29 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
+}
+//请求开机图
+-(void)getOpenImageFromNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"263" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
+     
+    success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+             NSString * openImageId = KISDictionaryHaveKey(responseObject, @"adImg");
+             NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
+            if (openImageId&&![openImageId isEqualToString:imageId]) {
+                [self downloadImageWithID:openImageId];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+    
 }
 
 - (void)didReceiveMemoryWarning
