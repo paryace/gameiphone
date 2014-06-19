@@ -15,6 +15,7 @@
 #import "OnceDynamicViewController.h"
 #import "ReplyViewController.h"
 #import "NearByViewController.h"
+#import "FunEntranceCell.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -103,6 +104,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     isSaveHcListInfo = NO;
     isSaveHcTopImg = NO;
+    self.lastMsgId = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastMsgId"];
     [self setTopViewWithTitle:@"" withBackButton:YES];
     titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     titleLabel.textColor = [UIColor whiteColor];
@@ -557,9 +559,15 @@ typedef enum : NSUInteger {
                         [m_dataArray writeToFile:filePath atomically:YES];
                         if (m_dataArray.count>0) {
                             NSMutableDictionary * firstDic = [m_dataArray objectAtIndex:0];
-                            [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(firstDic, @"id")] forKey:@"firstMsgId"];
+                            [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(firstDic, @"id")] forKey:@"lastMsgId"];
                         }
                         isSaveHcListInfo = NO;
+                        
+                        if ([self getMsgRowWithId]!=-1) {
+                            NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
+                            [diccccc setObject:@"isYES" forKey:@"isFund"];
+                            [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
+                        }
                     }
                 }
                 
@@ -571,6 +579,12 @@ typedef enum : NSUInteger {
                         [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
                     }
                     [m_dataArray addObjectsFromArray:arr];
+                    
+                    if ([self getMsgRowWithId]!=-1) {
+                        NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
+                        [diccccc setObject:@"isYES" forKey:@"isFund"];
+                        [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
+                    }
                 }
             }
             m_currPageCount ++;
@@ -595,6 +609,32 @@ typedef enum : NSUInteger {
         [hud hide:YES];
     }];
 }
+
+-(void)haveLastMsg:(NSArray*)msgArray
+{
+    for (NSMutableDictionary * dic in msgArray) {
+        if ([KISDictionaryHaveKey(dic, @"id") isEqualToString:self.lastMsgId]) {
+            
+        }
+    }
+}
+
+
+- (NSInteger)getMsgRowWithId
+{
+    if (m_dataArray.count>0 && self.lastMsgId && self.lastMsgId.length > 0)
+    {
+        for (int i = 0; i < m_dataArray.count; i++) {
+            NSDictionary* tempDic = [m_dataArray objectAtIndex:i];
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"id")] isEqualToString:self.lastMsgId]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    return -1;
+}
+
 
 #pragma mark----
 #pragma marl ====照片墙    collectionView delegate
@@ -703,6 +743,19 @@ typedef enum : NSUInteger {
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+        static NSString *identifier = @"cellFund";
+        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell ==nil) {
+            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        cell.titleLable.text = @"漫游城市";
+        cell.titleImage.image = KUIImage(@"city_roam");
+        return cell;
+    }
+    
     static NSString *identifier = @"cell";
     NewNearByCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell ==nil) {
@@ -713,7 +766,7 @@ typedef enum : NSUInteger {
     cell.myCellDelegate = self;
     cell.tag = indexPath.row;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+    
     
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
         cell.focusButton.hidden=NO;
@@ -924,23 +977,11 @@ typedef enum : NSUInteger {
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    if([self keyboardIsVisible]==YES){
-//        [self.textView resignFirstResponder];
-//        return ;
-//    }
-//    if(self.theEmojiView.hidden == NO){
-//        self.theEmojiView.hidden = YES;
-//        [self autoMovekeyBoard:-inPutView.bounds.size.height];
-//        self.commentInputType = CommentInputTypeKeyboard;
-//        senderBnt.selected = NO;
-//        return ;
-//    }
-//    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-//    OnceDynamicViewController *once =[[ OnceDynamicViewController alloc]init];
-//    once.messageid =KISDictionaryHaveKey(dic, @"id");
-//    [self.navigationController pushViewController:once animated:YES];
-
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
+        
+    }
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -981,6 +1022,10 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+        return 50;
+    }
+    
     [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
     
@@ -1150,6 +1195,11 @@ typedef enum : NSUInteger {
 #pragma mark Content分析器
 - (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
+    
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
+        return contentDict;
+    }
+    
     if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
         return contentDict;
     }
@@ -1311,7 +1361,9 @@ typedef enum : NSUInteger {
 {
     
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
-    
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
+        return;
+    }
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

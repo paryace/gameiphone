@@ -968,8 +968,8 @@ typedef enum : NSUInteger {
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-
     if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
         InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
         [self.navigationController pushViewController:addVC animated:YES];
@@ -1280,11 +1280,6 @@ typedef enum : NSUInteger {
     
     NSString * imageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     detailVC.imgStr = [ImageService getImgUrl:imageIds];
-    
-    
-//    NSString* imageName = [GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
-//    detailVC.imgStr =[BaseImageUrl stringByAppendingString:imageName];
-//    
     
     NSMutableDictionary *userDic=KISDictionaryHaveKey(dict, @"user");
     NSString * nickName=KISDictionaryHaveKey(userDic, @"alias");

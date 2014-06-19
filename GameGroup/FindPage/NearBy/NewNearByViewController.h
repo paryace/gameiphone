@@ -25,4 +25,6 @@ EmojiViewDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *gameid;
+
+@property(nonatomic,copy)NSString *lastMsgId;
 @end
