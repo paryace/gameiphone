@@ -16,11 +16,11 @@
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         self.lineImage1 = [[UIImageView alloc]initWithFrame:CGRectMake(5, 10, 90, 1)];
-        self.lineImage1.backgroundColor = kColorWithRGB(230,230,230, 0.7);
+        self.lineImage1.image = KUIImage(@"chat_line_left");
         [self addSubview:self.lineImage1];
         
         self.lineImage2 = [[UIImageView alloc]initWithFrame:CGRectMake(225, 10, 90, 1)];
-        self.lineImage2.backgroundColor = kColorWithRGB(230,230,230, 0.7);
+        self.lineImage2.image = KUIImage(@"chat_line_right");
         [self addSubview:self.lineImage2];
         
         self.timeLable = [[UILabel alloc]initWithFrame:CGRectMake(100, 2, 120, 20)];
@@ -42,6 +42,22 @@
         [self addSubview:self.msgLable];
     }
     return self;
+}
+
+//设置时间
+-(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime
+{
+    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<60) {
+        self.timeLable.hidden = YES;
+        self.lineImage1.hidden=YES;
+        self.lineImage2.hidden=YES;
+    }
+    else{
+        self.timeLable.hidden = NO;
+        self.lineImage1.hidden=NO;
+        self.lineImage2.hidden=NO;
+        self.timeLable.text = [NSString stringWithFormat:@"%@", timeStr];
+    }
 }
 
 @end
