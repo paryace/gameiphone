@@ -27,7 +27,7 @@
         NSLog(@"获得数据：%@", dict);
         int status = [[dict objectForKey:@"errorcode"] intValue];
         if (status==0) {
-            success(operation,[dict objectForKey:@"entity"]);
+            success(operation,KISDictionaryHaveKey(dict, @"entity"));
         }
         else
         {
@@ -64,11 +64,16 @@
 //下载图片
 +(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion
 {
+    
+      
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    
     NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
     NSURL *URL = [NSURL URLWithString:downLoadUrl];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    
+    
     NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil
     destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
          NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
@@ -78,26 +83,7 @@
         completion(response,filePath,error);
     }];
     [downloadTask resume];
-    
-    
-    
-    
-//    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",url];
-//    NSURL *URL = [NSURL URLWithString:downLoadUrl];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-//    NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imgId]];
-//    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
-//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"sasa%@",responseObject);
-//    }
-//       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//           
-//       }];
-//    [operation start];
 }
-
-
 
 ////下载图片
 //+(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure

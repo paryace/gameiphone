@@ -310,8 +310,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             }
             [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         }else{
-            ((ReusableView *)titleView).label.text = @"还没有公告";
-            ((ReusableView *)titleView).contentLabel.text = @"您还没有加入任何组织";
+            ((ReusableView *)titleView).label.text = @"组织公告";
+            ((ReusableView *)titleView).contentLabel.text = @"还没有组织公告哦!";
             ((ReusableView *)titleView).timeLabel.text = @"";
             ((ReusableView *)titleView).headImageView.image = KUIImage(@"group_billboard");
 //            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];

@@ -710,6 +710,9 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"203" forKey:@"method"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (!responseObject) {
+            return;
+        }
         if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken])//本地没有token的情况下不需要请求登陆失败的原因
             {

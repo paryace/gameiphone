@@ -12,16 +12,14 @@
 #import "MessagePageViewController.h"
 #import "FindViewController.h"
 #import "MePageViewController.h"
-//#import "NewFindViewController.h"
-
 #import "MLNavigationController.h"
 #import "Custom_tabbar.h"
-
 #import "LocationManager.h"
 #import "TempData.h"
-
 #import "MLNavigationController.h"
 #import "NewFriendPageController.h"
+#import "DownloadImageService.h"
+
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -119,14 +117,16 @@
 //下载开机图
 -(void)downloadImageWithID:(NSString *)imageId
 {
-    NSString * urlStr= [ImageService getImgUrl:imageId];
-    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
-     {
-         if (!error) {
-             [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:OpenImage];
-         }
-     }
-     ];
+    [[DownloadImageService singleton] startDownload:imageId];
+    
+//    NSString * urlStr= [ImageService getImgUrl:imageId];
+//    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
+//     {
+//         if (!error) {
+//             [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:imageId] forKey:OpenImage];
+//         }
+//     }
+//     ];
 }
 
 #pragma mark 获取用户位置
@@ -169,17 +169,15 @@
      
     success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-             NSString * openImageId = KISDictionaryHaveKey(responseObject, @"adImg");
+             NSString * openImageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"adImg")];
              NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
             if (openImageId&&![openImageId isEqualToString:imageId]) {
-//                [self downloadImageWithID:openImageId];
+                [self downloadImageWithID:openImageId];
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
-    
 }
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
