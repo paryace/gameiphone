@@ -66,7 +66,8 @@ typedef enum : NSUInteger {
     int height;
     BOOL _keyboardIsVisible;
     
-
+    NSMutableDictionary *m_mianDict;
+    NSArray *m_sectionHeadsKeys;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -156,7 +157,13 @@ typedef enum : NSUInteger {
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
    // [m_loginActivity startAnimating];
     
+    NSString *filePath = [[NSBundle mainBundle]pathForResource:@"CitiesList" ofType:@"plist"];
+    m_mianDict  = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+    m_sectionHeadsKeys =[NSArray array];
+    m_sectionHeadsKeys = [m_mianDict allKeys];
+    m_sectionHeadsKeys = [m_sectionHeadsKeys sortedArrayUsingSelector:@selector(compare:)];
     
+
     
     
     
@@ -980,8 +987,40 @@ typedef enum : NSUInteger {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
+        int i = arc4random()%m_sectionHeadsKeys.count;
+        NSArray *array =[m_mianDict objectForKey:m_sectionHeadsKeys[i]];
+        int j = arc4random()%array.count;
         
-    }
+            cityCode = KISDictionaryHaveKey(array[j], @"cityCode");
+            titleStr =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(array[j], @"city")];
+            
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey])
+            {
+                if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+                    NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+                    if ([type isEqualToString:@"0"]) {
+                        titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
+                    }
+                    else if ([type isEqualToString:@"1"])
+                    {
+                        titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
+                    }else
+                    {
+                        titleLabel.text = titleStr;
+                    }
+                }
+            }else{
+                titleLabel.text = titleStr;
+            }
+            [self changeActivityPositionWithTitle:titleLabel.text];
+            citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(array[j],@"city")];
+            m_currPageCount =0;
+            isSaveHcTopImg = YES;
+            isSaveHcListInfo = YES;
+            [self getInfoWithNet];
+            [self getTopImageFromNet];
+        }
+
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
