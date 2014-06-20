@@ -47,19 +47,26 @@
         self.timeLabel.textColor = [UIColor grayColor];
         [self.topBtn addSubview:self.timeLabel];
         
-        self.topLabel =  [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 320-40, 70)];
-        self.topLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
-        UIViewAutoresizingFlexibleHeight;
-        self.topLabel.backgroundColor = [UIColor clearColor];
-        self.topLabel.textAlignment = NSTextAlignmentCenter;
-        self.topLabel.font = [UIFont boldSystemFontOfSize:12.0f];
-        self.topLabel.numberOfLines=2;
-        self.topLabel.text=@"点击这里，可以通过标签找到与你兴趣相同得群组织，立即收获游戏小伙伴";
-        self.topLabel.textColor = [UIColor grayColor];
-//        [self.topBtn addSubview:self.topLabel];
         UIImageView * lineImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 71, 320, 1)];
         lineImage.image = KUIImage(@"my_group_line");
         [self.topBtn addSubview:lineImage];
+        
+        
+        self.gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(53, 6, 18, 18)];
+        [self.gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
+        self.gbMsgCountImageView.hidden = YES;
+        [self.topBtn addSubview:self.gbMsgCountImageView];
+        
+        
+        self.gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+        [self.gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
+        [self.gbMsgCountLable setTextAlignment:NSTextAlignmentCenter];
+        [self.gbMsgCountLable setTextColor:[UIColor whiteColor]];
+        self.gbMsgCountLable.font = [UIFont systemFontOfSize:14.0];
+        self.gbMsgCountLable.text = @"20";
+        [self.gbMsgCountImageView addSubview:self.gbMsgCountLable];
+        
+        
         [self addSubview:self.topBtn];
         
     }

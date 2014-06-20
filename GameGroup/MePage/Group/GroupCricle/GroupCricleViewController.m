@@ -15,6 +15,7 @@
 #import "OnceDynamicViewController.h"
 #import "ReplyViewController.h"
 #import "NearByViewController.h"
+#import "SendNewsViewController.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -82,7 +83,13 @@ typedef enum : NSUInteger {
     
     
     [self setTopViewWithTitle:@"群动态" withBackButton:YES];
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];
     wxSDArray = [NSMutableArray array];
@@ -134,7 +141,15 @@ typedef enum : NSUInteger {
     
     [self buildcommentView];
 }
-
+#pragma mark ---发表新动态
+-(void)publishInfo:(UIButton *)sender
+{
+    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
+    sendNews.delegate = self;
+    sendNews.isComeFromMe = YES;
+    [self.navigationController pushViewController:sendNews animated:YES];
+    
+}
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
         openMenuBtn.menuImageView.hidden =YES;

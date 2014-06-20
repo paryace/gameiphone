@@ -15,4 +15,7 @@
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UIButton *topBtn;
 @property(nonatomic,strong)UILabel * topLabel;
+
+@property(nonatomic,strong)UIImageView * gbMsgCountImageView;
+@property(nonatomic,strong)UILabel * gbMsgCountLable;
 @end

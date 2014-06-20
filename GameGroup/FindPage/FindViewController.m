@@ -71,6 +71,7 @@
     [super viewWillAppear:animated];
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    [self initMsgCount];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -750,14 +751,14 @@
 
 -(void)enterGroupList:(id)sender
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
+    [self.navigationController pushViewController:gruupV animated:YES];
+    gruupV.msgUnReadCount = billboardMsgCount;
     billboardMsgCount=0;
     [self setMsgBillBoardConunt:billboardMsgCount];
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
-    [self.navigationController pushViewController:gruupV animated:YES];
 }
 
 #pragma mark --改变顶部图片

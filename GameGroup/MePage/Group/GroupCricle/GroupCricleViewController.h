@@ -10,6 +10,8 @@
 #import "NewNearByCell.h"
 #import "HPGrowingTextView.h"
 #import "EmojiView.h"
+#import "HPGrowingTextView.h"
+#import "SendNewsViewController.h"
 
 @interface GroupCricleViewController : BaseViewController
 <
@@ -19,7 +21,8 @@ UIAlertViewDelegate,
 NewNearByCellDelegate,
 UIActionSheetDelegate,
 HPGrowingTextViewDelegate,
-EmojiViewDelegate
+EmojiViewDelegate,
+TableViewDatasourceDidChange
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *groupId;

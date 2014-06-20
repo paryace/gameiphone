@@ -23,9 +23,9 @@
     UIView *cellView;
     NSDictionary *dict;
     CGFloat imageHight;
+    NSInteger msgCount;
 }
 @end
-
 @implementation MyGroupViewController
 
 NSString *const RAMCollectionViewFlemishBondHeaderKind = @"RAMCollectionViewFlemishBondHeaderKind";
@@ -34,6 +34,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self loadMsgCount:self.msgUnReadCount];
     NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
     if (bills&&bills.count>0) {
         dict = [bills objectAtIndex:0];
@@ -43,12 +44,44 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [groupCollectionView reloadData];
 }
 
+-(void)loadMsgCount:(NSInteger)tempCount
+{
+    if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]) {
+        msgCount = tempCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(self.msgUnReadCount) forKey:Billboard_msg_count2];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
+        msgCount = i+tempCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i+self.msgUnReadCount) forKey:Billboard_msg_count2];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)loadMsgCount2
+{
+    if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]) {
+
+        [[NSUserDefaults standardUserDefaults]setObject:@(1) forKey:Billboard_msg_count2];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
+
+        [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:Billboard_msg_count2];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"我的组织" withBackButton:YES];
+    [self setTopViewWithTitle:@"我的组织" withBackButton:NO];
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     
@@ -98,10 +131,19 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self loadCacheGroupList];
     [self getGroupListFromNet];
 }
+-(void)backButtonClick:(id)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+   [self.navigationController popViewControllerAnimated:YES];
 
+}
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
+    msgCount++;
+     [self loadMsgCount2];
+    
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -135,68 +177,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
     [self.navigationController pushViewController:addGroupView animated:YES];
 }
-
-
-//-(UIButton *)bulidCellWithFrame:(CGRect)frame title1:(NSString*)title1 title2:(NSString *)title2 img:(NSString *)img
-//{
-//    UIButton *view = [[UIButton alloc]initWithFrame:frame];
-//    view.backgroundColor = [UIColor whiteColor];
-//    [view setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-//    [view setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-//    
-//    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(15,15, 30, 30)];
-//    imageView.image = KUIImage(img);
-//    [view addSubview:imageView];
-//    
-//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60,10, 200, 20)];
-//    label.backgroundColor = [UIColor clearColor];
-//    label.textColor = [UIColor blackColor];
-//    label.font = [UIFont systemFontOfSize:15];
-//    label.textAlignment = NSTextAlignmentLeft;
-//    label.text = title1;
-//    [view addSubview:label];
-//    
-//    UILabel *label1 = [[UILabel alloc]initWithFrame:CGRectMake(60, 35, 200, 20)];
-//    label1.backgroundColor = [UIColor clearColor];
-//    label1.textColor = [UIColor grayColor];
-//    label1.font = [UIFont systemFontOfSize:13];
-//    label1.textAlignment = NSTextAlignmentLeft;
-//    label1.text = title2;
-//    [view addSubview:label1];
-//
-//    UIImageView *rightImg = [[UIImageView alloc]initWithFrame:CGRectMake(300, 25, 10, 10)];
-//    rightImg.image = KUIImage(@"right");
-//    [view addSubview:rightImg];
-//    
-//    UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(0, frame.origin.y+59, 320, 1)];
-//    lineView.backgroundColor = kColorWithRGB(200,200,200, 0.5);
-//    [cellView addSubview:lineView];
-//    return view;
-//    
-//}
-
-//-(void)didClickNormal:(UIGestureRecognizer *)sender
-//{
-//    SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
-//
-//    switch (sender.view.tag) {
-//        case 100:
-//            [self showAlertViewWithTitle:@"嘟嘟嘟嘟" message:@"我都不知道这个标签是干什么的！没事不要乱点!" buttonTitle:@"跪求原谅"];
-//            break;
-//        case 101:
-//            groupView.ComeType = SETUP_NEARBY;
-//            [self.navigationController pushViewController:groupView animated:YES];
-//            break;
-//        case 102:
-//            break;
-//        default:
-//            [self showAlertViewWithTitle:@"嘟嘟嘟嘟" message:@"难道你不知道同服现在不能点呢嘛！！没事不要乱点!" buttonTitle:@"跪求原谅"];
-// 
-////            groupView.ComeType = SETUP_SAMEREALM;
-////            [self.navigationController pushViewController:groupView animated:YES];
-//            break;
-//    }
-//}
 
 //加载本地缓存数据
 -(void)loadCacheGroupList
@@ -264,7 +244,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.titleLabel.text = @"";
     }else{
         cell.headImgView.placeholderImage = KUIImage(@"group_icon");
-        cell.headImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+        cell.headImgView.imageURL = [ImageService getImageUrl3:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:120];
         cell.titleLabel.backgroundColor  =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
         cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
         
@@ -307,15 +287,31 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             if ([GameCommon isEmtity:backgroundImg]) {
                 ((ReusableView *)titleView).headImageView.imageURL = nil;
             }else{
-                ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageStr2:backgroundImg];
+                ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageUrl3:backgroundImg Width:120];
             }
             [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+            
+            
+            
+            
+            if (msgCount>0) {
+                ((ReusableView *)titleView).gbMsgCountImageView.hidden = NO;
+                if (msgCount > 99) {
+                    ((ReusableView *)titleView).gbMsgCountLable.text = @"99+";
+                }
+                else{
+                    ((ReusableView *)titleView).gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
+                }
+            }else
+            {
+                ((ReusableView *)titleView).gbMsgCountImageView.hidden = YES;
+            }
+
         }else{
             ((ReusableView *)titleView).label.text = @"组织公告";
             ((ReusableView *)titleView).contentLabel.text = @"还没有组织公告哦!";
             ((ReusableView *)titleView).timeLabel.text = @"";
             ((ReusableView *)titleView).headImageView.image = KUIImage(@"group_billboard");
-//            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"blue_bg") forState:UIControlStateNormal];
         }
         CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
@@ -326,6 +322,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 -(void)topBtnClick:(UIButton*)sender
 {
+    msgCount=0;
+    [[NSUserDefaults standardUserDefaults]setObject:@(0) forKey:Billboard_msg_count2];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     BillboardViewController *joinIn = [[BillboardViewController alloc]init];
     [self.navigationController pushViewController:joinIn animated:YES];
 }

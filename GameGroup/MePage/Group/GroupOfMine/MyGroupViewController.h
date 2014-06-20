@@ -8,4 +8,6 @@
 
 #import "BaseViewController.h"
 @interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate>
+@property (assign, nonatomic)  NSInteger msgUnReadCount;//未读的消息数
 @end
+

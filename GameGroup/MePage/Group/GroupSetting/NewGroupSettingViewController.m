@@ -295,10 +295,17 @@ typedef enum : NSUInteger {
         UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake((KISHighVersion_7?10:0),5,300, 40)];
         [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
         [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
-        [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
+        
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         okButton.backgroundColor = [UIColor clearColor];
-        [okButton addTarget:self action:@selector(dissolve:) forControlEvents:UIControlEventTouchUpInside];
+        if (self.shiptypeCount ==0){
+            [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
+            [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
+        }else{
+            [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
+            [okButton addTarget:self action:@selector(dissolve:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        
         cell.backgroundColor = [UIColor clearColor];
         [cell.contentView addSubview:okButton];
         

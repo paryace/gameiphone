@@ -81,7 +81,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 5;
+    return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -132,32 +132,32 @@
         }
         return cell;
     }
-    else if (indexPath.row ==2)
-    {    static NSString *cellinde2 = @"cell2";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
-        if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
-        }
-
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 50, 20)]
-        ;
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.backgroundColor = [UIColor clearColor];
-        [cell addSubview:titleLabel];
-        
-        titleLabel.text = @"群组号";
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,200, 40)];
-        numLb.font = [UIFont boldSystemFontOfSize:14];
-        numLb.backgroundColor = [UIColor clearColor];
-        numLb.textColor =[ UIColor blackColor];
-        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
-        [cell addSubview:numLb];
-        return cell;
-        
-    }
-    else if (indexPath.row ==3)
+//    else if (indexPath.row ==2)
+//    {    static NSString *cellinde2 = @"cell2";
+//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
+//        if (cell ==nil) {
+//            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
+//        }
+//
+//        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 50, 20)]
+//        ;
+//        titleLabel.textColor = [UIColor grayColor];
+//        titleLabel.font = [UIFont systemFontOfSize:14];
+//        titleLabel.textAlignment = NSTextAlignmentCenter;
+//        titleLabel.backgroundColor = [UIColor clearColor];
+//        [cell addSubview:titleLabel];
+//        
+//        titleLabel.text = @"群组号";
+//        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,200, 40)];
+//        numLb.font = [UIFont boldSystemFontOfSize:14];
+//        numLb.backgroundColor = [UIColor clearColor];
+//        numLb.textColor =[ UIColor blackColor];
+//        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
+//        [cell addSubview:numLb];
+//        return cell;
+//        
+//    }
+    else
     {
         static NSString *cellinde3 = @"cell3";
         GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
@@ -186,34 +186,34 @@
         }
         return cell;
     }
-    else
-    {
-        static NSString *cellinde4 = @"cell4";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
-        if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
-        }
-
-        UILabel *tLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 20)]
-        ;
-        tLabel.text = @"创建时间";
-        tLabel.textColor = [UIColor grayColor];
-        tLabel.backgroundColor = [UIColor clearColor];
-        tLabel.font = [UIFont systemFontOfSize:14];
-        tLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:tLabel];
-        
-        
-        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)];
-        timeLabel.backgroundColor = [UIColor clearColor];
-        timeLabel.textColor = [UIColor grayColor];
-        timeLabel.font = [UIFont systemFontOfSize:14];
-        timeLabel.textAlignment = NSTextAlignmentRight;
-        [cell.contentView addSubview:timeLabel];
-        
-        timeLabel.text = @"2013-04-16";
-        return cell;
-    }
+//    else
+//    {
+//        static NSString *cellinde4 = @"cell4";
+//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
+//        if (cell ==nil) {
+//            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
+//        }
+//
+//        UILabel *tLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 20)]
+//        ;
+//        tLabel.text = @"创建时间";
+//        tLabel.textColor = [UIColor grayColor];
+//        tLabel.backgroundColor = [UIColor clearColor];
+//        tLabel.font = [UIFont systemFontOfSize:14];
+//        tLabel.textAlignment = NSTextAlignmentCenter;
+//        [cell.contentView addSubview:tLabel];
+//        
+//        
+//        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 150, 20)];
+//        timeLabel.backgroundColor = [UIColor clearColor];
+//        timeLabel.textColor = [UIColor grayColor];
+//        timeLabel.font = [UIFont systemFontOfSize:14];
+//        timeLabel.textAlignment = NSTextAlignmentRight;
+//        [cell.contentView addSubview:timeLabel];
+//        
+//        timeLabel.text = @"2013-04-16";
+//        return cell;
+//    }
 }
 -(void)saveChanged:(id)sender
 {
@@ -253,10 +253,10 @@
                 NSInteger tagsRowCount = (tags.count-1)/2+1;
                 return  tagsRowCount*30+tagsRowCount*5+15;
                 break;
+//            case 2:
+//                return 40;
+//                break;
             case 2:
-                return 40;
-                break;
-            case 3:
             {
                 GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
                 float heigth = cell.contentLabel.frame.size.height;
@@ -293,7 +293,7 @@
         cardView.infoDict =[NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")],@"gameid", nil];
         [self.navigationController pushViewController:cardView animated:YES];
     }
-    else if (indexPath.row ==3) {
+    else if (indexPath.row ==2) {
         EditGroupMessageViewController *editG = [[EditGroupMessageViewController alloc]init];
         editG.placeHold =[m_mainDict objectForKey:@"info"];
         editG.headImgArray = [ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
