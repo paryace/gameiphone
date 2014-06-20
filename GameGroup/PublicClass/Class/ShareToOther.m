@@ -74,7 +74,6 @@ static ShareToOther *userManager = NULL;
     
     WXImageObject *ext = [WXImageObject object];
     UIImage* image = imageV;
-//    ext.imageData = UIImagePNGRepresentation(image);
     ext.imageData =UIImageJPEGRepresentation(image, 0.2);
     [self shareToWX:ext uiimage:imageV Title:@"" Description:@""];
 }
@@ -111,10 +110,7 @@ static ShareToOther *userManager = NULL;
 - (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
 {
     app.bSinaWB = YES;
-    QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]
-                                                        title:title
-                                                  description:des
-                                              previewImageURL:[NSURL URLWithString:imageUrl]];
+    QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageURL:[NSURL URLWithString:imageUrl]];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:newsObj];
     QQApiSendResultCode sent = [QQApiInterface sendReq:req];
     [self handleSendResult:sent];
