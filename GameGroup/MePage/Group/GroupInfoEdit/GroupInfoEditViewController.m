@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
 
-    [self setTopViewWithTitle:@"群信息设置" withBackButton:YES];
+    [self setTopViewWithTitle:@"编辑群资料" withBackButton:YES];
     
     m_mainDict = [NSMutableDictionary new];
     paramDict  = [NSMutableDictionary dictionary];
@@ -290,6 +290,7 @@
     else if (indexPath.row ==1) {
         CardViewController *cardView = [[CardViewController alloc]init];
         cardView.myDelegate = self;
+        cardView.infoDict =[NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")],@"gameid", nil];
         [self.navigationController pushViewController:cardView animated:YES];
     }
     else if (indexPath.row ==3) {

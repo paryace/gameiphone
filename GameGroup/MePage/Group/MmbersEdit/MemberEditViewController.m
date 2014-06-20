@@ -118,6 +118,7 @@
     return cell;
 }
 
+
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
 {
@@ -157,12 +158,12 @@
     didClickDict = dic;
     if (self.shiptype ==0) {
         if ([KISDictionaryHaveKey(dic, @"type")intValue]==1) {
-            UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"取消管理员",@"移除", nil];
+            UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群主",@"取消管理员",@"移除", nil];
             actionSheet.tag = 111;
             [actionSheet showInView:self.view];
 
         }else if ([KISDictionaryHaveKey(dic, @"type")intValue] ==2){
-        UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群组",@"设置管理员",@"移除", nil];
+        UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"管理" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"转让群主",@"设置管理员",@"移除", nil];
             actionSheet.tag =222;
         [actionSheet showInView:self.view];
         }

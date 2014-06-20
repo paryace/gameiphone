@@ -167,7 +167,7 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"263" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]:@"" forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
      
     success:^(AFHTTPRequestOperation *operation, id responseObject) {

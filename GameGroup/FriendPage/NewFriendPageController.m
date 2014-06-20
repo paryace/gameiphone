@@ -86,12 +86,28 @@
     }
     
     UIView *footView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-    footView.backgroundColor = [UIColor whiteColor];
+    footView.backgroundColor = [UIColor clearColor];
+//    UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(10, 0, 300,.5f)];
+//    lineView.backgroundColor = [UIColor grayColor];
+//    [footView addSubview:lineView];
+    
+    
+    UIImageView *iconImg = [[UIImageView alloc]initWithFrame:CGRectMake(80, 15, 20, 20)];
+    iconImg.image =KUIImage(@"phoneNote");
+    [footView addSubview:iconImg];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 1, 320, 50)];
+    label.backgroundColor = [UIColor clearColor];
+    label.text = @"手机通讯录";
+    label.font = [UIFont boldSystemFontOfSize:18];
+    label.textAlignment = NSTextAlignmentCenter;
+    [footView addSubview:label];
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(10, 3, 300,44);
-    [button setTitle:@"手机通讯录" forState:UIControlStateNormal];
-    button.titleLabel.textColor = [UIColor whiteColor];
-    button.backgroundColor = [UIColor grayColor];
+    
+//    [button setTitle:@"手机通讯录" forState:UIControlStateNormal];
+    button.backgroundColor = [UIColor clearColor];
     [button addTarget:self action:@selector(enterPhoneAddress:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
     
@@ -406,6 +422,8 @@
 
 -(void)enterPhoneAddress:(id)sender
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     MessageAddressViewController *mas = [[MessageAddressViewController alloc]init];
     [self.navigationController pushViewController:mas animated:YES];
 }

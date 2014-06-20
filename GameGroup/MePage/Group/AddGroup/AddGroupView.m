@@ -67,13 +67,13 @@
     
     
     UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(10,159+52, 300, 40)];
-    table_arrow_two.image = KUIImage(@"group_cell_bg");
+    table_arrow_two.image = KUIImage(@"group_cardtf");
     [self.firstScrollView addSubview:table_arrow_two];
     
     
     
     UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 320, 300, 40)];
-    table_bottom.image = KUIImage(@"group_cell_bg");
+    table_bottom.image = KUIImage(@"group_cardtf");
     [self.firstScrollView addSubview:table_bottom];
     
     UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 174+52, 12, 8)];
@@ -225,8 +225,8 @@
     
     m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
     m_textView.delegate = self;
-    m_textView.layer.borderColor = [UIColor grayColor].CGColor;
-    m_textView.layer.borderWidth =1.0;
+    m_textView.layer.borderColor = UIColorFromRGBA(0xaaa9a9, 1).CGColor;
+    m_textView.layer.borderWidth =0.5;
     m_textView.layer.cornerRadius =5.0;
     m_textView.font = [UIFont boldSystemFontOfSize:13];
     m_textView.textColor = [UIColor blackColor];

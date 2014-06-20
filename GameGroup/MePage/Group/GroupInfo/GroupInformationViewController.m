@@ -17,8 +17,11 @@
 #import "GroupLeaveViewController.h"
 #import "CreateTimeCell.h"
 #import "SearchGroupViewController.h"
-
+#import "PhotoViewController.h"
 #import "NewGroupSettingViewController.h"
+#import "AddFriendsViewController.h"
+#import "MyGroupViewController.h"
+#import "SearchGroupViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -28,7 +31,8 @@
     UIView *boView;
     UIView *aoView;
     UILabel* m_titleLabel;
-    
+    UIAlertView* alertView_1;
+    UIAlertView *chexiaoAlert;
 }
 @end
 
@@ -44,20 +48,12 @@
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshNet:) name:@"refelsh_groupInfo_wx" object:nil];
     
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    
-    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
-    m_titleLabel.textColor = [UIColor whiteColor];
-    m_titleLabel.backgroundColor = [UIColor clearColor];
-    m_titleLabel.textAlignment = NSTextAlignmentCenter;
-    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    [self.view addSubview:m_titleLabel];
 
     
     
     m_mainDict =[ NSMutableDictionary dictionary];
      m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
-    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
+    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeigth - 50 )];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
@@ -67,7 +63,7 @@
     [self.view addSubview:m_myTableView];
     
     
-    topImg = [[EGOImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
+    topImg = [[EGOImageView alloc]initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, 320, 320)];
     NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
     if ([GameCommon isEmtity:imageUrl]) {
         topImg.image = KUIImage(@"groupinfo_top");
@@ -79,14 +75,60 @@
     [m_myTableView reloadData];
     
     
-    aoView =[[ UIView alloc]initWithFrame:CGRectMake(0, 142, 320, 50)];
+    aoView =[[ UIView alloc]initWithFrame:CGRectMake(0, 270, 320, 50)];
     aoView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f  blue:0/255.0f  alpha:0.5];
     [topImg addSubview:aoView];
     
+    [self setTopViewWithTitle:@"" withBackButton:NO];
     
+    
+    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
+    m_titleLabel.textColor = [UIColor whiteColor];
+    m_titleLabel.backgroundColor = [UIColor clearColor];
+    m_titleLabel.textAlignment = NSTextAlignmentCenter;
+    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [self.view addSubview:m_titleLabel];
+    
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
 }
+
+-(void)backButtonClick:(id)sender
+{
+    if (self.isAudit) {
+        for(UIViewController *controller in self.navigationController.viewControllers) {
+            if([controller isKindOfClass:[MyGroupViewController class]]){
+                MyGroupViewController*owr = (MyGroupViewController *)controller;
+                [self.navigationController popToViewController:owr animated:YES];
+                return;
+            }
+            else if ([controller isKindOfClass:[MyGroupViewController class]]){
+                MyGroupViewController*owr = (MyGroupViewController *)controller;
+                [self.navigationController popToViewController:owr animated:YES];
+                return;
+            }
+            else if ([controller isKindOfClass:[AddFriendsViewController class]]){
+                AddFriendsViewController*owr = (AddFriendsViewController *)controller;
+                [self.navigationController popToViewController:owr animated:YES];
+                return;
+            }
+        }
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+
 -(void)refreshNet:(id)sender
 {
     [self getInfoWithNet];
@@ -124,6 +166,7 @@
 //           GroupSettingController *gr = [[GroupSettingController alloc]init];
            
            NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
+           gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
 
            gr.groupId = self.groupId;
            gr.shiptypeCount = self.shiptypeCount;
@@ -143,6 +186,7 @@
        }else{
 //           GroupSettingController *gr = [[GroupSettingController alloc]init];
            NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
+           gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
 
            gr.groupId = self.groupId;
            gr.shiptypeCount = self.shiptypeCount;
@@ -264,7 +308,7 @@
 -(void)chexiaoGroup:(id)sender
 {
     //251
-    UIAlertView *chexiaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认撤销申请吗" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    chexiaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认撤销申请吗" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     chexiaoAlert.tag = 777;
     [chexiaoAlert show];
 }
@@ -288,7 +332,7 @@
             if ([GameCommon isEmtity:imageUrl]) {
                 topImg.image = KUIImage(@"groupinfo_top");
             }else{
-                topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
+                topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:320*2];
             }
             [m_myTableView reloadData];
             
@@ -371,9 +415,9 @@
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                alert.tag = 789;
-                [alert show];
+                alertView_1 = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                alertView_1.tag = 789;
+                [alertView_1 show];
             }
         }
         [hud hide:YES];
@@ -389,7 +433,9 @@
     }
     else if (alertView.tag == 777)
     {
-        [self chexiaogroup];
+        if (buttonIndex ==1) {
+            [self chexiaogroup];
+        }
     }
 }
 
@@ -529,6 +575,7 @@
         if (cell ==nil) {
             cell = [[GroupInfomationJsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde3];
         }
+        cell.myCellDelegate = self;
         cell.selectionStyle =UITableViewCellSelectionStyleNone;
 
         if (m_mainDict&&[m_mainDict allKeys].count>0) {
@@ -662,6 +709,14 @@
     gl.groupId = self.groupId;
     [self.navigationController pushViewController:gl animated:YES];
 }
+- (void)bigImgWithCircle:(GroupInfomationJsCell*)myCell WithIndexPath:(NSInteger)row
+{
+    NSLog(@"点击查看大图");
+    PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")] indext:row];
+    [self presentViewController:pV animated:NO completion:^{
+    }];
+    
+}
 
 #pragma mark ---点击标签 进入搜索页面
 -(void)enterSearchGroupPage:(UIGestureRecognizer *)sender
@@ -671,7 +726,12 @@
     groupView.ComeType = SETUP_Tags;
     groupView.tagsId =KISDictionaryHaveKey(tags[sender.view.tag-100], @"tagId");
     [self.navigationController pushViewController:groupView animated:YES];
+}
 
+- (void)dealloc
+{
+    alertView_1.delegate = nil;
+    chexiaoAlert.delegate = nil;
 }
 - (void)didReceiveMemoryWarning
 {

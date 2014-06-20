@@ -11,4 +11,5 @@
 @interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,GroupInfoCellDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property(nonatomic,assign)NSInteger shiptypeCount;
+@property(nonatomic,assign)BOOL isAudit;
 @end

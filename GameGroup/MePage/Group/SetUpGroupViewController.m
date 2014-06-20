@@ -67,13 +67,20 @@
     m_textView.layer.borderColor=[kColorWithRGB(200, 200, 200, 1.0) CGColor];
     [self.view addSubview:m_textView];
 
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, startX+250, 300, 44);
-    [button setTitle:@"提交" forState:UIControlStateNormal];
-    [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:button];
+//    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+//    button.frame = CGRectMake(10, startX+250, 300, 44);
+//    [button setTitle:@"提交" forState:UIControlStateNormal];
+//    [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
+//    [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:button];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if([m_searchTf isFirstResponder]){
@@ -89,16 +96,20 @@
 {
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     
-    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
-        [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
-        return;
-    }
-    [dic setObject:m_textView.text forKey:@"msg"];
-    [dic setObject:self.groupid forKey:@"groupId"];
-    [dic setObject:KISDictionaryHaveKey(dict, @"id") forKey:@"characterId"];
-    [dic setObject:KISDictionaryHaveKey(dict, @"gameid") forKey:@"gameid"];
-    [ self getInfoToNetWithparamDict:dic method:@"232"];
+//    if ([m_searchTf.text isEqualToString:@""]||!m_searchTf.text||[m_searchTf.text isEqualToString:@" "]) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"确定"];
+//        return;
+//    }
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
+            [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
+            return;
+        }
+        [dic setObject:m_textView.text forKey:@"msg"];
+        [dic setObject:self.groupid forKey:@"groupId"];
+        [dic setObject:KISDictionaryHaveKey(dict, @"id") forKey:@"characterId"];
+        [dic setObject:KISDictionaryHaveKey(dict, @"gameid") forKey:@"gameid"];
+        [ self getInfoToNetWithparamDict:dic method:@"232"];
 }
 
 -(void)getInfoToNetWithparamDict:(NSMutableDictionary *)paramDict method:(NSString *)method
@@ -123,8 +134,9 @@
 {
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        m_searchTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请加入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
         [m_searchTf resignFirstResponder];
+        [m_textView becomeFirstResponder];
     }
 }
 
