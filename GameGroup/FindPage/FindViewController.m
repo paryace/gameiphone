@@ -284,10 +284,11 @@
     
     UIButton *iconImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
     [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+    [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
     [bottomView addSubview:iconImageView];
     
     //红点 - 公告
-    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(60, 2, 18, 18)];
+    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(30, -5, 18, 18)];
     [iconImageView bringSubviewToFront:gbMsgCountImageView];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
      gbMsgCountImageView.hidden = YES;
