@@ -21,7 +21,7 @@
         self.titleImage.image=KUIImage(@"not_read_dyn_img");
         [bgImage addSubview:self.titleImage];
         
-        self.titleLable = [[UILabel alloc] initWithFrame:CGRectMake(60, 15, 120, 20)];
+        self.titleLable = [[UILabel alloc] initWithFrame:CGRectMake(60, 15, 250, 20)];
         self.titleLable.text=@"去看看有趣的人";
         self.titleLable.backgroundColor=[UIColor clearColor];
         [bgImage addSubview:self.titleLable];
