@@ -746,12 +746,12 @@ typedef enum : NSUInteger {
     
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
     if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        static NSString *identifier = @"cellFund";
+        static NSString *identifier = @"cellCity";
         FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell ==nil) {
             cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
-        cell.titleLable.text = @"漫游城市";
+        cell.titleLable.text = @"去往随机城市看看";
         cell.titleImage.image = KUIImage(@"city_roam");
         return cell;
     }
