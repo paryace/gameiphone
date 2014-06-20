@@ -8,6 +8,7 @@
 
 #import "NewRegisterViewController.h"
 #import "ShowTextViewController.h"
+#import "HelpViewController.h"
 @interface NewRegisterViewController ()
 {
     UIImageView *m_topImage;//条图
@@ -202,6 +203,14 @@
     
     
 }
+-(void)enterToHelpPage:(id)sender
+{
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"content.html?4";
+    [self.navigationController pushViewController:helpVC animated:YES];
+    
+}
+
 - (void)agreeButtonClick:(id)sender
 {
     m_agreeButton.selected = !m_agreeButton.selected;

@@ -732,7 +732,13 @@ static GameCommon *my_gameCommon = NULL;
                 [[TempData sharedInstance]isBindingRolesWithBool:NO];  
             }
         }
+        }        
+        NSArray *charachers = [responseObject objectForKey:@"characters"];
+        
+        for (NSMutableDictionary *characher in charachers) {
+            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
         }
+
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         

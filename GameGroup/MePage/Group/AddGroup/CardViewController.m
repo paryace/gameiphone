@@ -16,6 +16,7 @@
     NSMutableArray *cardArray;
     NSMutableArray *numArray;
     CardCell *msxCell;
+    NSMutableArray *allkeysArr;
 }
 @end
 
@@ -72,6 +73,9 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             self.listDict  = responseObject;
+            [self.listDict removeObjectForKey:@"sortList"];
+            
+            
             [customPhotoCollectionView reloadData];
         }
         
@@ -102,7 +106,7 @@
     
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headViewww" forIndexPath:indexPath];
-        ((CardTitleView *)titleView).cardTitleLabel.text =[[self.listDict allKeys]objectAtIndex:indexPath.section];
+        ((CardTitleView *)titleView).cardTitleLabel.text =[allkeysArr objectAtIndex:indexPath.section];
     }
     return titleView;
 }

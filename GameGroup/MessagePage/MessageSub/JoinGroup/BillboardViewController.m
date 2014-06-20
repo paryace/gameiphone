@@ -123,6 +123,22 @@
     [m_billboardTabel deselectRowAtIndexPath:indexPath animated:YES];
 
 }
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    if (editingStyle ==UITableViewCellEditingStyleDelete) {
+        NSDictionary *dic =[m_dataArray objectAtIndex:indexPath.row];
+        NSString *messageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
+        [m_dataArray removeObjectAtIndex:indexPath.row];
+        [DataStoreManager deleteJoinGroupApplicationWithMsgId:messageId];
+        
+        [m_billboardTabel reloadData];
+        
+    }
+}
 
 - (void)didReceiveMemoryWarning
 {

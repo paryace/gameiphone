@@ -258,11 +258,14 @@
            
             
             NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"最热组织",@"tagId":@"hot"}, nil];
-            
+            allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
+            [allkeysArr insertObject:@"aaaa" atIndex:0];
+
             [listDict setObject:array forKey:@"aaaa"];
+            [listDict removeObjectForKey:@"sortList"];
+
             
-            allkeysArr = [NSMutableArray arrayWithArray:[listDict allKeys]];
-            [allkeysArr sortUsingSelector:@selector(compare:)];
+            
             [groupCollectionView reloadData];
         }
         
@@ -311,9 +314,7 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSMutableArray *arr =[NSMutableArray arrayWithArray:[listDict allKeys]];
-    [arr sortUsingSelector:@selector(compare:)];
-    NSArray *arry =[listDict objectForKey:arr[section]];
+    NSArray *arry =[listDict objectForKey:allkeysArr[section]];
     return arry.count;
 }
 
@@ -322,10 +323,7 @@
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
-    NSMutableArray *arr =[NSMutableArray arrayWithArray:[listDict allKeys]];
-    [arr sortUsingSelector:@selector(compare:)];
-    
-    NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
+    NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
     
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
     
@@ -347,8 +345,8 @@
         [arr sortUsingSelector:@selector(compare:)];
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
 
-        arr[0] = [NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]];
-        ((CardTitleView *)titleView).cardTitleLabel.text =[arr objectAtIndex:indexPath.section];
+        allkeysArr[0] = [NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]];
+        ((CardTitleView *)titleView).cardTitleLabel.text =[allkeysArr objectAtIndex:indexPath.section];
     }
     return titleView;
 }
@@ -357,13 +355,7 @@
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-
-    
-    NSMutableArray *arr = [NSMutableArray arrayWithArray:[listDict allKeys]];
-    [arr sortUsingSelector:@selector(compare:)];
-
-    NSArray *arry =[listDict objectForKey:arr[indexPath.section]];
-    
+    NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
 
@@ -445,6 +437,7 @@
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
     label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.backgroundColor = [UIColor clearColor];
     [customView addSubview:label];
     return customView;
     

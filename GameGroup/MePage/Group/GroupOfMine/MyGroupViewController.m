@@ -209,12 +209,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)getGroupListFromNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"230" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             [self setGroupList:responseObject];
             
@@ -247,6 +246,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    NSLog(@"-------%d",myGroupArray.count);
     return myGroupArray.count;
 }
 
@@ -282,6 +282,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     }else{
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
         gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
+        gr.isAudit = NO;
         [self.navigationController pushViewController:gr animated:YES];
     }
 }

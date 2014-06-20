@@ -222,6 +222,16 @@
     }];
 }
 
++(void)deleteJoinGroupApplicationWithMsgId:(NSString *)msgId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgId==[c]%@ ",msgId];
+        DSGroupApplyMsg * dGroup = [DSGroupApplyMsg MR_findFirstWithPredicate:predicateApp];
+        if (dGroup) {
+            [dGroup MR_deleteInContext:localContext];
+        }
+    }];
+}
 
 #pragma mark - 保存聊天记录
 +(void)saveDSCommonMsg:(NSDictionary *)msg
@@ -2275,7 +2285,7 @@
 
 +(NSMutableArray *)queryAllBlackListInfo
 {
-    NSArray *array = [DSBlackList MR_findAll];
+    NSMutableArray *array = [NSMutableArray arrayWithArray:[DSBlackList MR_findAll]];
     return array;
 }
 

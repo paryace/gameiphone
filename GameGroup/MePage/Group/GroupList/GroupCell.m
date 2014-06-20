@@ -44,12 +44,13 @@
         
         UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(320-65, 5, 40, 25)];
         leveImageV.image = KUIImage(@"level_image.png");
+        [self addSubview:leveImageV];
+
         self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 40, 20)];
         [self.levelLable setTextAlignment:NSTextAlignmentCenter];
         self.levelLable.textColor = [UIColor whiteColor];
         [self.levelLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [leveImageV addSubview:self.levelLable];
-        [self addSubview:leveImageV];
     }
     return self;
 }
