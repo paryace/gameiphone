@@ -298,7 +298,7 @@ typedef enum : NSUInteger {
         
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         okButton.backgroundColor = [UIColor clearColor];
-        if (self.shiptypeCount ==0){
+        if (self.shiptypeCount ==1){
             [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
             [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
         }else{

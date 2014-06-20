@@ -411,9 +411,11 @@
         }
     } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
-        cell.headImageV.image = KUIImage(@"group_icon");
+        cell.headImageV.image = KUIImage(@"group_msg_icon");
+//        cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
-        cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
+        cell.nameLabel.text =@"群通知";
+//         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
     
     if ([[message msgType]isEqualToString:@"groupchat"]) {

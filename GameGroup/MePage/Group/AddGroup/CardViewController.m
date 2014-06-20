@@ -26,7 +26,7 @@
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"标签" withBackButton:YES];
+    [self setTopViewWithTitle:@"群分类" withBackButton:YES];
     
     UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [okbutton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
