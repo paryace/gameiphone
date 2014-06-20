@@ -73,6 +73,8 @@ typedef enum : NSUInteger {
     UIActivityIndicatorView * m_loginActivity;
     BOOL ishaveAboutMe;
     BOOL ishavehuancun;
+    
+    BOOL isHaveFuns;
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -110,6 +112,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     ishaveAboutMe =NO;
     ishavehuancun = NO;
+    isHaveFuns = NO;
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -602,7 +605,6 @@ typedef enum : NSUInteger {
         aboutMeHeadImgView.imageURL =nil;
     }else
     {
-        //    aboutMeHeadImgView.imageURL =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img")],@"/60/60"]];
        aboutMeHeadImgView.imageURL = [ImageService getImageStr:userImageids Width:60];
     }
     
@@ -698,13 +700,15 @@ typedef enum : NSUInteger {
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
 //                //拉数据回来以后直接格式化， 再保存
+                isHaveFuns = NO;
                 for (int i=0; i<m_dataArray.count; i++) {
                     m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
                 }
                 
                 [self saveinfoToUserDefaults:m_dataArray];
                 
-                if (self.msgCount<m_dataArray.count) {
+                if (self.msgCount<m_dataArray.count&&!isHaveFuns) {
+                    isHaveFuns = YES;
                    NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
                     [dicccc setValue:@"isYes" forKey:@"isFund"];
                     [m_dataArray insertObject:dicccc atIndex:self.msgCount];
@@ -730,7 +734,8 @@ typedef enum : NSUInteger {
                 }
                 [m_dataArray addObjectsFromArray:arr];
                 
-                if (self.msgCount<m_dataArray.count) {
+                if (self.msgCount<m_dataArray.count&&!isHaveFuns) {
+                    isHaveFuns = YES;
                     NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
                     [dicccc setValue:@"isYes" forKey:@"isFund"];
                     [m_dataArray insertObject:dicccc atIndex:self.msgCount];

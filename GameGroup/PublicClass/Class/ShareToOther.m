@@ -33,13 +33,30 @@ static ShareToOther *userManager = NULL;
     }
     return self;
 }
+//微博，仅图片分享
 -(void)shareTosina:(UIImage *)imageV
 {
-    WBMessageObject *message = [WBMessageObject message];
     WBImageObject *image = [WBImageObject object];
     image.imageData = UIImagePNGRepresentation(imageV);
-    message.imageObject = image;
-    
+    [self shareTosinaObject:image];
+}
+//微博，带链接分享
+-(void)shareTosinass:(UIImage *)imageV Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
+{
+    WBWebpageObject *webpage = [WBWebpageObject object];
+    webpage.objectID = @"identifier1";
+    webpage.title = title;
+    webpage.description = des;
+    webpage.thumbnailData = UIImagePNGRepresentation(imageV);
+    webpage.webpageUrl = uri;
+    [self shareTosinaObject:webpage];
+}
+
+//分享到微博
+-(void)shareTosinaObject:(id)mediaObject
+{
+    WBMessageObject *message = [WBMessageObject message];
+    message.mediaObject = mediaObject;
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message];
     request.userInfo = @{@"ShareMessageFrom": @"SendMessageToWeiboViewController",
                          @"Other_Info_1": [NSNumber numberWithInt:123],
@@ -47,9 +64,9 @@ static ShareToOther *userManager = NULL;
                          @"Other_Info_3": @{@"key1": @"obj1", @"key2": @"obj2"}};
     
     [WeiboSDK sendRequest:request];
-        app.bSinaWB = YES;
+    app.bSinaWB = YES;
 }
-
+//微博sso认证
 - (void)ssoButtonPressed
 {
     WBAuthorizeRequest *request = [WBAuthorizeRequest request];
@@ -68,23 +85,23 @@ static ShareToOther *userManager = NULL;
 {
     _scene = scene;
 }
-
+//微信， 仅图片分享
 - (void) sendImageContentWithImage:(UIImage *)imageV
 {
     
     WXImageObject *ext = [WXImageObject object];
     UIImage* image = imageV;
-//    ext.imageData = UIImagePNGRepresentation(image);
     ext.imageData =UIImageJPEGRepresentation(image, 0.2);
     [self shareToWX:ext uiimage:imageV Title:@"" Description:@""];
 }
+//微信，带链接分分享
 - (void)sendAppExtendContent_friend:(UIImage *)image Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
 {
     WXWebpageObject *ext = [WXWebpageObject object];
     ext.webpageUrl = uri;
     [self shareToWX:ext uiimage:image Title:title Description:des];
 }
-
+//微信分享
 -(void)shareToWX:(id)mediaObject uiimage:(UIImage *)imageV Title:(NSString*)title Description:(NSString*)des
 {
     if ([WXApi isWXAppInstalled]) {
@@ -108,13 +125,11 @@ static ShareToOther *userManager = NULL;
     }
 
 }
+//QQ,带链接分享
 - (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
 {
     app.bSinaWB = YES;
-    QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]
-                                                        title:title
-                                                  description:des
-                                              previewImageURL:[NSURL URLWithString:imageUrl]];
+    QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageURL:[NSURL URLWithString:imageUrl]];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:newsObj];
     QQApiSendResultCode sent = [QQApiInterface sendReq:req];
     [self handleSendResult:sent];

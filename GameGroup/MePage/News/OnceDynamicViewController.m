@@ -15,6 +15,7 @@
 #import "EGOImageView.h"
 #import "AppDelegate.h"
 #import "JSON.h"
+#import "ShareToOther.h"
 @interface OnceDynamicViewController ()
 {
     UIButton *m_shareButton;
@@ -102,10 +103,7 @@
 
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    
-   // [self setUpViewBeforeLoading];
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
-    
     [self getDataByNet];
 }
 
@@ -404,10 +402,6 @@
 - (void)setButtomView
 {
     if ([self.urlLink isEqualToString:@""]) {   //如果是动态
-//        UIScrollView* scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 50 - startX - 60)];
-//        scroll.backgroundColor = [UIColor clearColor];
-//        [self.view addSubview:scroll];
-        
         NSString* loadStr = [self htmlContentWithTitle:KISDictionaryHaveKey(self.dataDic, @"title") time:[NSString stringWithFormat:@"%@", [self getDataWithTime]] content:KISDictionaryHaveKey(self.dataDic, @"msg")];
         
 
@@ -575,20 +569,14 @@
 #pragma mark 分享
 - (void)shareButtonClick:(id)sender
 {
-    if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
-        UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
-        sheet.tag = 90;
-        [sheet showInView:self.view];
-    }
-    else
-    {
-        shareType = 0;
-        selectContactPage *VC = [[selectContactPage alloc] init];
-        VC.contactDelegate = self;
-        [self.navigationController pushViewController:VC animated:YES];
-    }
+    
+    UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"分享到" delegate:self cancelButtonTitle:@"取消"destructiveButtonTitle:Nil
+                                  otherButtonTitles:@"好友",@"新浪微博",@"微信好友",@"微信朋友圈",nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+    [actionSheet showInView:self.view];
 }
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (actionSheet.tag == 90) {
         switch (buttonIndex) {
@@ -608,7 +596,61 @@
             default:
                 break;
         }
+    }else{
+        if (buttonIndex ==0) {
+            if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
+                UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
+                sheet.tag = 90;
+                [sheet showInView:self.view];
+            }
+            else
+            {
+                shareType = 0;
+                selectContactPage *VC = [[selectContactPage alloc] init];
+                VC.contactDelegate = self;
+                [self.navigationController pushViewController:VC animated:YES];
+            }
+        }
+        else if (buttonIndex ==1)
+        {
+            [[ShareToOther singleton]shareTosinass:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+        }
+        else if(buttonIndex ==2)
+        {
+            [[ShareToOther singleton]changeScene:WXSceneSession];
+             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+        }
+        else if(buttonIndex ==3)
+        {
+            [[ShareToOther singleton] changeScene:WXSceneTimeline];
+            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+        }
     }
+}
+
+-(NSString*)getShareUrl:(NSString*)msgid
+{
+    return [NSString stringWithFormat:@"%@%@%@",BaseDynamicShareUrl,@"id=",msgid];
+}
+
+//请求网络图片
+-(UIImage *) getImageFromURL:(NSString *)fileURL {
+    UIImage * result;
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
+    result = [UIImage imageWithData:data];
+    return result;
+}
+
+-(UIImage*)getShareImage
+{
+    if ([self.urlLink isEqualToString:@""]) {
+        NSString * imageUrl = [ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")];
+        if (![GameCommon isEmtity:imageUrl]) {
+            return [self getImageFromURL:imageUrl];
+        }
+        return KUIImage(@"icon");
+    }
+    return KUIImage(@"icon");
 }
 
 -(void)getContact:(NSDictionary *)userDict

@@ -13,4 +13,5 @@
 @property (nonatomic, strong) UILabel *msgLable;
 @property (nonatomic, strong) UIImageView *lineImage1;
 @property (nonatomic, strong) UIImageView *lineImage2;
+-(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime;
 @end

@@ -12,16 +12,14 @@
 #import "MessagePageViewController.h"
 #import "FindViewController.h"
 #import "MePageViewController.h"
-//#import "NewFindViewController.h"
-
 #import "MLNavigationController.h"
 #import "Custom_tabbar.h"
-
 #import "LocationManager.h"
 #import "TempData.h"
-
 #import "MLNavigationController.h"
 #import "NewFriendPageController.h"
+#import "DownloadImageService.h"
+
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -54,7 +52,6 @@
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
     [self getOpenImageFromNet];
-//    [self downloadImageWithID:@""];
 }
 
 -(UIImage*)getOpenImage
@@ -120,14 +117,16 @@
 //下载开机图
 -(void)downloadImageWithID:(NSString *)imageId
 {
-    NSString * urlStr= [ImageService getImgUrl:imageId];
-    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
-     {
-         if (!error) {
-             [[NSUserDefaults standardUserDefaults] setObject:imageId forKey:OpenImage];
-         }
-     }
-     ];
+    [[DownloadImageService singleton] startDownload:imageId];
+    
+//    NSString * urlStr= [ImageService getImgUrl:imageId];
+//    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
+//     {
+//         if (!error) {
+//             [[NSUserDefaults standardUserDefaults] setObject:[GameCommon getNewStringWithId:imageId] forKey:OpenImage];
+//         }
+//     }
+//     ];
 }
 
 #pragma mark 获取用户位置
@@ -148,7 +147,6 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSDictionary * locationDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f",userLongitude],@"longitude",[NSString stringWithFormat:@"%f",userLatitude],@"latitude", nil];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict setObject:@"108" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
@@ -167,22 +165,23 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"263" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
+<<<<<<< HEAD
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]:@"" forKey:@"token"];
+=======
+>>>>>>> FETCH_HEAD
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
      
     success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-             NSString * openImageId = KISDictionaryHaveKey(responseObject, @"adImg");
+             NSString * openImageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"adImg")];
              NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
             if (openImageId&&![openImageId isEqualToString:imageId]) {
-//                [self downloadImageWithID:openImageId];
+                [self downloadImageWithID:openImageId];
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
-    
 }
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

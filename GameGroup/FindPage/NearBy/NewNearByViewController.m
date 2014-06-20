@@ -68,6 +68,9 @@ typedef enum : NSUInteger {
     
     NSMutableDictionary *m_mianDict;
     NSArray *m_sectionHeadsKeys;
+    
+    
+    BOOL isHaveFun;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -105,6 +108,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     isSaveHcListInfo = NO;
     isSaveHcTopImg = NO;
+    isHaveFun=NO;
     self.lastMsgId = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastMsgId"];
     [self setTopViewWithTitle:@"" withBackButton:YES];
     titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
@@ -554,6 +558,7 @@ typedef enum : NSUInteger {
         [m_loginActivity stopAnimating];
             if (m_currPageCount ==0) {
                 [m_dataArray removeAllObjects];
+                isHaveFun=NO;
                 if ([responseObject isKindOfClass:[NSArray class]]) {
                     [m_dataArray addObjectsFromArray:responseObject];
                     for (int i =0; i <m_dataArray.count; i++) {
@@ -570,7 +575,8 @@ typedef enum : NSUInteger {
                         }
                         isSaveHcListInfo = NO;
                         
-                        if ([self getMsgRowWithId]!=-1) {
+                        if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
+                            isHaveFun=YES;
                             NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
                             [diccccc setObject:@"isYES" forKey:@"isFund"];
                             [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
@@ -587,7 +593,8 @@ typedef enum : NSUInteger {
                     }
                     [m_dataArray addObjectsFromArray:arr];
                     
-                    if ([self getMsgRowWithId]!=-1) {
+                    if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
+                        isHaveFun=YES;
                         NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
                         [diccccc setObject:@"isYES" forKey:@"isFund"];
                         [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];

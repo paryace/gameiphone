@@ -211,9 +211,18 @@ UINavigationControllerDelegate>
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
         if (self.unreadMsgCount>20) {
+            _titleLabel.hidden = YES;
             [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
+            
+            CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+            _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2, 10, textSize.width, 20);
+            
+            _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 13.5, 13, 13)];
+            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_normal") forState:UIControlStateNormal];
+            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_click") forState:UIControlStateHighlighted];
+            [titleBtn addSubview:_titleImageV];
         }else{
-            _titleLabel.frame = CGRectMake(0,10,200,20);
+            _titleLabel.hidden = NO;
         }
         [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
@@ -457,7 +466,8 @@ UINavigationControllerDelegate>
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         NSString* msg = KISDictionaryHaveKey(dict, @"msg");
         NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
-        cell.timeLable.text = [NSString stringWithFormat:@"%@", timeStr];
+        NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
+        [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         cell.msgLable.text = msg;
         CGSize textSize = [cell.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
@@ -493,7 +503,7 @@ UINavigationControllerDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             cell.senderNickName.hidden =YES;
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
-            bgImage = [[UIImage imageNamed:@"bubble_02.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             [cell.failImage setTag:(indexPath.row+1)];
             [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -658,23 +668,39 @@ UINavigationControllerDelegate>
 //群动态入口
 - (UIButton *)groupCircleImage{
     if(!_groupCircleBtn){
-        _groupCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-37-5,startX+5,37,37)];
+        _groupCircleBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-37-13,startX+5,40,40)];
         _groupCircleBtn.backgroundColor = [UIColor clearColor];
         [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
-        [_groupCircleBtn setBackgroundImage:KUIImage(@"chat_group_circle_click") forState:UIControlStateHighlighted];
         [_groupCircleBtn addTarget:self action:@selector(groupCricleButtonClick:)forControlEvents:UIControlEventTouchUpInside];
-        self.groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(12,18,30,16)];
-        self.groupCircleText .text = @"0";
-        self.groupCircleText.font = [UIFont systemFontOfSize:14];
-        self.groupCircleText.textColor = [UIColor whiteColor];
-        [_groupCircleBtn addSubview:self.groupCircleText];
+        
+        _groupCircleText = [[UILabel alloc] initWithFrame:CGRectMake(5,5,30,16)];
+        _groupCircleText .text = @"0";
+        _groupCircleText.textAlignment = NSTextAlignmentCenter;
+        _groupCircleText.backgroundColor = [UIColor clearColor];
+        _groupCircleText.font = [UIFont systemFontOfSize:16];
+        _groupCircleText.textColor = [UIColor whiteColor];
+        [_groupCircleBtn addSubview:_groupCircleText];
+
+        
+        _circleImage = [[UIImageView alloc] initWithFrame:CGRectMake(13,4,16,16)];
+        _circleImage.backgroundColor = [UIColor clearColor];
+        _circleImage.image = KUIImage(@"group_cricle_image");
+        [_groupCircleBtn addSubview:_circleImage];
+
+        
+        UILabel *groupCircleLable = [[UILabel alloc] initWithFrame:CGRectMake(5,18,30,16)];
+        groupCircleLable .text = @"群动态";
+        groupCircleLable.backgroundColor = [UIColor clearColor];
+        groupCircleLable.font = [UIFont systemFontOfSize:10];
+        groupCircleLable.textColor = [UIColor whiteColor];
+        [_groupCircleBtn addSubview:groupCircleLable];
     }
     return _groupCircleBtn;
 }
 
 - (UIButton *)titleButton{
     if(!_titleButton){
-        _titleButton = [[UIButton alloc] initWithFrame:CGRectMake(50,startX-40,200,40)];
+        _titleButton = [[UIButton alloc] initWithFrame:CGRectMake(60,startX-40,200,40)];
         _titleButton.backgroundColor = [UIColor clearColor];
         if ([self.type isEqualToString:@"group"]&&self.unreadMsgCount>20) {
             [_titleButton addTarget:self action:@selector(loadMoreMsg:)forControlEvents:UIControlEventTouchUpInside];
@@ -685,7 +711,7 @@ UINavigationControllerDelegate>
 //导航条标题
 - (UILabel *)titleLabel{
     if(!_titleLabel){
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,200,20)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,10,200,20)];
         _titleLabel.backgroundColor = [UIColor clearColor];
         _titleLabel.text = self.nickName;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -697,12 +723,12 @@ UINavigationControllerDelegate>
 //群的未读消息数
 - (UILabel *)groupunReadMsgLable{
     if(!_groupunReadMsgLable){
-        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,17,200,20)];
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,10,200,20)];
         _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
         _groupunReadMsgLable.text = [NSString stringWithFormat:@"%@%d%@",@"(未读消息",self.unreadMsgCount,@"条)"];
         _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;
         _groupunReadMsgLable.textColor = [UIColor whiteColor];
-        _groupunReadMsgLable.font = [UIFont systemFontOfSize:12.0f];
+        _groupunReadMsgLable.font = [UIFont systemFontOfSize:18];
     }
     return _groupunReadMsgLable;
 }
@@ -778,15 +804,18 @@ UINavigationControllerDelegate>
 -(void)setGroupDynamicMsg:(NSInteger)msgCount
 {
     if (msgCount>0) {
+        _circleImage.hidden = YES;
+        _groupCircleText.hidden=NO;
         if (msgCount > 99) {
-            self.groupCircleText.text = @"99+";
+            _groupCircleText.text = @"99+";
         }
         else{
-            self.groupCircleText.text =[NSString stringWithFormat:@"%d",msgCount] ;
+            _groupCircleText.text =[NSString stringWithFormat:@"%d",msgCount] ;
         }
     }else
     {
-        self.groupCircleText.text=@"0";
+        _circleImage.hidden = NO;
+        _groupCircleText.hidden=YES;
     }
 }
 //群动态入口
@@ -806,7 +835,7 @@ UINavigationControllerDelegate>
         return;
     }
     [self hideUnReadLable];
-    NSArray *array = [self getMsgArray:messages.count PageSize:self.unreadMsgCount-20];
+    NSArray *array = [self getMsgArray:messages.count PageSize:self.unreadMsgCount-messages.count];
     for (int i = 0; i < array.count; i++) {
         [messages insertObject:array[i] atIndex:i];
         [self overReadMsgToArray:array[i] Index:i];
@@ -819,7 +848,7 @@ UINavigationControllerDelegate>
 {
     if (_groupunReadMsgLable&&_groupunReadMsgLable.hidden==NO) {
         _groupunReadMsgLable.hidden=YES;
-        _titleLabel.frame = CGRectMake(0,10,200,20);
+        _titleLabel.hidden = NO;
         self.unreadMsgCount=0;
     }
 }

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AFURLSessionManager.h"
 
 #define kFailMessageKey @"failMessage"
 #define kFailErrorCodeKey @"failErrorCode"
@@ -14,6 +15,9 @@
 //联网
 
 @interface NetManager : NSObject
+
+
+
 +(void)requestWithURLStr:(NSString *)urlStr Parameters:(NSDictionary *)parameters success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
     failure:(void (^)(AFHTTPRequestOperation *operation, id error))failure;
 
