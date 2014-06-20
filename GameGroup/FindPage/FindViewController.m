@@ -282,7 +282,7 @@
     [circleView addSubview:bottomTitleLabel];
 
     
-    UIButton *iconImageView = [[UIButton alloc]initWithFrame:CGRectMake(13.5, 13.5, 33, 33)];
+    UIButton *iconImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
     [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     [bottomView addSubview:iconImageView];
     

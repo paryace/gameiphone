@@ -20,4 +20,7 @@
 - (void)ssoButtonPressed;//授权
 - (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri;
 - (void)sendAppExtendContent_friend:(UIImage*)image Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri;
+
+
+-(void)shareTosinass:(UIImage *)imageV Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri;
 @end

@@ -103,10 +103,7 @@
 
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
-    
-   // [self setUpViewBeforeLoading];
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
-    
     [self getDataByNet];
 }
 
@@ -405,10 +402,6 @@
 - (void)setButtomView
 {
     if ([self.urlLink isEqualToString:@""]) {   //如果是动态
-//        UIScrollView* scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 50 - startX - 60)];
-//        scroll.backgroundColor = [UIColor clearColor];
-//        [self.view addSubview:scroll];
-        
         NSString* loadStr = [self htmlContentWithTitle:KISDictionaryHaveKey(self.dataDic, @"title") time:[NSString stringWithFormat:@"%@", [self getDataWithTime]] content:KISDictionaryHaveKey(self.dataDic, @"msg")];
         
 
@@ -585,11 +578,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
     if (actionSheet.tag == 90) {
         switch (buttonIndex) {
             case 0:
@@ -625,22 +613,44 @@
         }
         else if (buttonIndex ==1)
         {
-//            [[ShareToOther singleton]shareTosina:viewImage];
+            [[ShareToOther singleton]shareTosinass:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
         {
             [[ShareToOther singleton]changeScene:WXSceneSession];
-//            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-             [[ShareToOther singleton] sendAppExtendContent_friend:KUIImage(@"icon") Title:@"title" Description:@"desc" Url:@"http://www.momotalk.com"];
+             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==3)
         {
             [[ShareToOther singleton] changeScene:WXSceneTimeline];
-            
-//            [[ShareToOther singleton] sendImageContentWithImage:viewImage];
-            [[ShareToOther singleton] sendAppExtendContent_friend:KUIImage(@"icon") Title:@"title" Description:@"desc" Url:@"http://www.momotalk.com"];
+            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
     }
+}
+
+-(NSString*)getShareUrl:(NSString*)msgid
+{
+    return [NSString stringWithFormat:@"%@%@%@",BaseDynamicShareUrl,@"id=",msgid];
+}
+
+//请求网络图片
+-(UIImage *) getImageFromURL:(NSString *)fileURL {
+    UIImage * result;
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
+    result = [UIImage imageWithData:data];
+    return result;
+}
+
+-(UIImage*)getShareImage
+{
+    if ([self.urlLink isEqualToString:@""]) {
+        NSString * imageUrl = [ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")];
+        if (![GameCommon isEmtity:imageUrl]) {
+            return [self getImageFromURL:imageUrl];
+        }
+        return KUIImage(@"icon");
+    }
+    return KUIImage(@"icon");
 }
 
 -(void)getContact:(NSDictionary *)userDict

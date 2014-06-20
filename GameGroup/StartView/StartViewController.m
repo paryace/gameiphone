@@ -54,7 +54,6 @@
     [[LocationManager sharedInstance] initLocation];//定位
     [self getUserLocation];
     [self getOpenImageFromNet];
-//    [self downloadImageWithID:@""];
 }
 
 -(UIImage*)getOpenImage
@@ -148,7 +147,6 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSDictionary * locationDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f",userLongitude],@"longitude",[NSString stringWithFormat:@"%f",userLatitude],@"latitude", nil];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict setObject:@"108" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [postDict setObject:locationDict forKey:@"params"];
@@ -167,7 +165,6 @@
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"263" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
      
     success:^(AFHTTPRequestOperation *operation, id responseObject) {
