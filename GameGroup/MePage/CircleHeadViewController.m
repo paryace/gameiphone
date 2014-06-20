@@ -704,11 +704,11 @@ typedef enum : NSUInteger {
                 
                 [self saveinfoToUserDefaults:m_dataArray];
                 
-                if (self.msgCount<m_dataArray.count) {
-                   NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
-                    [dicccc setValue:@"isYes" forKey:@"isFund"];
-                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
-                }
+//                if (self.msgCount<m_dataArray.count) {
+//                   NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
+//                    [dicccc setValue:@"isYes" forKey:@"isFund"];
+//                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
+//                }
                 
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
@@ -730,11 +730,11 @@ typedef enum : NSUInteger {
                 }
                 [m_dataArray addObjectsFromArray:arr];
                 
-                if (self.msgCount<m_dataArray.count) {
-                    NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
-                    [dicccc setValue:@"isYes" forKey:@"isFund"];
-                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
-                }
+//                if (self.msgCount<m_dataArray.count) {
+//                    NSMutableDictionary * dicccc = [NSMutableDictionary dictionary];
+//                    [dicccc setValue:@"isYes" forKey:@"isFund"];
+//                    [m_dataArray insertObject:dicccc atIndex:self.msgCount];
+//                }
             }
             m_currPageCount++;
             [m_header endRefreshing];
@@ -809,9 +809,9 @@ typedef enum : NSUInteger {
 #pragma mark Content分析器
 - (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
-        return contentDict;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
+//        return contentDict;
+//    }
     if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
         return contentDict;
     }
@@ -969,11 +969,11 @@ typedef enum : NSUInteger {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
-        [self.navigationController pushViewController:addVC animated:YES];
-    }
+//    NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+//        InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
+//        [self.navigationController pushViewController:addVC animated:YES];
+//    }
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -985,14 +985,14 @@ typedef enum : NSUInteger {
     
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
 
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        static NSString *identifier =@"cell111";
-        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell ==nil) {
-            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
-        return cell;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+//        static NSString *identifier =@"cell111";
+//        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+//        if (cell ==nil) {
+//            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+//        }
+//        return cell;
+//    }
     
     static NSString *identifier =@"cell";
     CircleHeadCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
@@ -1230,9 +1230,9 @@ typedef enum : NSUInteger {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
     
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        return 50;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+//        return 50;
+//    }
     
     dict = [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
