@@ -15,7 +15,7 @@
 @end
 
 @interface AuthViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate>
-
+@property(nonatomic,strong)NSString *Type;
 @property(nonatomic,strong)NSString* gameId;
 @property(nonatomic,assign)BOOL isComeFromFirstOpen;
 @property(nonatomic,strong)NSString* realm;

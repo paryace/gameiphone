@@ -39,7 +39,7 @@
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     
-    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@&from=from_client_ios",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],self.realm,self.character,self.gameId];
+    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@&type=%@&from=from_client_ios",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],self.realm,self.character,self.gameId,self.Type?self.Type:@""];
     NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
