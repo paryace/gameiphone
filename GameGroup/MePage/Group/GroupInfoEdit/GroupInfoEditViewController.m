@@ -40,14 +40,6 @@
     m_myTableView.showsHorizontalScrollIndicator = NO;
     [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
-    
-    
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
 
     
     topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
@@ -74,6 +66,12 @@
     
     [self setTopViewWithTitle:@"编辑群资料" withBackButton:YES];
 
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
