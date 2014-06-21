@@ -21,6 +21,7 @@
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     AppDelegate *app;
+    UIAlertView *m_alertView;
 }
 @end
 
@@ -102,7 +103,7 @@
     }
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
-    cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
+    cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"groupIconImg")];
     cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
     NSString * level = KISDictionaryHaveKey(cellDic, @"level");
@@ -139,13 +140,19 @@
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray * groupList = responseObject;
 
-            if (currentPageCount ==0) {
-                m_groupArray = groupList;
+            if (groupList&&groupList.count>0) {
+                if (currentPageCount ==0) {
+                    m_groupArray = groupList;
+                }else{
+                    [m_groupArray addObjectsFromArray:groupList];
+                }
+                currentPageCount +=groupList.count;
+                [m_GroupTableView reloadData];
             }else{
-                [m_groupArray addObjectsFromArray:groupList];
+                m_alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"查询无结果" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+                [m_alertView show];
             }
-            currentPageCount +=groupList.count;
-            [m_GroupTableView reloadData];
+            
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
@@ -270,6 +277,15 @@
 //            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
 //        }
 //         ];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)dealloc
+{
+    m_alertView.delegate  =nil;
 }
 
 - (void)didReceiveMemoryWarning

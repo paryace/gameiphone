@@ -135,7 +135,7 @@
     self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 320, 180, 40)];
     self.groupNameTf.returnKeyType = UIReturnKeyDone;
     self.groupNameTf.delegate = self;
-    self.groupNameTf.placeholder = @"10个字符以内";
+    self.groupNameTf.placeholder = @"限10字";
     self.groupNameTf.textAlignment = NSTextAlignmentRight;
     self.groupNameTf.font = [UIFont boldSystemFontOfSize:15.0];
     self.groupNameTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;

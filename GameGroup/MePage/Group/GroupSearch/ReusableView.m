@@ -18,6 +18,9 @@
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
         [self addSubview:self.topBtn];
         self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 50, 50)];
+        self.headImageView.layer.cornerRadius = 5;
+        self.headImageView.layer.masksToBounds=YES;
+
         self.headImageView.placeholderImage = KUIImage(@"group_icon");
         [self.topBtn addSubview:self.headImageView];
         

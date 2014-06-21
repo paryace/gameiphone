@@ -16,7 +16,7 @@ typedef enum
     SETUP_HOT,
 }setUpType;
 
-@interface SearchGroupViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
+@interface SearchGroupViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,UIAlertViewDelegate>
 @property(nonatomic, retain) NSString * conditiona;//条件
 @property(nonatomic, assign)setUpType ComeType;
 @property(nonatomic,copy)NSString *tagsId;

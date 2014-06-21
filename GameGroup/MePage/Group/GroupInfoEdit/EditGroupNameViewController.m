@@ -25,7 +25,7 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor colorWithRed:225.0/255.0 green:225.0/255.0 blue:225.0/255.0 alpha:1.0];
-    m_maxZiShu = 100;
+    m_maxZiShu = 10;
     [self setTopViewWithTitle:@"修改群名称" withBackButton:YES];
     
     
@@ -50,7 +50,7 @@
     
     [self refreshZiLabelText];
     
-    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 400 + startX, 300, 40)];
+    UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 130 + startX, 300, 40)];
     [okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [okButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [okButton setTitle:@"完 成" forState:UIControlStateNormal];
