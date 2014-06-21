@@ -465,9 +465,14 @@ UINavigationControllerDelegate>
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         NSString* msg = KISDictionaryHaveKey(dict, @"msg");
-        NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
-        NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
-        [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
+        if (indexPath.row==0) {
+            NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+            cell.timeLable.text = [NSString stringWithFormat:@"%@", timeStr];
+        }else{
+            NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+            NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
+            [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
+        }
         cell.msgLable.text = msg;
         CGSize textSize = [cell.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
