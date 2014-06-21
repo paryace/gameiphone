@@ -17,6 +17,8 @@
 @property(nonatomic,strong)UILabel * userNameLable;
 @property(nonatomic,strong)UILabel * joinReasonLable;
 
+@property(nonatomic,strong)UIButton * userInfoBg;
+
 @property(nonatomic,strong)UIButton *agreeBtn ;
 @property(nonatomic,strong)UIButton * desAgreeBtn;
 @property(nonatomic,strong)UIButton * ignoreBtn;
@@ -34,5 +36,7 @@
 -(void)desAgreeMsg:(JoinApplyCell*)sender;
 
 -(void)ignoreMsg:(JoinApplyCell*)sender;
+
+-(void)userInfoClick:(JoinApplyCell*)sender;
 
 @end

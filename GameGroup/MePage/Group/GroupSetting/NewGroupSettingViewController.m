@@ -133,7 +133,7 @@ typedef enum : NSUInteger {
 {
     switch (section) {
         case 0:
-            return 3;
+            return 2;
             break;
         case 1:
             return 1;
@@ -226,16 +226,17 @@ typedef enum : NSUInteger {
             [cell.contentView addSubview:groupNameLable];
         
             return cell;
-        }else{
-            static NSString *identifier = @"myCell02";
-            GroupSettingCell *cell = (GroupSettingCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
-            if (cell == nil) {
-                cell = [[GroupSettingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-            }
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.titleLable.text = @"邀请新成员";
-            return cell;
         }
+//        else{
+//            static NSString *identifier = @"myCell02";
+//            GroupSettingCell *cell = (GroupSettingCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+//            if (cell == nil) {
+//                cell = [[GroupSettingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+//            }
+//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            cell.titleLable.text = @"邀请新成员";
+//            return cell;
+//        }
         
 
     }else if (indexPath.section==1) {

@@ -19,6 +19,8 @@
 
 @property(nonatomic,strong)UILabel * groupCreateTimeLable;//时间
 
+@property(nonatomic,strong)UIButton * imageClickBtn;//
+
 @property(nonatomic,assign)id<GroupImageDeleGate>groupImageDeleGate;
 
 -(void)setGroupMsg:(NSString*)groupImage GroupName:(NSString*)groupName MsgTime:(NSString*)msgTime;

@@ -14,7 +14,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 135)];
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 139)];
         self.bgV.image = KUIImage(@"group_cell_bg");
         self.bgV.userInteractionEnabled =YES;
         
@@ -22,23 +22,23 @@
         [self.bgV addSubview:self.groupImageV];
         
         
-        UIButton * imageClickBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 10, 25, 25)];
-        [imageClickBtn addTarget:self action:@selector(groupButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        [self.bgV addSubview:imageClickBtn];
+        self.imageClickBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 0, 310, 40)];
+        [self.imageClickBtn addTarget:self action:@selector(groupButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bgV addSubview:self.imageClickBtn];
         
         self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(45, 12, 100, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
         self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.groupNameLable.text = @"群名";
         self.groupNameLable.font =[ UIFont systemFontOfSize:12];
-        [self.bgV addSubview:self.groupNameLable];
+        [self.imageClickBtn addSubview:self.groupNameLable];
         
         self.groupCreateTimeLable = [[UILabel alloc]initWithFrame:CGRectMake(300-50-5, 12, 50, 20)];
         self.groupCreateTimeLable.backgroundColor = [UIColor clearColor];
         self.groupCreateTimeLable.textColor = [UIColor grayColor];
         self.groupCreateTimeLable.text = @"昨天20:09";
         self.groupCreateTimeLable.font =[ UIFont systemFontOfSize:12];
-        [self.bgV addSubview:self.groupCreateTimeLable];
+        [self.imageClickBtn addSubview:self.groupCreateTimeLable];
         
         UIView *lineView1 = [[UIView alloc]initWithFrame:CGRectMake(10, 43, 320-30, 1)];
         lineView1.backgroundColor = kColorWithRGB(200,200,200, 0.7);

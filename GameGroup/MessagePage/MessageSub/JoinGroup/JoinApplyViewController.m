@@ -66,7 +66,7 @@
         ||[msgType isEqualToString:@"kickOffGroup"]) {
         return 105;
     }
-    return 140;
+    return 145;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -84,7 +84,6 @@
     //申请加入群
     if ([msgType isEqualToString:@"joinGroupApplication"]
         ||[msgType isEqualToString:@"friendJoinGroup"]) {
-        
         static NSString *identifier = @"ApplicationCell";
         JoinApplyCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -226,6 +225,17 @@
     gr.groupId =[GameCommon getNewStringWithId:groupId];
     [self.navigationController pushViewController:gr animated:YES];
 }
+
+-(void)userInfoClick:(JoinApplyCell*)sender
+{
+    NSMutableDictionary *dict = [m_applyArray objectAtIndex:sender.tag];
+    NSString * userId = KISDictionaryHaveKey(dict, @"userid");
+    TestViewController *detailV = [[TestViewController alloc]init];
+    detailV.userId = userId;
+    [self.navigationController pushViewController:detailV animated:YES];
+
+}
+
 //同意
 -(void)agreeMsg:(JoinApplyCell*)sender
 {
