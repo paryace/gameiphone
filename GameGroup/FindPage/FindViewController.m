@@ -187,6 +187,7 @@
         iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
     }else
     {
+        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
         gbMsgCountImageView.hidden = YES;
         NSInteger groupCount = [DataStoreManager queryGroupCount];
         if (groupCount>0) {
