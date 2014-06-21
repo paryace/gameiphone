@@ -288,7 +288,7 @@
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
         [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100;
-        button.backgroundColor = [UIColor grayColor];
+//        button.backgroundColor = [UIColor grayColor];
         if (shiptype ==1) {
             [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -488,7 +488,7 @@
         UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
         lvLb.font = [UIFont boldSystemFontOfSize:11];
         lvLb.backgroundColor = [UIColor clearColor];
-        lvLb.textColor =[ UIColor blackColor];
+        lvLb.textColor =[ UIColor whiteColor];
         lvLb.textAlignment = NSTextAlignmentCenter;
         lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
         [cell addSubview:lvLb];
@@ -651,8 +651,11 @@
         {
             GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
             float heigth = cell.contentLabel.frame.size.height;
+            if (heigth<20) {
+                heigth =40;
+            }
             if (photoArray.count==0) {
-                return 10+heigth+10;
+                return heigth;
             }else{
                 NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
                 return photoCount*68+photoCount*2+heigth+10+10;

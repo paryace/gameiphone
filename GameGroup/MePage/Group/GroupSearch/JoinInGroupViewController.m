@@ -56,7 +56,7 @@
 
     
     
-    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 20, 300, 40)];
+    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 10, 300, 40)];
     m_searchTf.backgroundColor = [UIColor clearColor];
     m_searchTf.borderStyle = UITextBorderStyleRoundedRect;
     m_searchTf.placeholder = @"搜索群名称或群号";
@@ -123,16 +123,7 @@
 {
  
     UIButton * myView = [[UIButton alloc]initWithFrame:CGRectMake(0, 70, 320, 60)];
-    
-    [myView setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-    [myView setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-    UIView *uplineView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 1)];
-    uplineView.backgroundColor = [UIColor grayColor];
-    [myView addSubview:uplineView];
-    
-    UIView *downView =[[ UIView alloc]initWithFrame:CGRectMake(0, 65, 320, 1)];
-    downView.backgroundColor =[UIColor grayColor];
-    [myView addSubview:downView];
+    myView.backgroundColor = [UIColor whiteColor];
     
     
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];

@@ -50,6 +50,11 @@
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
 
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"获取中...";
+    
     switch (self.ComeType) {
         case SETUP_Tags:
             [paramDict setObject:self.tagsId forKey:@"tagId"];
@@ -103,7 +108,7 @@
     }
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
-    cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"groupIconImg")];
+    cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
     cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
     NSString * level = KISDictionaryHaveKey(cellDic, @"level");
@@ -120,6 +125,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
@@ -254,29 +261,29 @@
 -(void)getLocationForNet
 {
     
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-    [paramDict setObject:@"20" forKey:@"maxSize"];
-    [paramDict setObject:self.gameid forKey:@"gameid"];
-    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-    [self getGroupListFromNetWithParam:paramDict method:@"237"];
+//    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+//    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+//    [paramDict setObject:@"20" forKey:@"maxSize"];
+//    [paramDict setObject:self.gameid forKey:@"gameid"];
+//    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+//    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+//    [self getGroupListFromNetWithParam:paramDict method:@"237"];
 
     
-//        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-//            [[TempData sharedInstance] setLat:lat Lon:lon];
-//            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-//            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-//            [paramDict setObject:@"20" forKey:@"maxSize"];
-//            
-//            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-//            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-//            [self getGroupListFromNetWithParam:paramDict method:@"237"];
-//
-//        } Failure:^{
-//            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-//        }
-//         ];
+        [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+            [[TempData sharedInstance] setLat:lat Lon:lon];
+            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+            [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+            [paramDict setObject:@"20" forKey:@"maxSize"];
+            [paramDict setObject:self.gameid forKey:@"gameid"];
+            [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+            [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+            [self getGroupListFromNetWithParam:paramDict method:@"237"];
+
+        } Failure:^{
+            [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+        }
+         ];
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
