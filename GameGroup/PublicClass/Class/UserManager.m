@@ -196,10 +196,8 @@ static UserManager *userManager = NULL;
 +(void)getGroupListFromNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"230" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"success%@",responseObject);

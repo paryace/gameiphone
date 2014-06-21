@@ -485,6 +485,7 @@ typedef enum : NSUInteger {
         {
             [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"0"];
+           
             
         }else if (buttonIndex ==2)
         {
@@ -497,12 +498,6 @@ typedef enum : NSUInteger {
             [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
             [self settingMsgHint:@"2"];
         }
-        
-        NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
-        NSString * message = [self getCellMsgByState:groupMsgSettingState];
-        [self setSettingMsg:message];
-        soundimageView.image= KUIImage([self getMsgIcon:groupMsgSettingState]);
-        
     }
 }
 
@@ -592,6 +587,10 @@ typedef enum : NSUInteger {
 //设置群消息提示
 -(void)settingMsgHint:(NSString*)state
 {
+    NSString * message = [self getCellMsgByState:state];
+    [self setSettingMsg:message];
+    soundimageView.image= KUIImage([self getMsgIcon:state]);
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.groupId forKey:@"groupId"];

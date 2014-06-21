@@ -67,7 +67,8 @@
     NSString *openImgPath = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageId]];
     UIImage *openImage = [[UIImage alloc]initWithContentsOfFile:openImgPath];
     if (openImage&&![openImage isEqual:@""]) {
-        return [NetManager image2:openImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
+        return openImage;
+//        return [NetManager image2:openImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
     }
     return [self getDefaultOpenImage];
 }
