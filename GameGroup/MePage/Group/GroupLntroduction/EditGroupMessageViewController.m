@@ -25,13 +25,14 @@
     NSMutableArray * uploadImagePathArray;
     NSMutableDictionary * reponseStrArray;
     NSInteger imageImdex;
-    
+
     NSInteger clickImdex;
     
     
 }
 @property (nonatomic,strong)UIActionSheet* addActionSheet;
 @property (nonatomic,strong)UIActionSheet* deleteActionSheet;
+@property (nonatomic,strong)NSMutableString* imageId;
 
 @end
 
@@ -261,15 +262,10 @@
 }
 
 
--(void)conbackImage
+-(void)conbackImage:(NSString*)imageids
 {
     if (self.delegate) {
-        NSString* headImgStr = @"";
-        for (int i = 0;i<self.headImgArray.count;i++) {
-            NSString * temp1 = [self.headImgArray objectAtIndex:i];
-            headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
-        }
-        [self.delegate comeBackInfoWithController:m_contentTextView.text InfoImg:headImgStr];
+        [self.delegate comeBackInfoWithController:m_contentTextView.text InfoImg:imageids];
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -305,18 +301,25 @@
     [reponseStrArray removeAllObjects];
     if (uploadImagePathArray.count>0) {
         [hud show:YES];
-        for (NSString * imageName in uploadImagePathArray) {
-            NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
-            NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
-            UpLoadFileService * up = [[UpLoadFileService alloc] init];
-            [up simpleUpload:uploadImagePath UpDeleGate:self];
-        }
+      [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
     }else
     {
-        [self conbackImage];
+        NSString* headImgStr = @"";
+        for (int i = 0;i<self.headImgArray.count;i++) {
+            NSString * temp1 = [self.headImgArray objectAtIndex:i];
+            headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
+        }
+        [self conbackImage:headImgStr];
     }
 }
-
+//执行上传（单张）
+-(void)uploadPicture:(NSString*)imageName
+{
+    NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:uploadImagePath UpDeleGate:self];
+}
 
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
@@ -331,25 +334,21 @@
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
-    
     [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
-    
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
-        NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
+        self.imageId = [[NSMutableString alloc]init];
         for (int i=0; i<reponseStrArray.count; i++) {
-            NSString * a= [uploadImagePathArray objectAtIndex:i];
-            for (int i = 0;i<a1.count;i++) {
-                if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
-                    [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
-                }
-            }
+            NSString * a=[uploadImagePathArray objectAtIndex:i];
+            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
         }
-        self.headImgArray = a1;
-        [self conbackImage];
+        [self conbackImage:_imageId];
+    }else{
+        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
     }
     imageImdex++;
 }
+
 //上传失败代理回调
 - (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
 {
