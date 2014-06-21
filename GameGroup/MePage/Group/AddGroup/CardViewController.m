@@ -174,12 +174,6 @@
     }
     
     
-    
-    
-    
-    
-    
-    
 //    if (cardArray.count>0) {
 //        for (int i =0;i<cardArray.count;i++) {
 //            NSDictionary *dict = cardArray[i];
