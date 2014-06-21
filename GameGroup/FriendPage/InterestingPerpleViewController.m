@@ -29,6 +29,7 @@ typedef enum : NSUInteger {
     NSString *sexStr ;
     AppDelegate *app;
     NSInteger m_currPageCount;
+    NSInteger delCellCount;
     NSString *cityCode;
     UILabel *nearBylabel;
     UILabel*            m_titleLabel;
@@ -318,7 +319,13 @@ typedef enum : NSUInteger {
     cell.tag = indexPath.row;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    
+    //删除按钮 - 自己的文章
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        [cell.jubaoBtn setTitle:@"删除" forState:UIControlStateNormal];
+        
+    }else{
+        [cell.jubaoBtn setTitle:@"举报" forState:UIControlStateNormal];
+    }
     
     
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
@@ -329,15 +336,6 @@ typedef enum : NSUInteger {
     }
     NSString * imageIds = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     cell.headImgBtn.imageURL = [ImageService getImageStr:imageIds Width:80];
-    
-//    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@""]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")isEqualToString:@" "]) {
-//        cell.headImgBtn.imageURL = nil;
-//    }else{
-//        cell.headImgBtn.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",BaseImageUrl,[GameCommon getHeardImgId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")],@"/80/80"]];
-//    }
-    
-    
-    
     //判断赞按钮状态显示相应的图标
     UIButton *button  = cell.zanBtn;
     NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
@@ -1590,39 +1588,93 @@ typedef enum : NSUInteger {
 #pragma mark --举报
 -(void)jubaoThisInfoWithCell:(NewNearByCell*)myCell
 {
-    // NSDictionary *dic =[m_dataArray objectAtIndex:myCell.tag];
-    
-    UIAlertView *jubaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认举报这条动态么？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"举报", nil];
-    
-    jubaoAlert.tag = myCell.tag;
-    [jubaoAlert show];
-}
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex ==1) {
-        hud.labelText = @"举报中...";
-        [hud show:YES];
-        NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 的文章含不良内容，请尽快处理！", KISDictionaryHaveKey([m_dataArray objectAtIndex:alertView.tag],@"id")];
-        NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",KISDictionaryHaveKey([m_dataArray objectAtIndex:alertView.tag],@"id"),@"id",@"dynamic",@"type",nil];
-        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [postDict setObject:@"155" forKey:@"method"];
-        [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-        [postDict setObject:dic forKey:@"params"];
-        
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [hud hide:YES];
-            [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }}}];
-        
+    delCellCount = myCell.tag;
+    NSDictionary *dict =[m_dataArray objectAtIndex:myCell.tag];
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        UIAlertView *delCellAlertView = [[UIAlertView alloc ]initWithTitle:@"提示" message:@"您确认删除这条动态吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        delCellAlertView.tag = 00001;
+        [delCellAlertView show];
+    }else{
+        UIAlertView *jubaoAlert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认举报这条动态么？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"举报", nil];
+        jubaoAlert.tag = 00002;
+        [jubaoAlert show];
     }
 }
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 00001) {//删除
+        NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount)];
+        if (buttonIndex ==1) {
+            [self delCellWithMsgId:KISDictionaryHaveKey(dic, @"id")];
+        }
+    }else{//举报
+        NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount)];
+        if (buttonIndex ==1) {
+            [self jubaoMethod:dic];
+        }
+    }
+    
+}
+//删除动态
+-(void)delCellWithMsgId:(NSString *)msgId
+{
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgId forKey:@"messageId"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"193" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"dynamicFromMe_wx"];
+        if ([KISDictionaryHaveKey(dic, @"id")intValue]==[KISDictionaryHaveKey([m_dataArray objectAtIndex:delCellCount], @"id")intValue]) {
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dynamicFromMe_wx"];
+        }
+        [m_dataArray removeObjectAtIndex:delCellCount];
+        [m_myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:delCellCount inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
+        [m_myTableView reloadData];
+        if (delCellCount<20) {
+            [self saveinfoToUserDefaults:m_dataArray];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        
+    }];
+}
+//举报动态
+-(void)jubaoMethod:(NSDictionary*)indexDict
+{
+    hud.labelText = @"举报中...";
+    [hud show:YES];
+    NSString* str = [NSString stringWithFormat:@"本人举报动态messageid为%@ 的文章含不良内容，请尽快处理！", KISDictionaryHaveKey(indexDict,@"id")];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:str ,@"msg",@"Platform=iphone", @"detail",KISDictionaryHaveKey(indexDict,@"id"),@"id",@"dynamic",@"type",nil];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"155" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:dic forKey:@"params"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }}}];
+    
+}
+
 #pragma mark --enter OnceDynamicViewController Page  进入动态详情界面
 -(void)enterInfoPage:(UIButton *)sender
 {

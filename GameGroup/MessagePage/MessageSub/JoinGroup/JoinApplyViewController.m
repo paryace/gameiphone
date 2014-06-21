@@ -321,7 +321,7 @@
     gr.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"groupId")];
     [self.navigationController pushViewController:gr animated:YES];
 }
-//
+//开始聊天
 -(void)chatClick:(CreateGroupMsgCell*)sender
 {
     NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];

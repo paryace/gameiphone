@@ -28,7 +28,6 @@
         [self.focusButton setBackgroundImage:KUIImage(@"guanzhu") forState:UIControlStateNormal];
         self.focusButton.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.focusButton setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-//        self.focusButton.backgroundColor =[UIColor grayColor];
         [self.focusButton addTarget:self action:@selector(guanzhuing:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.focusButton];
         
@@ -181,11 +180,6 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.photoArray objectAtIndex:indexPath.row];
-//    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
-//    NSURL *urls;
-//    urls = [NSURL URLWithString:address];
-//    cell.imageView.imageURL =urls;
-    
     cell.imageView.imageURL = [ImageService getImageUrl3:url Width:160];
     return cell;
 }
