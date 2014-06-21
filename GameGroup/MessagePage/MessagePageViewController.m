@@ -327,6 +327,7 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+     cell.settingState.hidden=YES;
     DSThumbMsgs * message = [allMsgArray objectAtIndex:indexPath.row];
     
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];//@"有新的打招呼信息"

@@ -603,8 +603,7 @@ UINavigationControllerDelegate>
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = i;
             button.frame = CGRectMake(10+i%4*80, 0+i/4*126.5, 70, 105);
-            [button addTarget:self action:@selector(kkChatAddViewButtonsClick:)
-             forControlEvents:UIControlEventTouchUpInside];
+            [button addTarget:self action:@selector(kkChatAddViewButtonsClick:) forControlEvents:UIControlEventTouchUpInside];
             [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"kkChatAddViewButtonsNomal_%d",i]]forState:UIControlStateNormal];
             [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"kkChatAddViewButtonsHighlight_%d",i]]forState:UIControlStateHighlighted];
             [button setTitleColor:UIColorFromRGBA(0x4c4c4c, 1)forState:UIControlStateNormal];
@@ -1132,6 +1131,11 @@ UINavigationControllerDelegate>
 
 //点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
+    
+    if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
+        [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
+        return ;
+    }
     NSLog(@"%d",sender.tag);
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
