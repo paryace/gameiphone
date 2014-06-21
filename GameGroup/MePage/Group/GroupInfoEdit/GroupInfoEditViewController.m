@@ -248,9 +248,15 @@
 
                 break;
             case 1:
-                NSLog(@"--------%d",tags.count/2);
-                NSInteger tagsRowCount = (tags.count-1)/2+1;
-                return  tagsRowCount*30+tagsRowCount*5+15;
+            {
+                if (tags.count==0) {
+                    return 40;
+                }else{
+                    NSInteger tagsRowCount = (tags.count-1)/2+1;
+                    return  tagsRowCount*30+tagsRowCount*5+15;
+                }
+            }
+               
                 break;
 //            case 2:
 //                return 40;

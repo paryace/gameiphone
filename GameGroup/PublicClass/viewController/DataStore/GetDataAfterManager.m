@@ -271,7 +271,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {//解散群
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
-        [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];//删除群公告消息
+        [DataStoreManager deleteJoinGroupApplicationByMsgTypeAndGroupId:@"groupBillboard" GroupId:groupId];//删除群公告消息
+//        [DataStoreManager deleteGroupInfoByGoupId:groupId];
         [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
@@ -280,8 +281,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-        [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];//删除群公告消息
-        
+        [DataStoreManager deleteJoinGroupApplicationByMsgTypeAndGroupId:@"groupBillboard" GroupId:groupId];//删除群公告消息
+//        [DataStoreManager deleteGroupInfoByGoupId:groupId];
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }

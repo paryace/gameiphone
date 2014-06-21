@@ -177,7 +177,7 @@
         }
     }];
 }
-
+//删除该群消息记录
 +(void)deleteGroupMsgWithSenderAndSayType:(NSString *)groupId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
