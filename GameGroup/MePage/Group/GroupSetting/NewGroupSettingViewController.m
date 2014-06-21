@@ -216,7 +216,7 @@ typedef enum : NSUInteger {
             tlb.font =[ UIFont systemFontOfSize:14];
             [cell.contentView addSubview:tlb];
             
-            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(115, 15, 160, 20)];
+            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(0, 15, 320-50, 20)];
             groupNameLable.backgroundColor = [UIColor clearColor];
             groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
             groupNameLable.text = self.CharacterInfo;
