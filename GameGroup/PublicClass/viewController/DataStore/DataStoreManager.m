@@ -289,7 +289,7 @@
     //普通用户消息存储到DSCommonMsgs和DSThumbMsgs两个表里
     if ([sendertype isEqualToString:COMMONUSER]) {
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,msgType];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];

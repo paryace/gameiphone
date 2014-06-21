@@ -51,7 +51,6 @@
     [self.view addSubview:m_baseScrollView];
     
     listDict  = [NSMutableDictionary dictionary];
-//    allkeysArr = [NSMutableArray array];
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 20, 300, 40)];
@@ -85,7 +84,6 @@
     m_layout.minimumInteritemSpacing = 10;
     m_layout.minimumLineSpacing =5;
     m_layout.itemSize = CGSizeMake(88, 30);
-//    m_layout.sectionInset = UIEdgeInsetsMake(30,0, 0, 0);
     m_layout.headerReferenceSize = CGSizeMake(300, 40);
     
     
@@ -137,20 +135,29 @@
     
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     clazzImg.backgroundColor = [UIColor clearColor];
-    clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
+    if (gameInfoArray.count>0) {
+        clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
+    }else
+    {
+        clazzImg.image=KUIImage(@"clazz_0");
+    }
+    
     [myView addSubview:clazzImg];
     
     authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
     authBg.backgroundColor = [UIColor clearColor];
-    NSString *auth =[gameInfoArray[0]objectForKey:@"auth"];
-//    BOOL isAuth = [auth boolValue];
+    NSString *auth;
+    if (gameInfoArray.count>0) {
+        auth =[gameInfoArray[0]objectForKey:@"auth"];
+    }else{
+        auth = @"0";
+    }
     if ([auth intValue]==0) {
         authBg.image = KUIImage(@"chara_auth_2");
     }else{
         authBg.image = KUIImage(@"chara_auth_1");
     }
     [myView addSubview:authBg];
-//    authBg.hidden = YES;
     
     nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 120, 20)];
     nameLabel.backgroundColor = [UIColor clearColor];
@@ -158,7 +165,11 @@
     nameLabel.font = [UIFont boldSystemFontOfSize:15.0];
     
     [myView addSubview:nameLabel];
-    
+    if (gameInfoArray.count>0) {
+        nameLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"name");
+    }else{
+        nameLabel.text = @"角色不存在";
+    }
     nameLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"name");
     
     gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
@@ -170,13 +181,17 @@
     realmLabel.backgroundColor = [UIColor clearColor];
     realmLabel.textColor = kColorWithRGB(102, 102, 102, 1.0) ;
     realmLabel.font = [UIFont boldSystemFontOfSize:14.0];
-    realmLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"realm");
+    if (gameInfoArray.count>0) {
+        realmLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"realm");
+    }else{
+        realmLabel.text = @"";
+    }
+    
     [myView addSubview:realmLabel];
     
     
     m_pickView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth, 320, 200)];
     m_pickView.tag=111;
-//    m_pickView.hidden = YES;
     [self.view addSubview:m_pickView];
     
     m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 44, 320, 180)];
@@ -204,11 +219,6 @@
     
      [m_baseScrollView addSubview:myView];
 }
-//<<<<<<< HEAD
-//-(void)didClickChangeRole:(id)sender
-//{
-//    m_pickView.hidden = NO;
-//=======
 
 -(void)showSelectView
 {
