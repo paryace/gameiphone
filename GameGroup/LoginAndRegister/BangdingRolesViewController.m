@@ -254,7 +254,7 @@
             
             NSLog(@"%@", responseObject);
             
-            
+            [[TempData sharedInstance]isBindingRolesWithBool:NO];
             [self dismissViewControllerAnimated:YES completion:^{
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
  
@@ -422,6 +422,7 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        [[TempData sharedInstance]isBindingRolesWithBool:NO];
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];

@@ -28,7 +28,7 @@
     UIImageView *m_notibgCircleNewsImageView; //朋友圈红点
 
     UILabel *commentLabel;
-    EGOImageView * headImgView;
+    EGOImageButton * headImgView;
     
     NSInteger    myDunamicmsgCount;
     
@@ -321,8 +321,9 @@
     iconImageView.frame = CGRectMake(10, 10, 40, 40);
     [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
-//    iconImageView.layer.masksToBounds = YES;
+    
 //    iconImageView.layer.cornerRadius = 5.0;
+//    iconImageView.layer.masksToBounds = YES;
     [bottomView addSubview:iconImageView];
     
     //红点 - 公告
@@ -341,7 +342,8 @@
     [gbMsgCountImageView addSubview:gbMsgCountLable];
     
     
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+    headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+    [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
     headImgView.frame = CGRectMake(320-50, 10, 40, 40);
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];

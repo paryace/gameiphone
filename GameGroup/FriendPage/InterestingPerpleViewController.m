@@ -329,7 +329,11 @@ typedef enum : NSUInteger {
     
     
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
-        cell.focusButton.hidden=NO;
+        if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+            cell.focusButton.hidden=YES;
+        }else{
+            cell.focusButton.hidden=NO;
+        }
     }else
     {
         cell.focusButton.hidden=YES;
