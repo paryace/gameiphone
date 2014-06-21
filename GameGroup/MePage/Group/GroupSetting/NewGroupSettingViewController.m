@@ -169,13 +169,14 @@ typedef enum : NSUInteger {
 
 -(UILabel*)getHeadTitleLable
 {
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 300, 40)];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    titleLabel.textColor = kColorWithRGB(100,100,100, 0.7);
-    titleLabel.text = @"陌游群公告会在我的组织中有非常明显的提示，可以很容易的被群成员注意到.";
-    titleLabel.font =[ UIFont systemFontOfSize:12];
-    titleLabel.numberOfLines = 2 ;
-    return titleLabel;
+    UILabel * contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 300, 40)];
+    contentLabel.backgroundColor = [UIColor clearColor];
+    [contentLabel setTextAlignment:NSTextAlignmentLeft];
+    [contentLabel setFont:[UIFont systemFontOfSize:12]];
+    contentLabel.text = @"陌游群公告会在我的组织中有非常明显的提示，可以很容易的被群成员注意到.";
+    [contentLabel setTextColor:[UIColor grayColor]];
+    contentLabel.numberOfLines = 2;
+    return contentLabel;
 }
 
 
