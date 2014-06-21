@@ -386,8 +386,7 @@
 -(void)setFansNum
 {
     [self refreTitle];
-    
-    fansNum=[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",FansCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     if ([GameCommon isEmtity:fansNum]) {
         fanstr=@"粉丝";
     }else {

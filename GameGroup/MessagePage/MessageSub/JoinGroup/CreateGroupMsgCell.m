@@ -20,6 +20,7 @@
         self.contentLable.text = @"申请理由";
         self.contentLable.font =[ UIFont systemFontOfSize:14];
         self.contentLable.numberOfLines = 4 ;
+        self.contentLable.textAlignment = NSTextAlignmentCenter;
         [self.bgV addSubview:self.contentLable];
         
         

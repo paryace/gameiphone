@@ -155,6 +155,7 @@ typedef enum : NSUInteger {
 {
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.groupId]];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark ---发表新动态

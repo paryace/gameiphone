@@ -100,7 +100,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout.headerReferenceSize = CGSizeMake(320, 70);
     m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
     
-    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 70+10+imageHight+10) collectionViewLayout:m_layout];
+    groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 70+10+imageHight+5) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     groupCollectionView.scrollEnabled = YES;
     groupCollectionView.delegate = self;
@@ -111,7 +111,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self.view addSubview:groupCollectionView];
     
     
-    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+10), 320, 200)];
+    cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+5), 320, 200)];
     UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
     lajiLabel.backgroundColor = [UIColor clearColor];
     lajiLabel.textColor = [UIColor grayColor];
@@ -204,15 +204,15 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 {
     [myGroupArray removeAllObjects];
     [myGroupArray addObjectsFromArray:responseObject];
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"tianjiazhaopian",@"backgroundImg", nil];
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
     [myGroupArray addObject:dic];
     if (myGroupArray.count<4) {
-        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+10);
-        cellView.frame = CGRectMake(0, startX+(70+10+imageHight+10), 320, 200);
+        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+5);
+        cellView.frame = CGRectMake(0, startX+(70+10+imageHight+5), 320, 200);
     }
     if (myGroupArray.count>4) {
-        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+10);
-        cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+10), 320, 180);
+        groupCollectionView.frame = CGRectMake(0, startX, 320, 70+(imageHight+10)*2+5);
+        cellView.frame = CGRectMake(0, startX+(70+(imageHight+10)*2+5), 320, 180);
     }
     [groupCollectionView reloadData];
 

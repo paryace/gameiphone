@@ -16,6 +16,7 @@
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:232/255.0f green:232/255.0f blue:232/255.0f alpha:1];
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
+        self.topBtn.backgroundColor= [UIColor whiteColor];
         [self addSubview:self.topBtn];
         self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 50, 50)];
         self.headImageView.layer.cornerRadius = 5;
@@ -24,24 +25,24 @@
         self.headImageView.placeholderImage = KUIImage(@"group_icon");
         [self.topBtn addSubview:self.headImageView];
         
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 320-90, 40)];
-        self.label.numberOfLines =2;
+        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 320-90, 20)];
         self.label.backgroundColor = [UIColor clearColor];
         self.label.textAlignment = NSTextAlignmentLeft;
-        self.label.font = [UIFont boldSystemFontOfSize:13.0f];
+        self.label.font = [UIFont boldSystemFontOfSize:14.0f];
         self.label.textColor = [UIColor grayColor];
         [self.topBtn addSubview:self.label];
         
-        self.contentLabel =  [[UILabel alloc] initWithFrame:CGRectMake(70, 50, 120, 15)];
-        self.contentLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
-        UIViewAutoresizingFlexibleHeight;
+        self.contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 28, 220, 40)];
         self.contentLabel.backgroundColor = [UIColor clearColor];
-        self.contentLabel.textAlignment = NSTextAlignmentLeft;
-        self.contentLabel.font = [UIFont boldSystemFontOfSize:11.0f];
-        self.contentLabel.textColor = [UIColor grayColor];
+        [self.contentLabel setTextAlignment:NSTextAlignmentLeft];
+        [self.contentLabel setFont:[UIFont systemFontOfSize:12]];
+        [self.contentLabel setTextColor:[UIColor grayColor]];
+        self.contentLabel.numberOfLines = 2;
         [self.topBtn addSubview:self.contentLabel];
+
         
-        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(220, 50, 100, 15)];
+        
+        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(210, 10, 100, 15)];
         self.timeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.timeLabel.backgroundColor = [UIColor clearColor];
@@ -84,16 +85,16 @@
 
 -(void)setInfo:(NSDictionary*)dict setMsgCount:(NSInteger)msgCount
 {
+    self.label.text = @"组织公告";
     if (dict) {
-        [self.topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        self.topBtn.backgroundColor = [UIColor whiteColor];
         self.topBtn.tag=123;
         self.roghtImage.hidden=NO;
         NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
         NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
         NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
         NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
-        self.label.text = billboard;
-        self.contentLabel.text = groupName;
+        self.contentLabel.text = [NSString stringWithFormat:@"%@%@%@",groupName,@":",billboard];
         self.timeLabel.text = [GameCommon getTimeWithMessageTime:createDate];
         if ([GameCommon isEmtity:backgroundImg]) {
             self.headImageView.imageURL = nil;
@@ -105,14 +106,13 @@
         [self setMsgCount:msgCount];
     }else{
         self.roghtImage.hidden=YES;
-        self.label.text = @"组织公告";
         self.contentLabel.text = @"还没有组织公告哦!";
         self.timeLabel.text = @"";
         self.headImageView.image = KUIImage(@"group_billboard");
         [self.topBtn removeTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     CGSize textSize = [self.timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    self.timeLabel.frame=CGRectMake(320 - textSize.width-10, 50, textSize.width, 15);
+    self.timeLabel.frame=CGRectMake(320 - textSize.width-20, 10, textSize.width, 15);
 }
 -(void)topBtnClick:(UIButton*)sender
 {
