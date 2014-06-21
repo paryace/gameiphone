@@ -83,9 +83,17 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     
     
-    [self setTopViewWithTitle:@"群动态" withBackButton:YES];
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [self setTopViewWithTitle:@"群动态" withBackButton:NO];
     
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
@@ -142,6 +150,13 @@ typedef enum : NSUInteger {
     
     [self buildcommentView];
 }
+
+-(void)backButtonClick:(UIButton*)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.groupId]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 #pragma mark ---发表新动态
 -(void)publishInfo:(UIButton *)sender
 {

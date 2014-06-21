@@ -209,7 +209,7 @@
     }];
 }
 
-//
+//根据msgType删除通知表的消息
 +(void)deleteJoinGroupApplicationByMsgType:(NSString*)msgType
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -221,7 +221,7 @@
         }
     }];
 }
-
+//根据msgId删除通知表的消息
 +(void)deleteJoinGroupApplicationWithMsgId:(NSString *)msgId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -232,6 +232,33 @@
         }
     }];
 }
+//根据msgType和GroupId删除通知表的消息
++(void)deleteJoinGroupApplicationByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgType==[c]%@ and groupId=[c]%@",msgType,groupId];
+        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
+        for (int i = 0; i<msgs.count; i++) {
+            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
+            [msg MR_deleteInContext:localContext];
+        }
+    }];
+}
+
+//根据GroupId删除通知表的消息
++(void)deleteJoinGroupApplicationByGroupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"groupId=[c]%@",groupId];
+        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
+        for (int i = 0; i<msgs.count; i++) {
+            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
+            [msg MR_deleteInContext:localContext];
+        }
+    }];
+}
+
+
 
 #pragma mark - 保存聊天记录
 +(void)saveDSCommonMsg:(NSDictionary *)msg
@@ -2667,6 +2694,17 @@
         if (group) {
             group.available = groupState;
             group.groupUsershipType = groupShipType;
+        }
+    }];
+}
+//根据groupId 删除群信息
++(void)deleteGroupInfoByGoupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate];
+        if (group) {
+            [group MR_deleteInContext:localContext];
         }
     }];
 }

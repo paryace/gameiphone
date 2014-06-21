@@ -281,6 +281,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];//删除群公告消息
+        
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }

@@ -103,6 +103,9 @@ UINavigationControllerDelegate>
 {
     [super viewWillAppear:animated];
     [self refreTitleText];
+    if ([self.type isEqualToString:@"group"]) {
+        [self initGroupCricleMsgCount];//初始化群动态的未读消息数
+    }
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -208,6 +211,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:self.unReadL]; //未读数量
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
+    
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
         if (self.unreadMsgCount>20) {
@@ -224,7 +228,6 @@ UINavigationControllerDelegate>
         }else{
             _titleLabel.hidden = NO;
         }
-        [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
     [self.view addSubview:titleBtn];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification

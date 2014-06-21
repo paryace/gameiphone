@@ -263,4 +263,13 @@
 +(void)deleteThumbMsgWithGroupId:(NSString *)groupId;//根据groupId删除ThumbMsg消息表得记录
 
 +(void)deleteJoinGroupApplicationWithMsgId:(NSString *)msgId;//根据msgid 删除单条记录(滑动删除)
+
+//根据msgType和GroupId删除通知表的消息
++(void)deleteJoinGroupApplicationByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
+
+//根据GroupId删除通知表的消息
++(void)deleteJoinGroupApplicationByGroupId:(NSString*)groupId;
+
+//根据groupId 删除群信息
++(void)deleteGroupInfoByGoupId:(NSString*)groupId;
 @end
