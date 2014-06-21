@@ -382,6 +382,7 @@
             NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
             authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
             authVC.realm = m_realmStr;
+            authVC.Type =@"register";
             UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
             authVC.isComeFromFirstOpen = YES;
             authVC.character = tf.text;

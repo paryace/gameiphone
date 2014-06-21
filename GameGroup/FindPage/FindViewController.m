@@ -308,13 +308,25 @@
     gbMsgCountLable.text = @"20";
     [gbMsgCountImageView addSubview:gbMsgCountLable];
     
+    
+    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+    headImgView.frame = CGRectMake(320-50, 10, 40, 40);
+    if (_friendImgStr ==nil) {
+        NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
+        
+        headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
+    }else{
+        headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
+    }
+    [bottomView addSubview:headImgView];
     //红点 - 朋友圈
-    m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(253, 2, 15, 15)];
+    m_notibgCircleNewsImageView = [[UIImageView alloc] initWithFrame:CGRectMake(265, 2, 15, 15)];
     [self.view bringSubviewToFront:m_notibgCircleNewsImageView];
     [m_notibgCircleNewsImageView setImage:[UIImage imageNamed:@"redpot.png"]];
     [bottomView addSubview:m_notibgCircleNewsImageView];
     
-    m_notibgInfoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(297,2, 18, 18)];
+    
+    m_notibgInfoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(300,2, 18, 18)];
     [bottomView bringSubviewToFront:m_notibgInfoImageView];
     [m_notibgInfoImageView setImage:[UIImage imageNamed:@"redCB.png"]];
     [bottomView addSubview:m_notibgInfoImageView];
@@ -375,16 +387,7 @@
     
     
     
-    headImgView = [[EGOImageView alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
-    headImgView.frame = CGRectMake(320-50, 10, 40, 40);
-    if (_friendImgStr ==nil) {
-        NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
-        
-        headImgView.imageURL = [ImageService getImageUrl3:imageId Width:120];
-    }else{
-        headImgView.imageURL = [ImageService getImageUrl3:_friendImgStr Width:80];
-    }
-    [bottomView addSubview:headImgView];
+   
     
     
     

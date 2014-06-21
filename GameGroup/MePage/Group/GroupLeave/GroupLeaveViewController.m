@@ -69,11 +69,17 @@
 
     maxExperImg = [[UIImageView alloc]initWithFrame:CGRectMake(70,105, 180, 10)];
     maxExperImg.image = KUIImage(@"maxExper");
+    maxExperImg.clipsToBounds = YES;
+
     [scrollView addSubview:maxExperImg];
-    
-    nowExperImg =[[UIImageView alloc]initWithFrame:CGRectMake(70,105, 150, 10)];
-    nowExperImg.image = KUIImage(@"nowExper");
-    [scrollView addSubview:nowExperImg];
+   
+
+    nowExperImg =[[UIImageView alloc]initWithFrame:CGRectMake(0,0, 150, 10)];
+    nowExperImg.image = [UIImage imageNamed:@"nowExper"];
+    nowExperImg.layer.cornerRadius = 5;
+    nowExperImg.layer.masksToBounds=YES;
+
+    [maxExperImg addSubview:nowExperImg];
 
     experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,100, 40, 20)];
     experlb.text = @"0/100";
@@ -109,7 +115,6 @@
     [self getInfoWithNet];
     // Do any additional setup after loading the view.
 }
-
 -(void)getInfoWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -125,9 +130,9 @@
         lvLabel.text = [NSString stringWithFormat:@"等级：%@",KISDictionaryHaveKey(responseObject,@"level")];
         headImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(responseObject, @"backgroundImg") Width:170];
         float width  = [KISDictionaryHaveKey(responseObject, @"experience")floatValue]/[KISDictionaryHaveKey(responseObject, @"levelUpExperience") floatValue];
-        
-        nowExperImg.frame = CGRectMake(70,105, 180*width, 10);
-        
+//        nowExperImg.image =[self dealDefaultImage:[UIImage imageNamed:@"nowExper"] org:215-215*width];
+
+        nowExperImg.frame = CGRectMake(0,0, 180*width, 10);
         experlb.text = [NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"experience"),KISDictionaryHaveKey(responseObject, @"levelUpExperience")];
         
         
@@ -144,6 +149,22 @@
     }];
 
 }
+
+- (UIImage *) dealDefaultImage: (UIImage *) image org:(float)orgX
+{
+	CGSize size = image.size;
+    float dwidth = orgX;
+    CGRect rect = CGRectMake(dwidth, 2, size.width-dwidth, size.height);
+	UIGraphicsBeginImageContext(CGSizeMake(size.width-dwidth, size.height));
+	[image drawInRect:rect];
+	UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+    
+    NSLog(@"%f--%f---%f",rect.origin.x,newimg.size.width,newimg.size.height);
+    return newimg;
+}
+
+
 
 - (void)didReceiveMemoryWarning
 {
