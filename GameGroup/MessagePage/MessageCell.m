@@ -59,7 +59,7 @@
         [self.contentView addSubview:self.timeLabel];
         
         
-        self.settingState = [[UIImageView alloc] initWithFrame:CGRectMake(290, 28, 17, 17)];
+        self.settingState = [[UIImageView alloc] initWithFrame:CGRectMake(290, 37, 17, 17)];
         self.settingState.backgroundColor = [UIColor clearColor];
 //        self.settingState.hidden=YES;
         self.settingState.image=KUIImage(@"nor_soundSong");

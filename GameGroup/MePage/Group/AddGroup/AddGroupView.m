@@ -155,7 +155,7 @@
     self.secondScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(320, 0, self.bounds.size.width, self.bounds.size.height)];
     self.secondScrollView.showsHorizontalScrollIndicator = NO;
     self.secondScrollView.showsVerticalScrollIndicator = NO;
-    self.secondScrollView.contentSize = CGSizeMake(0,150+kScreenHeigth);
+    self.secondScrollView.contentSize = CGSizeMake(0,100+kScreenHeigth);
     [self.scrollView addSubview:self.secondScrollView];
     
     self.topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 190)];
@@ -163,15 +163,7 @@
     self.topImageView .backgroundColor = [UIColor grayColor];
     [self.secondScrollView addSubview:self.topImageView];
 
-    
-//    UIView *cardView = [[UIView alloc]initWithFrame:CGRectMake(0, 155, 320, 40)];
-//    cardView.backgroundColor = UIColorFromRGBA(0xf1f1f1, 1);
-//    [cardView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
-//
-//    [self.secondScrollView addSubview:cardView];
-    
-    
-    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(20, 155+52, 280, 40)];
+    UIImageView *carimg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 155+52, 300, 40)];
     carimg.image = KUIImage(@"group_cardtf");
     carimg.userInteractionEnabled = YES;
     [carimg addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToCardPage:)]];
@@ -192,7 +184,7 @@
     self.cardTF.font = [UIFont systemFontOfSize:14];
     [carimg addSubview:self.cardTF];
     
-    UILabel *lb =[[ UILabel alloc]initWithFrame:CGRectMake(30, 250, 300, 13)];
+    UILabel *lb =[[ UILabel alloc]initWithFrame:CGRectMake(10, 255, 300, 13)];
     lb.backgroundColor = [UIColor clearColor];
     lb.font = [UIFont systemFontOfSize:12];
     lb.textColor = [UIColor grayColor];
@@ -205,7 +197,8 @@
     layout1.minimumInteritemSpacing = 3;
     layout1.minimumLineSpacing =5;
     layout1.itemSize = CGSizeMake(88, 30);
-   self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(20, 200+72, 280, 50) collectionViewLayout:layout1];
+    self. titleCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 267+5, 300, [self getTagViewHight]) collectionViewLayout:layout1];
+    
     self.titleCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     self.titleCollectionView.scrollEnabled = NO;
     self.titleCollectionView.delegate = self;
@@ -217,13 +210,13 @@
 
     
     
-    UIImageView* editIV = [[UIImageView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
-    editIV.backgroundColor=[UIColor whiteColor];
-    editIV.image = KUIImage(@"group_info");
-    [self.secondScrollView addSubview:editIV];
+    self.editIV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 280+52, 300, 150)];
+    self.editIV.backgroundColor=[UIColor whiteColor];
+    self.editIV.image = KUIImage(@"group_info");
+    [self.secondScrollView addSubview:self.editIV];
 
     
-    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(20, 280+52, 280, 150)];
+    m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, 280+52, 300, 150)];
     m_textView.delegate = self;
     m_textView.layer.borderColor = UIColorFromRGBA(0xaaa9a9, 1).CGColor;
     m_textView.layer.borderWidth =0.5;
@@ -236,17 +229,22 @@
     [self.secondScrollView addSubview:m_textView];
 
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(10, 450+52, 300, 44);
-    [button setTitle:@"提交" forState:UIControlStateNormal];
-    [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(enterThirdPage:) forControlEvents:UIControlEventTouchUpInside];
-    [self.secondScrollView addSubview:button];
-    
+    self.button = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.button.frame = CGRectMake(10, 482+10, 300, 44);
+    [self.button setTitle:@"提交" forState:UIControlStateNormal];
+    [self.button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
+    [self.button addTarget:self action:@selector(enterThirdPage:) forControlEvents:UIControlEventTouchUpInside];
+    [self.secondScrollView addSubview:self.button];
 }
 
-
-
+-(NSInteger)getTagViewHight
+{
+    if (self.cardArray.count==0) {
+        return 0;
+    }
+    NSInteger tagCount = (self.cardArray.count-1)/3+1;
+    return 30*tagCount+5*tagCount;
+}
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -255,6 +253,10 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    self. titleCollectionView.frame = CGRectMake(10, 267+10, 300, [self getTagViewHight]);
+    self.editIV.frame = CGRectMake(10, self.titleCollectionView.frame.size.height+self.titleCollectionView.frame.origin.y+5, 300, 150);
+    m_textView.frame = CGRectMake(10, self.titleCollectionView.frame.size.height+self.titleCollectionView.frame.origin.y+5, 300, 150);
+    self.button.frame = CGRectMake(10,m_textView.frame.size.height+m_textView.frame.origin.y+10, 300, 44);
         return self.cardArray.count;
 }
 
@@ -263,7 +265,6 @@
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
     NSDictionary* dic = [self.cardArray objectAtIndex:indexPath.row];
-//    cell.titleLabel.frame = cell.bgImgView.frame;
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"tagName");
     return cell;
 }
