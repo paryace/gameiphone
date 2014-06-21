@@ -165,7 +165,7 @@
 -(void)showEditImage
 {
     UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"删除",@"替换", nil];
-    actionSheetTemp.tag = ActionSheetTypeOperationPic;
+    actionSheetTemp.tag = actionSheetTypeOperationPic;
     [actionSheetTemp showInView:self.view];
 
 }
@@ -358,12 +358,12 @@
 - (void)photoWallAddAction
 {
     UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"相册选择",@"拍照", nil];
-    actionSheetTemp.tag = ActionSheetTypeChoosePic;
+    actionSheetTemp.tag = actionSheetTypeChoosePic;
     [actionSheetTemp showInView:self.view];
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet.tag==ActionSheetTypeChoosePic) {
+    if (actionSheet.tag==actionSheetTypeChoosePic) {
         UIImagePickerController * imagePicker;
         if (buttonIndex==1)
         {
@@ -400,7 +400,7 @@
                 [libraryAlert show];
             }
         }
-    }else if (actionSheet.tag ==ActionSheetTypeOperationPic)
+    }else if (actionSheet.tag ==actionSheetTypeOperationPic)
     {
         if (buttonIndex ==0)
         {

@@ -7,10 +7,10 @@
 //
 
 #import "BaseViewController.h"
-
-@interface NewGroupSettingViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,UIActionSheetDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+#import "GroupInfoEditViewController.h"
+@interface NewGroupSettingViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,UIActionSheetDelegate,UIPickerViewDelegate,UIPickerViewDataSource,GroupEditRefreshInfoDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property (assign, nonatomic)  NSInteger shiptypeCount;
 @property (nonatomic,copy)NSString *CharacterInfo;
-
+@property(nonatomic,assign)id<GroupEditRefreshInfoDelegate>myDelegate;
 @end

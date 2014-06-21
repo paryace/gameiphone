@@ -20,7 +20,7 @@
         self.groupHeadImage.backgroundColor = [UIColor clearColor];
         [self addSubview:self.groupHeadImage];
         
-        self.groupNameLable = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 100, 25)];
+        self.groupNameLable = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 150, 25)];
         [self.groupNameLable setTextAlignment:NSTextAlignmentLeft];
         [self.groupNameLable setFont:[UIFont boldSystemFontOfSize:13.0]];
         [self.groupNameLable setBackgroundColor:[UIColor clearColor]];

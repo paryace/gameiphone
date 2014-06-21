@@ -178,6 +178,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     NSMutableArray * groupList = [DataStoreManager queryGroupInfoList];
     [self setGroupList:groupList];
 }
+-(void)refreshGroupInfo
+{
+    [self getGroupListFromNet];
+}
+
 
 //加载服务器数据
 -(void)getGroupListFromNet

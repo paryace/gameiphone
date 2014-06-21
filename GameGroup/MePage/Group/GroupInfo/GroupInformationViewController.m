@@ -18,7 +18,6 @@
 #import "CreateTimeCell.h"
 #import "SearchGroupViewController.h"
 #import "PhotoViewController.h"
-#import "NewGroupSettingViewController.h"
 #import "AddFriendsViewController.h"
 #import "MyGroupViewController.h"
 #import "SearchGroupViewController.h"
@@ -125,6 +124,10 @@
     }
 }
 
+-(void)refreshGroupInfo
+{
+    [self getInfoWithNet];
+}
 
 -(void)refreshNet:(id)sender
 {
@@ -146,6 +149,7 @@
             
             NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
             gr.groupId = self.groupId;
+            gr.myDelegate = self;
             gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
             gr.shiptypeCount = self.shiptypeCount;
             [self.navigationController pushViewController:gr animated:YES];

@@ -226,8 +226,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
             [[NSUserDefaults standardUserDefaults]setObject:m_mainDict forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
-        
-
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refelsh_groupInfo_wx" object:nil userInfo:nil];
+        if (self.delegate &&[self.delegate respondsToSelector:@selector(refreshGroupInfo)]) {
+            [self.delegate refreshGroupInfo];
+        }
             [self showMessageWindowWithContent:@"修改成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];
             

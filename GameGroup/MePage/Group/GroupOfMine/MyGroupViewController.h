@@ -8,8 +8,8 @@
 
 #import "BaseViewController.h"
 #import "ReusableView.h"
-
-@interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate>
+#import "GroupInformationViewController.h"
+@interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate,GroupEditRefreshInfoDelegate>
 @property (assign, nonatomic)  NSInteger msgUnReadCount;//未读的消息数
 @end
 
