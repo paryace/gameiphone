@@ -232,6 +232,8 @@
 
 +(NSMutableArray *)queryGroupInfoList;//查找群列表
 
++(NSInteger)queryGroupCount;//查找我的群数量
+
 +(NSMutableDictionary*)queryGroupInfoByGroupId:(NSString*)groupId;//查找单个群信息
 
 +(void)deleteGroupMsgWithSenderAndSayType:(NSString *)groupId;//删除群消息记录

@@ -73,6 +73,26 @@
         
         [self.bgV addSubview:self.threeBtn];
         
+        
+        
+        self.foreBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 99,304, 33)];
+        [self.foreBtn addTarget:self action:@selector(foreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.foreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.foreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateSelected];
+        [self.foreBtn setTitle:@"开始聊天" forState:UIControlStateNormal];
+        self.foreBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        [self.foreBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+        self.foreBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.foreBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        UIBezierPath *maskPathforeBtn = [UIBezierPath bezierPathWithRoundedRect:self.foreBtn.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayerforeBtn = [[CAShapeLayer alloc] init];
+        maskLayerforeBtn.frame = self.foreBtn.bounds;
+        maskLayerforeBtn.path = maskPathforeBtn.CGPath;
+        self.foreBtn.layer.mask = maskLayerforeBtn;
+        
+        [self.bgV addSubview:self.foreBtn];
+        
         [self addSubview:self.bgV];
     }
     return self;
@@ -94,6 +114,13 @@
 {
     if (self.detailDeleGate) {
         [self.detailDeleGate detailClick:self];
+    }
+}
+
+-(void)foreButtonClick:(UIButton*)sender
+{
+    if (self.detailDeleGate) {
+        [self.detailDeleGate chatClick:self];
     }
 }
 

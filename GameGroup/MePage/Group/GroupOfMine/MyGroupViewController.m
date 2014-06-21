@@ -34,7 +34,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self loadMsgCount:self.msgUnReadCount];
+    NSInteger localMsgCount =  [self loadMsgCount:self.msgUnReadCount];
+    msgCount = self.msgUnReadCount +localMsgCount;
     NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
     if (bills&&bills.count>0) {
         dict = [bills objectAtIndex:0];
@@ -44,30 +45,17 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [groupCollectionView reloadData];
 }
 
--(void)loadMsgCount:(NSInteger)tempCount
+-(NSInteger)loadMsgCount:(NSInteger)tempCount
 {
     if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]) {
-        msgCount = tempCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(self.msgUnReadCount) forKey:Billboard_msg_count2];
-    }else{
-        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
-        msgCount = i+tempCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(i+self.msgUnReadCount) forKey:Billboard_msg_count2];
+        [[NSUserDefaults standardUserDefaults]setObject:@(tempCount) forKey:Billboard_msg_count2];
+         [[NSUserDefaults standardUserDefaults] synchronize];
+        return 0;
     }
+    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
+    [[NSUserDefaults standardUserDefaults]setObject:@(i+tempCount) forKey:Billboard_msg_count2];
     [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
--(void)loadMsgCount2
-{
-    if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]) {
-
-        [[NSUserDefaults standardUserDefaults]setObject:@(1) forKey:Billboard_msg_count2];
-    }else{
-        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
-
-        [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:Billboard_msg_count2];
-    }
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    return i;
 }
 
 - (void)viewDidLoad
@@ -142,7 +130,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
     msgCount++;
-     [self loadMsgCount2];
+    [self loadMsgCount:1];
     
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -270,62 +258,22 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionReusableView *titleView;
-    
     if (kind == UICollectionElementKindSectionHeader) {
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:HeaderIdentifier forIndexPath:indexPath];
-        if (dict) {
-            [((ReusableView *)titleView).topBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-            ((ReusableView *)titleView).topBtn.tag=123;
-            
-            NSString * groupName = KISDictionaryHaveKey(dict, @"groupName");
-            NSString * billboard = KISDictionaryHaveKey(dict, @"billboard");
-            NSString * createDate = KISDictionaryHaveKey(dict, @"createDate");
-            NSString * backgroundImg = KISDictionaryHaveKey(dict, @"backgroundImg");
-            ((ReusableView *)titleView).label.text = billboard;
-            ((ReusableView *)titleView).contentLabel.text = groupName;
-            ((ReusableView *)titleView).timeLabel.text = [GameCommon getTimeWithMessageTime:createDate];
-            if ([GameCommon isEmtity:backgroundImg]) {
-                ((ReusableView *)titleView).headImageView.imageURL = nil;
-            }else{
-                ((ReusableView *)titleView).headImageView.imageURL = [ImageService getImageUrl3:backgroundImg Width:120];
-            }
-            [((ReusableView *)titleView).topBtn addTarget:self action:@selector(topBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-            
-            
-            
-            
-            if (msgCount>0) {
-                ((ReusableView *)titleView).gbMsgCountImageView.hidden = NO;
-                if (msgCount > 99) {
-                    ((ReusableView *)titleView).gbMsgCountLable.text = @"99+";
-                }
-                else{
-                    ((ReusableView *)titleView).gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
-                }
-            }else
-            {
-                ((ReusableView *)titleView).gbMsgCountImageView.hidden = YES;
-            }
-
-        }else{
-            ((ReusableView *)titleView).label.text = @"组织公告";
-            ((ReusableView *)titleView).contentLabel.text = @"还没有组织公告哦!";
-            ((ReusableView *)titleView).timeLabel.text = @"";
-            ((ReusableView *)titleView).headImageView.image = KUIImage(@"group_billboard");
-        }
-        CGSize textSize = [((ReusableView *)titleView).timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        ((ReusableView *)titleView).timeLabel.frame=CGRectMake(320 - textSize.width-10, 45, textSize.width, 15);
-        
+        ReusableView * reu = ((ReusableView *)titleView);
+        reu.delegate = self;
+        [reu setInfo:dict setMsgCount:msgCount];
     }
     return titleView;
 }
 
--(void)topBtnClick:(UIButton*)sender
+//点击
+-(void)onClick:(UIButton*)sender
 {
     msgCount=0;
     [[NSUserDefaults standardUserDefaults]setObject:@(0) forKey:Billboard_msg_count2];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
+    
     BillboardViewController *joinIn = [[BillboardViewController alloc]init];
     [self.navigationController pushViewController:joinIn animated:YES];
 }

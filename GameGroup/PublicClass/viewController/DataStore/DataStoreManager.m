@@ -2600,11 +2600,7 @@
     [groupUserInfo setObject:groupuser.userId forKey:@"userId"];
     return groupUserInfo;
 }
-
-
-
-
-//查找所有的角色
+//查询群组列表
 +(NSMutableArray *)queryGroupInfoList
 {
     
@@ -2616,6 +2612,17 @@
         [titlesArray addObject:grouoDic];
     }
     return titlesArray;
+}
+
+
++(NSInteger)queryGroupCount
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@",@"3"];
+    NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
+    if (array>0) {
+        return array.count;
+    }
+    return 0;
 }
 
 +(NSMutableDictionary*)queryGroupInfo:(DSGroupList*)group

@@ -169,7 +169,12 @@
     }else
     {
         gbMsgCountImageView.hidden = YES;
-        groupMsgTitleLable.text =@"没有群公告";
+        NSInteger groupCount = [DataStoreManager queryGroupCount];
+        if (groupCount>0) {
+            groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
+        }else {
+            groupMsgTitleLable.text =@"您还未加入组织";
+        }
     }
 
 }

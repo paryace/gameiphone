@@ -11,6 +11,7 @@
 #import "CreateGroupMsgCell.h"
 #import "SimpleMsgCell.h"
 #import "GroupInformationViewController.h"
+#import "KKChatController.h"
 
 @interface JoinApplyViewController ()
 {
@@ -57,8 +58,7 @@
 {
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
-    if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
-        ||[msgType isEqualToString:@"joinGroupApplicationReject"]
+    if ([msgType isEqualToString:@"joinGroupApplicationReject"]
         ||[msgType isEqualToString:@"groupLevelUp"]
         ||[msgType isEqualToString:@"groupBillboard"]
         ||[msgType isEqualToString:@"disbandGroup"]
@@ -141,8 +141,7 @@
         return cell;
     }
     //（通过，拒绝,群升级,好友加入群,解散群,群成员身份变化,被踢出群的消息）
-    else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
-        ||[msgType isEqualToString:@"joinGroupApplicationReject"]
+    else if ([msgType isEqualToString:@"joinGroupApplicationReject"]
              ||[msgType isEqualToString:@"groupLevelUp"]
              ||[msgType isEqualToString:@"groupBillboard"]
              ||[msgType isEqualToString:@"disbandGroup"]
@@ -164,7 +163,8 @@
     }
     
     //创建群，群审核通过，群审核失败
-    else if ([msgType isEqualToString:@"groupApplicationUnderReview"]
+    else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
+             ||[msgType isEqualToString:@"groupApplicationUnderReview"]
              ||[msgType isEqualToString:@"groupApplicationAccept"]
              ||[msgType isEqualToString:@"groupApplicationReject"]) {
         
@@ -176,21 +176,30 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
          cell.groupImageDeleGate=self;
-        cell.detailDeleGate=self;
+         cell.detailDeleGate=self;
          cell.tag = indexPath.row;
         cell.contentLable.text=msgContent;
         if ([msgType isEqualToString:@"groupApplicationUnderReview"]) {
             cell.oneBtn.hidden=YES;
             cell.twoBtn.hidden=YES;
             cell.threeBtn.hidden=NO;
+            cell.foreBtn.hidden=YES;
         }else if([msgType isEqualToString:@"groupApplicationReject"]){
             cell.oneBtn.hidden=YES;
             cell.twoBtn.hidden=YES;
             cell.threeBtn.hidden=YES;
+            cell.foreBtn.hidden=YES;
         }else if([msgType isEqualToString:@"groupApplicationAccept"]){
             cell.oneBtn.hidden=NO;
             cell.twoBtn.hidden=NO;
             cell.threeBtn.hidden=YES;
+            cell.foreBtn.hidden=YES;
+        }else if([msgType isEqualToString:@"joinGroupApplicationAccept"])
+        {
+            cell.oneBtn.hidden=YES;
+            cell.twoBtn.hidden=YES;
+            cell.threeBtn.hidden=YES;
+            cell.foreBtn.hidden=NO;
         }
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -311,6 +320,16 @@
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
     gr.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"groupId")];
     [self.navigationController pushViewController:gr animated:YES];
+}
+//
+-(void)chatClick:(CreateGroupMsgCell*)sender
+{
+    NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];
+    NSString * groupId = KISDictionaryHaveKey(dict, @"groupId");
+    KKChatController * kkchat = [[KKChatController alloc] init];
+    kkchat.chatWithUser = [NSString stringWithFormat:@"%@",groupId];
+    kkchat.type = @"group";
+    [self.navigationController pushViewController:kkchat animated:YES];
 }
 
 - (void)didReceiveMemoryWarning

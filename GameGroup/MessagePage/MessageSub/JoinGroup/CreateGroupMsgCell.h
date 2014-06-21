@@ -18,6 +18,8 @@
 @property(nonatomic,strong)UIButton * twoBtn;
 @property(nonatomic,strong)UIButton * threeBtn;
 
+@property(nonatomic,strong)UIButton * foreBtn;
+
 @property(nonatomic,assign)id<CreateGroupDetailDeleGate>detailDeleGate;
 
 @end
@@ -29,5 +31,7 @@
 -(void)skillClick:(CreateGroupMsgCell*)sender;
 
 -(void)detailClick:(CreateGroupMsgCell*)sender;
+
+-(void)chatClick:(CreateGroupMsgCell*)sender;
 
 @end
