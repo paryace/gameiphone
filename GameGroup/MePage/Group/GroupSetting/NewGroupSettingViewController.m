@@ -276,14 +276,14 @@ typedef enum : NSUInteger {
         }
         //离开该群,解散群
         
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake((KISHighVersion_7?10:0),5,300,40)];
-        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
-        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
+        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,5,320,50)];
+//        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
+//        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         okButton.backgroundColor = [UIColor clearColor];
         [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor redColor];
         [cell.contentView addSubview:okButton];
         return cell;
 
@@ -295,13 +295,12 @@ typedef enum : NSUInteger {
         }
         //解散群
         cell.backgroundColor = [UIColor whiteColor];
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake((KISHighVersion_7?10:0),5,300, 40)];
-        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
-        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
+        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,320, 50)];
+//        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
+//        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
         
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        okButton.backgroundColor = [UIColor clearColor];
+        okButton.backgroundColor = [UIColor redColor];
         if (self.shiptypeCount ==1){
             [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
             [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];

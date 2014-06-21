@@ -317,8 +317,7 @@
     [circleView addSubview:bottomTitleLabel];
 
     
-    iconImageView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
-    iconImageView.frame = CGRectMake(10, 10, 40, 40);
+    iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
     [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
     
