@@ -58,6 +58,7 @@
         cell = [[MessageCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         cell.backgroundColor = [UIColor clearColor];
     }
+     cell.settingState.hidden=YES;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     NSDictionary *dict = KISDictionaryHaveKey(dic, @"content");
 //    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]]];

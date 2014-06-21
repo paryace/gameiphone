@@ -24,6 +24,8 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群公告" withBackButton:YES];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
+    
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
@@ -41,6 +43,15 @@
 -(void)getJoinGroupMsg
 {
     m_dataArray = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    [m_billboardTabel reloadData];
+}
+#pragma mark 收到公告消息
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count2];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [m_dataArray insertObject:sender.userInfo atIndex:0];
     [m_billboardTabel reloadData];
 }
 

@@ -271,9 +271,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)onClick:(UIButton*)sender
 {
     msgCount=0;
+    self.msgUnReadCount = 0;
     [[NSUserDefaults standardUserDefaults]setObject:@(0) forKey:Billboard_msg_count2];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
+    [groupCollectionView reloadData];
     BillboardViewController *joinIn = [[BillboardViewController alloc]init];
     [self.navigationController pushViewController:joinIn animated:YES];
 }

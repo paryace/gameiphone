@@ -124,6 +124,7 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    cell.settingState.hidden=YES;
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
     NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]]];
     NSString * headImageId = KISDictionaryHaveKey(simpleUserDic, @"img");

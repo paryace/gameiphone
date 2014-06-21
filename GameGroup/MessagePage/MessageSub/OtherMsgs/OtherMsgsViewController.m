@@ -83,6 +83,7 @@
     if (cell == nil) {
         cell = [[MessageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+     cell.settingState.hidden=YES;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     NSDictionary * dict = [[[m_tableData objectAtIndex:indexPath.row] objectForKey:@"msgContent"] JSONValue];
