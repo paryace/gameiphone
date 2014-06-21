@@ -60,10 +60,10 @@
     [self.view addSubview:m_myTableView];
     
     requestType =@"members";
-    [self getNearByDataByNetWithType:requestType];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
+    [self getNearByDataByNetWithType:requestType];
 
 }
 
