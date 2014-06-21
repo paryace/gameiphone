@@ -162,6 +162,8 @@
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(kScreenWidth) forKey:@"width"];
+    [paramDict setObject:@(kScreenHeigth) forKey:@"height"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"263" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];

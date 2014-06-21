@@ -78,6 +78,9 @@ didFinishDownloadingToURL:(NSURL *)location
     //下载成功后，文件是保存在一个临时目录的，需要开发者自己考到放置该文件的目录
     NSURL *destination = [self createDirectoryForDownloadItemFromURL];
     BOOL success = [self copyTempFileAtURL:location toDestination:destination];
+    if (success) {
+        [[NSUserDefaults standardUserDefaults]setObject:self.imageId forKey:OpenImage];
+    }
     self.task = nil;
 }
 
