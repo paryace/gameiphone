@@ -112,10 +112,9 @@
     }
 }
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    for(UIView *view in gestureRecognizer.view.subviews){
-        if ([view isKindOfClass:[UIButton class]]) {
-            return NO;
-        }
+    if ([touch.view isKindOfClass:[UITextField class]])
+    {
+        return NO;
     }
     return YES;
 }
@@ -350,8 +349,11 @@
             default:
                 break;
         }
+        cell.titleLabel.textColor = [UIColor whiteColor];
     }else{
         cell.bgImgView.image = KUIImage(@"card_show");
+        cell.titleLabel.textColor = [UIColor blackColor];
+
     }
     
     NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
@@ -385,6 +387,13 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    if([m_searchTf isFirstResponder]){
+        [m_searchTf resignFirstResponder];
+    }
+    if (m_pickView.tag==222) {
+        [self hideSelectView];
+    }
+
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
     
