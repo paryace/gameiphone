@@ -314,7 +314,7 @@
     UIImageView *imgV =[[ UIImageView alloc]initWithFrame:frame];
     imgV.image = KUIImage(@"card_show");
     imgV.userInteractionEnabled = YES;
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-20, frame.size.height)];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
     label.textAlignment = NSTextAlignmentCenter;
     label.font = [UIFont boldSystemFontOfSize:13];
     label.textColor = [UIColor blackColor];
