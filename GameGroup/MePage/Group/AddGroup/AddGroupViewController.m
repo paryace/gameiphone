@@ -12,6 +12,7 @@
 {
     NSMutableDictionary * m_updataDic;
     AddGroupView *addGroup;
+    UIAlertView *noRoleAlertView;
 }
 @end
 
@@ -22,6 +23,14 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建群组" withBackButton:YES];
+    
+    
+    NSMutableArray * stArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
+    if (!stArray||stArray.count<=0) {
+        noRoleAlertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色,无法创建公会,请绑定角色后再创建公会" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [noRoleAlertView show];
+    }
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
@@ -176,11 +185,16 @@
         [UIView commitAnimations];
         
     }
-    
-    
+
 }
-
-
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+- (void)dealloc
+{
+    noRoleAlertView.delegate = nil;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

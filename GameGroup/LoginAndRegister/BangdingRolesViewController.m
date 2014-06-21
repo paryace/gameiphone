@@ -246,7 +246,7 @@
         NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
         [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [body_two setObject:params_two forKey:@"params"];
-        [body_two setObject:@"118" forKey:@"method"];
+        [body_two setObject:@"262" forKey:@"method"];
         [body_two setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {

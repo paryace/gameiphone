@@ -215,12 +215,12 @@ typedef enum : NSUInteger {
             tlb.font =[ UIFont systemFontOfSize:14];
             [cell.contentView addSubview:tlb];
             
-            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(115, 15, 150, 20)];
+            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(115, 15, 160, 20)];
             groupNameLable.backgroundColor = [UIColor clearColor];
             groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
             groupNameLable.text = self.CharacterInfo;
             groupNameLable.textAlignment = NSTextAlignmentRight;
-            groupNameLable.font =[ UIFont systemFontOfSize:14];
+            groupNameLable.font =[ UIFont systemFontOfSize:12];
             groupNameLable.inputView = m_rolePickView;
             groupNameLable.inputAccessoryView = toolbar;
             [cell.contentView addSubview:groupNameLable];

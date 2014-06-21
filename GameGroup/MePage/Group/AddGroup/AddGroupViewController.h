@@ -10,6 +10,6 @@
 #import "AddGroupView.h"
 #import "RealmsSelectViewController.h"
 #import "CardViewController.h"
-@interface AddGroupViewController : BaseViewController<groupViewDelegate,RealmSelectDelegate,CardListDelegate>
+@interface AddGroupViewController : BaseViewController<groupViewDelegate,RealmSelectDelegate,CardListDelegate,UIAlertViewDelegate>
 
 @end

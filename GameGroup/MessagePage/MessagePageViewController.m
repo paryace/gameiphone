@@ -51,6 +51,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    
     if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
@@ -72,6 +73,10 @@
         [self.view bringSubviewToFront:hud];
         [self setFirstSayHiMsg];
         [self displayMsgsForDefaultView];
+        if (![[TempData sharedInstance]isBindingRoles]) {
+            [self enterBangdingView];
+        }
+
     }
 }
 
@@ -102,9 +107,6 @@
 {
     [super viewDidLoad];
     
-    if (![[TempData sharedInstance]isBindingRoles]) {
-        [self enterBangdingView];
-    }
 
 
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemindBegin) name:@"StartGetFriendListForNet" object:nil];

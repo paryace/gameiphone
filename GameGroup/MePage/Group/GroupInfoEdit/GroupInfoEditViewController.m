@@ -227,7 +227,6 @@
         
             [[NSUserDefaults standardUserDefaults]setObject:m_mainDict forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
         
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"refelsh_groupInfo_wx" object:nil];
 
             [self showMessageWindowWithContent:@"修改成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];
@@ -433,6 +432,8 @@
     UIImage * afterImage= [NetManager image2:upImage centerInSize:CGSizeMake(320*2, 192*2)];
     topImageView.image = afterImage;
     [self uploadbgImg:imagePath];
+    
+    
     
 }
 //将图片保存到本地，返回保存的路径
