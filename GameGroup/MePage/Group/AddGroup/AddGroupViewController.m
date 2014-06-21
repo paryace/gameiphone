@@ -164,7 +164,7 @@
     else {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.3];
-        addGroup.secondScrollView.contentOffset = CGPointMake(0, 300);
+        addGroup.secondScrollView.contentOffset = CGPointMake(0, 200);
         [UIView commitAnimations];
         
     }

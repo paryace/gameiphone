@@ -11,7 +11,7 @@
 #import "GroupInformationViewController.h"
 #import "MJRefresh.h"
 #import "LocationManager.h"
-
+#import "AddGroupViewController.h"
 @interface SearchGroupViewController ()
 {
     UITableView * m_GroupTableView;
@@ -39,6 +39,16 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"搜索群列表" withBackButton:YES];
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(didClickCreateGroup:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
+    
+    
     
     m_groupArray = [NSMutableArray array];
     currentPageCount = 0;
@@ -285,6 +295,15 @@
         }
          ];
 }
+
+#pragma mark ---创建群
+-(void)didClickCreateGroup:(id)sender
+{
+    AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
+    [self.navigationController pushViewController:addGroupView animated:YES];
+}
+
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     [self.navigationController popViewControllerAnimated:YES];

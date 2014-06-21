@@ -8,6 +8,7 @@
 
 #import "JoinInGroupViewController.h"
 #import "SearchGroupViewController.h"
+#import "AddGroupViewController.h"
 #import "CardCell.h"
 #import "CardTitleView.h"
 #import "EGOImageView.h"
@@ -40,6 +41,14 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(didClickCreateGroup:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
     
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
@@ -290,6 +299,12 @@
     groupView.conditiona = m_searchTf.text;
     groupView.ComeType = SETUP_Search;
     [self.navigationController pushViewController:groupView animated:YES];
+}
+#pragma mark ---创建群
+-(void)didClickCreateGroup:(id)sender
+{
+    AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
+    [self.navigationController pushViewController:addGroupView animated:YES];
 }
 
 

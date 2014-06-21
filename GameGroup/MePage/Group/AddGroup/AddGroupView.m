@@ -17,6 +17,7 @@
     UITextView *m_textView;
     NSMutableArray *gameInfoArray;
     UIPickerView *m_gamePickerView;
+    UILabel *uilabel;
 }
 
 
@@ -228,6 +229,16 @@
     m_textView.layer.masksToBounds = YES;
     [self.secondScrollView addSubview:m_textView];
 
+    uilabel = [[UILabel alloc]init];
+    
+    uilabel.frame =CGRectMake(17, 8,200, 20);
+    uilabel.text = @"请填写描述内容(10字以上)";
+    uilabel.enabled = NO;//lable必须设置为不可用
+    uilabel.font = [UIFont systemFontOfSize:12];
+    uilabel.backgroundColor = [UIColor clearColor];
+    [m_textView addSubview:uilabel];
+    
+    
     
     self.button = [UIButton buttonWithType:UIButtonTypeCustom];
     self.button.frame = CGRectMake(10, 482+10, 300, 44);
@@ -383,7 +394,14 @@
         [self.myDelegate didClickCardWithDel:self dic:self.listDict];
     }
 }
-
+-(void)textViewDidChange:(UITextView *)textView
+{
+    if (textView.text.length == 0) {
+        uilabel.text = @"请填写描述内容(10字以上)";
+    }else{
+        uilabel.text = @"";
+    }
+}
 -(void)comebackKeyBoard{
     [m_textView resignFirstResponder];
     [self.groupNameTf resignFirstResponder];

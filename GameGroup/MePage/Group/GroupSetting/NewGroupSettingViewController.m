@@ -275,6 +275,7 @@ typedef enum : NSUInteger {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
         //离开该群,解散群
+        
         UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake((KISHighVersion_7?10:0),5,300,40)];
         [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
         [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
