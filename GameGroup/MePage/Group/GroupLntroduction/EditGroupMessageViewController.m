@@ -164,7 +164,7 @@
 }
 -(void)showEditImage
 {
-    UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"删除",@"替换", nil];
+    UIActionSheet *actionSheetTemp = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"删除", nil];
     actionSheetTemp.tag = actionSheetTypeOperationPic;
     [actionSheetTemp showInView:self.view];
 

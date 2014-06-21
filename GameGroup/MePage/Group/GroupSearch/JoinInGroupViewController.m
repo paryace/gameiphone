@@ -269,7 +269,7 @@
             listDict  = responseObject;
            
             
-            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"最热组织",@"tagId":@"hot"}, nil];
+            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"猜你喜欢",@"tagId":@"hot"}, nil];
             allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
             [allkeysArr insertObject:[NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]] atIndex:0];
 

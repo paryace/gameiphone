@@ -271,18 +271,30 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {//解散群
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
-        [DataStoreManager deleteJoinGroupApplicationByMsgTypeAndGroupId:@"groupBillboard" GroupId:groupId];//删除群公告消息
-//        [DataStoreManager deleteGroupInfoByGoupId:groupId];
+        
+        
+//        [DataStoreManager deleteThumbMsgWithSender:groupId];//删除消息列表
+//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除聊天记录
+//        [DataStoreManager deleteGroupInfoByGoupId:groupId];//删除群信息
+//        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];// 删除群通知
+        
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
+        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];
         [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
+//        [DataStoreManager deleteThumbMsgWithSender:groupId];//删除消息列表
+//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除聊天记录
+//        [DataStoreManager deleteGroupInfoByGoupId:groupId];//删除群信息
+//        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];// 删除群通知
+        
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-        [DataStoreManager deleteJoinGroupApplicationByMsgTypeAndGroupId:@"groupBillboard" GroupId:groupId];//删除群公告消息
-//        [DataStoreManager deleteGroupInfoByGoupId:groupId];
+        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
