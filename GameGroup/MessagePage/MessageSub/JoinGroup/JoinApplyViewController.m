@@ -12,6 +12,7 @@
 #import "SimpleMsgCell.h"
 #import "GroupInformationViewController.h"
 #import "KKChatController.h"
+#import "HelpViewController.h"
 
 @interface JoinApplyViewController ()
 {
@@ -320,8 +321,9 @@
 //群组小技巧
 -(void)skillClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"群组小技巧"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-    [alert show];
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"groupskill.html";
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 //查看进度
 -(void)detailClick:(CreateGroupMsgCell*)sender

@@ -8,6 +8,7 @@
 
 #import "FindViewController.h"
 #import "EGOImageView.h"
+#import "EGOImageButton.h"
 #import "NewNearByViewController.h"
 #import "CircleHeadViewController.h"
 #import "SameRealmViewController.h"
@@ -36,7 +37,10 @@
     UILabel *groupMsgTitleLable;
     UILabel *gbMsgCountLable;//公告消息数
     UIImageView *gbMsgCountImageView; //公告红点
+    EGOImageButton *iconImageView ;//群头像
     NSInteger    billboardMsgCount;//群公告消息
+   
+   
     
     float button_center_x;
     float button_center_y;
@@ -175,6 +179,12 @@
             gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
         }
         groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
+        
+        NSMutableDictionary * billBoard = [self getBillboardGroupInfo];
+        NSString * groupId = KISDictionaryHaveKey(billBoard, @"groupId");
+        NSMutableDictionary * simpleGroupInfo = [[GroupManager singleton] getGroupInfo:groupId];
+        NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
+        iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
     }else
     {
         gbMsgCountImageView.hidden = YES;
@@ -185,8 +195,17 @@
             groupMsgTitleLable.text =@"您还未加入组织";
         }
     }
-
 }
+
+-(NSMutableDictionary*)getBillboardGroupInfo
+{
+    NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
+    if (bills&&bills.count>0) {
+        return [bills objectAtIndex:0];
+    }
+    return nil;
+}
+
 -(void)cleanNews
 {
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
@@ -297,14 +316,17 @@
     [circleView addSubview:bottomTitleLabel];
 
     
-    UIButton *iconImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+    iconImageView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
+    iconImageView.frame = CGRectMake(10, 10, 40, 40);
     [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+//    iconImageView.layer.masksToBounds = YES;
+//    iconImageView.layer.cornerRadius = 5.0;
     [bottomView addSubview:iconImageView];
     
     //红点 - 公告
     gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(30, -5, 18, 18)];
-    [iconImageView bringSubviewToFront:gbMsgCountImageView];
+//    [iconImageView bringSubviewToFront:gbMsgCountImageView];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
      gbMsgCountImageView.hidden = YES;
     [iconImageView addSubview:gbMsgCountImageView];
