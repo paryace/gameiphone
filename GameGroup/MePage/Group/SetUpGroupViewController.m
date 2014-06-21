@@ -66,7 +66,8 @@
     m_searchTf.adjustsFontSizeToFitWidth = YES;
     m_searchTf.placeholder = @"请选择角色";
     m_searchTf.textAlignment = NSTextAlignmentRight;
-    m_searchTf.font = [UIFont boldSystemFontOfSize:15.0];
+    m_searchTf.textColor = [UIColor grayColor];
+    m_searchTf.font = [UIFont systemFontOfSize:15.0];
     m_searchTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     m_searchTf.clearButtonMode = UITextFieldViewModeWhileEditing;
     
@@ -74,8 +75,8 @@
     
     m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, startX+80, 300, 150)];
     m_textView.delegate = self;
-    m_textView.font = [UIFont boldSystemFontOfSize:13];
-    m_textView.textColor = [UIColor blackColor];
+    m_textView.font = [UIFont systemFontOfSize:13];
+    m_textView.textColor = [UIColor grayColor];
     m_textView.backgroundColor = [UIColor whiteColor];
     m_textView.layer.cornerRadius = 5;
     m_textView.layer.masksToBounds = YES;

@@ -94,25 +94,29 @@
     //显示数字
         NSString *commStr1 = @"";
         NSString *commStr2 = @"";
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-            m_notibgCircleNewsImageView.hidden = NO;
-            commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
-        }else{
-            commStr1 =@"";
-            m_notibgCircleNewsImageView.hidden = YES;
-        }
         if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-            commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+            commStr2 = [NSString stringWithFormat:@"%d条与我相关",myDunamicmsgCount];
             m_notibgInfoImageView.hidden = NO;  //数字
             int dianCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
             if (dianCount > 99) {
                 lb.text = @"99+";
             }
-            else
+            else{
                 lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
+            }
+            commentLabel.text =commStr2;
+
+        }else{
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+                m_notibgCircleNewsImageView.hidden = NO;
+                commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
+            }else{
+                commStr1 =@"";
+                m_notibgCircleNewsImageView.hidden = YES;
+            }
+            commentLabel.text =commStr1 ;
 
         }
-        commentLabel.text =[commStr1 stringByAppendingString:commStr2];
 }
 //监听消息来临
 -(void)ss:(NSNotification*)sender
@@ -126,6 +130,12 @@
     headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+        commentLabel.text = commStr2;
+    }else{
+
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
         m_notibgCircleNewsImageView.hidden = NO;
         [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
@@ -134,10 +144,9 @@
         commStr1 =@"";
         m_notibgCircleNewsImageView.hidden = YES;
     }
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
+        commentLabel.text = commStr1 ;
+
     }
-    commentLabel.text = [commStr1 stringByAppendingString:commStr2];
 
 }
 
@@ -351,6 +360,7 @@
     commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentRight;
+    commentLabel.adjustsFontSizeToFitWidth = YES;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
     NSString *commStr1 = @"";

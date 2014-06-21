@@ -27,13 +27,12 @@
 {
     [super viewDidLoad];
 
-    [self setTopViewWithTitle:@"编辑群资料" withBackButton:YES];
     
     m_mainDict = [NSMutableDictionary new];
     paramDict  = [NSMutableDictionary dictionary];
     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     
-    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.backgroundColor = [UIColor clearColor];
@@ -51,12 +50,12 @@
     [self.view addSubview:shareButton];
 
     
-    topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 192)];
+    topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
     NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
     if ([GameCommon isEmtity:imageUrl]) {
         topImageView.image = KUIImage(@"groupinfo_top");
     }else{
-        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
+        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:320*2];
     }
     topImageView .userInteractionEnabled = YES;
     topImageView.userInteractionEnabled = YES;
@@ -66,12 +65,15 @@
     m_myTableView.tableHeaderView = topImageView;
     
     
-    UILabel *promptLb= [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 320, 42)];
+    UILabel *promptLb= [[UILabel alloc]initWithFrame:CGRectMake(0, 278, 320, 42)];
     promptLb.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
     promptLb.textColor = [UIColor whiteColor];
     promptLb.textAlignment = NSTextAlignmentCenter;
     promptLb.text = @"点击图片更换头图";
     [topImageView addSubview:promptLb];
+    
+    [self setTopViewWithTitle:@"编辑群资料" withBackButton:YES];
+
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
@@ -435,7 +437,7 @@
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     NSString * imagePath=[self writeImageToFile:upImage ImageName:@"groupInfoTopImage.jpg"];
-    UIImage * afterImage= [NetManager image2:upImage centerInSize:CGSizeMake(320*2, 192*2)];
+    UIImage * afterImage= [NetManager image2:upImage centerInSize:CGSizeMake(320*2, 320*2)];
     topImageView.image = afterImage;
     [self uploadbgImg:imagePath];
     
