@@ -64,6 +64,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     [self setTopViewWithTitle:@"我的组织" withBackButton:NO];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshNet:) name:@"refelsh_groupInfo_wx" object:nil];
+
+    
+    
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
@@ -126,6 +130,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
    [self.navigationController popViewControllerAnimated:YES];
 
 }
+
+
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {

@@ -30,6 +30,7 @@
     UIView *m_pickView;
     
     NSMutableArray *allkeysArr;
+    
 }
 @end
 
@@ -53,6 +54,8 @@
     listDict  = [NSMutableDictionary dictionary];
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
+    
+    
     m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, 20, 300, 40)];
     m_searchTf.backgroundColor = [UIColor clearColor];
     m_searchTf.borderStyle = UITextBorderStyleRoundedRect;
@@ -332,7 +335,25 @@
 {
     
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"card_show");
+    if (indexPath.section ==0) {
+        switch (indexPath.row) {
+            case 0:
+                cell.bgImgView.image = KUIImage(@"card_darkblue");
+                break;
+            case 1:
+               cell.bgImgView.image = KUIImage(@"card_purple");
+                break;
+            case 2:
+               cell.bgImgView.image = KUIImage(@"card_red");
+                break;
+   
+            default:
+                break;
+        }
+    }else{
+        cell.bgImgView.image = KUIImage(@"card_show");
+    }
+    
     NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
     
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
