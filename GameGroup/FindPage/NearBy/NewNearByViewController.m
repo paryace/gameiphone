@@ -575,12 +575,12 @@ typedef enum : NSUInteger {
                         }
                         isSaveHcListInfo = NO;
                         
-                        if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
-                            isHaveFun=YES;
-                            NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
-                            [diccccc setObject:@"isYES" forKey:@"isFund"];
-                            [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
-                        }
+//                        if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
+//                            isHaveFun=YES;
+//                            NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
+//                            [diccccc setObject:@"isYES" forKey:@"isFund"];
+//                            [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
+//                        }
                     }
                 }
                 
@@ -593,12 +593,12 @@ typedef enum : NSUInteger {
                     }
                     [m_dataArray addObjectsFromArray:arr];
                     
-                    if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
-                        isHaveFun=YES;
-                        NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
-                        [diccccc setObject:@"isYES" forKey:@"isFund"];
-                        [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
-                    }
+//                    if ([self getMsgRowWithId]!=-1&&!isHaveFun) {
+//                        isHaveFun=YES;
+//                        NSMutableDictionary * diccccc = [NSMutableDictionary dictionary];
+//                        [diccccc setObject:@"isYES" forKey:@"isFund"];
+//                        [m_dataArray insertObject:diccccc atIndex:[self getMsgRowWithId]];
+//                    }
                 }
             }
             m_currPageCount ++;
@@ -759,16 +759,16 @@ typedef enum : NSUInteger {
 {
     
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        static NSString *identifier = @"cellCity";
-        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell ==nil) {
-            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
-        cell.titleLable.text = @"去往随机城市看看";
-        cell.titleImage.image = KUIImage(@"city_roam");
-        return cell;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+//        static NSString *identifier = @"cellCity";
+//        FunEntranceCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+//        if (cell ==nil) {
+//            cell = [[FunEntranceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+//        }
+//        cell.titleLable.text = @"去往随机城市看看";
+//        cell.titleImage.image = KUIImage(@"city_roam");
+//        return cell;
+//    }
     
     static NSString *identifier = @"cell";
     NewNearByCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
@@ -992,41 +992,41 @@ typedef enum : NSUInteger {
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
-        int i = arc4random()%m_sectionHeadsKeys.count;
-        NSArray *array =[m_mianDict objectForKey:m_sectionHeadsKeys[i]];
-        int j = arc4random()%array.count;
-        
-            cityCode = KISDictionaryHaveKey(array[j], @"cityCode");
-            titleStr =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(array[j], @"city")];
-            
-            if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey])
-            {
-                if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
-                    NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
-                    if ([type isEqualToString:@"0"]) {
-                        titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
-                    }
-                    else if ([type isEqualToString:@"1"])
-                    {
-                        titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
-                    }else
-                    {
-                        titleLabel.text = titleStr;
-                    }
-                }
-            }else{
-                titleLabel.text = titleStr;
-            }
-            [self changeActivityPositionWithTitle:titleLabel.text];
-            citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(array[j],@"city")];
-            m_currPageCount =0;
-            isSaveHcTopImg = YES;
-            isSaveHcListInfo = YES;
-            [self getInfoWithNet];
-            [self getTopImageFromNet];
-        }
+//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
+//        int i = arc4random()%m_sectionHeadsKeys.count;
+//        NSArray *array =[m_mianDict objectForKey:m_sectionHeadsKeys[i]];
+//        int j = arc4random()%array.count;
+//        
+//            cityCode = KISDictionaryHaveKey(array[j], @"cityCode");
+//            titleStr =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(array[j], @"city")];
+//            
+//            if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey])
+//            {
+//                if ([[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey]) {
+//                    NSString * type =[[NSUserDefaults standardUserDefaults]objectForKey:NewNearByKey];
+//                    if ([type isEqualToString:@"0"]) {
+//                        titleLabel.text = [titleStr stringByAppendingString:@"(男)"];
+//                    }
+//                    else if ([type isEqualToString:@"1"])
+//                    {
+//                        titleLabel.text = [titleStr stringByAppendingString:@"(女)"];
+//                    }else
+//                    {
+//                        titleLabel.text = titleStr;
+//                    }
+//                }
+//            }else{
+//                titleLabel.text = titleStr;
+//            }
+//            [self changeActivityPositionWithTitle:titleLabel.text];
+//            citydongtaiStr = [NSString stringWithFormat:@"%@附近的动态",KISDictionaryHaveKey(array[j],@"city")];
+//            m_currPageCount =0;
+//            isSaveHcTopImg = YES;
+//            isSaveHcListInfo = YES;
+//            [self getInfoWithNet];
+//            [self getTopImageFromNet];
+//        }
 
 }
 
@@ -1068,9 +1068,9 @@ typedef enum : NSUInteger {
 {
     //用分析器初始化m_dataArray
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
-        return 50;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"isFund")]) {
+//        return 50;
+//    }
     
     [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
@@ -1242,9 +1242,9 @@ typedef enum : NSUInteger {
 - (NSMutableDictionary *)contentAnalyzer:(NSMutableDictionary *)contentDict withReAnalyzer:(BOOL)reAnalyzer;
 {
     
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
-        return contentDict;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(contentDict, @"isFund")]) {
+//        return contentDict;
+//    }
     
     if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
         return contentDict;
@@ -1407,9 +1407,9 @@ typedef enum : NSUInteger {
 {
     
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
-    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
-        return;
-    }
+//    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"isFund")]) {
+//        return;
+//    }
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

@@ -548,9 +548,9 @@
             NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
             
             NSArray * us=cell.contentView.subviews;
-            for(UIImageView *uv in us)
+            for(UIView *uv in us)
             {
-                if (uv.tag==122222) {
+                if ([uv isKindOfClass:[UIImageView class]]) {
                     [uv removeFromSuperview];
                 }
             }
