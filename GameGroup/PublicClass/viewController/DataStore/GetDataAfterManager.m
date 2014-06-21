@@ -98,8 +98,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return YES;
     }
 }
-//根据类型保存消息
--(void)storeNewMessage:(NSDictionary *)messageContent
+//设置声音或者震动
+-(void)setSoundOrVibrationopen
 {
     BOOL isVibrationopen=[self isVibrationopen];;
     BOOL isSoundOpen = [self isSoundOpen];
@@ -109,9 +109,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if (isVibrationopen) {
         [VibrationSong vibrationSong];
     }
-    
-    NSString * type = KISDictionaryHaveKey(messageContent, @"msgType");
-    type = type?type:@"notype";
+}
+
+//根据类型保存消息
+-(void)storeNewMessage:(NSDictionary *)messageContent
+{
+
+    NSString * type = KISDictionaryHaveKey(messageContent, @"msgType")?KISDictionaryHaveKey(messageContent, @"msgType"):@"notype";
     NSString * msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     if ([GameCommon isEmtity:msgId]) {
         return;
@@ -119,27 +123,33 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     
     if([type isEqualToString:@"normalchat"])//正常聊天
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
     }
     else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//加好友或者删除好友
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//关注和取消关注
     }
     else if([type isEqualToString:@"recommendfriend"])//好友推荐
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];//好友推荐
     }
     else if([type isEqualToString:@"dailynews"])//每日一闻
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
         
     }else if ([type isEqualToString:@"character"] || [type isEqualToString:@"pveScore"]
               || [type isEqualToString:@"title"])//头衔，角色，战斗力
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
     }
     else if ([type isEqualToString:@"joinGroupApplication"])//群组消息
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
     else if ([type isEqualToString:@"joinGroupApplication"]
@@ -154,6 +164,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
              ||[type isEqualToString:@"kickOffGroup"]//被踢出群的消息
              ||[type isEqualToString:@"disbandGroup"])//解散群
     {
+        [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
 }
@@ -211,6 +222,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+
+
+
 #pragma mark 收到群聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
@@ -257,15 +271,17 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     {//解散群
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
-        [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];
+        [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];//删除群公告消息
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-        [DataStoreManager deleteThumbMsgWithGroupId:groupId];
-        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
-        [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
+        [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];//删除群公告消息
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"joinGroupApplicationAccept"])
@@ -289,6 +305,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
+
 #pragma mark 加入群，退出群，解散群
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent
 {
