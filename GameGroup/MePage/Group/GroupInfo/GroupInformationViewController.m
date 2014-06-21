@@ -68,7 +68,7 @@
     if ([GameCommon isEmtity:imageUrl]) {
         topImg.image = KUIImage(@"groupinfo_top");
     }else{
-        topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
+        topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:320*2];
     }
     m_myTableView.tableHeaderView = topImg;
     topImg.userInteractionEnabled = YES;
@@ -332,7 +332,7 @@
             if ([GameCommon isEmtity:imageUrl]) {
                 topImg.image = KUIImage(@"groupinfo_top");
             }else{
-                topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:192*2];
+                topImg.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(m_mainDict, @"backgroundImg") Width:320*2 Height:320*2];
             }
             [m_myTableView reloadData];
             
