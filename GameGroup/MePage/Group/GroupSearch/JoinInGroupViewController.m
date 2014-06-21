@@ -272,9 +272,9 @@
             
             NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"最热组织",@"tagId":@"hot"}, nil];
             allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
-            [allkeysArr insertObject:@"aaaa" atIndex:0];
+            [allkeysArr insertObject:[NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]] atIndex:0];
 
-            [listDict setObject:array forKey:@"aaaa"];
+            [listDict setObject:array forKey:[NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]]];
             [listDict removeObjectForKey:@"sortList"];
 
             
@@ -374,9 +374,9 @@
         titleView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"headViewww" forIndexPath:indexPath];
         NSMutableArray *arr = [NSMutableArray arrayWithArray:[listDict allKeys]];
         [arr sortUsingSelector:@selector(compare:)];
-        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+//        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
 
-        allkeysArr[0] = [NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]];
+//        allkeysArr[0] = [NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]];
         ((CardTitleView *)titleView).cardTitleLabel.text =[allkeysArr objectAtIndex:indexPath.section];
     }
     return titleView;
@@ -387,6 +387,7 @@
 {
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSArray *arry =[listDict objectForKey:allkeysArr[indexPath.section]];
+    
     NSDictionary* dic = [arry objectAtIndex:indexPath.row];
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
 

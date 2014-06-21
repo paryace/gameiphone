@@ -42,18 +42,34 @@
     rb_server.tintColor = [UIColor blackColor];
     toolbar.items = @[rb_server];
 
-    m_searchTf = [[UITextField alloc]initWithFrame:CGRectMake(10, startX+20, 300, 40)];
-    m_searchTf.backgroundColor = [UIColor clearColor];
-    m_searchTf.borderStyle = UITextBorderStyleRoundedRect;
-    m_searchTf.placeholder = @"请选择游戏角色";
-    m_searchTf.clearButtonMode = UITextFieldViewModeUnlessEditing;
-    m_searchTf.autocorrectionType = UITextAutocorrectionTypeNo;
-    m_searchTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_searchTf.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    m_searchTf.returnKeyType =UIReturnKeyGo;
+    UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(10,startX+10, 300, 40)];
+    table_arrow_two.image = KUIImage(@"group_cardtf");
+    [self.view addSubview:table_arrow_two];
+    
+    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, startX+25, 12, 8)];
+    table_arrow.image = KUIImage(@"arrow_bottom");
+    [self.view addSubview:table_arrow];
+
+    
+    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, startX+10, 80, 38)];
+    table_label_three.text = @"群组名称";
+    table_label_three.backgroundColor = [UIColor clearColor];
+    
+    table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
+    table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
+    [self.view addSubview:table_label_three];
+
+    m_searchTf = [[UITextField alloc] initWithFrame:CGRectMake(80, startX+10, 180, 40)];
+    m_searchTf.returnKeyType = UIReturnKeyDone;
     m_searchTf.inputView = m_gamePickerView;
     m_searchTf.inputAccessoryView= toolbar;
-    m_searchTf.textAlignment = NSTextAlignmentCenter;
+    m_searchTf.adjustsFontSizeToFitWidth = YES;
+    m_searchTf.placeholder = @"请选择角色";
+    m_searchTf.textAlignment = NSTextAlignmentRight;
+    m_searchTf.font = [UIFont boldSystemFontOfSize:15.0];
+    m_searchTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    m_searchTf.clearButtonMode = UITextFieldViewModeWhileEditing;
+    
     [self.view addSubview:m_searchTf];
     
     m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, startX+80, 300, 150)];
@@ -64,6 +80,7 @@
     m_textView.layer.cornerRadius = 5;
     m_textView.layer.masksToBounds = YES;
     m_textView.layer.borderWidth=1;
+    m_textView.text = @"选择角色自动生成申请理由";
     m_textView.layer.borderColor=[kColorWithRGB(200, 200, 200, 1.0) CGColor];
     [self.view addSubview:m_textView];
 
@@ -127,7 +144,13 @@
         
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
     }];
 }
 -(void)selectServerNameOK:(id)sender
@@ -135,6 +158,7 @@
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
         m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请加入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        m_searchTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
         [m_searchTf resignFirstResponder];
         [m_textView becomeFirstResponder];
     }

@@ -70,7 +70,7 @@
             [self getLocationForNet];
 
             break;
-    case SETUP_HOT:
+         case SETUP_HOT:
             [paramDict setObject:self.gameid forKey:@"gameid"];
             [self getGroupListFromNetWithParam:paramDict method:@"257"];
             break;

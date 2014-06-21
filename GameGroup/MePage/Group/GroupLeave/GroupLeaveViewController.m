@@ -19,7 +19,7 @@
     UIImageView *maxExperImg;
     UIImageView *nowExperImg;
     UIImageView *listImageView;
-    
+    UILabel *m_infoLabel;
 }
 @end
 
@@ -87,13 +87,13 @@
     experlb.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:experlb];
     
-    UILabel *infoLabel = [[UILabel alloc]initWithFrame:CGRectMake(20,130, 290, 50)];
-    infoLabel.backgroundColor =[UIColor clearColor];
-    infoLabel.font = [UIFont systemFontOfSize:12];
-    infoLabel.numberOfLines =2;
-    infoLabel.textColor = [UIColor grayColor ];
-    infoLabel.text = @"群内每个成员在当天登陆陌游都会为群贡献1点经验值,本群升级经验还需要XX经验值";
-    [scrollView addSubview:infoLabel];
+    m_infoLabel = [[UILabel alloc]initWithFrame:CGRectMake(20,130, 290, 50)];
+    m_infoLabel.backgroundColor =[UIColor clearColor];
+    m_infoLabel.font = [UIFont systemFontOfSize:12];
+    m_infoLabel.numberOfLines =2;
+    m_infoLabel.textColor = [UIColor grayColor ];
+    m_infoLabel.text = @"群内每个成员在当天登陆陌游都会为群贡献1点经验值,本群升级经验还需要XX经验值";
+    [scrollView addSubview:m_infoLabel];
     
     listImageView =[[UIImageView alloc]initWithFrame:CGRectMake(20,190, 280, 288)];
     listImageView.image = KUIImage(@"groupExpList");
@@ -129,6 +129,7 @@
         numLabel.text = [NSString stringWithFormat:@"群号：%@",KISDictionaryHaveKey(responseObject,@"groupId")];
         lvLabel.text = [NSString stringWithFormat:@"等级：%@",KISDictionaryHaveKey(responseObject,@"level")];
         headImg.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(responseObject, @"backgroundImg") Width:170];
+        m_infoLabel.text = [NSString stringWithFormat:@"群内每个成员在当天登陆陌游都会为群贡献1点经验值,本群升级经验还需要%d经验值",[KISDictionaryHaveKey(responseObject, @"levelUpExperience")intValue]-[KISDictionaryHaveKey(responseObject, @"experience")intValue]];
         float width  = [KISDictionaryHaveKey(responseObject, @"experience")floatValue]/[KISDictionaryHaveKey(responseObject, @"levelUpExperience") floatValue];
 //        nowExperImg.image =[self dealDefaultImage:[UIImage imageNamed:@"nowExper"] org:215-215*width];
 
