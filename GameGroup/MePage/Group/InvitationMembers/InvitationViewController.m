@@ -17,7 +17,7 @@
     UICollectionView *m_customCollView;
     UICollectionViewFlowLayout *m_layout;
     NSMutableArray *addMemArray;
-    
+    AddGroupMemberCell*cell1;
 }
 @end
 
@@ -64,11 +64,11 @@
 -(void)buildAddMembersScroll
 {
     UIView *customView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
-    customView.backgroundColor = [UIColor whiteColor];
+    customView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:customView];
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
-    m_layout.minimumInteritemSpacing = 2;
+    m_layout.minimumInteritemSpacing = 4;
     m_layout.minimumLineSpacing = 3;
     m_layout.itemSize = CGSizeMake(34, 34);
     [m_layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -78,6 +78,12 @@
     m_customCollView.dataSource = self;
     m_customCollView.backgroundColor = [UIColor whiteColor];
     [customView addSubview:m_customCollView];
+    
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 50, 30)];
+    [button setTitle:@"确定" forState:UIControlStateNormal];
+    button.titleLabel.textColor = [UIColor blueColor];
+    [button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
+    [customView addSubview:button];
     
 }
 
@@ -118,6 +124,8 @@
     if (!cell) {
         cell = [[AddGroupMemberCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indefine];
     }
+    cell.tag = 100000*indexPath.section+indexPath.row;
+    
     NSDictionary * tempDict =[[resultDict objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
 
@@ -140,17 +148,37 @@
     if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
         cell.chooseImg.image = KUIImage(@"choose");
         [addMemArray addObject:tempDict];
-        NSLog(@"我要发送邀请的人--添加---%d",addMemArray.count);
-
+        NSDictionary *dic = tempDict;
+        [dic setValue:@(indexPath.section) forKey:@"section"];
+        [dic setValue:@(indexPath.row) forKey:@"row"];
     }else{
         cell.chooseImg.image =KUIImage(@"unchoose");
-        [addMemArray removeObject:tempDict];
-        NSLog(@"我要发送邀请的人---删除---%d",addMemArray.count);
+        NSDictionary *dic = tempDict;
+        [dic setValue:@(indexPath.section) forKey:@"section"];
+        [dic setValue:@(indexPath.row) forKey:@"row"];
+
+        [addMemArray removeObject:dic];
     }
     [m_customCollView reloadData];
-    m_customCollView.contentOffset = CGPointMake(addMemArray.count*43, 0);
+    m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
 
 }
+#pragma mark 索引
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+    NSString * keyName =[keyArr objectAtIndex:section];
+    return keyName;
+}
+// 返回索引列表的集合
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return keyArr;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+        return 30;
+}
+
 #pragma mark ---collectionview delegate  datasourse
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -173,9 +201,13 @@
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
+    cell1 = (AddGroupMemberCell*)[m_myTableView cellForRowAtIndexPath:path];
+        cell1.chooseImg.image = KUIImage(@"unchoose");
+    
     [addMemArray removeObject:tempDict];
     [m_customCollView reloadData];
-    m_customCollView.contentOffset = CGPointMake(addMemArray.count*43, 0);
+    m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
 
 }
 
@@ -201,6 +233,57 @@
         return @"gender_girl";
     }
 }
+
+
+#pragma mark ---开始邀请成员
+-(void)addMembers:(id)sender
+{
+    if (addMemArray.count>0) {
+        NSMutableArray *arr = [NSMutableArray array];
+        for (NSDictionary *dic  in addMemArray) {
+            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
+        }
+        
+        [self updataInfoWithId:[self getImageIdsStr:arr]];
+    }
+}
+-(NSString*)getImageIdsStr:(NSArray*)imageIdArray
+{
+    NSString* headImgStr = @"";
+    for (int i = 0;i<imageIdArray.count;i++) {
+        NSString * temp1 = [imageIdArray objectAtIndex:i];
+        headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
+    }
+    return headImgStr;
+}
+-(void)updataInfoWithId:(NSString *)str
+{
+    [hud show:YES];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    [paramDict setObject:str forKey:@"userids"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"258" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self showMessageWindowWithContent:@"发送成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+               UIAlertView * alertView_1 = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alertView_1 show];
+            }
+        }
+        [hud hide:YES];
+    }];
+
+}
+
 
 - (void)didReceiveMemoryWarning
 {

@@ -21,6 +21,7 @@
 #import "AddFriendsViewController.h"
 #import "MyGroupViewController.h"
 #import "SearchGroupViewController.h"
+#import "InvitationViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -260,9 +261,20 @@
         
         for (int i =0; i<array.count; i++) {
             EGOImageButton *headimgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(100+45*i, 5, 40, 40)];
-            headimgView.placeholderImage = KUIImage(@"people_man");
-               headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];
-            [headimgView addTarget:self action:@selector(enterMembersPage:) forControlEvents:UIControlEventTouchUpInside];
+            
+            if ([KISDictionaryHaveKey(array[i], @"img")isEqualToString:@"wxxxx"]) {
+                headimgView.placeholderImage = KUIImage(@"find_billboard");
+
+                headimgView.imageURL = nil;
+                [headimgView addTarget:self action:@selector(enterAddMembersPage:) forControlEvents:UIControlEventTouchUpInside];
+
+            }else{
+                headimgView.placeholderImage = KUIImage(@"people_man");
+                headimgView.imageURL  = [ImageService getImageStr:KISDictionaryHaveKey(array[i], @"img") Width:80];
+                [headimgView addTarget:self action:@selector(enterMembersPage:) forControlEvents:UIControlEventTouchUpInside];
+
+            }
+            
             [boView addSubview:headimgView];
         }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -342,8 +354,12 @@
             
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
             
+            NSMutableArray *arr = KISDictionaryHaveKey(responseObject, @"memberList");
+            [arr addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"wxxxx",@"img", nil]];
             
-            [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:KISDictionaryHaveKey(responseObject, @"memberList")];
+            [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:arr];
+            
+            
             
             NSString *identity = KISDictionaryHaveKey( responseObject, @"groupUsershipType");
             
@@ -774,6 +790,13 @@
     groupView.ComeType = SETUP_Tags;
     groupView.tagsId =KISDictionaryHaveKey(tags[sender.view.tag-100], @"tagId");
     [self.navigationController pushViewController:groupView animated:YES];
+}
+
+-(void)enterAddMembersPage:(id)sender
+{
+    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    inv.groupId = self.groupId;
+    [self.navigationController pushViewController:inv animated:YES];
 }
 
 - (void)dealloc

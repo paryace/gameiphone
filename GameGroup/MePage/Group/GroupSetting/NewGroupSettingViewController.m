@@ -413,6 +413,7 @@ typedef enum : NSUInteger {
 -(void)new:(id)sender
 {
     InvitationViewController *inv = [[InvitationViewController alloc]init];
+    inv.groupId = self.groupId;
     [self.navigationController pushViewController:inv animated:YES];
 }
 

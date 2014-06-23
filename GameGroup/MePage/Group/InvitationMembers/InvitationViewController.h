@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 
 @interface InvitationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
-
+@property(nonatomic,copy)NSString *groupId;
 @end
