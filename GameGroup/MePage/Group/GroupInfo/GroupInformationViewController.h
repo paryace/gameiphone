@@ -11,7 +11,7 @@
 //#import "GroupInfoEditViewController.h"
 #import "NewGroupSettingViewController.h"
 
-@interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,GroupInfoCellDelegate,GroupEditRefreshInfoDelegate>
+@interface GroupInformationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,GroupInfoCellDelegate,GroupEditRefreshInfoDelegate,UIActionSheetDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property(nonatomic,assign)NSInteger shiptypeCount;
 @property(nonatomic,assign)BOOL isAudit;

@@ -32,6 +32,7 @@
     UILabel* m_titleLabel;
     UIAlertView* alertView_1;
     UIAlertView *chexiaoAlert;
+    UIActionSheet *saobaoAction;
 }
 @end
 
@@ -442,14 +443,7 @@
             [self chexiaogroup];
         }
     }
-    else if (alertView.tag ==1111){
-        if (buttonIndex ==0) {
-            [self copyNum:nil];
-        }else{
-            [self seeLv:nil];
-        }
-    }
-}
+ }
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -638,9 +632,23 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row ==0) {
-        UIAlertView *saobaoAlert = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:@"复制群号",@"查看群等级", nil];
-        saobaoAlert.tag = 1111;
-        [saobaoAlert show];
+        saobaoAction = [[UIActionSheet alloc ]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"复制群号",@"查看组织等级", nil];
+        saobaoAction.tag = 1111;
+        [saobaoAction showInView:self.view];
+    }
+}
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex) {
+        case 0:
+            [self copyNum:nil];
+            break;
+        case 1:
+            [self seeLv:nil];
+            break;
+            
+        default:
+            break;
     }
 }
 
@@ -757,6 +765,7 @@
 {
     alertView_1.delegate = nil;
     chexiaoAlert.delegate = nil;
+    saobaoAction.delegate =nil;
 }
 - (void)didReceiveMemoryWarning
 {
