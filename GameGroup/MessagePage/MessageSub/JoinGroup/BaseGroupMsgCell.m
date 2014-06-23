@@ -14,7 +14,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 139)];
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 149)];
         self.bgV.image = KUIImage(@"group_cell_bg");
         self.bgV.userInteractionEnabled =YES;
         

@@ -14,8 +14,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV.frame = CGRectMake(5, 0, 310, 100);
-        self.contentLable = [[UILabel alloc]initWithFrame:CGRectMake(30, 37, 310-60, 60)];
+        self.bgV.frame = CGRectMake(5, 0, 310, 120);
+        self.contentLable = [[UILabel alloc]initWithFrame:CGRectMake(30, 47, 310-60, 60)];
         self.contentLable.backgroundColor = [UIColor clearColor];
         self.contentLable.textColor = kColorWithRGB(10,10,10, 0.7);
         self.contentLable.text = @"申请理由";

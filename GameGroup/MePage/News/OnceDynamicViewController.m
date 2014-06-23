@@ -630,7 +630,7 @@
 
 -(NSString*)getShareUrl:(NSString*)msgid
 {
-    return [NSString stringWithFormat:@"%@%@",BaseDynamicShareUrl,msgid];
+    return [NSString stringWithFormat:@"%@%@%@",BaseDynamicShareUrl,@"id=",msgid];
 }
 
 //请求网络图片

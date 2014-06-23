@@ -65,9 +65,9 @@
         ||[msgType isEqualToString:@"disbandGroup"]
         ||[msgType isEqualToString:@"groupUsershipTypeChange"]
         ||[msgType isEqualToString:@"kickOffGroup"]) {
-        return 105;
+        return 120;
     }
-    return 145;
+    return 155;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -14,12 +14,12 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
 
-        self.userInfoBg = [[UIButton alloc] initWithFrame:CGRectMake(5, 45, 310, 55)];
+        self.userInfoBg = [[UIButton alloc] initWithFrame:CGRectMake(5, 50, 310, 60)];
         self.userInfoBg.backgroundColor = [UIColor clearColor];
         [self.userInfoBg addTarget:self action:@selector(userInfoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.bgV addSubview:self.userInfoBg];
         
-        self.userImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 0, 50, 50)];
+        self.userImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 5, 50, 50)];
         [self.userInfoBg addSubview:self.userImageV];
     
         self.userNameLable = [[UILabel alloc]initWithFrame:CGRectMake(65, 3, 100, 20)];
@@ -30,15 +30,17 @@
         [self.userInfoBg addSubview:self.userNameLable];
         
         
-        self.joinReasonLable = [[UILabel alloc]initWithFrame:CGRectMake(65, 30, 300-85, 20)];
+        
+        self.joinReasonLable = [[UILabel alloc] initWithFrame:CGRectMake(65, 15,300-85, 40)];
         self.joinReasonLable.backgroundColor = [UIColor clearColor];
-        self.joinReasonLable.textColor = [UIColor grayColor];
-        self.joinReasonLable.text = @"申请理由";
-        self.joinReasonLable.font =[ UIFont systemFontOfSize:12];
+        [self.joinReasonLable setTextAlignment:NSTextAlignmentLeft];
+        [self.joinReasonLable setFont:[UIFont systemFontOfSize:12]];
+        [self.joinReasonLable setTextColor:[UIColor grayColor]];
+        self.joinReasonLable.numberOfLines = 2;
         [self.userInfoBg addSubview:self.joinReasonLable];
     
         
-        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 104, (304-2)/3, 33)];
+        self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 114, (304-2)/3, 33)];
         [self.agreeBtn addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -57,7 +59,7 @@
         [self.bgV addSubview:self.agreeBtn];
         
         
-        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((304-2)/3+4, 104, (304-2)/3, 33)];
+        self.desAgreeBtn = [[UIButton alloc] initWithFrame:CGRectMake((304-2)/3+4, 114, (304-2)/3, 33)];
         [self.desAgreeBtn addTarget:self action:@selector(desAgreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.desAgreeBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -71,7 +73,7 @@
        
         [self.bgV addSubview:self.desAgreeBtn];
         
-        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((304-2)/3)*2+5, 104, (304-2)/3+3, 33)];
+        self.ignoreBtn = [[UIButton alloc] initWithFrame:CGRectMake(((304-2)/3)*2+5, 114, (304-2)/3+3, 33)];
          [self.ignoreBtn addTarget:self action:@selector(ignoreButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.ignoreBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
@@ -90,7 +92,7 @@
         
         [self.bgV addSubview:self.ignoreBtn];
 
-        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(2, 104, 306, 33)];
+        self.stateLable = [[UILabel alloc]initWithFrame:CGRectMake(2, 114, 306, 33)];
         self.stateLable.backgroundColor = kColorWithRGB(230,230,230, 0.7);
         self.stateLable.textColor = [UIColor grayColor];
         self.stateLable.text = @"已同意";
