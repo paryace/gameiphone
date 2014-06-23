@@ -251,7 +251,7 @@
         
         NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
         [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-        [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
+        [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterId"];
         
         NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
         [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

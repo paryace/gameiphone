@@ -52,6 +52,10 @@
 @property (strong,nonatomic) NSString * gameids;//游戏id列表
 
 
+@property (strong,nonatomic) NSMutableArray * groupList;//群组列表
+@property (strong,nonatomic) NSString * groupNum;//群组数量
+
+
 - (id)initWithHostInfo:(NSDictionary*)info;
 @end
 

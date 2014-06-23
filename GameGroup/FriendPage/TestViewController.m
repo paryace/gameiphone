@@ -294,6 +294,17 @@
     m_currentStartY += 37;
     [self setOneLineWithY:m_currentStartY];
     
+    ////
+    UIView* topBggroup = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, kScreenWidth, 30)];
+    topBggroup.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
+    [m_myScrollView addSubview:topBggroup];
+    
+    UILabel* titleLabelgroup = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"他的群组" textAlignment:NSTextAlignmentLeft];
+    [topBggroup addSubview:titleLabelgroup];
+    
+    m_currentStartY += 30;
+    ////
+    
     UIView* topBg3 = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, kScreenWidth, 30)];
     topBg3.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [m_myScrollView addSubview:topBg3];
@@ -382,13 +393,15 @@
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:m_titleLabel];
     
+    
+    
     m_delegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
     
     m_currentStartY = 0;
     
     m_myScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX - (KISHighVersion_7?0:20)-44)];
-    [self.view addSubview:m_myScrollView];
     m_myScrollView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:m_myScrollView];
 
     [littleImgArray removeAllObjects];
     for (int i = 0; i <self.hostInfo.headImgArray.count; i++) {
@@ -402,6 +415,8 @@
     m_photoWall.delegate = self; 
     [m_myScrollView addSubview:m_photoWall];
     m_photoWall.backgroundColor = kColorWithRGB(105, 105, 105, 1.0);
+    
+    
     m_currentStartY += m_photoWall.frame.size.height;
     
     
@@ -418,6 +433,7 @@
     
     //////个人动态
     [self setUserInfoView];
+    [self setGroupList];
     [self setRoleView];
     [self setAchievementView];
     [self setOtherView];
@@ -472,8 +488,6 @@
                 showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
                 
             }
-//            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(self.hostInfo.state, @"userimg")];
-            
         }
         
         NSString* tit = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"title")] isEqualToString:@""] ? KISDictionaryHaveKey(self.hostInfo.state, @"msg") : KISDictionaryHaveKey(self.hostInfo.state, @"title");
@@ -641,13 +655,48 @@
 - (void)stateSelectClick:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-   // NewsViewController* VC = [[NewsViewController alloc] init];
     MyCircleViewController *VC = [[MyCircleViewController alloc]init];
     VC.userId = self.hostInfo.userId;
     VC.nickNmaeStr = self.hostInfo.nickName?self.hostInfo.nickName:@"";
-  //  VC.myViewType = ONEPERSON_NEWS_TYPE;
     [self.navigationController pushViewController:VC animated:YES];
 }
+
+- (void)setGroupList
+{
+    if (![self.hostInfo.groupList isKindOfClass:[NSArray class]]) {
+        return;
+    }
+    if (self.hostInfo.groupList.count==0) {
+        return;
+    }
+    UIView* topBg = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, kScreenWidth, 30)];
+    topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
+    [m_myScrollView addSubview:topBg];
+    
+    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:[NSString stringWithFormat:@"%@%@%d%@",@"他的群组",@"(",self.hostInfo.groupList.count,@")"] textAlignment:NSTextAlignmentLeft];
+    [topBg addSubview:titleLabel];
+    
+    m_currentStartY += 30;
+    for (int i = 0; i < self.hostInfo.groupList.count; i++) {
+        UIView * groupView = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, 320, 50)];
+        EGOImageView * headImage = [[EGOImageView alloc] initWithFrame:CGRectMake(5, 5, 40, 40)];
+        
+        if ([GameCommon isEmtity:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"backgroundImg")]) {
+            headImage.image = KUIImage(@"group_icon");
+        }else{
+            headImage.imageURL = [ImageService getImageStr:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"backgroundImg") Width:80];
+        }
+        [groupView addSubview:headImage];
+        UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
+        groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
+        [groupView addSubview:groupName];
+        [m_myScrollView addSubview:groupView];
+        m_currentStartY += 50;
+        [self setOneLineWithY:m_currentStartY];
+    }
+}
+
+
 
 - (void)setRoleView
 {

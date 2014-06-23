@@ -17,8 +17,10 @@
         self.state = KISDictionaryHaveKey(info, @"latestDynamicMsg");//动态
         self.charactersArr=KISDictionaryHaveKey(info, @"characters");//新角色
         self.gameids=KISDictionaryHaveKey(info, @"gameids");//游戏
+        self.groupList = KISDictionaryHaveKey(info, @"groupList");
         self.zanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"zannum")];
         self.fanNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"fansnum")];
+        self.groupNum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"groupNum")];
         self.relation = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(info, @"shiptype")];// 1 好友，2 关注 3 粉丝 4 陌生人
         if (![self.state isKindOfClass:[NSDictionary class]]) {
             ;
