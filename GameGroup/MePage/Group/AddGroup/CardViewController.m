@@ -44,13 +44,8 @@
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.headerReferenceSize = CGSizeMake(300, 40);
     layout.itemSize = CGSizeMake(88, 30);
-    // 3.设置整个collectionView的内边距
-    
-    // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
-    
     customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX, 300, kScreenHeigth-startX) collectionViewLayout:layout];
     customPhotoCollectionView.backgroundColor = [UIColor blackColor];
-//    customPhotoCollectionView.scrollEnabled = NO;
     customPhotoCollectionView.delegate = self;
     customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
     customPhotoCollectionView.showsVerticalScrollIndicator = NO;
@@ -59,18 +54,22 @@
     [customPhotoCollectionView registerClass:[CardTitleView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headViewww"];
     customPhotoCollectionView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:customPhotoCollectionView];
-    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"正在加载数据...";
     [self getCardWithNetWithDic:self.infoDict];
 }
 
 -(void)getCardWithNetWithDic:(NSMutableDictionary*)dict
 {
+    [hud show:YES];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"236" forKey:@"method"];
     [postDict setObject:dict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             self.listDict  = responseObject;
             [self.listDict removeObjectForKey:@"sortList"];
@@ -80,6 +79,7 @@
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
