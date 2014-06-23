@@ -162,6 +162,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
              ||[type isEqualToString:@"friendJoinGroup"]//群组消息
              ||[type isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
              ||[type isEqualToString:@"kickOffGroup"]//被踢出群的消息
+             ||[type isEqualToString:@"groupRecommend"]//群推荐
              ||[type isEqualToString:@"disbandGroup"])//解散群
     {
         [self setSoundOrVibrationopen];

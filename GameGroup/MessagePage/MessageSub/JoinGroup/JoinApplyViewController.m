@@ -65,7 +65,7 @@
         ||[msgType isEqualToString:@"disbandGroup"]
         ||[msgType isEqualToString:@"groupUsershipTypeChange"]
         ||[msgType isEqualToString:@"kickOffGroup"]) {
-        return 120;
+        return 125;
     }
     return 155;
 }
@@ -166,7 +166,8 @@
     else if ([msgType isEqualToString:@"joinGroupApplicationAccept"]
              ||[msgType isEqualToString:@"groupApplicationUnderReview"]
              ||[msgType isEqualToString:@"groupApplicationAccept"]
-             ||[msgType isEqualToString:@"groupApplicationReject"]) {
+             ||[msgType isEqualToString:@"groupApplicationReject"]
+             ||[msgType isEqualToString:@"groupRecommend"]) {
         
         static NSString *identifier = @"ApplicationUnderCell";
         CreateGroupMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -200,6 +201,13 @@
             cell.twoBtn.hidden=YES;
             cell.threeBtn.hidden=YES;
             cell.foreBtn.hidden=NO;
+        }
+        else if([msgType isEqualToString:@"groupRecommend"]){
+            cell.oneBtn.hidden=YES;
+            cell.twoBtn.hidden=YES;
+            cell.threeBtn.hidden=YES;
+            cell.foreBtn.hidden=NO;
+            cell.foreBtn.titleLabel.text = @"查看详情";
         }
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -337,7 +345,11 @@
 -(void)chatClick:(CreateGroupMsgCell*)sender
 {
     NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];
+    NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString * groupId = KISDictionaryHaveKey(dict, @"groupId");
+    if ([msgType isEqualToString:@"groupRecommend"]) {
+        return;
+    }
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",groupId];
     kkchat.type = @"group";

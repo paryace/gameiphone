@@ -24,21 +24,27 @@
         [self.bgV addSubview:self.contentLable];
         
         
-//        self.oneBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, 98, (300-1)/2, 33)];
-//        [self.oneBtn addTarget:self action:@selector(oneButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-//        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
-//        [self.oneBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
-//        self.oneBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-//        [self.oneBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
-//        self.oneBtn.titleLabel.font = [UIFont systemFontOfSize:12];
-//        self.oneBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-//        [self.bgV addSubview:self.oneBtn];
+        self.oneBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 114, (304-1)/2, 33)];
+        [self.oneBtn addTarget:self action:@selector(oneButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.oneBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.oneBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
+        self.oneBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+        [self.oneBtn setTitleColor:kColorWithRGB(41, 164, 246, 1.0) forState:UIControlStateNormal];
+        self.oneBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        self.oneBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        
+        UIBezierPath *maskPathoneBtn = [UIBezierPath bezierPathWithRoundedRect:self.oneBtn.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(3, 3)];
+        CAShapeLayer *maskLayeroneBtn = [[CAShapeLayer alloc] init];
+        maskLayeroneBtn.frame = self.oneBtn.bounds;
+        maskLayeroneBtn.path = maskPathoneBtn.CGPath;
+        self.oneBtn.layer.mask = maskLayeroneBtn;
+        
+        [self.bgV addSubview:self.oneBtn];
         
         
-//        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((300-1)/2+6, 98, (300-1)/2, 33)];
-        
-        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 114, 304, 33)];
+        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake((304-1)/2+4, 114, (304-1)/2+1, 33)];
+//        self.twoBtn = [[UIButton alloc] initWithFrame:CGRectMake(3, 114, 304, 33)];
         [self.twoBtn addTarget:self action:@selector(twoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
         [self.twoBtn setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
