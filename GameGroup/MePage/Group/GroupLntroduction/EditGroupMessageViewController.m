@@ -14,7 +14,6 @@
     UILabel *       m_ziNumLabel;
     NSInteger      m_maxZiShu;
     UIDatePicker* m_birthDayPick;
-    UIScrollView *scV;
     
     UILabel *       placeholderL;
 
@@ -43,11 +42,6 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:225.0/255.0 green:225.0/255.0 blue:225.0/255.0 alpha:1.0];
     
-    scV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
-    scV.scrollEnabled = YES;
-    scV.contentSize=CGSizeMake(320, 500);
-    [self.view addSubview:scV];
-    
     m_maxZiShu = 100;
     self.isChang =NO;
     
@@ -72,9 +66,9 @@
     reponseStrArray = [[NSMutableDictionary dictionary] init];
     deleteImageIdArray = [NSMutableArray array];
     
-    UIView * bgImage = [[UIView alloc] initWithFrame:CGRectMake(5, 10, 310, 110)];
+    UIView * bgImage = [[UIView alloc] initWithFrame:CGRectMake(5, startX+10, 310, 110)];
     bgImage.backgroundColor = [UIColor whiteColor];
-    [scV addSubview:bgImage];
+    [self.view addSubview:bgImage];
     
     m_contentTextView = [[UITextView alloc] initWithFrame: CGRectMake(0, 0, 310, 90)];
     m_contentTextView.backgroundColor = [UIColor whiteColor];
@@ -84,7 +78,7 @@
     [bgImage addSubview:m_contentTextView];
     
     
-    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 200, 20)];
+    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15, startX+15, 200, 20)];
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = [UIColor grayColor];
     if (![GameCommon isEmtity:self.placeHold]) {
@@ -93,15 +87,15 @@
         placeholderL.text = @"在这里输入群的简介信息……";
     }
     placeholderL.font = [UIFont systemFontOfSize:13.0];
-    [scV addSubview:placeholderL];
+    [self.view addSubview:placeholderL];
     
-    m_ziNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 100, 150, 20)];
+    m_ziNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, startX+100, 150, 20)];
     m_ziNumLabel.textColor = [UIColor grayColor];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     m_ziNumLabel.font = [UIFont systemFontOfSize:12.0f];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.text = @"";
-    [scV addSubview:m_ziNumLabel];
+    [self.view addSubview:m_ziNumLabel];
     
     [self buildCollectionView];
     [self refreshZiLabelText];
@@ -116,14 +110,14 @@
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =2;
     m_layout.itemSize = CGSizeMake(292/3, 292/3);
-    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 130, 300, 290) collectionViewLayout:m_layout];
+    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 300) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
-    m_photoCollectionView.scrollEnabled = NO;
+    m_photoCollectionView.scrollEnabled = YES;
     m_photoCollectionView.delegate = self;
     m_photoCollectionView.dataSource = self;
     [m_photoCollectionView registerClass:[EditPhotoCell class] forCellWithReuseIdentifier:@"titleCell"];
     m_photoCollectionView.backgroundColor = [UIColor clearColor];
-    [scV addSubview:m_photoCollectionView];
+    [self.view addSubview:m_photoCollectionView];
 
 }
 
@@ -304,14 +298,21 @@
       [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
     }else
     {
-        NSString* headImgStr = @"";
-        for (int i = 0;i<self.headImgArray.count;i++) {
-            NSString * temp1 = [self.headImgArray objectAtIndex:i];
-            headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
-        }
+        NSString* headImgStr = [self getImageIdsStr:self.headImgArray];
         [self conbackImage:headImgStr];
     }
 }
+
+-(NSString*)getImageIdsStr:(NSArray*)imageIdArray
+{
+    NSString* headImgStr = @"";
+    for (int i = 0;i<imageIdArray.count;i++) {
+        NSString * temp1 = [imageIdArray objectAtIndex:i];
+        headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
+    }
+    return headImgStr;
+}
+
 //执行上传（单张）
 -(void)uploadPicture:(NSString*)imageName
 {
@@ -337,12 +338,17 @@
     [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
-        self.imageId = [[NSMutableString alloc]init];
+        NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
         for (int i=0; i<reponseStrArray.count; i++) {
-            NSString * a=[uploadImagePathArray objectAtIndex:i];
-            [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
+            NSString * a= [uploadImagePathArray objectAtIndex:i];
+            for (int i = 0;i<a1.count;i++) {
+                if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
+                    [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
+                }
+            }
         }
-        [self conbackImage:_imageId];
+        self.headImgArray = a1;
+         [self conbackImage:[self getImageIdsStr:self.headImgArray]];
     }else{
         [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
     }
