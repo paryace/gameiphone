@@ -85,7 +85,7 @@
 
     [maxExperImg addSubview:nowExperImg];
 
-    experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,100, 40, 20)];
+    experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,100, 100, 20)];
     experlb.text = @"0/100";
     experlb.backgroundColor = [UIColor clearColor];
     experlb.textColor = [UIColor grayColor];
