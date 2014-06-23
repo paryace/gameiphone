@@ -77,6 +77,8 @@ typedef enum : NSUInteger {
     NSString * groupMsgSettingState = [GameCommon getMsgSettingStateByGroupId:self.groupId];
     if ([GameCommon isEmtity:groupMsgSettingState]) {
         groupMsgSettingState=@"0";
+        [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:[GameCommon getNewStringWithId:self.groupId]];
+        [self settingMsgHint:@"0"];
     }
     NSString * message = [self getCellMsgByState:groupMsgSettingState];
     [self setSettingMsg:message];

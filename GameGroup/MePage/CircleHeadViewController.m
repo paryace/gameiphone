@@ -74,7 +74,7 @@ typedef enum : NSUInteger {
     BOOL ishaveAboutMe;
     BOOL ishavehuancun;
     
-    BOOL isHaveFuns;
+//    BOOL isHaveFuns;
 }
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, assign) CommentInputType commentInputType;
@@ -112,7 +112,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     ishaveAboutMe =NO;
     ishavehuancun = NO;
-    isHaveFuns = NO;
+//    isHaveFuns = NO;
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     tapGr.delegate = self;
@@ -700,7 +700,7 @@ typedef enum : NSUInteger {
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
 //                //拉数据回来以后直接格式化， 再保存
-                isHaveFuns = NO;
+//                isHaveFuns = NO;
                 for (int i=0; i<m_dataArray.count; i++) {
                     m_dataArray[i] = [self contentAnalyzer:m_dataArray[i] withReAnalyzer:NO];
                 }
