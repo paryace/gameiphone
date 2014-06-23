@@ -30,6 +30,7 @@
     
     m_mainDict = [NSMutableDictionary new];
     paramDict  = [NSMutableDictionary dictionary];
+    self.isChang = NO;
     m_mainDict = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
     
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
@@ -64,7 +65,7 @@
     promptLb.text = @"点击图片更换头图";
     [topImageView addSubview:promptLb];
     
-    [self setTopViewWithTitle:@"编辑群资料" withBackButton:YES];
+    [self setTopViewWithTitle:@"编辑群资料" withBackButton:NO];
 
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
@@ -73,10 +74,37 @@
     [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
     
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"上传中...";
     
+}
+
+#pragma mark 返回
+- (void)backButtonClick:(id)sender
+{
+    if (self.isChang) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"警告" message:@"您这样返回是没有保存的喔！" delegate:self cancelButtonTitle:@"返回"otherButtonTitles:@"确定", nil];
+        alert.tag = 345;
+        [alert show];
+        return;
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 345) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -435,6 +463,7 @@
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    self.isChang = YES;
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
     NSString * imagePath=[self writeImageToFile:upImage ImageName:@"groupInfoTopImage.jpg"];
     UIImage * afterImage= [NetManager image2:upImage centerInSize:CGSizeMake(320*2, 320*2)];

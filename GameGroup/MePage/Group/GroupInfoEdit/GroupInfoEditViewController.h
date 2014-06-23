@@ -16,6 +16,7 @@
 @interface GroupInfoEditViewController : BaseViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,CardListDelegate,GroupEditMessageDelegate,UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,QiniuUploadDelegate,GroupEditGroupNameDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property(nonatomic,assign)id<GroupEditRefreshInfoDelegate>delegate;
+@property (nonatomic, assign) BOOL isChang;
 @end
 @protocol GroupEditRefreshInfoDelegate <NSObject>
 
