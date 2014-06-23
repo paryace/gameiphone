@@ -160,7 +160,11 @@
 
 +(void)deleteAllDSCommonMsgs;
 
-+(void)deleteMsgByMsgType:(NSString *)msgType;
+//-----删除所有的normalchat显示消息消息
++(void)deleteThumbMsgsByMsgType:(NSString *)msgType;
+
+//-----删除所有的normalchat历史记录消息
++(void)deleteCommonMsgsByMsgType:(NSString *)msgType;
 
 +(DSThumbMsgs*)qureySayHiMsg:(NSString *)type;
 
@@ -272,4 +276,7 @@
 
 //根据groupId 删除群信息
 +(void)deleteGroupInfoByGoupId:(NSString*)groupId;
+
+//删除所有的群聊历史记录
++(void)clearGroupChatHistroyMsg;
 @end

@@ -753,8 +753,8 @@
         }
     }];
 }
-//-----删除所有的normalchat消息
-+(void)deleteMsgByMsgType:(NSString *)msgType
+//-----删除所有的normalchat显示消息消息
++(void)deleteThumbMsgsByMsgType:(NSString *)msgType
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
@@ -763,13 +763,26 @@
                 DSThumbMsgs * thumb = [thumbMsg objectAtIndex:i];
                 [thumb MR_deleteInContext:localContext];
             }
-            NSArray * commonMsgs = [DSCommonMsgs MR_findAllWithPredicate:predicate];
-            for (int i = 0; i<commonMsgs.count; i++) {
-                DSCommonMsgs * common = [commonMsgs objectAtIndex:i];
-                [common MR_deleteInContext:localContext];
-            }
     }];
 }
+
+
+//-----删除所有的normalchat历史记录消息
++(void)deleteCommonMsgsByMsgType:(NSString *)msgType
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
+        NSArray * commonMsgs = [DSCommonMsgs MR_findAllWithPredicate:predicate];
+        for (int i = 0; i<commonMsgs.count; i++) {
+            DSCommonMsgs * common = [commonMsgs objectAtIndex:i];
+            [common MR_deleteInContext:localContext];
+        }
+    }];
+}
+
+
+
+
 
 +(void)deleteGroupMsgByMsgType:(NSString *)msgType
 {
@@ -782,6 +795,19 @@
         }
     }];
 }
+
+//删除所有的群聊历史记录
++(void)clearGroupChatHistroyMsg
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * commonMsgs = [DSGroupMsgs MR_findAll];
+        for (int i = 0; i<commonMsgs.count; i++) {
+            DSGroupMsgs * common = [commonMsgs objectAtIndex:i];
+            [common MR_deleteInContext:localContext];
+        }
+    }];
+}
+
 //-----
 
 +(void)deleteMsgInCommentWithUUid:(NSString *)uuid

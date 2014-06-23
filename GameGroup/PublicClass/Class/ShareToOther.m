@@ -36,9 +36,20 @@ static ShareToOther *userManager = NULL;
 //微博，仅图片分享
 -(void)shareTosina:(UIImage *)imageV
 {
+    
+    WBMessageObject *message = [WBMessageObject message];
     WBImageObject *image = [WBImageObject object];
     image.imageData = UIImagePNGRepresentation(imageV);
-    [self shareTosinaObject:image];
+    message.imageObject = image;
+    
+    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message];
+    request.userInfo = @{@"ShareMessageFrom": @"SendMessageToWeiboViewController",
+                         @"Other_Info_1": [NSNumber numberWithInt:123],
+                         @"Other_Info_2": @[@"obj1", @"obj2"],
+                         @"Other_Info_3": @{@"key1": @"obj1", @"key2": @"obj2"}};
+    
+    [WeiboSDK sendRequest:request];
+    app.bSinaWB = YES;
 }
 //微博，带链接分享
 -(void)shareTosinass:(UIImage *)imageV Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
