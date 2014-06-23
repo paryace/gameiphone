@@ -255,11 +255,12 @@
         
             [[NSUserDefaults standardUserDefaults]setObject:m_mainDict forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refelsh_groupInfo_wx" object:nil userInfo:nil];
+        [[GroupManager singleton] clearGroupCache:self.groupId];
         if (self.delegate &&[self.delegate respondsToSelector:@selector(refreshGroupInfo)]) {
             [self.delegate refreshGroupInfo];
         }
-            [self showMessageWindowWithContent:@"修改成功" imageType:0];
-            [self.navigationController popViewControllerAnimated:YES];
+        [self showMessageWindowWithContent:@"修改成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
             
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
