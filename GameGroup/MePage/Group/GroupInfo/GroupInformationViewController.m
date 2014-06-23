@@ -21,6 +21,7 @@
 #import "AddFriendsViewController.h"
 #import "MyGroupViewController.h"
 #import "SearchGroupViewController.h"
+#import "GuildMembersViewController.h"
 @interface GroupInformationViewController ()
 {
     UITableView *m_myTableView;
@@ -464,185 +465,361 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(m_mainDict, @"guild")]) {
+        return 6;
+    }
     return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    if (indexPath.row ==0) {
-        
-        static NSString *cellinde2 = @"cell2";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
-        if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
-        }
-        cell.selectionStyle =UITableViewCellSelectionStyleNone;
-        
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell addSubview:titleLabel];
-        
-        titleLabel.text = @"群组号";
-        
-        UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,70, 40)];
-        numLb.font = [UIFont boldSystemFontOfSize:14];
-        numLb.backgroundColor = [UIColor clearColor];
-        numLb.textColor =[ UIColor blackColor];
-        numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
-        [cell addSubview:numLb];
-        
-        
-//        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(180, 0, 60, 40)];
-//        [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
-//        [button setImageEdgeInsets:UIEdgeInsetsMake(13, 0, 10, 0)];
-//        [button addTarget:self action:@selector(copyNum:) forControlEvents:UIControlEventTouchUpInside];
-//        [cell addSubview:button];
-
-        
-        
-        UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
-        imageView.image = KUIImage(@"lv_group");
-//        imageView.userInteractionEnabled = YES;
-//        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
-        [cell addSubview:imageView];
-        
-        UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
-        lvLb.font = [UIFont boldSystemFontOfSize:11];
-        lvLb.backgroundColor = [UIColor clearColor];
-        lvLb.textColor =[ UIColor whiteColor];
-        lvLb.textAlignment = NSTextAlignmentCenter;
-        lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
-        [cell addSubview:lvLb];
-        
-        return cell;
-        
-    }
-   else if (indexPath.row ==1) {
-        static NSString *cellinde = @"cell1";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
-        if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
-        }
-       cell.selectionStyle =UITableViewCellSelectionStyleNone;
-
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
-        ;
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:titleLabel];
-        titleLabel.text = @"服务器";
-       
-        EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
-        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
-        gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
-        [cell addSubview:gameImg];
-       
-       
-       UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
-       numLb.font = [UIFont boldSystemFontOfSize:14];
-       numLb.backgroundColor = [UIColor clearColor];
-       numLb.textColor =[ UIColor blackColor];
-       numLb.text = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
-       [cell addSubview:numLb];
-        return cell;
-    }
-    else if (indexPath.row ==2)
-    {
-        static NSString *cellinde = @"cell0";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
-        if (cell ==nil) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
-        }
-        cell.selectionStyle =UITableViewCellSelectionStyleNone;
-        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 50, 20)]
-        ;
-        titleLabel.textColor = [UIColor grayColor];
-        titleLabel.font = [UIFont systemFontOfSize:14];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [cell.contentView addSubview:titleLabel];
-        
-        titleLabel.text = @"群分类";
-        if (m_mainDict &&[m_mainDict allKeys].count>0) {
-            NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(m_mainDict, @"guild")]) {
+        if (indexPath.row ==0) {
+            static NSString *cellinde2 = @"cell2";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
             
-            NSArray * us=cell.contentView.subviews;
-            for(UIView *uv in us)
-            {
-                if ([uv isKindOfClass:[UIImageView class]]) {
-                    [uv removeFromSuperview];
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell addSubview:titleLabel];
+            
+            titleLabel.text = @"群组号";
+            
+            UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,70, 40)];
+            numLb.font = [UIFont boldSystemFontOfSize:14];
+            numLb.backgroundColor = [UIColor clearColor];
+            numLb.textColor =[ UIColor blackColor];
+            numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
+            [cell addSubview:numLb];
+            
+            UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+            imageView.image = KUIImage(@"lv_group");
+            [cell addSubview:imageView];
+            
+            UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+            lvLb.font = [UIFont boldSystemFontOfSize:11];
+            lvLb.backgroundColor = [UIColor clearColor];
+            lvLb.textColor =[ UIColor whiteColor];
+            lvLb.textAlignment = NSTextAlignmentCenter;
+            lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
+            [cell addSubview:lvLb];
+            
+            return cell;
+            
+        }
+        else if(indexPath.row ==1){
+            static NSString *cellinde2 = @"cell002";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 80, 20)];
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.textAlignment = NSTextAlignmentLeft;
+            titleLabel.text = @"智能邀请";
+            [cell addSubview:titleLabel];
+            
+            UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 10,210, 20)];
+            numLb.font = [UIFont systemFontOfSize:14];
+            numLb.backgroundColor = [UIColor clearColor];
+            numLb.textColor =[ UIColor blueColor];
+            numLb.text = @"您可以立即邀请您游戏中的好友";
+            [cell addSubview:numLb];
+            return cell;
+        }
+        else if (indexPath.row ==2) {
+            static NSString *cellinde = @"cell1";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
+            ;
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell.contentView addSubview:titleLabel];
+            titleLabel.text = @"服务器";
+            
+            EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
+            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
+            [cell addSubview:gameImg];
+            
+            
+            UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
+            numLb.font = [UIFont boldSystemFontOfSize:14];
+            numLb.backgroundColor = [UIColor clearColor];
+            numLb.textColor =[ UIColor blackColor];
+            numLb.text = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
+            [cell addSubview:numLb];
+            return cell;
+        }
+        else if (indexPath.row ==3)
+        {
+            static NSString *cellinde = @"cell0";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 50, 20)]
+            ;
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell.contentView addSubview:titleLabel];
+            
+            titleLabel.text = @"群分类";
+            if (m_mainDict &&[m_mainDict allKeys].count>0) {
+                NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+                
+                NSArray * us=cell.contentView.subviews;
+                for(UIView *uv in us)
+                {
+                    if ([uv isKindOfClass:[UIImageView class]]) {
+                        [uv removeFromSuperview];
+                    }
+                }
+                for (int i =0; i<tags.count; i++) {
+                    UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                    tagImage.tag=100+i;
+                    tagImage.userInteractionEnabled = YES;
+                    [tagImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterSearchGroupPage:)]];
+                    [cell.contentView addSubview:tagImage];
                 }
             }
-            for (int i =0; i<tags.count; i++) {
-                UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
-                tagImage.tag=100+i;
-                tagImage.userInteractionEnabled = YES;
-                [tagImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterSearchGroupPage:)]];
-                [cell.contentView addSubview:tagImage];
+            return cell;
+            
+        }
+        else if (indexPath.row ==4)
+        {
+            static NSString *cellinde3 = @"cell3";
+            GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
+            if (cell ==nil) {
+                cell = [[GroupInfomationJsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde3];
             }
+            cell.myCellDelegate = self;
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            if (m_mainDict&&[m_mainDict allKeys].count>0) {
+                cell.titleLabel.text = @"群介绍";
+                cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
+                
+                CGSize sizeThatFits = [cell.contentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
+                float height1= sizeThatFits.height;
+                cell.contentLabel.frame = CGRectMake(80, 10, 210, height1);
+                
+                
+                cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
+                if (cell.photoArray.count==0) {
+                    cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, 0);
+                }else{
+                    NSInteger photoCount = (cell.photoArray.count-1)/3+1;
+                    cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, photoCount*68+photoCount*2);
+                }
+            }
+            return cell;
         }
-        return cell;
-
+        else
+        {
+            static NSString *cellinde4 = @"cell4";
+            CreateTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
+            if (cell ==nil) {
+                cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
+            double gongLi = dis/1000;
+            
+            NSString* allStr = @"";
+            if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
+                allStr = @"未知";
+            }
+            else{
+                allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
+            }
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
+            
+            return cell;
+        }
     }
-    else if (indexPath.row ==3)
-    {
-        static NSString *cellinde3 = @"cell3";
-        GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
-        if (cell ==nil) {
-            cell = [[GroupInfomationJsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde3];
+    else{
+        if (indexPath.row ==0) {
+            static NSString *cellinde2 = @"cell2";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde2];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell addSubview:titleLabel];
+            
+            titleLabel.text = @"群组号";
+            
+            UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(80, 0,70, 40)];
+            numLb.font = [UIFont boldSystemFontOfSize:14];
+            numLb.backgroundColor = [UIColor clearColor];
+            numLb.textColor =[ UIColor blackColor];
+            numLb.text = KISDictionaryHaveKey(m_mainDict, @"groupId");
+            [cell addSubview:numLb];
+            
+            UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+            imageView.image = KUIImage(@"lv_group");
+            [cell addSubview:imageView];
+            
+            UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
+            lvLb.font = [UIFont boldSystemFontOfSize:11];
+            lvLb.backgroundColor = [UIColor clearColor];
+            lvLb.textColor =[ UIColor whiteColor];
+            lvLb.textAlignment = NSTextAlignmentCenter;
+            lvLb.text = KISDictionaryHaveKey(m_mainDict, @"level");
+            [cell addSubview:lvLb];
+            
+            return cell;
+            
         }
-        cell.myCellDelegate = self;
-        cell.selectionStyle =UITableViewCellSelectionStyleNone;
-
-        if (m_mainDict&&[m_mainDict allKeys].count>0) {
-            cell.titleLabel.text = @"群介绍";
-            cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
-
-            CGSize sizeThatFits = [cell.contentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
-            float height1= sizeThatFits.height;
-            cell.contentLabel.frame = CGRectMake(80, 10, 210, height1);
+        else if (indexPath.row ==1) {
+            static NSString *cellinde = @"cell1";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
+            ;
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell.contentView addSubview:titleLabel];
+            titleLabel.text = @"服务器";
+            
+            EGOImageView *gameImg =[[EGOImageView alloc]initWithFrame:CGRectMake(80, 10, 20, 20)];
+            NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
+            [cell addSubview:gameImg];
             
             
-            cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
-            if (cell.photoArray.count==0) {
-                cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, 0);
-            }else{
-                NSInteger photoCount = (cell.photoArray.count-1)/3+1;
-                cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, photoCount*68+photoCount*2);
+            UILabel *numLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 0,100, 40)];
+            numLb.font = [UIFont boldSystemFontOfSize:14];
+            numLb.backgroundColor = [UIColor clearColor];
+            numLb.textColor =[ UIColor blackColor];
+            numLb.text = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
+            [cell addSubview:numLb];
+            return cell;
+        }
+        else if (indexPath.row ==2)
+        {
+            static NSString *cellinde = @"cell0";
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+            if (cell ==nil) {
+                cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
             }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 15, 50, 20)]
+            ;
+            titleLabel.textColor = [UIColor grayColor];
+            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.backgroundColor = [UIColor clearColor];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            [cell.contentView addSubview:titleLabel];
+            
+            titleLabel.text = @"群分类";
+            if (m_mainDict &&[m_mainDict allKeys].count>0) {
+                NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
+                
+                NSArray * us=cell.contentView.subviews;
+                for(UIView *uv in us)
+                {
+                    if ([uv isKindOfClass:[UIImageView class]]) {
+                        [uv removeFromSuperview];
+                    }
+                }
+                for (int i =0; i<tags.count; i++) {
+                    UIImageView * tagImage = [self buildImgVWithframe:CGRectMake(80+(i%2)*88+5*(i%2)-5,10+(i/2)*30+5*(i/2),88,30) title:KISDictionaryHaveKey(tags[i], @"tagName")];
+                    tagImage.tag=100+i;
+                    tagImage.userInteractionEnabled = YES;
+                    [tagImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterSearchGroupPage:)]];
+                    [cell.contentView addSubview:tagImage];
+                }
+            }
+            return cell;
+            
         }
-        return cell;
+        else if (indexPath.row ==3)
+        {
+            static NSString *cellinde3 = @"cell3";
+            GroupInfomationJsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde3];
+            if (cell ==nil) {
+                cell = [[GroupInfomationJsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde3];
+            }
+            cell.myCellDelegate = self;
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            
+            if (m_mainDict&&[m_mainDict allKeys].count>0) {
+                cell.titleLabel.text = @"群介绍";
+                cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
+                
+                CGSize sizeThatFits = [cell.contentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
+                float height1= sizeThatFits.height;
+                cell.contentLabel.frame = CGRectMake(80, 10, 210, height1);
+                
+                
+                cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
+                if (cell.photoArray.count==0) {
+                    cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, 0);
+                }else{
+                    NSInteger photoCount = (cell.photoArray.count-1)/3+1;
+                    cell.photoView.frame =  CGRectMake(80, height1+10+5, 210, photoCount*68+photoCount*2);
+                }
+            }
+            return cell;
+        }
+        else
+        {
+            static NSString *cellinde4 = @"cell4";
+            CreateTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
+            if (cell ==nil) {
+                cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
+            }
+            cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
+            double gongLi = dis/1000;
+            
+            NSString* allStr = @"";
+            if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
+                allStr = @"未知";
+            }
+            else{
+                allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
+            }
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
+            
+            return cell;
+        }
     }
-    else
-    {
-        static NSString *cellinde4 = @"cell4";
-        CreateTimeCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde4];
-        if (cell ==nil) {
-            cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
-        }
-        cell.selectionStyle =UITableViewCellSelectionStyleNone;
-        double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
-        double gongLi = dis/1000;
-        
-        NSString* allStr = @"";
-        if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
-            allStr = @"未知";
-        }
-        else{
-        allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
-        }
-        cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
-
-        return cell;
-
-    }
-
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -651,6 +828,15 @@
         saobaoAction = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"复制群号",@"查看组织等级", nil];
         saobaoAction.tag = 1111;
         [saobaoAction show];
+    }
+    if(![GameCommon isEmtity:KISDictionaryHaveKey(m_mainDict, @"guild")] ){
+        if (indexPath.row ==1) {
+            GuildMembersViewController *guildMember = [[GuildMembersViewController alloc]init];
+            guildMember.guildStr = KISDictionaryHaveKey(m_mainDict, @"guild");
+            guildMember.realmStr = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
+            guildMember.gameidStr = KISDictionaryHaveKey(m_mainDict, @"gameid");
+            [self.navigationController pushViewController:guildMember animated:YES];
+        }
     }
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

@@ -119,9 +119,6 @@
         }
         
         NSDictionary *dict = m_dataArray[indexPath.row];
-        
-//        cell.glazzImgView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dict, @"img")]]];
-        
         if ([self.gameid intValue]==2) {
             cell.glazzImgView.placeholderImage = KUIImage(@"clazz_icon");
         }else{
