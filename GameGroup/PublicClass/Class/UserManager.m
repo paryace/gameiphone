@@ -110,7 +110,7 @@ static UserManager *userManager = NULL;
     for (NSMutableDictionary *title in titles) {
         [DataStoreManager saveDSTitle:title];
     }
-    if (latestDynamicMsg) {
+    if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
         [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
     }
     [self updateMsgInfo:dicUser];

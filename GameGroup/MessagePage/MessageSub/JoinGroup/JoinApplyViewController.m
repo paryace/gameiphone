@@ -13,6 +13,7 @@
 #import "GroupInformationViewController.h"
 #import "KKChatController.h"
 #import "HelpViewController.h"
+#import "InvitationViewController.h"
 
 @interface JoinApplyViewController ()
 {
@@ -323,8 +324,8 @@
 //邀请新成员
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"邀请新成员"delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-    [alert show];
+    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    [self.navigationController pushViewController:inv animated:YES];
 }
 //群组小技巧
 -(void)skillClick:(CreateGroupMsgCell*)sender
