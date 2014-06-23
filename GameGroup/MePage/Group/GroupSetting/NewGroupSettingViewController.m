@@ -135,7 +135,7 @@ typedef enum : NSUInteger {
 {
     switch (section) {
         case 0:
-            return 2;
+            return 3;
             break;
         case 1:
             return 1;
@@ -230,16 +230,16 @@ typedef enum : NSUInteger {
         
             return cell;
         }
-//        else{
-//            static NSString *identifier = @"myCell02";
-//            GroupSettingCell *cell = (GroupSettingCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
-//            if (cell == nil) {
-//                cell = [[GroupSettingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-//            }
-//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            cell.titleLable.text = @"邀请新成员";
-//            return cell;
-//        }
+        else{
+            static NSString *identifier = @"myCell02";
+            GroupSettingCell *cell = (GroupSettingCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+            if (cell == nil) {
+                cell = [[GroupSettingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            }
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.titleLable.text = @"邀请新成员";
+            return cell;
+        }
         
 
     }else if (indexPath.section==1) {
@@ -282,8 +282,6 @@ typedef enum : NSUInteger {
         //离开该群,解散群
         
         UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,5,KISHighVersion_7?320:300,50)];
-//        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
-//        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         okButton.backgroundColor = [UIColor clearColor];
@@ -327,6 +325,8 @@ typedef enum : NSUInteger {
     if (indexPath.section==0) {
         if (indexPath.row==0) {//群组消息设置
             [self hint];
+        }else if (indexPath.row ==2){
+            [self new:nil];
         }
 
     }else if (indexPath.section==1) {
