@@ -508,7 +508,7 @@ typedef enum : NSUInteger {
 -(NSString*)getMsgIcon:(NSString*)groupMsgSettingState
 {
     if ([groupMsgSettingState isEqualToString:@"0"]) {
-        return @"";
+        return @"have_soundSong";
         
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
         return @"close_receive";

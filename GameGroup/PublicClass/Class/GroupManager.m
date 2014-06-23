@@ -55,7 +55,7 @@ static GroupManager *groupManager = NULL;
 -(void)getGroupInfoWithNet:(NSString*)groupId
 {
     
-    [self.groupCache removeObjectForKey:groupId];
+    [self clearGroupCache:groupId];
     if ([self.cacheGroupIds containsObject:groupId]) {
         return;
     }
