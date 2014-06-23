@@ -701,10 +701,10 @@
             GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
             float heigth = cell.contentLabel.frame.size.height;
             if (heigth<20) {
-                heigth =40;
+                heigth =20;
             }
             if (photoArray.count==0) {
-                return heigth;
+                return heigth+20;
             }else{
                 NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
                 return photoCount*68+photoCount*2+heigth+10+10;

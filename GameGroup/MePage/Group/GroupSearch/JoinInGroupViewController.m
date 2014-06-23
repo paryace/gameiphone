@@ -31,7 +31,7 @@
     UIView *m_pickView;
     
     NSMutableArray *allkeysArr;
-    
+    UIBarButtonItem*rb_server;
 }
 @end
 
@@ -205,7 +205,7 @@
     
     UIToolbar *toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     toolbar.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
+    rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
     rb_server.tintColor = [UIColor blackColor];
     toolbar.items = @[rb_server];
     [m_pickView addSubview:toolbar];

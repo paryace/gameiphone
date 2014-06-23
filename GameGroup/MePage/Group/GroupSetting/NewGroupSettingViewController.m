@@ -14,7 +14,7 @@
 #import "PublishBillboardViewController.h"
 #import "EGOImageView.h"
 #import "SoundSetCell.h"
-
+#import "InvitationViewController.h"
 typedef enum : NSUInteger {
     TypeNormal,
     TypeAdministrator
@@ -143,7 +143,7 @@ typedef enum : NSUInteger {
         case 2:
         {
             if ([self groupType]==TypeAdministrator) {
-                return 2;
+                return 3;
             }
             return 1;
         }
@@ -269,6 +269,8 @@ typedef enum : NSUInteger {
                 cell.titleLable.text = @"管理群成员";
             }else if (indexPath.row==1) {
                 cell.titleLable.text = @"编辑群资料";
+            }else if (indexPath.row ==2){
+                cell.titleLable.text = @"添加群成员";
             }
             return cell;
         }
@@ -339,6 +341,8 @@ typedef enum : NSUInteger {
                 [self managerGroup];
             }else if(indexPath.row==1){//编辑资料
                 [self editGroupInfo];
+            }else if (indexPath.row ==2){//添加群成员
+                [self new:nil];
             }
         }
     }
@@ -408,6 +412,8 @@ typedef enum : NSUInteger {
 //邀请新成员
 -(void)new:(id)sender
 {
+    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    [self.navigationController pushViewController:inv animated:YES];
 }
 
 //举报该群组
@@ -415,7 +421,6 @@ typedef enum : NSUInteger {
 {
     UIActionSheet *actionSheet = [[UIActionSheet alloc]initWithTitle:@"" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"敏感信息",@"欺诈信息",@"色情",@"非法活动", nil];
     [actionSheet showInView:self.view];
-    
     
 }
 //发布群公告
