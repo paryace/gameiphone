@@ -43,11 +43,13 @@
     
     titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 10, 200, 30)];
     titleLabel.text = @"群名";
+    titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.textColor = [UIColor grayColor];
     titleLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:titleLabel];
     
     numLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 40, 120, 30)];
+    numLabel.backgroundColor = [UIColor clearColor];
     numLabel.text = @"群号";
     numLabel.textColor = [UIColor grayColor];
     numLabel.font = [UIFont systemFontOfSize:14];
@@ -57,12 +59,14 @@
     
     lvLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 70, 200, 30)];
     lvLabel.text = @"群等级";
+    lvLabel.backgroundColor = [UIColor clearColor];
     lvLabel.textColor = [UIColor grayColor];
     lvLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:lvLabel];
 
     UILabel *experTitleLb = [[UILabel alloc]initWithFrame:CGRectMake(20,100, 40, 20)];
     experTitleLb.text = @"群经验";
+    experTitleLb.backgroundColor = [UIColor clearColor];
     experTitleLb.textColor = [UIColor grayColor];
     experTitleLb.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:experTitleLb];
@@ -83,6 +87,7 @@
 
     experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,100, 40, 20)];
     experlb.text = @"0/100";
+    experlb.backgroundColor = [UIColor clearColor];
     experlb.textColor = [UIColor grayColor];
     experlb.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:experlb];
@@ -102,12 +107,14 @@
     UILabel *tsLb1 = [[UILabel alloc]initWithFrame:CGRectMake(20,485, 300, 20)];
     tsLb1.text = @"*群组每提升一级都会获得5个成员的上限";
     tsLb1.textColor = [UIColor grayColor];
+    tsLb1.backgroundColor = [UIColor clearColor];
     tsLb1.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:tsLb1];
 
     UILabel *tsLb2 = [[UILabel alloc]initWithFrame:CGRectMake(20,505, 300, 20)];
     tsLb2.text = @"*群等级越高的群组将会在群所在的分类中排名越靠前";
     tsLb2.textColor = [UIColor grayColor];
+    tsLb2.backgroundColor = [UIColor clearColor];
     tsLb2.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:tsLb2];
 
