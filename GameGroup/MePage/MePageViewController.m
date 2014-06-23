@@ -172,9 +172,10 @@
     if (0 == section) {
         return nil;
     }
-    UIView* heardView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 35)];
-    UIImageView* topBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 35)];
-    topBg.image = KUIImage(@"table_heard_bg");
+    UIView* heardView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 31)];
+    UIImageView* topBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 31)];
+//    topBg.image = KUIImage(@"table_heard_bg");
+    topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [heardView addSubview:topBg];
 
     UIButton* setButton = [CommonControlOrView setButtonWithFrame:CGRectMake(250, 0, 70, 30) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"set_normal") HighImage:KUIImage(@"set_click") selectImage:Nil];
