@@ -210,6 +210,26 @@
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSLatestDynamic" representedClassName="DSLatestDynamic" syncable="YES">
+        <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="commentnum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rarenum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="superstar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="thumb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="titleObj" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="urlLink" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userimg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSMyNewsList" representedClassName="DSMyNewsList" syncable="YES">
         <attribute name="bigTitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="commentObj" optional="YES" attributeType="String" syncable="YES"/>
@@ -370,6 +390,7 @@
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
+        <element name="DSBillboard" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
         <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="208"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
@@ -397,6 +418,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSBillboard" positionX="-90" positionY="-54" width="128" height="330"/>
+        <element name="DSLatestDynamic" positionX="-90" positionY="-54" width="128" height="315"/>
     </elements>
 </model>

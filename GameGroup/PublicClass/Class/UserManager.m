@@ -91,9 +91,9 @@ static UserManager *userManager = NULL;
     
     NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
     NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
+    NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
     
     [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
-    
     if ([titles isKindOfClass:[NSArray class]] && [titles count] != 0) {//头衔
         NSDictionary *titleDictionary=[titles objectAtIndex:0];
         NSMutableDictionary * titleObjectDic = KISDictionaryHaveKey(titleDictionary, @"titleObj");
@@ -109,6 +109,9 @@ static UserManager *userManager = NULL;
     }
     for (NSMutableDictionary *title in titles) {
         [DataStoreManager saveDSTitle:title];
+    }
+    if (latestDynamicMsg) {
+        [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
     }
     [self updateMsgInfo:dicUser];
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];

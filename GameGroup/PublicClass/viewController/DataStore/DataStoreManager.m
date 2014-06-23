@@ -19,6 +19,7 @@
 #import "DSGroupList.h"
 #import "DSGroupApplyMsg.h"
 #import "DSGroupUser.h"
+#import "DSLatestDynamic.h"
 
 @implementation DataStoreManager
 -(void)nothing
@@ -2366,6 +2367,56 @@
 }
 
 
+#pragma mark - 保存最后一条动态
++(void)saveDSlatestDynamic:(NSDictionary *)characters
+{
+    NSString * alias = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"alias")];
+    NSString * commentnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"commentnum")];
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"createDate")];
+    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
+    NSString * msg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"msg")];
+    NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"nickname")];
+    NSString * rarenum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"rarenum")];
+    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"superstar")];
+    NSString * thumb = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"thumb")];
+    NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"title")];
+//    NSString * titleObj = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"titleObj")];
+    NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"type")];
+    NSString * urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"urlLink")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userid")];
+    NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userimg")];
+    NSString * username = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"username")];
+    NSString * zannum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"zannum")];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
+        if (!latestDynamic)
+            latestDynamic = [DSLatestDynamic MR_createInContext:localContext];
+        latestDynamic.alias = alias;
+        latestDynamic.commentnum= commentnum;
+        latestDynamic.createDate = createDate;
+        latestDynamic.msgId = msgId;
+        latestDynamic.img = img;
+        latestDynamic.msg = msg;
+        latestDynamic.nickname = nickname;
+        latestDynamic.rarenum = rarenum;
+        latestDynamic.superstar = superstar;
+        latestDynamic.thumb = thumb;
+        latestDynamic.title = title;
+//        latestDynamic.titleObj = titleObj;
+        latestDynamic.type = type;
+        latestDynamic.urlLink = urlLink;
+        latestDynamic.userid = userid;
+        latestDynamic.userimg = userimg;
+        latestDynamic.username = username;
+        latestDynamic.zannum = zannum;
+    }];
+}
+
+
+
 
 #pragma mark - 保存角色
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid
@@ -2506,6 +2557,36 @@
         [charactersArray addObject:characterDic];
     }
     return charactersArray;
+}
+
+
+//查找最后一条动态
++(NSMutableDictionary *)queryLatestDynamic:(NSString*)userId
+{
+    NSMutableDictionary * lasrDic = [NSMutableDictionary dictionary];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
+    DSLatestDynamic *lastds = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
+    if (lastds) {
+        [lasrDic setObject:lastds.alias forKey:@"alias"];
+        [lasrDic setObject:lastds.commentnum forKey:@"commentnum"];
+        [lasrDic setObject:lastds.createDate forKey:@"createDate"];
+        [lasrDic setObject:lastds.msgId forKey:@"msgId"];
+        [lasrDic setObject:lastds.img forKey:@"img"];
+        [lasrDic setObject:lastds.msg forKey:@"msg"];
+        [lasrDic setObject:lastds.nickname forKey:@"nickname"];
+        [lasrDic setObject:lastds.rarenum forKey:@"rarenum"];
+        [lasrDic setObject:lastds.superstar forKey:@"superstar"];
+        [lasrDic setObject:lastds.thumb forKey:@"thumb"];
+        [lasrDic setObject:lastds.title forKey:@"title"];
+        //    [lasrDic setObject:lastds.titleObj forKey:@"titleObj"];
+        [lasrDic setObject:lastds.type forKey:@"type"];
+        [lasrDic setObject:lastds.urlLink forKey:@"urlLink"];
+        [lasrDic setObject:lastds.userid forKey:@"userid"];
+        [lasrDic setObject:lastds.userimg forKey:@"userimg"];
+        [lasrDic setObject:lastds.username forKey:@"username"];
+        [lasrDic setObject:lastds.zannum forKey:@"zannum"];
+    }
+    return lasrDic;
 }
 
 

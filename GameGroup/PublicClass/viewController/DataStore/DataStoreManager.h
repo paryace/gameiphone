@@ -281,4 +281,10 @@
 +(void)clearGroupChatHistroyMsg;
 //更新群通知表的信息
 -(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg;
+
+//保存最后一条动态
++(void)saveDSlatestDynamic:(NSDictionary *)characters;
+
+//查询最有一条动态消息
++(NSMutableDictionary *)queryLatestDynamic:(NSString*)userId;
 @end
