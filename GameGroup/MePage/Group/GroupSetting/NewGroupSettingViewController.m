@@ -279,7 +279,7 @@ typedef enum : NSUInteger {
         }
         //离开该群,解散群
         
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,5,320,50)];
+        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,5,KISHighVersion_7?320:300,50)];
 //        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
 //        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
         [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
@@ -298,10 +298,7 @@ typedef enum : NSUInteger {
         }
         //解散群
         cell.backgroundColor = [UIColor whiteColor];
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,320, 50)];
-//        [okButton setBackgroundImage:KUIImage(@"red_button_normal") forState:UIControlStateNormal];
-//        [okButton setBackgroundImage:KUIImage(@"red_button_click") forState:UIControlStateHighlighted];
-        
+        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,KISHighVersion_7?320:300, 50)];
         [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         okButton.backgroundColor = [UIColor redColor];
         if (self.shiptypeCount ==1){

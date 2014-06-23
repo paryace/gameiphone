@@ -1213,9 +1213,10 @@ UINavigationControllerDelegate>
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(messages.count-1) inSection:0];
+        NSInteger imageIndex = [self getMsgRowWithId:uuid];
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
         KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        [cell uploadImage:upImagePath cellIndex:(messages.count-1)];
+        [cell uploadImage:upImagePath cellIndex:(imageIndex)];
     }
     else
     {

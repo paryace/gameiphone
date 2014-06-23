@@ -132,7 +132,7 @@ typedef enum : NSUInteger {
     [self.view addSubview:hud];
     
     
-    [self getInfoWithNet];
+    [self getInfoWithNet:NO];
     [self addheadView];
     [self addFootView];
     NSFileManager *fileManager =[NSFileManager defaultManager];
@@ -166,6 +166,11 @@ typedef enum : NSUInteger {
     sendNews.isComeFromMe = YES;
     [self.navigationController pushViewController:sendNews animated:YES];
     
+}
+-(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
+{
+    m_currPageCount = 0;
+    [self getInfoWithNet:YES];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
@@ -236,9 +241,11 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark ---- 网络请求
--(void)getInfoWithNet
+-(void)getInfoWithNet:(BOOL)isRefre
 {
-    [hud show:YES];
+    if (!isRefre) {
+        [hud show:YES];
+    }
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -571,8 +578,7 @@ typedef enum : NSUInteger {
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
-        hud.labelText = @"加载中...";
-        [self getInfoWithNet];
+        [self getInfoWithNet:YES];
         
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
@@ -593,9 +599,8 @@ typedef enum : NSUInteger {
     footer.activityView.center = footer.arrowImage.center;
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        hud.labelText = @"加载中...";
         m_currPageCount = m_dataArray.count;
-        [self getInfoWithNet];
+        [self getInfoWithNet:YES];
     };
     m_footer = footer;
 }
