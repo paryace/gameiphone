@@ -26,7 +26,7 @@
         [self.imageClickBtn addTarget:self action:@selector(groupButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.bgV addSubview:self.imageClickBtn];
         
-        self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(45, 12, 100, 20)];
+        self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(45, 12, 200, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
         self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.groupNameLable.text = @"群名";

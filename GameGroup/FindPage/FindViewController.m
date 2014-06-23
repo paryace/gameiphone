@@ -76,6 +76,7 @@
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     [self initMsgCount];
+    [self setBillboardImage];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -179,15 +180,8 @@
             gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
         }
         groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
-        
-        NSMutableDictionary * billBoard = [self getBillboardGroupInfo];
-        NSString * groupId = KISDictionaryHaveKey(billBoard, @"groupId");
-        NSMutableDictionary * simpleGroupInfo = [[GroupManager singleton] getGroupInfo:groupId];
-        NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
-        iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
     }else
     {
-        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
         gbMsgCountImageView.hidden = YES;
         NSInteger groupCount = [DataStoreManager queryGroupCount];
         if (groupCount>0) {
@@ -197,7 +191,26 @@
         }
     }
 }
-
+-(void)setBillboardImage
+{
+    NSMutableDictionary * billBoard = [self getBillboardGroupInfo];
+    if (billBoard) {
+        NSString * groupId = KISDictionaryHaveKey(billBoard, @"groupId");
+        NSMutableDictionary * simpleGroupInfo = [[GroupManager singleton] getGroupInfo:groupId];
+        NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
+        if ([GameCommon isEmtity:groupImage]) {
+            iconImageView.imageURL = nil;
+             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+        }else{
+            iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
+        }
+        
+    }else
+    {
+        iconImageView.imageURL = nil;
+        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+    }
+}
 -(NSMutableDictionary*)getBillboardGroupInfo
 {
     NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
@@ -318,19 +331,17 @@
 
     
     iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
-    [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+    iconImageView.placeholderImage = KUIImage(@"find_billboard");
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
-    
-//    iconImageView.layer.cornerRadius = 5.0;
-//    iconImageView.layer.masksToBounds = YES;
+    iconImageView.layer.cornerRadius = 5.0;
+    iconImageView.layer.masksToBounds = YES;
     [bottomView addSubview:iconImageView];
     
     //红点 - 公告
-    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(30, -5, 18, 18)];
-//    [iconImageView bringSubviewToFront:gbMsgCountImageView];
+    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 18, 18)];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
      gbMsgCountImageView.hidden = YES;
-    [iconImageView addSubview:gbMsgCountImageView];
+    [bottomView addSubview:gbMsgCountImageView];
     //未读公告消息
     gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
     [gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
@@ -342,7 +353,7 @@
     
     
     headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
-    [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+    [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     headImgView.frame = CGRectMake(320-50, 10, 40, 40);
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];

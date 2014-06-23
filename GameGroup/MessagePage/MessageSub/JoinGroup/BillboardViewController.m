@@ -65,9 +65,11 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 345) {
-        [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];
-        [m_dataArray removeAllObjects];
-        [m_billboardTabel reloadData];
+        if (buttonIndex==1) {
+            [DataStoreManager deleteJoinGroupApplicationByMsgType:@"groupBillboard"];
+            [m_dataArray removeAllObjects];
+            [m_billboardTabel reloadData];
+        }
     }
 }
 
@@ -150,7 +152,11 @@
         
     }
 }
-
+-(void)dealloc
+{
+    m_billboardTabel.delegate = nil;
+    m_billboardTabel.dataSource = nil;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
