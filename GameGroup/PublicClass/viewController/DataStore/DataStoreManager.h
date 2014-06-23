@@ -279,4 +279,6 @@
 
 //删除所有的群聊历史记录
 +(void)clearGroupChatHistroyMsg;
+//更新群通知表的信息
+-(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg;
 @end

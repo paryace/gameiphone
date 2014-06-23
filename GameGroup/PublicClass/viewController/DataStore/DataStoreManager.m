@@ -2591,6 +2591,9 @@
             [self saveDSGroupUser:user GroupId:groupId];
         }
     }
+    
+    [self upDataDSGroupApplyMsgByGroupId:groupId GroupName:groupName GroupBackgroundImg:backgroundImg];//更新群通知消息列表
+    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
@@ -2810,6 +2813,17 @@
         [msgList addObject:[self queryDSGroupApplyMsg:apm]];
     }
     return msgList;
+}
+
+//更新群通知表的信息
++(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+    DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
+    if (commonMsg) {
+        commonMsg.groupName = groupName;
+        commonMsg.backgroundImg = backgroundImg;
+    }
 }
 
 +(NSMutableDictionary*)queryDSGroupApplyMsg:(DSGroupApplyMsg*)msgDS

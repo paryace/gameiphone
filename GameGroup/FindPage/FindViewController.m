@@ -202,6 +202,7 @@
             iconImageView.imageURL = nil;
              [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
+            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
         }
         
@@ -331,7 +332,6 @@
 
     
     iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
-    iconImageView.placeholderImage = KUIImage(@"find_billboard");
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
     iconImageView.layer.cornerRadius = 5.0;
     iconImageView.layer.masksToBounds = YES;
