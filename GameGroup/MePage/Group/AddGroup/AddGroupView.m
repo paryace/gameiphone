@@ -360,6 +360,13 @@
         return;
     }
     
+    if ([m_textView.text isEqualToString:@""]||[m_textView.text isEqualToString:@""]) {
+        UIAlertView *al = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请填写群介绍" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [al show];
+
+        return;
+    }
+    
     [self.myDelegate didClickContentWithDel:self content:m_textView.text];
     
     

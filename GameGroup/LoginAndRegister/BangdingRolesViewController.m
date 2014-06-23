@@ -9,6 +9,7 @@
 #import "BangdingRolesViewController.h"
 #import "AboutRoleCell.h"
 #import "AuthViewController.h"
+#import "HelpViewController.h"
 @interface BangdingRolesViewController ()
 {
     UITableView *m_myTableView;
@@ -134,7 +135,10 @@
 
 -(void)hitRegisterButton:(id)sender
 {
-    
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+        helpVC.myUrl = @"content.html?7";
+    [self.navigationController pushViewController:helpVC animated:YES];
+
 }
 - (void)selectGameNameOK:(UIButton *)sender
 {
@@ -422,7 +426,7 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        [[TempData sharedInstance]isBindingRolesWithBool:NO];
+        [[TempData sharedInstance]isBindingRolesWithBool:YES];
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];
