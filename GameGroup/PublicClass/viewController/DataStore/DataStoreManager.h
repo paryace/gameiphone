@@ -268,6 +268,8 @@
 
 +(void)deleteJoinGroupApplicationWithMsgId:(NSString *)msgId;//根据msgid 删除单条记录(滑动删除)
 
+
+
 //根据msgType和GroupId删除通知表的消息
 +(void)deleteJoinGroupApplicationByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
 

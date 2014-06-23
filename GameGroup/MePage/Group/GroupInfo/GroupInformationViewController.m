@@ -442,6 +442,13 @@
             [self chexiaogroup];
         }
     }
+    else if (alertView.tag ==1111){
+        if (buttonIndex ==0) {
+            [self copyNum:nil];
+        }else{
+            [self seeLv:nil];
+        }
+    }
 }
 
 
@@ -479,18 +486,18 @@
         [cell addSubview:numLb];
         
         
-        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(180, 0, 60, 40)];
-        [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
-        [button setImageEdgeInsets:UIEdgeInsetsMake(13, 0, 10, 0)];
-        [button addTarget:self action:@selector(copyNum:) forControlEvents:UIControlEventTouchUpInside];
-        [cell addSubview:button];
+//        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(180, 0, 60, 40)];
+//        [button setImage:KUIImage(@"copyNum") forState:UIControlStateNormal];
+//        [button setImageEdgeInsets:UIEdgeInsetsMake(13, 0, 10, 0)];
+//        [button addTarget:self action:@selector(copyNum:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell addSubview:button];
 
         
         
         UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
         imageView.image = KUIImage(@"lv_group");
-        imageView.userInteractionEnabled = YES;
-        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
+//        imageView.userInteractionEnabled = YES;
+//        [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(seeLv:)]];
         [cell addSubview:imageView];
         
         UILabel *lvLb =[[ UILabel alloc]initWithFrame:CGRectMake(250, 5, 40, 30)];
@@ -627,6 +634,16 @@
     }
 
 }
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row ==0) {
+        UIAlertView *saobaoAlert = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:@"复制群号",@"查看群等级", nil];
+        saobaoAlert.tag = 1111;
+        [saobaoAlert show];
+    }
+}
+
 -(void)copyNum:(id)sender
 {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];

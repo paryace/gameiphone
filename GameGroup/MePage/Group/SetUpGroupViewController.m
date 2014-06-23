@@ -186,11 +186,13 @@
     NSDictionary *dic = [gameInfoArray objectAtIndex:row];
     UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    customView.backgroundColor = [UIColor clearColor];
     imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
     [customView addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
     label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.backgroundColor =[ UIColor clearColor];
     [customView addSubview:label];
     return customView;
     

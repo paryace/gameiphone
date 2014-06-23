@@ -2948,6 +2948,8 @@
         }
     }];
 }
+
+
 //删除该群的所有消息
 +(void)deleteMsgByGroupId:(NSString*)groupId
 {
