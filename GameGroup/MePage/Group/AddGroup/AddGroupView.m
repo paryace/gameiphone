@@ -234,7 +234,7 @@
     uilabel.frame =CGRectMake(10, 8,200, 20);
     uilabel.text = @"请填写描述内容(10字以上)";
     uilabel.enabled = NO;//lable必须设置为不可用
-    uilabel.font = [UIFont systemFontOfSize:12];
+    uilabel.font = [UIFont systemFontOfSize:14];
     uilabel.backgroundColor = [UIColor clearColor];
     [m_textView addSubview:uilabel];
     

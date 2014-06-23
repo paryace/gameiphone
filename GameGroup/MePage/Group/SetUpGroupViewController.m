@@ -12,6 +12,8 @@
 {
     UITextView *m_textView;
     UITextField *m_searchTf;
+    UILabel * placeholderL;
+    
     UIPickerView *m_gamePickerView;
     NSMutableArray *gameInfoArray;
 }
@@ -81,9 +83,15 @@
     m_textView.layer.cornerRadius = 5;
     m_textView.layer.masksToBounds = YES;
     m_textView.layer.borderWidth=1;
-    m_textView.text = @"选择角色自动生成申请理由";
     m_textView.layer.borderColor=[kColorWithRGB(200, 200, 200, 1.0) CGColor];
     [self.view addSubview:m_textView];
+    
+    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15, startX+83, 300, 20)];
+    placeholderL.backgroundColor = [UIColor clearColor];
+    placeholderL.textColor = [UIColor grayColor];
+    placeholderL.text = @"选择角色自动生成申请理由";
+    placeholderL.font = [UIFont systemFontOfSize:13.0];
+    [self.view addSubview:placeholderL];
 
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
@@ -108,16 +116,21 @@
         [m_textView resignFirstResponder];
     }
 }
-
+#pragma mark - text view delegate
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if (textView.text.length>0 || text.length != 0) {
+        placeholderL.text = @"";
+    }else{
+        placeholderL.text = @"选择角色自动生成申请理由";
+    }
+    return YES;
+}
 
 -(void)updateInfo:(id)sender
 {
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-    
-//    if ([m_searchTf.text isEqualToString:@""]||!m_searchTf.text||[m_searchTf.text isEqualToString:@" "]) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"确定"];
-//        return;
-//    }
+
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         if ([m_textView.text isEqualToString:@""]||!m_textView.text||[m_textView.text isEqualToString:@" "]) {
             [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
@@ -157,6 +170,7 @@
 -(void)selectServerNameOK:(id)sender
 {
     if ([gameInfoArray count] != 0) {
+        placeholderL.text = @"";
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
         m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请加入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
         m_searchTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
