@@ -37,6 +37,7 @@
     UILabel *groupMsgTitleLable;
     UILabel *gbMsgCountLable;//公告消息数
     UIImageView *gbMsgCountImageView; //公告红点
+    UIImageView *m_notibgGbImageView;//群公告红点
     EGOImageButton *iconImageView ;//群头像
     NSInteger    billboardMsgCount;//群公告消息
    
@@ -185,8 +186,10 @@
         gbMsgCountImageView.hidden = YES;
         NSInteger groupCount = [DataStoreManager queryGroupCount];
         if (groupCount>0) {
+             m_notibgGbImageView.hidden = YES;
             groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
         }else {
+             m_notibgGbImageView.hidden = NO;
             groupMsgTitleLable.text =@"您还未加入组织";
         }
     }
@@ -350,6 +353,15 @@
     gbMsgCountLable.font = [UIFont systemFontOfSize:14.0];
     gbMsgCountLable.text = @"20";
     [gbMsgCountImageView addSubview:gbMsgCountLable];
+    
+    //红点 - 朋友圈
+    m_notibgGbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 15, 15)];
+    [m_notibgGbImageView setImage:[UIImage imageNamed:@"redpot.png"]];
+    m_notibgGbImageView.hidden = YES;
+    [bottomView addSubview:m_notibgGbImageView];
+    
+    
+    
     
     
     headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
