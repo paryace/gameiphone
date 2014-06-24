@@ -70,10 +70,8 @@
     if (!cell) {
         cell = [[GroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
-    cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
+    cell.headImageV.placeholderImage = KUIImage(@"group_icon");
     cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
     cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
@@ -84,19 +82,14 @@
     cell.gameImageV.image = KUIImage(@"clazz_00.png");
     cell.gameImageV.imageURL = [ImageService getImageUrl4:gameImageId];
     cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
-    cell.levelLable.text = [NSString stringWithFormat:@"%@%@",@"lv.",level];
+    cell.levelLable.text = [NSString stringWithFormat:@"%@",level];
+    cell.cricleLable.text = KISDictionaryHaveKey(cellDic, @"info");
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
      NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
-//    KKChatController * kkchat = [[KKChatController alloc] init];
-//    kkchat.chatWithUser = KISDictionaryHaveKey(cellDic, @"groupId");
-//    kkchat.type = @"group";
-//    [self.navigationController pushViewController:kkchat animated:YES];
-    
-    
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
     gr.groupId = KISDictionaryHaveKey(cellDic, @"groupId");
@@ -114,8 +107,11 @@
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.userId forKey:@"userid"];
+    [paramDict setObject:@"0" forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"230" forKey:@"method"];
+    [postDict setObject:@"259" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -124,9 +120,9 @@
             m_groupArray = groupList;
             [m_GroupTableView reloadData];
             
-            for (NSMutableDictionary * groupInfo in responseObject) {
-                [DataStoreManager saveDSGroupList:groupInfo];
-            }
+//            for (NSMutableDictionary * groupInfo in responseObject) {
+//                [DataStoreManager saveDSGroupList:groupInfo];
+//            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");

@@ -14,35 +14,35 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(5, 5, 65, 65)];
+        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(15, 12, 50, 50)];
         self.headImageV.backgroundColor = [UIColor whiteColor];
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
         [self addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 5, 150, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 12, 150, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.nameLabel];
         
-        self.gameImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(75, 30, 10, 10)];
+        self.gameImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 32, 10, 10)];
         [self addSubview:self.gameImageV];
         
-        self.numberLable = [[UILabel alloc] initWithFrame:CGRectMake(90, 30, 50, 10)];
+        self.numberLable = [[UILabel alloc] initWithFrame:CGRectMake(95, 32, 50, 10)];
         [self.numberLable setTextAlignment:NSTextAlignmentLeft];
         [self.numberLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [self.numberLable setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.numberLable];
         
-        self.cricleLable= [[UILabel alloc] initWithFrame:CGRectMake(75, 45, 200, 20)];
+        self.cricleLable= [[UILabel alloc] initWithFrame:CGRectMake(80, 40, 200, 20)];
         [self.cricleLable setTextAlignment:NSTextAlignmentLeft];
         [self.cricleLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [self.cricleLable setBackgroundColor:[UIColor clearColor]];
         self.cricleLable.textColor = [UIColor grayColor];
         [self addSubview:self.cricleLable];
         
-        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(320-65, 5, 40, 25)];
+        UIImageView * leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(320-55, 5, 40, 25)];
         leveImageV.backgroundColor = [UIColor clearColor];
         leveImageV.image = KUIImage(@"level_image.png");
         

@@ -19,6 +19,8 @@
 #import "HelpViewController.h"
 #import "MyCircleViewController.h"
 #import "ImageService.h"
+#import "GroupInformationViewController.h"
+#import "GroupListViewController.h"
 
 @interface TestViewController ()
 {
@@ -441,8 +443,6 @@
     m_myScrollView.contentSize = CGSizeMake(kScreenWidth, m_currentStartY);
 }
 
-
-
 - (void)setUserInfoView
 {
     float currentHeigth = 0;
@@ -452,44 +452,27 @@
         topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
         [m_myScrollView addSubview:topBg];
         
-        UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人动态" textAlignment:NSTextAlignmentLeft];
+        UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人动态" textAlignment:NSTextAlignmentLeft];
         [topBg addSubview:titleLabel];
         
         m_currentStartY += 30;
         
         NSString* showTitle = @"";
-//        NSString* imageId = @"";
-        if ([KISDictionaryHaveKey(self.hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]])
-        {//目标 别人评论了我
-//            NSDictionary* destDic = KISDictionaryHaveKey(self.hostInfo.state, @"destUser");
-//            imageId = [GameCommon getHeardImgId: KISDictionaryHaveKey(destDic, @"userimg")];
-//            
-//            showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? [DataStoreManager queryRemarkNameForUser:KISDictionaryHaveKey(destDic, @"nickname")] : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
-//            
-//            if (showTitle ==nil) {
-//                showTitle = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
-//                
-//            }
-        }
-        else
-        {
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"type")] isEqualToString:@"3"]) {
-                showTitle =  [[DataStoreManager queryRemarkNameForUser:self.userId]stringByAppendingString:@"发表了该内容"];
-                NSLog(@"showtitle%@",showTitle);
-                if ([showTitle  isEqualToString:@""]) {
-                    showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:@"发表了该内容"];
-                    
-                }
-                NSLog(@"showTitle%@",showTitle);
-            }
-            else
-                showTitle = [[DataStoreManager queryRemarkNameForUser:KISDictionaryHaveKey(self.hostInfo.state, @"userid")]stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
-            if (showTitle ==nil) {
-                showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"type")] isEqualToString:@"3"]) {
+            showTitle =  [[DataStoreManager queryRemarkNameForUser:self.userId]stringByAppendingString:@"发表了该内容"];
+            NSLog(@"showtitle%@",showTitle);
+            if ([showTitle  isEqualToString:@""]) {
+                showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:@"发表了该内容"];
                 
             }
+            NSLog(@"showTitle%@",showTitle);
         }
-        
+        else
+            showTitle = [[DataStoreManager queryRemarkNameForUser:KISDictionaryHaveKey(self.hostInfo.state, @"userid")]stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
+        if (showTitle ==nil) {
+            showTitle = [KISDictionaryHaveKey(self.hostInfo.state, @"nickname") stringByAppendingString:KISDictionaryHaveKey(self.hostInfo.state, @"showtitle")];
+            
+        }
         NSString* tit = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"title")] isEqualToString:@""] ? KISDictionaryHaveKey(self.hostInfo.state, @"msg") : KISDictionaryHaveKey(self.hostInfo.state, @"title");
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"title")] isEqualToString:@""]) {
             tit = [NSString stringWithFormat:@"「%@」", tit];
@@ -497,14 +480,6 @@
         UIView* person_state ;
         
         person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:KISDictionaryHaveKey(self.hostInfo.state, @"userimg")];
-        
-//        if (imageId) {
-//            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:[[BaseImageUrl stringByAppendingString:imageId] stringByAppendingString:@"/80/80"]];
-//        }else
-//        {
-//            person_state =[CommonControlOrView setPersonStateViewTime:[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.hostInfo.state, @"createDate")]] nameText:showTitle achievement:tit achievementLevel:@"1" titleImage:nil];
-//        }
-        
         currentHeigth = person_state.frame.size.height;
         person_state.frame = CGRectMake(0, m_currentStartY, kScreenWidth, currentHeigth);
         [m_myScrollView addSubview:person_state];
@@ -530,7 +505,7 @@
     UIButton* fansBtn = [[UIButton alloc] initWithFrame:CGRectMake(85, m_currentStartY + 10, 75, 30)];
     [fansBtn setImage:KUIImage(@"detail_fans") forState:UIControlStateNormal];
     fansBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 45);
-    //    [fansBtn setTitle:self.hostInfo.fanNum forState:UIControlStateNormal];
+    
     [fansBtn addTarget:self action:@selector(FansButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [m_myScrollView addSubview:fansBtn];
     
@@ -542,12 +517,13 @@
     [m_myScrollView addSubview:m_buttonBgView];
     
     m_currentStartY += 50;
+    
     ////////////////////////
     UIView* topBg = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, kScreenWidth, 30)];
     topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [m_myScrollView addSubview:topBg];
     
-    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人资料" textAlignment:NSTextAlignmentLeft];
+    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人资料" textAlignment:NSTextAlignmentLeft];
     [topBg addSubview:titleLabel];
     
     m_currentStartY += 30;
@@ -671,14 +647,25 @@
     }
     UIView* topBg = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, kScreenWidth, 30)];
     topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
-    [m_myScrollView addSubview:topBg];
+    [m_myScrollView addSubview:topBg];//259
     
-    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:[NSString stringWithFormat:@"%@%@%d%@",@"他的群组",@"(",self.hostInfo.groupList.count,@")"] textAlignment:NSTextAlignmentLeft];
+    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:[NSString stringWithFormat:@"%@",@"他的群组"] textAlignment:NSTextAlignmentLeft];
     [topBg addSubview:titleLabel];
+    
+    UIButton* setButton = [CommonControlOrView setButtonWithFrame:CGRectMake(250, 0, 70, 30) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"set_normal02") HighImage:KUIImage(@"set_click02") selectImage:Nil];
+    setButton.backgroundColor = [UIColor clearColor];
+    [setButton addTarget:self action:@selector(groupListClick:) forControlEvents:UIControlEventTouchUpInside];
+    [topBg addSubview:setButton];
+    
+    
+    UILabel* groupNumLable = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 5, 30, 20) textColor:[UIColor grayColor] font:[UIFont boldSystemFontOfSize:14.0] text:[NSString stringWithFormat:@"%@%@%@",@"(",self.hostInfo.groupNum,@")"] textAlignment:NSTextAlignmentLeft];
+    [setButton addSubview:groupNumLable];
     
     m_currentStartY += 30;
     for (int i = 0; i < self.hostInfo.groupList.count; i++) {
-        UIView * groupView = [[UIView alloc] initWithFrame:CGRectMake(0, m_currentStartY, 320, 50)];
+        UIButton * groupView = [[UIButton alloc] initWithFrame:CGRectMake(0, m_currentStartY, 320, 50)];
+        [groupView addTarget:self action:@selector(groupInfoClick:) forControlEvents:UIControlEventTouchUpInside];
+        groupView.tag = i;
         EGOImageView * headImage = [[EGOImageView alloc] initWithFrame:CGRectMake(5, 5, 40, 40)];
         
         if ([GameCommon isEmtity:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"backgroundImg")]) {
@@ -688,6 +675,7 @@
         }
         [groupView addSubview:headImage];
         UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
+        groupName.textColor = [UIColor grayColor];
         groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
         [groupView addSubview:groupName];
         [m_myScrollView addSubview:groupView];
@@ -696,7 +684,22 @@
     }
 }
 
+-(void)groupListClick:(UIButton*)sender
+{
+    GroupListViewController *gr = [[GroupListViewController alloc]init];
+    gr.userId = self.userId;
+    [self.navigationController pushViewController:gr animated:YES];
+}
 
+-(void)groupInfoClick:(UIButton*)sender
+{
+    NSInteger index = sender.tag;
+    GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+    gr.groupId =KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:index], @"groupId");
+    gr.isAudit = NO;
+    [self.navigationController pushViewController:gr animated:YES];
+
+}
 
 - (void)setRoleView
 {
@@ -704,7 +707,7 @@
     topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [m_myScrollView addSubview:topBg];
     
-    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人角色" textAlignment:NSTextAlignmentLeft];
+    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人角色" textAlignment:NSTextAlignmentLeft];
     [topBg addSubview:titleLabel];
     
     m_currentStartY += 30;
@@ -767,22 +770,6 @@
         [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
     }
     
-    
-//    if ([characterArray isKindOfClass:[NSArray class]]){
-//        
-//       
-//        //告诉是他人看到推过来的
-//    }else{
-//        NSDictionary *dic = KISDictionaryHaveKey(self.hostInfo.state, @"titleObj");
-//        if ([dic isKindOfClass:[NSDictionary class]]) {
-//            CVC.gameId =self.hostInfo.gameid;
-//            CVC.characterId = self.hostInfo.characterid;
-//        }
-//        
-//    }
-//    CVC.myViewType = CHARA_INFO_PERSON;
-//    [self.navigationController pushViewController:CVC animated:YES];
-    
 }
 - (void)setAchievementView
 {
@@ -791,7 +778,7 @@
         topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
         [m_myScrollView addSubview:topBg];
         
-        UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人头衔" textAlignment:NSTextAlignmentLeft];
+        UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"个人头衔" textAlignment:NSTextAlignmentLeft];
         [topBg addSubview:titleLabel];
         
         m_currentStartY += 30;
@@ -836,7 +823,7 @@
     topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [m_myScrollView addSubview:topBg];
     
-    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 0, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"其他" textAlignment:NSTextAlignmentLeft];
+    UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:@"其他" textAlignment:NSTextAlignmentLeft];
     [topBg addSubview:titleLabel];
     
     m_currentStartY += 30;

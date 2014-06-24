@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 
 @interface GroupListViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate>
-
+@property(nonatomic,copy)NSString *userId;
 @end
