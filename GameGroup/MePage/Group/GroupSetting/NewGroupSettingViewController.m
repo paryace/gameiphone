@@ -143,7 +143,7 @@ typedef enum : NSUInteger {
         case 2:
         {
             if ([self groupType]==TypeAdministrator) {
-                return 3;
+                return 2;
             }
             return 1;
         }
@@ -269,8 +269,6 @@ typedef enum : NSUInteger {
                 cell.titleLable.text = @"管理群成员";
             }else if (indexPath.row==1) {
                 cell.titleLable.text = @"编辑群资料";
-            }else if (indexPath.row ==2){
-                cell.titleLable.text = @"添加群成员";
             }
             return cell;
         }
@@ -341,8 +339,6 @@ typedef enum : NSUInteger {
                 [self managerGroup];
             }else if(indexPath.row==1){//编辑资料
                 [self editGroupInfo];
-            }else if (indexPath.row ==2){//添加群成员
-                [self new:nil];
             }
         }
     }

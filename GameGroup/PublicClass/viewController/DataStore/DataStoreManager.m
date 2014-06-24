@@ -2902,12 +2902,16 @@
 //更新群通知表的信息
 +(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-    DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
-    if (commonMsg) {
-        commonMsg.groupName = groupName;
-        commonMsg.backgroundImg = backgroundImg;
-    }
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * commonMsgs = [DSGroupApplyMsg findAllWithPredicate:predicate];
+        for (DSGroupApplyMsg * commonMsg in commonMsgs) {
+            if (commonMsg) {
+                commonMsg.groupName = groupName;
+                commonMsg.backgroundImg = backgroundImg;
+            }
+        }
+    }];
 }
 
 +(NSMutableDictionary*)queryDSGroupApplyMsg:(DSGroupApplyMsg*)msgDS

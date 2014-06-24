@@ -856,6 +856,7 @@ UINavigationControllerDelegate>
     if (_groupunReadMsgLable&&_groupunReadMsgLable.hidden==NO) {
         _groupunReadMsgLable.hidden=YES;
         _titleLabel.hidden = NO;
+        _titleImageV.hidden = YES;
         self.unreadMsgCount=0;
     }
 }
