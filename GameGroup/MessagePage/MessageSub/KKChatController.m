@@ -22,6 +22,7 @@
 #import "MessageService.h"
 #import "GroupInformationViewController.h"
 #import "KKSystemMsgCell.h"
+#import "KKHistoryMsgCell.h"
 #import "GroupCricleViewController.h"
 
 #ifdef NotUseSimulator
@@ -46,7 +47,8 @@ typedef enum : NSUInteger {
     KKChatMsgTypeText,
     KKChatMsgTypeLink,
     KKChatMsgTypeImage,
-    KKChatMsgTypeSystem
+    KKChatMsgTypeSystem,
+    KKChatMsgHistory
 } KKChatMsgType;
 
 
@@ -485,6 +487,17 @@ UINavigationControllerDelegate>
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
+    else if (kkChatMsgType == KKChatMsgHistory)
+    {
+        static NSString *identifier = @"historyMsgCell";
+        KKHistoryMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[KKHistoryMsgCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.msgLable.text =  @"以上是历史消息";
+        return cell;
+    }
     //普通消息
     else
     {
@@ -836,17 +849,32 @@ UINavigationControllerDelegate>
     addVC.groupId=self.chatWithUser;
     [self.navigationController pushViewController:addVC animated:YES];
 }
+
+//以上是历史消息
+-(void)addGroupHistoryMsg
+{
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"historyMsg"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"以上是历史消息" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    [dictionary setObject:payloadStr forKey:@"payload"];
+    [dictionary setObject:self.chatWithUser forKey:@"groupId"];
+    [messages insertObject:dictionary atIndex:0];
+    [self newMsgToArray:dictionary];
+}
+
 //加载全部
 - (void)loadMoreMsg:(UIButton *)sender{
     if (self.unreadMsgCount<20) {
         return;
     }
+    NSArray *array = [self getMsgArray:20 PageSize:self.unreadMsgCount-20];
     [self hideUnReadLable];
-    NSArray *array = [self getMsgArray:messages.count PageSize:self.unreadMsgCount-messages.count];
     for (int i = 0; i < array.count; i++) {
         [messages insertObject:array[i] atIndex:i];
         [self overReadMsgToArray:array[i] Index:i];
     }
+    [self addGroupHistoryMsg];
     [self.tView reloadData];
     [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
@@ -878,6 +906,9 @@ UINavigationControllerDelegate>
 -(CGFloat)getCellHight:(NSDictionary*)msgDic msgHight:(CGFloat)hight
 {
     KKChatMsgType kkChatMsgType = [self msgType:msgDic];
+    if (kkChatMsgType == KKChatMsgHistory) {
+        return 25;
+    }
     if (kkChatMsgType == KKChatMsgTypeSystem)
     {
         return 47;
@@ -1072,6 +1103,10 @@ UINavigationControllerDelegate>
         {
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
         }
+        case KKChatMsgHistory:
+        {
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:25], nil];
+        }
         default:
             break;
     }
@@ -1102,6 +1137,10 @@ UINavigationControllerDelegate>
     else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"])
     {
         return KKChatMsgTypeSystem;
+    }
+    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])
+    {
+        return KKChatMsgHistory;
     }
     //文字
     else
