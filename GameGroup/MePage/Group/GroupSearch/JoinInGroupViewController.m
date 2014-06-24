@@ -50,10 +50,10 @@
     [self.view addSubview:shareButton];
 
     
-    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
-    tapGr.cancelsTouchesInView = NO;
-    tapGr.delegate = self;
-    [self.view addGestureRecognizer:tapGr];
+//    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+//    tapGr.cancelsTouchesInView = NO;
+//    tapGr.delegate = self;
+//    [self.view addGestureRecognizer:tapGr];
     
     
     m_baseScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320,kScreenHeigth-startX)];
@@ -120,13 +120,13 @@
         [self hideSelectView];
     }
 }
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    if ([touch.view isKindOfClass:[UITextField class]])
-    {
-        return NO;
-    }
-    return YES;
-}
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+//    if ([touch.view isKindOfClass:[UICollectionView class]])
+//    {
+//        return YES;
+//    }
+//    return NO;
+//}
 
 -(void)buildRoleView
 {

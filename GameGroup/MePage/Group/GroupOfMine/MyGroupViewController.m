@@ -234,8 +234,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     GroupOfMineCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"titleCell" forIndexPath:indexPath];
     NSMutableDictionary * cellDic = [myGroupArray objectAtIndex:indexPath.row];
     if (indexPath.row ==myGroupArray.count-1) {
-        cell.headImgView.placeholderImage =nil;
-        cell.headImgView.imageURL = nil;
         NSString *imgStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(cellDic, @"backgroundImg")];
         cell.headImgView.placeholderImage = KUIImage(imgStr);
         cell.headImgView.imageURL = nil;
@@ -246,7 +244,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
         cell.headImgView.imageURL = [ImageService getImageUrl3:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:120];
         cell.titleLabel.backgroundColor  =[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
         cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
-        
     }
     return cell;
 }

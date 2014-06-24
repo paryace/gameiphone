@@ -18,6 +18,7 @@
     UICollectionViewFlowLayout *m_layout;
     NSMutableArray *addMemArray;
     AddGroupMemberCell*cell1;
+    UIButton *m_button;
 }
 @end
 
@@ -65,7 +66,7 @@
 
 -(void)buildAddMembersScroll
 {
-    UIView *customView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
+    UIView *customView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50-(KISHighVersion_7?0:20), 320, 50)];
     customView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:customView];
     
@@ -89,11 +90,11 @@
     m_customCollView.backgroundColor = [UIColor clearColor];
     [customView addSubview:m_customCollView];
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 50, 30)];
-    [button setTitle:@"确定" forState:UIControlStateNormal];
-    button.titleLabel.textColor = [UIColor blueColor];
-    [button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
-    [customView addSubview:button];
+    m_button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 55, 25)];
+    [m_button setBackgroundImage:KUIImage(@"addmembers_ok") forState:UIControlStateNormal];
+    m_button.titleLabel.font = [UIFont boldSystemFontOfSize:11];
+    [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
+    [customView addSubview:m_button];
     
 }
 
@@ -110,6 +111,13 @@
         [resultDict removeAllObjects];
         [keyArr addObjectsFromArray:keys];
         resultDict = result;
+    for (int i =0; i<keyArr.count; i++) {
+        NSArray *arr = [resultDict objectForKey:keyArr[i]];
+        for (int j = 0; j<arr.count; j++) {
+            NSDictionary *dic = arr[j];
+            [dic setValue:@"1" forKey:@"choose"];
+        }
+    }
         [m_myTableView reloadData];
 //    }];
 }
@@ -146,7 +154,11 @@
     if ([GameCommon isEmtity:nickName]) {
         nickName=[tempDict objectForKey:@"nickname"];
     }
-    cell.chooseImg.image = KUIImage(@"unchoose");
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"choose")]intValue]==1) {
+        cell.chooseImg.image = KUIImage(@"unchoose");
+    }else{
+        cell.chooseImg.image = KUIImage(@"choose");
+    }
     cell.nameLabel.text = nickName;
     return cell;
 }
@@ -154,10 +166,11 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     AddGroupMemberCell*cell = (AddGroupMemberCell*)[m_myTableView cellForRowAtIndexPath:indexPath];
-        NSDictionary * tempDict =[[resultDict objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
+        NSMutableDictionary * tempDict =[[resultDict objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
         cell.chooseImg.image = KUIImage(@"choose");
         NSDictionary *dic = tempDict;
+        [tempDict setObject:@"2" forKey:@"choose"];
         [dic setValue:@(indexPath.section) forKey:@"section"];
         [dic setValue:@(indexPath.row) forKey:@"row"];
         [addMemArray insertObject:dic atIndex:addMemArray.count-1];
@@ -165,6 +178,8 @@
     }else{
         cell.chooseImg.image =KUIImage(@"unchoose");
         NSDictionary *dic = tempDict;
+        [tempDict setObject:@"1" forKey:@"choose"];
+
         [dic setValue:@(indexPath.section) forKey:@"section"];
         [dic setValue:@(indexPath.row) forKey:@"row"];
 
@@ -175,7 +190,10 @@
     [UIView setAnimationDuration:0.3];
     m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
     [UIView commitAnimations];
-
+    int count = addMemArray.count;
+    NSString *title = [NSString stringWithFormat:@"确定(%d)",count-1];
+    [m_button setTitle:title forState:UIControlStateNormal];
+    
 }
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
@@ -222,7 +240,13 @@
     if (indexPath.row ==addMemArray.count-1) {
         return;
     }
+    
+    
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
+    int section = [KISDictionaryHaveKey(tempDict, @"section")intValue];
+    int row = [KISDictionaryHaveKey(tempDict, @"row")intValue];
+    NSMutableDictionary *dic= [[resultDict objectForKey:keyArr[section]]objectAtIndex:row];
+    [dic setObject:@"1" forKey:@"choose"];
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
     cell1 = (AddGroupMemberCell*)[m_myTableView cellForRowAtIndexPath:path];
         cell1.chooseImg.image = KUIImage(@"unchoose");

@@ -2899,6 +2899,30 @@
     return msgList;
 }
 
++(void)changedDSGroupApplyMsgWithGroupId:(NSString *)groupId name:(NSString *)name
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
+        for (DSGroupApplyMsg * apm in groupArrlyList) {
+            apm.nickname  = name;
+        }
+    }];
+}
++(void)changedDSGroupApplyMsgImgWithGroupId:(NSString *)groupId img:(NSString *)img
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * groupArrlyList = [DSGroupApplyMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
+        for (DSGroupApplyMsg * apm in groupArrlyList) {
+            apm.backgroundImg  = img;
+        }
+    }];
+}
+
+
 //更新群通知表的信息
 +(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg
 {

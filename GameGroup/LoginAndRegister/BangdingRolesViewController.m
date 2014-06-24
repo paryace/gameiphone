@@ -264,7 +264,7 @@
             
             NSLog(@"%@", responseObject);
             
-            [[TempData sharedInstance]isBindingRolesWithBool:NO];
+            [[TempData sharedInstance]isBindingRolesWithBool:YES];
             [self dismissViewControllerAnimated:YES completion:^{
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
  

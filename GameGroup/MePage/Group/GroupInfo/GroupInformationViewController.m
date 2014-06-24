@@ -831,7 +831,7 @@
             else{
                 allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
             }
-            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
             
             return cell;
         }
@@ -983,6 +983,21 @@
     InvitationViewController *inv = [[InvitationViewController alloc]init];
     inv.groupId = self.groupId;
     [self.navigationController pushViewController:inv animated:YES];
+}
+- (NSString*)getDataWithTimeInterval:(NSString*)timeInterval
+{
+    if ([NSString stringWithFormat:@"%.f", [timeInterval doubleValue]].length < 10) {
+        return timeInterval;
+    }
+    NSString* timeStr = [timeInterval substringToIndex:timeInterval.length-3];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"]];//location设置为中国
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    
+    double time = [timeStr doubleValue];
+    NSLog(@"%@", [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]]);
+    return [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:time]];
 }
 
 - (void)dealloc

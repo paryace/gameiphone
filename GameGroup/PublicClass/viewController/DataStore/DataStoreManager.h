@@ -254,6 +254,9 @@
 
 +(NSMutableArray*)queryDSGroupApplyMsgByMsgType:(NSString*)msgType;//根据msgType查询群通知消息
 
++(void)changedDSGroupApplyMsgWithGroupId:(NSString *)groupId name:(NSString *)name;//改变群名
+
++(void)changedDSGroupApplyMsgImgWithGroupId:(NSString *)groupId img:(NSString *)img;//改变群头像
 +(void)updateMsgState:(NSString*)userid State:(NSString*)state MsgType:(NSString*)msgType GroupId:(NSString*)groupId;//改变消息状态
 
 +(void)deleteJoinGroupApplication;//删除所有的群组消息
