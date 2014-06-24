@@ -190,6 +190,7 @@
             groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
         }else {
              m_notibgGbImageView.hidden = NO;
+            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:1 OrDot:YES WithButtonIndex:2];
             groupMsgTitleLable.text =@"您还未加入组织";
         }
     }
@@ -824,6 +825,7 @@
     [self setMsgBillBoardConunt:billboardMsgCount];
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
 }
 
 #pragma mark --改变顶部图片
