@@ -62,23 +62,23 @@
 
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"搜索中...";
     [self.view addSubview:hud];
-    hud.labelText = @"获取中...";
     
     switch (self.ComeType) {
         case SETUP_Tags:
             [paramDict setObject:self.tagsId forKey:@"tagId"];
-            [self getGroupListFromNetWithParam:paramDict method:@"245"];
+            [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:NO];
 
             break;
         case SETUP_Search:
             [paramDict setObject:self.conditiona forKey:@"param"];
-            [self getGroupListFromNetWithParam:paramDict method:@"234"];
+            [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:NO];
             break;
         case SETUP_SAMEREALM:
             [paramDict setObject:self.gameid forKey:@"gameid"];
             [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-            [self getGroupListFromNetWithParam:paramDict method:@"243"];
+            [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:NO];
 
             break;
         case SETUP_NEARBY:
@@ -88,7 +88,7 @@
          case SETUP_HOT:
             [paramDict setObject:self.gameid forKey:@"gameid"];
             [paramDict setObject:self.roleId forKey:@"charaterId"];
-            [self getGroupListFromNetWithParam:paramDict method:@"257"];
+            [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:NO];
             break;
         default:
             break;
@@ -148,14 +148,19 @@
 
 
 //获取群列表
--(void)getGroupListFromNetWithParam:(NSDictionary *)paramDict method:(NSString *)method
+-(void)getGroupListFromNetWithParam:(NSDictionary *)paramDict method:(NSString *)method isRefre:(BOOL)isRefre
 {
+    if (!isRefre) {
+        [hud show:YES];
+    }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:method forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray * groupList = responseObject;
 
@@ -178,6 +183,7 @@
             
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
     }];
 }
 -(void)addheadView
@@ -197,17 +203,17 @@
         switch (self.ComeType) {
             case SETUP_Tags:
                 [paramDict setObject:self.tagsId forKey:@"tagId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"245"];
+                [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
                 
                 break;
             case SETUP_Search:
                 [paramDict setObject:self.conditiona forKey:@"param"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234"];
+                [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:YES];
                 break;
             case SETUP_SAMEREALM:
                 [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-                [self getGroupListFromNetWithParam:paramDict method:@"243"];
+                [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:YES];
                 
                 break;
             case SETUP_NEARBY:
@@ -217,7 +223,7 @@
             case SETUP_HOT:
                 [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.roleId forKey:@"charaterId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"257"];
+                [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:YES];
                 break;
             default:
                 break;
@@ -248,17 +254,17 @@
         switch (self.ComeType) {
             case SETUP_Tags:
                 [paramDict setObject:self.tagsId forKey:@"tagId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"245"];
+                [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
                 
                 break;
             case SETUP_Search:
                 [paramDict setObject:self.conditiona forKey:@"param"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234"];
+                [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:YES];
                 break;
             case SETUP_SAMEREALM:
                 [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-                [self getGroupListFromNetWithParam:paramDict method:@"243"];
+                [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:YES];
                 
                 break;
             case SETUP_NEARBY:
@@ -268,7 +274,7 @@
             case SETUP_HOT:
                 [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.roleId forKey:@"charaterId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"257"];
+                [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:YES];
                 break;
             default:
                 break;
@@ -297,7 +303,7 @@
             [paramDict setObject:self.gameid forKey:@"gameid"];
             [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
             [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-            [self getGroupListFromNetWithParam:paramDict method:@"237"];
+            [self getGroupListFromNetWithParam:paramDict method:@"237" isRefre:NO];
 
         } Failure:^{
             [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
