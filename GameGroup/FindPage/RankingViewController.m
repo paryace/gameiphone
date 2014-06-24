@@ -1210,7 +1210,8 @@
             [hud hide:YES];
             
             NSLog(@"%@", responseObject);
-            
+            [DataStoreManager saveDSCharacters:dic UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+
             
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];

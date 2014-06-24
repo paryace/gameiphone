@@ -8,7 +8,6 @@
 
 #import "BangdingRolesViewController.h"
 #import "AboutRoleCell.h"
-#import "AuthViewController.h"
 #import "HelpViewController.h"
 @interface BangdingRolesViewController ()
 {
@@ -393,6 +392,7 @@
             authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
             authVC.realm = m_realmStr;
             authVC.Type =@"register";
+            authVC.authDelegate =self;
             UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
             authVC.isComeFromFirstOpen = YES;
             authVC.character = tf.text;
@@ -463,7 +463,12 @@
 
 }
 
-
+- (void)authCharacterRegist
+{
+//    [self dismissViewControllerAnimated:NO completion:^{
+//    
+//    }];
+}
 
 - (void)didReceiveMemoryWarning
 {

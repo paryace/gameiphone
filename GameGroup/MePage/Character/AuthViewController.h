@@ -11,7 +11,7 @@
 @protocol AuthCharacterDelegate <NSObject>
 
 - (void)authCharacterSuccess;
-
+- (void)authCharacterRegist;
 @end
 
 @interface AuthViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate>

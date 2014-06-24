@@ -68,6 +68,40 @@
     webViewAlert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"加载失败" delegate:self cancelButtonTitle:@"知道了" otherButtonTitles:@"重新加载", nil];
     [webViewAlert show];
 }
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+
+{
+    NSString *urlString = [[request URL] absoluteString];
+    NSArray *urlComps = [urlString
+                         componentsSeparatedByString:@"://"];
+    if([urlComps count] && [[urlComps objectAtIndex:0]
+                            isEqualToString:@"objc"])
+    {
+        NSArray *arrFucnameAndParameter = [(NSString*)[urlComps
+                                                       objectAtIndex:1] componentsSeparatedByString:@":/"];
+        NSString *funcStr = [arrFucnameAndParameter objectAtIndex:0];
+        NSLog(@"%@",funcStr);
+        NSLog(@"%@--%d",arrFucnameAndParameter,arrFucnameAndParameter.count);
+        if (1 == [arrFucnameAndParameter count])
+        {
+            // 没有参
+            
+            
+            if([funcStr isEqualToString:@"closeWindows"])
+            {
+                /*调用本地函数1*/
+                NSLog(@"doFunc1");
+                [self closeWindows];
+            }else{
+                
+            }
+            
+        }
+        return NO;
+    };
+    return YES;
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==1) {
@@ -76,12 +110,18 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
--(void)AuthSuccess
+-(void)closeWindows
 {
+    [self showMessageWindowWithContent:@"认证成功" imageType:0];
     if (self.isComeFromFirstOpen) {
+        [[TempData sharedInstance]isBindingRolesWithBool:YES];
+
         [self dismissViewControllerAnimated:YES completion:^{
-            [self showMessageWindowWithContent:@"认证成功" imageType:0];
+//            [self.authDelegate authCharacterRegist];
         }];
+    }else{
+        
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 
@@ -317,10 +357,6 @@
 //        [hud hide:YES];
 //    }];
 //}
-- (void)closeWindows
-{
-    [self.navigationController popViewControllerAnimated:YES];
-}
 
 - (void)dealloc
 {
