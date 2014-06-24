@@ -517,7 +517,6 @@
 }
 +(void)storeMyMessage:(NSDictionary *)message
 {
-    NSLog(@"message==%@",message);
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");
     NSString * msgContent = KISDictionaryHaveKey(message, @"msg");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];

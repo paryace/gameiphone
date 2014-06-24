@@ -1867,9 +1867,7 @@ UINavigationControllerDelegate>
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
-    if ([self.type isEqualToString:@"normal"]) {
-        [self refreWX];
-    }
+    [self refreWX];
 }
 #pragma mark 发送文本消息
 -(void)sendMsg:(NSString *)message
@@ -1884,9 +1882,7 @@ UINavigationControllerDelegate>
     NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [self addNewMessageToTable:dictionary];
     [self sendMessage:message NowTime:nowTime UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
-    if ([self.type isEqualToString:@"normal"]) {
-        [self refreWX];
-    }
+    [self refreWX];
 }
 
 -(NSString*)getDomain:(NSString*)domain
