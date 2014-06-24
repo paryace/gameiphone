@@ -41,6 +41,8 @@
     resultDict = [NSMutableDictionary dictionary];
     keyArr = [NSMutableArray array];
     addMemArray = [NSMutableArray array];
+    [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
+    
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
@@ -64,15 +66,23 @@
 -(void)buildAddMembersScroll
 {
     UIView *customView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50, 320, 50)];
-    customView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    customView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:customView];
     
+    UIView *line1 = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 0.5)];
+    line1.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    [customView addSubview:line1];
+    UIView *line2 = [[UIView alloc]initWithFrame:CGRectMake(0, 0.5, 320, 0.5)];
+    line2.backgroundColor = [UIColor grayColor];
+    [customView addSubview:line2];
+
+    
     m_layout = [[UICollectionViewFlowLayout alloc]init];
-    m_layout.minimumInteritemSpacing = 4;
-    m_layout.minimumLineSpacing = 3;
+    m_layout.minimumInteritemSpacing = 15;
+    m_layout.minimumLineSpacing = 5;
     m_layout.itemSize = CGSizeMake(34, 34);
     [m_layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-    m_customCollView = [[UICollectionView alloc]initWithFrame:CGRectMake(5, 5, 240, 40) collectionViewLayout:m_layout];
+    m_customCollView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 5, 240, 40) collectionViewLayout:m_layout];
     [m_customCollView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
     m_customCollView.delegate = self;
     m_customCollView.dataSource = self;
@@ -147,10 +157,11 @@
         NSDictionary * tempDict =[[resultDict objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
         cell.chooseImg.image = KUIImage(@"choose");
-        [addMemArray addObject:tempDict];
         NSDictionary *dic = tempDict;
         [dic setValue:@(indexPath.section) forKey:@"section"];
         [dic setValue:@(indexPath.row) forKey:@"row"];
+        [addMemArray insertObject:dic atIndex:addMemArray.count-1];
+
     }else{
         cell.chooseImg.image =KUIImage(@"unchoose");
         NSDictionary *dic = tempDict;
@@ -194,15 +205,23 @@
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
 
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
-    
-    cell.imageView.placeholderImage = [UIImage imageNamed:headplaceholderImage];
+
     NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+    if (indexPath.row ==addMemArray.count-1) {
+        cell.imageView.placeholderImage = KUIImage(imageids);
+        cell.imageView.imageURL = nil;
+    }else{
+        cell.imageView.placeholderImage = [UIImage imageNamed:headplaceholderImage];
     cell.imageView.imageURL=[ImageService getImageStr:imageids Width:80];
+    }
     return cell;
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.row ==addMemArray.count-1) {
+        return;
+    }
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
     cell1 = (AddGroupMemberCell*)[m_myTableView cellForRowAtIndexPath:path];
@@ -245,10 +264,14 @@
 #pragma mark ---开始邀请成员
 -(void)addMembers:(id)sender
 {
-    if (addMemArray.count>0) {
+    if (addMemArray.count>1) {
+        
+        NSMutableArray *customArr = [NSMutableArray arrayWithArray:addMemArray];
+        [customArr removeLastObject];
         NSMutableArray *arr = [NSMutableArray array];
-        for (NSDictionary *dic  in addMemArray) {
-            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
+        for (NSDictionary *dic  in customArr) {
+            
+            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
         }
         
         [self updataInfoWithId:[self getImageIdsStr:arr]];
@@ -276,6 +299,8 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        
+        [self.navigationController popViewControllerAnimated:YES];
         
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
