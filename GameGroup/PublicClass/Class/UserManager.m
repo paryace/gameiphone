@@ -102,6 +102,9 @@ static UserManager *userManager = NULL;
         [dicUser setObject:titleObj forKey:@"titleName"];
         [dicUser setObject:titleObjLevel forKey:@"rarenum"];
     }
+    [DataStoreManager deleteAllDSCharacters:KISDictionaryHaveKey(dicUser, @"userid")];
+    [DataStoreManager deleteAllDSTitle:KISDictionaryHaveKey(dicUser, @"userid")];
+    
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
     for (NSMutableDictionary *characher in charachers) {

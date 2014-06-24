@@ -271,7 +271,11 @@
 
 +(void)deleteJoinGroupApplicationWithMsgId:(NSString *)msgId;//根据msgid 删除单条记录(滑动删除)
 
+//删除所有角色
++(void)deleteAllDSCharacters:(NSString*)userid;
 
+//删除所有头衔
++(void)deleteAllDSTitle:(NSString*)userid;
 
 //根据msgType和GroupId删除通知表的消息
 +(void)deleteJoinGroupApplicationByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;

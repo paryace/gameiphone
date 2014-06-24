@@ -2415,8 +2415,28 @@
     }];
 }
 
-
-
+//删除所有角色
++(void)deleteAllDSCharacters:(NSString*)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        NSArray * dbCharacters = [DSCharacters MR_findAllWithPredicate:predicate];
+        for (DSCharacters* chara in dbCharacters) {
+            [chara MR_deleteInContext:localContext];
+        }
+    }];
+}
+//删除所有头衔
++(void)deleteAllDSTitle:(NSString*)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        NSArray * dbTitles = [DSTitle MR_findAllWithPredicate:predicate];
+        for (DSTitle* title in dbTitles) {
+            [title MR_deleteInContext:localContext];
+        }
+    }];
+}
 
 #pragma mark - 保存角色
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid
