@@ -12,11 +12,16 @@
 #import "JoinGroupViewController.h"
 #import "GroupInformationViewController.h"
 #import "GroupSettingController.h"
+#import "MJRefresh.h"
 
 @interface GroupListViewController ()
 {
     UITableView * m_GroupTableView;
     NSMutableArray * m_groupArray;
+    
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
+    NSInteger  m_currPageCount;
     
 }
 @end
@@ -40,7 +45,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群列表" withBackButton:YES];
-    
+    m_currPageCount = 0;
     m_groupArray = [NSMutableArray array];
 
     m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
@@ -48,7 +53,9 @@
     m_GroupTableView.delegate = self;
     [self.view addSubview:m_GroupTableView];
     
-    [self getGroupList];
+    [self addheadView];
+    [self addFootView];
+//    [self getGroupList];
     [self getGroupListFromNet];
 }
 #pragma mark 表格
@@ -108,13 +115,15 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
-    [paramDict setObject:@"0" forKey:@"firstResult"];
+    [paramDict setObject:@(m_currPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"259" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray * groupList = responseObject;
             m_groupArray = groupList;
@@ -125,9 +134,57 @@
 //            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
         NSLog(@"faile");
     }];
 }
+
+
+#pragma mark ---addRefreshHeadview and refreshFootView
+//添加下拉刷新
+-(void)addheadView
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_GroupTableView;
+    
+    header.scrollView = m_GroupTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currPageCount = 0;
+        [self getGroupListFromNet];
+    };
+    header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
+    };
+    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+        
+    };
+    m_header = header;
+}
+
+//添加上拉加载更多
+-(void)addFootView
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_GroupTableView;
+    
+    footer.scrollView = m_GroupTableView;
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        m_currPageCount = m_groupArray.count;
+        [self getGroupListFromNet];
+    };
+    m_footer = footer;
+}
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

@@ -208,7 +208,7 @@
             cell.twoBtn.hidden=YES;
             cell.threeBtn.hidden=YES;
             cell.foreBtn.hidden=NO;
-            cell.foreBtn.titleLabel.text = @"查看详情";
+            [cell.foreBtn setTitle:@"查看详情" forState:UIControlStateNormal];
         }
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -349,6 +349,9 @@
     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     NSString * groupId = KISDictionaryHaveKey(dict, @"groupId");
     if ([msgType isEqualToString:@"groupRecommend"]) {
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =[GameCommon getNewStringWithId:groupId];
+        [self.navigationController pushViewController:gr animated:YES];
         return;
     }
     KKChatController * kkchat = [[KKChatController alloc] init];
