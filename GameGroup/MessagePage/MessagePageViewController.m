@@ -265,11 +265,12 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
+            [DataStoreManager deleteThumbMsgsByMsgType:@"payloadchat"];//旧版本的payload消息
             [DataStoreManager deleteThumbMsgsByMsgType:@"sayHi"];//删除打招呼的显示消息
             [DataStoreManager deleteThumbMsgsByMsgType:@"normalchat"];//删除所有的normalchat显示消息
             [DataStoreManager deleteCommonMsgsByMsgType:@"normalchat"];//删除所有的normalchat历史记录
             [DataStoreManager deleteThumbMsgsByMsgType:@"groupchat"];//删除所有的groupchat显示消息
-            [DataStoreManager clearGroupChatHistroyMsg];//删除所有群聊历史消息
+            [DataStoreManager clearGroupChatHistroyMsg];//删除所有群聊历史消息//
             [self displayMsgsForDefaultView];
         }
     }

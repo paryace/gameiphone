@@ -676,6 +676,7 @@
         [groupView addSubview:headImage];
         UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
         groupName.textColor = [UIColor grayColor];
+        groupName.backgroundColor = [UIColor clearColor];
         groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
         [groupView addSubview:groupName];
         [m_myScrollView addSubview:groupView];

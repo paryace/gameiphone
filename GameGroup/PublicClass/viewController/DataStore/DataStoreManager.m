@@ -443,7 +443,7 @@
         NSDictionary* user= [[UserManager singleton] getUser:sender];
         NSString * senderNickname = [user objectForKey:@"nickname"];
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, msgType];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -496,7 +496,7 @@
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",receicer,msgType];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -527,7 +527,7 @@
 
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
 
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",receicer];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",receicer ,@"normalchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -559,7 +559,7 @@
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
         
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (!thumbMsgs)

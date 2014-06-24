@@ -254,6 +254,14 @@
     
     [addMemArray removeObject:tempDict];
     [m_customCollView reloadData];
+    int count = addMemArray.count-1;
+    NSString *title;
+    if (count==0) {
+        title = [NSString stringWithFormat:@"确定"];
+    }else{
+        title = [NSString stringWithFormat:@"确定(%d)",addMemArray.count-1];
+    }
+    [m_button setTitle:title forState:UIControlStateNormal];
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
     m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);

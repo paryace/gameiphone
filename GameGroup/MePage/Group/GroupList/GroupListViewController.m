@@ -38,7 +38,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self getGroupListFromNet];
+    [self getGroupListFromNet:YES];
 }
 
 - (void)viewDidLoad
@@ -55,8 +55,11 @@
     
     [self addheadView];
     [self addFootView];
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
 //    [self getGroupList];
-    [self getGroupListFromNet];
+    [self getGroupListFromNet:NO];
 }
 #pragma mark 表格
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -110,8 +113,12 @@
 }
 
 //获取群列表
--(void)getGroupListFromNet
+-(void)getGroupListFromNet:(BOOL)isRefre
 {
+    if (!isRefre) {
+        [hud show:YES];
+    }
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.userId forKey:@"userid"];
@@ -122,6 +129,7 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         [m_header endRefreshing];
         [m_footer endRefreshing];
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
@@ -134,6 +142,7 @@
 //            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         [m_header endRefreshing];
         [m_footer endRefreshing];
         NSLog(@"faile");
@@ -155,7 +164,7 @@
     header.scrollView = m_GroupTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
-        [self getGroupListFromNet];
+        [self getGroupListFromNet:YES];
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
     };
@@ -178,7 +187,7 @@
     footer.scrollView = m_GroupTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = m_groupArray.count;
-        [self getGroupListFromNet];
+        [self getGroupListFromNet:YES];
     };
     m_footer = footer;
 }
