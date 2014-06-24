@@ -463,6 +463,10 @@
         }];
     }else if([sendertype isEqualToString:JOINGROUPMSG])//加入群组消息
     {
+        NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+        NSDictionary *payloadDic = [payloadStr JSONValue];
+        NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
@@ -479,6 +483,7 @@
             thumbMsgs.messageuuid = msgId;
             thumbMsgs.status = @"1";
             thumbMsgs.sayHiType = @"1";
+            thumbMsgs.groupId = groupId;
             thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }];
     }

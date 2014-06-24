@@ -425,7 +425,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
-        [DataStoreManager deleteThumbMsgWithSender:self.groupId];//删除消息列表
+        [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
         [DataStoreManager deleteGroupInfoByGoupId:self.groupId];//删除群信息
         [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
