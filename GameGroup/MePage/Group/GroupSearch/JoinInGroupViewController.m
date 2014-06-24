@@ -419,6 +419,7 @@
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"hot"]) {
         ;
         groupView.ComeType = SETUP_HOT;
+        groupView.roleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")];
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
 
     }else{

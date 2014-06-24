@@ -87,13 +87,15 @@
             break;
          case SETUP_HOT:
             [paramDict setObject:self.gameid forKey:@"gameid"];
+            [paramDict setObject:self.roleId forKey:@"charaterId"];
             [self getGroupListFromNetWithParam:paramDict method:@"257"];
             break;
         default:
             break;
     }
     
-    
+    [self addheadView];
+    [self addFootView];
 }
 
 
@@ -163,12 +165,16 @@
                 }else{
                     [m_groupArray addObjectsFromArray:groupList];
                 }
-                currentPageCount +=groupList.count;
+                currentPageCount +=20;
                 [m_GroupTableView reloadData];
             }else{
-                m_alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"查询无结果" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-                [m_alertView show];
+                if (currentPageCount ==0) {
+                    m_alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"查询无结果" delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+                    [m_alertView show];
+                }
             }
+            [m_header endRefreshing];
+            [m_footer endRefreshing];
             
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -199,18 +205,20 @@
                 [self getGroupListFromNetWithParam:paramDict method:@"234"];
                 break;
             case SETUP_SAMEREALM:
-                [paramDict setObject:self.gameid forKey:@"gameId"];
+                [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.realmStr forKey:@"gameRealm"];
                 [self getGroupListFromNetWithParam:paramDict method:@"243"];
                 
                 break;
             case SETUP_NEARBY:
-                [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-                [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234"];
+                [self getLocationForNet];
                 
                 break;
-                
+            case SETUP_HOT:
+                [paramDict setObject:self.gameid forKey:@"gameid"];
+                [paramDict setObject:self.roleId forKey:@"charaterId"];
+                [self getGroupListFromNetWithParam:paramDict method:@"257"];
+                break;
             default:
                 break;
         }
@@ -248,19 +256,20 @@
                 [self getGroupListFromNetWithParam:paramDict method:@"234"];
                 break;
             case SETUP_SAMEREALM:
-                [paramDict setObject:self.gameid forKey:@"gameId"];
+                [paramDict setObject:self.gameid forKey:@"gameid"];
                 [paramDict setObject:self.realmStr forKey:@"gameRealm"];
                 [self getGroupListFromNetWithParam:paramDict method:@"243"];
                 
                 break;
             case SETUP_NEARBY:
-                
-                [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-                [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234"];
+                [self getLocationForNet];
                 
                 break;
-                
+            case SETUP_HOT:
+                [paramDict setObject:self.gameid forKey:@"gameid"];
+                [paramDict setObject:self.roleId forKey:@"charaterId"];
+                [self getGroupListFromNetWithParam:paramDict method:@"257"];
+                break;
             default:
                 break;
         }
