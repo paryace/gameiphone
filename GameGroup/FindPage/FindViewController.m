@@ -76,7 +76,6 @@
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     [self initMsgCount];
-    [self setBillboardImage];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -171,6 +170,7 @@
 //设置公告未读消息数量
 -(void)setMsgBillBoardConunt:(NSInteger)msgCount
 {
+    [self setBillboardImage];
     if (msgCount>0) {
         gbMsgCountImageView.hidden = NO;
         if (msgCount > 99) {

@@ -394,7 +394,6 @@
                 ||[msgtype isEqualToString:@"groupApplicationReject"]//群审核被拒绝
                 
                 ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升disbandGroup
-                ||[msgtype isEqualToString:@"groupBillboard"]//群公告
                 ||[msgtype isEqualToString:@"disbandGroup"]//解散群
                 ||[msgtype isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
                 ||[msgtype isEqualToString:@"kickOffGroup"]//被踢出群的消息
@@ -411,7 +410,21 @@
             }
             [self.chatDelegate JoinGroupMessageReceived:dict];
         }
+        //群组公告消息
+        else if ([msgtype isEqualToString:@"groupBillboard"])
+        {
+            [self comeBackDelivered:from msgId:msgId];
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate groupBillBoardMessageReceived:dict];
+        }
     }
+    
     if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])
     {
         NSDictionary* bodyDic = [msg JSONValue];

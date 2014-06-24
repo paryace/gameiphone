@@ -21,4 +21,6 @@
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent;//创建群，审核群...
 
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent;//加入或者退出群
+
+-(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent;//群公告消息
 @end

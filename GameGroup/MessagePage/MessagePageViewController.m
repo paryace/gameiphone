@@ -375,7 +375,7 @@
         cell.contentLabel.text = [[allMsgArray objectAtIndex:indexPath.row]msgContent];
         cell.nameLabel.text = [[allMsgArray objectAtIndex:indexPath.row] senderNickname];
     }
-    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"])
+    else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"normalchat"]||[[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:@"payloadchat"])
     {//正常聊天
         NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",[[allMsgArray objectAtIndex:indexPath.row]sender]]];
         

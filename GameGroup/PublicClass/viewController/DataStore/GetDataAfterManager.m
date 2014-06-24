@@ -273,29 +273,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
         
-        
-//        [DataStoreManager deleteThumbMsgWithSender:groupId];//删除消息列表
-//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除聊天记录
-//        [DataStoreManager deleteGroupInfoByGoupId:groupId];//删除群信息
-//        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];// 删除群通知
-        
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];
+        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
         [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-//        [DataStoreManager deleteThumbMsgWithSender:groupId];//删除消息列表
-//        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除聊天记录
-//        [DataStoreManager deleteGroupInfoByGoupId:groupId];//删除群信息
-//        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];// 删除群通知
-        
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];
+        [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
@@ -305,22 +294,25 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
-    if([msgType isEqualToString:@"groupBillboard"])
-    {//群公告
-        [[NSNotificationCenter defaultCenter]postNotificationName:Billboard_msg object:nil userInfo:messageContent];
-        if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]) {
-            int i=1;
-            [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:Billboard_msg_count];
-        }else{
-            int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]intValue];
-            [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:Billboard_msg_count];
-        }
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
 
+#pragma mark 群组公告消息
+-(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent
+{
+    [DataStoreManager saveDSGroupApplyMsg:messageContent];
+    [[NSNotificationCenter defaultCenter]postNotificationName:Billboard_msg object:nil userInfo:messageContent];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]) {
+        int i=1;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:Billboard_msg_count];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]intValue];
+        [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:Billboard_msg_count];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+}
 #pragma mark 加入群，退出群，解散群
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent
 {
