@@ -92,6 +92,7 @@
     
     m_button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 55, 25)];
     [m_button setBackgroundImage:KUIImage(@"addmembers_ok") forState:UIControlStateNormal];
+    [m_button setTitle:@"确定" forState:UIControlStateNormal];
     m_button.titleLabel.font = [UIFont boldSystemFontOfSize:11];
     [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
     [customView addSubview:m_button];
