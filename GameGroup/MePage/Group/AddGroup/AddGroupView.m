@@ -366,6 +366,12 @@
 
         return;
     }
+    if (m_textView.text.length<10) {
+        UIAlertView *al = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请填写群介绍(10字以上)" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [al show];
+        
+        return;
+    }
     
     [self.myDelegate didClickContentWithDel:self content:m_textView.text];
     

@@ -20,6 +20,9 @@
         [self addSubview:self.chooseImg];
         
         self.headImg =[[EGOImageView alloc]initWithFrame:CGRectMake(60, 10, 40, 40)];
+        self.headImg.layer.cornerRadius = 5;
+        self.headImg.layer.masksToBounds=YES;
+
         [self addSubview:self.headImg];
         
         self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 200, 30)];

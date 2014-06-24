@@ -76,7 +76,7 @@
     [m_customCollView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
     m_customCollView.delegate = self;
     m_customCollView.dataSource = self;
-    m_customCollView.backgroundColor = [UIColor whiteColor];
+    m_customCollView.backgroundColor = [UIColor clearColor];
     [customView addSubview:m_customCollView];
     
     UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 50, 30)];
@@ -160,7 +160,10 @@
         [addMemArray removeObject:dic];
     }
     [m_customCollView reloadData];
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
     m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
+    [UIView commitAnimations];
 
 }
 #pragma mark 索引
@@ -207,7 +210,11 @@
     
     [addMemArray removeObject:tempDict];
     [m_customCollView reloadData];
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
     m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
+    [UIView commitAnimations];
+
 
 }
 
@@ -269,6 +276,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
