@@ -58,7 +58,7 @@ static ShareToOther *userManager = NULL;
     webpage.objectID = @"identifier1";
     webpage.title = title;
     webpage.description = des;
-    webpage.thumbnailData = UIImagePNGRepresentation(imageV);
+    webpage.thumbnailData = UIImagePNGRepresentation([NetManager compressImage:imageV targetSizeX:640/5 targetSizeY:1136/5]);
     webpage.webpageUrl = uri;
     [self shareTosinaObject:webpage];
 }

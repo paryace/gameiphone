@@ -2383,7 +2383,6 @@
     NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"superstar")];
     NSString * thumb = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"thumb")];
     NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"title")];
-//    NSString * titleObj = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"titleObj")];
     NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"type")];
     NSString * urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"urlLink")];
     NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userid")];
@@ -2407,7 +2406,6 @@
         latestDynamic.superstar = superstar;
         latestDynamic.thumb = thumb;
         latestDynamic.title = title;
-//        latestDynamic.titleObj = titleObj;
         latestDynamic.type = type;
         latestDynamic.urlLink = urlLink;
         latestDynamic.userid = userid;
