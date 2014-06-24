@@ -552,7 +552,7 @@
     step3Button.backgroundColor = [UIColor clearColor];
     [step3Button addTarget:self action:@selector(step3ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
     [m_step2Scroll addSubview:step3Button];
-
+    m_step2Scroll.contentSize  = CGSizeMake(0, iPhone5?kScreenHeigth:kScreenHeigth+40);
 }
 
 - (void)sexButtonClick:(id)sender
