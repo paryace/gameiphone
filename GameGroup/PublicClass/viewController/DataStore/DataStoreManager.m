@@ -551,9 +551,7 @@
 
 
 +(void)storeMyGroupThumbMessage:(NSDictionary *)message
-{
-    NSLog(@"message==%@",message);
-    NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+{    NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * msgContent = KISDictionaryHaveKey(message, @"msg");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
     NSString* msgType = KISDictionaryHaveKey(message, @"msgType");
@@ -571,7 +569,7 @@
         thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = msgContent;
         thumbMsgs.sendTime = sendTime;
-        thumbMsgs.senderType = COMMONUSER;
+        thumbMsgs.senderType = GROUPMSG;
         thumbMsgs.msgType = msgType;
         thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";

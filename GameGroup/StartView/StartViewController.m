@@ -175,8 +175,12 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
              NSString * openImageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"adImg")];
              NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
-            if (openImageId&&![openImageId isEqualToString:imageId]) {
-                [self downloadImageWithID:openImageId];
+            if ([GameCommon isEmtity:imageId]) {
+                [[NSUserDefaults standardUserDefaults]setObject:@"" forKey:OpenImage];
+            }else{
+                if (![openImageId isEqualToString:imageId]) {
+                    [self downloadImageWithID:openImageId];
+                }
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
