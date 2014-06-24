@@ -395,7 +395,7 @@
         if (!groupInfo) {
             cell.contentLabel.text = @"";
             cell.nameLabel.text =@"";
-            cell.headImageV.image = KUIImage(@"moren_people.png");
+            cell.headImageV.image = KUIImage(@"group_icon");
         }else
         {
             NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
@@ -411,7 +411,11 @@
                 cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
             }
             cell.nameLabel.text =nickName;
-            cell.headImageV.imageURL = [ImageService getImageStr:backgroundImg Width:80];
+            if ([GameCommon isEmtity:backgroundImg]) {
+                 cell.headImageV.image = KUIImage(@"group_icon");
+            }else{
+                cell.headImageV.imageURL = [ImageService getImageStr:backgroundImg Width:80];
+            }
         }
     } else if([[[allMsgArray objectAtIndex:indexPath.row] msgType] isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;

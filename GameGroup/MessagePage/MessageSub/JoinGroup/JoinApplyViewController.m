@@ -324,7 +324,9 @@
 //邀请新成员
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
+     NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];
     InvitationViewController *inv = [[InvitationViewController alloc]init];
+    inv.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"groupId")];
     [self.navigationController pushViewController:inv animated:YES];
 }
 //群组小技巧

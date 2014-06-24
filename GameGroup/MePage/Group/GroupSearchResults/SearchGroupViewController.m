@@ -119,7 +119,7 @@
         cell = [[GroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
-    cell.headImageV.placeholderImage = KUIImage(@"people_man.png");
+    cell.headImageV.placeholderImage = KUIImage(@"group_icon");
     cell.headImageV.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(cellDic, @"backgroundImg")];
     cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
