@@ -388,6 +388,7 @@
     }
     [paramDict setObject:tagStr forKey:@"tagIds"];
     m_mainDict = dic;
+    self.isChang = YES;
     [m_myTableView reloadData];
 }
 
