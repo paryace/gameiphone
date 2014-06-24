@@ -279,7 +279,7 @@
             [boView addSubview:headimgView];
         }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        rightBtn.frame = CGRectMake(290, 0, 30, 50);
+        rightBtn.frame = CGRectMake(290, 5, 25, 40);
         [rightBtn setImage:KUIImage(@"right") forState:UIControlStateNormal];
         [rightBtn setImageEdgeInsets:UIEdgeInsetsMake(10, 0, 10, 15)];
 
