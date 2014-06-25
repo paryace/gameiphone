@@ -401,6 +401,7 @@
     [dic setObject:info forKey:@"info"];
     [dic setObject:infoImg forKey:@"infoImg"];
     m_mainDict = dic;
+    self.isChang =YES;
     [m_myTableView reloadData];
 }
 //修改群昵称
@@ -410,6 +411,7 @@
     NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithDictionary:m_mainDict];
     [dic setObject:groupName forKey:@"groupName"];
     m_mainDict = dic;
+    self.isChang =YES;
     [m_myTableView reloadData];
 }
 
