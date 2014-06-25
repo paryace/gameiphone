@@ -237,15 +237,6 @@
     uilabel.font = [UIFont systemFontOfSize:14];
     uilabel.backgroundColor = [UIColor clearColor];
     [m_textView addSubview:uilabel];
-    
-    
-    
-    self.button = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.button.frame = CGRectMake(10, 482+10, 300, 44);
-    [self.button setTitle:@"提交" forState:UIControlStateNormal];
-    [self.button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
-    [self.button addTarget:self action:@selector(enterThirdPage:) forControlEvents:UIControlEventTouchUpInside];
-    [self.secondScrollView addSubview:self.button];
 }
 
 -(NSInteger)getTagViewHight
@@ -267,7 +258,6 @@
     self. titleCollectionView.frame = CGRectMake(10, 267+10, 300, [self getTagViewHight]);
     self.editIV.frame = CGRectMake(10, self.titleCollectionView.frame.size.height+self.titleCollectionView.frame.origin.y+5, 300, 150);
     m_textView.frame = CGRectMake(10, self.titleCollectionView.frame.size.height+self.titleCollectionView.frame.origin.y+5, 300, 150);
-    self.button.frame = CGRectMake(10,m_textView.frame.size.height+m_textView.frame.origin.y+10, 300, 44);
         return self.cardArray.count;
 }
 

@@ -1036,7 +1036,7 @@ typedef enum : NSUInteger {
     nearBylabel.font = [UIFont systemFontOfSize:13];
     [view addSubview:nearBylabel];
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 8.5, 72, 23)];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(240, 8.5, 72, 23)];
 
     [button setTitle:@"城市漫游 >" forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont systemFontOfSize:12];

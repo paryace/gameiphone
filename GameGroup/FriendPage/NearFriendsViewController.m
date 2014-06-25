@@ -26,7 +26,7 @@
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
     m_titleLabel.backgroundColor = [UIColor clearColor];
-    m_titleLabel.text = @"附近的朋友";
+    m_titleLabel.text = @"好友出没";
     m_titleLabel.textAlignment = NSTextAlignmentCenter;
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:m_titleLabel];

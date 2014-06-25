@@ -13,6 +13,7 @@
     NSMutableDictionary * m_updataDic;
     AddGroupView *addGroup;
     UIAlertView *noRoleAlertView;
+    UIButton *addButton;
 }
 @end
 
@@ -23,7 +24,14 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建群组" withBackButton:YES];
-        
+    
+    addButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [addButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [addButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    addButton.hidden = YES;
+    [self.view addSubview:addButton];
+    [addButton addTarget:self action:@selector(saveMyNews:) forControlEvents:UIControlEventTouchUpInside];
     NSMutableArray * stArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     if (!stArray||stArray.count<=0) {
@@ -48,6 +56,10 @@
     hud.labelText = @"提交中...";
 }
 
+-(void)saveMyNews:(id)sender
+{
+    [addGroup enterThirdPage:sender];
+}
 -(void)didClickGameListWithDel:(AddGroupView *)gro dic:(NSDictionary *)dic
 {
     [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id")?KISDictionaryHaveKey(dic, @"id"):@"" forKey:@"gameid"];
@@ -68,6 +80,7 @@
 }
 -(void)didClickPageOneWithDel:(AddGroupView *)gro WithDic:(NSDictionary *)dic
 {
+    addButton.hidden = NO;
     [m_updataDic setObject:addGroup.groupNameTf.text forKey:@"groupName"];
     [m_updataDic setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
     [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterId"];

@@ -20,13 +20,14 @@
 @property(nonatomic,strong)UIScrollView *firstScrollView;
 @property(nonatomic,strong)UIScrollView *secondScrollView;
 @property(nonatomic,strong)UIImageView* editIV;
-@property(nonatomic,strong)UIButton *button ;
 @property(nonatomic,strong)UIScrollView *thirdScrollView;
 @property(nonatomic,strong)UILabel *cardTF;
 @property(nonatomic,strong) NSMutableDictionary *listDict;
 @property(nonatomic,copy)   NSString *cardStr;
 @property(nonatomic,strong) NSMutableArray *cardArray;
 @property(nonatomic,strong)   UICollectionView * titleCollectionView;
+
+-(void)enterThirdPage:(id)sender;
 
 @end
 @protocol groupViewDelegate <NSObject>

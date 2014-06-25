@@ -147,8 +147,8 @@
 {
     CardCell*cell = (CardCell*)[customPhotoCollectionView cellForItemAtIndexPath:indexPath];
 
-    NSArray *array = [self.listDict allKeys];
-    NSDictionary *dic = [[self.listDict objectForKey:array[indexPath.section] ]objectAtIndex:indexPath.row];
+//    NSArray *array = [self.listDict allKeys];
+    NSDictionary *dic = [[self.listDict objectForKey:allkeysArr[indexPath.section] ]objectAtIndex:indexPath.row];
     
     if ([numArray containsObject:@(indexPath.section *10000+indexPath.row)]) {
         NSString *dicStr = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"tagId")];
