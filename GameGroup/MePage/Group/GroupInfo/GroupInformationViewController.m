@@ -342,6 +342,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             [DataStoreManager saveDSGroupList:responseObject];
+            [[GroupManager singleton] clearGroupCache:self.groupId];
             m_titleLabel.text = KISDictionaryHaveKey(responseObject, @"groupName");
             NSString * imageUrl = KISDictionaryHaveKey(m_mainDict, @"backgroundImg");
             if ([GameCommon isEmtity:imageUrl]) {

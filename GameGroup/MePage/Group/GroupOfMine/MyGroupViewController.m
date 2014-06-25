@@ -55,18 +55,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 {
     [super viewDidLoad];
     
-    [self setTopViewWithTitle:@"我的组织" withBackButton:NO];
+    [self setTopViewWithTitle:@"我的组织" withBackButton:YES];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshNet:) name:@"refelsh_groupInfo_wx" object:nil];
 
-    
-    
-    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
-    backButton.backgroundColor = [UIColor clearColor];
-    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backButton];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     
@@ -116,14 +108,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self loadCacheGroupList];
     [self getGroupListFromNet];
 }
--(void)backButtonClick:(id)sender
-{
-//    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-   [self.navigationController popViewControllerAnimated:YES];
-
-}
-
 
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
@@ -185,8 +169,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             [self setGroupList:responseObject];
-            
             for (NSMutableDictionary * groupInfo in responseObject) {
+                [[GroupManager singleton] clearGroupCache:KISDictionaryHaveKey(groupInfo, @"groupId")];
                 [DataStoreManager saveDSGroupList:groupInfo];
             }
         }
