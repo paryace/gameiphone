@@ -297,14 +297,19 @@ static GameCommon *my_gameCommon = NULL;
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     NSString *currentStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
+    
     NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
     [dateFormatter2 setDateFormat:@"HH:mm"];
+    
     NSString * msgT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     NSString * nowT = [dateFormatter2 stringFromDate:[NSDate dateWithTimeIntervalSince1970:theCurrentT]];
     int hours = [[nowT substringToIndex:2] intValue];
     int minutes = [[nowT substringFromIndex:3] intValue];
     int currentDayBegin = theCurrentT-hours*3600-minutes*60;
     int yesterdayBegin = currentDayBegin-3600*24;
+    int yearDay =[[[messageDateStr substringFromIndex:0] substringToIndex:4]intValue];
+    int yearBegin =[[[currentStr substringFromIndex:0] substringToIndex:4]intValue];
+    
     //今天
     if ([currentStr isEqualToString:messageDateStr]) {
     
@@ -316,9 +321,15 @@ static GameCommon *my_gameCommon = NULL;
         finalTime = [NSString stringWithFormat:@"昨天 %@",msgT];
     }
   
-    else
+    else if(yearDay !=yearBegin){
         finalTime = [NSString stringWithFormat:@"%@年%@月%@日 %@",
                      [[messageDateStr substringFromIndex:0] substringToIndex:4],
+                     [[messageDateStr substringFromIndex:5] substringToIndex:2],
+                     [messageDateStr substringFromIndex:8],
+                     msgT];
+
+    }else
+        finalTime = [NSString stringWithFormat:@"%@-%@ %@",
                      [[messageDateStr substringFromIndex:5] substringToIndex:2],
                      [messageDateStr substringFromIndex:8],
                      msgT];
