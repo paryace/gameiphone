@@ -64,14 +64,14 @@
     lvLabel.font = [UIFont systemFontOfSize:14];
     [scrollView addSubview:lvLabel];
 
-    UILabel *experTitleLb = [[UILabel alloc]initWithFrame:CGRectMake(20,100, 40, 20)];
+    UILabel *experTitleLb = [[UILabel alloc]initWithFrame:CGRectMake(20,108, 40, 20)];
     experTitleLb.text = @"群经验";
     experTitleLb.backgroundColor = [UIColor clearColor];
     experTitleLb.textColor = [UIColor grayColor];
     experTitleLb.font = [UIFont systemFontOfSize:12];
     [scrollView addSubview:experTitleLb];
 
-    maxExperImg = [[UIImageView alloc]initWithFrame:CGRectMake(70,105, 180, 10)];
+    maxExperImg = [[UIImageView alloc]initWithFrame:CGRectMake(70,113, 180, 10)];
     maxExperImg.image = KUIImage(@"maxExper");
     maxExperImg.clipsToBounds = YES;
 
@@ -85,7 +85,7 @@
 
     [maxExperImg addSubview:nowExperImg];
 
-    experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,100, 100, 20)];
+    experlb = [[UILabel alloc]initWithFrame:CGRectMake(260,108, 100, 20)];
     experlb.text = @"0/100";
     experlb.backgroundColor = [UIColor clearColor];
     experlb.textColor = [UIColor grayColor];

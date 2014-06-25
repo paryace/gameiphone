@@ -25,7 +25,7 @@
 
         [self addSubview:self.headImg];
         
-        self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(100, 10, 200, 30)];
+        self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 10, 200, 30)];
         self.nameLabel.backgroundColor = [UIColor clearColor];
         self.nameLabel.font = [UIFont systemFontOfSize:15];
         [self addSubview:self.nameLabel];

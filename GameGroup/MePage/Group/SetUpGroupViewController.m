@@ -54,9 +54,8 @@
 
     
     UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, startX+10, 80, 38)];
-    table_label_three.text = @"群组名称";
+    table_label_three.text = @"角色名";
     table_label_three.backgroundColor = [UIColor clearColor];
-    
     table_label_three.textColor = kColorWithRGB(102, 102, 102, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:table_label_three];
@@ -77,8 +76,8 @@
     
     m_textView =[[ UITextView alloc]initWithFrame:CGRectMake(10, startX+80, 300, 150)];
     m_textView.delegate = self;
-    m_textView.font = [UIFont systemFontOfSize:13];
-    m_textView.textColor = [UIColor grayColor];
+    m_textView.font = [UIFont boldSystemFontOfSize:15];
+    m_textView.textColor = kColorWithRGB(102, 102, 102, 1.0);
     m_textView.backgroundColor = [UIColor whiteColor];
     m_textView.layer.cornerRadius = 5;
     m_textView.layer.masksToBounds = YES;
@@ -90,7 +89,7 @@
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = [UIColor grayColor];
     placeholderL.text = @"选择角色自动生成申请理由";
-    placeholderL.font = [UIFont systemFontOfSize:13.0];
+    placeholderL.font = [UIFont boldSystemFontOfSize:15.0];
     [self.view addSubview:placeholderL];
 
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -100,13 +99,6 @@
     [shareButton addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    
-//    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-//    button.frame = CGRectMake(10, startX+250, 300, 44);
-//    [button setTitle:@"提交" forState:UIControlStateNormal];
-//    [button setBackgroundImage:KUIImage(@"group_list_btn1") forState:UIControlStateNormal];
-//    [button addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:button];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if([m_searchTf isFirstResponder]){

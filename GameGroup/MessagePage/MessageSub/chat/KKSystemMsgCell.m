@@ -54,8 +54,8 @@
     }
     else{
         self.timeLable.hidden = NO;
-        self.lineImage1.hidden=NO;
-        self.lineImage2.hidden=NO;
+        self.lineImage1.hidden=YES;
+        self.lineImage2.hidden=YES;
         self.timeLable.text = [NSString stringWithFormat:@"%@", timeStr];
     }
 }
