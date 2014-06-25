@@ -71,6 +71,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            allkeysArr = KISDictionaryHaveKey(responseObject, @"sortList");
             self.listDict  = responseObject;
             [self.listDict removeObjectForKey:@"sortList"];
             
@@ -120,8 +121,8 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-        NSArray *keyArray = [self.listDict allKeys];
-        NSArray *array = [self.listDict objectForKey:[keyArray objectAtIndex:section]];
+//        NSArray *keyArray = [self.listDict allKeys];
+        NSArray *array = [self.listDict objectForKey:[allkeysArr objectAtIndex:section]];
         return array.count;
 }
 
@@ -131,8 +132,7 @@
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     cell.bgImgView.image = KUIImage(@"card_show");
     cell.tag = indexPath.section*1000+indexPath.row;
-    NSArray *keysArray = [self.listDict allKeys];
-    NSDictionary* dic = [[self.listDict objectForKey:[keysArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
+    NSDictionary* dic = [[self.listDict objectForKey:[allkeysArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     
 //    CGSize size = [KISDictionaryHaveKey(dic, @"tagName") sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(MAXFLOAT, 20) lineBreakMode:NSLineBreakByCharWrapping];
 //    cell.titleLabel.frame = CGRectMake(0, 0, size.width+5, 30);
@@ -175,32 +175,7 @@
         cell.titleLabel.textColor  = [UIColor whiteColor];
         cell.bgImgView.image = KUIImage(@"card_click");
     }
-    
-    
-//    if (cardArray.count>0) {
-//        for (int i =0;i<cardArray.count;i++) {
-//            NSDictionary *dict = cardArray[i];
-//           [dic setValue:@(10000*indexPath.section+indexPath.row) forKey:@"indexx"];
-//            if ([KISDictionaryHaveKey(dict, @"tagId")intValue]==[KISDictionaryHaveKey(dic, @"tagId")intValue]) {
-//                cell.backgroundColor = [UIColor grayColor];
-//                [cardArray removeObject:dict];
-//                NSLog(@"11111111");
-//
-//            }else{
-//                [cardArray addObject:dic];
-//                cell.backgroundColor = [UIColor greenColor];
-//                NSLog(@"222222222");
-//
-//            }
-//        }
-//    }else{
-//        [cardArray addObject:dic];
-//        cell.titleLabel.backgroundColor = [UIColor greenColor];
-//        NSLog(@"333333333");
-//
-//    }
-    
- 
+  
 }
 -(void)successClick:(id)sender
 {
@@ -215,16 +190,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

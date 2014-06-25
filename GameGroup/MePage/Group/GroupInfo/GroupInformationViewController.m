@@ -279,7 +279,7 @@
             [boView addSubview:headimgView];
         }
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        rightBtn.frame = CGRectMake(292, 5, 25, 40);
+        rightBtn.frame = CGRectMake(297, 5, 25, 40);
         [rightBtn setImage:KUIImage(@"right") forState:UIControlStateNormal];
         [rightBtn setImageEdgeInsets:UIEdgeInsetsMake(10, 0, 10, 15)];
 
@@ -306,7 +306,6 @@
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
         [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100;
-//        button.backgroundColor = [UIColor grayColor];
         if (shiptype ==1) {
             [button addTarget:self action:@selector(didClickGroup:) forControlEvents:UIControlEventTouchUpInside];
 

@@ -21,7 +21,7 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
-    [self setTopViewWithTitle:@"魔女棒" withBackButton:YES];
+    [self setTopViewWithTitle:@"魔女榜" withBackButton:YES];
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"help_normal") forState:UIControlStateNormal];
