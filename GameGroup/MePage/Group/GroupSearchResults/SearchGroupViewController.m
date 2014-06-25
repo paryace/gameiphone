@@ -87,7 +87,7 @@
             break;
          case SETUP_HOT:
             [paramDict setObject:self.gameid forKey:@"gameid"];
-            [paramDict setObject:self.roleId forKey:@"charaterId"];
+            [paramDict setObject:self.roleId forKey:@"characterId"];
             [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:NO];
             break;
         default:
