@@ -271,9 +271,9 @@
             
             NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"猜你喜欢",@"tagId":@"hot"}, nil];
             allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
-            [allkeysArr insertObject:[NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]] atIndex:0];
+            [allkeysArr insertObject:[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]] atIndex:0];
 
-            [listDict setObject:array forKey:[NSString stringWithFormat:@"%@的组织推荐",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]]];
+            [listDict setObject:array forKey:[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]]];
             [listDict removeObjectForKey:@"sortList"];
 
             
