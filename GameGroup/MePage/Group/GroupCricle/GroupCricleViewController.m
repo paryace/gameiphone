@@ -114,8 +114,15 @@ typedef enum : NSUInteger {
     [self.view addSubview:m_myTableView];
     NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.groupId];
     NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
-    UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
-    topImageView.image = KUIImage(@"groupinfo_top");
+    EGOImageView *topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
+    topImageView.placeholderImage = KUIImage(@"groupinfo_top");
+    NSString * imageUrl = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
+    if ([GameCommon isEmtity:imageUrl]) {
+        topImageView.image = KUIImage(@"groupinfo_top");
+    }else{
+        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(groupInfo, @"backgroundImg") Width:320*2 Height:187*2];
+    }
+//    topImageView.image = KUIImage(@"groupinfo_top");
     [self.view addSubview:topImageView];
     
     UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];
