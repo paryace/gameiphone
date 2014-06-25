@@ -860,7 +860,7 @@ UINavigationControllerDelegate>
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
     [messages insertObject:dictionary atIndex:0];
-    [self newMsgToArray:dictionary];
+    [self overReadMsgToArray:dictionary Index:0];
 }
 
 //加载全部
