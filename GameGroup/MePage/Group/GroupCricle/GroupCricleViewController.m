@@ -81,24 +81,6 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    
-    [self setTopViewWithTitle:@"群动态" withBackButton:NO];
-    
-    
-    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
-    backButton.backgroundColor = [UIColor clearColor];
-    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backButton];
-    
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];
     wxSDArray = [NSMutableArray array];
@@ -108,23 +90,24 @@ typedef enum : NSUInteger {
     delcommentDic = [NSMutableDictionary dictionary];
     
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:self.groupId];
     NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
-    EGOImageView *topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
+    EGOImageView *topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320,320)];
     topImageView.placeholderImage = KUIImage(@"groupinfo_top");
     NSString * imageUrl = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
     if ([GameCommon isEmtity:imageUrl]) {
-        topImageView.image = KUIImage(@"groupinfo_top");
+        UIImage * afterImage= [NetManager image2:KUIImage(@"groupinfo_top") centerInSize:CGSizeMake(320*2,320*2)];
+        topImageView.image = afterImage;
     }else{
-        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(groupInfo, @"backgroundImg") Width:320*2 Height:187*2];
+        topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(groupInfo, @"backgroundImg") Width:320*2 Height:320*2];
     }
     [self.view addSubview:topImageView];
     
-    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];
+    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 320-30, 320, 30)];
     lb.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
     lb.textColor = [UIColor whiteColor];
     lb.font = [UIFont systemFontOfSize:12];
@@ -152,9 +135,22 @@ typedef enum : NSUInteger {
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
     
-    
-    
     [self buildcommentView];
+    
+    [self setTopViewWithTitle:@"群动态" withBackButton:NO];
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
 }
 
 -(void)backButtonClick:(UIButton*)sender
@@ -1302,9 +1298,9 @@ typedef enum : NSUInteger {
         offer+=[[cellhightarray objectForKey:KISDictionaryHaveKey(dict, @"id")]floatValue];
     }
     if(iPhone5){
-        offer+=(185-height-23);
+        offer+=(320-height-startX-20);
     }else{
-        offer+=(185-height+65);
+        offer+=(320-height-startX-20);
     }
     
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];

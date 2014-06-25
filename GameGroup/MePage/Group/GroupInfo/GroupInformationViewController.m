@@ -563,6 +563,7 @@
                 cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
             ;
@@ -662,7 +663,7 @@
                 cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
-            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@ , %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
             cell.distance.text = [self getDist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"distance")]];
             
             return cell;
@@ -716,6 +717,7 @@
                 cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)]
             ;
@@ -815,7 +817,7 @@
                 cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
-            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@ , %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
             cell.distance.text = [self getDist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"distance")]];
             return cell;
         }
