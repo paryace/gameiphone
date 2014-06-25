@@ -23,7 +23,7 @@
         topView.frame = CGRectMake(0,0,320,60);
         topView.backgroundColor = [UIColor blackColor];
 
-        topTitle = @[@"粉丝数量",@"附近的朋友",@"有趣的人",@"添加好友"];
+        topTitle = @[@"粉丝数量",@"好友出没",@"有趣的人",@"添加好友"];
         self.btn1 = [self getUIBtn:0];
         [topView addSubview:self.btn1];
         

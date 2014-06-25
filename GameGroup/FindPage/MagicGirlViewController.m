@@ -24,8 +24,8 @@
     [self setTopViewWithTitle:@"魔女棒" withBackButton:YES];
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [delButton setBackgroundImage:KUIImage(@"help_normal") forState:UIControlStateNormal];
+    [delButton setBackgroundImage:KUIImage(@"help_click") forState:UIControlStateHighlighted];
     [self.view addSubview:delButton];
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     

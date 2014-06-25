@@ -79,14 +79,6 @@ typedef enum : NSUInteger {
 
 @implementation NewNearByViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
@@ -250,7 +242,6 @@ typedef enum : NSUInteger {
     [self buildcommentView];
 
     citydongtaiStr = @"附近的动态";
-    // Do any additional setup after loading the view.
     
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
@@ -1045,9 +1036,13 @@ typedef enum : NSUInteger {
     nearBylabel.font = [UIFont systemFontOfSize:13];
     [view addSubview:nearBylabel];
     
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 0, 100, 39)];
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(220, 8.5, 72, 23)];
+
     [button setTitle:@"城市漫游 >" forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont systemFontOfSize:12];
+    [button setBackgroundImage:KUIImage(@"near_city_normal") forState:UIControlStateNormal];
+    [button setBackgroundImage:KUIImage(@"near_city_click") forState:UIControlStateHighlighted];
+    button.backgroundColor = [UIColor clearColor];
     [button addTarget:self action:@selector(enterCitisePage:) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [button setBackgroundColor:[UIColor clearColor]];
