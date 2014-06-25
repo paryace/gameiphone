@@ -51,7 +51,6 @@
 
     // Override point for customization after application launch.
     self.startViewController = [[StartViewController alloc] init];
-    
     self.window.rootViewController = self.startViewController;
     
     //网络变化

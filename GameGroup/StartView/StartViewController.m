@@ -19,7 +19,7 @@
 #import "MLNavigationController.h"
 #import "NewFriendPageController.h"
 #import "DownloadImageService.h"
-
+#import "Appdelegate.h"
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -106,14 +106,16 @@
         fourth.hidesBottomBarWhenPushed = YES;
         UINavigationController* navigationController_Fourth = [[UINavigationController alloc] initWithRootViewController:fourth];
         navigationController_Fourth.navigationBarHidden = YES;
-
+    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
     
-        Custom_tabbar*  ryc_tabbarController = [[Custom_tabbar alloc] init];
-    
+        Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
         ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second, navigationController_Third, navigationController_Fourth, nil];
-        [self presentViewController:ryc_tabbarController animated:NO completion:^{
-            
-        }];
+    app.window.rootViewController = nil;
+    app.window.rootViewController = ryc_tabbarController;
+
+//        [self presentViewController:ryc_tabbarController animated:NO completion:^{
+//            
+//        }];
 }
 
 //下载开机图
