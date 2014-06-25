@@ -296,4 +296,7 @@
 
 //查询最有一条动态消息
 +(NSMutableDictionary *)queryLatestDynamic:(NSString*)userId;
+
+//清空群组通知
++(void)clearJoinGroupApplicationMsg;
 @end

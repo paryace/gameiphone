@@ -594,6 +594,7 @@
             
         }else if([[[allMsgArray objectAtIndex:indexPath.row]msgType] isEqual:GROUPAPPLICATIONSTATE])
         {
+            [DataStoreManager clearJoinGroupApplicationMsg];
             [DataStoreManager deleteJoinGroupApplication];
         }
         else{

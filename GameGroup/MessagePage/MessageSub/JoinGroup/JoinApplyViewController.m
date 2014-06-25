@@ -28,6 +28,14 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群组通知页" withBackButton:YES];
+    
+    UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
+    [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [self.view addSubview:delButton];
+    [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreMsgList:) name:kJoinGroupMessage object:nil];
     
     m_applyArray = [NSMutableArray array];
@@ -39,6 +47,23 @@
     [self.view addSubview:m_ApplyTableView];
     [self getJoinGroupMsg];
 }
+
+#pragma mark -清空
+- (void)cleanBtnClick:(id)sender
+{
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"将会清除所有的消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    alert.tag = 345;
+    [alert show];
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 345) {
+        if (alertView.cancelButtonIndex != buttonIndex) {
+            [DataStoreManager clearJoinGroupApplicationMsg];
+            [self getJoinGroupMsg];
+        }
+    }
+}
 -(void)refreMsgList:(NSNotification *)notification
 {
     [DataStoreManager blankMsgUnreadCountFormsgType:GROUPAPPLICATIONSTATE];
@@ -47,6 +72,10 @@
 -(void)getJoinGroupMsg
 {
     m_applyArray = [DataStoreManager queryDSGroupApplyMsg];
+    if([m_applyArray isKindOfClass:[NSArray class]]&&m_applyArray.count==0)
+    {
+        [DataStoreManager deleteJoinGroupApplication];
+    }
     [m_ApplyTableView reloadData];
 }
 #pragma mark 表格
@@ -227,6 +256,25 @@
         return cell;
     }
 }
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle==UITableViewCellEditingStyleDelete)
+    {
+        NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
+        NSString * msgId = KISDictionaryHaveKey(dict, @"msgId");
+        [m_applyArray removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        [DataStoreManager deleteJoinGroupApplicationWithMsgId:msgId];
+        [m_ApplyTableView reloadData];
+    }
+}
+
+
+
 -(void)groupImageClick:(BaseGroupMsgCell*)sender
 {
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:sender.tag];

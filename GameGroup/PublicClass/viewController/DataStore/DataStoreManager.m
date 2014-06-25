@@ -190,17 +190,10 @@
         }
     }];
 }
-//
+//删除群组通知的显示消息
 +(void)deleteJoinGroupApplication
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgType!=[c]%@ ",@"groupBillboard"];
-        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
-        for (int i = 0; i<msgs.count; i++) {
-            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
-            [msg MR_deleteInContext:localContext];
-        }
-        
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs)
@@ -233,6 +226,19 @@
         }
     }];
 }
+//清空群组通知
++(void)clearJoinGroupApplicationMsg
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicateApp = [NSPredicate predicateWithFormat:@"msgType!=[c]%@ ",@"groupBillboard"];
+        NSArray * msgs = [DSGroupApplyMsg MR_findAllWithPredicate:predicateApp];
+        for (int i = 0; i<msgs.count; i++) {
+            DSGroupApplyMsg * msg = [msgs objectAtIndex:i];
+            [msg MR_deleteInContext:localContext];
+        }
+    }];
+}
+
 //根据msgType和GroupId删除通知表的消息
 +(void)deleteJoinGroupApplicationByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId
 {
