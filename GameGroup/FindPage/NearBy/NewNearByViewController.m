@@ -1042,9 +1042,8 @@ typedef enum : NSUInteger {
     button.titleLabel.font = [UIFont systemFontOfSize:12];
     [button setBackgroundImage:KUIImage(@"near_city_normal") forState:UIControlStateNormal];
     [button setBackgroundImage:KUIImage(@"near_city_click") forState:UIControlStateHighlighted];
-    button.backgroundColor = [UIColor clearColor];
     [button addTarget:self action:@selector(enterCitisePage:) forControlEvents:UIControlEventTouchUpInside];
-    [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button setBackgroundColor:[UIColor clearColor]];
     [view addSubview:button];
     

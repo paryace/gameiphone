@@ -259,8 +259,19 @@ typedef enum : NSUInteger {
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_footer endRefreshing];
+        [m_header endRefreshing];
+        [hud hide:YES];
         if(!responseObject||![responseObject isKindOfClass:[NSArray class]]){
+            [m_dataArray removeAllObjects];
+            [m_myTableView reloadData];
             return ;
+        }
+        NSArray * arrr = responseObject;
+        if (arrr.count==0) {
+            [m_dataArray removeAllObjects];
+            [m_myTableView reloadData];
+            return;
         }
         if (m_currPageCount ==0) {
             [m_dataArray removeAllObjects];
@@ -280,9 +291,6 @@ typedef enum : NSUInteger {
             
         }
         [m_myTableView reloadData];
-        [m_footer endRefreshing];
-        [m_header endRefreshing];
-        [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

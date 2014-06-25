@@ -23,8 +23,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建群组" withBackButton:YES];
-    
-    
+        
     NSMutableArray * stArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     if (!stArray||stArray.count<=0) {
@@ -48,6 +47,7 @@
     [self.view addSubview:hud];
     hud.labelText = @"提交中...";
 }
+
 -(void)didClickGameListWithDel:(AddGroupView *)gro dic:(NSDictionary *)dic
 {
     [m_updataDic setObject:KISDictionaryHaveKey(dic, @"id")?KISDictionaryHaveKey(dic, @"id"):@"" forKey:@"gameid"];
