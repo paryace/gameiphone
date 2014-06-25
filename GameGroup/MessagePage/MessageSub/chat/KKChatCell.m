@@ -87,7 +87,7 @@
 //设置时间
 -(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime
 {
-    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<60) {
+    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<300) {
         self.senderAndTimeLabel.hidden = YES;
     }
     else{

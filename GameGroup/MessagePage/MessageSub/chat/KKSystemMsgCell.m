@@ -47,7 +47,7 @@
 //设置时间
 -(void)setMsgTime:(NSString*)timeStr lastTime:(NSString*)lasttime previousTime:(NSString*)previoustime
 {
-    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<60) {
+    if ([lasttime intValue]-[[previoustime substringToIndex:10]intValue]<300) {
         self.timeLable.hidden = YES;
         self.lineImage1.hidden=YES;
         self.lineImage2.hidden=YES;
