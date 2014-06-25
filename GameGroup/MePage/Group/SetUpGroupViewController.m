@@ -164,7 +164,7 @@
     if ([gameInfoArray count] != 0) {
         placeholderL.text = @"";
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请加入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
         m_searchTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
         [m_searchTf resignFirstResponder];
         [m_textView becomeFirstResponder];
