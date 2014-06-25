@@ -13,9 +13,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {//65
-        // Initialization code
-//        self.contentView.backgroundColor = [UIColor colorWithRed:0.98 green:0.98 blue:0.98 alpha:1];
+    if (self) {
         self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 12.5, 45, 45)];
         self.headImageV.backgroundColor = [UIColor clearColor];
         self.headImageV.layer.cornerRadius = 5;
@@ -61,7 +59,6 @@
         
         self.settingState = [[UIImageView alloc] initWithFrame:CGRectMake(290, 37, 17, 17)];
         self.settingState.backgroundColor = [UIColor clearColor];
-//        self.settingState.hidden=YES;
         self.settingState.image=KUIImage(@"nor_soundSong");
         [self.contentView addSubview:self.settingState];
         
@@ -69,11 +66,86 @@
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+-(void)setNotReadMsgCount:(DSThumbMsgs*)message
 {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+    if ([[message msgType]isEqualToString:@"groupchat"]) {
+        NSString * groupId = [NSString stringWithFormat:@"%@",[message groupId]];
+        if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {//关闭模式
+            self.settingState.hidden=NO;
+            self.settingState.image=KUIImage(@"close_receive");
+            self.unreadCountLabel.hidden = YES;
+            self.notiBgV.hidden = YES;
+            if([[message unRead]intValue]>0)
+            {
+                self.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条新消息"];
+            }
+            
+        }else{
+            if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"2"]) {//无声模式
+                self.settingState.hidden=NO;
+                self.settingState.image=KUIImage(@"nor_soundSong");
+            }else{
+                self.settingState.hidden=YES;
+                self.settingState.image=KUIImage(@"");
+            }
+            if ([[message unRead]intValue]>0) {
+                self.unreadCountLabel.hidden = NO;
+                self.notiBgV.hidden = NO;
+                [self.unreadCountLabel setText:[message unRead]];
+                if ([[message unRead] intValue]>99) {
+                    [self.unreadCountLabel setText:@"99+"];
+                    self.notiBgV.image = KUIImage(@"redCB_big");
+                    self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+                    self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+                }
+                else{
+                    self.notiBgV.image = KUIImage(@"redCB.png");
+                    [self.unreadCountLabel setText:[message unRead]];
+                    self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+                    self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+                }
+            }
+            else
+            {
+                self.unreadCountLabel.hidden = YES;
+                self.notiBgV.hidden = YES;
+            }
+        }
+        
+    }else{
+        //设置红点 start
+        self.settingState.hidden=YES;
+        if ([[message unRead]intValue]>0) {
+            self.unreadCountLabel.hidden = NO;
+            self.notiBgV.hidden = NO;
+            if ([[message msgType] isEqualToString:@"recommendfriend"] |
+                [[message msgType] isEqualToString:@"sayHello"] ||
+                [[message msgType] isEqualToString:@"deletePerson"]) {
+                self.notiBgV.image = KUIImage(@"redpot");
+                self.unreadCountLabel.hidden = YES;
+            }
+            else
+            {
+                [self.unreadCountLabel setText:[message unRead]];
+                if ([[message unRead] intValue]>99) {
+                    [self.unreadCountLabel setText:@"99+"];
+                    self.notiBgV.image = KUIImage(@"redCB_big");
+                    self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+                    self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+                }
+                else{
+                    self.notiBgV.image = KUIImage(@"redCB.png");
+                    [self.unreadCountLabel setText:[message unRead]];
+                    self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+                    self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+                }
+            }
+        }
+        else
+        {
+            self.unreadCountLabel.hidden = YES;
+            self.notiBgV.hidden = YES;
+        }
+    }
 }
-
 @end
