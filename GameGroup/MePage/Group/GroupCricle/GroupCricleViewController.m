@@ -122,7 +122,6 @@ typedef enum : NSUInteger {
     }else{
         topImageView.imageURL = [ImageService getImageUrl:KISDictionaryHaveKey(groupInfo, @"backgroundImg") Width:320*2 Height:187*2];
     }
-//    topImageView.image = KUIImage(@"groupinfo_top");
     [self.view addSubview:topImageView];
     
     UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];

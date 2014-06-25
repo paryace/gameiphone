@@ -662,17 +662,8 @@
                 cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
-            double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
-            double gongLi = dis/1000;
-            
-            NSString* allStr = @"";
-            if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
-                allStr = @"未知";
-            }
-            else{
-                allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
-            }
-            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[[GameCommon shareGameCommon]getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
+            cell.distance.text = [self getDist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"distance")]];
             
             return cell;
         }

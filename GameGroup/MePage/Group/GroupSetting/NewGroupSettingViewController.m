@@ -278,13 +278,12 @@ typedef enum : NSUInteger {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
         //离开该群,解散群
-        
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,5,KISHighVersion_7?320:300,50)];
-        [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
-        [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        okButton.backgroundColor = [UIColor clearColor];
-        [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
-        cell.backgroundColor = [UIColor redColor];
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
+        UILabel* okButton = [[UILabel alloc] initWithFrame:CGRectMake(0,0,KISHighVersion_7?320:300,50)];
+        okButton.text = @"离开该群";
+        okButton.textColor = [UIColor whiteColor];
+        okButton.backgroundColor = UIColorFromRGBA(0xea4444, 1);
+        okButton.textAlignment = NSTextAlignmentCenter;
         [cell.contentView addSubview:okButton];
         return cell;
 
@@ -294,19 +293,18 @@ typedef enum : NSUInteger {
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
+        cell.selectionStyle =UITableViewCellSelectionStyleNone;
         //解散群
         cell.backgroundColor = [UIColor whiteColor];
-        UIButton* okButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,KISHighVersion_7?320:300, 50)];
-        [okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        okButton.backgroundColor = [UIColor redColor];
+        UILabel* okButton = [[UILabel alloc] initWithFrame:CGRectMake(0,0,KISHighVersion_7?320:300, 50)];
+        okButton.textColor = [UIColor whiteColor];
+        okButton.textAlignment = NSTextAlignmentCenter;
+        okButton.backgroundColor = UIColorFromRGBA(0xea4444, 1);
         if (self.shiptypeCount ==1){
-            [okButton setTitle:@"离开该群" forState:UIControlStateNormal];
-            [okButton addTarget:self action:@selector(leave:) forControlEvents:UIControlEventTouchUpInside];
+            okButton.text = @"离开该群";
         }else{
-            [okButton setTitle:@"解散该群" forState:UIControlStateNormal];
-            [okButton addTarget:self action:@selector(dissolve:) forControlEvents:UIControlEventTouchUpInside];
+            okButton.text = @"解散该群";
         }
-        
         cell.backgroundColor = [UIColor clearColor];
         [cell.contentView addSubview:okButton];
         
@@ -340,6 +338,14 @@ typedef enum : NSUInteger {
             }else if(indexPath.row==1){//编辑资料
                 [self editGroupInfo];
             }
+        }else{
+            [self leave:nil];
+        }
+    }else if(indexPath.section==3){
+        if (self.shiptypeCount ==1){
+            [self leave:nil];
+        }else{
+            [self dissolve:nil];
         }
     }
 }
