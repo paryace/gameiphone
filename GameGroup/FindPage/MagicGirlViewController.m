@@ -25,7 +25,7 @@
     contentWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
     contentWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     contentWebView.delegate = self;
-    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"2"]]]];
+    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"1"]]]];
 
     [(UIScrollView *)[[contentWebView subviews] objectAtIndex:0] setBounces:NO];
     [self.view addSubview:contentWebView];

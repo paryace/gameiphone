@@ -32,6 +32,15 @@
         [self.contentView addSubview:self.timeLabel];
         
         
+        self.distance = [[UILabel alloc]initWithFrame:CGRectMake(320-20-100, 10, 100, 20)];
+        self.distance.textColor = [UIColor grayColor];
+        self.distance.adjustsFontSizeToFitWidth = YES;
+        self.distance.font = [UIFont systemFontOfSize:14];
+        self.distance.textAlignment = NSTextAlignmentRight;
+        self.distance.backgroundColor=[UIColor clearColor];
+        [self.contentView addSubview:self.distance];
+        
+        
 
     }
     return self;

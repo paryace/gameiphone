@@ -83,7 +83,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     m_layout.minimumLineSpacing =5;
     m_layout.itemSize = CGSizeMake(imageHight, imageHight);
     m_layout.headerReferenceSize = CGSizeMake(320, 70);
-    m_layout.sectionInset = UIEdgeInsetsMake(10,3,3,3);
+    m_layout.sectionInset = UIEdgeInsetsMake(10,5,3,3);
     
     groupCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, startX, 320, 70+10+imageHight+5) collectionViewLayout:m_layout];
     groupCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);

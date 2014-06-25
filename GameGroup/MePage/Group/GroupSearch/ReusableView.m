@@ -18,21 +18,21 @@
         self.topBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, 70)];
         self.topBtn.backgroundColor= [UIColor whiteColor];
         [self addSubview:self.topBtn];
-        self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 50, 50)];
+        self.headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(5, 10, 50, 50)];
         self.headImageView.layer.cornerRadius = 5;
         self.headImageView.layer.masksToBounds=YES;
 
         self.headImageView.placeholderImage = KUIImage(@"group_icon");
         [self.topBtn addSubview:self.headImageView];
         
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 320-90, 20)];
+        self.label = [[UILabel alloc] initWithFrame:CGRectMake(65, 10, 320-90, 20)];
         self.label.backgroundColor = [UIColor clearColor];
         self.label.textAlignment = NSTextAlignmentLeft;
         self.label.font = [UIFont boldSystemFontOfSize:14.0f];
         self.label.textColor = [UIColor grayColor];
         [self.topBtn addSubview:self.label];
         
-        self.contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 28, 220, 40)];
+        self.contentLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 28, 220, 40)];
         self.contentLabel.backgroundColor = [UIColor clearColor];
         [self.contentLabel setTextAlignment:NSTextAlignmentLeft];
         [self.contentLabel setFont:[UIFont systemFontOfSize:12]];
@@ -42,7 +42,7 @@
 
         
         
-        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(210, 10, 100, 15)];
+        self.timeLabel =  [[UILabel alloc] initWithFrame:CGRectMake(205, 10, 100, 15)];
         self.timeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth |
         UIViewAutoresizingFlexibleHeight;
         self.timeLabel.backgroundColor = [UIColor clearColor];
@@ -62,7 +62,7 @@
         [self.topBtn addSubview:self.roghtImage];
         
         
-        self.gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(53, 6, 18, 18)];
+        self.gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(48, 6, 18, 18)];
         [self.gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
         self.gbMsgCountImageView.hidden = YES;
         [self.topBtn addSubview:self.gbMsgCountImageView];

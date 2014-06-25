@@ -8,6 +8,7 @@
 
 #import "BillboardViewController.h"
 #import "BillBoardCell.h"
+#import "KKChatController.h"
 
 @interface BillboardViewController ()
 {
@@ -36,6 +37,7 @@
     m_billboardTabel = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth- startX)];
     m_billboardTabel.delegate = self;
     m_billboardTabel.dataSource = self;
+    [GameCommon setExtraCellLineHidden:m_billboardTabel];
     [self.view addSubview:m_billboardTabel];
     [self getJoinGroupMsg];
 }
@@ -133,6 +135,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_billboardTabel deselectRowAtIndexPath:indexPath animated:YES];
+    NSMutableDictionary *tempDic=[NSMutableDictionary dictionaryWithDictionary:[m_dataArray objectAtIndex:indexPath.row]];
+    KKChatController * kkchat = [[KKChatController alloc] init];
+    kkchat.chatWithUser = KISDictionaryHaveKey(tempDic, @"groupId");
+    kkchat.type = @"group";
+    [self.navigationController pushViewController:kkchat animated:YES];
 
 }
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

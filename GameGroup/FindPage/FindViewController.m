@@ -368,6 +368,8 @@
     headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
     [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     headImgView.frame = CGRectMake(320-50, 10, 40, 40);
+    headImgView.layer.cornerRadius = 5.0;
+    headImgView.layer.masksToBounds = YES;
     if (_friendImgStr ==nil) {
         NSString * imageId=[[NSUserDefaults standardUserDefaults]objectForKey:@"preload_img_wx_dongtai"];
         
@@ -405,7 +407,7 @@
     }
 
     
-    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 100, 20)];
+    commentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 33, 100, 20)];
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentRight;
     commentLabel.adjustsFontSizeToFitWidth = YES;

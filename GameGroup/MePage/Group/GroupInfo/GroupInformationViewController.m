@@ -357,7 +357,7 @@
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"%@_group",self.groupId]];
             
             NSMutableArray *arr = KISDictionaryHaveKey(responseObject, @"memberList");
-            [arr addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"wxxxx",@"img", nil]];
+            [arr insertObject:[NSDictionary dictionaryWithObjectsAndKeys:@"wxxxx",@"img", nil] atIndex:0];
             
             [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:arr];
             
@@ -499,6 +499,7 @@
                 cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
             titleLabel.textColor = [UIColor grayColor];
@@ -684,6 +685,7 @@
                 cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde2];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(15, 10, 50, 20)];
             titleLabel.textColor = [UIColor grayColor];
@@ -822,21 +824,31 @@
                 cell = [[CreateTimeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde4];
             }
             cell.selectionStyle =UITableViewCellSelectionStyleNone;
-            double dis = [KISDictionaryHaveKey(m_mainDict, @"distance") doubleValue];
-            double gongLi = dis/1000;
-            
-            NSString* allStr = @"";
-            if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
-                allStr = @"未知";
-            }
-            else{
-                allStr = [NSString stringWithFormat:@"%.2fkm",gongLi];
-            }
-            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],KISDictionaryHaveKey(m_mainDict, @"location"),allStr];
-            
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@  %@",[self getDataWithTimeInterval:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(m_mainDict, @"createDate")]],[self getLocation:KISDictionaryHaveKey(m_mainDict, @"location")]];
+            cell.distance.text = [self getDist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"distance")]];
             return cell;
         }
     }
+}
+
+//location
+-(NSString*)getLocation:(NSString*)location
+{
+    if ([GameCommon isEmtity:location]) {
+        return @"未知";
+    }
+    return location;
+}
+
+//距离
+- (NSString*)getDist:(NSString*)distrance
+{
+    double dis = [distrance doubleValue];
+    double gongLi = dis/1000;
+    if (gongLi < 0 || gongLi == 9999) {
+        return @"未知";
+    }
+    return [NSString stringWithFormat:@"%.2fkm", gongLi];
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -947,7 +959,7 @@
 
     label.textAlignment = NSTextAlignmentCenter;
     label.font = [UIFont boldSystemFontOfSize:13];
-    label.textColor = [UIColor blackColor];
+    label.textColor = [UIColor blueColor];
     label.backgroundColor = [UIColor clearColor];
     
     label.shadowColor = [UIColor colorWithWhite:1.0f alpha:0.7];
