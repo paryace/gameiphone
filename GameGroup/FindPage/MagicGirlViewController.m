@@ -21,11 +21,18 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
+    [self setTopViewWithTitle:@"魔女棒" withBackButton:YES];
+    UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
+    [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [self.view addSubview:delButton];
+    [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    contentWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0, (KISHighVersion_7?20:0), 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
+    contentWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0,startX, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
     contentWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     contentWebView.delegate = self;
-    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"1"]]]];
+    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"2"]]]];
 
     [(UIScrollView *)[[contentWebView subviews] objectAtIndex:0] setBounces:NO];
     [self.view addSubview:contentWebView];
@@ -35,6 +42,12 @@
     hud.delegate = self;
     hud.labelText = @"正在加载魔女榜...";
 }
+
+- (void)cleanBtnClick:(id)sender
+{
+    
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
     [hud show:YES];
