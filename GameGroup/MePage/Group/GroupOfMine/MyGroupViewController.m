@@ -34,8 +34,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    NSInteger localMsgCount =  [self loadMsgCount:self.msgUnReadCount];
-    msgCount = self.msgUnReadCount +localMsgCount;
+    [self initMsgCount];
     NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
     if (bills&&bills.count>0) {
         dict = [bills objectAtIndex:0];
@@ -45,17 +44,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [groupCollectionView reloadData];
 }
 
--(NSInteger)loadMsgCount:(NSInteger)tempCount
+//初始化公告未读消息数量
+-(void)initMsgCount
 {
-    if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]) {
-        [[NSUserDefaults standardUserDefaults]setObject:@(tempCount) forKey:Billboard_msg_count2];
-         [[NSUserDefaults standardUserDefaults] synchronize];
-        return 0;
-    }
-    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count2]intValue];
-    [[NSUserDefaults standardUserDefaults]setObject:@(i+tempCount) forKey:Billboard_msg_count2];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    return i;
+    NSNumber *bullboardMsgCount = [[NSUserDefaults standardUserDefaults]objectForKey:Billboard_msg_count];
+    msgCount = [bullboardMsgCount intValue];
 }
 
 - (void)viewDidLoad
@@ -125,8 +118,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 }
 -(void)backButtonClick:(id)sender
 {
-    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
    [self.navigationController popViewControllerAnimated:YES];
 
 }
@@ -136,10 +129,6 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
     msgCount++;
-    [self loadMsgCount:1];
-    
-    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
     NSDictionary * msg = sender.userInfo;
     NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
@@ -160,6 +149,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     dict = msg;
     [groupCollectionView reloadData];
 }
+
 -(void)refreshNet:(id)sender
 {
     [self getGroupListFromNet];
@@ -279,8 +269,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)onClick:(UIButton*)sender
 {
     msgCount=0;
-    self.msgUnReadCount = 0;
-    [[NSUserDefaults standardUserDefaults]setObject:@(0) forKey:Billboard_msg_count2];
+    [[NSUserDefaults standardUserDefaults]setObject:0 forKey:Billboard_msg_count];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [groupCollectionView reloadData];
     BillboardViewController *joinIn = [[BillboardViewController alloc]init];

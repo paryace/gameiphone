@@ -852,6 +852,20 @@
             guildMember.realmStr = KISDictionaryHaveKey(m_mainDict, @"gameRealm");
             guildMember.gameidStr = KISDictionaryHaveKey(m_mainDict, @"gameid");
             [self.navigationController pushViewController:guildMember animated:YES];
+        }else if (indexPath.row==2){
+            SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
+            groupView.ComeType =SETUP_SAMEREALM;
+            groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"realm")] ;
+            [self.navigationController pushViewController:groupView animated:YES];
+        }
+    }else{
+        if (indexPath.row==1) {
+            SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
+            groupView.ComeType =SETUP_SAMEREALM;
+            groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
+            groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")] ;
+            [self.navigationController pushViewController:groupView animated:YES];
         }
     }
 }

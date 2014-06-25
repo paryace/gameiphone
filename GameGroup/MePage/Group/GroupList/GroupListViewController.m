@@ -51,6 +51,7 @@
     m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_GroupTableView.dataSource = self;
     m_GroupTableView.delegate = self;
+    [GameCommon setExtraCellLineHidden:m_GroupTableView];
     [self.view addSubview:m_GroupTableView];
     
     [self addheadView];
@@ -134,7 +135,12 @@
         [m_footer endRefreshing];
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             NSMutableArray * groupList = responseObject;
-            m_groupArray = groupList;
+            if (m_currPageCount == 0) {
+                m_groupArray = groupList;
+            }
+            else{
+                [m_groupArray addObjectsFromArray:groupList];
+            }
             [m_GroupTableView reloadData];
             
 //            for (NSMutableDictionary * groupInfo in responseObject) {

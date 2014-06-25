@@ -597,6 +597,7 @@
                 break;
         }
     }else{
+         NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
         if (buttonIndex ==0) {
             if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
                 UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
@@ -613,17 +614,17 @@
         }
         else if (buttonIndex ==1)
         {
-            [[ShareToOther singleton]shareTosinass:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+            [[ShareToOther singleton]shareTosinass:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
         {
             [[ShareToOther singleton]changeScene:WXSceneSession];
-             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==3)
         {
             [[ShareToOther singleton] changeScene:WXSceneTimeline];
-            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:@"动态分享" Description:@"动态分享" Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
     }
 }
@@ -679,7 +680,6 @@
             titleSize = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"title")] sizeWithFont:[UIFont boldSystemFontOfSize:15.0] constrainedToSize:CGSizeMake(260, 40)];
         }
         
-//        float titleHeg = titleSize.height > 50 ? 50 : titleSize.height;
         UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 260, titleSize.height)];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.numberOfLines = 2;
@@ -694,10 +694,6 @@
             thumb.layer.masksToBounds = YES;
             thumb.placeholderImage = KUIImage(@"have_picture");
             
-            
-//            NSString* imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"thumb")];
-//            NSURL * titleImage = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/50",imgStr]];
-//            thumb.imageURL = titleImage;
             NSString * imageId=KISDictionaryHaveKey(self.dataDic, @"thumb");
             thumb.imageURL = [ImageService getImageUrl3:imageId Width:50];
             

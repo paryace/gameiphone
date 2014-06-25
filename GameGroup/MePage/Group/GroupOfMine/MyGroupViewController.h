@@ -10,6 +10,5 @@
 #import "ReusableView.h"
 #import "GroupInformationViewController.h"
 @interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate,GroupEditRefreshInfoDelegate>
-@property (assign, nonatomic)  NSInteger msgUnReadCount;//未读的消息数
 @end
 
