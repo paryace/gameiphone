@@ -107,6 +107,7 @@
         UINavigationController* navigationController_Fourth = [[UINavigationController alloc] initWithRootViewController:fourth];
         navigationController_Fourth.navigationBarHidden = YES;
 
+    
         Custom_tabbar*  ryc_tabbarController = [[Custom_tabbar alloc] init];
     
         ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second, navigationController_Third, navigationController_Fourth, nil];
