@@ -45,8 +45,29 @@ static DownloadImageService *downService = NULL;
 {
     //用NSURLSession和NSURLRequest创建网络任务
     self.imageId = imageId;
-    self.task = [[self session] downloadTaskWithRequest:[self request:imageId]];
-    [self.task resume];
+    if (KISHighVersion_7) {
+        self.task = [[self session] downloadTaskWithRequest:[self request:imageId]];
+        [self.task resume];
+    }
+    else{
+        [self iOS6DownloadImage];
+    }
+    
+}
+
+-(void)iOS6DownloadImage
+{
+    NSString * urlStr= [ImageService getImgUrl:self.imageId];
+    NSString * downLoadUrl = [NSString stringWithFormat:@"%@",urlStr];
+    NSURL *url = [NSURL URLWithString:downLoadUrl];
+    UIImage * result;
+    NSData * data = [NSData dataWithContentsOfURL:url];
+    result = [UIImage imageWithData:data];
+    NSString *path = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",self.imageId]];
+    if([UIImageJPEGRepresentation(result, 1.0) writeToFile:path options:NSAtomicWrite error:nil])
+    {
+        [[NSUserDefaults standardUserDefaults]setObject:self.imageId forKey:OpenImage];
+    }
 }
 
 //创建文件本地保存目录

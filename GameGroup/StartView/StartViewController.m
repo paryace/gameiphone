@@ -118,7 +118,7 @@
 //下载开机图
 -(void)downloadImageWithID:(NSString *)imageId
 {
-    [[DownloadImageService singleton] startDownload:imageId];
+   [[DownloadImageService singleton] startDownload:imageId];
     
 //    NSString * urlStr= [ImageService getImgUrl:imageId];
 //    [NetManager downloadImageWithBaseURLStr:urlStr ImageId:imageId completion:^(NSURLResponse *response, NSURL *filePath, NSError *error)
@@ -175,7 +175,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
              NSString * openImageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"adImg")];
              NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
-            if ([GameCommon isEmtity:imageId]) {
+            if ([GameCommon isEmtity:openImageId]) {
                 [[NSUserDefaults standardUserDefaults]setObject:@"" forKey:OpenImage];
             }else{
                 if (![openImageId isEqualToString:imageId]) {
