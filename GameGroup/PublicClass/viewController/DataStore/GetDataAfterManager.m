@@ -147,11 +147,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self setSoundOrVibrationopen];
         [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
     }
-    else if ([type isEqualToString:@"joinGroupApplication"])//群组消息
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
-    }
     else if ([type isEqualToString:@"joinGroupApplication"]
              ||[type isEqualToString:@"joinGroupApplicationAccept"]
              ||[type isEqualToString:@"joinGroupApplicationReject"]
