@@ -393,9 +393,9 @@
 
 - (NSString*)imageHtmlWithId:(NSString*)imageid
 {
-    if ([GameCommon isPureInt:imageid]) {
-        [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"/305"];
-    }
+//    if ([GameCommon isPureInt:imageid]) {
+//        [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"/305"];
+//    }
     return [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"?imageView2/2/w/305"];
 }
 
