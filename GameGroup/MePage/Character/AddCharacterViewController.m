@@ -39,19 +39,18 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-//    if (isRefresh) {
+    if (isRefresh) {
 //        isRefresh = NO;
-//        switch (self.viewType) {
-//            case CHA_TYPE_Add:
-//                [self addCharacterByNet];
-//                break;
-//            case CHA_TYPE_Change:
-//                [self changeByNet];
-//                break;
-//            default:
-//                break;
-//        }
-//    }
+        switch (self.viewType) {
+            case CHA_TYPE_Add:
+                break;
+            case CHA_TYPE_Change:
+                [self changeByNetWithDictionary:nil];
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 - (void)viewDidLoad
@@ -410,9 +409,12 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        
-        [self addCharacterByNetWithDictionary:dic];//添加
-        
+        if (isRefresh) {
+            isRefresh =NO;
+        }else{
+            [self addCharacterByNetWithDictionary:dic];//添加
+
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
