@@ -9,6 +9,7 @@
 #import "MagicGirlViewController.h"
 #import "TestViewController.h"
 #import "FunsOfOtherViewController.h"
+#import "HelpViewController.h"
 @interface MagicGirlViewController ()
 {
     UIWebView *contentWebView;
@@ -45,7 +46,9 @@
 
 - (void)cleanBtnClick:(id)sender
 {
-    
+    HelpViewController *helpVC = [[HelpViewController alloc]init];
+    helpVC.myUrl = @"monvintro.html";
+    [self.navigationController pushViewController:helpVC animated:YES];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView

@@ -128,6 +128,11 @@
             [self showAlertViewWithTitle:@"提示" message:@"请填写申请" buttonTitle:@"确定"];
             return;
         }
+    NSInteger ziNum = 30 - [[GameCommon shareGameCommon] unicodeLengthOfString:m_textView.text];
+    if (ziNum < 0) {
+        [self showAlertViewWithTitle:@"提示" message:@"输入字数超过上限，请修改！" buttonTitle:@"确定"];
+        return;
+    }
         [dic setObject:m_textView.text forKey:@"msg"];
         [dic setObject:self.groupid forKey:@"groupId"];
         [dic setObject:KISDictionaryHaveKey(dict, @"id") forKey:@"characterId"];
