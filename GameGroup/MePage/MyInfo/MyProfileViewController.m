@@ -312,25 +312,30 @@
     NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
     return imageData;
 }
+
+//执行上传（单张）
+-(void)uploadPicture:(NSString*)imageName
+{
+    NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    UpLoadFileService * up = [[UpLoadFileService alloc] init];
+    [up simpleUpload:uploadImagePath UpDeleGate:self];
+}
+
 //保存上传图片信息
 -(void)saveMyPicter:(id)sender
 {
     imageImdex=0;
     [reponseStrArray removeAllObjects];
-    
-    [hud show:YES];
     if (uploadImagePathArray.count>0) {
-        for (NSString * imageName in uploadImagePathArray) {
-            NSString * path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
-            NSString  * uploadImagePath = [NSString stringWithFormat:@"%@/%@",path,imageName];
-            UpLoadFileService * up = [[UpLoadFileService alloc] init];
-            [up simpleUpload:uploadImagePath UpDeleGate:self];
-        }
+        [hud show:YES];
+        [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
+    }else
+    {
+        NSString* headImgStr = [self getImageIdsStr:self.headImgArray];
+        [self refreshMyInfo:headImgStr];
     }
-    else//只是修改顺序
-        [self refreshMyInfo];
 }
-
 
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
@@ -360,9 +365,20 @@
             }
         }
         self.headImgArray = a1;
-        [self refreshMyInfo];
+        [self refreshMyInfo:[self getImageIdsStr:self.headImgArray]];
+    }else{
+        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
     }
     imageImdex++;
+}
+-(NSString*)getImageIdsStr:(NSArray*)imageIdArray
+{
+    NSString* headImgStr = @"";
+    for (int i = 0;i<imageIdArray.count;i++) {
+        NSString * temp1 = [imageIdArray objectAtIndex:i];
+        headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
+    }
+    return headImgStr;
 }
 //上传失败代理回调
 - (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
@@ -370,8 +386,8 @@
     [hud hide:YES];
     [self showAlertViewWithTitle:@"提示" message:@"上传失败" buttonTitle:@"确定"];
 }
-
-- (void)refreshMyInfo//更新个人头像数据
+//
+- (void)refreshMyInfo:(NSString*)imageids//更新个人头像数据
 {
     NSString* headImgStr = @"";
     for (int i = 0;i<self.headImgArray.count;i++) {
