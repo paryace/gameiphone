@@ -460,7 +460,7 @@
         NSString * imageId= KISDictionaryHaveKey(dic, @"img");
         m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
     }else{
-        [m_menuButton setBackgroundImage:KUIImage(@"menu_find") forState:UIControlStateNormal];
+        [m_menuButton setBackgroundImage:KUIImage(@"menu_find_normal") forState:UIControlStateNormal];
     }
     [self.view addSubview:m_menuButton];
    // [self didClickMenu:nil];
