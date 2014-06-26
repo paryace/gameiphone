@@ -286,7 +286,7 @@
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
-                [self saveLastDynimacUserImage:[payload JSONValue]];
+                [self saveLastFriendDynimacUserImage:[payload JSONValue]];
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
                     int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
                     i++;
@@ -303,7 +303,7 @@
             else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
-                [self saveLastDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
+                [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
                 if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
                    int i=1;
                     [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
@@ -501,13 +501,23 @@
     NSDictionary * imageDic = @{@"img":cusUserImageIds};
     return imageDic;
 }
--(void)saveLastDynimacUserImage:(NSDictionary*)payloadDic
+-(void)saveLastMyDynimacUserImage:(NSDictionary*)payloadDic
 {
     NSMutableData *data= [[NSMutableData alloc]init];
     NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
     [archiver encodeObject:payloadDic forKey: @"getDatat"];
     [archiver finishEncoding];
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic
+{
+    NSMutableData *data= [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:payloadDic forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 //sender:@"10000202@gamepro.com/862933025698753"

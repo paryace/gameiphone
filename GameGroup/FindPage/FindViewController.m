@@ -204,7 +204,7 @@
 {
     NSMutableData *data= [NSMutableData data];
     NSDictionary *dic = [NSDictionary dictionary];
-    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
+    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"frienddynamicmsg_huancun_wx"];
     NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     dic = [unarchiver decodeObjectForKey: @"getDatat"];
     [unarchiver finishDecoding];
@@ -461,7 +461,7 @@
     
     [self setDynamicImage];//设置动态消息图片
     
-    m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 44, 44)];
+    m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 42.24, 44)];
     m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
     [m_menuButton addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
