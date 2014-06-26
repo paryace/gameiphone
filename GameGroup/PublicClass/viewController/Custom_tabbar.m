@@ -18,6 +18,18 @@
 
 static Custom_tabbar *s_tabbar = NULL;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    NSLog(@"初始化Custom_tabbar");
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+        NSLog(@"初始化Custom_tabbar 成功");
+    }
+    return self;
+}
+
+
 - (void)init_tab
 {
 	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"find_normal.png",@"wo_normal.png",nil];
@@ -26,6 +38,9 @@ static Custom_tabbar *s_tabbar = NULL;
     float startY = [[UIScreen mainScreen] bounds].size.height;
     tabBarView = [[UIView alloc] initWithFrame:CGRectMake(0, startY - 50, 320, 50)];
 }
+
+
+
 
 //- (void)viewWillAppear:(BOOL)animated
 //{

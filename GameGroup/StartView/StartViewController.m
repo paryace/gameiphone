@@ -106,17 +106,21 @@
         fourth.hidesBottomBarWhenPushed = YES;
         UINavigationController* navigationController_Fourth = [[UINavigationController alloc] initWithRootViewController:fourth];
         navigationController_Fourth.navigationBarHidden = YES;
+    
     Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
-
-    AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+  //  AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
         ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second, navigationController_Third, navigationController_Fourth, nil];
     
-    app.window.rootViewController = nil;
-    app.window.rootViewController = ryc_tabbarController;
-
-//        [self presentViewController:ryc_tabbarController animated:NO completion:^{
-//            
-//        }];
+    if (ryc_tabbarController) //开机闪退 是因为这里为空
+    {
+        self.view.window.rootViewController = ryc_tabbarController;
+        [self.view.window makeKeyAndVisible];
+    }
+    else{//为空直接闪退出去
+        [self presentViewController:ryc_tabbarController animated:NO completion:^{
+            
+        }];
+    }
 }
 
 //下载开机图
