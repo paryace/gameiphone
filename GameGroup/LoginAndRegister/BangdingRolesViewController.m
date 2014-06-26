@@ -371,12 +371,8 @@
             cell.contentTF.inputAccessoryView= toolbar_server1;
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
-            //            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
-            
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL = [ImageService getImageUrl4:imageId];
-            //            m_gameNamePick.tag = indexPath.row;
-            //            toolbar_server1.tag = indexPath.row;
             
         }else if([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]){
             cell.serverButton.hidden =NO;
@@ -401,7 +397,7 @@
         if (buttonIndex ==1) {
             AuthViewController* authVC = [[AuthViewController alloc] init];
             NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
-            authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+            authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")];
             authVC.realm = m_realmStr;
             authVC.Type =@"register";
             authVC.authDelegate =self;
