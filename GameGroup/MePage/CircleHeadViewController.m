@@ -1769,7 +1769,7 @@ typedef enum : NSUInteger {
     if(iPhone5){
         offer+=(300-height-15);
     }else{
-        offer+=(300-height+65);
+        offer+=(300-height+90);
     }
     if (abobtMeImageView.hidden==NO) {
         offer+=60;
