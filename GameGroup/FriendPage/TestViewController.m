@@ -673,21 +673,25 @@
         }else{
             headImage.imageURL = [ImageService getImageStr:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"backgroundImg") Width:80];
         }
+        headImage.layer.cornerRadius = 5.0;
+        headImage.layer.masksToBounds = YES;
         [groupView addSubview:headImage];
         UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
-        groupName.textColor = [UIColor grayColor];
+        groupName.textColor = [UIColor blackColor];
         groupName.backgroundColor = [UIColor clearColor];
         groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
         [groupView addSubview:groupName];
-        [m_myScrollView addSubview:groupView];
         
         
         UILabel * shipTypeName = [[UILabel alloc] initWithFrame:CGRectMake(320-50-10, 15, 50, 20)];
         shipTypeName.textColor = [UIColor grayColor];
         shipTypeName.backgroundColor = [UIColor clearColor];
         shipTypeName.textAlignment = NSTextAlignmentRight;
+        shipTypeName.font=[UIFont boldSystemFontOfSize:12.0];
         shipTypeName.text = [self getShipTypeName:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupUsershipType")];
-        [m_myScrollView addSubview:shipTypeName];
+        [groupView addSubview:shipTypeName];
+        [m_myScrollView addSubview:groupView];
+        
         m_currentStartY += 50;
         [self setOneLineWithY:m_currentStartY];
     }
@@ -695,11 +699,11 @@
 //
 -(NSString*)getShipTypeName:(NSString*)groupUsershipType
 {
-    if ([GameCommon isEmtity:groupUsershipType]) {
+    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:groupUsershipType]]) {
         return @"";
     }
     if ([groupUsershipType intValue]==0) {
-        return @"群组";
+        return @"群主";
     }else if ([groupUsershipType intValue]==1){
         return @"管理员";
     }
