@@ -263,14 +263,10 @@ typedef enum : NSUInteger {
         [m_header endRefreshing];
         [hud hide:YES];
         if(!responseObject||![responseObject isKindOfClass:[NSArray class]]){
-            [m_dataArray removeAllObjects];
-            [m_myTableView reloadData];
             return ;
         }
         NSArray * arrr = responseObject;
         if (arrr.count==0) {
-            [m_dataArray removeAllObjects];
-            [m_myTableView reloadData];
             return;
         }
         if (m_currPageCount ==0) {
@@ -1308,7 +1304,7 @@ typedef enum : NSUInteger {
     if(iPhone5){
         offer+=(320-height-startX-20);
     }else{
-        offer+=(320-height-startX-20);
+        offer+=(320-height-startX-20+85);
     }
     
     [m_myTableView scrollRectToVisible:CGRectMake(0, offer, m_myTableView.frame.size.width, m_myTableView.frame.size.height) animated:YES];
