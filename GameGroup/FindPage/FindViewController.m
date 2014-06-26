@@ -154,25 +154,27 @@
     NSString *commStr2 = @"";
     if (dongtaicount>0||mydynamicmsgcount>0) {
         
-        if (dongtaicount>0) {
-            commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",dongtaicount];
-            m_notibgCircleNewsImageView.hidden =NO;
-            [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
-        }else{
-            m_notibgCircleNewsImageView.hidden = YES;
-        }
         
         if (mydynamicmsgcount>0) {
             commStr2 = [NSString stringWithFormat:@"%d条与我相关",mydynamicmsgcount];
             m_notibgInfoImageView.hidden = NO;
             [bottomView bringSubviewToFront:m_notibgInfoImageView];
             lb.text =[NSString stringWithFormat:@"%d",mydynamicmsgcount];
+            commentLabel.text = commStr2;
         }else{
             commStr2 = @"";
-            lb.text = @"";
             m_notibgInfoImageView.hidden = YES;
+
+            if (dongtaicount>0) {
+                commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",dongtaicount];
+                m_notibgCircleNewsImageView.hidden =NO;
+                [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
+            }else{
+                m_notibgCircleNewsImageView.hidden = YES;
+            }
+            commentLabel.text = commStr1;
         }
-        commentLabel.text = [commStr1 stringByAppendingString:commStr2];
+//        commentLabel.text = [commStr1 stringByAppendingString:commStr2];
     }else{
         commentLabel.text  = @"暂无新动态";
         lb.text = @"";

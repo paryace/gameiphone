@@ -39,19 +39,19 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    if (isRefresh) {
-        isRefresh = NO;
-        switch (self.viewType) {
-            case CHA_TYPE_Add:
-                [self addCharacterByNet];
-                break;
-            case CHA_TYPE_Change:
-                [self changeByNet];
-                break;
-            default:
-                break;
-        }
-    }
+//    if (isRefresh) {
+//        isRefresh = NO;
+//        switch (self.viewType) {
+//            case CHA_TYPE_Add:
+//                [self addCharacterByNet];
+//                break;
+//            case CHA_TYPE_Change:
+//                [self changeByNet];
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 }
 
 - (void)viewDidLoad
@@ -241,17 +241,10 @@
 //        [self showAlertViewWithTitle:@"提示" message:@"请输入角色名！" buttonTitle:@"确定"];
 //        return;
 //    }
-    switch (self.viewType) {
-        case CHA_TYPE_Add:
-            [self addCharacterByNet];
-            break;
-        case CHA_TYPE_Change:
-            [self changeByNet];
-            break;
-        default:
-            break;
-    }
+    [self isHaveThisRole];
 }
+
+#pragma mark ----选定角色
 - (void)selectServerNameOK:(UIButton *)sender
 {
     
@@ -284,9 +277,9 @@
     
 }
 
-- (void)addCharacterByNet
+#pragma mark ---判断角色是否存在
+-(void)isHaveThisRole
 {
-    
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
         NSDictionary *dic = m_dataArray[i];
@@ -302,7 +295,7 @@
             }
         }
     }
-
+    
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [body setObject:params forKey:@"params"];
@@ -311,40 +304,18 @@
     
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //        [hud hide:YES];
-        NSDictionary* dic = responseObject;
         
-        hud.labelText = @"添加中...";
-        
-        NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
-        [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-        [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
-        
-        NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
-        [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [body_two setObject:params_two forKey:@"params"];
-        [body_two setObject:@"118" forKey:@"method"];
-        [body_two setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-        
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [hud hide:YES];
+        switch (self.viewType) {
+            case CHA_TYPE_Add:
+                [self addCharacterByNetWithDictionary:responseObject];
+                break;
+            case CHA_TYPE_Change:
+                [self changeByNetWithDictionary:responseObject];
+                break;
+            default:
+                break;
+        }
 
-            NSLog(@"%@", responseObject);
-            
-
-            [self showMessageWindowWithContent:@"添加成功" imageType:0];
-            [self.navigationController popViewControllerAnimated:YES];
-            
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }
-            }
-            [hud hide:YES];
-        }];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -361,7 +332,50 @@
         }
         [hud hide:YES];
     }];
+
 }
+
+
+
+
+#pragma mark ---添加角色
+- (void)addCharacterByNetWithDictionary:(NSDictionary *)dic
+{
+    hud.labelText = @"添加中...";
+    
+    NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
+    [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
+    [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
+    
+    NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
+    [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [body_two setObject:params_two forKey:@"params"];
+    [body_two setObject:@"118" forKey:@"method"];
+    [body_two setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        
+        NSLog(@"%@", responseObject);
+        
+        
+        [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+    
+}
+
+
 
 #pragma mark 角色查找
 //- (void)searchButtonClick:(id)semder
@@ -378,7 +392,9 @@
 //    m_realmText.text = realm;
 //}
 
-- (void)changeByNet
+#pragma mark ----删除角色接口
+
+- (void)changeByNetWithDictionary:(NSDictionary *)dic
 {
     hud.labelText = @"修改中...";
     [hud show:YES];
@@ -395,7 +411,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         
-        [self addCharacterByNet];//添加
+        [self addCharacterByNetWithDictionary:dic];//添加
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
