@@ -494,6 +494,38 @@
         }];
     }
 }
+
++(void)uploadStoreMsg:(NSDictionary *)msg
+{
+    NSString * sender = [msg objectForKey:@"senderId"];
+    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
+    NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"senTime"] doubleValue]];
+    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender = sender;
+        thumbMsgs.senderNickname = KISDictionaryHaveKey(msg, @"msgTitle");
+        thumbMsgs.msgContent = msgContent;
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = JOINGROUPMSG;
+        thumbMsgs.msgType = GROUPAPPLICATIONSTATE;
+        int unread = [thumbMsgs.unRead intValue];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.messageuuid = msgId;
+        thumbMsgs.status = @"1";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+    }];
+
+}
 +(void)storeMyPayloadmsg:(NSDictionary *)message
 {
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");

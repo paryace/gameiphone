@@ -427,9 +427,12 @@
     
     [cell setNotReadMsgCount:message];
     //-- end
-    NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
-    cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
-    return cell;
+    if ([[allMsgArray objectAtIndex:indexPath.row] sendTime]) {
+        NSTimeInterval uu = [[[allMsgArray objectAtIndex:indexPath.row] sendTime] timeIntervalSince1970];
+        cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[[NSString stringWithFormat:@"%.f",uu] substringToIndex:10]];
+
+    }
+       return cell;
 }
 
 -(NSString*)getNickUserNameBySender:(NSString*)sender

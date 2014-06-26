@@ -680,9 +680,30 @@
         groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
         [groupView addSubview:groupName];
         [m_myScrollView addSubview:groupView];
+        
+        
+        UILabel * shipTypeName = [[UILabel alloc] initWithFrame:CGRectMake(320-50-10, 15, 50, 20)];
+        shipTypeName.textColor = [UIColor grayColor];
+        shipTypeName.backgroundColor = [UIColor clearColor];
+        shipTypeName.textAlignment = NSTextAlignmentRight;
+        shipTypeName.text = [self getShipTypeName:KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupUsershipType")];
+        [m_myScrollView addSubview:shipTypeName];
         m_currentStartY += 50;
         [self setOneLineWithY:m_currentStartY];
     }
+}
+//
+-(NSString*)getShipTypeName:(NSString*)groupUsershipType
+{
+    if ([GameCommon isEmtity:groupUsershipType]) {
+        return @"";
+    }
+    if ([groupUsershipType intValue]==0) {
+        return @"群组";
+    }else if ([groupUsershipType intValue]==1){
+        return @"管理员";
+    }
+    return @"";
 }
 
 -(void)groupListClick:(UIButton*)sender

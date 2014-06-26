@@ -299,4 +299,6 @@
 
 //清空群组通知
 +(void)clearJoinGroupApplicationMsg;
+
++(void)uploadStoreMsg:(NSDictionary *)msg;
 @end
