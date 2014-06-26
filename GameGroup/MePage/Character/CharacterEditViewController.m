@@ -203,6 +203,8 @@
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
     authVC.character = KISDictionaryHaveKey(dic, @"name");
 
+    [[NSUserDefaults standardUserDefaults]setObject:[NSDictionary dictionaryWithObjectsAndKeys:authVC.gameId,@"gameId",authVC.realm,@"realm",authVC.character,@"character", nil] forKey:@"deleteRole_wx"];
+    
     [self.navigationController pushViewController:authVC animated:YES];
 }
 

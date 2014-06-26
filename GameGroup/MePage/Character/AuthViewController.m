@@ -120,7 +120,10 @@
 //            [self.authDelegate authCharacterRegist];
         }];
     }else{
-        
+        if (self.authDelegate && [self.authDelegate respondsToSelector:@selector(authCharacterSuccess)]) {
+            [self.authDelegate authCharacterSuccess];
+        }
+
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
