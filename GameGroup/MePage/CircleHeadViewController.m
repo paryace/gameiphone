@@ -326,7 +326,6 @@ typedef enum : NSUInteger {
 -(void)backButtonClick:(UIButton*)sender
 {
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
