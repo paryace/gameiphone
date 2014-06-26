@@ -516,8 +516,7 @@
         thumbMsgs.sendTime = sendTime;
         thumbMsgs.senderType = JOINGROUPMSG;
         thumbMsgs.msgType = GROUPAPPLICATIONSTATE;
-        int unread = [thumbMsgs.unRead intValue];
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
         thumbMsgs.messageuuid = msgId;
         thumbMsgs.status = @"1";
         thumbMsgs.sayHiType = @"1";
