@@ -22,6 +22,14 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
+    
+    contentWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0,0, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
+    contentWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    contentWebView.delegate = self;
+    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"2"]]]];
+
+    [(UIScrollView *)[[contentWebView subviews] objectAtIndex:0] setBounces:NO];
+    [self.view addSubview:contentWebView];
     [self setTopViewWithTitle:@"魔女榜" withBackButton:YES];
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
@@ -29,15 +37,6 @@
     [delButton setBackgroundImage:KUIImage(@"help_click") forState:UIControlStateHighlighted];
     [self.view addSubview:delButton];
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    contentWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0,startX, 320, self.view.bounds.size.height-(KISHighVersion_7?20:0))];
-    contentWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    contentWebView.delegate = self;
-    [contentWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@&from_client_ios&%@&%@",[MymonvbangURL stringByAppendingString:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]],self.gameid,@"2"]]]];
-
-    [(UIScrollView *)[[contentWebView subviews] objectAtIndex:0] setBounces:NO];
-    [self.view addSubview:contentWebView];
-    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.delegate = self;
