@@ -202,6 +202,14 @@
 //获取缓存的动态消息内容
 -(NSDictionary*)getDynamicInfo
 {
+    if (![self getMyDynamicInfo]) {
+        return [self getFriendDynamicInfo];
+    }
+    return [self getMyDynamicInfo];
+}
+//获取缓存的动态消息内容
+-(NSDictionary*)getFriendDynamicInfo
+{
     NSMutableData *data= [NSMutableData data];
     NSDictionary *dic = [NSDictionary dictionary];
     data =[[NSUserDefaults standardUserDefaults]objectForKey:@"frienddynamicmsg_huancun_wx"];
@@ -210,6 +218,19 @@
     [unarchiver finishDecoding];
     return dic;
 }
+
+//获取缓存的动态消息内容
+-(NSDictionary*)getMyDynamicInfo
+{
+    NSMutableData *data= [NSMutableData data];
+    NSDictionary *dic = [NSDictionary dictionary];
+    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
+    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    dic = [unarchiver decodeObjectForKey: @"getDatat"];
+    [unarchiver finishDecoding];
+    return dic;
+}
+
 
 //初始化公告未读消息数量
 -(void)initMsgCount

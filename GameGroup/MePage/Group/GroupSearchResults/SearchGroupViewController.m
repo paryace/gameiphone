@@ -38,7 +38,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"群列表" withBackButton:YES];
+//    [self setTopViewWithTitle:@"群列表" withBackButton:YES];
+    
+    [self setTopViewWithTitle:self.titleName withBackButton:YES];
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];

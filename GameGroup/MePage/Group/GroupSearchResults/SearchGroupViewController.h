@@ -23,4 +23,6 @@ typedef enum
 @property(nonatomic,copy)NSString *realmStr;
 @property(nonatomic,copy)NSString *gameid;
 @property(nonatomic,copy)NSString *roleId;
+
+@property(nonatomic,copy)NSString *titleName;
 @end

@@ -861,7 +861,8 @@
             SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
             groupView.ComeType =SETUP_SAMEREALM;
             groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
-            groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"realm")] ;
+            groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")];
+            groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")];
             [self.navigationController pushViewController:groupView animated:YES];
         }
     }else{
@@ -870,6 +871,7 @@
             groupView.ComeType =SETUP_SAMEREALM;
             groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameid")];
             groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")] ;
+            groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")];
             [self.navigationController pushViewController:groupView animated:YES];
         }
     }
@@ -994,6 +996,7 @@
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
     groupView.ComeType = SETUP_Tags;
     groupView.tagsId =KISDictionaryHaveKey(tags[sender.view.tag-100], @"tagId");
+    groupView.titleName = KISDictionaryHaveKey(tags[sender.view.tag-100], @"tagName");
     [self.navigationController pushViewController:groupView animated:YES];
 }
 

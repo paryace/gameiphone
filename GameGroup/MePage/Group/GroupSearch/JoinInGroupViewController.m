@@ -298,6 +298,7 @@
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
     groupView.conditiona = m_searchTf.text;
     groupView.ComeType = SETUP_Search;
+    groupView.titleName = @"搜索结果";
     [self.navigationController pushViewController:groupView animated:YES];
 }
 #pragma mark ---创建群
@@ -410,22 +411,25 @@
         groupView.ComeType =SETUP_SAMEREALM;
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
         groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
+        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
     }
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"nearby"]) {
         ;
         groupView.ComeType  = SETUP_NEARBY;
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+        groupView.titleName = @"附近组织";
     }
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"hot"]) {
         ;
         groupView.ComeType = SETUP_HOT;
         groupView.roleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")];
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
+        groupView.titleName = @"猜你喜欢";
 
     }else{
-
-    groupView.ComeType = SETUP_Tags;
-    groupView.tagsId =KISDictionaryHaveKey(dic, @"tagId");
+        groupView.ComeType = SETUP_Tags;
+        groupView.tagsId =KISDictionaryHaveKey(dic, @"tagId");
+        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagName")];
     }
     [self.navigationController pushViewController:groupView animated:YES];
 
