@@ -269,6 +269,10 @@
         [m_applyArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
         [DataStoreManager deleteJoinGroupApplicationWithMsgId:msgId];
+        if([m_applyArray isKindOfClass:[NSArray class]]&&m_applyArray.count==0)
+        {
+            [DataStoreManager deleteJoinGroupApplication];
+        }
         [m_ApplyTableView reloadData];
     }
 }
