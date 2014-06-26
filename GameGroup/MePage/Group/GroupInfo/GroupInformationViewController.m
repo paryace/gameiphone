@@ -793,10 +793,9 @@
                 cell.titleLabel.text = @"群介绍";
                 cell.contentLabel.text = KISDictionaryHaveKey(m_mainDict, @"info");
                 
-                CGSize sizeThatFits = [cell.contentLabel sizeThatFits:CGSizeMake(245, MAXFLOAT)];
+                CGSize sizeThatFits = [cell.contentLabel.text sizeWithFont:cell.contentLabel.font constrainedToSize:CGSizeMake(230, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
                 float height1= sizeThatFits.height;
-                cell.contentLabel.frame = CGRectMake(80, 10, 210, height1);
-                
+                cell.contentLabel.frame = CGRectMake(80, 10, 230, height1);
                 
                 cell.photoArray =[ImageService getImageIds:KISDictionaryHaveKey(m_mainDict, @"infoImg")];
                 if (cell.photoArray.count==0) {

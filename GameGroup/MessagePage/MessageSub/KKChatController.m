@@ -1872,16 +1872,12 @@ UINavigationControllerDelegate>
 #pragma mark 发送文本消息
 -(void)sendMsg:(NSString *)message
 {
-    NSString * nowTime = [GameCommon getCurrentTime];
     NSString * uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
-    NSString * fromUserid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    NSString * toUserId = self.chatWithUser;
-    NSString *from=[fromUserid stringByAppendingString:domain];
-    NSString *to=[toUserId stringByAppendingString:[self getDomain:domain]];
-    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
+    NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [self addNewMessageToTable:dictionary];
-    [self sendMessage:message NowTime:nowTime UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
+    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
     [self refreWX];
 }
 
