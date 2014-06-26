@@ -97,16 +97,15 @@
     
     
     drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
-    [self.view addSubview:drawView];
+    
+    if (gameidss &&gameidss.count>0) {
+        
     
     for (int i =0; i<drawView.tableArray.count; i++) {
         NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
         for (int j =0; j<arr.count; j++) {
             NSDictionary *dic = arr[j];
             if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
-                NSString *str = gameidss[0];
-                NSString *str2 =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")];
-                NSLog(@"%@--%lu--%@---%lu",gameidss,(unsigned long)str.length,[dic objectForKey:@"id"],(unsigned long)str2.length);
                 [arr removeObject:dic];
                 [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
             }
@@ -120,13 +119,14 @@
             [drawView.tableArray removeObjectAtIndex:i];
         }
     }
-    
+    [drawView.tv reloadData];
+
+    }
+  
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     [self initMsgCount];
     [self initDynamicMsgCount];
-    [drawView.tv reloadData];
-    [self.view bringSubviewToFront:m_menuButton];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -385,7 +385,8 @@
     // 建立标头和下拉菜单
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?79:59 )];
     drawView.myViewDelegate = self;
-    
+    [self.view addSubview:drawView];
+
     
     
     
@@ -973,12 +974,12 @@
     bottomView.hidden = NO;
     [self.view sendSubviewToBack:drawView];
     [self.view sendSubviewToBack:imgV];
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
-    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-
-    NSArray *allkeys = [dict allKeys];
-    manDic = [[dict objectForKey:allkeys[section]]objectAtIndex:row];
+//    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+//
+//    NSArray *allkeys = [dict allKeys];
+    manDic = [[drawView.tableDic objectForKey:drawView.tableArray[section]]objectAtIndex:row];
     [[NSUserDefaults standardUserDefaults]setObject:manDic forKey:@"find_initial_game"];
 
     [m_menuButton setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
