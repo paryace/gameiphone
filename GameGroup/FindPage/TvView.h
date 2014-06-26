@@ -13,15 +13,15 @@
 @interface TvView : UIView<UITableViewDelegate,UITableViewDataSource>
 {
     UITableView *tv;//下拉列表
-    NSArray *tableArray;//下拉列表数据
+    NSMutableArray *tableArray;//下拉列表数据
     UITextField *textField;//文本输入框
     CGFloat tabheight;//table下拉列表的高度
     CGFloat frameHeight;//frame的高度
 }
 @property(nonatomic,assign)BOOL showList;
 @property (nonatomic,retain) UITableView *tv;
-@property(nonatomic,strong)NSDictionary *tableDic;
-@property (nonatomic,retain) NSArray *tableArray;
+@property(nonatomic,strong)NSMutableDictionary *tableDic;
+@property (nonatomic,retain) NSMutableArray *tableArray;
 @property (nonatomic,retain) UITextField *textField;
 @property (nonatomic,strong) id<TvViewDelegate>myViewDelegate;
 

@@ -750,6 +750,13 @@ static GameCommon *my_gameCommon = NULL;
         
         for (NSMutableDictionary *characher in charachers) {
             [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
+            
+//            NSMutableArray *array = [NSMutableArray array];
+//            if (![array containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characher, @"gameid")]]) {
+//                [array addObject:[characher objectForKey:@"gameid"]];
+//            }
+//
+//            [[NSUserDefaults standardUserDefaults]setObject:array forKey:[NSString stringWithFormat:@"findpageGameList_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
         }
 
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];

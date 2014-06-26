@@ -79,10 +79,54 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+    BOOL isTrue = [fileManager fileExistsAtPath:path];
+    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+    
+    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    }else{
+        [[GameCommon shareGameCommon]firtOpen];
+        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    }
+    
+    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    
+    NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
+    
+    
+    drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
+    [self.view addSubview:drawView];
+    
+    for (int i =0; i<drawView.tableArray.count; i++) {
+        NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
+        for (int j =0; j<arr.count; j++) {
+            NSDictionary *dic = arr[j];
+            if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
+                NSString *str = gameidss[0];
+                NSString *str2 =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")];
+                NSLog(@"%@--%lu--%@---%lu",gameidss,(unsigned long)str.length,[dic objectForKey:@"id"],(unsigned long)str2.length);
+                [arr removeObject:dic];
+                [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
+            }
+        }
+    }
+    
+    for (int i = 0; i<drawView.tableArray.count; i++) {
+        NSArray *array = [drawView.tableDic objectForKey:drawView.tableArray[i]];
+        if (!array||array.count<1) {
+            [drawView.tableDic removeObjectForKey:drawView.tableArray[i]];
+            [drawView.tableArray removeObjectAtIndex:i];
+        }
+    }
+    
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     [self initMsgCount];
     [self initDynamicMsgCount];
+    [drawView.tv reloadData];
+    [self.view bringSubviewToFront:m_menuButton];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -343,22 +387,8 @@
     drawView.myViewDelegate = self;
     
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-    BOOL isTrue = [fileManager fileExistsAtPath:path];
-    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
-    
-    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    }else{
-        [[GameCommon shareGameCommon]firtOpen];
-        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    }
     
     
-    drawView.tableArray = [drawView.tableDic allKeys];
-    [self.view addSubview:drawView];
-
     
     //建立朋友圈view
     bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height-110, 320, 60)];
