@@ -652,13 +652,13 @@
     UILabel* titleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, 2.5, 100, 25) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:12.0] text:[NSString stringWithFormat:@"%@",@"他的群组"] textAlignment:NSTextAlignmentLeft];
     [topBg addSubview:titleLabel];
     
-    UIButton* setButton = [CommonControlOrView setButtonWithFrame:CGRectMake(250, 0, 70, 30) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"set_normal02") HighImage:KUIImage(@"set_click02") selectImage:Nil];
+    UIButton* setButton = [CommonControlOrView setButtonWithFrame:CGRectMake(250, 0, 70, 30) title:@"" fontSize:Nil textColor:nil bgImage:KUIImage(@"home_normal") HighImage:KUIImage(@"home_click") selectImage:Nil];
     setButton.backgroundColor = [UIColor clearColor];
     [setButton addTarget:self action:@selector(groupListClick:) forControlEvents:UIControlEventTouchUpInside];
     [topBg addSubview:setButton];
     
     
-    UILabel* groupNumLable = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 5, 30, 20) textColor:[UIColor grayColor] font:[UIFont boldSystemFontOfSize:14.0] text:[NSString stringWithFormat:@"%@%@%@",@"(",self.hostInfo.groupNum,@")"] textAlignment:NSTextAlignmentLeft];
+    UILabel* groupNumLable = [CommonControlOrView setLabelWithFrame:CGRectMake(25, 5, 30, 20) textColor:[UIColor grayColor] font:[UIFont boldSystemFontOfSize:14.0] text:[NSString stringWithFormat:@"%@%@",@"x",self.hostInfo.groupNum] textAlignment:NSTextAlignmentLeft];
     [setButton addSubview:groupNumLable];
     
     m_currentStartY += 30;
