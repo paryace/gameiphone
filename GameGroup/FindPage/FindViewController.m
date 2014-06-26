@@ -183,16 +183,21 @@
 //设置动态消息的头像
 -(void)setDynamicImage
 {
-    NSString * headImage = KISDictionaryHaveKey([self getDynamicInfo], @"img");
-    if([GameCommon isEmtity:headImage])
-    {
+    NSDictionary * dicInfo = [self getDynamicInfo];
+    if (!dicInfo) {
         headImgView.imageURL = nil;
         [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
     }else{
-        headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
-        [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+        NSString * headImage = KISDictionaryHaveKey(dicInfo, @"img");
+        if([GameCommon isEmtity:headImage])
+        {
+            headImgView.imageURL = nil;
+            [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+        }else{
+            headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+        }
     }
-    
 }
 //获取缓存的动态消息内容
 -(NSDictionary*)getDynamicInfo

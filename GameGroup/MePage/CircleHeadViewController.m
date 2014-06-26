@@ -241,7 +241,7 @@ typedef enum : NSUInteger {
     aboutMeLabel.font = [UIFont boldSystemFontOfSize:13];
     [abobtMeImageView addSubview:aboutMeLabel];
     
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"]) {
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
         ishaveAboutMe =YES;
         //改变HeadView的高度 以容纳aboutMeImageView
         CGRect frame = m_myTableView.tableHeaderView.frame;
@@ -249,39 +249,20 @@ typedef enum : NSUInteger {
         UIView *view = m_myTableView. tableHeaderView;
         view.frame = frame;
         m_myTableView.tableHeaderView = view;
-        
-        NSMutableData *data= [NSMutableData data];
-        NSDictionary *dic = [NSDictionary dictionary];
-        data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
-        NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        dic = [unarchiver decodeObjectForKey: @"getDatat"];
-        [unarchiver finishDecoding];
-
-        NSString *customObject;
-        NSString *customUser;
-        
-        if ([KISDictionaryHaveKey(dic, @"type")intValue]==4) {
-            customObject = @"zanObject";
-            customUser = @"zanUser";
-        }
-        else if ([KISDictionaryHaveKey(dic, @"type")intValue]==5||[KISDictionaryHaveKey(dic, @"type")intValue]==7)
-        {
-            customObject =@"commentObject";
-            customUser = @"commentUser";
-        }
-        
+        NSDictionary *dic = [self getDynamicInfo];
         abobtMeImageView.hidden =NO;
-        NSString * cusUserImageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(dic, customObject),customUser), @"img");
-        
-        if ([GameCommon isEmtity:cusUserImageIds]) {
+        if (dic) {
+            NSString * cusUserImageIds=KISDictionaryHaveKey(dic,@"img");
+            if ([GameCommon isEmtity:cusUserImageIds]) {
+                aboutMeHeadImgView.imageURL =nil;
+            }else
+            {
+                aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
+                
+            }
+        }else{
             aboutMeHeadImgView.imageURL =nil;
-        }else
-        {
-            aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
-            
         }
-        
-        
         m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
         aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
 
@@ -292,7 +273,6 @@ typedef enum : NSUInteger {
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
@@ -334,6 +314,17 @@ typedef enum : NSUInteger {
         [self buildBottomView];
         [self getInfoFromNet];
     }
+}
+//获取缓存的动态消息内容
+-(NSDictionary*)getDynamicInfo
+{
+    NSMutableData *data= [NSMutableData data];
+    NSDictionary *dic = [NSDictionary dictionary];
+    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
+    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    dic = [unarchiver decodeObjectForKey: @"getDatat"];
+    [unarchiver finishDecoding];
+    return dic;
 }
 
 -(void)buildBottomView

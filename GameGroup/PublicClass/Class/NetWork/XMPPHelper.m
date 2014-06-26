@@ -286,7 +286,7 @@
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
-                [self saveDynimacInfo:payload];
+                [self saveLastDynimacUserImage:[payload JSONValue]];
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
                     int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
                     i++;
@@ -303,7 +303,7 @@
             else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
-                [self saveDynimacInfo:payload];
+                [self saveLastDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
                 if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
                    int i=1;
                     [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
@@ -484,15 +484,31 @@
     return @"新的群消息";
 }
 //保存最后一条动态消息
--(void)saveDynimacInfo:(NSString*)payload
+-(NSDictionary*)getMyDynimacImageInfo:(NSDictionary*)payloadDic
+{
+    NSString *customObject;
+    NSString *customUser;
+    if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==4) {
+        customObject = @"zanObject";
+        customUser = @"zanUser";
+    }
+    else if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==5||[KISDictionaryHaveKey(payloadDic, @"type")intValue]==7)
+    {
+        customObject =@"commentObject";
+        customUser = @"commentUser";
+    }
+    NSString * cusUserImageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, customObject),customUser), @"img");
+    NSDictionary * imageDic = @{@"img":cusUserImageIds};
+    return imageDic;
+}
+-(void)saveLastDynimacUserImage:(NSDictionary*)payloadDic
 {
     NSMutableData *data= [[NSMutableData alloc]init];
     NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-    [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
+    [archiver encodeObject:payloadDic forKey: @"getDatat"];
     [archiver finishEncoding];
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
 }
 //sender:@"10000202@gamepro.com/862933025698753"
 #pragma mark 发送反馈消息
