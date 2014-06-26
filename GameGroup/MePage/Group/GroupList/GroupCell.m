@@ -20,22 +20,22 @@
         self.headImageV.layer.masksToBounds=YES;
         [self addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 12, 150, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 10, 150, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.nameLabel];
         
-        self.gameImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 32, 10, 10)];
+        self.gameImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 32, 13, 13)];
         [self addSubview:self.gameImageV];
         
-        self.numberLable = [[UILabel alloc] initWithFrame:CGRectMake(95, 32, 50, 10)];
+        self.numberLable = [[UILabel alloc] initWithFrame:CGRectMake(95, 33, 50, 10)];
         [self.numberLable setTextAlignment:NSTextAlignmentLeft];
         [self.numberLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [self.numberLable setBackgroundColor:[UIColor clearColor]];
         [self addSubview:self.numberLable];
         
-        self.cricleLable= [[UILabel alloc] initWithFrame:CGRectMake(80, 40, 200, 20)];
+        self.cricleLable= [[UILabel alloc] initWithFrame:CGRectMake(80, 45, 200, 20)];
         [self.cricleLable setTextAlignment:NSTextAlignmentLeft];
         [self.cricleLable setFont:[UIFont boldSystemFontOfSize:12.0]];
         [self.cricleLable setBackgroundColor:[UIColor clearColor]];

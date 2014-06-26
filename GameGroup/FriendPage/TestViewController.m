@@ -679,6 +679,7 @@
         UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
         groupName.textColor = [UIColor blackColor];
         groupName.backgroundColor = [UIColor clearColor];
+        groupName.font=[UIFont boldSystemFontOfSize:14.0];
         groupName.text = KISDictionaryHaveKey([self.hostInfo.groupList objectAtIndex:i], @"groupName");
         [groupView addSubview:groupName];
         

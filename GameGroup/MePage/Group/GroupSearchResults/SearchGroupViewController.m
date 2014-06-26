@@ -57,6 +57,7 @@
     m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_GroupTableView.dataSource = self;
     m_GroupTableView.delegate = self;
+    [GameCommon setExtraCellLineHidden:m_GroupTableView];
     [self.view addSubview:m_GroupTableView];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
