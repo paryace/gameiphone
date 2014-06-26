@@ -271,13 +271,21 @@ typedef enum : NSUInteger {
         abobtMeImageView.hidden = YES;
     }
     
-    [self setTopViewWithTitle:@"朋友圈" withBackButton:YES];
+    [self setTopViewWithTitle:@"朋友圈" withBackButton:NO];
+    
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
 
     
     m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -315,6 +323,13 @@ typedef enum : NSUInteger {
         [self getInfoFromNet];
     }
 }
+-(void)backButtonClick:(UIButton*)sender
+{
+    [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 //获取缓存的动态消息内容
 -(NSDictionary*)getDynamicInfo
 {
