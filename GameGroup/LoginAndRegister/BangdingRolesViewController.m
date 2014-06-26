@@ -20,6 +20,7 @@
     NSString *m_realmStr;
     UIButton* findPasButton;
     UIButton* registerButton;
+    UIScrollView *mainScrollView;
 }
 @end
 
@@ -39,6 +40,15 @@
     [super viewDidLoad];
     self.navigationController.navigationBarHidden = YES;
     [self setTopViewWithTitle:@"绑定角色" withBackButton:NO];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
+                                               object:nil];
+    
+
+    
     UIImageView *iageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 28)];
     iageView.image = KUIImage(@"registerStep3");
     [self.view addSubview:iageView];
@@ -58,6 +68,9 @@
         [gameInfoArray addObjectsFromArray:array];
     }
     
+    mainScrollView =[[ UIScrollView alloc]initWithFrame:CGRectMake(0, startX+28, 320, kScreenHeigth-startX-28)];
+    mainScrollView.contentSize = CGSizeMake(0, (kScreenHeigth-startX-28)*1.3);
+    [self.view addSubview:mainScrollView];
     
     [self setStep_2View];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
@@ -68,23 +81,23 @@
 #pragma mark 第二步
 - (void)setStep_2View
 {
-    UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, startX+28, 300, 50)];
+    UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 300, 50)];
     topLabel.numberOfLines = 2;
     topLabel.font = [UIFont boldSystemFontOfSize:12.0];
     topLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
     topLabel.backgroundColor = [UIColor clearColor];
     topLabel.text = @"如果您拥有多名角色，请先绑定最主要的，其他游戏角色可在注册完成之后，在设置面板中添加";
-    [self.view addSubview:topLabel];
+    [mainScrollView addSubview:topLabel];
     
     
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+88, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 60, 320, self.view.bounds.size.height-startX-44) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.scrollEnabled = NO;
     
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:m_myTableView];
+    [mainScrollView addSubview:m_myTableView];
     
     m_gameNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
     m_gameNamePick.dataSource = self;
@@ -97,37 +110,36 @@
     rb_server.tintColor = [UIColor blackColor];
     toolbar_server1.items = @[rb_server];
     
-    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, startX +200, 300, 40)];
+    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 172, 300, 40)];
     [m_okButton setBackgroundImage:KUIImage(@"bindingrole") forState:UIControlStateNormal];
 //    [step2Button setBackgroundImage:KUIImage(@"zhuce_click") forState:UIControlStateHighlighted];
     //    [step2Button setTitle:@"绑定上述角色" forState:UIControlStateNormal];
     [m_okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     m_okButton.backgroundColor = [UIColor clearColor];
     [m_okButton addTarget:self action:@selector(step2ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:m_okButton];
+    [mainScrollView addSubview:m_okButton];
     
     
-    findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 238 + startX, 80, 40)];
+    findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 210, 80, 40)];
     [findPasButton setTitle:@"退出登录" forState:UIControlStateNormal];
     [findPasButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     findPasButton.backgroundColor = [UIColor clearColor];
     findPasButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
     [findPasButton addTarget:self action:@selector(backToRegister:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:findPasButton];
+    [mainScrollView addSubview:findPasButton];
     
-    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 238 + startX, 100, 40)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 210, 100, 40)];
     [registerButton setTitle:@"|     遇到问题" forState:UIControlStateNormal];
     [registerButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     registerButton.backgroundColor = [UIColor clearColor];
     registerButton.titleLabel.font = [UIFont boldSystemFontOfSize:14];
     [registerButton addTarget:self action:@selector(hitRegisterButton:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:registerButton];
+    [mainScrollView addSubview:registerButton];
 
     
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    
     [textField resignFirstResponder];
     return YES;
 }
@@ -161,10 +173,10 @@
         [m_dataArray addObjectsFromArray:sarchArray];
         
         m_okButton.hidden = NO;
-        m_myTableView.frame = CGRectMake(0, startX+60+28, 320, 44*m_dataArray.count);
-        m_okButton.frame = CGRectMake(10, startX+74+28+44*m_dataArray.count, 300, 40);
-        registerButton.frame = CGRectMake(150,  startX+124+28+44*m_dataArray.count, 100, 40);
-        findPasButton.frame = CGRectMake(70,  startX+124+28+44*m_dataArray.count, 80, 40);
+        m_myTableView.frame = CGRectMake(0, 60, 320, 44*m_dataArray.count);
+        m_okButton.frame = CGRectMake(10, 74+44*m_dataArray.count, 300, 40);
+        registerButton.frame = CGRectMake(150,  124+44*m_dataArray.count, 100, 40);
+        findPasButton.frame = CGRectMake(70,  124+44*m_dataArray.count, 80, 40);
         [m_myTableView reloadData];
     }
 }
@@ -461,6 +473,29 @@
         [hud hide:YES];
     }];
 
+}
+- (void)keyboardWillShow:(NSNotification *)notification {
+    UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
+
+    if ([tf isFirstResponder]) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        mainScrollView.contentOffset =CGPointMake(0, 140);
+        [UIView commitAnimations];
+        
+    }
+  
+}
+- (void)keyboardWillHide:(NSNotification *)notification {
+    UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
+    if ([tf isFirstResponder]) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        mainScrollView.contentOffset =CGPointMake(0, 0);
+        [UIView commitAnimations];
+        
+    }
+    
 }
 
 - (void)authCharacterRegist
