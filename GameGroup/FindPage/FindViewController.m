@@ -31,6 +31,7 @@
     EGOImageButton * headImgView;
     
     NSInteger    myDunamicmsgCount;
+    NSInteger    friendDunamicmsgCount;
     
     UILabel *lb;
     
@@ -64,10 +65,14 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ss:) name:@"frienddunamicmsgChange_WX"object:nil];
+        //好友动态
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
+        //与我相关
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
+        //清除离线消息
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];//群公告消息广播接收
+        //群公告消息广播接收
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
     }
     return self;
 }
@@ -77,82 +82,128 @@
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     [self initMsgCount];
+    [self initDynamicMsgCount];
 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }
 
-#pragma mark -
-#pragma mark 红点监听
-//监听与我相关的消息来临
+#pragma mark 接收到于我相关消息通知
 -(void)receivedMyDynamicMsg:(NSNotification*)sender
 {
-    myDunamicmsgCount ++;
     //添加Tab上的小红点
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    myDunamicmsgCount ++;
+    [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
+    
+    
     //显示头像
     NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
     headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
-    
-    
-    //显示数字
-        NSString *commStr1 = @"";
-        NSString *commStr2 = @"";
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-            commStr2 = [NSString stringWithFormat:@"%d条与我相关",myDunamicmsgCount];
-            m_notibgInfoImageView.hidden = NO;  //数字
-            int dianCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
-            if (dianCount > 99) {
-                lb.text = @"99+";
-            }
-            else{
-                lb.text =[NSString stringWithFormat:@"%d",myDunamicmsgCount] ;
-            }
-            commentLabel.text =commStr2;
 
-        }else{
-            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-                m_notibgCircleNewsImageView.hidden = NO;
-                commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
-            }else{
-                commStr1 =@"";
-                m_notibgCircleNewsImageView.hidden = YES;
-            }
-            commentLabel.text =commStr1 ;
-
-        }
 }
-//监听消息来临
--(void)ss:(NSNotification*)sender
+#pragma mark 接收到好友动态消息通知
+-(void)receivedFriendDynamicMsg:(NSNotification*)sender
 {
-    NSLog(@"监听");
-    //控制红点
-    
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    friendDunamicmsgCount++;
+    [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
+    
     //显示头像
     NSString * headImage = KISDictionaryHaveKey(sender.userInfo, @"img");
     headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+}
+
+#pragma mark 接收到公告消息通知
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    billboardMsgCount++;
+    [self setMsgBillBoardConunt:billboardMsgCount];
+}
+
+//取出我的动态消息数
+-(NSInteger)getMyDynamicMsgCount
+{
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+        return [[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"] intValue];
+    }
+    return 0;
+}
+//取出好友动态的消息数量
+-(NSInteger)getFriendDynamicMsgCount
+{
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+        return [[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"] intValue];
+    }
+    return 0;
+}
+
+//初始化动态红点
+-(void)initDynamicMsgCount
+{
+    myDunamicmsgCount = [self getMyDynamicMsgCount];
+    friendDunamicmsgCount = [self getFriendDynamicMsgCount];
+    [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
+}
+
+//设置动态红点以及数量
+-(void)setDynamicMsgCount:(NSInteger)dongtaicount MydynamicmsgCount:(NSInteger)mydynamicmsgcount
+{
     NSString *commStr1 = @"";
     NSString *commStr2 = @"";
-    
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-        commStr2 = [NSString stringWithFormat:@"%d条与我相关",[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue]];
-        commentLabel.text = commStr2;
+    if (dongtaicount>0||mydynamicmsgcount>0) {
+        
+        if (dongtaicount>0) {
+            commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",dongtaicount];
+            m_notibgCircleNewsImageView.hidden =NO;
+            [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
+        }else{
+            m_notibgCircleNewsImageView.hidden = YES;
+        }
+        
+        if (mydynamicmsgcount>0) {
+            commStr2 = [NSString stringWithFormat:@"%d条与我相关",mydynamicmsgcount];
+            m_notibgInfoImageView.hidden = NO;
+            [bottomView bringSubviewToFront:m_notibgInfoImageView];
+            lb.text =[NSString stringWithFormat:@"%d",mydynamicmsgcount];
+        }else{
+            commStr2 = @"";
+            lb.text = @"";
+            m_notibgInfoImageView.hidden = YES;
+        }
+        commentLabel.text = [commStr1 stringByAppendingString:commStr2];
     }else{
-
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-        m_notibgCircleNewsImageView.hidden = NO;
-        [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
-        commStr1 = [NSString stringWithFormat:@"有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
-    }else{
-        commStr1 =@"";
+        commentLabel.text  = @"暂无新动态";
+        lb.text = @"";
+        m_notibgInfoImageView.hidden = YES;
         m_notibgCircleNewsImageView.hidden = YES;
     }
-        commentLabel.text = commStr1 ;
-
+}
+//设置动态消息的头像
+-(void)setDynamicImage
+{
+    NSString * headImage = KISDictionaryHaveKey([self getDynamicInfo], @"img");
+    if([GameCommon isEmtity:headImage])
+    {
+        headImgView.imageURL = nil;
+        [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+    }else{
+        headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+        [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
     }
-
+    
+}
+//获取缓存的动态消息内容
+-(NSDictionary*)getDynamicInfo
+{
+    NSMutableData *data= [NSMutableData data];
+    NSDictionary *dic = [NSDictionary dictionary];
+    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
+    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    dic = [unarchiver decodeObjectForKey: @"getDatat"];
+    [unarchiver finishDecoding];
+    return dic;
 }
 
 //初始化公告未读消息数量
@@ -162,12 +213,7 @@
     billboardMsgCount = [bullboardMsgCount intValue];
     [self setMsgBillBoardConunt:billboardMsgCount];
 }
-#pragma mark 收到公告消息
--(void)receivedBillboardMsg:(NSNotification*)sender
-{
-    billboardMsgCount++;
-    [self setMsgBillBoardConunt:billboardMsgCount];
-}
+
 //设置公告未读消息数量
 -(void)setMsgBillBoardConunt:(NSInteger)msgCount
 {
@@ -261,11 +307,8 @@
     imgV.userInteractionEnabled = YES;
     [imgV addGestureRecognizer:[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
     [self.view addSubview:imgV];
-    
-    
-    
+
     centerBtnArray = [NSMutableArray array];
-    
     
     // 建立标头和下拉菜单
     drawView =[[ TvView alloc]initWithFrame:CGRectMake(0,0, 320, KISHighVersion_7?79:59 )];
@@ -361,10 +404,6 @@
     m_notibgGbImageView.hidden = YES;
     [bottomView addSubview:m_notibgGbImageView];
     
-    
-    
-    
-    
     headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
     [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
     headImgView.frame = CGRectMake(320-50, 10, 40, 40);
@@ -413,44 +452,9 @@
     commentLabel.adjustsFontSizeToFitWidth = YES;
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
-    NSString *commStr1 = @"";
-    NSString *commStr2 = @"";
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]||[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-            commStr1 = [NSString stringWithFormat:@"共有%d条新动态.",[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue]];
-            m_notibgCircleNewsImageView.hidden =NO;
-            [bottomView bringSubviewToFront:m_notibgCircleNewsImageView];
-        }else{
-            m_notibgCircleNewsImageView.hidden = YES;
-        }
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-            
-            NSString *counts = [[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"];
-                       
-            commStr2 = [NSString stringWithFormat:@"%@条与我相关",counts];
-            m_notibgInfoImageView.hidden = NO;
-            [bottomView bringSubviewToFront:m_notibgInfoImageView];
-            lb.text =[NSString stringWithFormat:@"%@",counts];
-        }else{
-            commStr2 = @"";
-            lb.text = @"";
-            m_notibgInfoImageView.hidden = YES;
-        }
-        commentLabel.text = [commStr1 stringByAppendingString:commStr2];
-    }else{
-        commentLabel.text  = @"暂无新动态";
-        lb.text = @"";
-        m_notibgInfoImageView.hidden = YES;
-        m_notibgCircleNewsImageView.hidden = YES;
-    }
     [circleView addSubview:commentLabel];
     
-    
-    
-   
-    
-    
-    
+    [self setDynamicImage];//设置动态消息图片
     
     m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 44, 44)];
     m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
@@ -463,7 +467,6 @@
         [m_menuButton setBackgroundImage:KUIImage(@"menu_find_normal") forState:UIControlStateNormal];
     }
     [self.view addSubview:m_menuButton];
-   // [self didClickMenu:nil];
 }
 - (UIImage *) dealDefaultImage: (UIImage *) image centerInSize: (CGSize) viewsize
 {
@@ -807,12 +810,8 @@
 //    circleVC.msgCount = [[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
     circleVC.userId =[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     [self.navigationController pushViewController:circleVC animated:YES];
-    //清除红点
-    m_notibgInfoImageView.hidden = YES;
-    m_notibgCircleNewsImageView.hidden = YES;
-    myDunamicmsgCount =0;
+    friendDunamicmsgCount = 0;
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
-    commentLabel.text = @"暂无新的动态";
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
 }

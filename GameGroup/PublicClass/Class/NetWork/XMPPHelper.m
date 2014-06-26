@@ -285,8 +285,8 @@
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-            
-            if ([msgtype isEqualToString:@"frienddynamicmsg"]) {    //新的朋友圈动态
+            if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
+                [self saveDynimacInfo:payload];
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
                     int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
                     i++;
@@ -300,14 +300,10 @@
                 
 
             }
-            else if ([msgtype isEqualToString:@"mydynamicmsg"])
+            else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
-                NSMutableData *data= [[NSMutableData alloc]init];
-                NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-                [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
-                [archiver finishEncoding];
+                [self saveDynimacInfo:payload];
                 if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
                    int i=1;
                     [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
@@ -316,10 +312,9 @@
                     
                     [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
                 }
-                
-                [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
                 [[NSUserDefaults standardUserDefaults] synchronize];
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
                 [[GameCommon shareGameCommon] displayTabbarNotification];
             }
             else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
@@ -487,6 +482,17 @@
         return @"解散群";
     }
     return @"新的群消息";
+}
+//保存最后一条动态消息
+-(void)saveDynimacInfo:(NSString*)payload
+{
+    NSMutableData *data= [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:[payload JSONValue] forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
 }
 //sender:@"10000202@gamepro.com/862933025698753"
 #pragma mark 发送反馈消息
