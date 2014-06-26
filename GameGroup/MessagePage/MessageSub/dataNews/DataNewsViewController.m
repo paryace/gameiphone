@@ -19,15 +19,6 @@
 
 @implementation DataNewsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -39,11 +30,8 @@
     m_myTableView.rowHeight = 70;
     m_myTableView.delegate = self;
     m_myTableView.dataSource =self;
-//    m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     m_myTableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
-    
-    // Do any additional setup after loading the view.
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -61,8 +49,6 @@
      cell.settingState.hidden=YES;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     NSDictionary *dict = KISDictionaryHaveKey(dic, @"content");
-//    cell.headImageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]]];
-    
     NSString * gameId=KISDictionaryHaveKey(dic, @"gameid");
     NSString * imageId=[GameCommon putoutgameIconWithGameId:gameId];
     cell.headImageV.imageURL = [ImageService getImageUrl4:imageId];
@@ -85,7 +71,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 - (NSString*)getDataWithTimeMiaoInterval:(NSString*)timeInterval
 {
@@ -107,7 +92,6 @@
     if (messageTime.length < 10 || currentString.length < 10) {
         return @"未知";
     }
-    // NSString * finalTime;
     NSString* curStr = [currentString substringToIndex:messageTime.length-3];
     NSString* mesStr = [messageTime substringToIndex:messageTime.length-3];
     
@@ -132,15 +116,5 @@
     NSString *messageDateStr = [dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:theMessageT]];
     return [messageDateStr substringFromIndex:5];
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
