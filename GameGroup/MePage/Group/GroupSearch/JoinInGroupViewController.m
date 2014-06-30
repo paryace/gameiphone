@@ -82,6 +82,11 @@
     
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(gameInfoArray[0], @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(gameInfoArray[0], @"id")],@"characterId", nil];
 
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"获取中...";
+    
+    
     [self getCardWithNetWithDic:dic];
     
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 140, 320, 20)];
@@ -256,6 +261,7 @@
 #pragma mark ---获取网络请求数据
 -(void)getCardWithNetWithDic:(NSMutableDictionary *)paramDict
 {
+    [hud show:YES];
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
 
     
@@ -267,7 +273,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             listDict  = responseObject;
-           
+            [hud hide:YES];
             
             NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"猜你喜欢",@"tagId":@"hot"}, nil];
             allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
@@ -289,6 +295,7 @@
                 [alert show];
             }
         }
+         [hud hide:YES];
     }];
     
 }
