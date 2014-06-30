@@ -189,10 +189,11 @@ UINavigationControllerDelegate>
     {
         offHight = 20;
     }
+    [self.view addSubview:self.tView];
+    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
-    NSLog(@"从数据库中取出与 %@ 的聊天纪录:messages%@",self.chatWithUser, messages);
     //清空此人所有的未读消息
     if ([self.type isEqualToString:@"normal"]) {
         [self sendReadedMesg];//发送已读消息
@@ -200,8 +201,6 @@ UINavigationControllerDelegate>
     }else if ([self.type isEqualToString:@"group"]){
         [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
     }
-    [self.view addSubview:self.tView];
-    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
@@ -1304,9 +1303,10 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"]){
         [DataStoreManager refreshGroupMessageStatusWithId:uuid status:status];
     }
-
     [messages replaceObjectAtIndex:index withObject:dict];
-    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    [cell setViewState:status];
+//    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
 //刷新消息状态
 -(void)refreMessageStatus2:(NSMutableDictionary*)msgDictionary Status:(NSString*)status
@@ -1577,36 +1577,58 @@ UINavigationControllerDelegate>
     return YES;
 }
 
+///                [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
+//[DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
+
+
+
 //消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
     NSDictionary* tempDic = notification.userInfo;
-    NSString* src_id = KISDictionaryHaveKey(tempDic, @"src_id");
-    if ([tempDic isKindOfClass:[NSDictionary class]]) {
-        NSString* status = [self getMsgStatus:src_id];
-        NSInteger changeRow = [self getMsgRowWithId:src_id];
-        if (changeRow < 0) {
-            return;
-        }
-        NSMutableDictionary *dict = [messages objectAtIndex:changeRow];
-        if ([status isEqualToString:@"2"]) {//发送中-> 失败
-            if ([self.type isEqualToString:@"normal"]) {
-                [DataStoreManager refreshMessageStatusWithId:src_id status:@"0"];
-            }else if([self.type isEqualToString:@"group"]){
-                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:@"0"];
-            }
-            
-            [dict setObject:@"0" forKey:@"status"];
-            [messages replaceObjectAtIndex:changeRow withObject:dict];
-            [self.tView reloadData];
-        }
-        else//送达、已读、失败
-        {
-            [dict setObject:status forKey:@"status"];
-            [self refreMessageStatus2:dict Status:status];
-        }
+    NSInteger changeRow = [self getMsgRowWithId:KISDictionaryHaveKey(tempDic, @"src_id")];
+    NSMutableDictionary *dict = [messages objectAtIndex:changeRow];
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:@"0"];
+    }else if([self.type isEqualToString:@"group"]){
+        [DataStoreManager refreshGroupMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:@"0"];
     }
+    
+    [dict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")] forKey:@"status"];
+    [messages replaceObjectAtIndex:changeRow withObject:dict];
+    [self refreMessageStatus2:dict Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
 }
+
+////消息发送成功
+//- (void)messageAck:(NSNotification *)notification
+//{
+//    NSDictionary* tempDic = notification.userInfo;
+//    NSString* src_id = KISDictionaryHaveKey(tempDic, @"src_id");
+//    if ([tempDic isKindOfClass:[NSDictionary class]]) {
+//        NSString* status = [self getMsgStatus:src_id];
+//        NSInteger changeRow = [self getMsgRowWithId:src_id];
+//        if (changeRow < 0) {
+//            return;
+//        }
+//        NSMutableDictionary *dict = [messages objectAtIndex:changeRow];
+//        if ([status isEqualToString:@"2"]) {//发送中-> 失败
+//            if ([self.type isEqualToString:@"normal"]) {
+//                [DataStoreManager refreshMessageStatusWithId:src_id status:@"0"];
+//            }else if([self.type isEqualToString:@"group"]){
+//                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:@"0"];
+//            }
+//            
+//            [dict setObject:@"0" forKey:@"status"];
+//            [messages replaceObjectAtIndex:changeRow withObject:dict];
+//            [self.tView reloadData];
+//        }
+//        else//送达、已读、失败
+//        {
+//            [dict setObject:status forKey:@"status"];
+//            [self refreMessageStatus2:dict Status:status];
+//        }
+//    }
+//}
 
 -(NSString*)getMsgStatus:(NSString*)msgId
 {
@@ -1878,8 +1900,8 @@ UINavigationControllerDelegate>
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
     
-    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
-    [self addNewMessageToTable:dictionary];
+//    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    [self addNewMessageToTable:[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]]];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
     [self refreWX];
 }
@@ -2036,7 +2058,7 @@ UINavigationControllerDelegate>
 {
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
     CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],[[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
-    KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexpath];
+    KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexpath];
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
 }
 #pragma mark 判断是否需要执行第一次打招呼
@@ -2056,7 +2078,7 @@ UINavigationControllerDelegate>
 -(NSMutableDictionary*)createMsgDictionarys:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid MsgStatus:(NSString *)status
                                    SenderId:(NSString*)senderId ReceiveId:(NSString*)receiveId MsgType:(NSString*)msgType
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary * dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:message forKey:@"msg"];
     [dictionary setObject:senderId forKey:@"sender"];
     [dictionary setObject:nowTime forKey:@"time"];
@@ -2162,27 +2184,27 @@ UINavigationControllerDelegate>
         }
         [chat.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,chat.tView.frame.size.width,chat.tView.frame.size.height) animated:NO];
     };
-    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-        
-        switch (state) {
-            case MJRefreshStateNormal:
-                
-                break;
-            case MJRefreshStatePulling:
-                
-                break;
-            case MJRefreshStateRefreshing:
-                
-                break;
-            case MJRefreshStateWillRefreshing:
-                
-                break;
-                
-            default:
-                break;
-        }
-        
-    };
+//    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
+//        
+//        switch (state) {
+//            case MJRefreshStateNormal:
+//                
+//                break;
+//            case MJRefreshStatePulling:
+//                
+//                break;
+//            case MJRefreshStateRefreshing:
+//                
+//                break;
+//            case MJRefreshStateWillRefreshing:
+//                
+//                break;
+//                
+//            default:
+//                break;
+//        }
+//        
+//    };
     self.kkChatControllerRefreshHeadView = header;
     
 }

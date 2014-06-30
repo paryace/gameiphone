@@ -24,5 +24,6 @@
 
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index;
 -(void)refreStatus:(NSInteger)cellIndex;
+
 @end
 

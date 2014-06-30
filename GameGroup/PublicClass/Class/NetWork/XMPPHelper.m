@@ -372,23 +372,6 @@
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
         }
-//        else if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
-//        {
-//            NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
-//            NSString * to=[NSString stringWithFormat:@"%@%@%@",[[message attributeForName:@"groupid"] stringValue],@"@group.",[[from componentsSeparatedByString:@"@"] objectAtIndex:1]];
-//            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-//            
-//            [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
-//            if (payload.length>0) {
-//                [dict setObject:payload forKey:@"payload"];
-//            }
-//            [dict setObject:msgtype forKey:@"msgType"];
-//            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-//            [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
-//            
-//            [self.chatDelegate newGroupMessageReceived:dict];
-//            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
-//        }
         else if([msgtype isEqualToString:@"inGroupSystemMsgJoinGroup"]//好友加入群
                 ||[msgtype isEqualToString:@"inGroupSystemMsgQuitGroup"])//好友退出群
         {
@@ -451,17 +434,13 @@
                 return;
             }
             NSString * msgStatus = KISDictionaryHaveKey(bodyDic, @"msgStatus");
+            
             if ([msgStatus isEqualToString:@"Delivered"]) {//是否送达
-                [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0"];
-                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0"];
-                
+                [bodyDic setValue:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0" forKeyPath:@"msgState"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
             else if ([msgStatus isEqualToString:@"Displayed"]) {//是否已读
-                
-                [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
-                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
-                
+                [bodyDic setValue:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0" forKeyPath:@"msgState"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
             }
         }
@@ -474,8 +453,7 @@
         if (src_id.length <= 0) {
             return;
         }
-        [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
-         [DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(msgData, @"received") boolValue] ? @"1" : @"0"];
+        [msgData setValue:@"1" forKeyPath:@"msgState"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
     }
 }

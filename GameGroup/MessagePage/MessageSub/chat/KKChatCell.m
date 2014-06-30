@@ -111,12 +111,16 @@
     }
 }
 
-#pragma mark 重连标识 FailImg
-- (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
+-(void)setViewPoint:(CGPoint)point
 {
     mPoint = point;
     self.failImage.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
     self.statusLabel.frame = CGRectMake(point.x-12, point.y-12, 24, 24);
+    self.activityView.center = point;
+}
+
+-(void)setViewState:(NSString*)status
+{
     if ([status isEqualToString:@"0"]) {//失败
         self.failImage.hidden = NO;
         self.statusLabel.hidden = YES;
@@ -131,7 +135,6 @@
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES;
-        self.activityView.center = point;
         [self.activityView startAnimating];
         if (![self.cellTimer isValid]) {
             self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mSendTime target:self selector:@selector(stopActivity) userInfo:nil repeats:YES];
@@ -153,7 +156,7 @@
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = NO;
-         [self.activityView stopAnimating];
+        [self.activityView stopAnimating];
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
             self.cellTimer = nil;
@@ -182,11 +185,20 @@
     }
 }
 
+#pragma mark 重连标识 FailImg
+- (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
+{
+    [self setViewPoint:point];
+    [self setViewState:status];
+    
+}
+
+
 //菊花停止转动
 - (void)stopActivity
 {
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"0", @"received",nil];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"true", @"received",@"0",@"msgState",nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
     //10秒后通知大家检查现在的status状态
 }

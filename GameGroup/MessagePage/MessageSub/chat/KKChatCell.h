@@ -47,6 +47,7 @@
 //头像 
 - (void)setHeadImgByMe:(NSString*) myHeadImg; //头像是自己
 - (void)setHeadImgByChatUser:(NSString*) chatUserImg; //把头像设置为聊天对像
+-(void)setViewState:(NSString*)status;
 @end
 
 @protocol KKChatCellDelegate <NSObject>
