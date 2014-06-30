@@ -301,4 +301,10 @@
 +(void)clearJoinGroupApplicationMsg;
 
 +(void)uploadStoreMsg:(NSDictionary *)msg;
+
+//保存群组聊天消息
++(void)storeNewGroupMsgs:(NSDictionary *)msg;
+
+//保存正常聊天的消息
++(void)storeNewNormalChatMsgs:(NSDictionary *)msg;
 @end

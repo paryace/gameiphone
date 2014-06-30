@@ -211,28 +211,35 @@
     [dict setObject:msgId forKey:@"msgId"];//消息id
     [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
     
-    if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
-    {
-        NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
-        NSString * to=[NSString stringWithFormat:@"%@%@%@",[[message attributeForName:@"groupid"] stringValue],@"@group.",[[from componentsSeparatedByString:@"@"] objectAtIndex:1]];
-        NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-        
-        [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
-        if (payload.length>0) {
-            [dict setObject:payload forKey:@"payload"];
-        }
-        [dict setObject:msgtype forKey:@"msgType"];
-        [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-        [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
-        
-        [self.chatDelegate newGroupMessageReceived:dict];
-        [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
-        return;
-    }
     NSLog(@"theDict%@",dict);
     if ([type isEqualToString:@"chat"])
     {
+        if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
+        {
+            if ([GameCommon isEmtity:msgId]) {
+                return;
+            }
+            NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
+            NSString * to=[NSString stringWithFormat:@"%@%@%@",[[message attributeForName:@"groupid"] stringValue],@"@group.",[[from componentsSeparatedByString:@"@"] objectAtIndex:1]];
+            NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+            
+            [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [dict setObject:msgtype forKey:@"msgType"];
+            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+            [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
+            
+            [self.chatDelegate newGroupMessageReceived:dict];
+            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
+            return;
+        }
+        
         if ([msgtype isEqualToString:@"normalchat"]) {//聊天的 或动态聊天消息
+            if ([GameCommon isEmtity:msgId]) {
+                return;
+            }
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];//是否含payload标签
             if (payload.length>0) {

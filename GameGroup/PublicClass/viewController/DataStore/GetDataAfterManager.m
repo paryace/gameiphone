@@ -119,17 +119,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if ([GameCommon isEmtity:KISDictionaryHaveKey(messageContent, @"msgId")]) {
         return;
     }
-    
-    if([type isEqualToString:@"normalchat"])//正常聊天
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:COMMONUSER];//普通聊天消息
-    }
-    else if ([type isEqualToString:@"sayHello"] || [type isEqualToString:@"deletePerson"])//加好友或者删除好友
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:SAYHELLOS];//关注和取消关注
-    }
     else if([type isEqualToString:@"recommendfriend"])//好友推荐
     {
         [self setSoundOrVibrationopen];
@@ -184,7 +173,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
-     NSString * sender = [messageContent objectForKey:@"sender"];
+    NSString * sender = [messageContent objectForKey:@"sender"];
     NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
 
     if ([DataStoreManager savedMsgWithID:msgId]) {
@@ -206,8 +195,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    [self storeNewMessage:messageContent];//保存消息
-    [DataStoreManager saveDSCommonMsg:messageContent];
+    [DataStoreManager storeNewNormalChatMsgs:messageContent];
     
     if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
         [[UserManager singleton]requestUserFromNet:sender];
@@ -218,15 +206,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
-
-
-#pragma mark 收到群聊天消息
+#pragma mark 收到群组聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
-    if ([DataStoreManager isHasdGroMsg:KISDictionaryHaveKey(messageContent, @"msgId")]) {
-        return;
-    }
-    [messageContent setValue:@"1" forKey:@"sayHiType"];
     if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
         BOOL isVibrationopen=[self isVibrationopen];;
         BOOL isSoundOpen = [self isSoundOpen];
@@ -237,8 +219,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             [VibrationSong vibrationSong];
         }
     }
-    [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];
-    [DataStoreManager saveDSGroupMsg:messageContent];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [DataStoreManager storeNewGroupMsgs:messageContent];
     
     if (![DataStoreManager ifHaveThisUserInUserManager:[messageContent objectForKey:@"sender"]]) {
         [[UserManager singleton]requestUserFromNet:[messageContent objectForKey:@"sender"]];
@@ -324,8 +306,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * fromUser = [userInfo objectForKey:@"sender"];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [self storeNewMessage:userInfo];
-    
-    
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];

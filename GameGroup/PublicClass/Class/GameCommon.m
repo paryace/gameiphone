@@ -330,12 +330,6 @@ static GameCommon *my_gameCommon = NULL;
 
     }else
         finalTime = [NSString stringWithFormat:@"%@-%@", [[messageDateStr substringFromIndex:5] substringToIndex:2],[messageDateStr substringFromIndex:8]];
-//    finalTime = [NSString stringWithFormat:@"%@-%@ %@",
-//                 [[messageDateStr substringFromIndex:5] substringToIndex:2],
-//                 [messageDateStr substringFromIndex:8],
-//                 msgT];
-
-    
     return finalTime;
 }
 

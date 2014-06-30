@@ -296,9 +296,7 @@ UINavigationControllerDelegate>
     NSString *sender = KISDictionaryHaveKey(dict, @"sender");
     NSString *time = [KISDictionaryHaveKey(dict, @"time") substringToIndex:10];
     NSString *status = KISDictionaryHaveKey(dict, @"status");
-    CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],
-                             [[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
-    
+    CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:0] floatValue],[[[self.HeightArray objectAtIndex:indexPath.row] objectAtIndex:1] floatValue]);
     size.width = size.width<20?20:size.width;
     size.height = size.height<20?20:size.height;
     
@@ -462,6 +460,7 @@ UINavigationControllerDelegate>
         }
         return  cell;
     }
+    //加入群，退出群，解散群
     else if (kkChatMsgType == KKChatMsgTypeSystem) {
         static NSString *identifier = @"systemMsgCell";
         KKSystemMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
@@ -487,8 +486,8 @@ UINavigationControllerDelegate>
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
-    else if (kkChatMsgType == KKChatMsgHistory)
-    {
+    //以上是历史消息
+    else if (kkChatMsgType == KKChatMsgHistory){
         static NSString *identifier = @"historyMsgCell";
         KKHistoryMsgCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -1026,10 +1025,10 @@ UINavigationControllerDelegate>
 //格式化时间
 -(NSString*)getMsgTime:(NSDictionary*)plainEntry
 {
-    NSString *time = [KISDictionaryHaveKey(plainEntry, @"time") substringToIndex:10];
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
-    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+//    NSString *time = [KISDictionaryHaveKey(plainEntry, @"time") substringToIndex:10];
+//    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)[[NSDate date] timeIntervalSince1970]];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[[KISDictionaryHaveKey(plainEntry, @"time") substringToIndex:10] intValue]];
     return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
 
@@ -1875,6 +1874,7 @@ UINavigationControllerDelegate>
     NSString * uuid = [[GameCommon shareGameCommon] uuid];
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+    
     NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [self addNewMessageToTable:dictionary];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
@@ -1905,18 +1905,18 @@ UINavigationControllerDelegate>
 -(void)addNewMessageToTable:(NSMutableDictionary*)dictionary
 {
     [messages addObject:dictionary];//添加到当前消息集合 内存
-    [self newMsgToArray:dictionary];//计算高度，添加高度到内存
+    [self newMsgToArray:dictionary];//计算高度，添加高度到内存｀
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager storeMyMessage:dictionary];//添加到数据库
-        [DataStoreManager storeMyNormalMessage:dictionary];
+//        [DataStoreManager storeMyNormalMessage:dictionary];
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
-        [DataStoreManager storeMyGroupThumbMessage:dictionary];
         if (![self isGroupAvaitable]) {//本群不可用
             [self groupNotAvailable];
             [dictionary setObject:@"1" forKey:@"status"];
         }
-        [DataStoreManager storeMyGroupMessage:dictionary];
+        [DataStoreManager storeMyGroupThumbMessage:dictionary];
+//        [DataStoreManager storeMyGroupMessage:dictionary];
     }
     [self.tView reloadData];//刷新列表
     if (messages.count>0) {//定位到列表最后
