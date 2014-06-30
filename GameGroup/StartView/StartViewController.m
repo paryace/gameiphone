@@ -117,10 +117,19 @@
         [self.view.window makeKeyAndVisible];
     }
     else{//为空直接闪退出去
-        [self presentViewController:ryc_tabbarController animated:NO completion:^{
-            
-        }];
+        NSString *str = [NSString stringWithFormat:@"没有获取到%@",ryc_tabbarController];
+        UIAlertView *alertView =[[UIAlertView alloc]initWithTitle:@"提示" message:str delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+        [alertView show];
     }
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
+    [self presentViewController:ryc_tabbarController animated:NO completion:^{
+        
+    }];
+
 }
 
 //下载开机图
