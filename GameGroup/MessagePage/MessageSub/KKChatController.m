@@ -1587,47 +1587,6 @@ UINavigationControllerDelegate>
     [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
 }
 
-////消息发送成功
-//- (void)messageAck:(NSNotification *)notification
-//{
-//    NSDictionary* tempDic = notification.userInfo;
-//    NSString* src_id = KISDictionaryHaveKey(tempDic, @"src_id");
-//    if ([tempDic isKindOfClass:[NSDictionary class]]) {
-//        NSString* status = [self getMsgStatus:src_id];
-//        NSInteger changeRow = [self getMsgRowWithId:src_id];
-//        if (changeRow < 0) {
-//            return;
-//        }
-//        NSMutableDictionary *dict = [messages objectAtIndex:changeRow];
-//        if ([status isEqualToString:@"2"]) {//发送中-> 失败
-//            if ([self.type isEqualToString:@"normal"]) {
-//                [DataStoreManager refreshMessageStatusWithId:src_id status:@"0"];
-//            }else if([self.type isEqualToString:@"group"]){
-//                [DataStoreManager refreshGroupMessageStatusWithId:src_id status:@"0"];
-//            }
-//            
-//            [dict setObject:@"0" forKey:@"status"];
-//            [messages replaceObjectAtIndex:changeRow withObject:dict];
-//            [self.tView reloadData];
-//        }
-//        else//送达、已读、失败
-//        {
-//            [dict setObject:status forKey:@"status"];
-//            [self refreMessageStatus2:dict Status:status];
-//        }
-//    }
-//}
-
--(NSString*)getMsgStatus:(NSString*)msgId
-{
-    if ([self.type isEqualToString:@"normal"]) {
-        return [DataStoreManager queryMessageStatusWithId:msgId];
-    }else if([self.type isEqualToString:@"group"]){
-        return [DataStoreManager queryGroupMessageStatusWithId:msgId];
-    }
-    return [DataStoreManager queryMessageStatusWithId:msgId];
-}
-
 //根据uuid获取message所在的RowIndex
 - (NSInteger)getMsgRowWithId:(NSString*)msgUUID
 {
