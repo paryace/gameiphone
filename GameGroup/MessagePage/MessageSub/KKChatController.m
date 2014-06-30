@@ -1294,6 +1294,9 @@ UINavigationControllerDelegate>
 // 刷新消息状态
 -(void)refreMessageStatus:(int)index Status:(NSString*)status
 {
+    if (index<0) {
+        return;
+    }
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(index) inSection:0];
     NSMutableDictionary *dict = [messages objectAtIndex:index];
     NSString *uuid = KISDictionaryHaveKey(dict, @"messageuuid");
@@ -1306,7 +1309,6 @@ UINavigationControllerDelegate>
     [messages replaceObjectAtIndex:index withObject:dict];
     KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
     [cell setViewState:status];
-//    [self.tView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
 //刷新消息状态
 -(void)refreMessageStatus2:(NSMutableDictionary*)msgDictionary Status:(NSString*)status
@@ -1577,26 +1579,12 @@ UINavigationControllerDelegate>
     return YES;
 }
 
-///                [DataStoreManager refreshMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
-//[DataStoreManager refreshGroupMessageStatusWithId:src_id status:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0"];
-
-
-
 //消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
     NSDictionary* tempDic = notification.userInfo;
     NSInteger changeRow = [self getMsgRowWithId:KISDictionaryHaveKey(tempDic, @"src_id")];
-    NSMutableDictionary *dict = [messages objectAtIndex:changeRow];
-    if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:@"0"];
-    }else if([self.type isEqualToString:@"group"]){
-        [DataStoreManager refreshGroupMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:@"0"];
-    }
-    
-    [dict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")] forKey:@"status"];
-    [messages replaceObjectAtIndex:changeRow withObject:dict];
-    [self refreMessageStatus2:dict Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
+    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
 }
 
 ////消息发送成功
