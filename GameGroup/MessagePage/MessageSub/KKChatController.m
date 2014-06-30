@@ -1908,7 +1908,6 @@ UINavigationControllerDelegate>
     [self newMsgToArray:dictionary];//计算高度，添加高度到内存｀
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager storeMyMessage:dictionary];//添加到数据库
-//        [DataStoreManager storeMyNormalMessage:dictionary];
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         if (![self isGroupAvaitable]) {//本群不可用
@@ -1916,7 +1915,6 @@ UINavigationControllerDelegate>
             [dictionary setObject:@"1" forKey:@"status"];
         }
         [DataStoreManager storeMyGroupThumbMessage:dictionary];
-//        [DataStoreManager storeMyGroupMessage:dictionary];
     }
     [self.tView reloadData];//刷新列表
     if (messages.count>0) {//定位到列表最后
