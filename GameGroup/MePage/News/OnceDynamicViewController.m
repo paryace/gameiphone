@@ -952,8 +952,8 @@
     [self changeWebViewStyle:webView];
 
     //为图片添加点击响应
-    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
-    NSLog(@"------finish=%@",str);
+//    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
+//    NSLog(@"------finish=%@",str);
 }
 
 - (void)changeWebViewStyle:(UIWebView *)webView{

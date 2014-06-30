@@ -386,10 +386,8 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
-        NSMutableArray *characterArray = [NSMutableArray array];
-        characterArray = m_hostInfo.charactersArr;//魔兽世界 新的
-        [[NSUserDefaults standardUserDefaults]setObject:characterArray forKey:@"CharacterArrayOfAllForYou"];
-            if ([characterArray count]<=0) {
+        [[NSUserDefaults standardUserDefaults]setObject:m_hostInfo.charactersArr forKey:@"CharacterArrayOfAllForYou"];
+            if ([m_hostInfo.charactersArr count]<=0) {
             cell.heardImg.hidden = YES; 
             cell.authBg.hidden = YES;
             cell.nameLabel.hidden = YES;
@@ -410,7 +408,7 @@
             cell.pveLabel.hidden = NO;
             cell.pveTitle.hidden=NO;
             cell.noCharacterLabel.hidden = YES;
-            NSDictionary* tempDic = [characterArray objectAtIndex:indexPath.row];
+            NSDictionary* tempDic = [m_hostInfo.charactersArr objectAtIndex:indexPath.row];
 
             NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
             NSString* v1=KISDictionaryHaveKey(tempDic, @"value1");//部落

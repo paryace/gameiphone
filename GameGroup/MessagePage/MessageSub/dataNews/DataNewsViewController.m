@@ -24,13 +24,14 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"每日一闻" withBackButton:YES];
-    
+     self.view.backgroundColor=UIColorFromRGBA(0xf7f7f7, 1);
     m_dataArray = (NSMutableArray *)[DataStoreManager qureyFirstOfgame];
     m_myTableView =[[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     m_myTableView.rowHeight = 70;
     m_myTableView.delegate = self;
     m_myTableView.dataSource =self;
-    m_myTableView.backgroundColor = [UIColor clearColor];
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
 }
 

@@ -116,8 +116,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
 
     NSString * type = KISDictionaryHaveKey(messageContent, @"msgType")?KISDictionaryHaveKey(messageContent, @"msgType"):@"notype";
-    NSString * msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    if ([GameCommon isEmtity:msgId]) {
+    if ([GameCommon isEmtity:KISDictionaryHaveKey(messageContent, @"msgId")]) {
         return;
     }
     
@@ -224,15 +223,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到群聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
-    NSString * sender = [messageContent objectForKey:@"sender"];
-    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    NSString * groupId = [messageContent objectForKey:@"groupId"];
-    if ([DataStoreManager isHasdGroMsg:msgId]) {
+    if ([DataStoreManager isHasdGroMsg:KISDictionaryHaveKey(messageContent, @"msgId")]) {
         return;
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-
-    if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"0"]) {//正常模式
+    if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
         BOOL isVibrationopen=[self isVibrationopen];;
         BOOL isSoundOpen = [self isSoundOpen];
         if (isSoundOpen) {
@@ -245,11 +240,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager storeNewMsgs:messageContent senderType:GROUPMSG];
     [DataStoreManager saveDSGroupMsg:messageContent];
     
-    if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
-        [[UserManager singleton]requestUserFromNet:sender];
+    if (![DataStoreManager ifHaveThisUserInUserManager:[messageContent objectForKey:@"sender"]]) {
+        [[UserManager singleton]requestUserFromNet:[messageContent objectForKey:@"sender"]];
     }else{//更新消息表
-        NSDictionary* user=[[UserManager singleton] getUser:sender];
-        [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+        NSDictionary* user=[[UserManager singleton] getUser:[messageContent objectForKey:@"sender"]];
+        [DataStoreManager storeThumbMsgUser:[messageContent objectForKey:@"sender"] nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }

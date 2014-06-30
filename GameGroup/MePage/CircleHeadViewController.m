@@ -335,6 +335,9 @@ typedef enum : NSUInteger {
     NSMutableData *data= [NSMutableData data];
     NSDictionary *dic = [NSDictionary dictionary];
     data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
+    if(!data){
+        return nil;
+    }
     NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     dic = [unarchiver decodeObjectForKey: @"getDatat"];
     [unarchiver finishDecoding];

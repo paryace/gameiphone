@@ -49,6 +49,7 @@
     [super viewDidLoad];
 
     [self setTopViewWithTitle:nil withBackButton:YES];
+    self.view.backgroundColor=UIColorFromRGBA(0xf7f7f7, 1);
     
     titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
     titleLabel.textColor = [UIColor whiteColor];
@@ -66,6 +67,8 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight = 70;
+    m_myTableView.backgroundColor=UIColorFromRGBA(0xf3f3f3, 1);
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUserUpdate:) name:@"userInfoUpdated" object:nil];
     

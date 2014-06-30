@@ -129,14 +129,14 @@
     if (messageTime.length < 10 || currentString.length < 10) {
         return @"未知";
     }
-    NSString* curStr = [currentString substringToIndex:messageTime.length-3];
+//    NSString* curStr = [currentString substringToIndex:messageTime.length-3];
     NSString* mesStr = [messageTime substringToIndex:messageTime.length-3];
     
-    double theCurrentT = [curStr doubleValue];
+//    double theCurrentT = [curStr doubleValue];
     double theMessageT = [mesStr doubleValue];
     
-    NSLog(@"%f--%f",theCurrentT,theMessageT);
-    NSLog(@"++%f",theCurrentT-theMessageT);
+//    NSLog(@"%f--%f",theCurrentT,theMessageT);
+//    NSLog(@"++%f",theCurrentT-theMessageT);
 //    if (((int)(theCurrentT-theMessageT))<60) {
 //        return @"1分钟以前";
 //    }

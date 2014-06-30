@@ -143,7 +143,7 @@
     
     [self setTopViewWithTitle:@"" withBackButton:NO];
 
-    
+    self.view.backgroundColor=UIColorFromRGBA(0xf7f7f7, 1);
     
     allMsgArray = [NSMutableArray array];
     
@@ -160,7 +160,8 @@
     m_messageTable.dataSource = self;
     m_messageTable.rowHeight = 70;
     m_messageTable.delegate = self;
-    
+    m_messageTable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    [GameCommon setExtraCellLineHidden:m_messageTable];
     self.titleLabel=[[UILabel alloc] initWithFrame:CGRectMake(0, startX - 44, 320, 44)];
     self.titleLabel.backgroundColor=[UIColor clearColor];
     [self.titleLabel setFont:[UIFont boldSystemFontOfSize:20]];

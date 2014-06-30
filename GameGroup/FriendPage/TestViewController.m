@@ -88,6 +88,9 @@
     NSMutableData *data= [NSMutableData data];//将nsuserdefaults中获取到的数据 抓换成data 并且转化成NSDictionary
     NSDictionary *dic = [NSDictionary dictionary];
     data =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"swxInPersonInfo%@",self.userId]];
+    if (!data) {
+        return nil;
+    }
     NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     dic = [unarchiver decodeObjectForKey: @"getDatat"];
     [unarchiver finishDecoding];

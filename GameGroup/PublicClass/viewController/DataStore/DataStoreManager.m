@@ -270,19 +270,14 @@
 #pragma mark - 保存聊天记录
 +(void)saveDSCommonMsg:(NSDictionary *)msg
 {
-    NSString * sender = [msg objectForKey:@"sender"];
-    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
-    NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
-    NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
-    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
-        commonMsg.sender = sender;
-        commonMsg.msgContent = msgContent?msgContent:@"";
-        commonMsg.senTime = sendTime;
-        commonMsg.msgType = msgType;
+        commonMsg.sender = [msg objectForKey:@"sender"];
+        commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+        commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
         commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        commonMsg.messageuuid = msgId;
+        commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
         commonMsg.status = @"1";
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
@@ -291,22 +286,16 @@
 #pragma mark - 保存群组聊天记录
 +(void)saveDSGroupMsg:(NSDictionary *)msg
 {
-    NSString * sender = [msg objectForKey:@"sender"];
-    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
-    NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
-    NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
-    NSString * groupId = KISDictionaryHaveKey(msg, @"groupId");
-    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
-        groupMsg.sender = sender;
-        groupMsg.msgContent = msgContent?msgContent:@"";
-        groupMsg.senTime = sendTime;
-        groupMsg.msgType = msgType;
+        groupMsg.sender = [msg objectForKey:@"sender"];
+        groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+        groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+        groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
         groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        groupMsg.messageuuid = msgId;
-        groupMsg.status = @"1";//状态5表示未读吧
-        groupMsg.groupId = groupId;
+        groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+        groupMsg.status = @"1";
+        groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
 }
