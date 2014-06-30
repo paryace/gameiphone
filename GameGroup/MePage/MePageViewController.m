@@ -60,13 +60,14 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
-
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     m_myTableView.showsVerticalScrollIndicator = NO;
     m_myTableView.showsHorizontalScrollIndicator = NO;
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:m_myTableView];
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];

@@ -562,7 +562,10 @@ UINavigationControllerDelegate>
 }
 //行数
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [messages count];
+    if ([messages count]!=0) {
+        return [messages count];
+    }
+    return 0;
 }
 //点击重发红点
 -(void)resendMsgClick:(UIButton*)sender
