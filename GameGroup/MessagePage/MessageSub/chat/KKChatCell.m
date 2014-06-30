@@ -185,7 +185,7 @@
     }
 }
 
-#pragma mark 重连标识 FailImg
+#pragma mark
 - (void)refreshStatusPoint:(CGPoint)point status:(NSString*)status
 {
     [self setViewPoint:point];
