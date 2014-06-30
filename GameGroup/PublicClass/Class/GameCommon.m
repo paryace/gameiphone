@@ -774,10 +774,6 @@ static GameCommon *my_gameCommon = NULL;
     }];
 }
 
-
-
-
-
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {
     //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];

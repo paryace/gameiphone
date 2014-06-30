@@ -187,6 +187,9 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+
     }];
 }
 -(void)addheadView
