@@ -67,12 +67,10 @@ UINavigationControllerDelegate>
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
 @property (nonatomic, strong) UILabel *unReadL;
-@property (nonatomic, strong) MJRefreshHeaderView *kkChatControllerRefreshHeadView;
 @property (nonatomic, strong) UIButton *kkChatAddButton;
 @property (nonatomic, strong) UIView *inPutView;
 @property (nonatomic, strong) UIView *kkChatAddView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
-@property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 
@@ -178,10 +176,9 @@ UINavigationControllerDelegate>
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
     self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    //添加背景
-    UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,320,self.view.frame.size.height)];
-    bgV.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
-    [self.view addSubview:bgV];
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [self.view addSubview:self.tView];
+    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     
     if([self.type isEqualToString:@"normal"]){
         offHight = 0;
@@ -189,8 +186,6 @@ UINavigationControllerDelegate>
     {
         offHight = 20;
     }
-    [self.view addSubview:self.tView];
-    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
@@ -1846,8 +1841,7 @@ UINavigationControllerDelegate>
     NSString * uuid = [[GameCommon shareGameCommon] uuid];
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
-    
-//    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+
     [self addNewMessageToTable:[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]]];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
     [self refreWX];
@@ -1879,16 +1873,16 @@ UINavigationControllerDelegate>
     [messages addObject:dictionary];//添加到当前消息集合 内存
     [self newMsgToArray:dictionary];//计算高度，添加高度到内存｀
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager storeMyMessage:dictionary];//添加到数据库
+        [DataStoreManager storeMyMessage:dictionary];//正常聊天消息添加到数据库
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         if (![self isGroupAvaitable]) {//本群不可用
             [self groupNotAvailable];
             [dictionary setObject:@"1" forKey:@"status"];
         }
-        [DataStoreManager storeMyGroupThumbMessage:dictionary];
+        [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
     }
-    [self.tView reloadData];//刷新列表
+    [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
     if (messages.count>0) {//定位到列表最后
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
@@ -2099,13 +2093,11 @@ UINavigationControllerDelegate>
     
     __block NSArray *array;
     __block int loadHistoryArrayCount;
-    __block KKChatController *chat = self;
     __block float loadMoreMsgHeight = 0;
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
     header.scrollView = self.tView;
     [header.statusLabel setHidden:YES];
     [header.lastUpdateTimeLabel setHidden:YES];
-    
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(30, 30);
     header.arrowImage.frame = headerRect;
@@ -2125,34 +2117,12 @@ UINavigationControllerDelegate>
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
-        [chat.tView reloadData];
+        [self.tView reloadData];
         if (loadHistoryArrayCount==0) {
             return;
         }
-        [chat.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,chat.tView.frame.size.width,chat.tView.frame.size.height) animated:NO];
+        [self.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,self.tView.frame.size.width,self.tView.frame.size.height) animated:NO];
     };
-//    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-//        
-//        switch (state) {
-//            case MJRefreshStateNormal:
-//                
-//                break;
-//            case MJRefreshStatePulling:
-//                
-//                break;
-//            case MJRefreshStateRefreshing:
-//                
-//                break;
-//            case MJRefreshStateWillRefreshing:
-//                
-//                break;
-//                
-//            default:
-//                break;
-//        }
-//        
-//    };
-    self.kkChatControllerRefreshHeadView = header;
     
 }
 #pragma mark 群信息更新完成
@@ -2240,7 +2210,7 @@ UINavigationControllerDelegate>
         [tempDic setValue:@"4" forKey:@"status"];
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
-        [self.tView reloadData];
+        [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
         if (messages.count>0) {
             [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
         }

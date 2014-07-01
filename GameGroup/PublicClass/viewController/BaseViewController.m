@@ -51,7 +51,6 @@
     [super viewDidLoad];
     
     [self.view addGestureRecognizer:[[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(ceshi)]];
-
     nieheImageView = [[UIView alloc]initWithFrame:self.view.bounds];
     nieheImageView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.7];
     [self.view addSubview:nieheImageView];

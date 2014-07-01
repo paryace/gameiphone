@@ -47,6 +47,7 @@
         [myView addSubview:lineLabel];
         
         self.pveLabel = [[UILabel alloc] init];
+        self.pveLabel.backgroundColor = [UIColor clearColor];
         self.pveLabel.frame = CGRectMake(201, 7, 110, 20);
         self.pveLabel.textColor = UIColorFromRGBA(0x0077ff,1.0);
         self.pveLabel.textAlignment = NSTextAlignmentCenter;
@@ -54,6 +55,7 @@
         [myView addSubview:self.pveLabel];
         
         self.pveTitle = [[UILabel alloc] initWithFrame:CGRectMake(201, 30, 110, 20)];
+        self.pveTitle.backgroundColor = [UIColor clearColor];
         self.pveTitle.textColor = UIColorFromRGBA(0xa7a7a7,1.0);
         self.pveTitle.textAlignment = NSTextAlignmentCenter;
         self.pveTitle.font = [UIFont boldSystemFontOfSize:13.0];
