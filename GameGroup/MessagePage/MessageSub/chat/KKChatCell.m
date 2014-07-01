@@ -194,7 +194,7 @@
 }
 
 
-//菊花停止转动
+//设置为发送失败，菊花停止转动
 - (void)stopActivity
 {
     NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
