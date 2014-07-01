@@ -155,11 +155,11 @@
             break;
         case 1:
         {
-                return 35;
+                return 30;
         }break;
         case 3:
         {
-                return 35;
+                return 30;
         }break;
         default:
             return 30;
@@ -175,7 +175,6 @@
     }
     UIView* heardView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 31)];
     UIImageView* topBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 31)];
-//    topBg.image = KUIImage(@"table_heard_bg");
     topBg.backgroundColor = UIColorFromRGBA(0xe8e8e8, 1);
     [heardView addSubview:topBg];
 
@@ -387,8 +386,7 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryNone;
-        [[NSUserDefaults standardUserDefaults]setObject:m_hostInfo.charactersArr forKey:@"CharacterArrayOfAllForYou"];
-            if ([m_hostInfo.charactersArr count]<=0) {
+        if ([m_hostInfo.charactersArr count]<=0) {
             cell.heardImg.hidden = YES; 
             cell.authBg.hidden = YES;
             cell.nameLabel.hidden = YES;
