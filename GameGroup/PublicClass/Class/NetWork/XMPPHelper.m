@@ -22,12 +22,16 @@
 #import "JSON.h"
 #import "GameXmppStream.h"
 #import "GameXmppReconnect.h"
+#import "MyTask.h"
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
+NSOperationQueue *queue ;
 -(id)init
 {
     self = [super init];
     if (self) {
+        queue = [[NSOperationQueue alloc]init];
+        [queue setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
     }
     return self;
@@ -313,19 +317,27 @@
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
-                [self saveLastFriendDynimacUserImage:[payload JSONValue]];
-                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
-                    i++;
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
-                }else{
-                    int i = 0;
-                    i++;
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
-                }
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
                 
-
+                int index=1;
+                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:payload];
+                task.operationId=index++;
+                if ([[queue operations] count]>0) {
+                    MyTask *theBeforeTask=[[queue operations] lastObject];
+                    [task addDependency:theBeforeTask];
+                }
+                [queue addOperation:task];
+                
+//                [self saveLastFriendDynimacUserImage:[payload JSONValue]];
+//                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+//                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
+//                    i++;
+//                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
+//                }else{
+//                    int i = 0;
+//                    i++;
+//                    [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
+//                }
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
@@ -457,6 +469,25 @@
         [msgData setValue:@"1" forKeyPath:@"msgState"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
     }
+}
+
+-(void)saveNormalChatMessage:(NSString *)payload
+{
+    [self saveLastFriendDynimacUserImage:[payload JSONValue]];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
+        i++;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
+    }else{
+        int i = 0;
+        i++;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
+    }
+    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:payload waitUntilDone:YES];
+}
+-(void)sendNSNotification:(NSString *)payload
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
 }
 
 -(NSString*)getMsgTitle:(NSString*)msgtype

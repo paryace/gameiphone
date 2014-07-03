@@ -20,6 +20,7 @@
 static GetDataAfterManager *my_getDataAfterManager = NULL;
 NSOperationQueue *queuenormal ;
 NSOperationQueue *queuegroup ;
+//dispatch_queue_t queue1;
 
 - (id)init
 {
@@ -29,6 +30,7 @@ NSOperationQueue *queuegroup ;
         [queuenormal setMaxConcurrentOperationCount:1];
         queuegroup = [[NSOperationQueue alloc]init];
         [queuegroup setMaxConcurrentOperationCount:1];
+//        queue1 = dispatch_queue_create("com.dispatch.writeFile", DISPATCH_QUEUE_SERIAL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -198,6 +200,11 @@ NSOperationQueue *queuegroup ;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
+//    dispatch_async(queue1, ^{
+//        [DataStoreManager storeNewNormalChatMsgs:messageContent];
+//        [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
+//    });
+    
     int index=1;
     MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
     task.operationId=index++;
@@ -206,12 +213,12 @@ NSOperationQueue *queuegroup ;
         [task addDependency:theBeforeTask];
     }
     [queuenormal addOperation:task];
+    
 //    [DataStoreManager storeNewNormalChatMsgs:messageContent];
 //    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
 -(void)saveNormalChatMessage:(NSDictionary *)messageContent{
-//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
     [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
 }
 -(void)sendNSNotification:(NSDictionary *)messageContent
@@ -251,8 +258,6 @@ NSOperationQueue *queuegroup ;
 }
 
 -(void)saveGroupChatMessage:(NSDictionary *)messageContent{
-    NSLog(@"88888888888888");
-//    [DataStoreManager storeNewGroupMsgs:messageContent];
     [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
 }
 
