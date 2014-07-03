@@ -166,6 +166,10 @@
             [thumbMsgs MR_deleteInContext:localContext];
         }
     }];
+    NSArray * m_applyArray = [DataStoreManager queryDSGroupApplyMsg];
+    if (m_applyArray.count>0) {
+        [self uploadStoreMsg:[m_applyArray objectAtIndex:0]];
+    }
 }
 +(void)deleteSayHiMsgWithSenderAndSayType:(NSString *)senderType SayHiType:(NSString*)sayHiType
 {

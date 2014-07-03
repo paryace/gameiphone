@@ -57,7 +57,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
-    
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
     
@@ -72,6 +72,7 @@
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     if(KISHighVersion_7){
         m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     }

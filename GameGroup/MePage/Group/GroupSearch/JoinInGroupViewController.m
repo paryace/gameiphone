@@ -301,7 +301,13 @@
 }
 
 -(void)searchStrToNextPage:(id)sender
-{    
+{
+    if ([GameCommon isEmtity:m_searchTf.text])
+    {
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"搜索条件不能为空" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
     groupView.conditiona = m_searchTf.text;
     groupView.ComeType = SETUP_Search;

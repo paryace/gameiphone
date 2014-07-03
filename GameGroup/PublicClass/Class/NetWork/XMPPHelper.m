@@ -26,12 +26,16 @@
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 NSOperationQueue *queue ;
+NSOperationQueue *queueme ;
 -(id)init
 {
     self = [super init];
     if (self) {
         queue = [[NSOperationQueue alloc]init];
         [queue setMaxConcurrentOperationCount:1];
+        queueme = [[NSOperationQueue alloc]init];
+        [queueme setMaxConcurrentOperationCount:1];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
     }
     return self;
@@ -319,7 +323,7 @@ NSOperationQueue *queue ;
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
                 
                 int index=1;
-                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:payload];
+                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveDyMessage:)object:payload];
                 task.operationId=index++;
                 if ([[queue operations] count]>0) {
                     MyTask *theBeforeTask=[[queue operations] lastObject];
@@ -337,23 +341,33 @@ NSOperationQueue *queue ;
 //                    i++;
 //                    [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
 //                }
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];saveAboutDyMessage
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
-                [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
-                if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
-                   int i=1;
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
-                }else{
-                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
-                    
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
+                
+//                [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
+//                if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
+//                   int i=1;
+//                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
+//                }else{
+//                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
+//                    
+//                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
+//                }
+//                [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
+//                [[NSUserDefaults standardUserDefaults] synchronize];
+//                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
+                
+                int index=1;
+                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveAboutDyMessage:)object:payload];
+                task.operationId=index++;
+                if ([[queueme operations] count]>0) {
+                    MyTask *theBeforeTask=[[queueme operations] lastObject];
+                    [task addDependency:theBeforeTask];
                 }
-                [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
+                [queueme addOperation:task];
             }
             else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
                 NSDictionary* msgDic = [payload JSONValue];
@@ -471,7 +485,7 @@ NSOperationQueue *queue ;
     }
 }
 
--(void)saveNormalChatMessage:(NSString *)payload
+-(void)saveDyMessage:(NSString *)payload
 {
     [self saveLastFriendDynimacUserImage:[payload JSONValue]];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
@@ -483,12 +497,33 @@ NSOperationQueue *queue ;
         i++;
         [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
     }
-    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:payload waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(sendDyNSNotification:) withObject:payload waitUntilDone:YES];
 }
--(void)sendNSNotification:(NSString *)payload
+-(void)sendDyNSNotification:(NSString *)payload
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];
 }
+
+-(void)saveAboutDyMessage:(NSString *)payload
+{
+    [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
+        int i=1;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
+        
+        [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [self performSelectorOnMainThread:@selector(sendAboutDyNSNotification:) withObject:payload waitUntilDone:YES];
+}
+-(void)sendAboutDyNSNotification:(NSString *)payload
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
+}
+
 
 -(NSString*)getMsgTitle:(NSString*)msgtype
 {

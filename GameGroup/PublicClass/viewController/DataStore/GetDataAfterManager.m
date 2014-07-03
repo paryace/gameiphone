@@ -20,6 +20,7 @@
 static GetDataAfterManager *my_getDataAfterManager = NULL;
 NSOperationQueue *queuenormal ;
 NSOperationQueue *queuegroup ;
+NSOperationQueue *queueme ;
 //dispatch_queue_t queue1;
 
 - (id)init
@@ -30,6 +31,8 @@ NSOperationQueue *queuegroup ;
         [queuenormal setMaxConcurrentOperationCount:1];
         queuegroup = [[NSOperationQueue alloc]init];
         [queuegroup setMaxConcurrentOperationCount:1];
+        queueme = [[NSOperationQueue alloc]init];
+        [queueme setMaxConcurrentOperationCount:1];
 //        queue1 = dispatch_queue_create("com.dispatch.writeFile", DISPATCH_QUEUE_SERIAL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
@@ -178,6 +181,21 @@ NSOperationQueue *queuegroup ;
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
+    int index=1;
+    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
+    task.operationId=index++;
+    if ([[queuenormal operations] count]>0) {
+        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
+        [task addDependency:theBeforeTask];
+    }
+    [queuenormal addOperation:task];
+    
+}
+-(void)saveaboutMeMessage:(NSDictionary *)messageContent{
+    [self performSelectorOnMainThread:@selector(sendAboutMeNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
+-(void)sendAboutMeNSNotification:(NSDictionary *)messageContent
+{
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
 
@@ -267,24 +285,22 @@ NSOperationQueue *queuegroup ;
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:messageContent];
     if ([msgType isEqualToString:@"disbandGroup"])
     {//解散群
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
-        
-        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
-        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
@@ -294,6 +310,7 @@ NSOperationQueue *queuegroup ;
         [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
+    [self storeNewMessage:messageContent];
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }

@@ -61,11 +61,6 @@
     self.topImageView .backgroundColor = [UIColor grayColor];
     [self.firstScrollView addSubview:self.topImageView];
     
-//    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 210, 300, 40)];
-//    table_top.image = KUIImage(@"table_top");
-//    [self.firstScrollView addSubview:table_top];
-//    
-    
     
     UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(10,159+52, 300, 40)];
     table_arrow_two.image = KUIImage(@"group_cardtf");
@@ -292,12 +287,6 @@
 {
     return gameInfoArray.count;
 }
-
-//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-//{
-//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
-//    return title;
-//}
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
     NSDictionary *dic = [gameInfoArray objectAtIndex:row];
@@ -320,7 +309,7 @@
     [self.groupNameTf resignFirstResponder];
     
     
-    if ([GameCommon isEmtity:self.gameTextField.text]||[GameCommon isEmtity:self.realmTextField.text]||[GameCommon isEmtity:self.groupNameTf.text]) {
+    if ([GameCommon isEmtity:self.gameTextField.text]||[GameCommon isEmtity:self.groupNameTf.text]) {
         UIAlertView *al = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请将信息填写完整" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [al show];
         return;
