@@ -32,8 +32,8 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)init_tab
 {
-	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"friend_normal.png"/*,@"find_normal.png"*/,@"wo_normal.png",nil];
-	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"friend_click.png"/*,@"find_click.png"*/,@"wo_click.png",nil];
+	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",/*@"friend_normal.png",*/@"find_normal.png",@"wo_normal.png",nil];
+	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",/*@"friend_click.png",*/@"find_click.png",@"wo_click.png",nil];
     
     float startY = [[UIScreen mainScreen] bounds].size.height;
     tabBarView = [[UIView alloc] initWithFrame:CGRectMake(0, startY - 50, 320, 50)];

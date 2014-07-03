@@ -202,7 +202,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:self.unReadL]; //未读数量
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
-    [self.view addSubview:self.noReadView]; //未读数量
+//    [self.view addSubview:self.noReadView]; //未读数量
 
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
