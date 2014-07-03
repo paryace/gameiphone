@@ -178,7 +178,13 @@ NSOperationQueue *queueme ;
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
+    int index=1;
     MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
+    task.operationId=index++;
+    if ([[queuenormal operations] count]>0) {
+        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
+        [task addDependency:theBeforeTask];
+    }
     [queuenormal addOperation:task];
     
 }
