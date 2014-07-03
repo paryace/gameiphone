@@ -2175,7 +2175,7 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
+        array = [self getMsgArray:messages.count PageSize:20];
         loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
