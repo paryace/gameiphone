@@ -80,4 +80,9 @@
 //去掉tableview的多余分割线(下划线)
 + (void)setExtraCellLineHidden: (UITableView *)tableView;
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where;
+
+//创建label
++(UILabel *)buildLabelinitWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment;
+
+
 @end

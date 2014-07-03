@@ -966,6 +966,17 @@ static GameCommon *my_gameCommon = NULL;
     return[scan scanInt:&val] && [scan isAtEnd];
 }
 
++(UILabel *)buildLabelinitWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment
+{
+    UILabel *label = [[UILabel alloc]initWithFrame:frame];
+    label.textColor = textColor;
+    label.backgroundColor  = backgroundColor;
+    label.font = font;
+    label.textAlignment = Alignment;
+    return label;
+}
+
+
 +(NSString*)getGroupDomain:(NSString*)domain
 {
     return [domain stringByReplacingOccurrencesOfString:@"@" withString:@"@group."];

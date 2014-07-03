@@ -20,6 +20,7 @@
 #import "NewFriendPageController.h"
 #import "DownloadImageService.h"
 #import "Appdelegate.h"
+#import "ItemBaseViewController.h"
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -96,6 +97,15 @@
         second.hidesBottomBarWhenPushed = YES;
         UINavigationController* navigationController_Second = [[UINavigationController alloc] initWithRootViewController:second];
         navigationController_Second.navigationBarHidden = YES;
+    
+    // 组队页面
+    
+    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
+    itemBase.hidesBottomBarWhenPushed = YES;
+    UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
+    navigationController_center.navigationBarHidden  = YES;
+    
+    
 //发现页面
         FindViewController* third = [[FindViewController alloc] init];
         third.hidesBottomBarWhenPushed = YES;
@@ -109,7 +119,7 @@
     
     Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
   //  AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
-        ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second, navigationController_Third, navigationController_Fourth, nil];
+        ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second,navigationController_center, navigationController_Third, navigationController_Fourth, nil];
     
     if (ryc_tabbarController) //开机闪退 是因为这里为空
     {
