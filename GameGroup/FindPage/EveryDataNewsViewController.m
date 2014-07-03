@@ -70,8 +70,6 @@
     
     EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x-30, KISHighVersion_7 ? 27 : 7, 30, 30)];
     
-//    imageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:self.gameid]]];
-    
     NSString * imageId =[GameCommon putoutgameIconWithGameId:self.gameid];
     imageView.imageURL = [ImageService getImageUrl4:imageId];
     [self.view addSubview:imageView];
@@ -99,21 +97,6 @@
                                                                 time]];
     cell.topTimeLabel.frame = CGRectMake((320-cell.topTimeLabel.text.length*12)/2, 5, cell.topTimeLabel.text.length*12, 20);
     
-    
-//    NSString * fruits = KISDictionaryHaveKey(dic, @"userImg");
-//    NSArray  * array= [fruits componentsSeparatedByString:@","];
-//    NSString*friendImgStr;
-//    if (array.count>0) {
-//        friendImgStr =[array objectAtIndex:0];
-//    }
-//    if (friendImgStr) {
-//        cell.headImageBtn.imageURL =[NSURL URLWithString:[[BaseImageUrl stringByAppendingFormat:@"%@",friendImgStr] stringByAppendingString:@"/80"]];
-//        
-//    }else
-//    {
-//        cell.headImageBtn.imageURL = nil;
-//    }
-    
     NSString * imageids = KISDictionaryHaveKey(dic, @"userImg");
     cell.headImageBtn.imageURL = [ImageService getImageStr:imageids Width:80];
     
@@ -128,10 +111,6 @@
     
     cell.bianzheLabel.frame = CGRectMake(cell.nickNameBtn.frame.size.width+64, 20, 70, 15);
         cell.signatureLabel.text = KISDictionaryHaveKey(dic, @"editorNote");
-    
-    
-//    cell.bigImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/540/360",KISDictionaryHaveKey(dic, @"img")]];
-    
     
     NSString * imageId = KISDictionaryHaveKey(dic, @"img");
     cell.bigImageView.imageURL = [ImageService getImageUrl:imageId Width:540 Height:360];
