@@ -153,7 +153,6 @@
         NSString *messageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"msgId")];
         [m_dataArray removeObjectAtIndex:indexPath.row];
         [DataStoreManager deleteJoinGroupApplicationWithMsgId:messageId];
-        
         [m_billboardTabel reloadData];
         
     }

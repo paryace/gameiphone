@@ -213,9 +213,6 @@ NSOperationQueue *queuegroup ;
         [task addDependency:theBeforeTask];
     }
     [queuenormal addOperation:task];
-    
-//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
 -(void)saveNormalChatMessage:(NSDictionary *)messageContent{

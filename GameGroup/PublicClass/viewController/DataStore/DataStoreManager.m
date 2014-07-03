@@ -508,7 +508,7 @@
 +(void)uploadStoreMsg:(NSDictionary *)msg
 {
     NSString * sender = [msg objectForKey:@"senderId"];
-    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
+    NSString * msgContent = KISDictionaryHaveKey(msg, @"msgContent");
     NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"senTime"] doubleValue]];
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
