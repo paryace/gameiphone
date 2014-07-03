@@ -14,14 +14,12 @@
 #import "VibrationSong.h"
 #import "MyTask.h"
 
-#define kBgQueue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
 NSOperationQueue *queuenormal ;
 NSOperationQueue *queuegroup ;
 NSOperationQueue *queueme ;
-//dispatch_queue_t queue1;
 
 - (id)init
 {
@@ -33,7 +31,6 @@ NSOperationQueue *queueme ;
         [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
-//        queue1 = dispatch_queue_create("com.dispatch.writeFile", DISPATCH_QUEUE_SERIAL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -181,13 +178,7 @@ NSOperationQueue *queueme ;
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
-    int index=1;
     MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
-    task.operationId=index++;
-    if ([[queuenormal operations] count]>0) {
-        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
-        [task addDependency:theBeforeTask];
-    }
     [queuenormal addOperation:task];
     
 }
@@ -218,18 +209,7 @@ NSOperationQueue *queueme ;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-//    dispatch_async(queue1, ^{
-//        [DataStoreManager storeNewNormalChatMsgs:messageContent];
-//        [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
-//    });
-    
-    int index=1;
     MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
-    task.operationId=index++;
-    if ([[queuenormal operations] count]>0) {
-        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
-        [task addDependency:theBeforeTask];
-    }
     [queuenormal addOperation:task];
 }
 
@@ -244,7 +224,6 @@ NSOperationQueue *queueme ;
 
 -(void)sendGroupNSNotification:(NSDictionary *)messageContent
 {
-    [DataStoreManager storeNewGroupMsgs:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
@@ -262,13 +241,8 @@ NSOperationQueue *queueme ;
         }
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    int index=1;
+    
     MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
-    task.operationId=index++;
-    if ([[queuegroup operations] count]>0) {
-        MyTask *theBeforeTask=[[queuegroup operations] lastObject];
-        [task addDependency:theBeforeTask];
-    }
     [queuegroup addOperation:task];
 }
 
