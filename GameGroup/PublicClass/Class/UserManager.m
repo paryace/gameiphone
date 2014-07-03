@@ -206,6 +206,7 @@ static UserManager *userManager = NULL;
     [postDict setObject:@"230" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [DataStoreManager deleteAllDSGroupList];
         NSLog(@"success%@",responseObject);
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             for (NSMutableDictionary * groupInfo in responseObject) {

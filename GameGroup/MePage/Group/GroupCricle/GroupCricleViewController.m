@@ -263,10 +263,18 @@ typedef enum : NSUInteger {
         [m_header endRefreshing];
         [hud hide:YES];
         if(!responseObject||![responseObject isKindOfClass:[NSArray class]]){
+            if (!isRefre) {
+                [m_dataArray removeAllObjects];
+                [m_myTableView reloadData];
+            }
             return ;
         }
         NSArray * arrr = responseObject;
         if (arrr.count==0) {
+            if (!isRefre) {
+                [m_dataArray removeAllObjects];
+                [m_myTableView reloadData];
+            }
             return;
         }
         if (m_currPageCount ==0) {

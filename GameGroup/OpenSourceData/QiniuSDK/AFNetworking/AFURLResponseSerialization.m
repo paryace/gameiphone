@@ -245,13 +245,18 @@ static id AFJSONObjectByRemovingKeysWithNullValues(id JSONObject, NSJSONReadingO
             data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
 
             if (data) {
-                if ([data length] > 0) {
-                    //修改解析方法
-//                    responseObject = [NSJSONSerialization JSONObjectWithData:data options:self.readingOptions error:&serializationError];
-                    NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-
-                    responseObject = [receiveStr JSONValue];
-                } else {
+                @try
+                {
+                    if ([data length] > 0) {
+                        //修改解析方法a
+                        //                    responseObject = [NSJSONSerialization JSONObjectWithData:data options:self.readingOptions error:&serializationError];
+                        NSString *receiveStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+                        
+                        responseObject = [receiveStr JSONValue];
+                    } else {
+                        return nil;
+                    }
+                }@catch (NSException * e) {
                     return nil;
                 }
             } else {

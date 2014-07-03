@@ -130,6 +130,8 @@
     registerButton.titleLabel.font = [UIFont boldSystemFontOfSize:kLabelFont];
     [registerButton addTarget:self action:@selector(hitRegisterButton:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:registerButton];
+    
+    phoneTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:kMYPHONENUM]?[[NSUserDefaults standardUserDefaults] objectForKey:kMYPHONENUM]:@"";
 
 }
 
@@ -148,7 +150,6 @@
     }
     
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-
     [params setObject:phoneTextField.text forKey:@"username"];
     [params setObject:passwordTextField.text forKey:@"password"];
 //    [params setObject:@"15811212096" forKey:@"username"];
@@ -172,6 +173,8 @@
         NSDictionary* dic = responseObject;
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"user"]objectForKey:@"active" ] forKey:@"active_wx"];
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"userid"] forKey:kMYUSERID];
+        [[NSUserDefaults standardUserDefaults]setObject:phoneTextField.text forKey:kMYPHONENUM];
+        
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:kMyToken];
         
         [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];

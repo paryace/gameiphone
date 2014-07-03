@@ -425,10 +425,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"RefreshMyGroupList" object:nil];
-//        [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
         [DataStoreManager deleteGroupInfoByGoupId:self.groupId];//删除群信息
-//        [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
         [self showMessageWindowWithContent:@"取消成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
@@ -902,41 +900,84 @@
     NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
     if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
-    switch (indexPath.row) {
-        case 0:
-            return 40;
-            break;
-        case 1:
-            return 40;
-            break;
-        case 2:
-            NSLog(@"--------%d",tags.count/2);
-            if (tags.count==0) {
-                return 10;
-            }else{
-                NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
-                return  tagsRowCount*30+tagsRowCount*5+10;
+        if (![GameCommon isEmtity:KISDictionaryHaveKey(m_mainDict, @"guild")]) {
+            switch (indexPath.row) {
+                case 0:
+                    return 40;
+                    break;
+                case 1:
+                    return 40;
+                    break;
+                case 2:
+                    return 40;
+                    break;
+                case 3:
+                    NSLog(@"--------%d",tags.count/2);
+                    if (tags.count==0) {
+                        return 10;
+                    }else{
+                        NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+                        return  tagsRowCount*30+tagsRowCount*5+10;
+                    }
+                    break;
+                case 4:
+                {
+                    GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
+                    float heigth = cell.contentLabel.frame.size.height;
+                    if (heigth<20) {
+                        heigth =20;
+                    }
+                    if (!photoArray||photoArray.count==0) {
+                        return heigth+20;
+                    }else{
+                        NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
+                        return photoCount*68+photoCount*2+heigth+10+10;
+                    }
+                }
+                    break;
+                default:
+                    return 40;
+                    break;
             }
-            break;
-         case 3:
-        {
-            GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
-            float heigth = cell.contentLabel.frame.size.height;
-            if (heigth<20) {
-                heigth =20;
-            }
-            if (photoArray.count==0) {
-                return heigth+20;
-            }else{
-                NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
-                return photoCount*68+photoCount*2+heigth+10+10;
+        }else{
+            switch (indexPath.row) {
+                case 0:
+                    return 40;
+                    break;
+                case 1:
+                    return 40;
+                    break;
+                case 2:
+                {
+                    NSLog(@"--------%d",tags.count/2);
+                    if (tags.count==0) {
+                        return 10;
+                    }else{
+                        NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+                        return  tagsRowCount*30+tagsRowCount*5+10;
+                    }
+                }
+                    break;
+                case 3:
+                {
+                    GroupInfomationJsCell *cell = (GroupInfomationJsCell *)[self tableView:tableView cellForRowAtIndexPath:indexPath];
+                    float heigth = cell.contentLabel.frame.size.height;
+                    if (heigth<20) {
+                        heigth =20;
+                    }
+                    if (!photoArray||photoArray.count==0) {
+                        return heigth+20;
+                    }else{
+                        NSInteger photoCount = (photoArray.count-1)/3+1;//图片行数
+                        return photoCount*68+photoCount*2+heigth+10+10;
+                    }
+                }
+                    break;
+                default:
+                    return 40;
+                    break;
             }
         }
-            break;
-        default:
-            return 40;
-            break;
-    }
     }else{
         return 40;
     }

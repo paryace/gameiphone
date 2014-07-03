@@ -111,7 +111,6 @@
 {
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
     [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
@@ -126,8 +125,10 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
-            
-            [[UserManager singleton] saveUserInfo:responseObject];
+            dispatch_queue_t queue = dispatch_queue_create("com.living.game.MePage", NULL);
+            dispatch_async(queue, ^{
+                [[UserManager singleton] saveUserInfo:responseObject];
+            });
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -601,14 +602,9 @@
 //头衔设置
 - (void)achievementSetClick:(id)sender
 {
-    
-//    if (m_hostInfo.achievementArray && [m_hostInfo.achievementArray count] != 0) {
-        [[Custom_tabbar showTabBar] hideTabBar:YES];
-        MyTitleObjViewController* VC = [[MyTitleObjViewController alloc] init];
-        [self.navigationController pushViewController:VC animated:YES];
-//    }else{
-//        [self showMessageWithContent:@"暂无头衔" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
-//    }
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    MyTitleObjViewController* VC = [[MyTitleObjViewController alloc] init];
+    [self.navigationController pushViewController:VC animated:YES];
 }
 - (BOOL)prefersStatusBarHidden
 {

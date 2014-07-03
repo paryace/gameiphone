@@ -45,14 +45,12 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendListFromNet];
     }
-
 }
 
 - (void)viewDidLoad
@@ -80,17 +78,9 @@
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
-        [self getFriendListFromNet];
-    }
     
     UIView *footView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
     footView.backgroundColor = [UIColor clearColor];
-//    UIView *lineView =[[ UIView alloc]initWithFrame:CGRectMake(10, 0, 300,.5f)];
-//    lineView.backgroundColor = [UIColor grayColor];
-//    [footView addSubview:lineView];
-    
     
     UIImageView *iconImg = [[UIImageView alloc]initWithFrame:CGRectMake(80, 15, 20, 20)];
     iconImg.image =KUIImage(@"phoneNote");
@@ -106,18 +96,13 @@
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(10, 3, 300,44);
     
-//    [button setTitle:@"手机通讯录" forState:UIControlStateNormal];
     button.backgroundColor = [UIColor clearColor];
     [button addTarget:self action:@selector(enterPhoneAddress:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:button];
     
-
     m_myTableView.tableFooterView = footView;
     
-    
-    
-    
-    
+    [self getFriendDateFromDataSore];
     [self addheadView];
 }
 #pragma mark 刷新表格
@@ -208,7 +193,6 @@
     }
     
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
-    
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
     NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
@@ -365,6 +349,7 @@
         [keyArr addObject:@"^"];
         [keyArr addObjectsFromArray:keys];
         resultArray = result;
+        fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myTableView reloadData];
             [self setFansNum];

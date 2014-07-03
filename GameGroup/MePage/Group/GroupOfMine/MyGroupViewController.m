@@ -168,6 +168,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
+            [DataStoreManager deleteAllDSGroupList];
             [self setGroupList:responseObject];
             for (NSMutableDictionary * groupInfo in responseObject) {
                 [[GroupManager singleton] clearGroupCache:KISDictionaryHaveKey(groupInfo, @"groupId")];
