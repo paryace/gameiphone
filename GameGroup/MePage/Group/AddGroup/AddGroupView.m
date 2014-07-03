@@ -319,7 +319,8 @@
 {
     [self.groupNameTf resignFirstResponder];
     
-    if ([self.gameTextField.text isEqualToString: @""]||[self.realmTextField.text isEqualToString: @""]||[self.groupNameTf.text isEqualToString:@""]) {
+    
+    if ([GameCommon isEmtity:self.gameTextField.text]||[GameCommon isEmtity:self.realmTextField.text]||[GameCommon isEmtity:self.groupNameTf.text]) {
         UIAlertView *al = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请将信息填写完整" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [al show];
         return;

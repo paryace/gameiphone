@@ -32,8 +32,8 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)init_tab
 {
-	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",/*@"friend_normal.png",*/@"find_normal.png",@"wo_normal.png",nil];
-	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",/*@"friend_click.png",*/@"find_click.png",@"wo_click.png",nil];
+	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"find_normal.png",@"wo_normal.png",nil];
+	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"find_click.png",@"wo_click.png",nil];
     
     float startY = [[UIScreen mainScreen] bounds].size.height;
     tabBarView = [[UIView alloc] initWithFrame:CGRectMake(0, startY - 50, 320, 50)];
@@ -81,7 +81,7 @@ static Custom_tabbar *s_tabbar = NULL;
 	for(int i = 0; i< tab_num; i++)
 	{
 		UIButton  *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-		[btn setFrame:CGRectMake(i*320/4, 0, 320/4, 50)];
+		[btn setFrame:CGRectMake(i*320/tab_num, 0, 320/tab_num, 50)];
 		NSString *back_image = [backgroud_image objectAtIndex:i];
 		NSString *selected_image = [select_image objectAtIndex:i]; 
 		[btn setBackgroundImage:[UIImage imageNamed:back_image] forState:UIControlStateNormal];
@@ -130,14 +130,14 @@ static Custom_tabbar *s_tabbar = NULL;
 			[[tab_btn objectAtIndex:3]setSelected:false];
 			break;
             
-//        case 3:
-//        {
-//            [[tab_btn objectAtIndex:0]setSelected:false];
-//            [[tab_btn objectAtIndex:1]setSelected:false];
-//            [[tab_btn objectAtIndex:2]setSelected:false];
-//            [[tab_btn objectAtIndex:3]setSelected:true];
-//			break;
-//        }
+        case 3:
+        {
+            [[tab_btn objectAtIndex:0]setSelected:false];
+            [[tab_btn objectAtIndex:1]setSelected:false];
+            [[tab_btn objectAtIndex:2]setSelected:false];
+            [[tab_btn objectAtIndex:3]setSelected:true];
+			break;
+        }
 		default:
 			break;
 	}
