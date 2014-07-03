@@ -656,6 +656,9 @@ static GameCommon *my_gameCommon = NULL;
 }
 +(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId
 {
+    if ([GameCommon isEmtity:[[NSUserDefaults standardUserDefaults] objectForKey:[self getNewStringWithId:groupId]]]) {
+        return @"0";
+    }
     return [[NSUserDefaults standardUserDefaults] objectForKey:[self getNewStringWithId:groupId]];
 }
 

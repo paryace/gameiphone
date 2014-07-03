@@ -695,7 +695,7 @@ UINavigationControllerDelegate>
     if(!_noReadView){
         _noReadView = [[UIView alloc] init];
         _noReadView.frame = CGRectMake(60,kScreenHeigth - startX - 20-20,200,20);
-        
+        _noReadView.hidden = YES;
         
         
         _noReadBtn = [[UIButton alloc] initWithFrame:CGRectMake(200-20,0,20,20)];
@@ -707,6 +707,7 @@ UINavigationControllerDelegate>
         
         _noReadLable = [[UILabel alloc] initWithFrame:CGRectMake(200-20-100,0,100,20)];
         _noReadLable .text = @"下方有未读消息";
+        _noReadLable.hidden = YES;
         _noReadLable.textAlignment = NSTextAlignmentRight;
         _noReadLable.backgroundColor = [UIColor clearColor];
         _noReadLable.font = [UIFont systemFontOfSize:12];

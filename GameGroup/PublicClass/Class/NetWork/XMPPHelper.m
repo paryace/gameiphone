@@ -342,7 +342,6 @@
                 [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
-                [[GameCommon shareGameCommon] displayTabbarNotification];
             }
             else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
                 NSDictionary* msgDic = [payload JSONValue];
