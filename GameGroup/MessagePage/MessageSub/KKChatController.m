@@ -1939,13 +1939,10 @@ UINavigationControllerDelegate>
 }
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    CGFloat height = scrollView.frame.size.height;
-    CGFloat contentYoffset = scrollView.contentOffset.y;
-    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
-    if(distanceFromBottom - height<spaceEnd)
+    CGFloat distanceFromBottom = scrollView.contentSize.height - scrollView.contentOffset.y;
+    if(distanceFromBottom - scrollView.frame.size.height<spaceEnd)
     {
         endOfTable = YES;
-        NSLog(@"end of the table");
     }else{
         endOfTable = NO;
     }
