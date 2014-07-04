@@ -20,6 +20,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 //NSOperationQueue *queuenormal ;
 //NSOperationQueue *queuegroup ;
 NSOperationQueue *queueme ;
+ NSArray *array ;
 
 - (id)init
 {
@@ -31,6 +32,7 @@ NSOperationQueue *queueme ;
 //        [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
+        array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -199,8 +201,7 @@ NSOperationQueue *queueme ;
         return;
     }
     //1 打过招呼，2 未打过招呼
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
-        NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+    if ([array isKindOfClass:[NSArray class]] && array.count>0) {
         if ([array containsObject:sender]) {
             [messageContent setValue:@"1" forKey:@"sayHiType"];
         }else{
@@ -216,9 +217,9 @@ NSOperationQueue *queueme ;
 //    [queuenormal addOperation:task];
 }
 
--(void)saveNormalChatMessage:(NSDictionary *)messageContent{
-    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
-}
+//-(void)saveNormalChatMessage:(NSDictionary *)messageContent{
+//    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
+//}
 -(void)sendNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager storeNewNormalChatMsgs:messageContent];
@@ -240,9 +241,9 @@ NSOperationQueue *queueme ;
 //    [queuegroup addOperation:task];
 }
 
--(void)saveGroupChatMessage:(NSDictionary *)messageContent{
-    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
-}
+//-(void)saveGroupChatMessage:(NSDictionary *)messageContent{
+//    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
+//}
 -(void)sendGroupNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager storeNewGroupMsgs:messageContent];
