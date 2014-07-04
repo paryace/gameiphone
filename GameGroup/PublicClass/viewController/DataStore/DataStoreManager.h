@@ -316,4 +316,8 @@
 
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type;
 +(NSMutableDictionary*)qSayHiMsg:(NSString *)type;
+
+
+
++(void)saveNewNormalChatMsg:(NSArray *)msgs;
 @end

@@ -26,6 +26,11 @@
 
 @property(nonatomic,strong)XMPPHelper* xmppHelper;
 
+@property(nonatomic, strong) NSMutableArray* cacheMsg;
+@property (nonatomic, retain) NSTimer* cellTimer;
+
 + (GetDataAfterManager*)shareManageCommon;
+
+-(void)setSoundOrVibrationopen;
 
 @end

@@ -524,17 +524,10 @@
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
         return;
     }
-//    int allUnread = 0;
-//    for (int i = 0; i<allMsgArray.count; i++) {
-//        allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-//    }
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
-//        MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-//        NSInteger no = [cell.unreadCountLabel.text intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
-//        kkchat.unreadNo = allUnread-no;
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
@@ -542,10 +535,7 @@
         return;
     }
     
-//    MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-//    NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];
-//    kkchat.unreadNo = allUnread-no;
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"senderId")];
     kkchat.type = @"normal";
     [self.navigationController pushViewController:kkchat animated:YES];

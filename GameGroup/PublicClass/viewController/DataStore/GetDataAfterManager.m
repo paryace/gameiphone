@@ -13,26 +13,29 @@
 #import "DSuser.h"
 #import "VibrationSong.h"
 #import "MyTask.h"
+#define mTime 0.3
 
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-//NSOperationQueue *queuenormal ;
-//NSOperationQueue *queuegroup ;
+NSOperationQueue *queuenormal ;
+NSOperationQueue *queuegroup ;
 NSOperationQueue *queueme ;
- NSArray *array ;
+NSArray *array ;
+NSTimeInterval markTime;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-//        queuenormal = [[NSOperationQueue alloc]init];
-//        [queuenormal setMaxConcurrentOperationCount:1];
-//        queuegroup = [[NSOperationQueue alloc]init];
-//        [queuegroup setMaxConcurrentOperationCount:1];
+        queuenormal = [[NSOperationQueue alloc]init];
+        [queuenormal setMaxConcurrentOperationCount:1];
+        queuegroup = [[NSOperationQueue alloc]init];
+        [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
         array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -191,10 +194,21 @@ NSOperationQueue *queueme ;
 {
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
+- (void)stopATime
+{
+    if ([self.cellTimer isValid]) {
+        [self.cellTimer invalidate];
+        self.cellTimer = nil;
+    }
+    [DataStoreManager saveNewNormalChatMsg:self.cacheMsg];
+    [self.cacheMsg removeAllObjects];
+    self.cacheMsg = nil;
+}
 
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
+
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
         NSLog(@"黑名单用户 不作操作");
@@ -210,43 +224,54 @@ NSOperationQueue *queueme ;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    [self setSoundOrVibrationopen];
-    [self sendNSNotification:messageContent];
     
+    if (self.cacheMsg) {
+        [self.cacheMsg addObject:messageContent];
+    }
+    if (![self.cellTimer isValid]) {
+        if (!self.cacheMsg) {
+            self.cacheMsg = [NSMutableArray array];
+        }
+        [self.cacheMsg addObject:messageContent];
+        self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
+    }
+    
+    
+//    [self sendNSNotification:messageContent];
 //    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
 //    [queuenormal addOperation:task];
 }
 
-//-(void)saveNormalChatMessage:(NSDictionary *)messageContent{
-//    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
-//}
+-(void)saveNormalChatMessage:(NSDictionary *)messageContent{
+    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
 -(void)sendNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager storeNewNormalChatMsgs:messageContent];
+    [self setSoundOrVibrationopen];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
 #pragma mark 收到群组聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
-    if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-        [self setSoundOrVibrationopen];
-    }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
 
-    [self sendGroupNSNotification:messageContent];
-    
-    
-//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
-//    [queuegroup addOperation:task];
+//    [self sendGroupNSNotification:messageContent];
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
+    [queuegroup addOperation:task];
 }
 
-//-(void)saveGroupChatMessage:(NSDictionary *)messageContent{
-//    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
-//}
+-(void)saveGroupChatMessage:(NSDictionary *)messageContent{
+    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
 -(void)sendGroupNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager storeNewGroupMsgs:messageContent];
+    if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
+        [self setSoundOrVibrationopen];
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
