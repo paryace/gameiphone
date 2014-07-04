@@ -167,6 +167,7 @@ UINavigationControllerDelegate>
     //群动态消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,self.chatWithUser] object:nil];
     [self initMyInfo];
+    
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
     historyMsg = 0;
@@ -200,6 +201,8 @@ UINavigationControllerDelegate>
     [self.view addSubview:self.inPutView];  //输入框
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [self.view addSubview:self.unReadL]; //未读数量
+    [self setNoreadMsg];
+    [self setNoreadMsgView];
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
 //    [self.view addSubview:self.noReadView]; //未读数量
@@ -669,25 +672,41 @@ UINavigationControllerDelegate>
     }
     return _inPutView;
 }
+
+-(void)setNoreadMsg
+{
+    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
+    _unreadNo  = [GameCommon getNoreadMsgCount:array];
+}
+
 //未读消息数红点
 - (UILabel *)unReadL{
     if (!_unReadL) {
         
         _unReadL = [[UILabel alloc] init];
         _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
-        if (_unreadNo>0) {
-            _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-        }
         _unReadL.backgroundColor = [UIColor redColor];
         _unReadL.layer.cornerRadius = 10;
         _unReadL.layer.masksToBounds=YES;
         _unReadL.textColor = [UIColor whiteColor];
         _unReadL.textAlignment = NSTextAlignmentCenter;
         _unReadL.font = [UIFont systemFontOfSize:14];
-        _unReadL.hidden = YES;
-        
     }
     return _unReadL;
+}
+
+-(void)setNoreadMsgView
+{
+    if (_unreadNo>0) {
+         _unReadL.hidden = NO;
+        if (_unreadNo>99) {
+            _unReadL.text = [NSString stringWithFormat:@"%@",@"99+"];
+        }else{
+             _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+        }
+    }else{
+         _unReadL.hidden = YES;
+    }
 }
 
 -(UIView * )noReadView
@@ -2175,7 +2194,7 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        array = [self getMsgArray:messages.count PageSize:20];
+        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
         loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
@@ -2303,15 +2322,8 @@ UINavigationControllerDelegate>
     }
     else
     {
-        self.unReadL.hidden = NO;
         _unreadNo++;
-        if (_unreadNo>0) {
-            if (_unreadNo>99) {
-                self.unReadL.text =@"N+";
-            }else{
-                self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-            }
-        }
+        [self setNoreadMsgView];
     }
 }
 

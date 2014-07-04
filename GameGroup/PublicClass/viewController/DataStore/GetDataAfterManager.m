@@ -215,8 +215,11 @@ NSOperationQueue *queueme ;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
-    [queuenormal addOperation:task];
+    [self setSoundOrVibrationopen];
+    [self sendNSNotification:messageContent];
+    
+//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
+//    [queuenormal addOperation:task];
 }
 
 -(void)saveNormalChatMessage:(NSDictionary *)messageContent{
@@ -225,11 +228,6 @@ NSOperationQueue *queueme ;
 -(void)sendNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager storeNewNormalChatMsgs:messageContent];
-     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
-}
-
--(void)sendGroupNSNotification:(NSDictionary *)messageContent
-{
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
@@ -237,23 +235,22 @@ NSOperationQueue *queueme ;
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-        BOOL isVibrationopen=[self isVibrationopen];;
-        BOOL isSoundOpen = [self isSoundOpen];
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
+        [self setSoundOrVibrationopen];
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    
-    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
-    [queuegroup addOperation:task];
+
+    [self sendGroupNSNotification:messageContent];
+//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
+//    [queuegroup addOperation:task];
 }
 
 -(void)saveGroupChatMessage:(NSDictionary *)messageContent{
     [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
+-(void)sendGroupNSNotification:(NSDictionary *)messageContent
+{
+    [DataStoreManager storeNewGroupMsgs:messageContent];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
 #pragma mark 申请加入群消息

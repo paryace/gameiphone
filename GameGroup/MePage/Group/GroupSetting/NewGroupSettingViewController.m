@@ -70,7 +70,7 @@ typedef enum : NSUInteger {
     msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(320-25-8-50, 15, 40, 20)];
     msgHintLable.backgroundColor = [UIColor clearColor];
     msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
-    msgHintLable.text = @"无声";
+    msgHintLable.text = @"禁音模式";
     msgHintLable.font =[ UIFont systemFontOfSize:12];
     
     
@@ -402,7 +402,7 @@ typedef enum : NSUInteger {
 //群组消息设置
 -(void)hint
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常接收",@"关闭模式",@"无声模式", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"禁音模式",@"无红点模式", nil];
     alertView.tag = 1002;
     [alertView show];
 }
@@ -500,14 +500,14 @@ typedef enum : NSUInteger {
             
         }else if (buttonIndex ==2)
         {
-            [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
-            [self settingMsgHint:@"1"];
+            [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
+            [self settingMsgHint:@"2"];
             
         }
         else if (buttonIndex ==3)
         {
-            [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
-            [self settingMsgHint:@"2"];
+            [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
+            [self settingMsgHint:@"1"];
         }
     }
 }
@@ -535,12 +535,12 @@ typedef enum : NSUInteger {
 -(NSString*)getCellMsgByState:(NSString*)groupMsgSettingState
 {
     if ([groupMsgSettingState isEqualToString:@"0"]) {
-        return @"正常接收";
+        return @"正常模式";
         
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
-        return @"关闭模式";
+        return @"无红点模式";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"无声模式";
+        return @"禁音模式";
     }
     return @"";
 }

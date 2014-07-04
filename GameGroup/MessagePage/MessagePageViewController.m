@@ -317,20 +317,9 @@
 //红点通知
 -(void)displayTabbarNotification
 {
-    int allUnread = 0;
-    for (int i = 0; i<allMsgArray.count; i++) {
-        NSMutableDictionary * message = [allMsgArray objectAtIndex:i];
-        if ([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
-            if ([[GameCommon getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"0"]
-                ||[[GameCommon getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"2"]) {
-                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-            }
-        }else{
-            allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-        }
-    }
-    if (allUnread>0) {
-        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:allUnread OrDot:NO WithButtonIndex:0];
+    NSInteger msgCount  = [GameCommon getNoreadMsgCount:allMsgArray];
+    if (msgCount>0) {
+        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:0];
     }
     else
     {
@@ -535,17 +524,17 @@
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
         return;
     }
-    int allUnread = 0;
-    for (int i = 0; i<allMsgArray.count; i++) {
-        allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-    }
+//    int allUnread = 0;
+//    for (int i = 0; i<allMsgArray.count; i++) {
+//        allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+//    }
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
-        MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-        NSInteger no = [cell.unreadCountLabel.text intValue];
+//        MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
+//        NSInteger no = [cell.unreadCountLabel.text intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
-        kkchat.unreadNo = allUnread-no;
+//        kkchat.unreadNo = allUnread-no;
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
@@ -553,10 +542,10 @@
         return;
     }
     
-    MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-    NSInteger no = [cell.unreadCountLabel.text intValue];
+//    MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
+//    NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];
-    kkchat.unreadNo = allUnread-no;
+//    kkchat.unreadNo = allUnread-no;
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"senderId")];
     kkchat.type = @"normal";
     [self.navigationController pushViewController:kkchat animated:YES];

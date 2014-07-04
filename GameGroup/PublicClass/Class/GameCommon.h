@@ -84,5 +84,6 @@
 //创建label
 +(UILabel *)buildLabelinitWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment;
 
-
+//未读消息的数量
++(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs;
 @end
