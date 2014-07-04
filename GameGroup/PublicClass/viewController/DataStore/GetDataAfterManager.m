@@ -17,18 +17,18 @@
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-NSOperationQueue *queuenormal ;
-NSOperationQueue *queuegroup ;
+//NSOperationQueue *queuenormal ;
+//NSOperationQueue *queuegroup ;
 NSOperationQueue *queueme ;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        queuenormal = [[NSOperationQueue alloc]init];
-        [queuenormal setMaxConcurrentOperationCount:1];
-        queuegroup = [[NSOperationQueue alloc]init];
-        [queuegroup setMaxConcurrentOperationCount:1];
+//        queuenormal = [[NSOperationQueue alloc]init];
+//        [queuenormal setMaxConcurrentOperationCount:1];
+//        queuegroup = [[NSOperationQueue alloc]init];
+//        [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
@@ -178,14 +178,8 @@ NSOperationQueue *queueme ;
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
-    int index=1;
-    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
-    task.operationId=index++;
-    if ([[queuenormal operations] count]>0) {
-        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
-        [task addDependency:theBeforeTask];
-    }
-    [queuenormal addOperation:task];
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
+    [queueme addOperation:task];
     
 }
 -(void)saveaboutMeMessage:(NSDictionary *)messageContent{
@@ -240,6 +234,8 @@ NSOperationQueue *queueme ;
     [messageContent setValue:@"1" forKey:@"sayHiType"];
 
     [self sendGroupNSNotification:messageContent];
+    
+    
 //    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
 //    [queuegroup addOperation:task];
 }
