@@ -14,6 +14,7 @@
     NSMutableArray *charaArray;
     UITextField *textField1;
     NSString *charaterId ;
+    NSString *gameIds ;
     UITextField *textField;
     UIAlertView *alertView1;
 }
@@ -139,14 +140,14 @@
         [self showAlertViewWithTitle:@"提示" message:@"请重新选择角色" buttonTitle:@"确定"];
         return;
     }
-    [self getUserInfoByNetWithExchangeCode:textField.text CharaterId:charaterId];
+    [self getUserInfoByNetWithExchangeCode:textField.text CharaterId:charaterId GameId:gameIds];
 }
 
-- (void)getUserInfoByNetWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId
+- (void)getUserInfoByNetWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId GameId:(NSString*)gameId
 {
     hud.labelText = @"获取中...";
     [hud show:YES];
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",nil];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",gameId,@"gameid",nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"168" forKey:@"method"];
@@ -201,7 +202,7 @@
             return;
         }
         if (buttonIndex ==1) {
-            [self goOnUploadWithExchangeCode:textField.text CharaterId:charaterId];
+            [self goOnUploadWithExchangeCode:textField.text CharaterId:charaterId GameId:gameIds];
             return;
         }
     }
@@ -217,11 +218,11 @@
 
 }
 
--(void)goOnUploadWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId
+-(void)goOnUploadWithExchangeCode:(NSString *)exchangeCode CharaterId:(NSString *)charaId GameId:(NSString*)gameId
 {
     hud.labelText = @"提交中";
     [hud show:YES];
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",nil];
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:exchangeCode ,@"exchangeCode",charaId,@"characterId",gameId,@"gameid",nil];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"167" forKey:@"method"];
@@ -299,6 +300,7 @@
     [textField1 resignFirstResponder];
     textField1.text =[NSString stringWithFormat:@"%@ %@ %@",KISDictionaryHaveKey(dic,@"name"),KISDictionaryHaveKey(dic,@"realm"),realm];
     charaterId = KISDictionaryHaveKey(dic, @"id");
+    gameIds = KISDictionaryHaveKey(dic, @"gameid");
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
