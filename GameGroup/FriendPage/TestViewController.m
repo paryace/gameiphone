@@ -1339,7 +1339,7 @@
 - (void)photoWallPhotoTaped:(NSUInteger)index WithPhotoWall:(UIView *)photoWall
 {
     //放大
-     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:[self imageToURL:littleImgArray] images:self.hostInfo.headImgArray indext:index];
+     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:self.hostInfo.headImgArray indext:index];
     [self presentViewController:pV animated:NO completion:^{
         
     }];

@@ -34,11 +34,23 @@
 {
     self = [super init];
     if (self) {
-        self.smallImageArray = sImages;
+        self.smallImageArray = [self imageToURL:images];
         self.imgIDArray = images;
         self.indext = indext;
     }
     return self;
+}
+
+#pragma mark -创建界面
+-(NSArray *)imageToURL:(NSArray *)imageArray;
+{
+    NSMutableArray * temp = [NSMutableArray array];
+    for (id headID in imageArray) {
+        if (![GameCommon isEmtity:headID]) {
+            [temp addObject:[ImageService getImageUrlString:headID Width:160 Height:160]];
+        }
+    }
+    return temp;
 }
 
 - (void)viewDidLoad

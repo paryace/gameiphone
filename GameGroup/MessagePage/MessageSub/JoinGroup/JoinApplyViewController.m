@@ -46,6 +46,10 @@
     m_ApplyTableView.delegate = self;
     [self.view addSubview:m_ApplyTableView];
     [self getJoinGroupMsg];
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
 }
 
 #pragma mark -清空
@@ -324,6 +328,7 @@
 // 同意，拒绝申请
 -(void)msgEdit:(NSString*)state Dic:(NSMutableDictionary*)dict
 {
+    [hud show:YES];
     NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
     NSString * clickstate = KISDictionaryHaveKey(dict, @"state");
     if (![clickstate isEqualToString:@"0"]) {
@@ -339,10 +344,12 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         [self changState:dict State:state];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[self getSuccessMsg:state]delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             NSString* warn = [error objectForKey:kFailMessageKey];
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100069"]) {
