@@ -320,4 +320,6 @@
 
 
 +(void)saveNewNormalChatMsg:(NSArray *)msgs;
+
++(void)saveNewGroupChatMsg:(NSArray *)msgs;
 @end

@@ -13,16 +13,21 @@
 #import "DSuser.h"
 #import "VibrationSong.h"
 #import "MyTask.h"
-#define mTime 0.3
+#define mTime 0.2
 
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-NSOperationQueue *queuenormal ;
-NSOperationQueue *queuegroup ;
+NSOperationQueue *queuenormal;
+NSOperationQueue *queuegroup;
 NSOperationQueue *queueme ;
-NSArray *array ;
+
 NSTimeInterval markTime;
+NSTimeInterval markTimeGroup;
+
+
+NSArray *array ;
+
 
 - (id)init
 {
@@ -35,7 +40,6 @@ NSTimeInterval markTime;
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
         array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -194,16 +198,7 @@ NSTimeInterval markTime;
 {
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
-- (void)stopATime
-{
-    if ([self.cellTimer isValid]) {
-        [self.cellTimer invalidate];
-        self.cellTimer = nil;
-    }
-    [DataStoreManager saveNewNormalChatMsg:self.cacheMsg];
-    [self.cacheMsg removeAllObjects];
-    self.cacheMsg = nil;
-}
+
 
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
@@ -214,17 +209,17 @@ NSTimeInterval markTime;
         NSLog(@"黑名单用户 不作操作");
         return;
     }
-    //1 打过招呼，2 未打过招呼
-    if ([array isKindOfClass:[NSArray class]] && array.count>0) {
-        if ([array containsObject:sender]) {
-            [messageContent setValue:@"1" forKey:@"sayHiType"];
-        }else{
-            [messageContent setValue:@"2" forKey:@"sayHiType"];
-        }
-    }else{
-        [self getSayHiUserIdWithInfo:messageContent];
-    }
-    
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+//    //1 打过招呼，2 未打过招呼
+//    if ([array isKindOfClass:[NSArray class]] && array.count>0) {
+//        if ([array containsObject:sender]) {
+//            [messageContent setValue:@"1" forKey:@"sayHiType"];
+//        }else{
+//            [messageContent setValue:@"2" forKey:@"sayHiType"];
+//        }
+//    }else{
+//        [self getSayHiUserIdWithInfo:messageContent];
+//    }
     if (self.cacheMsg) {
         [self.cacheMsg addObject:messageContent];
     }
@@ -236,43 +231,54 @@ NSTimeInterval markTime;
         self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
     }
-    
-    
-//    [self sendNSNotification:messageContent];
-//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
-//    [queuenormal addOperation:task];
+}
+- (void)stopATime
+{
+    NSMutableArray *array = [self.cacheMsg mutableCopy];
+    [self.cacheMsg removeAllObjects];
+    self.cacheMsg = nil;
+    if ([self.cellTimer isValid]) {
+        [self.cellTimer invalidate];
+        self.cellTimer = nil;
+    }
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
+    [queuenormal addOperation:task];
 }
 
--(void)saveNormalChatMessage:(NSDictionary *)messageContent{
-    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
-}
--(void)sendNSNotification:(NSDictionary *)messageContent
-{
-    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-    [self setSoundOrVibrationopen];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+-(void)saveNormalChatMessage:(NSArray *)messageContent{
+     [DataStoreManager saveNewNormalChatMsg:messageContent];
 }
 
 #pragma mark 收到群组聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-
-//    [self sendGroupNSNotification:messageContent];
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
+    if (self.cacheMsgGroup) {
+        [self.cacheMsgGroup addObject:messageContent];
+    }
+    if (![self.cellTimerGroup isValid]) {
+        if (!self.cacheMsgGroup) {
+            self.cacheMsgGroup = [NSMutableArray array];
+        }
+        [self.cacheMsgGroup addObject:messageContent];
+        self.cellTimerGroup = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATimeGroup) userInfo:nil repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerGroup forMode:NSRunLoopCommonModes];
+    }
+}
+- (void)stopATimeGroup
+{
+    NSMutableArray *array = [self.cacheMsgGroup mutableCopy];
+    [self.cacheMsgGroup removeAllObjects];
+    self.cacheMsgGroup = nil;
+    if ([self.cellTimerGroup isValid]) {
+        [self.cellTimerGroup invalidate];
+        self.cellTimerGroup = nil;
+    }
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:array];
     [queuegroup addOperation:task];
 }
-
--(void)saveGroupChatMessage:(NSDictionary *)messageContent{
-    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
-}
--(void)sendGroupNSNotification:(NSDictionary *)messageContent
-{
-    [DataStoreManager storeNewGroupMsgs:messageContent];
-    if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-        [self setSoundOrVibrationopen];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+-(void)saveGroupChatMessage:(NSArray *)messageContent{
+    [DataStoreManager saveNewGroupChatMsg:messageContent];
 }
 
 #pragma mark 申请加入群消息

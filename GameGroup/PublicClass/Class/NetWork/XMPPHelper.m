@@ -27,6 +27,8 @@
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 NSOperationQueue *queue ;
 NSOperationQueue *queueme ;
+
+NSOperationQueue *queuemecomback ;
 -(id)init
 {
     self = [super init];
@@ -35,6 +37,9 @@ NSOperationQueue *queueme ;
         [queue setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
+        
+        queuemecomback = [[NSOperationQueue alloc]init];
+        [queuemecomback setMaxConcurrentOperationCount:1];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
     }
@@ -138,7 +143,6 @@ NSOperationQueue *queueme ;
 
 //此方法在stream开始连接服务器的时候调用
 - (void)xmppStreamDidConnect:(XMPPStream *)sender{
-    NSLog(@"connected");
     NSError *error = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
     //验证密码
@@ -174,7 +178,6 @@ NSOperationQueue *queueme ;
 //    [self.xmppvCardAvatarModule activate:self.xmppStream];
 //    [self getmyvcard];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
-    NSLog(@"authenticated");
     [self goOnline];
     
 }
@@ -200,7 +203,7 @@ NSOperationQueue *queueme ;
 #pragma mark 收到消息后调用
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
-    NSLog(@"message =====%@",message);
+
     if(msg==nil){
         return;
     }
@@ -219,7 +222,6 @@ NSOperationQueue *queueme ;
     [dict setObject:msgId forKey:@"msgId"];//消息id
     [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
     
-    NSLog(@"theDict%@",dict);
     if ([type isEqualToString:@"chat"])
     {
         if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
@@ -321,7 +323,6 @@ NSOperationQueue *queueme ;
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
-                
                 int index=1;
                 MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveDyMessage:)object:payload];
                 task.operationId=index++;
@@ -587,22 +588,28 @@ NSOperationQueue *queueme ;
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-//sender:@"10000202@gamepro.com/862933025698753"
 #pragma mark 发送反馈消息
 - (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
 {
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
-    NSString *to=[[sender componentsSeparatedByString:@"/"] objectAtIndex:0];
+    NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender};
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(comeBack:)object:dic];
+    [queuemecomback addOperation:task];
+}
+- (void)comeBack:(NSMutableDictionary*)msgDic
+{
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
+    NSString *to=[[KISDictionaryHaveKey(msgDic, @"senderId") componentsSeparatedByString:@"/"] objectAtIndex:0];
     NSString * nowTime=[GameCommon getCurrentTime];
     NSString * message=[dic JSONRepresentation];
     NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
     NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:msgId From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:KISDictionaryHaveKey(msgDic, @"msgId") From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
     if (![self sendMessage:mes]) {
         return;
     }
 }
+
 
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence
 {
@@ -614,7 +621,6 @@ NSOperationQueue *queueme ;
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveError:(id)error
 {
-    NSLog(@"didReceiveError:%@",error);
     DDXMLNode *errorNode = (DDXMLNode *)error;
     //遍历错误节点
     for(DDXMLNode *node in [errorNode children])
@@ -634,7 +640,6 @@ NSOperationQueue *queueme ;
 }
 
 - (void)xmppAutoPingDidReceivePong:(XMPPAutoPing *)sender{
-    NSLog(@"ping did received");
 }
 
 - (void)xmppAutoPingDidTimeout:(XMPPAutoPing *)sender{
@@ -646,7 +651,6 @@ NSOperationQueue *queueme ;
 }
 
 - (void)xmppPing:(XMPPPing *)sender didReceivePong:(XMPPIQ *)pong withRTT:(NSTimeInterval)rtt{
-    NSLog(@"ping did received");
 }
 
 @end

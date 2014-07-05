@@ -105,6 +105,10 @@ UINavigationControllerDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    //接收消息监听
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
+    //ack消息监听//消息是否发送成功
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     [self refreTitleText];
     if ([self.type isEqualToString:@"group"]) {
         [self initGroupCricleMsgCount];//初始化群动态的未读消息数
@@ -112,6 +116,10 @@ UINavigationControllerDelegate>
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
+    //监听通知（收到新消息，与发送消息成功）
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
+    //ack反馈消息通知
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [self changMsgToRead];
 }
 //设置Title
@@ -145,14 +153,8 @@ UINavigationControllerDelegate>
 {
     NSLog(@"chat init");
     [super viewDidLoad];
-    //监听通知（收到新消息，与发送消息成功）
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
-    //ack反馈消息通知
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
-    //接收消息监听
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
-    //ack消息监听//消息是否发送成功
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
+
+
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];

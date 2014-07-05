@@ -29,6 +29,9 @@
 @property(nonatomic, strong) NSMutableArray* cacheMsg;
 @property (nonatomic, retain) NSTimer* cellTimer;
 
+@property(nonatomic, strong) NSMutableArray* cacheMsgGroup;
+@property (nonatomic, retain) NSTimer* cellTimerGroup;
+
 + (GetDataAfterManager*)shareManageCommon;
 
 -(void)setSoundOrVibrationopen;
