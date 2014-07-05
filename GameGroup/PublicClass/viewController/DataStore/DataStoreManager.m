@@ -423,7 +423,6 @@
         }
     }];
 }
-
 //保存正常聊天的消息
 +(void)saveNewNormalChatMsgs:(NSDictionary *)msg LoCon:(NSManagedObjectContext *)localContext
 {
@@ -433,16 +432,19 @@
     DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:hasedpredicate];
     if (!commonMsg) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
-        if (!thumbMsgs)
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        int unread;
+        if (!thumbMsgs){
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            unread =0;
+        }else{
+            unread = [thumbMsgs.unRead intValue];
+        }
         thumbMsgs.sender = sender;
         thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
         thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
         thumbMsgs.senderType = COMMONUSER;
-        int unread = [thumbMsgs.unRead intValue];
-        NSLog(@"uuuu---->>>>%d",unread);
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
         thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
@@ -513,15 +515,19 @@
     if (!hasedmsg) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",KISDictionaryHaveKey(msg, @"groupId"), KISDictionaryHaveKey(msg, @"msgType")];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-        if (!thumbMsgs)
+        int unread;
+        if (!thumbMsgs){
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            unread =1;
+        }else{
+            unread = [thumbMsgs.unRead intValue];
+        }
         thumbMsgs.sender = [msg objectForKey:@"sender"];
         thumbMsgs.senderNickname = senderNickname;
         thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
         thumbMsgs.groupId = KISDictionaryHaveKey(msg, @"groupId");
         thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
         thumbMsgs.senderType = GROUPMSG;
-        int unread = [thumbMsgs.unRead intValue];
         thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
         thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
         thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
@@ -2191,7 +2197,6 @@
         NSMutableDictionary * dict = [NSMutableDictionary dictionary];
         [dict setObject:[[rechellos objectAtIndex:i] userId] forKey:@"userid"];
         [dict setObject:[[rechellos objectAtIndex:i] nickName] forKey:@"nickName"];
-        NSLog(@"---------------%@",dict);
         //        NSRange range=[[[rechellos objectAtIndex:i] headImgID] rangeOfString:@","];
         //        if (range.location!=NSNotFound) {
         ////            NSArray *imageArray = [[[rechellos objectAtIndex:i] headImgID] componentsSeparatedByString:@","];

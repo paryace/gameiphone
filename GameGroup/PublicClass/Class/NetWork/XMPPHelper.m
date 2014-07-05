@@ -323,67 +323,18 @@ NSOperationQueue *queuemecomback ;
             [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
-                int index=1;
-                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveDyMessage:)object:payload];
-                task.operationId=index++;
-                if ([[queue operations] count]>0) {
-                    MyTask *theBeforeTask=[[queue operations] lastObject];
-                    [task addDependency:theBeforeTask];
-                }
+                NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveDyMessage:)object:payload];
                 [queue addOperation:task];
-                
-//                [self saveLastFriendDynimacUserImage:[payload JSONValue]];
-//                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-//                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
-//                    i++;
-//                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
-//                }else{
-//                    int i = 0;
-//                    i++;
-//                    [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
-//                }
-//                [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[payload JSONValue]];saveAboutDyMessage
             }
             else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
             {
                 [self.chatDelegate newdynamicAboutMe:[payload JSONValue]];
-                
-//                [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[payload JSONValue]]];
-//                if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
-//                   int i=1;
-//                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
-//                }else{
-//                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
-//                    
-//                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:@"mydynamicmsg_huancunCount_wx"];
-//                }
-//                [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
-//                [[NSUserDefaults standardUserDefaults] synchronize];
-//                [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
-                
-                int index=1;
-                MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveAboutDyMessage:)object:payload];
-                task.operationId=index++;
-                if ([[queueme operations] count]>0) {
-                    MyTask *theBeforeTask=[[queueme operations] lastObject];
-                    [task addDependency:theBeforeTask];
-                }
+                NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveAboutDyMessage:)object:payload];
                 [queueme addOperation:task];
             }
             else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
-                NSDictionary* msgDic = [payload JSONValue];
-                NSString * groupId  = KISDictionaryHaveKey(msgDic, @"groupId");
-                if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]]) {
-                    int i=1;
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]];
-                }else{
-                    int i =[[[NSUserDefaults standardUserDefaults]objectForKey: [NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]]intValue];
-                    
-                    [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,groupId]];
-                }
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                
-                [[NSNotificationCenter defaultCenter]postNotificationName:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,groupId] object:nil userInfo:msgDic];
+                NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupDyMessage:)object:payload];
+                [queue addOperation:task];
             }
               //未知的动态
             else
@@ -524,6 +475,26 @@ NSOperationQueue *queuemecomback ;
 {
     [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[payload JSONValue]];
 }
+
+
+-(void)saveGroupDyMessage:(NSString *)payload
+{
+    NSDictionary* msgDic = [payload JSONValue];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]]) {
+        int i=1;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: [NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]]intValue];
+        
+        [[NSUserDefaults standardUserDefaults]setObject:@(i+1) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]];
+    }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [self performSelectorOnMainThread:@selector(sendGroupDyNSNotification:) withObject:msgDic waitUntilDone:YES];
+}
+-(void)sendGroupDyNSNotification:(NSDictionary *)msgDic
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,KISDictionaryHaveKey(msgDic, @"groupId")] object:nil userInfo:msgDic];}
 
 
 -(NSString*)getMsgTitle:(NSString*)msgtype

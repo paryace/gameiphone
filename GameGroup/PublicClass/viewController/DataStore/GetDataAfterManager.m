@@ -13,7 +13,7 @@
 #import "DSuser.h"
 #import "VibrationSong.h"
 #import "MyTask.h"
-#define mTime 0.2
+#define mTime 0.5
 
 @implementation GetDataAfterManager
 
@@ -26,7 +26,6 @@ NSTimeInterval markTime;
 NSTimeInterval markTimeGroup;
 
 
-NSArray *array ;
 
 
 - (id)init
@@ -39,7 +38,7 @@ NSArray *array ;
         [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
-        array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+        self.sayHelloArray = (NSMutableArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -66,8 +65,6 @@ NSArray *array ;
 {
     [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_Vibration_tixing_count"];
 }
-
-
 
 - (void)changeMyActive:(NSNotification*)notification
 {
@@ -199,7 +196,6 @@ NSArray *array ;
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
 
-
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
@@ -209,17 +205,16 @@ NSArray *array ;
         NSLog(@"黑名单用户 不作操作");
         return;
     }
-    [messageContent setValue:@"1" forKey:@"sayHiType"];
-//    //1 打过招呼，2 未打过招呼
-//    if ([array isKindOfClass:[NSArray class]] && array.count>0) {
-//        if ([array containsObject:sender]) {
-//            [messageContent setValue:@"1" forKey:@"sayHiType"];
-//        }else{
-//            [messageContent setValue:@"2" forKey:@"sayHiType"];
-//        }
-//    }else{
-//        [self getSayHiUserIdWithInfo:messageContent];
-//    }
+    //1 打过招呼，2 未打过招呼
+    if ([self.sayHelloArray isKindOfClass:[NSArray class]] && self.sayHelloArray.count>0) {
+        if ([self.sayHelloArray containsObject:sender]) {
+            [messageContent setValue:@"1" forKey:@"sayHiType"];
+        }else{
+            [messageContent setValue:@"2" forKey:@"sayHiType"];
+        }
+    }else{
+        [self getSayHiUserIdWithInfo:messageContent];
+    }
     if (self.cacheMsg) {
         [self.cacheMsg addObject:messageContent];
     }
@@ -241,12 +236,12 @@ NSArray *array ;
         [self.cellTimer invalidate];
         self.cellTimer = nil;
     }
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
-    [queuenormal addOperation:task];
+    NSInvocationOperation * tasknormal = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
+    [queuenormal addOperation:tasknormal];
 }
 
 -(void)saveNormalChatMessage:(NSArray *)messageContent{
-     [DataStoreManager saveNewNormalChatMsg:messageContent];
+    [DataStoreManager saveNewNormalChatMsg:messageContent];
 }
 
 #pragma mark 收到群组聊天消息

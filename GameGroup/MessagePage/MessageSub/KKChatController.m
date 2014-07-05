@@ -191,20 +191,15 @@ UINavigationControllerDelegate>
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
-    //清空此人所有的未读消息
-    
-    [self changMsgToRead];
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
     ifAudio = NO;
     ifEmoji = NO;
-    
     [self.view addSubview:self.inPutView];  //输入框
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [self.view addSubview:self.unReadL]; //未读数量
-    [self setNoreadMsg];
-    [self setNoreadMsgView];
+    [self changMsgToRead];
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
 //    [self.view addSubview:self.noReadView]; //未读数量
@@ -260,12 +255,19 @@ UINavigationControllerDelegate>
 {
     if ([self.type isEqualToString:@"normal"]) {
         [self sendReadedMesg];//发送已读消息
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
-    }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
     }
-
-
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.readMessage", NULL);
+    dispatch_async(queue, ^{
+        if ([self.type isEqualToString:@"normal"]) {
+            [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+        }else if ([self.type isEqualToString:@"group"]){
+            [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+        }
+        [self readNoreadMsg];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setNoreadMsgView];
+        });
+    });
 }
 -(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {
@@ -675,7 +677,7 @@ UINavigationControllerDelegate>
     return _inPutView;
 }
 
--(void)setNoreadMsg
+-(void)readNoreadMsg
 {
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
     _unreadNo  = [GameCommon getNoreadMsgCount:array];
@@ -692,7 +694,8 @@ UINavigationControllerDelegate>
         _unReadL.layer.masksToBounds=YES;
         _unReadL.textColor = [UIColor whiteColor];
         _unReadL.textAlignment = NSTextAlignmentCenter;
-        _unReadL.font = [UIFont systemFontOfSize:14];
+        _unReadL.font = [UIFont systemFontOfSize:12];
+        _unReadL.hidden = YES;
     }
     return _unReadL;
 }
@@ -702,7 +705,8 @@ UINavigationControllerDelegate>
     if (_unreadNo>0) {
          _unReadL.hidden = NO;
         if (_unreadNo>99) {
-            _unReadL.text = [NSString stringWithFormat:@"%@",@"99+"];
+            _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
+            _unReadL.text = [NSString stringWithFormat:@"%@",@"N+"];
         }else{
              _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
         }
@@ -2330,19 +2334,22 @@ UINavigationControllerDelegate>
 //发送已读消息
 - (void)comeBackDisplayed:(NSString*)sender msgId:(NSString*)msgId
 {
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Displayed",@"msgStatus", nil];
-    NSString* message=[dic JSONRepresentation];
-    NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
-    NSString *from=[fromUserId stringByAppendingString:domain];
-    NSString *to=[sender stringByAppendingString:domain];
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
-    if (![self.appDel.xmppHelper sendMessage:mes]) {
-        return;
-    }
-    [DataStoreManager refreshMessageStatusWithId:msgId status:@"4"];
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.comeBack", NULL);
+    dispatch_async(queue, ^{
+        NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Displayed",@"msgStatus", nil];
+        NSString* message=[dic JSONRepresentation];
+        NSString* nowTime = [GameCommon getCurrentTime];
+        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+        NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+        NSString *from=[fromUserId stringByAppendingString:domain];
+        NSString *to=[sender stringByAppendingString:domain];
+        NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+        if (![self.appDel.xmppHelper sendMessage:mes]) {
+            return;
+        }
+        [DataStoreManager refreshMessageStatusWithId:msgId status:@"4"];
+    });
 }
 
 
