@@ -202,9 +202,16 @@ NSTimeInterval markTimeGroup;
 
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
-        NSLog(@"黑名单用户 不作操作");
         return;
     }
+    if ([self.sayHelloArray isKindOfClass:[NSArray class]]) {
+        if (self.sayHelloArray.count==0) {
+            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
+                self.sayHelloArray=[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+            }
+        }
+    }
+    
     //1 打过招呼，2 未打过招呼
     if ([self.sayHelloArray isKindOfClass:[NSArray class]] && self.sayHelloArray.count>0) {
         if ([self.sayHelloArray containsObject:sender]) {

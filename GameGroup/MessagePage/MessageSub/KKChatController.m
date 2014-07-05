@@ -151,7 +151,6 @@ UINavigationControllerDelegate>
 //初始化会话界面UI
 - (void)viewDidLoad
 {
-    NSLog(@"chat init");
     [super viewDidLoad];
 
 
@@ -1117,7 +1116,6 @@ UINavigationControllerDelegate>
     }
     if(![self.finalImage objectForKey:uuid]) //如果没有这个uuid，才执行这个压缩过程
     {
-        NSLog(@"finalmesg添加%@",uuid);
         NSDictionary* payload = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
         NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
          NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
@@ -1257,7 +1255,6 @@ UINavigationControllerDelegate>
         [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
         return ;
     }
-    NSLog(@"%d",sender.tag);
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
 
@@ -1333,7 +1330,6 @@ UINavigationControllerDelegate>
     }
     else
     {
-        NSLog(@"fail");
     }
     [self dismissViewControllerAnimated:YES completion:^{
         [hud hide:YES];
@@ -1472,7 +1468,6 @@ UINavigationControllerDelegate>
             [self.textView resignFirstResponder];
             
             self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
-            NSLog(@"-----%f",self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
             self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
@@ -2070,7 +2065,6 @@ UINavigationControllerDelegate>
         [payload setStringValue:payloadStr];
         [mes addChild:payload];
     }
-    NSLog(@"sendMsg------------>>>>%@",mes);
     [self.appDel.xmppHelper sendMessage:mes];
 }
 
@@ -2378,7 +2372,6 @@ UINavigationControllerDelegate>
             }
         }
     }
-    NSLog(@"加载的图片地址：%@",str);
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
     [self presentViewController:photo animated:NO completion:^{
@@ -2411,7 +2404,6 @@ UINavigationControllerDelegate>
 }
 - (void)didReceiveMemoryWarning
 {
-    NSLog(@"ChatPage--didReceiveMemoryWarning--->");
     [super didReceiveMemoryWarning];
 }
 @end

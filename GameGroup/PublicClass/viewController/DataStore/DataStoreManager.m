@@ -601,7 +601,7 @@
         thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";
         int unread = [thumbMsgs.unRead intValue];
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread];
         thumbMsgs.messageuuid = messageuuid;
         thumbMsgs.status = @"2";
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
@@ -624,8 +624,7 @@
         thumbMsgs.msgType = KISDictionaryHaveKey(message, @"msgType");
         thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";
-        int unread = [thumbMsgs.unRead intValue];
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
         thumbMsgs.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
         thumbMsgs.status = @"2";
         thumbMsgs.groupId = KISDictionaryHaveKey(message, @"groupId");
@@ -665,8 +664,7 @@
         thumbMsgs.msgType = KISDictionaryHaveKey(message, @"msgType");
         thumbMsgs.senderimg = @"";
         thumbMsgs.sayHiType = @"1";
-        int unread = [thumbMsgs.unRead intValue];
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
         thumbMsgs.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
         thumbMsgs.status = @"2";//发送中
         thumbMsgs.groupId = groupId;

@@ -166,6 +166,11 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        if (!responseObject) {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"登陆失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+            return ;
+        }
 
         [[NSUserDefaults standardUserDefaults] setValue:phoneTextField.text forKey:PhoneNumKey];
         [[NSUserDefaults standardUserDefaults] synchronize];

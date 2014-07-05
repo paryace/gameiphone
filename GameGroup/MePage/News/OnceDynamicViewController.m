@@ -64,7 +64,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-
+        
     }
     return self;
 }
@@ -105,6 +105,8 @@
     [self.view addSubview:hud];
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self getDataByNet];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
 }
 
 
@@ -806,6 +808,14 @@
     }else{
         [self showMessageWindowWithContent:@"发送失败" imageType:0];
     }
+}
+
+
+//消息发送成功
+- (void)messageAck:(NSNotification *)notification
+{
+    NSDictionary* tempDic = notification.userInfo;
+    [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:KISDictionaryHaveKey(tempDic, @"msgState")];
 }
 
 //广播给粉丝
