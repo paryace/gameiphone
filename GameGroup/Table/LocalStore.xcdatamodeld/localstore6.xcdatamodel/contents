@@ -77,7 +77,7 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSCommonMsgs" representedClassName="DSCommonMsgs" syncable="YES">
-        <attribute name="messageuuid" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgFilesID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
@@ -312,7 +312,7 @@
         <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sayHiType" optional="YES" attributeType="String" defaultValueString="1" syncable="YES"/>
-        <attribute name="sender" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="sender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senderimg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senderType" optional="YES" attributeType="String" syncable="YES"/>

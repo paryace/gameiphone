@@ -16,14 +16,22 @@
 #define mTime 0.5
 
 @implementation GetDataAfterManager
-
+{
+    NSOperationQueue *queuenormal;
+    NSOperationQueue *queuegroup;
+    NSOperationQueue *queueme ;
+    
+    NSTimeInterval markTime;
+    NSTimeInterval markTimeGroup;
+    
+    NSCondition *tc;
+    NSThread *t2;
+    
+    int index;
+    int index2;
+}
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-NSOperationQueue *queuenormal;
-NSOperationQueue *queuegroup;
-NSOperationQueue *queueme ;
 
-NSTimeInterval markTime;
-NSTimeInterval markTimeGroup;
 
 
 
@@ -32,6 +40,9 @@ NSTimeInterval markTimeGroup;
 {
     self = [super init];
     if (self) {
+        index=1;
+        index2=1;
+        tc = [[NSCondition alloc] init];
         queuenormal = [[NSOperationQueue alloc]init];
         [queuenormal setMaxConcurrentOperationCount:1];
         queuegroup = [[NSOperationQueue alloc]init];
@@ -222,17 +233,26 @@ NSTimeInterval markTimeGroup;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    if (self.cacheMsg) {
-        [self.cacheMsg addObject:messageContent];
-    }
-    if (![self.cellTimer isValid]) {
-        if (!self.cacheMsg) {
-            self.cacheMsg = [NSMutableArray array];
+    
+    
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTime)*100<0.1*1000) {
+        markTime = [[NSDate date] timeIntervalSince1970];
+        if (self.cacheMsg) {
+            [self.cacheMsg addObject:messageContent];
         }
-        [self.cacheMsg addObject:messageContent];
-        self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
+        if (![self.cellTimer isValid]) {
+            if (!self.cacheMsg) {
+                self.cacheMsg = [NSMutableArray array];
+            }
+            [self.cacheMsg addObject:messageContent];
+            self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
+        }
+        return;
     }
+    markTime = [[NSDate date] timeIntervalSince1970];
+    [DataStoreManager storeNewNormalChatMsgs:messageContent];
 }
 - (void)stopATime
 {
@@ -244,6 +264,9 @@ NSTimeInterval markTimeGroup;
         self.cellTimer = nil;
     }
     NSInvocationOperation * tasknormal = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
+    if ([[queuenormal operations] count]>0) {
+        [tasknormal addDependency:[[queuenormal operations] lastObject]];
+    }
     [queuenormal addOperation:tasknormal];
 }
 
@@ -255,17 +278,25 @@ NSTimeInterval markTimeGroup;
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    if (self.cacheMsgGroup) {
-        [self.cacheMsgGroup addObject:messageContent];
-    }
-    if (![self.cellTimerGroup isValid]) {
-        if (!self.cacheMsgGroup) {
-            self.cacheMsgGroup = [NSMutableArray array];
+    
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTimeGroup)*100<0.1*1000) {
+        markTimeGroup = [[NSDate date] timeIntervalSince1970];
+        if (self.cacheMsgGroup) {
+            [self.cacheMsgGroup addObject:messageContent];
         }
-        [self.cacheMsgGroup addObject:messageContent];
-        self.cellTimerGroup = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATimeGroup) userInfo:nil repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerGroup forMode:NSRunLoopCommonModes];
+        if (![self.cellTimerGroup isValid]) {
+            if (!self.cacheMsgGroup) {
+                self.cacheMsgGroup = [NSMutableArray array];
+            }
+            [self.cacheMsgGroup addObject:messageContent];
+            self.cellTimerGroup = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATimeGroup) userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.cellTimerGroup forMode:NSRunLoopCommonModes];
+        }
+        return;
     }
+    markTimeGroup = [[NSDate date] timeIntervalSince1970];
+    [DataStoreManager storeNewGroupMsgs:messageContent];
 }
 - (void)stopATimeGroup
 {
@@ -277,6 +308,9 @@ NSTimeInterval markTimeGroup;
         self.cellTimerGroup = nil;
     }
     NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:array];
+    if ([[queuegroup operations] count]>0) {
+        [task addDependency:[[queuegroup operations] lastObject]];
+    }
     [queuegroup addOperation:task];
 }
 -(void)saveGroupChatMessage:(NSArray *)messageContent{
