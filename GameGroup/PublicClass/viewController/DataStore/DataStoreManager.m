@@ -531,6 +531,10 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
+        if ([[GameCommon getMsgSettingStateByGroupId:[msg objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
+            [[GetDataAfterManager shareManageCommon] setSoundOrVibrationopen];
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msg];
     }];
 }
 //保存群组的消息
