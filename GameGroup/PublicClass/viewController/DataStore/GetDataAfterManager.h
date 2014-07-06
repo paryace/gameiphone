@@ -36,7 +36,6 @@
 @property (nonatomic, retain) NSTimer* cellTimerGroup;
 
 
-@property (nonatomic, retain) NSMutableArray * sayHelloArray;
 
 + (GetDataAfterManager*)shareManageCommon;
 

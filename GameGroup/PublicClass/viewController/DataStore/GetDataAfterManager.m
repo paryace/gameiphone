@@ -29,6 +29,9 @@
     
     int index;
     int index2;
+    
+    dispatch_queue_t queue; //
+    dispatch_queue_t queue2; //
 }
 static GetDataAfterManager *my_getDataAfterManager = NULL;
 
@@ -49,7 +52,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
-        self.sayHelloArray = (NSMutableArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+        queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
+        queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -215,17 +219,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if ([DataStoreManager isBlack:sender]) {
         return;
     }
-    if ([self.sayHelloArray isKindOfClass:[NSArray class]]) {
-        if (self.sayHelloArray.count==0) {
-            if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
-                self.sayHelloArray=[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
-            }
-        }
-    }
-    
     //1 打过招呼，2 未打过招呼
-    if ([self.sayHelloArray isKindOfClass:[NSArray class]] && self.sayHelloArray.count>0) {
-        if ([self.sayHelloArray containsObject:sender]) {
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
+        NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
+        if ([array containsObject:sender]) {
             [messageContent setValue:@"1" forKey:@"sayHiType"];
         }else{
             [messageContent setValue:@"2" forKey:@"sayHiType"];
@@ -233,6 +230,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
+    
+    
     
     
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
@@ -252,7 +251,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTime = [[NSDate date] timeIntervalSince1970];
-    [DataStoreManager storeNewNormalChatMsgs:messageContent];
+    dispatch_sync(queue, ^{
+        [DataStoreManager storeNewNormalChatMsgs:messageContent];
+    });
 }
 - (void)stopATime
 {
@@ -263,6 +264,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self.cellTimer invalidate];
         self.cellTimer = nil;
     }
+    
+    
     NSInvocationOperation * tasknormal = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
     if ([[queuenormal operations] count]>0) {
         [tasknormal addDependency:[[queuenormal operations] lastObject]];
@@ -271,7 +274,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 
 -(void)saveNormalChatMessage:(NSArray *)messageContent{
-    [DataStoreManager saveNewNormalChatMsg:messageContent];
+   [DataStoreManager saveNewNormalChatMsg:messageContent];
 }
 
 #pragma mark 收到群组聊天消息
@@ -280,7 +283,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    if ((nowTime - markTimeGroup)*100<0.1*1000) {
+    if ((nowTime - markTimeGroup)*100<0.2*1000) {
         markTimeGroup = [[NSDate date] timeIntervalSince1970];
         if (self.cacheMsgGroup) {
             [self.cacheMsgGroup addObject:messageContent];
@@ -296,7 +299,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTimeGroup = [[NSDate date] timeIntervalSince1970];
-    [DataStoreManager storeNewGroupMsgs:messageContent];
+    dispatch_sync(queue2, ^{
+        [DataStoreManager storeNewGroupMsgs:messageContent];
+    });
 }
 - (void)stopATimeGroup
 {

@@ -283,7 +283,7 @@
 - (void)displayMsgsForDefaultView
 {
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    if (nowTime - markTime<mTime*1000) {
+    if ((nowTime - markTime)*100<mTime*1000) {
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
             self.cellTimer = nil;
