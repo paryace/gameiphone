@@ -125,7 +125,7 @@
             cell.glazzImgView.placeholderImage = KUIImage(@"clazz_0");
         }
         
-        cell.glazzImgView.imageURL = [ImageService getImageUrl4:KISDictionaryHaveKey(dict, @"img")];
+        cell.glazzImgView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dict, @"img") Width:30];
         cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
         if ([KISDictionaryHaveKey(dict,@"user")isKindOfClass:[NSDictionary class]]) {
             NSDictionary *dic = KISDictionaryHaveKey(dict, @"user");
@@ -136,7 +136,7 @@
             }else{
                 cell.genderImgView.image = KUIImage(@"gender_boy");
             }
-            cell.headImgBtn.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(dic, @"img")];
+            cell.headImgBtn.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dic, @"img") Width:80];
         }else{
             cell.headImgBtn.imageURL = nil;
             cell.genderImgView.image = KUIImage(@"weibangding");

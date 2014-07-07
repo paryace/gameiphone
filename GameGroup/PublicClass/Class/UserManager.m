@@ -11,7 +11,9 @@
 
 static UserManager *userManager = NULL;
 
-@implementation UserManager
+@implementation UserManager{
+    dispatch_queue_t queue;
+}
 
 + (UserManager*)singleton
 {
@@ -29,6 +31,7 @@ static UserManager *userManager = NULL;
     if (self) {
         self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
         self.cacheUserids = [NSMutableArray array];
+        queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
     }
     return self;
 }
@@ -86,39 +89,41 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
-    if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
-        [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
-    }
-    
-    NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
-    NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
-    NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
-    
-    [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
-    if ([titles isKindOfClass:[NSArray class]] && [titles count] != 0) {//头衔
-        NSDictionary *titleDictionary=[titles objectAtIndex:0];
-        NSMutableDictionary * titleObjectDic = KISDictionaryHaveKey(titleDictionary, @"titleObj");
-        NSString * titleObj = KISDictionaryHaveKey(titleObjectDic, @"title");
-        NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjectDic, @"rarenum")];
-        [dicUser setObject:titleObj forKey:@"titleName"];
-        [dicUser setObject:titleObjLevel forKey:@"rarenum"];
-    }
-    [DataStoreManager deleteAllDSCharacters:KISDictionaryHaveKey(dicUser, @"userid")];
-    [DataStoreManager deleteAllDSTitle:KISDictionaryHaveKey(dicUser, @"userid")];
-    
-    [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-
-    for (NSMutableDictionary *characher in charachers) {
-        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
-    }
-    for (NSMutableDictionary *title in titles) {
-        [DataStoreManager saveDSTitle:title];
-    }
-    if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
-        [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
-    }
-    [self updateMsgInfo:dicUser];
+    dispatch_sync(queue, ^{
+        NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
+        if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
+            [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
+        }
+        
+        NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
+        NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
+        NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
+        
+        [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
+        if ([titles isKindOfClass:[NSArray class]] && [titles count] != 0) {//头衔
+            NSDictionary *titleDictionary=[titles objectAtIndex:0];
+            NSMutableDictionary * titleObjectDic = KISDictionaryHaveKey(titleDictionary, @"titleObj");
+            NSString * titleObj = KISDictionaryHaveKey(titleObjectDic, @"title");
+            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjectDic, @"rarenum")];
+            [dicUser setObject:titleObj forKey:@"titleName"];
+            [dicUser setObject:titleObjLevel forKey:@"rarenum"];
+        }
+        [DataStoreManager deleteAllDSCharacters:KISDictionaryHaveKey(dicUser, @"userid")];
+        [DataStoreManager deleteAllDSTitle:KISDictionaryHaveKey(dicUser, @"userid")];
+        
+        [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+        
+        for (NSMutableDictionary *characher in charachers) {
+            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
+        }
+        for (NSMutableDictionary *title in titles) {
+            [DataStoreManager saveDSTitle:title];
+        }
+        if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
+            [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
+        }
+        [self updateMsgInfo:dicUser];
+    });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表
