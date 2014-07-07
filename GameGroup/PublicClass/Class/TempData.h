@@ -22,14 +22,15 @@
 @property (nonatomic,retain)NSString * characterID;//注册时的角色ID
 @property (nonatomic,retain)NSString * gamerealm;//注册时的服务器名
 @property (nonatomic,retain)NSString * token;
-@property(nonatomic,assign)BOOL isSoundOpen;//是否打开声音
-@property(nonatomic,assign)BOOL isVibration;//是否打开震动
-@property(nonatomic,assign)BOOL isBindingRoles;//是否绑定角色
-
+@property (nonatomic,assign)BOOL isSoundOpen;//是否打开声音
+@property (nonatomic,assign)BOOL isVibration;//是否打开震动
+@property (nonatomic,assign)BOOL isBindingRoles;//是否绑定角色
+@property (nonatomic,assign)BOOL isShowOpenImg;//是否显示开机图
 
 + (id)sharedInstance;
 -(void)setLat:(double)lat Lon:(double)lon;
--(void)isBindingRolesWithBool:(BOOL)isYes;
+-(void)isBindingRolesWithBool:(BOOL)isYes;//改变绑定图bool
+-(void)ChangeShowOpenImg:(BOOL)isYes;//改变开机图bool
 -(double)returnLat;//经度
 -(double)returnLon;//纬度
 -(NSString*)getMyUserID;

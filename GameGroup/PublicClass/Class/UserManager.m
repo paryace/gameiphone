@@ -7,6 +7,8 @@
 //
 
 #import "UserManager.h"
+#import "LocationManager.h"
+#import "DownloadImageService.h"
 static UserManager *userManager = NULL;
 
 @implementation UserManager
@@ -84,6 +86,9 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
+    dispatch_async(queue, ^{
+
     NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
     if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
         [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -117,6 +122,7 @@ static UserManager *userManager = NULL;
         [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
     }
     [self updateMsgInfo:dicUser];
+    });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表
@@ -239,4 +245,93 @@ static UserManager *userManager = NULL;
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
+#pragma mark 获取用户位置
+-(void)getUserLocation
+{
+    [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+        [[TempData sharedInstance] setLat:lat Lon:lon];
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]) {//自动登录
+            [self upLoadUserLocationWithLat:lat Lon:lon];
+        }
+    } Failure:^{
+        NSLog(@"开机定位失败");
+    }];
+}
+-(void)upLoadUserLocationWithLat:(double)userLatitude Lon:(double)userLongitude
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSDictionary * locationDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f",userLongitude],@"longitude",[NSString stringWithFormat:@"%f",userLatitude],@"latitude", nil];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"108" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:locationDict forKey:@"params"];
+    
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+}
+//请求开机图
+-(void)getOpenImageFromNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(kScreenWidth) forKey:@"width"];
+    [paramDict setObject:@(kScreenHeigth) forKey:@"height"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"263" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]:@"" forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
+     
+                          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                                  NSString * openImageId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"adImg")];
+                                  NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
+                                  if ([GameCommon isEmtity:openImageId]) {
+                                      [[NSUserDefaults standardUserDefaults]setObject:@"" forKey:OpenImage];
+                                  }else{
+                                      if (![openImageId isEqualToString:imageId]) {
+                                          [self downloadImageWithID:openImageId];
+                                      }
+                                  }
+                              }
+                          } failure:^(AFHTTPRequestOperation *operation, id error) {
+                          }];
+}
+
+-(void)downloadImageWithID:(NSString *)imageId
+{
+    [[DownloadImageService singleton] startDownload:imageId];
+}
+
+
+//获取开机图
+-(UIImage*)getOpenImage
+{
+    NSString * imageId = [[NSUserDefaults standardUserDefaults] objectForKey:OpenImage];
+    if ([GameCommon isEmtity:imageId]) {
+        return [self getDefaultOpenImage];
+    }
+    return [self getOpemImageByImageId:imageId];
+}
+-(UIImage*)getOpemImageByImageId:(NSString*)imageId
+{
+    NSString *openImgPath = [RootDocPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.jpg",imageId]];
+    UIImage *openImage = [[UIImage alloc]initWithContentsOfFile:openImgPath];
+    if (openImage&&![openImage isEqual:@""]) {
+        return openImage;
+        //        return [NetManager image2:openImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
+    }
+    return [self getDefaultOpenImage];
+}
+-(UIImage*)getDefaultOpenImage
+{
+    if (iPhone5) {
+        return KUIImage(@"Default-568h@2x.png");
+    }
+    return KUIImage(@"Default.png");
+}
+
 @end

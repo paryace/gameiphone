@@ -76,7 +76,7 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)add_custom_tabbar_elements
 {
-	int tab_num = 4;
+	int tab_num = 5;
 	
 	[self.view addSubview:tabBarView];
 	
@@ -84,7 +84,7 @@ static Custom_tabbar *s_tabbar = NULL;
 	for(int i = 0; i< tab_num; i++)
 	{
 		UIButton  *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-		[btn setFrame:CGRectMake(i*320/4, 0, 320/4, 50)];
+		[btn setFrame:CGRectMake(i*320/5, 0, 320/5, 50)];
 		NSString *back_image = [backgroud_image objectAtIndex:i];
 		NSString *selected_image = [select_image objectAtIndex:i]; 
 		[btn setBackgroundImage:[UIImage imageNamed:back_image] forState:UIControlStateNormal];

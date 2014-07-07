@@ -1274,6 +1274,8 @@
         nameIndex=@"#";
     }
     if (![GameCommon isEmtity:userId]) {
+        
+        
         [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
             DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
