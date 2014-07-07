@@ -113,7 +113,7 @@
     toolbar.items = @[rb_server];
 
     
-    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(80, 158+52, 180, 40)];
+    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(80, 158+52, 200, 40)];
     self.gameTextField.returnKeyType = UIReturnKeyDone;
     self.gameTextField.delegate = self;
     self.gameTextField.inputView = m_gamePickerView;

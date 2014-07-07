@@ -166,7 +166,7 @@ UINavigationControllerDelegate>
     //被剔出该群
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     //群动态消息
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,self.chatWithUser] object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
@@ -870,11 +870,10 @@ UINavigationControllerDelegate>
 #pragma mark 收到群动态消息
 -(void)receivedGroupDynamicMsg:(NSNotification*)sender
 {
-    NSDictionary * groupDic = sender.userInfo;
-    NSString * groupMsgId= KISDictionaryHaveKey(groupDic, @"groupId");
-    if ([self.chatWithUser isEqualToString:groupMsgId]) {
-        _groupCricleMsgCount++;
-        [self setGroupDynamicMsg:_groupCricleMsgCount];
+    if ([self.chatWithUser isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(sender.userInfo, @"groupId")]]) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(sender.userInfo, @"groupId")] isEqualToString:self.chatWithUser]) {
+            [self initGroupCricleMsgCount];
+        }
     }
 }
 //设置群动态的未读消息数

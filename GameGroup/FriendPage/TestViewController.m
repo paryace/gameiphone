@@ -759,7 +759,7 @@
         
         if ([failedmsg intValue ]==404)//角色不存在
         {
-            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:[GameCommon getNewStringWithId:auth] Pro:v2];
+            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[[realm stringByAppendingString:@" "] stringByAppendingString:v1] pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:@"00" Pro:v2];
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
         }

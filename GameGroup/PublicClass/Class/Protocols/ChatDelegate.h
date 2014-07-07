@@ -23,4 +23,8 @@
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent;//加入或者退出群
 
 -(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent;//群公告消息
+
+
+-(void)dyMessageReceived:(NSDictionary *)payloadStr;//动态消息
+
 @end

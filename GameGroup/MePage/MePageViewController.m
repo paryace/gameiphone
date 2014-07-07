@@ -419,11 +419,13 @@
             NSString* failedmsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
             NSString* img=KISDictionaryHaveKey(tempDic, @"img");//角色图标
             NSString* gameid=KISDictionaryHaveKey(tempDic, @"gameid");
-            
+            cell.heardImg.placeholderImage = KUIImage(@"clazz_icon.png");
+            cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
+            cell.authBg.hidden = NO;
             if ([failedmsg intValue] ==404)//角色不存在
             {
                 cell.heardImg.image = KUIImage(@"clazz_icon.png");
-                cell.realmLabel.text = @"角色不存在";
+                cell.authBg.image= KUIImage(@"chara_auth_3");
             }
             else
             {
@@ -433,17 +435,17 @@
                 else{
                     cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
                 }
-                cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
+                
+                if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
+                    cell.authBg.image= KUIImage(@"chara_auth_1");
+                }
+                else
+                {
+                    
+                    cell.authBg.image= KUIImage(@"chara_auth_2");
+                }
             }
-            if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
-                cell.authBg.hidden = NO;
-                cell.authBg.image= KUIImage(@"chara_auth_1");
-            }
-            else
-            {
-                cell.authBg.hidden = NO;
-                cell.authBg.image= KUIImage(@"chara_auth_2");
-            }
+           
             cell.rowIndex = indexPath.row;
             cell.myDelegate = self;
             NSString * gameImageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];

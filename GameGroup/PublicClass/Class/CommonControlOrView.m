@@ -203,9 +203,12 @@
     authBg.backgroundColor = [UIColor clearColor];
     [myView addSubview:authBg];
 
-    if ([auth isEqualToString:@"1"]) {
-        authBg.image = KUIImage(@"chara_auth_1");
+    if ([auth isEqualToString:@"00"]) {
+        authBg.image = KUIImage(@"chara_auth_3");
 
+    }else if ([auth isEqualToString:@"1"]) {
+        authBg.image = KUIImage(@"chara_auth_1");
+        
     }else{
         authBg.image = KUIImage(@"chara_auth_2");
 

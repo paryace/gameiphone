@@ -65,20 +65,33 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        //好友动态
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
-        //与我相关
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
-        //清除离线消息
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
-        //群公告消息广播接收
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
-    }
+           }
     return self;
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super  viewWillDisappear:animated];
+    //好友动态
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"frienddunamicmsgChange_WX" object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"mydynamicmsg_wx" object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"cleanInfoOffinderPage_wx" object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:Billboard_msg object:nil];}
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    //好友动态
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
+    //与我相关
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
+    //清除离线消息
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
+    //群公告消息广播接收
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
+
+    
+    
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
@@ -138,10 +151,9 @@
 {
     //添加Tab上的小红点
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
-    myDunamicmsgCount ++;
+    myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
-    
-    
+
     //显示头像
     NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
     headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
@@ -151,7 +163,7 @@
 -(void)receivedFriendDynamicMsg:(NSNotification*)sender
 {
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
-    friendDunamicmsgCount++;
+    friendDunamicmsgCount = [self getFriendDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
     
     //显示头像
@@ -162,6 +174,7 @@
 #pragma mark 接收到公告消息通知
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     billboardMsgCount++;
     [self setMsgBillBoardConunt:billboardMsgCount];
 }

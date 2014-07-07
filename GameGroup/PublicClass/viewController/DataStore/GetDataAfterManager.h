@@ -28,12 +28,16 @@
 
 @property(nonatomic, strong) NSMutableArray* cacheMsg;
 @property (nonatomic, retain) NSTimer* cellTimer;
-
 @property (nonatomic, retain) NSTimer* mTimer;
+@property (nonatomic, retain) NSTimer* cellTimerGroup;
+
+@property (nonatomic, retain) NSTimer* cellTimerDy;
+@property (nonatomic, retain) NSTimer* cellTimerDyMe;
+@property (nonatomic, retain) NSTimer* cellTimerDyGroup;
 
 
 @property(nonatomic, strong) NSMutableArray* cacheMsgGroup;
-@property (nonatomic, retain) NSTimer* cellTimerGroup;
+
 
 
 
