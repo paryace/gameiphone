@@ -32,6 +32,7 @@ static TempData *sharedInstance=nil;
     self.passBindingRole = NO;
     self.isSoundOpen =YES;
     self.isVibration = YES;
+    self.isShowOpenImg = YES;
     self.isBindingRoles = YES;
     self.token=[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken];
 }
@@ -40,7 +41,10 @@ static TempData *sharedInstance=nil;
 {
     self.isBindingRoles = isYes;
 }
-
+-(void)ChangeShowOpenImg:(BOOL)isYes
+{
+    self.isShowOpenImg = isYes;
+}
 -(void)setLat:(double)lat Lon:(double)lon
 {
     latitude = lat;

@@ -23,7 +23,7 @@
 #import "DataNewsViewController.h"
 #import "ImageService.h"
 #import "JoinApplyViewController.h"
-
+#import "OpenImgViewController.h"
 #define mTime 0.5
 
 @interface MessagePageViewController ()<NewRegisterViewControllerDelegate>
@@ -50,7 +50,18 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [[Custom_tabbar showTabBar] hideTabBar:NO];
+    if ([[TempData sharedInstance]isShowOpenImg]) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+        OpenImgViewController *openImg = [[OpenImgViewController alloc]init];
+        [self presentViewController:openImg animated:NO completion:^{
+            
+        }];
+    }
+    else
+    {
+        [[Custom_tabbar showTabBar] hideTabBar:NO];
+    }
+
 }
 
 - (void)viewDidAppear:(BOOL)animated

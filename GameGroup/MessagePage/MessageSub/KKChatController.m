@@ -33,7 +33,7 @@
 #define kChatImageSizeHigh @"200"
 
 #define padding 20
-#define spaceEnd 300
+#define spaceEnd 500
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
 
@@ -65,7 +65,6 @@ UINavigationControllerDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     BOOL endOfTable;
-    
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -255,18 +254,13 @@ UINavigationControllerDelegate>
     if ([self.type isEqualToString:@"normal"]) {
         [self sendReadedMesg];//发送已读消息
     }
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.readMessage", NULL);
-    dispatch_async(queue, ^{
-        if ([self.type isEqualToString:@"normal"]) {
-            [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
-        }else if ([self.type isEqualToString:@"group"]){
-            [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
-        }
-        [self readNoreadMsg];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setNoreadMsgView];
-        });
-    });
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
+    [self readNoreadMsg];
+    [self setNoreadMsgView];
 }
 -(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {

@@ -19,6 +19,17 @@
 #import "XMPPping.h"
 #import "UserManager.h"
 #import "OfflineComment.h"
+
+
+#import "FindViewController.h"
+#import "MePageViewController.h"
+#import "Custom_tabbar.h"
+#import "NewFriendPageController.h"
+//#import "ItemBaseViewController.h"
+#import "MessagePageViewController.h"
+#import "LocationManager.h"
+
+
 @implementation AppDelegate
 {
     TencentOAuth *tOAuth;
@@ -49,9 +60,45 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
+    //消息页面
+    MessagePageViewController* fist  = [[MessagePageViewController alloc] init];
+    fist.hidesBottomBarWhenPushed = YES;
+    UINavigationController* navigationController_First = [[UINavigationController alloc] initWithRootViewController:fist];
+    navigationController_First.navigationBarHidden = YES;
+    //好友页面
+    NewFriendPageController* second = [[NewFriendPageController alloc] init];
+    second.hidesBottomBarWhenPushed = YES;
+    UINavigationController* navigationController_Second = [[UINavigationController alloc] initWithRootViewController:second];
+    navigationController_Second.navigationBarHidden = YES;
+    
+    // 组队页面
+    
+    //    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
+    //    itemBase.hidesBottomBarWhenPushed = YES;
+    //    UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
+    //    navigationController_center.navigationBarHidden  = YES;
+    
+    
+    //发现页面
+    FindViewController* third = [[FindViewController alloc] init];
+    third.hidesBottomBarWhenPushed = YES;
+    UINavigationController* navigationController_Third = [[UINavigationController alloc] initWithRootViewController:third];
+    navigationController_Third.navigationBarHidden = YES;
+    //我的页面
+    MePageViewController* fourth = [[MePageViewController alloc] init];
+    fourth.hidesBottomBarWhenPushed = YES;
+    UINavigationController* navigationController_Fourth = [[UINavigationController alloc] initWithRootViewController:fourth];
+    navigationController_Fourth.navigationBarHidden = YES;
+    
+    Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
+    //  AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second,/*navigationController_center,*/ navigationController_Third, navigationController_Fourth, nil];
+    
+    
+    
     // Override point for customization after application launch.
-    self.startViewController = [[StartViewController alloc] init];
-    self.window.rootViewController = self.startViewController;
+//    self.startViewController = [[StartViewController alloc] init];
+    self.window.rootViewController = ryc_tabbarController	;
     
     //网络变化
     self.reach = [Reachability reachabilityForInternetConnection];
@@ -76,7 +123,10 @@
         [UserManager getBlackListFromNet];
     }
    
-    
+    [[LocationManager sharedInstance] initLocation];//定位
+    [[UserManager singleton] getUserLocation];
+    [[UserManager singleton ]getOpenImageFromNet];
+    [[GameCommon shareGameCommon]firtOpen];
     
     //注册离线系统  里面监听重连事件 自动提交赞与评论 未来可以添加其他离线的内容
     [OfflineComment singleton];

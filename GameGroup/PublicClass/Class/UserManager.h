@@ -30,4 +30,9 @@
 -(void)saveUserInfo:(id)responseObject;
 
 +(void)getGroupSettingState;
+
+-(void)getUserLocation; //  定位
+
+-(void)getOpenImageFromNet; //请求开机图
+-(UIImage*)getOpenImage;//获取开机图
 @end
