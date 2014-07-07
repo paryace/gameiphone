@@ -38,25 +38,17 @@
     [super viewDidLoad];
 
     [self setTopViewWithTitle:@"好友推荐" withBackButton:YES];
-    
     m_tableData = [[NSMutableArray alloc] initWithCapacity:1];
-    
     m_pageIndex = 0;
-    
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
     addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [addButton setBackgroundImage:KUIImage(@"add_button_normal") forState:UIControlStateNormal];
     [addButton setBackgroundImage:KUIImage(@"add_button_click") forState:UIControlStateHighlighted];
-//    [self.view addSubview:addButton];
     [addButton addTarget:self action:@selector(addButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    
-    
-    
     hud = [[MBProgressHUD alloc] init];
     hud.labelText = @"查询中...";
     [self.view addSubview:hud];
@@ -109,16 +101,6 @@
     NSDictionary* tempDic = [m_tableData objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
 
-//    NSURL * theUrl = nil;
-//    if ([KISDictionaryHaveKey(tempDic, @"headImgID") isEqualToString:@""]||[KISDictionaryHaveKey(tempDic, @"headImgID")isEqualToString:@" "]) {
-//        cell.headImageV.imageURL = nil;
-//    }else{
-//        if ([GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]) {
-//            theUrl = [NSURL URLWithString:[BaseImageUrl stringByAppendingFormat:@"%@/80/80",[GameCommon getHeardImgId:KISDictionaryHaveKey(tempDic, @"headImgID")]]];
-//        }
-//        cell.headImageV.imageURL = theUrl;
-//    }
-    
     cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(tempDic, @"headImgID") Width:80];
     
     cell.nameLabel.text = KISDictionaryHaveKey(tempDic, @"nickname");
@@ -252,10 +234,8 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:userName forKey:@"username"];
-
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-//    [postDict setObject:@"106" forKey:@"method"]; 
     [postDict setObject:@"201" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
 
@@ -264,77 +244,14 @@
         [hud hide:YES];
         [[UserManager singleton] saveUserInfo:responseObject];
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-
-//        NSMutableDictionary * recDict = KISDictionaryHaveKey(responseObject, @"user");
-//        NSString * gameids=KISDictionaryHaveKey(responseObject, @"gameids");
-//        [recDict setObject:gameids forKey:@"gameids"];
-//        
-//        if ([KISDictionaryHaveKey(responseObject, @"title") isKindOfClass:[NSArray class]] && [KISDictionaryHaveKey(responseObject, @"title") count] != 0) {//头衔
-//            NSDictionary *titleDictionary=[KISDictionaryHaveKey(responseObject, @"title") objectAtIndex:0];
-//            
-//            NSString * titleObj = KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"title");
-//            NSString * titleObjLevel = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(titleDictionary, @"titleObj"), @"rarenum")];
-//            [recDict setObject:titleObj forKey:@"titleName"];
-//            [recDict setObject:titleObjLevel forKey:@"rarenum"];
-//        }
-//         [DataStoreManager newSaveAllUserWithUserManagerList:recDict withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-//        if ([recDict isKindOfClass:[NSDictionary class]]) {
-//            if (type == 2) {//关注
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"1"];
-//            }
-//            else if (type == 1)
-//            {
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-//            }
-//        }
-
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [hud hide:YES];
     }];
 }
 
-//#pragma mark  scrollView  delegate
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-//{
-//    if (m_myTableView.contentSize.height < m_myTableView.frame.size.height) {
-//        refreshView.viewMaxY = 0;
-//    }
-//    else
-//        refreshView.viewMaxY = m_myTableView.contentSize.height - m_myTableView.frame.size.height;
-//    [refreshView viewdidScroll:scrollView];
-//}
-//
-//#pragma mark pull up refresh
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-//{
-//    if(scrollView == m_myTableView)
-//    {
-//        [refreshView viewWillBeginDragging:scrollView];
-//    }
-//}
-//
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-//{
-//    if(scrollView == m_myTableView)
-//    {
-//        [refreshView didEndDragging:scrollView];
-//    }
-//}
-//
-//- (void)PullUpStartRefresh:(PullUpRefreshView *)refreshView
-//{
-//  
-//    m_pageIndex += ([m_tableData count] - m_pageIndex) < 20 ? ([m_tableData count] - m_pageIndex) : 20;
-//    [m_myTableView reloadData];
-//    [refreshView setRefreshViewFrame];
-//    [refreshView stopLoading:NO];
-//}
-
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
