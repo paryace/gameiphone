@@ -230,14 +230,14 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:@"3" forKey:@"type"];
+//    [paramDict setObject:@"3" forKey:@"type"];
     [paramDict setObject:self.dynamicTV.text forKey:@"msg"];
     [paramDict setObject:imageID forKey:@"img"];
     [paramDict setObject:self.titleTV.text forKey:@"title"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"134" forKey:@"method"];
+    [postDict setObject:@"184" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]forKey:@"token"];
     
     hud.labelText = @"发表中...";

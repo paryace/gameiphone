@@ -83,6 +83,7 @@
 
 //创建label
 +(UILabel *)buildLabelinitWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment;
-
+//创建textfield
++(UITextField *)buildTextFieldWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment placeholder:(NSString *)placeholder;
 
 @end

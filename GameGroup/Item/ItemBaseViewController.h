@@ -7,7 +7,7 @@
 //
 
 #import "BaseViewController.h"
+#import "ChooseTab.h"
 
-@interface ItemBaseViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
-
+@interface ItemBaseViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIPickerViewDataSource,UIPickerViewDelegate,chooseTabDelegate>
 @end

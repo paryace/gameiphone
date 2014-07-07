@@ -325,13 +325,13 @@
     
     hud.labelText = nil;
     [hud show:YES];
-    [paramDict setObject:@"4" forKey:@"type"];
-    [paramDict setObject:self.messageid forKey:@"messageid"];
+//    [paramDict setObject:@"4" forKey:@"type"];
+    [paramDict setObject:self.messageid forKey:@"messageId"];
  //   [paramDict setObject:@"mydynamicmsg" forKey:@"msgtype"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"134" forKey:@"method"];
+    [postDict setObject:@"185" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -352,8 +352,8 @@
             [self showMessageWindowWithContent:@"取消赞" imageType:6];
         }
     
-        double allZan = [KISDictionaryHaveKey(responseObject, @"zannum") doubleValue];
-        [zanBtn setTitle:[NSString stringWithFormat:@"%.f", allZan] forState:UIControlStateNormal];
+//        double allZan = [KISDictionaryHaveKey(responseObject, @"zannum") doubleValue];
+//        [zanBtn setTitle:[NSString stringWithFormat:@"%.f", allZan] forState:UIControlStateNormal];
        // if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
           //  [self.delegate dynamicListJustReload];//上个页面刷新
         
