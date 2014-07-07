@@ -404,57 +404,61 @@
 {
     NSString * sender = [msg objectForKey:@"sender"];
     NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
-    
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
-        if (!thumbMsgs)
-            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-        thumbMsgs.sender = sender;
-        thumbMsgs.senderNickname = @"";
-        thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
-        thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-        thumbMsgs.senderType = COMMONUSER;
-        int unread = [thumbMsgs.unRead intValue];
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
-        thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
-        thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
-        thumbMsgs.status = @"1";//已发送
-        thumbMsgs.sayHiType = sayhiType;
-        thumbMsgs.senderimg = @"";
-        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
-        //
-        if ([sayhiType isEqualToString:@"2"]){//自定义一条用于显示打招呼的消息
-            NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];
+ 
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        NSPredicate * hasedpredicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
+        DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:hasedpredicate];
+        if (!commonMsg) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];//消息页展示的内容
             if (!thumbMsgs)
                 thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");//打招呼内容
-            thumbMsgs.sender = @"1234567wxxxxxxxxx";
+            thumbMsgs.sender = sender;
             thumbMsgs.senderNickname = @"";
+            thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
+            thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
             thumbMsgs.senderType = COMMONUSER;
             int unread = [thumbMsgs.unRead intValue];
+            NSLog(@"uuuu---->>>>%d",unread);
             thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
-            thumbMsgs.msgType = @"sayHi";
-            thumbMsgs.messageuuid = @"wx123";
+            thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
+            thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
             thumbMsgs.status = @"1";//已发送
-            thumbMsgs.sayHiType = @"1";
-            thumbMsgs.sendTime=[NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+            thumbMsgs.sayHiType = sayhiType;
+            thumbMsgs.senderimg = @"";
+            thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+            //
+            if ([sayhiType isEqualToString:@"2"]){//自定义一条用于显示打招呼的消息
+                NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
+                DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate1];
+                if (!thumbMsgs)
+                    thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+                thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");//打招呼内容
+                thumbMsgs.sender = @"1234567wxxxxxxxxx";
+                thumbMsgs.senderNickname = @"";
+                thumbMsgs.senderType = COMMONUSER;
+                int unread = [thumbMsgs.unRead intValue];
+                thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+                thumbMsgs.msgType = @"sayHi";
+                thumbMsgs.messageuuid = @"wx123";
+                thumbMsgs.status = @"1";//已发送
+                thumbMsgs.sayHiType = @"1";
+                thumbMsgs.sendTime=[NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+                thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+            }
+            //
+            commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+            commonMsg.sender = [msg objectForKey:@"sender"];
+            commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+            commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+            commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+            commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+            commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+            commonMsg.status = @"1";
+            commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         }
-        //
-        DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
-        commonMsg.sender = [msg objectForKey:@"sender"];
-        commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
-        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-        commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
-        commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
-        commonMsg.status = @"1";
-        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }];
-    
-    
 }
 
 
@@ -462,7 +466,7 @@
 +(void)storeNewGroupMsgs:(NSDictionary *)msg
 {
     NSString * senderNickname = [[[UserManager singleton] getUser:[msg objectForKey:@"sender"]] objectForKey:@"nickname"];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicateMsg = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
         DSGroupMsgs * hasedmsg = [DSGroupMsgs MR_findFirstWithPredicate:predicateMsg];
         if (!hasedmsg) {
@@ -582,7 +586,7 @@
         thumbMsgs.groupId = KISDictionaryHaveKey(message, @"groupId");
         thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         
-        
+        //
         DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];
         commonMsg.sender = KISDictionaryHaveKey(message, @"sender");
         commonMsg.senderNickname = @"";
@@ -1120,6 +1124,50 @@
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
     return array;
 }
+
+
++(NSArray * )qAllThumbMessagesWithType:(NSString *)type
+{
+    NSMutableArray * msgList = [NSMutableArray array];
+    NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
+    NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
+    for (DSThumbMsgs * apm in array) {
+        [msgList addObject:[self queryDSThumbMessage:apm]];
+    }
+    return msgList;
+}
+
++(NSMutableDictionary*)queryDSThumbMessage:(DSThumbMsgs*)msgDS
+{
+    if (!msgDS) {
+        return nil;
+    }
+    NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
+    [msgDic setObject:msgDS.sender?msgDS.sender:@"" forKey:@"senderId"];
+    [msgDic setObject:msgDS.senderNickname?msgDS.senderNickname:@"" forKey:@"senderNickname"];
+    [msgDic setObject:msgDS.msgContent?msgDS.msgContent:@"" forKey:@"msgContent"];
+    [msgDic setObject:msgDS.groupId?msgDS.groupId:@"" forKey:@"groupId"];
+    [msgDic setObject:msgDS.senderType?msgDS.senderType:@"" forKey:@"senderType"];
+    NSTimeInterval uu = [msgDS.sendTime timeIntervalSince1970];
+    [msgDic setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"sendTime"];
+    [msgDic setObject:msgDS.unRead?msgDS.unRead:@"" forKey:@"unRead"];
+    [msgDic setObject:msgDS.msgType?msgDS.msgType:@"" forKey:@"msgType"];
+    [msgDic setObject:msgDS.messageuuid?msgDS.messageuuid:@"" forKey:@"messageuuid"];
+    [msgDic setObject:msgDS.status?msgDS.status:@"" forKey:@"status"];
+    [msgDic setObject:msgDS.sayHiType?msgDS.sayHiType:@"" forKey:@"sayHiType"];
+    [msgDic setObject:msgDS.receiveTime?msgDS.receiveTime:@"" forKey:@"receiveTime"];
+    return msgDic;
+}
+
++(NSMutableDictionary*)qSayHiMsg:(NSString *)type
+{
+    NSArray * sayHiList=[self qAllThumbMessagesWithType:type];
+    if (sayHiList.count>0) {
+        return [sayHiList objectAtIndex:0];
+    }
+    return nil;
+}
+
 +(DSThumbMsgs*)qureySayHiMsg:(NSString *)type
 {
     NSArray * sayHiList=[self qureyAllThumbMessagesWithType:type];
@@ -2778,6 +2826,17 @@
         groupInfo.available =[avb isEqualToString:@"0"]?@"0":avb;
     }];
 }
+
+//删除所有群
++(void)deleteAllDSGroupList
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * dbTitles = [DSGroupList MR_findAll];
+        for (DSGroupList* title in dbTitles) {
+            [title MR_deleteInContext:localContext];
+        }
+    }];
+}
 #pragma mark - 保存群组用户列表信息
 +(void)saveDSGroupUser:(NSDictionary *)groupUser GroupId:(NSString*)groupId
 {
@@ -2791,6 +2850,8 @@
         groupUserInfo.userId = userId;
     }];
 }
+
+
 //查询群用户列表
 +(NSMutableArray *)queryGroupUserList:(NSString*)groupId
 {
@@ -2832,7 +2893,7 @@
 
 +(NSInteger)queryGroupCount
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@",@"3"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and available==[c]%@",@"3",@"0"];
     NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     if (array>0) {
         return array.count;

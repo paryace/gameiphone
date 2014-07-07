@@ -12,14 +12,23 @@
 #import "UserManager.h"
 #import "DSuser.h"
 #import "VibrationSong.h"
+#import "MyTask.h"
+
+#define kBgQueue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 @implementation GetDataAfterManager
 
 static GetDataAfterManager *my_getDataAfterManager = NULL;
+NSOperationQueue *queuenormal ;
+NSOperationQueue *queuegroup ;
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        queuenormal = [[NSOperationQueue alloc]init];
+        [queuenormal setMaxConcurrentOperationCount:1];
+        queuegroup = [[NSOperationQueue alloc]init];
+        [queuegroup setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -174,16 +183,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
     NSString * sender = [messageContent objectForKey:@"sender"];
-    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-
-    if ([DataStoreManager savedMsgWithID:msgId]) {
-        return;
-    }
     if ([DataStoreManager isBlack:sender]) {
         NSLog(@"黑名单用户 不作操作");
         return;
     }
-    
     //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
         NSArray *array = (NSArray *)[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"];
@@ -195,14 +198,31 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-    
-    if (![DataStoreManager ifHaveThisUserInUserManager:sender]) {
-        [[UserManager singleton]requestUserFromNet:sender];
-    }else{//更新消息表
-        NSDictionary* user=[[UserManager singleton] getUser:sender];
-        [DataStoreManager storeThumbMsgUser:sender nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+    int index=1;
+    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
+    task.operationId=index++;
+    if ([[queuenormal operations] count]>0) {
+        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
+        [task addDependency:theBeforeTask];
     }
+    [queuenormal addOperation:task];
+//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
+
+-(void)saveNormalChatMessage:(NSDictionary *)messageContent{
+//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
+    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
+-(void)sendNSNotification:(NSDictionary *)messageContent
+{
+    [DataStoreManager storeNewNormalChatMsgs:messageContent];
+     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
+
+-(void)sendGroupNSNotification:(NSDictionary *)messageContent
+{
+    [DataStoreManager storeNewGroupMsgs:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 
@@ -220,16 +240,22 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         }
     }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [DataStoreManager storeNewGroupMsgs:messageContent];
-    
-    if (![DataStoreManager ifHaveThisUserInUserManager:[messageContent objectForKey:@"sender"]]) {
-        [[UserManager singleton]requestUserFromNet:[messageContent objectForKey:@"sender"]];
-    }else{//更新消息表
-        NSDictionary* user=[[UserManager singleton] getUser:[messageContent objectForKey:@"sender"]];
-        [DataStoreManager storeThumbMsgUser:[messageContent objectForKey:@"sender"] nickName:KISDictionaryHaveKey(user, @"nickname") andImg:KISDictionaryHaveKey(user,@"img")];
+    int index=1;
+    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
+    task.operationId=index++;
+    if ([[queuegroup operations] count]>0) {
+        MyTask *theBeforeTask=[[queuegroup operations] lastObject];
+        [task addDependency:theBeforeTask];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+    [queuegroup addOperation:task];
 }
+
+-(void)saveGroupChatMessage:(NSDictionary *)messageContent{
+    NSLog(@"88888888888888");
+//    [DataStoreManager storeNewGroupMsgs:messageContent];
+    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
+
 #pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {

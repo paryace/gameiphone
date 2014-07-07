@@ -240,7 +240,6 @@
             if ([GameCommon isEmtity:msgId]) {
                 return;
             }
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];//是否含payload标签
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -250,7 +249,10 @@
             }
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
+        
             [self.chatDelegate newMessageReceived:dict];
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
+            
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
             [self comeBackDelivered:from msgId:msgId];//反馈消息

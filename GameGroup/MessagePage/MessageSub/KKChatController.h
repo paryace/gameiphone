@@ -93,6 +93,9 @@ SendMsgDeleGate>
 @property (nonatomic, strong) UIImageView *circleImage;  //群动态///
 @property (nonatomic, strong) UILabel *groupCircleText;  //群动态数量
 @property (nonatomic, strong) UILabel *groupunReadMsgLable;  //群消息未读条数
+@property (nonatomic, strong) UIView * noReadView;  //
+@property (nonatomic, strong) UIButton * noReadBtn;  //
+@property (nonatomic, strong) UILabel* noReadLable;  //
 @property (nonatomic, strong) UIButton * titleImageV;
 @property (nonatomic, strong) UIButton *titleButton;  //
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量

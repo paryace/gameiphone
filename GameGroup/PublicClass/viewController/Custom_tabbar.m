@@ -34,6 +34,9 @@ static Custom_tabbar *s_tabbar = NULL;
 {
 	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"Item_normal.png",@"find_normal.png",@"wo_normal.png",nil];
 	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"Item_click.png",@"find_click.png",@"wo_click.png",nil];
+
+//	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",/*@"friend_normal.png",*/@"find_normal.png",@"wo_normal.png",nil];
+//	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",/*@"friend_click.png",*/@"find_click.png",@"wo_click.png",nil];
     
     float startY = [[UIScreen mainScreen] bounds].size.height;
     tabBarView = [[UIView alloc] initWithFrame:CGRectMake(0, startY - 50, 320, 50)];
@@ -73,7 +76,7 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)add_custom_tabbar_elements
 {
-	int tab_num = 5;
+	int tab_num = 4;
 	
 	[self.view addSubview:tabBarView];
 	
@@ -81,7 +84,7 @@ static Custom_tabbar *s_tabbar = NULL;
 	for(int i = 0; i< tab_num; i++)
 	{
 		UIButton  *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-		[btn setFrame:CGRectMake(i*64, 0, 64, 50)];
+		[btn setFrame:CGRectMake(i*320/4, 0, 320/4, 50)];
 		NSString *back_image = [backgroud_image objectAtIndex:i];
 		NSString *selected_image = [select_image objectAtIndex:i]; 
 		[btn setBackgroundImage:[UIImage imageNamed:back_image] forState:UIControlStateNormal];

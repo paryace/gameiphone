@@ -14,4 +14,5 @@
 
 @property (assign,nonatomic) AppDelegate * appDel;
 @property(nonatomic,strong)UILabel*   titleLabel;;
+@property (nonatomic, retain) NSTimer* cellTimer;
 @end

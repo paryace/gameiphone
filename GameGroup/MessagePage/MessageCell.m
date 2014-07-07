@@ -66,18 +66,18 @@
     return self;
 }
 
--(void)setNotReadMsgCount:(DSThumbMsgs*)message
+-(void)setNotReadMsgCount:(NSMutableDictionary*)message
 {
-    if ([[message msgType]isEqualToString:@"groupchat"]) {
-        NSString * groupId = [NSString stringWithFormat:@"%@",[message groupId]];
+    if ([KISDictionaryHaveKey(message,@"msgType")isEqualToString:@"groupchat"]) {
+        NSString * groupId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message,@"groupId")];
         if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {//关闭模式
             self.settingState.hidden=NO;
             self.settingState.image=KUIImage(@"close_receive");
             self.unreadCountLabel.hidden = YES;
             self.notiBgV.hidden = YES;
-            if([[message unRead]intValue]>0)
+            if([KISDictionaryHaveKey(message,@"unRead")intValue]>0)
             {
-                self.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条新消息"];
+                self.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[KISDictionaryHaveKey(message,@"unRead") intValue] ,@"条新消息"];
             }
             
         }else{
@@ -88,11 +88,11 @@
                 self.settingState.hidden=YES;
                 self.settingState.image=KUIImage(@"");
             }
-            if ([[message unRead]intValue]>0) {
+            if ([KISDictionaryHaveKey(message,@"unRead")intValue]>0) {
                 self.unreadCountLabel.hidden = NO;
                 self.notiBgV.hidden = NO;
-                [self.unreadCountLabel setText:[message unRead]];
-                if ([[message unRead] intValue]>99) {
+                [self.unreadCountLabel setText:KISDictionaryHaveKey(message,@"unRead")];
+                if ([KISDictionaryHaveKey(message,@"unRead") intValue]>99) {
                     [self.unreadCountLabel setText:@"99+"];
                     self.notiBgV.image = KUIImage(@"redCB_big");
                     self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
@@ -100,7 +100,7 @@
                 }
                 else{
                     self.notiBgV.image = KUIImage(@"redCB.png");
-                    [self.unreadCountLabel setText:[message unRead]];
+                    [self.unreadCountLabel setText:KISDictionaryHaveKey(message,@"unRead")];
                     self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
                     self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
                 }
@@ -115,19 +115,19 @@
     }else{
         //设置红点 start
         self.settingState.hidden=YES;
-        if ([[message unRead]intValue]>0) {
+        if ([KISDictionaryHaveKey(message,@"unRead") intValue]>0) {
             self.unreadCountLabel.hidden = NO;
             self.notiBgV.hidden = NO;
-            if ([[message msgType] isEqualToString:@"recommendfriend"] |
-                [[message msgType] isEqualToString:@"sayHello"] ||
-                [[message msgType] isEqualToString:@"deletePerson"]) {
+            if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"recommendfriend"] |
+                [KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHello"] ||
+                [KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"deletePerson"]) {
                 self.notiBgV.image = KUIImage(@"redpot");
                 self.unreadCountLabel.hidden = YES;
             }
             else
             {
-                [self.unreadCountLabel setText:[message unRead]];
-                if ([[message unRead] intValue]>99) {
+                [self.unreadCountLabel setText:KISDictionaryHaveKey(message,@"unRead")];
+                if ([KISDictionaryHaveKey(message,@"unRead") intValue]>99) {
                     [self.unreadCountLabel setText:@"99+"];
                     self.notiBgV.image = KUIImage(@"redCB_big");
                     self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
@@ -135,7 +135,7 @@
                 }
                 else{
                     self.notiBgV.image = KUIImage(@"redCB.png");
-                    [self.unreadCountLabel setText:[message unRead]];
+                    [self.unreadCountLabel setText:KISDictionaryHaveKey(message,@"unRead")];
                     self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
                     self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
                 }
@@ -148,4 +148,88 @@
         }
     }
 }
+
+
+//-(void)setNotReadMsgCount:(DSThumbMsgs*)message
+//{
+//    if ([[message msgType]isEqualToString:@"groupchat"]) {
+//        NSString * groupId = [NSString stringWithFormat:@"%@",[message groupId]];
+//        if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"1"]) {//关闭模式
+//            self.settingState.hidden=NO;
+//            self.settingState.image=KUIImage(@"close_receive");
+//            self.unreadCountLabel.hidden = YES;
+//            self.notiBgV.hidden = YES;
+//            if([[message unRead]intValue]>0)
+//            {
+//                self.contentLabel.text = [NSString stringWithFormat:@"%@%d%@",@"有",[[message unRead]intValue] ,@"条新消息"];
+//            }
+//            
+//        }else{
+//            if ([[GameCommon getMsgSettingStateByGroupId:groupId] isEqualToString:@"2"]) {//无声模式
+//                self.settingState.hidden=NO;
+//                self.settingState.image=KUIImage(@"nor_soundSong");
+//            }else{
+//                self.settingState.hidden=YES;
+//                self.settingState.image=KUIImage(@"");
+//            }
+//            if ([[message unRead]intValue]>0) {
+//                self.unreadCountLabel.hidden = NO;
+//                self.notiBgV.hidden = NO;
+//                [self.unreadCountLabel setText:[message unRead]];
+//                if ([[message unRead] intValue]>99) {
+//                    [self.unreadCountLabel setText:@"99+"];
+//                    self.notiBgV.image = KUIImage(@"redCB_big");
+//                    self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+//                    self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+//                }
+//                else{
+//                    self.notiBgV.image = KUIImage(@"redCB.png");
+//                    [self.unreadCountLabel setText:[message unRead]];
+//                    self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+//                    self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+//                }
+//            }
+//            else
+//            {
+//                self.unreadCountLabel.hidden = YES;
+//                self.notiBgV.hidden = YES;
+//            }
+//        }
+//        
+//    }else{
+//        //设置红点 start
+//        self.settingState.hidden=YES;
+//        if ([[message unRead]intValue]>0) {
+//            self.unreadCountLabel.hidden = NO;
+//            self.notiBgV.hidden = NO;
+//            if ([[message msgType] isEqualToString:@"recommendfriend"] |
+//                [[message msgType] isEqualToString:@"sayHello"] ||
+//                [[message msgType] isEqualToString:@"deletePerson"]) {
+//                self.notiBgV.image = KUIImage(@"redpot");
+//                self.unreadCountLabel.hidden = YES;
+//            }
+//            else
+//            {
+//                [self.unreadCountLabel setText:[message unRead]];
+//                if ([[message unRead] intValue]>99) {
+//                    [self.unreadCountLabel setText:@"99+"];
+//                    self.notiBgV.image = KUIImage(@"redCB_big");
+//                    self.notiBgV.frame=CGRectMake(40, 8, 22, 18);
+//                    self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+//                }
+//                else{
+//                    self.notiBgV.image = KUIImage(@"redCB.png");
+//                    [self.unreadCountLabel setText:[message unRead]];
+//                    self.notiBgV.frame=CGRectMake(42, 8, 18, 18);
+//                    self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+//                }
+//            }
+//        }
+//        else
+//        {
+//            self.unreadCountLabel.hidden = YES;
+//            self.notiBgV.hidden = YES;
+//        }
+//    }
+//}
 @end

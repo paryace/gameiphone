@@ -307,4 +307,13 @@
 
 //保存正常聊天的消息
 +(void)storeNewNormalChatMsgs:(NSDictionary *)msg;
+
+//删除所有的群
++(void)deleteAllDSGroupList;
+
+
+
+
++(NSArray * )qAllThumbMessagesWithType:(NSString *)type;
++(NSMutableDictionary*)qSayHiMsg:(NSString *)type;
 @end

@@ -33,6 +33,7 @@
 #define kChatImageSizeHigh @"200"
 
 #define padding 20
+#define spaceEnd 300
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
 
@@ -62,17 +63,17 @@ UINavigationControllerDelegate>
     BOOL myActive;
     NSMutableArray *wxSDArray;
     NSInteger offHight;//群消息需要多加上的高度
+    NSInteger historyMsg;
+    BOOL endOfTable;
     
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
 @property (nonatomic, strong) UILabel *unReadL;
-@property (nonatomic, strong) MJRefreshHeaderView *kkChatControllerRefreshHeadView;
 @property (nonatomic, strong) UIButton *kkChatAddButton;
 @property (nonatomic, strong) UIView *inPutView;
 @property (nonatomic, strong) UIView *kkChatAddView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
-@property (nonatomic, strong) KKMessageCell *currentCell;
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 
@@ -111,13 +112,7 @@ UINavigationControllerDelegate>
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
-    //清除未读
-    if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
-    }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
-    }
-    
+    [self changMsgToRead];
 }
 //设置Title
 -(void)refreTitleText
@@ -174,14 +169,15 @@ UINavigationControllerDelegate>
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
+    historyMsg = 0;
+    endOfTable = YES;
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
     self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    //添加背景
-    UIImageView * bgV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,320,self.view.frame.size.height)];
-    bgV.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
-    [self.view addSubview:bgV];
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    [self.view addSubview:self.tView];
+    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     
     if([self.type isEqualToString:@"normal"]){
         offHight = 0;
@@ -189,18 +185,12 @@ UINavigationControllerDelegate>
     {
         offHight = 20;
     }
-    [self.view addSubview:self.tView];
-    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
     //清空此人所有的未读消息
-    if ([self.type isEqualToString:@"normal"]) {
-        [self sendReadedMesg];//发送已读消息
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
-    }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
-    }
+    
+    [self changMsgToRead];
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
@@ -212,7 +202,8 @@ UINavigationControllerDelegate>
     [self.view addSubview:self.unReadL]; //未读数量
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
-    
+//    [self.view addSubview:self.noReadView]; //未读数量
+
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
         if (self.unreadMsgCount>20) {
@@ -258,6 +249,18 @@ UINavigationControllerDelegate>
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
+}
+
+-(void)changMsgToRead
+{
+    if ([self.type isEqualToString:@"normal"]) {
+        [self sendReadedMesg];//发送已读消息
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
+
+
 }
 -(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {
@@ -686,6 +689,34 @@ UINavigationControllerDelegate>
     }
     return _unReadL;
 }
+
+-(UIView * )noReadView
+{
+    if(!_noReadView){
+        _noReadView = [[UIView alloc] init];
+        _noReadView.frame = CGRectMake(60,kScreenHeigth - startX - 20-20,200,20);
+        
+        
+        
+        _noReadBtn = [[UIButton alloc] initWithFrame:CGRectMake(200-20,0,20,20)];
+        _noReadBtn.backgroundColor = [UIColor clearColor];
+        [_noReadBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
+        [_noReadBtn addTarget:self action:@selector(msgNoReadButtonClick:)forControlEvents:UIControlEventTouchUpInside];
+        [_noReadView addSubview:_noReadBtn];
+        
+        
+        _noReadLable = [[UILabel alloc] initWithFrame:CGRectMake(200-20-100,0,100,20)];
+        _noReadLable .text = @"下方有未读消息";
+        _noReadLable.textAlignment = NSTextAlignmentRight;
+        _noReadLable.backgroundColor = [UIColor clearColor];
+        _noReadLable.font = [UIFont systemFontOfSize:12];
+        _noReadLable.textColor = [UIColor grayColor];
+        [_noReadView addSubview:_noReadLable];
+
+    }
+    return _noReadView;
+}
+
 //群动态入口
 - (UIButton *)groupCircleImage{
     if(!_groupCircleBtn){
@@ -851,9 +882,14 @@ UINavigationControllerDelegate>
     [self.navigationController pushViewController:addVC animated:YES];
 }
 
+- (void)msgNoReadButtonClick:(UIButton *)sender{
+    
+}
+
 //以上是历史消息
 -(void)addGroupHistoryMsg
 {
+    historyMsg = 1;
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"historyMsg"];
@@ -879,6 +915,16 @@ UINavigationControllerDelegate>
     [self.tView reloadData];
     [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
+
+-(void)loadMessage:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
+{
+    NSArray *array = [self getMsgArray:FetchOffset PageSize:pageSize];
+    for (int i = 0; i < array.count; i++) {
+        [messages insertObject:array[i] atIndex:i];
+        [self overReadMsgToArray:array[i] Index:i];
+    }
+}
+
 //隐藏未读消息数量
 -(void)hideUnReadLable
 {
@@ -1846,8 +1892,7 @@ UINavigationControllerDelegate>
     NSString * uuid = [[GameCommon shareGameCommon] uuid];
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
-    
-//    NSMutableDictionary *dictionary=[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+
     [self addNewMessageToTable:[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]]];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
     [self refreWX];
@@ -1872,23 +1917,41 @@ UINavigationControllerDelegate>
     }
     return @"normalchat";
 }
-
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat height = scrollView.frame.size.height;
+    CGFloat contentYoffset = scrollView.contentOffset.y;
+    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
+    if(distanceFromBottom - height<spaceEnd)
+    {
+        endOfTable = YES;
+        NSLog(@"end of the table");
+    }else{
+        endOfTable = NO;
+    }
+}
 #pragma mark 添加一条新的消息到列表
 -(void)addNewMessageToTable:(NSMutableDictionary*)dictionary
 {
+    if (messages.count>=50) {
+        [self clearMessage];
+        [self loadMessage:0 PageSize:20];
+        [self.tView reloadData];
+    }
     [messages addObject:dictionary];//添加到当前消息集合 内存
     [self newMsgToArray:dictionary];//计算高度，添加高度到内存｀
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager storeMyMessage:dictionary];//添加到数据库
+        [DataStoreManager storeMyMessage:dictionary];//正常聊天消息添加到数据库
     }else if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
         if (![self isGroupAvaitable]) {//本群不可用
             [self groupNotAvailable];
             [dictionary setObject:@"1" forKey:@"status"];
         }
-        [DataStoreManager storeMyGroupThumbMessage:dictionary];
+        [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
     }
-    [self.tView reloadData];//刷新列表
+    [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    
     if (messages.count>0) {//定位到列表最后
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
@@ -2099,13 +2162,11 @@ UINavigationControllerDelegate>
     
     __block NSArray *array;
     __block int loadHistoryArrayCount;
-    __block KKChatController *chat = self;
     __block float loadMoreMsgHeight = 0;
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
     header.scrollView = self.tView;
     [header.statusLabel setHidden:YES];
     [header.lastUpdateTimeLabel setHidden:YES];
-    
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(30, 30);
     header.arrowImage.frame = headerRect;
@@ -2113,7 +2174,7 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        array = [self getMsgArray:messages.count PageSize:20];
+        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
         loadMoreMsgHeight = 0;
         for (int i = 0; i < array.count; i++) {
             [messages insertObject:array[i] atIndex:i];
@@ -2125,34 +2186,12 @@ UINavigationControllerDelegate>
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
-        [chat.tView reloadData];
+        [self.tView reloadData];
         if (loadHistoryArrayCount==0) {
             return;
         }
-        [chat.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,chat.tView.frame.size.width,chat.tView.frame.size.height) animated:NO];
+        [self.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,self.tView.frame.size.width,self.tView.frame.size.height) animated:NO];
     };
-//    header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-//        
-//        switch (state) {
-//            case MJRefreshStateNormal:
-//                
-//                break;
-//            case MJRefreshStatePulling:
-//                
-//                break;
-//            case MJRefreshStateRefreshing:
-//                
-//                break;
-//            case MJRefreshStateWillRefreshing:
-//                
-//                break;
-//                
-//            default:
-//                break;
-//        }
-//        
-//    };
-    self.kkChatControllerRefreshHeadView = header;
     
 }
 #pragma mark 群信息更新完成
@@ -2231,18 +2270,34 @@ UINavigationControllerDelegate>
         [self comeBackDisplayed:sender msgId:msgId];//发送已读消息
     }
 }
-
+-(void)clearMessage
+{
+        [messages removeAllObjects];
+        [self.HeightArray removeAllObjects];
+        [self.finalImage removeAllObjects];
+        [self.finalMessageTime removeAllObjects];
+        [self.finalMessageArray removeAllObjects];
+}
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
 {
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
         [tempDic setValue:@"4" forKey:@"status"];
+        
+        if (messages.count>=60) {
+            [self clearMessage];
+            [self loadMessage:0 PageSize:20];
+            [self.tView reloadData];
+        }
+        
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
-        [self.tView reloadData];
-        if (messages.count>0) {
-            [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+        if (endOfTable) {
+            if (messages.count>0) {
+                [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
         }
     }
     else
@@ -2334,5 +2389,10 @@ UINavigationControllerDelegate>
 -(void)refreStatus:(NSInteger)cellIndex
 {
     [self refreMessageStatus:cellIndex Status:@"0"];
+}
+- (void)didReceiveMemoryWarning
+{
+    NSLog(@"ChatPage--didReceiveMemoryWarning--->");
+    [super didReceiveMemoryWarning];
 }
 @end
