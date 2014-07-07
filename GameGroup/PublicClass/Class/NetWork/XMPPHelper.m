@@ -237,13 +237,12 @@
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
-            
             [self.chatDelegate newGroupMessageReceived:dict];
 //            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
             return;
         }
         
-        if ([msgtype isEqualToString:@"normalchat"]) {//聊天的 或动态聊天消息
+        if ([msgtype isEqualToString:@"normalchat"]) {//正常聊天的消息
             if ([GameCommon isEmtity:msgId]) {
                 return;
             }
@@ -256,10 +255,8 @@
             }
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-        
             [self.chatDelegate newMessageReceived:dict];
 //            [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
             [self comeBackDelivered:from msgId:msgId];//反馈消息

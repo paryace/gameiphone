@@ -409,14 +409,10 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (block) {
-                block(msg);
-            }
-            [[GetDataAfterManager shareManageCommon] setSoundOrVibrationopen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msg];
-        });
     }];
+    if (block) {
+        block(msg);
+    }
 }
 
 //保存正常聊天的消息
@@ -424,15 +420,13 @@
     [MagicalRecord 	saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         for (NSDictionary * msg in msgs) {
             [self saveNewNormalChatMsgs:msg LoCon:localContext];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (block) {
-                    block(msg);
-                }
-                [[GetDataAfterManager shareManageCommon] setSoundOrVibrationopen];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msg];
-            });
         }
     }];
+    for (NSDictionary * msg in msgs) {
+        if (block) {
+            block(msg);
+        }
+    }
 }
 
 //保存正常聊天的消息
@@ -502,15 +496,9 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (block) {
-                block(msg);
-            }
-            if ([[GameCommon getMsgSettingStateByGroupId:[msg objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-                [[GetDataAfterManager shareManageCommon] setSoundOrVibrationopen];
-            }
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msg];
-        });
+        if (block) {
+            block(msg);
+        }
     }];
 }
 //保存群组的消息
@@ -518,17 +506,13 @@
     [MagicalRecord 	saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         for (NSDictionary * msg in msgs) {
             [self saveGroupChatMsgs:msg LoCon:localContext];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (block) {
-                    block(msg);
-                }
-                if ([[GameCommon getMsgSettingStateByGroupId:[msg objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-                    [[GetDataAfterManager shareManageCommon] setSoundOrVibrationopen];
-                }
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msg];
-            });
         }
     }];
+    for (NSDictionary * msg in msgs) {
+        if (block) {
+            block(msg);
+        }
+    }
 }
 +(void)saveGroupChatMsgs:(NSDictionary *)msg LoCon:(NSManagedObjectContext *)localContext
 {
