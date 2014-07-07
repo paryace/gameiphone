@@ -460,15 +460,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
     NSString * msgtype = KISDictionaryHaveKey(info, @"msgType");
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
-    if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//新的朋友圈动态
+    if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//好友动态
         [self saveDyMessage:payload];
     }
-    else if ([msgtype isEqualToString:@"mydynamicmsg"])//我的动态消息（与我相关）
+    else if ([msgtype isEqualToString:@"mydynamicmsg"])//与我相关
     {
         [self newdynamicAboutMe:[payload JSONValue]];
         [self saveAboutDyMessage:payload];
     }
-    else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态groupId
+    else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态
         [self saveGroupDyMessage:payload];
     }
     //未知的动态

@@ -72,8 +72,10 @@
     table_bottom.image = KUIImage(@"group_cardtf");
     [self.firstScrollView addSubview:table_bottom];
     
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 174+52, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
+    UIButton* table_arrow = [[UIButton alloc] initWithFrame:CGRectMake(270, 158+52, 40, 40)];
+    [table_arrow setImageEdgeInsets:UIEdgeInsetsMake(16, 14, 16, 14)];
+    [table_arrow setImage:KUIImage(@"arrow_bottom") forState:UIControlStateNormal];
+    [table_arrow addTarget:self action:@selector(result:) forControlEvents:UIControlEventTouchUpInside];
     [self.firstScrollView addSubview:table_arrow];
 
     
@@ -127,7 +129,6 @@
     
     [self.firstScrollView addSubview:self.gameTextField];
     
-    
     self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 320, 180, 40)];
     self.groupNameTf.returnKeyType = UIReturnKeyDone;
     self.groupNameTf.delegate = self;
@@ -146,6 +147,12 @@
     [self.firstScrollView addSubview:button];
 
 }
+
+-(void)result:(id)sender
+{
+    [self.gameTextField becomeFirstResponder];
+}
+
 -(void)buildSecondView
 {
     self.secondScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(320, 0, self.bounds.size.width, self.bounds.size.height)];
