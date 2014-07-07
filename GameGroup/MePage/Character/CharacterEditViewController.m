@@ -141,45 +141,41 @@
         cell = [[MyCharacterEditCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.heardImg.placeholderImage = [UIImage imageNamed:@"clazz_0.png"];
+    cell.authBg.hidden = NO;
     
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
-        cell.authBtn.hidden = YES;
-        cell.authBg.hidden = NO;
-    }
-    else
-    {
-        cell.authBtn.hidden = NO;
-        cell.authBg.hidden = YES;
-    }
-
+    cell.realmLabel.text = [[KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:@" "] stringByAppendingString:KISDictionaryHaveKey(tempDic, @"value1")];
+    
     if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
     {
-        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-        cell.realmLabel.text = @"角色不存在";
-        cell.editBtn.hidden = NO;
         cell.authBtn.hidden = YES;
+        cell.authBg.image= KUIImage(@"chara_auth_3");
+        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+        cell.editBtn.hidden = NO;
     }
     else
     {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+            cell.authBtn.hidden = YES;
+            cell.authBg.image= KUIImage(@"chara_auth_1");
+        }
+        else
+        {
+            cell.authBtn.hidden = NO;
+            cell.authBg.image= KUIImage(@"chara_auth_2");
+        }
         NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
         if ([GameCommon isEmtity:gameImageId]) {
             cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
         }else{
             cell.heardImg.imageURL = [ImageService getImageUrl4:gameImageId];
         }
-        NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
-        cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
         cell.editBtn.hidden = YES;
     }
-    
-    
-    
-    
     cell.myIndexPath = indexPath;
     cell.myDelegate = self;
-    NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
-    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"gameid")]];
     
     if ([GameCommon isEmtity:imageId]) {
         cell.gameImg.imageURL=nil;
