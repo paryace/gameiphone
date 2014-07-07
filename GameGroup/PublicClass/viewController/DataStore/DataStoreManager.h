@@ -302,25 +302,20 @@
 
 +(void)uploadStoreMsg:(NSDictionary *)msg;
 
-//保存群组聊天消息
-+(void)storeNewGroupMsgs:(NSDictionary *)msg;
-
-//保存正常聊天的消息
-+(void)storeNewNormalChatMsgs:(NSDictionary *)msg;
-
 //删除所有的群
 +(void)deleteAllDSGroupList;
-
-
-
 
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type;
 +(NSMutableDictionary*)qSayHiMsg:(NSString *)type;
 
+//保存群组聊天消息
++(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
+//保存正常聊天的消息
++(void)storeNewNormalChatMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
-+(void)saveNewNormalChatMsg:(NSArray *)msgs;
++(void)saveNewNormalChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
-+(void)saveNewGroupChatMsg:(NSArray *)msgs;
++(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
 @end

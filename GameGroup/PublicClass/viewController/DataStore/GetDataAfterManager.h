@@ -25,6 +25,7 @@
 @interface GetDataAfterManager : NSObject
 
 @property(nonatomic,strong)XMPPHelper* xmppHelper;
+@property (strong,nonatomic) AppDelegate * appDel;
 
 @property(nonatomic, strong) NSMutableArray* cacheMsg;
 @property (nonatomic, retain) NSTimer* cellTimer;

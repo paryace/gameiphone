@@ -21,13 +21,11 @@
     NSOperationQueue *queuegroup;
     NSOperationQueue *queueme ;
     
-    NSOperationQueue *queued ;
-    NSOperationQueue *queuemed ;
+    NSOperationQueue *queuemecomback ;
     
     NSTimeInterval markTime;
     NSTimeInterval markTimeGroup;
    
-    
     int index;
     int index2;
     dispatch_queue_t queue;
@@ -42,10 +40,6 @@
     int dyGroupMsgCount;
 }
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-
-
-
-
 
 - (id)init
 {
@@ -62,14 +56,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
-        
-        queued = [[NSOperationQueue alloc]init];
-        [queued setMaxConcurrentOperationCount:1];
-        queuemed = [[NSOperationQueue alloc]init];
-        [queuemed setMaxConcurrentOperationCount:1];
+        queuemecomback = [[NSOperationQueue alloc]init];
+        [queuemecomback setMaxConcurrentOperationCount:1];
+
         
         queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
         queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
+        self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -200,6 +193,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
 }
+
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
@@ -226,7 +220,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
-
+//--------------------------------------------正常聊天消息
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
@@ -246,10 +240,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    
-    
-    
-    
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     if ((nowTime - markTime)*100<0.03*1000) {
         markTime = [[NSDate date] timeIntervalSince1970];
@@ -268,7 +258,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     markTime = [[NSDate date] timeIntervalSince1970];
     dispatch_sync(queue, ^{
-        [DataStoreManager storeNewNormalChatMsgs:messageContent];
+        [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        }];
     });
 }
 - (void)stopATime
@@ -280,8 +272,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self.cellTimer invalidate];
         self.cellTimer = nil;
     }
-    
-    
     NSInvocationOperation * tasknormal = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
     if ([[queuenormal operations] count]>0) {
         [tasknormal addDependency:[[queuenormal operations] lastObject]];
@@ -290,14 +280,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 
 -(void)saveNormalChatMessage:(NSArray *)messageContent{
-   [DataStoreManager saveNewNormalChatMsg:messageContent];
+   [DataStoreManager saveNewNormalChatMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+       [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+   }];
 }
-
+//--------------------------------------------群组聊天消息
 #pragma mark 收到群组聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     if ((nowTime - markTimeGroup)*100<0.03*1000) {
         markTimeGroup = [[NSDate date] timeIntervalSince1970];
@@ -316,7 +307,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }
     markTimeGroup = [[NSDate date] timeIntervalSince1970];
     dispatch_sync(queue2, ^{
-        [DataStoreManager storeNewGroupMsgs:messageContent];
+        [DataStoreManager storeNewGroupMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
+        } ];
     });
 }
 - (void)stopATimeGroup
@@ -335,9 +328,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [queuegroup addOperation:task];
 }
 -(void)saveGroupChatMessage:(NSArray *)messageContent{
-    [DataStoreManager saveNewGroupChatMsg:messageContent];
+    [DataStoreManager saveNewGroupChatMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
+    }];
 }
-
+//--------------------------------------------群通知消息
 #pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
@@ -407,6 +402,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveDSGroupMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+//--------------------------------------------
 #pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo
 {
@@ -432,7 +428,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
-
+//--------------------------------------------角色，头衔，战斗力变化，
 #pragma mark - 头衔、角色、战斗力变化等消息
 -(void)otherMessageReceived:(NSDictionary *)info
 {
@@ -442,7 +438,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveOtherMsgsWithData:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
 }
-
+//--------------------------------------------好友推荐
 #pragma mark 收到推荐好友消息
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
@@ -454,7 +450,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager saveRecommendWithData:tempDic];
     }
 }
-
+//--------------------------------------------动态消息
 
 -(void)dyMessageReceived:(NSDictionary *)info
 {
@@ -653,6 +649,39 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
+
+//--------------------------------------
+#pragma mark 发送反馈消息
+- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId Type:(NSString*)type//发送送达消息
+{
+    NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender,@"type":type};
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(comeBack:)object:dic];
+    [queuemecomback addOperation:task];
+}
+- (void)comeBack:(NSMutableDictionary*)msgDic
+{
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
+    NSString * nowTime=[GameCommon getCurrentTime];
+    NSString * message=[dic JSONRepresentation];
+    NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
+    NSString *to=[NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(msgDic, @"senderId"),[self getDomain:domaim Type:KISDictionaryHaveKey(msgDic, @"type")]];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:KISDictionaryHaveKey(msgDic, @"msgId") From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    if (![self.appDel.xmppHelper sendMessage:mes]) {
+        return;
+    }
+}
+-(NSString*)getDomain:(NSString*)domain Type:(NSString*)type
+{
+    if ([type isEqualToString:@"normal"]) {
+        return domain;
+    }else if([type isEqualToString:@"group"]){
+        return [GameCommon getGroupDomain:domain];
+    }
+    return domain;
+}
+//--------------------------------------
 #pragma mark --获取你和谁说过话
 -(void)getSayHiUserIdWithInfo:(NSDictionary *)info
 {
