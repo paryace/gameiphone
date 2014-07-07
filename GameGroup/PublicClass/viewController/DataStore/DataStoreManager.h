@@ -200,7 +200,11 @@
 //
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid;//保存角色列表
 
++(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid;
+
 +(void)saveDSTitle:(NSDictionary *)titles;//保存头衔列表
+
++(void)saveDSTitle2:(NSArray *)titles;
 
 +(NSMutableArray *)queryCharacters:(NSString*)userId;//查找角色列表
 
