@@ -65,6 +65,7 @@ UINavigationControllerDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     BOOL endOfTable;
+    dispatch_queue_t queue;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -172,6 +173,7 @@ UINavigationControllerDelegate>
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
+    queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -2291,24 +2293,31 @@ UINavigationControllerDelegate>
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
 {
     if ([sender isEqualToString:self.chatWithUser]) {
-        NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
-        [tempDic setValue:msgId forKey:@"messageuuid"];
-        [tempDic setValue:@"4" forKey:@"status"];
         
-        if (messages.count>=60) {
-            [self clearMessage];
-            [self loadMessage:0 PageSize:20];
-            [self.tView reloadData];
-        }
-        
-        [messages addObject:tempDic];
-        [self newMsgToArray:tempDic];
-        [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
-        if (endOfTable) {
-            if (messages.count>0) {
-                [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        dispatch_sync(queue, ^{
+            NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
+            [tempDic setValue:msgId forKey:@"messageuuid"];
+            [tempDic setValue:@"4" forKey:@"status"];
+            
+            if (messages.count>=60) {
+                [self clearMessage];
+                [self loadMessage:0 PageSize:20];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tView reloadData];
+                });
             }
-        }
+            
+            [messages addObject:tempDic];
+            [self newMsgToArray:tempDic];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+                if (endOfTable) {
+                    if (messages.count>0) {
+                        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                    }
+                }
+            });
+        });
     }
     else
     {

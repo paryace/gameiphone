@@ -58,11 +58,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [queueme setMaxConcurrentOperationCount:1];
         queuemecomback = [[NSOperationQueue alloc]init];
         [queuemecomback setMaxConcurrentOperationCount:1];
-
-        
         queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
         queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
         self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
