@@ -11,6 +11,7 @@
 #import "ImgCollCell.h"
 #import "AddGroupMemberCell.h"
 #import "LocationManager.h"
+#import "MJRefresh.h"
 @interface NewInvitationViewController ()
 {
     UIScrollView     *  m_mainScroll;
@@ -31,6 +32,9 @@
     NSInteger           m_sameRealmCount;
     BOOL                isFirstNearBy;
     BOOL                isFirstSameRealm;
+    MJRefreshFooterView *m_foot1;
+    MJRefreshFooterView *m_foot2;
+
     AddGroupMemberCell*cell1;
 }
 @end
@@ -65,6 +69,8 @@
     [self buildlistView];
     
     [self getInfo];
+    [self addFootView1];
+    [self addFootView2];
     // Do any additional setup after loading the view.
 }
 
@@ -79,6 +85,32 @@
     [segment addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventValueChanged];
     
 }
+-(void)buildlistView
+{
+    m_listView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50-(KISHighVersion_7?0:20), 320, 40)];
+    m_listView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:m_listView];
+    
+    m_layout = [[UICollectionViewFlowLayout alloc]init];
+    m_layout.minimumInteritemSpacing = 15;
+    m_layout.minimumLineSpacing = 5;
+    m_layout.itemSize = CGSizeMake(34, 34);
+    [m_layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+    m_customCollView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 5, 240, 40) collectionViewLayout:m_layout];
+    [m_customCollView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    m_customCollView.delegate = self;
+    m_customCollView.dataSource = self;
+    m_customCollView.backgroundColor = [UIColor clearColor];
+    [m_listView addSubview:m_customCollView];
+    
+    m_button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 55, 25)];
+    [m_button setBackgroundImage:KUIImage(@"addmembers_ok") forState:UIControlStateNormal];
+    [m_button setTitle:@"确定" forState:UIControlStateNormal];
+    m_button.titleLabel.font = [UIFont boldSystemFontOfSize:11];
+    [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
+    [m_listView addSubview:m_button];
+}
+
 
 -(void)qiehuantype:(UISegmentedControl *)seg
 {
@@ -170,6 +202,8 @@
                 }
                 m_nearByCount+=20;
                 [m_gTableView reloadData];
+                [m_foot1 endRefreshing];
+            
             }
             else if ([method isEqualToString:@"294"])
             {
@@ -181,6 +215,7 @@
                 }
                 m_sameRealmCount+=20;
                 [m_bTableView reloadData];
+                [m_foot2 endRefreshing];
             }
         }
         
@@ -194,6 +229,8 @@
                 [alert show];
             }
         }
+        [m_foot1 endRefreshing];
+        [m_foot2 endRefreshing];
     }];
 }
 
@@ -230,31 +267,7 @@
     //    }];
 }
 
--(void)buildlistView
-{
-    m_listView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-40-(KISHighVersion_7?0:20), 320, 40)];
-    m_listView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:m_listView];
-    
-    m_layout = [[UICollectionViewFlowLayout alloc]init];
-    m_layout.minimumInteritemSpacing = 15;
-    m_layout.minimumLineSpacing = 5;
-    m_layout.itemSize = CGSizeMake(34, 34);
-    [m_layout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-    m_customCollView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 5, 240, 40) collectionViewLayout:m_layout];
-    [m_customCollView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
-    m_customCollView.delegate = self;
-    m_customCollView.dataSource = self;
-    m_customCollView.backgroundColor = [UIColor clearColor];
-    [m_listView addSubview:m_customCollView];
-    
-    m_button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 55, 25)];
-    [m_button setBackgroundImage:KUIImage(@"addmembers_ok") forState:UIControlStateNormal];
-    [m_button setTitle:@"确定" forState:UIControlStateNormal];
-    m_button.titleLabel.font = [UIFont boldSystemFontOfSize:11];
-    [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
-    [m_listView addSubview:m_button];
-}
+
 
 
 -(void)addMembers:(id)sender
@@ -523,6 +536,35 @@
     {
         return @"gender_girl";
     }
+}
+//添加上拉加载更多
+-(void)addFootView1
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_gTableView;
+    
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getMembersFromNetWithMethod:@"293"];
+    };
+    m_foot1 = footer;
+}
+-(void)addFootView2
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_bTableView;
+    
+    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        [self getMembersFromNetWithMethod:@"294"];
+    };
+    m_foot1 = footer;
 }
 
 
