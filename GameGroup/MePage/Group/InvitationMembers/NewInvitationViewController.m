@@ -257,6 +257,62 @@
 }
 
 
+-(void)addMembers:(id)sender
+{
+    if (addMemArray.count>1) {
+        
+        NSMutableArray *customArr = [NSMutableArray arrayWithArray:addMemArray];
+        [customArr removeLastObject];
+        NSMutableArray *arr = [NSMutableArray array];
+        for (NSDictionary *dic  in customArr) {
+            
+            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+        }
+        
+        [self updataInfoWithId:[self getImageIdsStr:arr]];
+    }
+
+}
+
+-(NSString*)getImageIdsStr:(NSArray*)imageIdArray
+{
+    NSString* headImgStr = @"";
+    for (int i = 0;i<imageIdArray.count;i++) {
+        NSString * temp1 = [imageIdArray objectAtIndex:i];
+        headImgStr = [headImgStr stringByAppendingFormat:@"%@,",temp1];
+    }
+    return headImgStr;
+}
+-(void)updataInfoWithId:(NSString *)str
+{
+    [hud show:YES];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
+    [paramDict setObject:str forKey:@"userids"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"258" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        
+        [self showMessageWindowWithContent:@"发送成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView * alertView_1 = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alertView_1 show];
+            }
+        }
+        [hud hide:YES];
+    }];
+    
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView ==m_rTableView)
