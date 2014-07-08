@@ -121,7 +121,7 @@ static UserManager *userManager = NULL;
     if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
         [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
     }
-    [self updateMsgInfo:dicUser];
+    [self updateMsgInfo:dicUser]; 
     });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }

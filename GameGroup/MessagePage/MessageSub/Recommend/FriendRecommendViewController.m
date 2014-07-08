@@ -38,7 +38,14 @@
     [super viewDidLoad];
 
     [self setTopViewWithTitle:@"好友推荐" withBackButton:YES];
-    
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+//    [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
+//    [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
+    [shareButton setTitle:@"多选" forState:UIControlStateNormal];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
+
     m_tableData = [[NSMutableArray alloc] initWithCapacity:1];
     
     m_pageIndex = 0;
@@ -53,6 +60,8 @@
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.allowsMultipleSelectionDuringEditing = YES;
+
     [self.view addSubview:m_myTableView];
     
     
@@ -61,6 +70,11 @@
     hud.labelText = @"查询中...";
     [self.view addSubview:hud];
 }
+-(void)shareBtnClick:(id)sender
+{
+    m_myTableView.editing = YES;
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
     [self getDataByStore];
@@ -104,7 +118,7 @@
     if (cell == nil) {
         cell = [[RecommendCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSDictionary* tempDic = [m_tableData objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
@@ -245,6 +259,15 @@
         }
         [hud hide:YES];
     }];
+}
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+        editingStyle =UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
+    
 }
 
 -(void)requestPeopleInfoWithName:(NSString *)userName ForType:(int)type
