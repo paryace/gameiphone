@@ -212,8 +212,6 @@ static NSString * const kMagicalRecordNSManagedObjectContextWorkingName = @"kNSM
                                              selector:@selector(MR_contextWillSave:)
                                                  name:NSManagedObjectContextWillSaveNotification
                                                object:self];
-    
-    
 }
 
 - (void) MR_contextWillSave:(NSNotification *)notification

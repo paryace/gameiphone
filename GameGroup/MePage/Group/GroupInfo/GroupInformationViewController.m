@@ -21,7 +21,8 @@
 #import "AddFriendsViewController.h"
 #import "MyGroupViewController.h"
 #import "SearchGroupViewController.h"
-#import "InvitationViewController.h"
+//#import "InvitationViewController.h"
+#import "NewInvitationViewController.h"
 #import "GuildMembersViewController.h"
 @interface GroupInformationViewController ()
 {
@@ -1042,7 +1043,7 @@
 
 -(void)enterAddMembersPage:(id)sender
 {
-    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
     inv.groupId = self.groupId;
     [self.navigationController pushViewController:inv animated:YES];
 }

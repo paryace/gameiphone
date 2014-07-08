@@ -272,7 +272,6 @@ typedef enum : NSUInteger {
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
 
-    
     self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
     self.textView.isScrollable = NO;
     self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
