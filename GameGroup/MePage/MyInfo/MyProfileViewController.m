@@ -352,25 +352,33 @@
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
     
     [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
-    
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
-        NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-        for (int i=0; i<reponseStrArray.count; i++) {
-            NSString * a= [uploadImagePathArray objectAtIndex:i];
-            for (int i = 0;i<a1.count;i++) {
-                if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
-                    [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
-                }
-            }
-        }
-        self.headImgArray = a1;
-        [self refreshMyInfo:[self getImageIdsStr:self.headImgArray]];
+        [self replyImage];
     }else{
-        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        if (uploadImagePathArray.count>imageImdex) {
+            [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        }
     }
     imageImdex++;
 }
+
+-(void)replyImage
+{
+    NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
+    for (int i=0; i<reponseStrArray.count; i++) {
+        NSString * a= [uploadImagePathArray objectAtIndex:i];
+        for (int i = 0;i<a1.count;i++) {
+            if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
+                [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
+            }
+        }
+    }
+    self.headImgArray = a1;
+    [self refreshMyInfo:[self getImageIdsStr:self.headImgArray]];
+}
+
+
 -(NSString*)getImageIdsStr:(NSArray*)imageIdArray
 {
     NSString* headImgStr = @"";
