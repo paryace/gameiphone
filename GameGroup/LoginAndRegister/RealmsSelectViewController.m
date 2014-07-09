@@ -142,6 +142,7 @@
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
         [self filterContentForSearchText:searchString];
+        [self setTopViewWithTitle:@"服务器" withBackButton:YES];
         return YES;
 }
 
