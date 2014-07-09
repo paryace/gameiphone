@@ -32,6 +32,7 @@ static UserManager *userManager = NULL;
         self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
         self.cacheUserids = [NSMutableArray array];
         queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
+        NSLog(@"v44444 - create queue - userinfo ");
     }
     return self;
 }
@@ -89,7 +90,8 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    dispatch_barrier_async(queue, ^{
+//    dispatch_async(queue, ^{
+        NSLog(@"v44444 - async queue - SAVE userinfo ");
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -110,20 +112,20 @@ static UserManager *userManager = NULL;
         }
         [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         
-        [DataStoreManager saveDSCharacters2:charachers UserId:KISDictionaryHaveKey(dicUser, @"userid")];
-        [DataStoreManager saveDSTitle2:titles];
+//        [DataStoreManager saveDSCharacters2:charachers UserId:KISDictionaryHaveKey(dicUser, @"userid")];
+//        [DataStoreManager saveDSTitle2:titles];
     
-//        for (NSMutableDictionary *characher in charachers) {
-//            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
-//        }
-//        for (NSMutableDictionary *title in titles) {
-//            [DataStoreManager saveDSTitle:title];
-//        }
+        for (NSMutableDictionary *characher in charachers) {
+            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
+        }
+        for (NSMutableDictionary *title in titles) {
+            [DataStoreManager saveDSTitle:title];
+        }
         if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
             [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
         }
         [self updateMsgInfo:dicUser];
-    });
+//    });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表

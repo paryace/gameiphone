@@ -32,6 +32,7 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
+    dispatch_queue_t queue ;
 }
 @end
 
@@ -60,6 +61,7 @@
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
+    queue = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -322,8 +324,7 @@
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
-    dispatch_async(queue, ^{
+//    dispatch_async(queue, ^{
         if (result.count>0) {
             for (int i=0; i<[keys count]; i++) {
                 NSString *key=[keys objectAtIndex:i];
@@ -334,14 +335,15 @@
                 }
             }
         }
-    });
+//    });
 }
 
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
+    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
     dispatch_async(queue, ^{
+        NSLog(@"v333333 - in queue - getFriendDateFromDataSore");
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
@@ -352,6 +354,7 @@
         resultArray = result;
         fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"v333333 - MAIN THREAD updated UI - getFriendDateFromDataSore");
             [m_myTableView reloadData];
             [self setFansNum];
         });

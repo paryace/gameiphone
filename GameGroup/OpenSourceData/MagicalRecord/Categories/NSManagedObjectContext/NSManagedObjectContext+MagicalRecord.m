@@ -64,6 +64,7 @@ static NSString * const kMagicalRecordNSManagedObjectContextWorkingName = @"kNSM
 
 + (void) MR_setDefaultContext:(NSManagedObjectContext *)moc
 {
+    NSLog(@"v22222 - MR_setDefaultContext");
     if (defaultManagedObjectContext_)
     {
         [[NSNotificationCenter defaultCenter] removeObserver:defaultManagedObjectContext_];
@@ -110,6 +111,7 @@ static NSString * const kMagicalRecordNSManagedObjectContextWorkingName = @"kNSM
 }
 
 + (void)rootContextChanged:(NSNotification *)notification {
+    NSLog(@"v22222 - rootContextChange ING");
     if ([NSThread isMainThread] == NO) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self rootContextChanged:notification];
@@ -118,6 +120,7 @@ static NSString * const kMagicalRecordNSManagedObjectContextWorkingName = @"kNSM
         return;
     }
     
+    NSLog(@"v22222 - rootContextChanged END");
     [[self MR_defaultContext] mergeChangesFromContextDidSaveNotification:notification];
 }
 
@@ -142,6 +145,7 @@ static NSString * const kMagicalRecordNSManagedObjectContextWorkingName = @"kNSM
 
 + (void) MR_initializeDefaultContextWithCoordinator:(NSPersistentStoreCoordinator *)coordinator;
 {
+    NSLog(@"v22222 - MR_initializeDefaultContextWithCoordinator");
     if (defaultManagedObjectContext_ == nil)
     {
         NSManagedObjectContext *rootContext = [self MR_contextWithStoreCoordinator:coordinator];

@@ -37,22 +37,14 @@
     
     for (int i = 0; i < buttonCount; i++) {
         NSDictionary * dataDic = [self.buttonTitleArray objectAtIndex:i];
-        
-        EGOImageView* gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(70, 29 + i * 40, 18, 18)];
-//        gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]]]];
-        
+        CGSize nameSize = [KISDictionaryHaveKey(dataDic, kSelectRealmKey) sizeWithFont:[UIFont boldSystemFontOfSize:15] constrainedToSize:CGSizeMake(182, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        EGOImageView* gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(55+(210-3-18-(nameSize.width>182?182:nameSize.width))/2, 29 + i * 40, 18, 18)];
         NSString * gameImageId=[GameCommon putoutgameIconWithGameId:[dataDic objectForKey:kSelectGameIdKey ]];
         gameImg.imageURL = [ImageService getImageUrl4:gameImageId];
         
-        
         [self addSubview:gameImg];
-        
-        UIButton*  tempButton = [[UIButton alloc] initWithFrame:CGRectMake(55, 18 + i * 40, 210, 40)];
-//        [tempButton setTitle:[[dataDic objectForKey:kSelectRealmKey] stringByAppendingFormat:@"－%@", [dataDic objectForKey:kSelectCharacterKey]] forState:UIControlStateNormal];
-        
+        UIButton*  tempButton = [[UIButton alloc] initWithFrame:CGRectMake(gameImg.frame.size.width+gameImg.frame.origin.x+3, 18 + i * 40, nameSize.width>182?182:nameSize.width, 40)];
         [tempButton setTitle:[dataDic objectForKey:kSelectRealmKey] forState:UIControlStateNormal];
-
-        
         [tempButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         tempButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
         tempButton.backgroundColor = [UIColor clearColor];

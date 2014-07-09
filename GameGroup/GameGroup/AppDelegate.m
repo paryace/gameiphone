@@ -118,6 +118,7 @@
 
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
+        NSLog(@"v22222 - setDefaultDataBase");
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         [self.xmppHelper connect];
         [[ReconnectMessage singleton]sendDeviceToken];
