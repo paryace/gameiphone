@@ -747,7 +747,7 @@
     }
     for (int i = 0; i < [charactersArr count]; i++) {
         NSDictionary* characterDic = [charactersArr objectAtIndex:i];
-        NSString* realm =  KISDictionaryHaveKey(characterDic, @"realm");//服务器
+        NSString* realm =  KISDictionaryHaveKey(characterDic, @"simpleRealm");//服务器realm
         NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"gameid")];//游戏Id
         NSString* v1=KISDictionaryHaveKey(characterDic, @"value1");//部落
         NSString* v2=KISDictionaryHaveKey(characterDic, @"value2");//战斗力

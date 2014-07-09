@@ -14,7 +14,7 @@
 
 @end
 
-@interface RealmsSelectViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate>
+@interface RealmsSelectViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
 @property(nonatomic, assign)id<RealmSelectDelegate> realmSelectDelegate;
 @property(nonatomic,copy)NSString *gameNum;
 @property(nonatomic,copy)NSString *indexCount;

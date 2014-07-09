@@ -29,7 +29,7 @@ static NSUInteger defaultBatchSize = kMagicalRecordDefaultBatchSize;
     [context performBlockAndWait:^{
 
         NSError *error = nil;
-        
+      //  NSLog(@"v1111取库中");
         results = [context executeFetchRequest:request error:&error];
         
         if (results == nil) 

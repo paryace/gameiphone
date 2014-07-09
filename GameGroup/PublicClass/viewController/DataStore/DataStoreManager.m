@@ -407,7 +407,7 @@
 //保存正常聊天的消息
 +(void)storeNewNormalChatMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
         }
     ];
@@ -437,8 +437,10 @@
     NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
     NSPredicate * hasedpredicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
     DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:hasedpredicate];
+    NSLog(@"v1111查库：是否有该消息，没有就存库");
     if (!commonMsg) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
+        NSLog(@"v1111查库：是否有该thumb，没有就创建");
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         int unread;
         if (!thumbMsgs){
@@ -495,7 +497,7 @@
 //保存接收到群组的消息
 +(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
     }];
     if (block) {
@@ -1179,11 +1181,13 @@
 
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type
 {
+    // NSManagedObjectContext *mainContext  = [NSManagedObjectContext MR_defaultContext];
     NSMutableArray * msgList = [NSMutableArray array];
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
-//     NSLog(@"v1111取库开始");
+     NSLog(@"v1111取库开始");
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
-//    NSLog(@"v1111取库结束");
+   // NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate inContext:mainContext];
+    NSLog(@"v1111取库结束");
     for (DSThumbMsgs * apm in array) {
         [msgList addObject:[self queryDSThumbMessage:apm]];
     }
@@ -2608,13 +2612,11 @@
 #pragma mark - 批量保存角色
 +(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid
 {
-    NSLog(@"保存开始。。。");
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         for (NSDictionary * character in characters) {
             [self saveCharacter:character UserId:userid Loco:localContext];
         }
     }];
-   NSLog(@"保存结束。。。");
 }
 
 +(void)saveCharacter:(NSDictionary *)characters UserId:(NSString*)userid Loco:(NSManagedObjectContext*)localContext
@@ -2629,6 +2631,7 @@
     NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value1")];
     NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
+    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
     DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
@@ -2645,6 +2648,7 @@
     dscharacters.value1=value1;
     dscharacters.value2=value2;
     dscharacters.value3=value3;
+    dscharacters.simpleRealm=[NSString stringWithFormat:@"%@",simpleRealm] ;
 }
 
 
@@ -2763,6 +2767,7 @@
          [characterDic setObject:character.value1 forKey:@"value1"];
          [characterDic setObject:character.value2 forKey:@"value2"];
          [characterDic setObject:character.value3 forKey:@"value3"];
+        [characterDic setObject:character.simpleRealm forKey:@"simpleRealm"];
         [charactersArray addObject:characterDic];
     }
     return charactersArray;

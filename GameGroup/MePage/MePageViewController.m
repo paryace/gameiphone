@@ -125,10 +125,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
-//            dispatch_queue_t queue = dispatch_queue_create("com.living.game.MePage", NULL);
-//            dispatch_async(queue, ^{
-                [[UserManager singleton] saveUserInfo:responseObject];
-//            });
+            [[UserManager singleton] saveUserInfo:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -410,7 +407,8 @@
             cell.noCharacterLabel.hidden = YES;
             NSDictionary* tempDic = [m_hostInfo.charactersArr objectAtIndex:indexPath.row];
 
-            NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
+//            NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
+            NSString* realm =  KISDictionaryHaveKey(tempDic, @"simpleRealm");//服务器
             NSString* v1=KISDictionaryHaveKey(tempDic, @"value1");//部落
             NSString* v2=KISDictionaryHaveKey(tempDic, @"value2");//战斗力
             NSString* v3=KISDictionaryHaveKey(tempDic, @"value3");//战斗力数

@@ -141,11 +141,11 @@
         cell = [[MyCharacterEditCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.heardImg.placeholderImage = [UIImage imageNamed:@"clazz_0.png"];
+    cell.heardImg.placeholderImage = [UIImage imageNamed:@"clazz_icon.png"];
     cell.authBg.hidden = NO;
     
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
-    cell.realmLabel.text = [[KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:@" "] stringByAppendingString:KISDictionaryHaveKey(tempDic, @"value1")];
+    cell.realmLabel.text = [[KISDictionaryHaveKey(tempDic, @"simpleRealm") stringByAppendingString:@" "] stringByAppendingString:KISDictionaryHaveKey(tempDic, @"value1")];
     
     if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
     {

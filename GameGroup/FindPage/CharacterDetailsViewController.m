@@ -543,6 +543,7 @@
     }
     NSDictionary *dic  =m_nameArray[indexPath.row];
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
+    cell.titleImgView.placeholderImage = KUIImage(@"clazz_icon.png");
     cell.titleImgView.imageURL = [ImageService getImageUrl4:imageId];
     
     cell.titleLabel.text = KISDictionaryHaveKey(dic, @"value1");

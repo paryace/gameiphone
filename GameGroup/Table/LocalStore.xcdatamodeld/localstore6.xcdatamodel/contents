@@ -54,6 +54,7 @@
         <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="simpleRealm" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
@@ -392,7 +393,7 @@
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
         <element name="DSBillboard" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
-        <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="208"/>
+        <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="225"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>

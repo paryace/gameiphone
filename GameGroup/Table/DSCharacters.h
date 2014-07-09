@@ -23,5 +23,6 @@
 @property (nonatomic, retain) NSString * value1;
 @property (nonatomic, retain) NSString * value2;
 @property (nonatomic, retain) NSString * value3;
+@property (nonatomic, retain) NSString * simpleRealm;
 
 @end

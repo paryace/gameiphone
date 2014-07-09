@@ -2294,7 +2294,7 @@ UINavigationControllerDelegate>
 {
     if ([sender isEqualToString:self.chatWithUser]) {
         
-        dispatch_async(queue, ^{
+//        dispatch_barrier_async(queue, ^{
             NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
             [tempDic setValue:msgId forKey:@"messageuuid"];
             [tempDic setValue:@"4" forKey:@"status"];
@@ -2302,22 +2302,22 @@ UINavigationControllerDelegate>
             if (messages.count>=60) {
                 [self clearMessage];
                 [self loadMessage:0 PageSize:20];
-                dispatch_async(dispatch_get_main_queue(), ^{
+//                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.tView reloadData];
-                });
+//                });
             }
             
             [messages addObject:tempDic];
             [self newMsgToArray:tempDic];
-            dispatch_async(dispatch_get_main_queue(), ^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
                 if (endOfTable) {
                     if (messages.count>0) {
                         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
                     }
                 }
-            });
-        });
+//            });
+//        });
     }
     else
     {
