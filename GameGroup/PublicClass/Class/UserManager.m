@@ -89,7 +89,7 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    dispatch_sync(queue, ^{
+    dispatch_barrier_async(queue, ^{
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -108,13 +108,11 @@ static UserManager *userManager = NULL;
             [dicUser setObject:titleObj forKey:@"titleName"];
             [dicUser setObject:titleObjLevel forKey:@"rarenum"];
         }
-        [DataStoreManager deleteAllDSCharacters:KISDictionaryHaveKey(dicUser, @"userid")];
-        [DataStoreManager deleteAllDSTitle:KISDictionaryHaveKey(dicUser, @"userid")];
-        
         [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
         
         [DataStoreManager saveDSCharacters2:charachers UserId:KISDictionaryHaveKey(dicUser, @"userid")];
         [DataStoreManager saveDSTitle2:titles];
+    
 //        for (NSMutableDictionary *characher in charachers) {
 //            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
 //        }

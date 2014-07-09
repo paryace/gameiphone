@@ -2294,7 +2294,7 @@ UINavigationControllerDelegate>
 {
     if ([sender isEqualToString:self.chatWithUser]) {
         
-        dispatch_sync(queue, ^{
+        dispatch_async(queue, ^{
             NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
             [tempDic setValue:msgId forKey:@"messageuuid"];
             [tempDic setValue:@"4" forKey:@"status"];

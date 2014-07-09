@@ -409,7 +409,8 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
-    }];
+        }
+    ];
     if (block) {
         block(msg);
     }
@@ -496,10 +497,10 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
-        if (block) {
-            block(msg);
-        }
     }];
+    if (block) {
+        block(msg);
+    }
 }
 //保存群组的消息
 +(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block{
@@ -1180,7 +1181,9 @@
 {
     NSMutableArray * msgList = [NSMutableArray array];
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
+//     NSLog(@"v1111取库开始");
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
+//    NSLog(@"v1111取库结束");
     for (DSThumbMsgs * apm in array) {
         [msgList addObject:[self queryDSThumbMessage:apm]];
     }
@@ -2605,11 +2608,13 @@
 #pragma mark - 批量保存角色
 +(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid
 {
+    NSLog(@"保存开始。。。");
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         for (NSDictionary * character in characters) {
             [self saveCharacter:character UserId:userid Loco:localContext];
         }
     }];
+   NSLog(@"保存结束。。。");
 }
 
 +(void)saveCharacter:(NSDictionary *)characters UserId:(NSString*)userid Loco:(NSManagedObjectContext*)localContext

@@ -23,6 +23,7 @@ static NSString const * kMagicalRecordManagedObjectContextKey = @"MagicalRecord_
 {
 	if ([NSThread isMainThread])
 	{
+        
 		return [self MR_defaultContext];
 	}
 	else

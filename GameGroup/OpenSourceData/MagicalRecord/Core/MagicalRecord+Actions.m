@@ -35,7 +35,7 @@
 + (void) saveUsingCurrentThreadContextWithBlock:(void (^)(NSManagedObjectContext *localContext))block completion:(MRSaveCompletionHandler)completion;
 {
     NSManagedObjectContext *localContext = [NSManagedObjectContext MR_contextForCurrentThread];
-
+    
     [localContext performBlock:^{
         if (block) {
             block(localContext);

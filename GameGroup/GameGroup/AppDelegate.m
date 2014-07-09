@@ -19,6 +19,9 @@
 #import "XMPPping.h"
 #import "UserManager.h"
 #import "OfflineComment.h"
+#import "MagicalRecord.h"
+#import "CoreData+MagicalRecord.h"
+#import <objc/runtime.h>
 
 
 #import "FindViewController.h"
@@ -56,7 +59,6 @@
 //       [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstStart"];
 //    }else{
 //    }
-    
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 

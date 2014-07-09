@@ -167,6 +167,7 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
 
     m_layout = [[UICollectionViewFlowLayout alloc]init];

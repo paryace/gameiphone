@@ -125,10 +125,10 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
             [m_myTableView reloadData];
-            dispatch_queue_t queue = dispatch_queue_create("com.living.game.MePage", NULL);
-            dispatch_async(queue, ^{
+//            dispatch_queue_t queue = dispatch_queue_create("com.living.game.MePage", NULL);
+//            dispatch_async(queue, ^{
                 [[UserManager singleton] saveUserInfo:responseObject];
-            });
+//            });
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

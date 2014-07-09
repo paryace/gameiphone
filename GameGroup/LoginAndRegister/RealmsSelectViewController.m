@@ -14,6 +14,8 @@
     
     NSMutableDictionary*   m_realmsDic;
     NSArray* m_realmsIndexArray;
+    UISearchBar * mSearchBar;
+    UISearchDisplayController *searchController;
 }
 @end
 
@@ -40,6 +42,20 @@
     m_realmsTableView.delegate = self;
     m_realmsTableView.dataSource = self;
     [self.view addSubview:m_realmsTableView];
+    
+    
+//    //初始化搜索条
+//    
+//    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 44, 320, 44)];
+//    [mSearchBar setBackgroundImage:[UIImage imageNamed:@"nav_bg.png"]];
+//    [mSearchBar setPlaceholder:@"搜索城市"];
+//    mSearchBar.delegate = self;
+//    [mSearchBar sizeToFit];
+//    //初始化UISearchDisplayController
+//    searchController = [[UISearchDisplayController alloc] initWithSearchBar:mSearchBarcontentsController:self];
+//    searchController.searchResultsDelegate= self;
+//    searchController.searchResultsDataSource = self;
+//    searchController.delegate = self;
 }
 #pragma mark 表格
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -88,17 +104,17 @@
 #pragma mark 索引
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-//    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-//        return @"";
-//    }
+    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+        return @"";
+    }
     return [m_realmsIndexArray objectAtIndex:section];
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-//    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-//        return nil;
-//    }
+    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+        return nil;
+    }
    
     return m_realmsIndexArray;
 }

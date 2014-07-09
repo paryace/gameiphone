@@ -257,10 +257,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTime = [[NSDate date] timeIntervalSince1970];
-    dispatch_sync(queue, ^{
+//    NSLog(@"v1111存库开始");
+    dispatch_barrier_async(queue, ^{
         [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-            [self setSoundOrVibrationopen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+//            NSLog(@"v1111存库结束");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self setSoundOrVibrationopen];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            });
              [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         }];
     });
@@ -312,7 +316,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTimeGroup = [[NSDate date] timeIntervalSince1970];
-    dispatch_sync(queue2, ^{
+    dispatch_barrier_async(queue2, ^{
         [DataStoreManager storeNewGroupMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
