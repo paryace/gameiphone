@@ -23,6 +23,7 @@
     UIButton *nearByBtn;
     UIButton *moGirlBtn;
     UIButton *encoBtn;
+    
     UIView *bottomView;
     UIImageView *m_notibgInfoImageView; //与我相关红点
     UIImageView *m_notibgCircleNewsImageView; //朋友圈红点
@@ -538,8 +539,10 @@
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
         NSString * imageId= KISDictionaryHaveKey(dic, @"img");
         m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
+        drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
     }else{
         [m_menuButton setBackgroundImage:KUIImage(@"menu_find_normal") forState:UIControlStateNormal];
+        drawView.textLabel.text = @"点击Go,开始您的游戏社交";
     }
     [self.view addSubview:m_menuButton];
 }
@@ -1004,7 +1007,7 @@
     m_menuButton.imageURL=[ImageService getImageUrl4:imageId2];
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-
+drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
     m_menuButton.center = CGPointMake(160, KISHighVersion_7?79:59);
     [self.view bringSubviewToFront:m_menuButton];
 

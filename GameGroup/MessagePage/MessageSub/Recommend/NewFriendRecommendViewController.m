@@ -43,9 +43,7 @@
     isChoose = YES;
     UIButton *chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    //    [chooseAllBtn setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    //    [chooseAllBtn setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
-    [chooseAllBtn setTitle:@"全不选" forState:UIControlStateNormal];
+    [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -77,7 +75,10 @@
 {
     if (isChoose) {
         isChoose =NO;
-        [sender setTitle:@"全选" forState:UIControlStateNormal];
+//        [sender setTitle:@"全选" forState:UIControlStateNormal];
+        [sender setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
+        
+        
         for (NSMutableDictionary *dic in m_dataArray) {
             [dic setObject:@"1" forKey:@"state"];
         }
@@ -94,7 +95,7 @@
 
     }else{
         isChoose =YES;
-        [sender setTitle:@"全不选" forState:UIControlStateNormal];
+        [sender setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
         for (NSMutableDictionary *dic in m_dataArray) {
             [dic setObject:@"0" forKey:@"state"];
         }
@@ -117,9 +118,9 @@
     }
     NSString *title;
     if (addMemArray.count==1) {
-        title = [NSString stringWithFormat:@"确定"];
+        title = [NSString stringWithFormat:@"关注"];
     }else{
-        title = [NSString stringWithFormat:@"确定(%d)",addMemArray.count-1];
+        title = [NSString stringWithFormat:@"关注(%d)",addMemArray.count-1];
     }
     [m_button setTitle:title forState:UIControlStateNormal];
 
@@ -155,7 +156,7 @@
     
     m_button = [[UIButton alloc]initWithFrame:CGRectMake(260, 10, 55, 25)];
     [m_button setBackgroundImage:KUIImage(@"addmembers_ok") forState:UIControlStateNormal];
-    [m_button setTitle:@"确定" forState:UIControlStateNormal];
+    [m_button setTitle:@"关注" forState:UIControlStateNormal];
     m_button.titleLabel.font = [UIFont boldSystemFontOfSize:11];
     [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
     [customView addSubview:m_button];
@@ -188,9 +189,9 @@
     [UIView commitAnimations];
     NSString *title;
     if (addMemArray.count==1) {
-        title = [NSString stringWithFormat:@"确定"];
+        title = [NSString stringWithFormat:@"关注"];
     }else{
-        title = [NSString stringWithFormat:@"确定(%d)",addMemArray.count-1];
+        title = [NSString stringWithFormat:@"关注(%d)",addMemArray.count-1];
     }
     [m_button setTitle:title forState:UIControlStateNormal];
 
@@ -289,9 +290,9 @@
     }
     NSString *title;
     if (addMemArray.count==0) {
-        title = [NSString stringWithFormat:@"确定"];
+        title = [NSString stringWithFormat:@"关注"];
     }else{
-        title = [NSString stringWithFormat:@"确定(%d)",addMemArray.count-1];
+        title = [NSString stringWithFormat:@"关注(%d)",addMemArray.count-1];
     }
     [m_button setTitle:title forState:UIControlStateNormal];
     [UIView beginAnimations:nil context:nil];
@@ -349,9 +350,9 @@
     int count = addMemArray.count;
     NSString *title;
     if (count==0) {
-        title = [NSString stringWithFormat:@"确定"];
+        title = [NSString stringWithFormat:@"关注"];
     }else{
-        title = [NSString stringWithFormat:@"确定(%d)",addMemArray.count-1];
+        title = [NSString stringWithFormat:@"关注(%d)",addMemArray.count-1];
     }
     [m_button setTitle:title forState:UIControlStateNormal];
     [UIView beginAnimations:nil context:nil];

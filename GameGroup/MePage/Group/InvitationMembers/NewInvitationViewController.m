@@ -36,6 +36,13 @@
     MJRefreshFooterView *m_foot2;
 
     AddGroupMemberCell*cell1;
+    
+    UIButton *m_btn1;
+    UIButton *m_btn2;
+    UIButton *m_btn3;
+    
+    NSInteger      m_tabTag;
+    UIButton * chooseAllBtn;
 }
 @end
 
@@ -54,6 +61,15 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"添加成员" withBackButton:YES];
+    
+    chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [chooseAllBtn setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
+    [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateSelected];
+    [self.view addSubview:chooseAllBtn];
+    [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
+
+    
     m_rArray = [NSMutableArray array];
     m_gArray = [NSMutableArray array];
     m_bArray = [NSMutableArray array];
@@ -61,6 +77,7 @@
     m_sameRealmCount =0;
     isFirstNearBy = YES;
     isFirstSameRealm = YES;
+    m_tabTag = 1;
     addMemArray = [NSMutableArray array];
 [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
     
@@ -76,15 +93,33 @@
 
 -(void)buildTopView
 {
-    NSArray *array =[NSArray arrayWithObjects:@"好友",@"附近",@"同服", nil];
-    UISegmentedControl *segment  = [[UISegmentedControl alloc]initWithItems:array];
-    segment.segmentedControlStyle = UISegmentedControlStyleBar;
-    segment.frame = CGRectMake(0, startX, 320, 40);
-    segment.selectedSegmentIndex = 0;
-    [self.view addSubview:segment];
-    [segment addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventValueChanged];
+
+    m_btn1 = [self buildButtonWithFrame:CGRectMake(0, startX, kScreenWidth/3, 56) img1:@"seg1_normal" img2:@"seg1_click"];
+    m_btn1.tag =100001;
+    m_btn1.selected = YES;
+    [m_btn1 addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_btn1];
+    m_btn2 = [self buildButtonWithFrame:CGRectMake(kScreenWidth/3, startX, kScreenWidth/3, 56) img1:@"seg2_normal" img2:@"seg2_click"];
+    m_btn2.tag = 100002;
+    [m_btn2 addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_btn2];
+
     
+    m_btn3 = [self buildButtonWithFrame:CGRectMake(kScreenWidth/3*2, startX, kScreenWidth/3, 56) img1:@"seg3_normal" img2:@"seg3_click"];
+    m_btn3.tag = 100003;
+    [m_btn3 addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_btn3];
+
 }
+
+-(UIButton *)buildButtonWithFrame:(CGRect)frame img1:(NSString *)img1 img2:(NSString*)img2
+{
+    UIButton *button = [[UIButton alloc]initWithFrame:frame];
+    [button setImage:KUIImage(img1) forState:UIControlStateNormal];
+    [button setImage:KUIImage(img2) forState:UIControlStateSelected];
+    return button;
+}
+
 -(void)buildlistView
 {
     m_listView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50-(KISHighVersion_7?0:20), 320, 40)];
@@ -110,21 +145,126 @@
     [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
     [m_listView addSubview:m_button];
 }
-
-
--(void)qiehuantype:(UISegmentedControl *)seg
+-(void)didClickChooseAll:(UIButton *)sender
 {
-    UISegmentedControl *segmentedControl = (UISegmentedControl *)seg;
-    NSInteger segment = segmentedControl.selectedSegmentIndex;
-    switch (segment) {
-        case 0:
+    switch (m_tabTag) {
+        case 1:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_rArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+ 
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_rArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_rArray];
+            }
+            [m_rTableView reloadData];
+            
+            break;
+        case 2:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_gArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_gArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_gArray];
+
+            }
+            [m_gTableView reloadData];
+
+            break;
+        case 3:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_bArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_bArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_bArray];
+
+            }
+            [m_bTableView reloadData];
+
+            break;
+   
+        default:
+            break;
+    }
+    [m_customCollView reloadData];
+    
+}
+
+
+-(void)qiehuantype:(UIButton *)seg
+{
+//    UISegmentedControl *segmentedControl = (UISegmentedControl *)seg;
+//    NSInteger segment = segmentedControl.selectedSegmentIndex;
+    UIButton *button = (UIButton *)seg;
+    
+    switch (button.tag) {
+        case 100001:
+            if (button.selected) {
+                return;
+            }
+            m_btn1.selected =YES;
+            m_btn2.selected = NO;
+            m_btn3.selected = NO;
+            chooseAllBtn.selected = NO;
+            m_tabTag = 1;
             m_mainScroll.contentOffset = CGPointMake(0, 0);
             
             break;
-        case 1:
+        case 100002:
+            if (button.selected) {
+                return;
+            }
+            m_btn1.selected =NO;
+            m_btn2.selected = YES;
+            m_btn3.selected = NO;
+            chooseAllBtn.selected = NO;
+            m_tabTag = 2;
             m_mainScroll.contentOffset = CGPointMake(320, 0);
             if (isFirstNearBy) {
                 [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+                    isFirstNearBy = NO;
                     [[TempData sharedInstance] setLat:lat Lon:lon];
                     [self getMembersFromNetWithMethod:@"293"];
                 } Failure:^{
@@ -136,7 +276,15 @@
             
             NSLog(@"222222");
             break;
-        case 2:
+        case 100003:
+            if (button.selected) {
+                return;
+            }
+            m_btn1.selected =NO;
+            m_btn2.selected = NO;
+            m_btn3.selected = YES;
+            chooseAllBtn.selected = NO;
+            m_tabTag =3;
             m_mainScroll.contentOffset = CGPointMake(640, 0);
             if (isFirstSameRealm) {
                 [self getMembersFromNetWithMethod:@"294"];
@@ -151,7 +299,7 @@
 
 -(void)buildMainView
 {
-    m_mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX+40, kScreenWidth, kScreenHeigth-startX-80)];
+    m_mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX+56, kScreenWidth, kScreenHeigth-startX-96)];
     m_mainScroll.scrollEnabled = NO;
     m_mainScroll.contentSize  = CGSizeMake(960, 0);
     [self.view addSubview:m_mainScroll];
@@ -196,6 +344,7 @@
         if ([responseObject isKindOfClass:[NSArray class]]) {
             if ([method isEqualToString:@"293"])
             {
+                isFirstNearBy = NO;
                 if (m_nearByCount==0) {
                     [m_gArray removeAllObjects];
                     [m_gArray addObjectsFromArray:responseObject];
@@ -210,6 +359,7 @@
             }
             else if ([method isEqualToString:@"294"])
             {
+                isFirstSameRealm = NO;
                 if (m_sameRealmCount==0) {
                     [m_bArray removeAllObjects];
                     [m_bArray addObjectsFromArray:responseObject];
@@ -245,12 +395,15 @@
     hud.labelText = @"获取中...";
     //    [hud showAnimated:YES whileExecutingBlock:^{
     NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+    
+    
+    
     NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
     NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
     
     for (int i =0; i<keys.count; i++) {
         NSArray *array = [result objectForKey:keys[i]];
-        for (NSDictionary *dic in array) {
+        for (NSMutableDictionary *dic in array) {
             [dic setValue:@"1" forKey:@"choose"];
             [dic setValue:@"friends" forKeyPath:@"tabType"];
         }

@@ -12,7 +12,7 @@
 @implementation TvView
 {
     UILabel *titleLabel;
-    UILabel *textLabel;
+    
 }
 @synthesize tv,tableArray,textField;
 
@@ -56,13 +56,13 @@
 //        titleLabel.backgroundColor = [ UIColor clearColor];
 //        [self addSubview:titleLabel];
         
-        textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?35:15, 320, 20)];
-        textLabel.text = @"选择游戏 开始您的游戏社交";
-        textLabel.textColor =[UIColor whiteColor];
-        textLabel.textAlignment = NSTextAlignmentCenter;
-        textLabel.backgroundColor =[ UIColor clearColor];
-        textLabel.font = [UIFont boldSystemFontOfSize:14];
-        [self addSubview:textLabel];
+        self.textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0,KISHighVersion_7?35:15, 320, 20)];
+        self.textLabel.text = @"点击GO,开始您的游戏社交";
+        self.textLabel.textColor =[UIColor whiteColor];
+        self.textLabel.textAlignment = NSTextAlignmentCenter;
+        self.textLabel.backgroundColor =[ UIColor clearColor];
+        self.textLabel.font = [UIFont boldSystemFontOfSize:14];
+        [self addSubview:self.textLabel];
         
  
         
@@ -86,7 +86,7 @@
         
         self.frame = sf;
         titleLabel.text = @"发现";
-        textLabel.hidden =NO;
+        self.textLabel.hidden =NO;
         CGRect frame = tv.frame;
         frame.size.height = 0;
         tv.frame = frame;
@@ -103,7 +103,7 @@
         tv.hidden = NO;
         self.showList = YES;//显示下拉框
         titleLabel.text = @"请选择游戏";
-        textLabel.hidden = YES;
+        self.textLabel.hidden = YES;
         CGRect frame = tv.frame;
         frame.size.height = 0;
         tv.frame = frame;
@@ -111,7 +111,7 @@
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         self.frame = sf;
-        self.frame = CGRectMake(0, 0, 320, 430);
+        self.frame = CGRectMake(0, 0, 320, kScreenHeigth-50);
         tv.frame = frame;
         [UIView commitAnimations];
     }
@@ -199,7 +199,7 @@
     self.frame = sf;
 //    menuButotn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
     titleLabel.text  = @"发现";
-    textLabel.hidden =NO;
+    self.textLabel.hidden =NO;
     CGRect frame = tv.frame;
     frame.size.height = 0;
     tv.frame = frame;
