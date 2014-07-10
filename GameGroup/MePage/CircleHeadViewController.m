@@ -31,7 +31,7 @@ typedef enum : NSUInteger {
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     UILabel *nickNameLabel;
-    UIImageView *topImgaeView;
+    EGOImageView *topImageView;
     EGOImageButton *headImageView;
     EGOImageView *imageViewC;
     
@@ -153,18 +153,26 @@ typedef enum : NSUInteger {
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
     
-    topImgaeView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
-    topImgaeView.backgroundColor = [UIColor blackColor];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]]) {
-        topImgaeView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]]];
-    }else{
-        topImgaeView.backgroundColor = UIColorFromRGBA(0x262930, 1);
-        topImgaeView.image = KUIImage(@"");
-    }
-    topImgaeView.userInteractionEnabled =YES;
+    topImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 320)];
+    topImageView.backgroundColor = [UIColor blackColor];
     
-    [topImgaeView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
-    [topVIew addSubview:topImgaeView];
+    NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
+        
+        
+//        topImageView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",userid]]];
+        topImageView.imageURL =[ImageService getImageStr2:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]];
+        
+    }else{
+            topImageView.backgroundColor = UIColorFromRGBA(0x262930, 1);
+            topImageView.imageURL = nil;
+            topImageView.image = KUIImage(@"");
+
+    }
+    topImageView.userInteractionEnabled =YES;
+    
+    [topImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeTopImage:)]];
+    [topVIew addSubview:topImageView];
     
     //黑白渐变Label以突出文字
     UIImageView *topunderBgImageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 280, 320, 40)];
@@ -670,6 +678,10 @@ typedef enum : NSUInteger {
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             
+            NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+            if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
+                topImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+            }
             NSArray *arraaay =KISDictionaryHaveKey(responseObject, @"dynamicMsgList");
             if (([arraaay isKindOfClass:[NSArray class]]&&arraaay.count>0)&&ishavehuancun) {
                 
@@ -1375,7 +1387,7 @@ typedef enum : NSUInteger {
     NSString * imagePath=[self writeImageToFile:upImage ImageName:@"topImage.jpg"];
     [self uploadbgImg:imagePath];
 //    [self uploadbgImg:upImage];
-    topImgaeView.image = upImage;
+    topImageView.image = upImage;
    
 }
 //将图片保存到本地，返回保存的路径
@@ -1390,8 +1402,7 @@ typedef enum : NSUInteger {
     NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
     
     NSData *data = UIImageJPEGRepresentation(thumbimg, 0.7);
-    
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:[NSString stringWithFormat:@"topImageData_wx_%@",kMYUSERID]];
+
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
@@ -1874,7 +1885,11 @@ typedef enum : NSUInteger {
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
                              msgid,@"msgId",
                              uuid,@"uuid",nil];
-        [DataStoreManager saveOfflineZanWithDic:dic];
+        dispatch_queue_t queue = dispatch_queue_create("com.living.game.liveLineZan", NULL);
+        dispatch_async(queue, ^{
+            [DataStoreManager saveOfflineZanWithDic:dic];
+        });
+
     }
     else{
     
@@ -1962,7 +1977,13 @@ typedef enum : NSUInteger {
         [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
         [dict setObject:comment forKey:@"comments"];
         [dict setObject:uuid forKey:@"uuid"];
-        [DataStoreManager saveCommentsWithDic:dict];
+        
+        dispatch_queue_t queue = dispatch_queue_create("com.living.game.liveLineZan", NULL);
+        dispatch_async(queue, ^{
+            [DataStoreManager saveCommentsWithDic:dict];
+        });
+        
+       
         return;
     }
     else{
@@ -2047,6 +2068,9 @@ typedef enum : NSUInteger {
 
 -(void)uploadsuccessImg:(NSString *)img
 {
+    NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    [[NSUserDefaults standardUserDefaults]setObject:img forKey :[NSString stringWithFormat:@"topImageHead_wx_%@",userid]];
+    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:img forKey:@"coverImg"];
@@ -2055,6 +2079,7 @@ typedef enum : NSUInteger {
     [dict setObject:@"198" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

@@ -985,7 +985,7 @@
 {
     [self didClickMenu:nil];
     bottomView.hidden = NO;
-    [self.view sendSubviewToBack:drawView];
+    [self.view sendSubviewToBack :drawView];
     [self.view sendSubviewToBack:imgV];
 //    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     

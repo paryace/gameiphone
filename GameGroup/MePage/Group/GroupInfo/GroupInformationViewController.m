@@ -154,6 +154,7 @@
             NewGroupSettingViewController *gr = [[NewGroupSettingViewController alloc]init];
             gr.groupId = self.groupId;
             gr.myDelegate = self;
+            gr.realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gamerealm")];
             gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
             gr.shiptypeCount = self.shiptypeCount;
             [self.navigationController pushViewController:gr animated:YES];
@@ -1045,6 +1046,7 @@
 {
     NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
     inv.groupId = self.groupId;
+    inv.realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gameRealm")];
     [self.navigationController pushViewController:inv animated:YES];
 }
 - (NSString*)getDataWithTimeInterval:(NSString*)timeInterval

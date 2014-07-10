@@ -12,4 +12,5 @@
 @property(nonatomic,strong)UIImageView *chooseImg;
 @property(nonatomic,strong)EGOImageView *headImg;
 @property(nonatomic,strong)UILabel *nameLabel;
+@property(nonatomic,strong)UILabel *disLabel;
 @end
