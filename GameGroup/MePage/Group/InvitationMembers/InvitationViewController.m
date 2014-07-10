@@ -304,9 +304,12 @@
         NSMutableArray *arr = [NSMutableArray array];
         for (NSDictionary *dic  in customArr) {
             
-            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+            NSString *userid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            
+            if (![arr containsObject:userid]) {
+                 [arr addObject:userid];
+            }
         }
-        
         [self updataInfoWithId:[self getImageIdsStr:arr]];
     }
 }

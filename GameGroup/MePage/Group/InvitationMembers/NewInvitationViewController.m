@@ -128,7 +128,8 @@
                     [[TempData sharedInstance] setLat:lat Lon:lon];
                     [self getMembersFromNetWithMethod:@"293"];
                 } Failure:^{
-                    [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+                        [alert show];
                 }
                  ];
               }
@@ -151,6 +152,7 @@
 -(void)buildMainView
 {
     m_mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX+40, kScreenWidth, kScreenHeigth-startX-80)];
+    m_mainScroll.scrollEnabled = NO;
     m_mainScroll.contentSize  = CGSizeMake(960, 0);
     [self.view addSubview:m_mainScroll];
     
@@ -203,7 +205,8 @@
                 m_nearByCount+=20;
                 [m_gTableView reloadData];
                 [m_foot1 endRefreshing];
-            
+                [m_foot2 endRefreshing];
+
             }
             else if ([method isEqualToString:@"294"])
             {
@@ -215,10 +218,12 @@
                 }
                 m_sameRealmCount+=20;
                 [m_bTableView reloadData];
+                [m_foot1 endRefreshing];
                 [m_foot2 endRefreshing];
+
             }
         }
-        
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -279,7 +284,11 @@
         NSMutableArray *arr = [NSMutableArray array];
         for (NSDictionary *dic  in customArr) {
             
-            [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+            NSString *userid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            
+            if (![arr containsObject:userid]) {
+                [arr addObject:userid];
+            }
         }
         
         [self updataInfoWithId:[self getImageIdsStr:arr]];
@@ -564,7 +573,7 @@
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self getMembersFromNetWithMethod:@"294"];
     };
-    m_foot1 = footer;
+    m_foot2 = footer;
 }
 
 

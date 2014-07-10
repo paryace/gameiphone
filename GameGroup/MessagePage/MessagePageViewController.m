@@ -16,6 +16,8 @@
 #import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
 #import "FriendRecommendViewController.h"
+#import "NewFriendRecommendViewController.h"
+
 #import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
@@ -505,7 +507,7 @@
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        FriendRecommendViewController* VC = [[FriendRecommendViewController alloc] init];
+        NewFriendRecommendViewController* VC = [[NewFriendRecommendViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
         [self cleanUnReadCountWithType:2 Content:@"" typeStr:@""];
         return;
