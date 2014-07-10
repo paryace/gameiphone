@@ -573,7 +573,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self.cellTimerDyMe invalidate];
         self.cellTimerDyMe = nil;
     }
-//    [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]];
+    [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]];
     if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
         int i = 0;
         i+=dyMeMsgCount;

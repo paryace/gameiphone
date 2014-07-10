@@ -319,7 +319,7 @@
         [self updataInfoWithId:[self getImageIdsStr:arr]];
     }
 }
--(NSString*)getImageIdsStr:(NSArray*)imageIx`dArray
+-(NSString*)getImageIdsStr:(NSArray*)imageIdArray
 {
     NSString* headImgStr = @"";
     for (int i = 0;i<imageIdArray.count;i++) {

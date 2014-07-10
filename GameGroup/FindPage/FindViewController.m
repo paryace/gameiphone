@@ -151,9 +151,6 @@
     myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
 
-    //显示头像
-    NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
-    headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
 
 }
 #pragma mark 接收到好友动态消息通知
@@ -161,10 +158,7 @@
 {
     friendDunamicmsgCount = [self getFriendDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
-    
-    //显示头像
-    NSString * headImage = KISDictionaryHaveKey(sender.userInfo, @"img");
-    headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+    [self setDynamicImage];
 }
 
 #pragma mark 接收到公告消息通知
@@ -237,7 +231,7 @@
 //设置动态消息的头像
 -(void)setDynamicImage
 {
-    NSDictionary * dicInfo = [self getDynamicInfo];
+    NSDictionary * dicInfo = [self getFriendDynamicInfo];
     if (!dicInfo) {
         headImgView.imageURL = nil;
         [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
@@ -253,14 +247,7 @@
         }
     }
 }
-//获取缓存的动态消息内容
--(NSDictionary*)getDynamicInfo
-{
-    if (![self getMyDynamicInfo]) {
-        return [self getFriendDynamicInfo];
-    }
-    return [self getMyDynamicInfo];
-}
+
 //获取缓存的动态消息内容
 -(NSDictionary*)getFriendDynamicInfo
 {
@@ -272,22 +259,6 @@
     [unarchiver finishDecoding];
     return dic;
 }
-
-//获取缓存的动态消息内容
--(NSDictionary*)getMyDynamicInfo
-{
-    NSMutableData *data= [NSMutableData data];
-    NSDictionary *dic = [NSDictionary dictionary];
-    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
-    if(!data){
-        return nil;
-    }
-    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    dic = [unarchiver decodeObjectForKey: @"getDatat"];
-    [unarchiver finishDecoding];
-    return dic;
-}
-
 
 //初始化公告未读消息数量
 -(void)initMsgCount

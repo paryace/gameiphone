@@ -344,6 +344,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
         {
+             cell.headImageV.hidden = NO;
             NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
             cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
             cell.titleLabel.text = @"我发表了该内容";
@@ -354,6 +355,8 @@
         }
         else
         {
+            cell.headImageV.hidden = YES;
+            
             cell.titleLabel.text = @"";
             cell.nameLabel.text = @"暂无新的动态";
             cell.timeLabel.text = @"";
