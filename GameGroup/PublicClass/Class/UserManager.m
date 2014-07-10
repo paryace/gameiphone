@@ -97,7 +97,7 @@ static UserManager *userManager = NULL;
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
         }
         
-        NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
+        NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @   "title");
         NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
         NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
         
@@ -124,6 +124,10 @@ static UserManager *userManager = NULL;
         if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
             [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
         }
+    
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+
         [self updateMsgInfo:dicUser];
 //    });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];

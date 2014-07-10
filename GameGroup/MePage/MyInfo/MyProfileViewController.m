@@ -413,7 +413,6 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"104" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -421,16 +420,12 @@
             [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
             [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
         }
-        
         [self showMessageWindowWithContent:@"保存成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
-
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
-                
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
             }

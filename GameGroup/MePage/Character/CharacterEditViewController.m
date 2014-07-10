@@ -9,6 +9,7 @@
 #import "CharacterEditViewController.h"
 #import "AuthViewController.h"
 #import "AddCharacterViewController.h"
+#import "CharacterAndTitleService.h"
 
 @interface CharacterEditViewController ()
 {
@@ -72,7 +73,9 @@
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [m_characterArray removeAllObjects];
             [m_characterArray addObjectsFromArray:responseObject];
-             [m_myTabelView reloadData];
+            [m_myTabelView reloadData];
+            
+            [[CharacterAndTitleService singleton] saveCharachers:responseObject Userid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -254,10 +257,9 @@
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
-            
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];
             [m_myTabelView reloadData];
-            
+            [DataStoreManager deleteDSCharactersByCharactersId:KISDictionaryHaveKey(dic, @"id")];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

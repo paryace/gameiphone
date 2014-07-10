@@ -310,6 +310,7 @@
 +(void)deleteAllDSGroupList;
 
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type;
+
 +(NSMutableDictionary*)qSayHiMsg:(NSString *)type;
 
 //保存群组聊天消息
@@ -321,5 +322,18 @@
 +(void)saveNewNormalChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
 +(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
++(void)deleteDSlatestDynamic:(NSString*)userid;
+
++(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias;
+
+//删除单个角色
++(void)deleteDSCharactersByCharactersId:(NSString*)charactersId;
+
+//根据角色id删除头衔
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId;
+
+//根据Type删除头衔
++(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;
 
 @end

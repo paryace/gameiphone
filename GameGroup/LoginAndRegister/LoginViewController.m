@@ -199,7 +199,7 @@
         [app.xmppHelper connect];
         
         
-//        [[UserManager singleton] saveUserInfo:responseObject];
+        [[UserManager singleton] saveUserInfo:responseObject];
         
 //        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
 //        [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];

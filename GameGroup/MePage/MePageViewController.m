@@ -38,7 +38,10 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"appBecomeActive" object:Nil];
-
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:userInfoUpload object:Nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateTitleInfo object:Nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateCharacterInfo object:Nil];
+    
     [super viewWillDisappear:animated];
 }
 
@@ -52,8 +55,10 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    [self getUserInfoByNet];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView:) name:@"dynamicFromMe_wx_notification" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateTitleInfo object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateCharacterInfo object:nil];
+    [self refreUserInfo];
 }
 
 - (void)viewDidLoad
@@ -61,7 +66,6 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-    
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -69,20 +73,58 @@
     m_myTableView.showsHorizontalScrollIndicator = NO;
     m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:m_myTableView];
-    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-    
- 
     m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
     [m_myTableView reloadData];
-    
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:isFirstIntoMePage]) {
-        [self getUserInfoByNet];
+}
+
+-(void)updateUserInfo:(NSNotification*)notifition{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePageTitleAndCharaters", NULL);
+    dispatch_async(queueselect, ^{
+        m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+        m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+        });
+    });
+   
+    [m_myTableView reloadData];
+}
+-(void)refreUserInfo
+{
+    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    if (!userDic) {
+        [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    }else{
+        [self iniUserInfo];
     }
 }
 
+-(void)iniUserInfo
+{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePage", NULL);
+    dispatch_async(queueselect, ^{
+        m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+        });
+    });
+
+}
+
+//用户信息获取成功接收到的广播
+-(void)getInfoFromUserManager:(NSNotification *)notification
+{
+    if (![[[notification.userInfo objectForKey:@"user"] objectForKey:@"userid"]isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
+    {
+        return;
+    }
+    NSDictionary *dictionary = notification.userInfo;
+    m_hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+    [m_myTableView reloadData];
+}
 //加在本地数据
 -(NSMutableDictionary*)getLocalInfo
 {
@@ -91,52 +133,22 @@
     NSMutableArray * titlessss= [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
     NSMutableArray * chasss= [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     NSMutableDictionary * latestDynamicMsg = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    NSString * fansnum = [[NSUserDefaults standardUserDefaults] objectForKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    NSString * zannum = [[NSUserDefaults standardUserDefaults] objectForKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [info setObject:latestDynamicMsg forKey:@"latestDynamicMsg"];
     [info setObject:userDic forKey:@"user"];
     [info setObject:chasss forKey:@"characters"];
     [info setObject:titlessss forKey:@"title"];
     [info setObject:KISDictionaryHaveKey(userDic, @"gameids") forKey:@"gameids"];
     [info setObject:KISDictionaryHaveKey(userDic, @"shiptype") forKey:@"shiptype"];
-    [info setObject:@"0" forKey:@"zannum"];
-    [info setObject:@"0" forKey:@"fansnum"];
+    [info setObject:[GameCommon getNewStringWithId:zannum] forKey:@"zannum"];
+    [info setObject:[GameCommon getNewStringWithId:fansnum] forKey:@"fansnum"];
     return info;
 }
 
 -(void)reloadTableView:(id)sender
 {
     [m_myTableView reloadData];
-}
-
-- (void)getUserInfoByNet
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:@"201" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    if (!m_hostInfo) {
-        [hud show:YES];
-    }
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            m_hostInfo = [[HostInfo alloc] initWithHostInfo:responseObject];
-            [m_myTableView reloadData];
-            [[UserManager singleton] saveUserInfo:responseObject];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
-    }];
 }
 
 #pragma mark 表格
@@ -332,36 +344,12 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
         {
-            if ([KISDictionaryHaveKey(m_hostInfo.state, @"destUser") isKindOfClass:[NSDictionary class]]) {//目标 别人评论了我
-                NSDictionary* destDic = KISDictionaryHaveKey(m_hostInfo.state, @"destUser");
-                NSString * imageIds=KISDictionaryHaveKey(destDic, @"userimg");
-                cell.headImageV.imageURL = [ImageService getImageStr2:imageIds];
-                cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(destDic, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(destDic, @"nickname") : KISDictionaryHaveKey(destDic, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-            }
-            else
-            {
-                NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
-                cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
-                if([KISDictionaryHaveKey(m_hostInfo.state, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]])
-                {
-                    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"type")] isEqualToString:@"3"]) {
-                        cell.titleLabel.text = @"我发表了该内容";
-                    }
-                    else
-                        cell.titleLabel.text = [NSString stringWithFormat:@"我%@",KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-                }
-                else
-                    cell.titleLabel.text = [NSString stringWithFormat:@"%@%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"nickname") : KISDictionaryHaveKey(m_hostInfo.state, @"alias") , KISDictionaryHaveKey(m_hostInfo.state, @"showtitle")];
-            }
-            NSString* tit = [[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")]] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"msg") : KISDictionaryHaveKey(m_hostInfo.state, @"title");
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"title")] isEqualToString:@""]) {
-                cell.nameLabel.text = tit;
-                
-            }
-            else
-            {
-                cell.nameLabel.text = [NSString stringWithFormat:@"「%@」", tit];
-            }
+            NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
+            cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
+            cell.titleLabel.text = @"我发表了该内容";
+            cell.titleLabel.text = [NSString stringWithFormat:@"%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"nickname") : KISDictionaryHaveKey(m_hostInfo.state, @"alias")];
+            NSString* tit = [GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"msg")]];
+            cell.nameLabel.text = tit;
             cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
         }
         else
@@ -406,8 +394,6 @@
             cell.pveTitle.hidden=NO;
             cell.noCharacterLabel.hidden = YES;
             NSDictionary* tempDic = [m_hostInfo.charactersArr objectAtIndex:indexPath.row];
-
-//            NSString* realm =  KISDictionaryHaveKey(tempDic, @"realm");//服务器
             NSString* realm =  KISDictionaryHaveKey(tempDic, @"simpleRealm");//服务器
             NSString* v1=KISDictionaryHaveKey(tempDic, @"value1");//部落
             NSString* v2=KISDictionaryHaveKey(tempDic, @"value2");//战斗力

@@ -1364,8 +1364,7 @@
                     dUser.superstar = superstar?superstar:@"";
                     dUser.userId = userId?userId:@"";
                     dUser.userName = myUserName?myUserName:@"";
-                    
-                    
+                    [self updateDSlatestDynamic:userId NickName:nickName Image:headImgID Alias:alias];
                     if (![userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
                         if ([shiptype isEqualToString:@"1"]||[shiptype isEqualToString:@"2"]) {
                             NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"index==[c]%@",nameIndex];
@@ -2676,7 +2675,6 @@
     NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userimg")];
     NSString * username = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"username")];
     NSString * zannum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"zannum")];
-    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
@@ -2702,6 +2700,27 @@
     }];
 }
 
+//删除最后一条动太
++(void)deleteDSlatestDynamic:(NSString*)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
+       [latestDynamic MR_deleteInContext:localContext];
+    }];
+}
+
++(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
+        latestDynamic.alias = alias?alias:@"";
+        latestDynamic.nickname = nickname?nickname:@"";
+        latestDynamic.userimg = userimg?userimg:@"";
+    }];
+}
+
 //删除所有角色
 +(void)deleteAllDSCharacters:(NSString*)userid
 {
@@ -2713,6 +2732,19 @@
         }
     }];
 }
+
+//删除单个角色
++(void)deleteDSCharactersByCharactersId:(NSString*)charactersId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        DSCharacters * dbCharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
+        if (dbCharacters) {
+            [dbCharacters MR_deleteInContext:localContext];
+        }
+    }];
+}
+
 //删除所有头衔
 +(void)deleteAllDSTitle:(NSString*)userid
 {
@@ -2725,7 +2757,30 @@
     }];
 }
 
-
+//根据角色id删除头衔
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        NSArray * dbTitles = [DSTitle MR_findFirstWithPredicate:predicate];
+        for (DSTitle* title in dbTitles) {
+            [title MR_deleteInContext:localContext];
+        }
+    }];
+}
+//根据Type删除头衔
++(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"hide==[c]%@ and userid==[c]%@",hide,userid];
+        NSArray * dbTitles = [DSTitle MR_findAllWithPredicate:predicate];
+        if (dbTitles.count>0) {
+            for (DSTitle* title in dbTitles) {
+                [title MR_deleteInContext:localContext];
+            }
+        }
+    }];
+}
 
 #pragma mark - 保存角色
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid
@@ -2907,7 +2962,7 @@
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
     DSLatestDynamic *lastds = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
     if (lastds) {
-        [lasrDic setObject:lastds.alias forKey:@"alias"];
+        [lasrDic setObject:lastds.alias?lastds.alias:@"" forKey:@"alias"];
         [lasrDic setObject:lastds.commentnum forKey:@"commentnum"];
         [lasrDic setObject:lastds.createDate forKey:@"createDate"];
         [lasrDic setObject:lastds.msgId forKey:@"msgId"];

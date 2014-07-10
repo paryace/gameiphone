@@ -164,7 +164,6 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
         
-            
             NSString *strImg = KISDictionaryHaveKey(responseObject, @"coverImg");
             topImgaeView.imageURL = [ImageService getImageUrl4:strImg];
             if (m_currPageCount==0) {
@@ -174,6 +173,12 @@
             }else{
                 [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
             }
+            
+            if (dataArray.count>0) {
+                [self setLastDy:[dataArray objectAtIndex:0]];
+            }else{
+                [DataStoreManager deleteDSlatestDynamic:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+            }
             m_currPageCount++;
             [m_header endRefreshing];
             [m_footer endRefreshing];
@@ -181,8 +186,6 @@
             [hud  hide:YES];
         
         }
-        
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -197,6 +200,15 @@
     
 }
 
+
+-(void)setLastDy:(NSMutableDictionary*)dyDic
+{
+    NSMutableDictionary * simpleUsertInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];;
+    [dyDic setObject:KISDictionaryHaveKey(simpleUsertInfo, @"img") forKey:@"userimg"];
+    [dyDic setObject:KISDictionaryHaveKey(simpleUsertInfo, @"nickname") forKey:@"nickname"];
+    [dyDic setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
+    [DataStoreManager saveDSlatestDynamic:dyDic];
+}
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
