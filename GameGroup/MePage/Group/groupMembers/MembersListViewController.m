@@ -173,7 +173,7 @@
         cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
         NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
         
-        cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:80];
+        cell.headImageView.imageURL = [ImageService getImageStr:imageIds Width:100];
         
         NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
         cell.sexImageView.image =KUIImage(genderimage);

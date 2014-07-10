@@ -30,6 +30,13 @@
         self.nameLabel.font = [UIFont systemFontOfSize:15];
         [self addSubview:self.nameLabel];
         
+        
+        self.disLabel = [[UILabel alloc]initWithFrame:CGRectMake(170, 5, 130, 20)];
+        self.disLabel.backgroundColor = [UIColor clearColor];
+        self.disLabel.textAlignment = NSTextAlignmentRight;
+        self.disLabel.font = [UIFont systemFontOfSize:13];
+        [self addSubview:self.disLabel];
+        
     }
     return self;
 }

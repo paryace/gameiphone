@@ -85,6 +85,11 @@
     [self buildMainView];
     [self buildlistView];
     
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"获取中...";
+    
+    
     [self getInfo];
     [self addFootView1];
     [self addFootView2];
@@ -304,17 +309,17 @@
     m_mainScroll.contentSize  = CGSizeMake(960, 0);
     [self.view addSubview:m_mainScroll];
     
-    m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeigth-startX-80)];
+    m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeigth-startX-96)];
     m_rTableView.delegate = self;
     m_rTableView.dataSource =self;
     [m_mainScroll addSubview:m_rTableView];
     
-    m_gTableView = [[UITableView alloc]initWithFrame:CGRectMake(kScreenWidth,0, kScreenWidth, kScreenHeigth-startX-80)];
+    m_gTableView = [[UITableView alloc]initWithFrame:CGRectMake(kScreenWidth,0, kScreenWidth, kScreenHeigth-startX-96)];
     m_gTableView.delegate = self;
     m_gTableView.dataSource =self;
     [m_mainScroll addSubview:m_gTableView];
     
-    m_bTableView = [[UITableView alloc]initWithFrame:CGRectMake(kScreenWidth*2,0,  kScreenWidth, kScreenHeigth-startX-80)];
+    m_bTableView = [[UITableView alloc]initWithFrame:CGRectMake(kScreenWidth*2,0,  kScreenWidth, kScreenHeigth-startX-96)];
     m_bTableView.delegate = self;
     m_bTableView.dataSource =self;
     [m_mainScroll addSubview:m_bTableView];
@@ -322,6 +327,7 @@
 }
 -(void)getMembersFromNetWithMethod:(NSString *)method
 {
+    [hud show:YES];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     if ([method isEqualToString:@"293"]) {
@@ -341,6 +347,7 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             if ([method isEqualToString:@"293"])
             {
@@ -376,6 +383,7 @@
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -488,6 +496,30 @@
     }];
     
 }
+
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (tableView ==m_bTableView) {
+        return 30;
+    }else{
+        return 0;
+    }
+}
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (tableView == m_bTableView) {
+        return self.realmStr;
+    }else{
+        return nil;
+    }
+    
+}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView ==m_rTableView)
@@ -525,15 +557,33 @@
     if (tableView ==m_rTableView)
     {
         tempDict = m_rArray[indexPath.row];
+        
+        cell.disLabel.hidden = YES;
+
     }
     else if (tableView ==m_gTableView)
     {
         tempDict = m_gArray[indexPath.row];
+        cell.disLabel.hidden = NO;
+        NSString *distance = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")];
+        double dis = [distance doubleValue];
+        double gongLi = dis/1000;
+        
+        NSString* allStr = @"";
+        if (gongLi < 0 || gongLi == 9999) {//距离-1时 存的9999000
+            allStr = @"未知";
+        }
+        else
+            allStr = [allStr stringByAppendingFormat:@"%.2fkm", gongLi];
+        cell.disLabel .text = allStr;
+        
     }
     else if (tableView ==m_bTableView)
     {
         tempDict = m_bArray[indexPath.row];
+        cell.disLabel.hidden = YES;
     }
+    
     
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];

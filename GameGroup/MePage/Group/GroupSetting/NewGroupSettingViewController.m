@@ -14,7 +14,7 @@
 #import "PublishBillboardViewController.h"
 #import "EGOImageView.h"
 #import "SoundSetCell.h"
-#import "InvitationViewController.h"
+#import "NewInvitationViewController.h"
 typedef enum : NSUInteger {
     TypeNormal,
     TypeAdministrator
@@ -414,8 +414,9 @@ typedef enum : NSUInteger {
 //邀请新成员
 -(void)new:(id)sender
 {
-    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
     inv.groupId = self.groupId;
+    inv.realmStr = self.realmStr;
     [self.navigationController pushViewController:inv animated:YES];
 }
 

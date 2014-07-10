@@ -10,4 +10,6 @@
 
 @interface NewInvitationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,copy)NSString *groupId;
+@property(nonatomic,copy)NSString *realmStr;
+
 @end
