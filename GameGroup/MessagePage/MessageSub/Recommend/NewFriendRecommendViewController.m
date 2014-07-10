@@ -43,9 +43,6 @@
     isChoose = YES;
     UIButton *chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    //    [chooseAllBtn setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    //    [chooseAllBtn setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
-//    [chooseAllBtn setTitle:@"全不选" forState:UIControlStateNormal];
     [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];

@@ -19,6 +19,7 @@
     NSMutableArray *addMemArray;
     AddGroupMemberCell*cell1;
     UIButton *m_button;
+    UIButton *chooseAllBtn;
 }
 @end
 
@@ -39,6 +40,12 @@
     
     [self setTopViewWithTitle:@"添加成员" withBackButton:YES];
     
+    chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [chooseAllBtn setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
+    [self.view addSubview:chooseAllBtn];
+    [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
+
     resultDict = [NSMutableDictionary dictionary];
     keyArr = [NSMutableArray array];
     addMemArray = [NSMutableArray array];
@@ -63,7 +70,6 @@
     
     
 }
-
 -(void)buildAddMembersScroll
 {
     UIView *customView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50-(KISHighVersion_7?0:20), 320, 50)];

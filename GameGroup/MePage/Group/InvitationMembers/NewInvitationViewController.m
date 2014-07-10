@@ -41,7 +41,8 @@
     UIButton *m_btn2;
     UIButton *m_btn3;
     
-    
+    NSInteger      m_tabTag;
+    UIButton * chooseAllBtn;
 }
 @end
 
@@ -60,6 +61,15 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"添加成员" withBackButton:YES];
+    
+    chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
+    [chooseAllBtn setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
+    [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateSelected];
+    [self.view addSubview:chooseAllBtn];
+    [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
+
+    
     m_rArray = [NSMutableArray array];
     m_gArray = [NSMutableArray array];
     m_bArray = [NSMutableArray array];
@@ -67,6 +77,7 @@
     m_sameRealmCount =0;
     isFirstNearBy = YES;
     isFirstSameRealm = YES;
+    m_tabTag = 1;
     addMemArray = [NSMutableArray array];
 [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
     
@@ -134,6 +145,92 @@
     [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
     [m_listView addSubview:m_button];
 }
+-(void)didClickChooseAll:(UIButton *)sender
+{
+    switch (m_tabTag) {
+        case 1:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_rArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+ 
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_rArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_rArray];
+            }
+            [m_rTableView reloadData];
+            
+            break;
+        case 2:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_gArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_gArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_gArray];
+
+            }
+            [m_gTableView reloadData];
+
+            break;
+        case 3:
+            if (sender.selected) {
+                sender.selected = NO;
+                for (NSMutableDictionary *dic in m_bArray) {
+                    [dic setObject:@"1" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+
+            }else{
+                sender.selected = YES;
+                for (NSMutableDictionary *dic in m_bArray) {
+                    [dic setObject:@"2" forKey:@"choose"];
+
+                    if ([addMemArray containsObject:dic]) {
+                        [addMemArray removeObject:dic];
+                    }
+                }
+                [addMemArray addObjectsFromArray:m_bArray];
+
+            }
+            [m_bTableView reloadData];
+
+            break;
+   
+        default:
+            break;
+    }
+    [m_customCollView reloadData];
+    
+}
 
 
 -(void)qiehuantype:(UIButton *)seg
@@ -150,7 +247,8 @@
             m_btn1.selected =YES;
             m_btn2.selected = NO;
             m_btn3.selected = NO;
-            
+            chooseAllBtn.selected = NO;
+            m_tabTag = 1;
             m_mainScroll.contentOffset = CGPointMake(0, 0);
             
             break;
@@ -161,7 +259,8 @@
             m_btn1.selected =NO;
             m_btn2.selected = YES;
             m_btn3.selected = NO;
-
+            chooseAllBtn.selected = NO;
+            m_tabTag = 2;
             m_mainScroll.contentOffset = CGPointMake(320, 0);
             if (isFirstNearBy) {
                 [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
@@ -184,7 +283,8 @@
             m_btn1.selected =NO;
             m_btn2.selected = NO;
             m_btn3.selected = YES;
-
+            chooseAllBtn.selected = NO;
+            m_tabTag =3;
             m_mainScroll.contentOffset = CGPointMake(640, 0);
             if (isFirstSameRealm) {
                 [self getMembersFromNetWithMethod:@"294"];
@@ -303,7 +403,7 @@
     
     for (int i =0; i<keys.count; i++) {
         NSArray *array = [result objectForKey:keys[i]];
-        for (NSDictionary *dic in array) {
+        for (NSMutableDictionary *dic in array) {
             [dic setValue:@"1" forKey:@"choose"];
             [dic setValue:@"friends" forKeyPath:@"tabType"];
         }
