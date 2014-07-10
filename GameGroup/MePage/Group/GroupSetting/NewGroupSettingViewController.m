@@ -218,7 +218,7 @@ typedef enum : NSUInteger {
             tlb.font =[ UIFont systemFontOfSize:14];
             [cell.contentView addSubview:tlb];
             
-            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(0, 15, 320-50, 20)];
+            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(113, 15, 320-50-113, 20)];
             groupNameLable.backgroundColor = [UIColor clearColor];
             groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
             groupNameLable.text = self.CharacterInfo;
@@ -321,6 +321,8 @@ typedef enum : NSUInteger {
     if (indexPath.section==0) {
         if (indexPath.row==0) {//群组消息设置
             [self hint];
+        }else if (indexPath.row ==1){
+            [groupNameLable becomeFirstResponder];
         }else if (indexPath.row ==2){
             [self new:nil];
         }
