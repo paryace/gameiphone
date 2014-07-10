@@ -75,10 +75,6 @@
 
     
     m_selectRealmButton = [[UIButton alloc] initWithFrame:CGRectMake(60, KISHighVersion_7 ? 20 : 0, 200, 20)];
-//    [m_selectRealmButton setImage:KUIImage(@"toparrow_down") forState:UIControlStateNormal];
-//    [m_selectRealmButton setImage:KUIImage(@"toparrow_up") forState:UIControlStateSelected];
-//    m_selectRealmButton.imageEdgeInsets = UIEdgeInsetsMake(26, 160, 26, 26);
-//    m_selectRealmButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 18);
     [m_selectRealmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     m_selectRealmButton.titleLabel.font = [UIFont boldSystemFontOfSize:20.0];
     m_selectRealmButton.backgroundColor = [UIColor clearColor];
@@ -93,6 +89,7 @@
     [m_selectImage setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     m_selectImage.titleLabel.font = [UIFont boldSystemFontOfSize:20.0];
     m_selectImage.backgroundColor = [UIColor clearColor];
+    [m_selectImage addTarget:self action:@selector(selectRealmClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_selectImage];
 
     
@@ -211,8 +208,8 @@
 -(void)setTitleOrgin
 {
     CGSize nameSize = [m_selectRealmButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:20.0] constrainedToSize:CGSizeMake(182, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    m_selectRealmButton.frame = CGRectMake((200-(nameSize.width>185?185:nameSize.width)+20-3)/2+50,(startX)/2, nameSize.width, 20);
-    m_selectImage.frame = CGRectMake(m_selectRealmButton.frame.origin.x+m_selectRealmButton.frame.size.width+3,(startX)/2, 20, 15);
+    m_selectRealmButton.frame = CGRectMake((200-(nameSize.width>185?185:nameSize.width)+20-3)/2+50,KISHighVersion_7 ? 20 : 0, nameSize.width, 44);
+    m_selectImage.frame = CGRectMake(m_selectRealmButton.frame.origin.x+m_selectRealmButton.frame.size.width+3,KISHighVersion_7 ? 35 : 15, 20, 15);
 }
 
 
@@ -319,11 +316,11 @@
 #pragma mark 服务器筛选
 - (void)selectRealmClick:(id)sender
 {
-    m_selectRealmButton.selected = !m_selectRealmButton.selected;
+    m_selectImage.selected = !m_selectImage.selected;
     
     float viewHeight = 21 + [m_realmsArray count] * 40;
 //    [UIView animateWithDuration:0.4 animations:^{
-        if (m_selectRealmButton.selected) {
+        if (m_selectImage.selected) {
             m_selectView.center = CGPointMake(kScreenWidth/2, startX + viewHeight/2);
         }
         else
