@@ -1645,7 +1645,8 @@ UINavigationControllerDelegate>
 - (void)messageAck:(NSNotification *)notification
 {
     NSDictionary* tempDic = notification.userInfo;
-    NSInteger changeRow = [self getMsgRowWithId:KISDictionaryHaveKey(tempDic, @"src_id")];
+    NSString * msgId = KISDictionaryHaveKey(tempDic, @"src_id");
+    NSInteger changeRow = [self getMsgRowWithId:msgId];
     [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
 }
 

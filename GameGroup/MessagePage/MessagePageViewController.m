@@ -387,6 +387,8 @@
                 cell.contentLabel.text =@"";
             }
             cell.nameLabel.text = @"有新的打招呼信息";
+            cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
+
         }
     }
     else if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"character"] ||
@@ -464,12 +466,24 @@
     
     [cell setNotReadMsgCount:message];
     //-- end
-    if (KISDictionaryHaveKey(message,@"sendTime")) {
-        cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
-        
+    
+    
+    if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHi"]) {//打招呼
+        if (firstSayHiMsg) {
+            if (KISDictionaryHaveKey(firstSayHiMsg,@"sendTime")) {
+                 cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(firstSayHiMsg,@"sendTime") substringToIndex:10]];
+            }
+        }
+    }else{
+        if (KISDictionaryHaveKey(message,@"sendTime")) {
+            cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
+            
+        }
     }
     return cell;
 }
+
+
 -(NSDate*) convertDateFromString:(NSString*)uiDate
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init] ;

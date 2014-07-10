@@ -1180,14 +1180,9 @@
 
 
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type
-{
-    // NSManagedObjectContext *mainContext  = [NSManagedObjectContext MR_defaultContext];
-    NSMutableArray * msgList = [NSMutableArray array];
+{    NSMutableArray * msgList = [NSMutableArray array];
     NSPredicate * predicate= [NSPredicate predicateWithFormat:@"sayHiType==[c]%@",type];
-     NSLog(@"v1111取库开始");
     NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate];
-   // NSArray *array =[DSThumbMsgs MR_findAllSortedBy:@"sendTime" ascending:NO withPredicate:predicate inContext:mainContext];
-    NSLog(@"v1111取库结束");
     for (DSThumbMsgs * apm in array) {
         [msgList addObject:[self queryDSThumbMessage:apm]];
     }
