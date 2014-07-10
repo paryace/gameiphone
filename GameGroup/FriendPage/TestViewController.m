@@ -1262,12 +1262,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
-        [hudadd hide:YES];
-        
-//        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
-        
         [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
-        
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
         if ([type isEqualToString:@"2"]) {
@@ -1290,6 +1285,7 @@
             
             [self showMessageWindowWithContent:@"关注成功" imageType:0];
         }
+        [hudadd hide:YES];
         if ([type isEqualToString:@"2"]) {
             if (self.isFansPage) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
