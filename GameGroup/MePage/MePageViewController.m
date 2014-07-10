@@ -548,7 +548,9 @@
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
-            if([gameId isEqualToString:@"1"]||[gameId isEqualToString:@"2"])
+            
+            NSString *fileMsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")];
+            if(![fileMsg isEqualToString:@"notSupport"])
             {
                 [[Custom_tabbar showTabBar] hideTabBar:YES];
                 CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];

@@ -87,7 +87,7 @@
 //存储“好友”的关注人列表
 
 +(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
-
++(void)deleteMemberFromListWithUserid:(NSString *)userid;
 
 
 +(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息

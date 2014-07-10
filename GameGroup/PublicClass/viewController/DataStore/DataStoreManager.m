@@ -1938,6 +1938,19 @@
     }
 }
 
++(void)deleteMemberFromListWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
+        if (Recommend)
+        {
+            [Recommend MR_deleteInContext:localContext];
+        }
+    }];
+     
+}
+
 #pragma mark -
 +(NSString *)convertChineseToPinYin:(NSString *)chineseName
 {
@@ -2393,12 +2406,12 @@
         }
         Recommend.userName = userName;
         Recommend.nickName = userNickname;
-        if ([DataStoreManager ifHaveThisUserInUserManager:fromID] || [DataStoreManager ifIsAttentionWithUserId:userid]) {
-            Recommend.state = @"1";
-        }
-        else{
+//        if ([DataStoreManager ifHaveThisUserInUserManager:fromID] || [DataStoreManager ifIsAttentionWithUserId:userid]) {
+//            Recommend.state = @"1";
+//        }
+//        else{
             Recommend.state = @"0";
-        }
+//        }
         Recommend.headImgID = headImgID;
         Recommend.fromStr = fromStr;
         Recommend.fromID = fromID;

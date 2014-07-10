@@ -1264,7 +1264,9 @@
         [self end];
         [hudadd hide:YES];
         
-        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
+//        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
+        
+        [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
         
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
