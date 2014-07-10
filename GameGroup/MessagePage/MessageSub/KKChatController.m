@@ -206,7 +206,7 @@ UINavigationControllerDelegate>
 
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
-        if (self.unreadMsgCount>20) {
+        if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
             _titleLabel.hidden = YES;
             [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
             
@@ -2186,15 +2186,20 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
-        loadMoreMsgHeight = 0;
-        for (int i = 0; i < array.count; i++) {
-            [messages insertObject:array[i] atIndex:i];
-            CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
-            loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
-        }
-        loadHistoryArrayCount = array.count;
-        [header endRefreshing];
+        dispatch_barrier_async(queue, ^{
+            array = [self getMsgArray:messages.count-historyMsg PageSize:20];
+            loadMoreMsgHeight = 0;
+            for (int i = 0; i < array.count; i++) {
+                [messages insertObject:array[i] atIndex:i];
+                CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
+                loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
+            }
+            loadHistoryArrayCount = array.count;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [header endRefreshing];
+            });
+        });
+        
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
