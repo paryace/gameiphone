@@ -341,8 +341,8 @@
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
-    dispatch_async(queue, ^{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
+    dispatch_async(queueselect, ^{
         NSLog(@"v333333 - in queue - getFriendDateFromDataSore");
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
