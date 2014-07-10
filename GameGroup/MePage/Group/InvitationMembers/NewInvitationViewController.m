@@ -43,6 +43,9 @@
     
     NSInteger      m_tabTag;
     UIButton * chooseAllBtn;
+    
+    NSString *m_realmStr;
+    
 }
 @end
 
@@ -79,6 +82,7 @@
     isFirstSameRealm = YES;
     m_tabTag = 1;
     addMemArray = [NSMutableArray array];
+    
 [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
     
     [self buildTopView];
@@ -162,7 +166,13 @@
                         [addMemArray removeObject:dic];
                     }
                 }
- 
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];
+                }
+                
+
             }else{
                 sender.selected = YES;
                 for (NSMutableDictionary *dic in m_rArray) {
@@ -173,8 +183,17 @@
                     }
                 }
                 [addMemArray addObjectsFromArray:m_rArray];
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+                
+
             }
+            
             [m_rTableView reloadData];
+
+
             
             break;
         case 2:
@@ -187,6 +206,11 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+                
 
             }else{
                 sender.selected = YES;
@@ -198,6 +222,11 @@
                     }
                 }
                 [addMemArray addObjectsFromArray:m_gArray];
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+                
 
             }
             [m_gTableView reloadData];
@@ -213,6 +242,11 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+                
 
             }else{
                 sender.selected = YES;
@@ -224,6 +258,11 @@
                     }
                 }
                 [addMemArray addObjectsFromArray:m_bArray];
+                if (addMemArray.count==0) {
+                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+                }else{
+                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+                
 
             }
             [m_bTableView reloadData];
@@ -367,6 +406,7 @@
             else if ([method isEqualToString:@"294"])
             {
                 isFirstSameRealm = NO;
+                m_realmStr = [[responseObject objectAtIndex:0]objectForKey:@"groupRealm"];
                 if (m_sameRealmCount==0) {
                     [m_bArray removeAllObjects];
                     [m_bArray addObjectsFromArray:responseObject];
@@ -513,11 +553,10 @@
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (tableView == m_bTableView) {
-        return self.realmStr;
+        return m_realmStr?m_realmStr:@"";
     }else{
         return nil;
     }
-    
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -525,7 +564,6 @@
     if (tableView ==m_rTableView)
     {
         return m_rArray.count;
-        
     }
     else if (tableView ==m_gTableView)
     {

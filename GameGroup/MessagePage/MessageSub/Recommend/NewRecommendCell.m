@@ -27,11 +27,18 @@
         
         [self addSubview:self.headImg];
         
-        self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 10, 200, 30)];
+        self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 10, 200, 20)];
         self.nameLabel.backgroundColor = [UIColor clearColor];
         self.nameLabel.font = [UIFont systemFontOfSize:15];
         [self addSubview:self.nameLabel];
         
+        self.disLb = [[UILabel alloc]initWithFrame:CGRectMake(110, 30, 200, 30)];
+        self.disLb.backgroundColor = [UIColor clearColor];
+        self.disLb.font = [UIFont systemFontOfSize:12];
+        self.disLb.textColor = [UIColor grayColor];
+        self.disLb.numberOfLines =2;
+        [self addSubview:self.disLb];
+
 
     }
     return self;

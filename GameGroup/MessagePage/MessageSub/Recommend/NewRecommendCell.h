@@ -17,7 +17,7 @@
 @property(nonatomic,strong)EGOImageView *headImg;
 @property(nonatomic,strong)UILabel *nameLabel;
 @property(nonatomic,assign)id<RecommendCellDelegate>myDelegate;
-
+@property(nonatomic,strong)UILabel *disLb;
 
 -(void)setChooseimgWithString:(NSString *)str;
 

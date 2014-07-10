@@ -220,7 +220,7 @@
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     
     cell.headImg.placeholderImage = [UIImage imageNamed:headplaceholderImage];
-    NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+    NSString * imageids=KISDictionaryHaveKey(tempDict, @"headImgID");
     cell.headImg.imageURL=[ImageService getImageStr:imageids Width:80];
     NSString * nickName=[tempDict objectForKey:@"alias"];
     if ([GameCommon isEmtity:nickName]) {
@@ -231,6 +231,7 @@
     }else{
         [cell.chooseImg setImage: KUIImage(@"unchoose") forState:UIControlStateNormal];
     }
+    cell.disLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"recommendReason")];
     cell.nameLabel.text = nickName;
     return cell;
 }
