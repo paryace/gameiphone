@@ -2299,7 +2299,7 @@ UINavigationControllerDelegate>
             [tempDic setValue:msgId forKey:@"messageuuid"];
             [tempDic setValue:@"4" forKey:@"status"];
             
-            if (messages.count>=60) {
+            if (messages.count>=60&&endOfTable) {
                 [self clearMessage];
                 [self loadMessage:0 PageSize:20];
 //                dispatch_async(dispatch_get_main_queue(), ^{
@@ -2309,7 +2309,6 @@ UINavigationControllerDelegate>
             
             [messages addObject:tempDic];
             [self newMsgToArray:tempDic];
-//            dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
                 if (endOfTable) {
                     if (messages.count>0) {
@@ -2330,8 +2329,8 @@ UINavigationControllerDelegate>
 //发送已读消息
 - (void)comeBackDisplayed:(NSString*)sender msgId:(NSString*)msgId
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.comeBack", NULL);
-    dispatch_async(queue, ^{
+    dispatch_queue_t queueload = dispatch_queue_create("com.living.game.comeBack", NULL);
+    dispatch_async(queueload, ^{
         NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Displayed",@"msgStatus", nil];
         NSString* message=[dic JSONRepresentation];
         NSString* nowTime = [GameCommon getCurrentTime];

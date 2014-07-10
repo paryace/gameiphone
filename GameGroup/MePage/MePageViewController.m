@@ -141,8 +141,8 @@
     [info setObject:titlessss forKey:@"title"];
     [info setObject:KISDictionaryHaveKey(userDic, @"gameids") forKey:@"gameids"];
     [info setObject:KISDictionaryHaveKey(userDic, @"shiptype") forKey:@"shiptype"];
-    [info setObject:[GameCommon getNewStringWithId:zannum] forKey:@"zannum"];
-    [info setObject:[GameCommon getNewStringWithId:fansnum] forKey:@"fansnum"];
+    [info setObject:[GameCommon getNewStringWithId:zannum?zannum:@""] forKey:@"zannum"];
+    [info setObject:[GameCommon getNewStringWithId:fansnum?fansnum:@""] forKey:@"fansnum"];
     return info;
 }
 

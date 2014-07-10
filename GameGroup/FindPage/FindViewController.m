@@ -72,11 +72,8 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super  viewWillDisappear:animated];
-    //好友动态
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"frienddunamicmsgChange_WX" object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"mydynamicmsg_wx" object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"cleanInfoOffinderPage_wx" object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:Billboard_msg object:nil];}
+    
+}
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -151,7 +148,6 @@
 -(void)receivedMyDynamicMsg:(NSNotification*)sender
 {
     //添加Tab上的小红点
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
 
@@ -163,7 +159,6 @@
 #pragma mark 接收到好友动态消息通知
 -(void)receivedFriendDynamicMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     friendDunamicmsgCount = [self getFriendDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
     
@@ -175,7 +170,6 @@
 #pragma mark 接收到公告消息通知
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
     billboardMsgCount++;
     [self setMsgBillBoardConunt:billboardMsgCount];
 }

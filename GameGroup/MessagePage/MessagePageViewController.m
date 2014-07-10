@@ -123,11 +123,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-   
-
 
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemindBegin) name:@"StartGetFriendListForNet" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemind) name:@"getFriendListForNet_wx" object:nil];
+    //好友动态
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
+    //与我相关
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
+    //群公告消息广播接收
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHelloReceived:) name:kFriendHelloReceived object:nil];
@@ -646,7 +650,22 @@
         [self displayMsgsForDefaultView];
     }
 }
+#pragma mark 接收到于我相关消息通知
+-(void)receivedMyDynamicMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
+#pragma mark 接收到好友动态消息通知
+-(void)receivedFriendDynamicMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
 
+#pragma mark 接收到公告消息通知
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
 
 - (void)didReceiveMemoryWarning
 {
