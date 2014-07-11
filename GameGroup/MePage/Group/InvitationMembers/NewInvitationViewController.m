@@ -425,8 +425,9 @@
             else if ([method isEqualToString:@"294"])
             {
                 isFirstSameRealm = NO;
-                m_realmStr = [[responseObject objectAtIndex:0]objectForKey:@"groupRealm"];
                 if (m_sameRealmCount==0) {
+                    m_realmStr = [[responseObject objectAtIndex:0]objectForKey:@"groupRealm"];
+
                     [m_bArray removeAllObjects];
                     [m_bArray addObjectsFromArray:responseObject];
                 }else{

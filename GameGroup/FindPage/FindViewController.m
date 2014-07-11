@@ -305,18 +305,20 @@
         NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
         if ([GameCommon isEmtity:groupImage]) {
             iconImageView.imageURL = nil;
-             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+            iconImageView.placeholderImage  = KUIImage(@"placeholder.png");
+//             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
             [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
-            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+//            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
 
         }
         
     }else
     {
         iconImageView.imageURL = nil;
-        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+        iconImageView.placeholderImage =KUIImage(@"find_billboard");
+//        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     }
 }
 -(NSMutableDictionary*)getBillboardGroupInfo
