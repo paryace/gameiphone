@@ -244,6 +244,7 @@
         }else{
             headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
             [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+            
         }
     }
 }
@@ -308,6 +309,8 @@
         }else{
             [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
+            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+
         }
         
     }else
@@ -421,10 +424,11 @@
     
     iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+    iconImageView.placeholderImage =KUIImage(@"find_billboard");
     iconImageView.layer.cornerRadius = 5.0;
     iconImageView.layer.masksToBounds = YES;
     [bottomView addSubview:iconImageView];
-    
+
     //红点 - 公告
     gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 18, 18)];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
