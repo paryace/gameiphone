@@ -167,8 +167,8 @@
 	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
 
     if(page==0||page==1||page==kMAXPAGE+1){
-        loginButton.hidden = YES;
-        registerButton.hidden = YES;
+        loginButton.hidden = NO;
+        registerButton.hidden = NO;
     }else{
         loginButton.hidden = NO;
         registerButton.hidden = NO;

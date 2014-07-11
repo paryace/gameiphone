@@ -810,31 +810,25 @@
 //把正常聊天消息的未读消息设置为0
 +(void)blankMsgUnreadCountForUser:(NSString *)userid
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",userid,@"normalchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
         }
     }
-      completion:^(BOOL success, NSError *error) {
-          
-      }
      ];
 }
 //把群组聊天消息的未读消息设置为0
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
         }
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 }
 
 +(void)blankMsgUnreadCountFormsgType:(NSString *)msgType
@@ -2761,10 +2755,12 @@
 +(void)deleteDSTitleByCharactersId:(NSString*)charactersId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
-        NSArray * dbTitles = [DSTitle MR_findFirstWithPredicate:predicate];
-        for (DSTitle* title in dbTitles) {
-            [title MR_deleteInContext:localContext];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"characterid==[c]%@",charactersId];
+        NSArray * dbTitles = [DSTitle MR_findAllWithPredicate:predicate];
+        if (dbTitles.count>0) {
+            for (DSTitle* title in dbTitles) {
+                [title MR_deleteInContext:localContext];
+            }
         }
     }];
 }

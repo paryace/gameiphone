@@ -262,7 +262,6 @@
         
         NSDictionary* dic = [m_characterArray objectAtIndex:alertView.tag - 1];
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-//        [params setObject:@"1" forKey:@"gameid"];
         [params setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
         [params setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
         
@@ -276,8 +275,9 @@
             [hud hide:YES];
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];
             [m_myTabelView reloadData];
-            [DataStoreManager deleteDSCharactersByCharactersId:KISDictionaryHaveKey(dic, @"id")];
-            [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
+            [DataStoreManager deleteDSTitleByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
+//            [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -290,17 +290,7 @@
         }];
     }
 }
-//-(void)backButtonClick:(UIButton *)sender
-//{
-//    if (self.isFromMeet) {
-//        NewFindViewController *nf = [[NewFindViewController alloc]init];
-//        [self.navigationController popToViewController:nf animated:YES];
-//
-//    }else{
-//        [self.navigationController popViewControllerAnimated:YES];
-//
-//    }
-//}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

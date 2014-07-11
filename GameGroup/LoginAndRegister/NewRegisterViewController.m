@@ -642,6 +642,7 @@
         [userDic setObject:KISDictionaryHaveKey(userDic, @"id") forKey:@"userid"];
         [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
         [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:@"unknow"] ;
+        [DataStoreManager saveFriendRemarkName:KISDictionaryHaveKey(userDic, @"nickname") userid:KISDictionaryHaveKey(userDic, @"id")];
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         [self dismissViewControllerAnimated:YES completion:^{

@@ -14,6 +14,7 @@
 #import "BinRoleViewController.h"
 #import "TestViewController.h"
 #import "AddCharacterViewController.h"
+#import "CharacterAndTitleService.h"
 @interface SearchWithGameViewController ()
 {
     NSMutableArray *m_dataArray;
@@ -252,7 +253,7 @@
     [body setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary* dic = responseObject;
+        NSMutableDictionary* dic = responseObject;
         
         
         NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
@@ -267,11 +268,7 @@
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
-            
-            NSLog(@"%@", responseObject);
-            
-            [DataStoreManager saveDSCharacters:dic UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            
+            [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];
             

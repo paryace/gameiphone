@@ -654,7 +654,7 @@ typedef enum : NSUInteger {
 {
     if ([m_roleArray count] != 0) {
         NSDictionary *dict =[m_roleArray objectAtIndex:[m_rolePickView selectedRowInComponent:0]];
-        groupNameLable.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        groupNameLable.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
         NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"id"),@"characterId",self.groupId,@"groupId",KISDictionaryHaveKey(dict, @"gameid"),@"gameid", nil];
         [self getCardWithNetWithDic:dic];
         

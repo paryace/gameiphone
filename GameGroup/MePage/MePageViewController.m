@@ -30,6 +30,7 @@
     UITableView*  m_myTableView;
     HostInfo*     m_hostInfo;
     NSInteger     m_refreshCharaIndex;
+    dispatch_queue_t mePagequeue;
 }
 @end
 
@@ -66,6 +67,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
+    mePagequeue = dispatch_queue_create("com.living.game.MePagequeue", NULL);
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];
     m_myTableView.delegate = self;
@@ -82,8 +84,7 @@
 }
 
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
-    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePageDynicmic", NULL);
-    dispatch_async(queueselect, ^{
+    dispatch_async(mePagequeue, ^{
        m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myTableView reloadData];
@@ -92,8 +93,7 @@
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
-    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePageTitleAndCharaters", NULL);
-    dispatch_async(queueselect, ^{
+    dispatch_async(mePagequeue, ^{
         m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -113,8 +113,7 @@
 
 -(void)iniUserInfo
 {
-    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePage", NULL);
-    dispatch_async(queueselect, ^{
+    dispatch_async(mePagequeue, ^{
         m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_myTableView reloadData];

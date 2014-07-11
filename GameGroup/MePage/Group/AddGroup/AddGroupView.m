@@ -369,7 +369,7 @@
 {
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        self.gameTextField.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        self.gameTextField.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
       
         if (self.myDelegate &&[self.myDelegate respondsToSelector:@selector(didClickGameListWithDel:dic:)]) {
             [self.myDelegate didClickGameListWithDel:self dic:dict];
