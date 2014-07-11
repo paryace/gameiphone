@@ -2802,11 +2802,11 @@
     NSString * charactersId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
     NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
     NSString * name = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"name")];
-    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"realm")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value1")];
     NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
-    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
+//    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
     DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
@@ -2823,7 +2823,7 @@
     dscharacters.value1=value1;
     dscharacters.value2=value2;
     dscharacters.value3=value3;
-    dscharacters.simpleRealm=[NSString stringWithFormat:@"%@",simpleRealm] ;
+//    dscharacters.simpleRealm=[NSString stringWithFormat:@"%@",simpleRealm] ;
 }
 
 
@@ -2939,11 +2939,11 @@
          [characterDic setObject:character.charactersId forKey:@"id"];
          [characterDic setObject:character.img forKey:@"img"];
          [characterDic setObject:character.name forKey:@"name"];
-         [characterDic setObject:character.realm forKey:@"realm"];
+         [characterDic setObject:character.realm forKey:@"simpleRealm"];
          [characterDic setObject:character.value1 forKey:@"value1"];
          [characterDic setObject:character.value2 forKey:@"value2"];
          [characterDic setObject:character.value3 forKey:@"value3"];
-        [characterDic setObject:character.simpleRealm forKey:@"simpleRealm"];
+//        [characterDic setObject:character.simpleRealm forKey:@"simpleRealm"];
         [charactersArray addObject:characterDic];
     }
     return charactersArray;

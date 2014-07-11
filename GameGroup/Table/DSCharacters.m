@@ -22,6 +22,5 @@
 @dynamic value1;
 @dynamic value2;
 @dynamic value3;
-@dynamic simpleRealm;
 
 @end
