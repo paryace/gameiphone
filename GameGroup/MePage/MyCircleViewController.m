@@ -173,11 +173,12 @@
             }else{
                 [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
             }
-            
-            if (dataArray.count>0) {
-                [self setLastDy:[dataArray objectAtIndex:0]];
-            }else{
-                [DataStoreManager deleteDSlatestDynamic:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+            if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+                if (dataArray.count>0) {
+                    [self setLastDy:[dataArray objectAtIndex:0]];
+                }else{
+                    [DataStoreManager deleteDSlatestDynamic:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+                }
             }
             m_currPageCount++;
             [m_header endRefreshing];

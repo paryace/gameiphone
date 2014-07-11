@@ -719,6 +719,14 @@ typedef enum : NSUInteger {
                 [m_dataArray removeAllObjects];
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
+                
+                if (m_dataArray.count>0) {
+                    NSMutableDictionary * sss= [m_dataArray objectAtIndex:0];
+                    NSDictionary * dic = @{@"img":KISDictionaryHaveKey(KISDictionaryHaveKey(sss, @"user"), @"img")};
+                    [self saveLastFriendDynimacUserImage:dic];
+                }
+                
+                
 //                //拉数据回来以后直接格式化， 再保存
 //                isHaveFuns = NO;
                 for (int i=0; i<m_dataArray.count; i++) {
@@ -781,6 +789,16 @@ typedef enum : NSUInteger {
         }
         [hud hide:YES];
     }];
+}
+
+-(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic
+{
+    NSMutableData *data= [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:payloadDic forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 #pragma mark --朋友在赞触发方法与网络请求
 -(void)friendZan:(UIButton *)sender
