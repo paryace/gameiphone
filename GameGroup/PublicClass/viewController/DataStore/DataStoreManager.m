@@ -810,24 +810,31 @@
 //把正常聊天消息的未读消息设置为0
 +(void)blankMsgUnreadCountForUser:(NSString *)userid
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",userid,@"normalchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
         }
-    }];
+    }
+      completion:^(BOOL success, NSError *error) {
+          
+      }
+     ];
 }
 //把群组聊天消息的未读消息设置为0
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
         }
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];
 }
 
 +(void)blankMsgUnreadCountFormsgType:(NSString *)msgType

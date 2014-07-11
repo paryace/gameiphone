@@ -1207,6 +1207,7 @@
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"---->>>>%@",responseObject);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         

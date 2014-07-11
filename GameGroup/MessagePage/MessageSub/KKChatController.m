@@ -114,13 +114,20 @@ UINavigationControllerDelegate>
         [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
 }
+
+
 -(void)viewWillDisappear:(BOOL)animated
 {
     //监听通知（收到新消息，与发送消息成功）
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
     //ack反馈消息通知
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
-    [self changMsgToRead];
+    
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
 }
 //设置Title
 -(void)refreTitleText
@@ -264,6 +271,8 @@ UINavigationControllerDelegate>
     [self readNoreadMsg];
     [self setNoreadMsgView];
 }
+
+
 -(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {
     if([self.type isEqualToString:@"normal"]){
@@ -957,7 +966,7 @@ UINavigationControllerDelegate>
         self.unreadMsgCount=0;
     }
 }
-//发送已读消息
+//将当前会话的所有消息改为已读，发送已读消息
 - (void)sendReadedMesg
 {
     for(NSMutableDictionary* plainEntry in messages)
