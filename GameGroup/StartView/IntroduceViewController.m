@@ -122,16 +122,16 @@
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"second_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"second_regist_click") forState:UIControlStateHighlighted];
 
     }
     else{
         [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"first_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"first_regist_click") forState:UIControlStateHighlighted];
 
     }
 
