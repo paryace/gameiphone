@@ -76,8 +76,8 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-    m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
-    [m_myTableView reloadData];
+    [self refreUserInfo];
+    [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
