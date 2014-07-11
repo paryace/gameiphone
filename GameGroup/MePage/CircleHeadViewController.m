@@ -720,11 +720,11 @@ typedef enum : NSUInteger {
                 
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 
-                if (m_dataArray.count>0) {
-                    NSMutableDictionary * sss= [m_dataArray objectAtIndex:0];
-                    NSDictionary * dic = @{@"img":KISDictionaryHaveKey(KISDictionaryHaveKey(sss, @"user"), @"img")};
-                    [self saveLastFriendDynimacUserImage:dic];
-                }
+//                if (m_dataArray.count>0) {
+//                    NSMutableDictionary * sss= [m_dataArray objectAtIndex:0];
+//                    NSDictionary * dic = @{@"img":KISDictionaryHaveKey(KISDictionaryHaveKey(sss, @"user"), @"img")};
+//                    [self saveLastFriendDynimacUserImage:dic];
+//                }
                 
                 
 //                //拉数据回来以后直接格式化， 再保存
