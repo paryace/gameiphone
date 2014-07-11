@@ -19,10 +19,10 @@
         self.chooseImg = [[UIImageView alloc]initWithFrame:CGRectMake(20, 20, 20, 20)];
         [self addSubview:self.chooseImg];
         
-        self.headImg =[[EGOImageView alloc]initWithFrame:CGRectMake(60, 10, 40, 40)];
+        self.headImg =[[EGOImageButton alloc]initWithFrame:CGRectMake(60, 10, 40, 40)];
         self.headImg.layer.cornerRadius = 5;
         self.headImg.layer.masksToBounds=YES;
-
+        [self.headImg addTarget:self action:@selector(enterPersonInfo:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.headImg];
         
         self.nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(110, 10, 200, 30)];
@@ -39,6 +39,11 @@
         
     }
     return self;
+}
+
+-(void)enterPersonInfo:(id)sender
+{
+    [self.myDelegate enterMembersInfoPageWithCell:self];
 }
 
 - (void)awakeFromNib

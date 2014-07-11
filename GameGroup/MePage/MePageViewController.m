@@ -426,10 +426,11 @@
                 if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
                     cell.authBg.image= KUIImage(@"chara_auth_1");
                 }
-                else
+                else if([[GameCommon getNewStringWithId:auth] isEqualToString:@"0"])
                 {
-                    
                     cell.authBg.image= KUIImage(@"chara_auth_2");
+                }else{
+                    cell.authBg.image = KUIImage(@"");
                 }
             }
            

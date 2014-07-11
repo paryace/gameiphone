@@ -9,9 +9,9 @@
 #import "NewInvitationViewController.h"
 #import "EGOImageView.h"
 #import "ImgCollCell.h"
-#import "AddGroupMemberCell.h"
 #import "LocationManager.h"
 #import "MJRefresh.h"
+#import "TestViewController.h"
 @interface NewInvitationViewController ()
 {
     UIScrollView     *  m_mainScroll;
@@ -132,7 +132,7 @@
 -(void)buildlistView
 {
     m_listView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-50-(KISHighVersion_7?0:20), 320, 40)];
-    m_listView.backgroundColor = [UIColor whiteColor];
+    m_listView.backgroundColor = [UIColor colorWithRed:240/255.0f green:240/255.0f blue:240/255.0f alpha:1];
     [self.view addSubview:m_listView];
     
     m_layout = [[UICollectionViewFlowLayout alloc]init];
@@ -154,6 +154,17 @@
     [m_button addTarget:self action:@selector(addMembers:) forControlEvents:UIControlEventTouchUpInside];
     [m_listView addSubview:m_button];
 }
+
+-(void)DetectNetwork
+{
+    AppDelegate *app = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    if (app.reach.currentReachabilityStatus ==NotReachable) {
+        [hud hide:YES];
+        [self showMessageWithContent:@"请求数据失败，请检查网络" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+}
+
 -(void)didClickChooseAll:(UIButton *)sender
 {
     switch (m_tabTag) {
@@ -307,11 +318,15 @@
             m_tabTag = 2;
             m_mainScroll.contentOffset = CGPointMake(320, 0);
             if (isFirstNearBy) {
+                [self DetectNetwork];
+                [hud show:YES];
+
                 [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
                     isFirstNearBy = NO;
                     [[TempData sharedInstance] setLat:lat Lon:lon];
                     [self getMembersFromNetWithMethod:@"293"];
                 } Failure:^{
+                    [hud hide:YES];
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
                         [alert show];
                 }
@@ -366,7 +381,11 @@
 }
 -(void)getMembersFromNetWithMethod:(NSString *)method
 {
+    
+    
     [hud show:YES];
+    
+    [self DetectNetwork];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     if ([method isEqualToString:@"293"]) {
@@ -589,15 +608,15 @@
     if (!cell) {
         cell = [[AddGroupMemberCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indefine];
     }
-    cell.tag = 100000*indexPath.section+indexPath.row;
+    
+    cell.tag = 100+indexPath.row;
+    cell.myDelegate = self;
     
     NSDictionary * tempDict ;
     if (tableView ==m_rTableView)
     {
         tempDict = m_rArray[indexPath.row];
-        
         cell.disLabel.hidden = YES;
-
     }
     else if (tableView ==m_gTableView)
     {
@@ -713,6 +732,32 @@
     }
     return cell;
 }
+
+-(void)enterMembersInfoPageWithCell:(AddGroupMemberCell*)cell
+{
+    NSDictionary * tempDict =[NSDictionary dictionary];
+    switch (m_tabTag) {
+        case 1:
+            tempDict = m_rArray[cell.tag-100];
+            break;
+        case 2:
+            tempDict = m_gArray[cell.tag-100];
+            break;
+        case 3:
+            tempDict = m_bArray[cell.tag-100];
+            break;
+   
+        default:
+            break;
+    }
+    TestViewController *test =[[ TestViewController alloc]init];
+    test.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"userid")];
+    test.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
+    [self.navigationController pushViewController:test animated:YES];
+}
+
+
+
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
