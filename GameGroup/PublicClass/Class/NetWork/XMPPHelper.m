@@ -28,6 +28,7 @@
 
 {
     NSOperationQueue *queuemecomback ;
+    dispatch_queue_t queue;
 }
 
 -(id)init
@@ -35,7 +36,7 @@
     self = [super init];
     if (self) {
         
-        
+        queue = dispatch_queue_create("com.dispatch.normalcomback", NULL);
         queuemecomback = [[NSOperationQueue alloc]init];
         [queuemecomback setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
@@ -382,9 +383,9 @@
         }
     }
     
-    if ([type isEqualToString:@"normal"]&& [msgtype isEqualToString:@"msgStatus"])
+    if ([type isEqualToString:@"normal"]&& ([msgtype isEqualToString:@"msgStatus"]))
     {
-        NSDictionary* bodyDic = [msg JSONValue];
+        NSDictionary* bodyDic = [[GameCommon getNewStringWithId:msg] JSONValue];
         if ([bodyDic isKindOfClass:[NSDictionary class]]) {
             NSString* src_id = KISDictionaryHaveKey(bodyDic, @"src_id");
             if (src_id.length <= 0) {
@@ -443,10 +444,11 @@
 - (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
 {
     NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender};
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(comeBack:)object:dic];
-    [queuemecomback addOperation:task];
+    dispatch_barrier_async(queue, ^{
+        [self comeBack:dic];
+    });
 }
-- (void)comeBack:(NSMutableDictionary*)msgDic
+- (void)comeBack:(NSDictionary*)msgDic
 {
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
     NSString *to=[[KISDictionaryHaveKey(msgDic, @"senderId") componentsSeparatedByString:@"/"] objectAtIndex:0];

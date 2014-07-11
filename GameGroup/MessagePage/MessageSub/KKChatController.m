@@ -277,20 +277,22 @@ UINavigationControllerDelegate>
 //初始我的信息（激活状态，头像）
 -(void)initMyInfo
 {
+    myActive = YES;
     DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    myActive = [friend.action boolValue];
+//    myActive = [friend.action boolValue];
     self.myNickName = friend.nickName;
     self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
 }
 //改变我的激活状态
 - (void)changeMyActive:(NSNotification*)notification
 {
-    if ([notification.userInfo[@"active"] intValue] == 2) {
-        myActive = YES;
-    }else
-    {
-        myActive = NO;
-    }
+     myActive = YES;
+//    if ([notification.userInfo[@"active"] intValue] == 2) {
+//        myActive = YES;
+//    }else
+//    {
+//        myActive = NO;
+//    }
 }
 
 #pragma mark ---TabView 显示方法
@@ -1372,7 +1374,6 @@ UINavigationControllerDelegate>
     [messages replaceObjectAtIndex:index withObject:dict];
     KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
     [cell setViewState:status];
-    [self.tView reloadData];
 }
 //刷新消息状态
 -(void)refreMessageStatus2:(NSMutableDictionary*)msgDictionary Status:(NSString*)status
@@ -1642,41 +1643,42 @@ UINavigationControllerDelegate>
     return YES;
 }
 
-////消息发送成功
-//- (void)messageAck:(NSNotification *)notification
-//{
-//    NSDictionary* tempDic = notification.userInfo;
-//    NSString * msgId = KISDictionaryHaveKey(tempDic, @"src_id");
-//    NSInteger changeRow = [self getMsgRowWithId:msgId];
-//    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
-//}
-
-
 //消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
-    NSDictionary* stateDic = notification.userInfo;
-    NSString * msgId = KISDictionaryHaveKey(stateDic, @"src_id");
-    if (messages.count>0 && msgId && msgId.length > 0)
-    {
-        for (int i = 0; i < [messages count]; i++) {
-            NSMutableDictionary* tempDic = [messages objectAtIndex:i];
-            if ([KISDictionaryHaveKey(tempDic, @"messageuuid") isEqualToString:msgId]) {
-                if (index<0) {
-                    return;
-                }
-                [tempDic setObject:KISDictionaryHaveKey(stateDic, @"msgState") forKey:@"status"];
-                
-                if ([self.type isEqualToString:@"normal"]) {
-                    [DataStoreManager refreshMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
-                }else if([self.type isEqualToString:@"group"]){
-                    [DataStoreManager refreshGroupMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
-                }
-                [self.tView reloadData];
-            }
-        }
-    }
+    NSDictionary* tempDic = notification.userInfo;
+    NSString * msgId = KISDictionaryHaveKey(tempDic, @"src_id");
+    NSInteger changeRow = [self getMsgRowWithId:msgId];
+    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
 }
+
+
+////消息发送成功
+//- (void)messageAck:(NSNotification *)notification
+//{
+//    NSDictionary* stateDic = notification.userInfo;
+//    NSString * msgId = KISDictionaryHaveKey(stateDic, @"src_id");
+//    if (messages.count>0 && msgId && msgId.length > 0)
+//    {
+//        for (int i = 0; i < [messages count]; i++) {
+//            NSMutableDictionary* tempDic = [messages objectAtIndex:i];
+//            if ([KISDictionaryHaveKey(tempDic, @"messageuuid") isEqualToString:msgId]) {
+//                if (i<0) {
+//                    return;
+//                }
+//                [tempDic setObject:KISDictionaryHaveKey(stateDic, @"msgState") forKey:@"status"];
+//                if ([self.type isEqualToString:@"normal"]) {
+//                    [DataStoreManager refreshMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
+//                }else if([self.type isEqualToString:@"group"]){
+//                    [DataStoreManager refreshGroupMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
+//                }
+//                NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+//                KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
+//                [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
+//            }
+//        }
+//    }
+//}
 
 
 

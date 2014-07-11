@@ -11,7 +11,7 @@
 #import "EGOImageView.h"
 
 #define padding 20 //边距常数
-#define mSendTime 10.0 //最长重试时间
+#define mSendTime 50.0 //最长重试时间
 
 @protocol KKChatCellDelegate;
 

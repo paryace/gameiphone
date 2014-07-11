@@ -22,8 +22,6 @@
     NSOperationQueue *queuegroup;
     NSOperationQueue *queueme ;
     
-    NSOperationQueue *queuemecomback ;
-    
     NSTimeInterval markTime;
     NSTimeInterval markTimeGroup;
    
@@ -57,8 +55,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [queuegroup setMaxConcurrentOperationCount:1];
         queueme = [[NSOperationQueue alloc]init];
         [queueme setMaxConcurrentOperationCount:1];
-        queuemecomback = [[NSOperationQueue alloc]init];
-        [queuemecomback setMaxConcurrentOperationCount:1];
         queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
         queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
         self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -258,16 +254,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTime = [[NSDate date] timeIntervalSince1970];
-    NSLog(@"v1111存库开始");
 //    dispatch_barrier_async(queue, ^{
         [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-            NSLog(@"v1111存库结束");
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self setSoundOrVibrationopen];
-                NSLog(@"v1111回主线程发通知ß");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
             });
-             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         }];
 //    });
 }
@@ -680,10 +673,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 - (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId Type:(NSString*)type//发送送达消息
 {
     NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender,@"type":type};
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(comeBack:)object:dic];
-    [queuemecomback addOperation:task];
+    [self comeBack:dic];
 }
-- (void)comeBack:(NSMutableDictionary*)msgDic
+- (void)comeBack:(NSDictionary*)msgDic
 {
     NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
     NSString * nowTime=[GameCommon getCurrentTime];
