@@ -43,8 +43,7 @@
     isChoose = YES;
     UIButton *chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [chooseAllBtn setBackgroundImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
-    [chooseAllBtn setBackgroundImage:KUIImage(@"choose_no") forState:UIControlStateHighlighted];
+    [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
     
