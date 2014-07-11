@@ -58,6 +58,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateTitleInfo object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateCharacterInfo object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateLastDynicmicInfo:) name:UpdateLastDynicmicInfo object:nil];
     [self refreUserInfo];
 }
 
@@ -76,8 +77,18 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"查询中...";
-    [self refreUserInfo];
+    [self iniUserInfo];
     [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+}
+
+-(void)updateLastDynicmicInfo:(NSNotification*)notifition{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.MePageDynicmic", NULL);
+    dispatch_async(queueselect, ^{
+       m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+        });
+    });
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
@@ -89,8 +100,6 @@
             [m_myTableView reloadData];
         });
     });
-   
-    [m_myTableView reloadData];
 }
 -(void)refreUserInfo
 {

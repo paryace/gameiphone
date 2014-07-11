@@ -42,7 +42,6 @@
 
 + (NSArray *) MR_findAllSortedBy:(NSString *)sortTerm ascending:(BOOL)ascending withPredicate:(NSPredicate *)searchTerm inContext:(NSManagedObjectContext *)context
 {
-    NSLog(@"v1111取thumb库开始");
 	NSFetchRequest *request = [self MR_requestAllSortedBy:sortTerm
                                                 ascending:ascending
                                             withPredicate:searchTerm

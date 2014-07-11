@@ -327,7 +327,6 @@
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
     allMsgArray = [array mutableCopy];
     firstSayHiMsg = [DataStoreManager qSayHiMsg:@"2"];
-    NSLog(@"z主线程...");
     [m_messageTable reloadData];
     [self displayTabbarNotification];
 }

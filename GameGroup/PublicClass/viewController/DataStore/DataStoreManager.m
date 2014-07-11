@@ -437,10 +437,8 @@
     NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
     NSPredicate * hasedpredicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
     DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:hasedpredicate];
-    NSLog(@"v1111查库：是否有该消息，没有就存库");
     if (!commonMsg) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
-        NSLog(@"v1111查库：是否有该thumb，没有就创建");
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         int unread;
         if (!thumbMsgs){
@@ -2838,7 +2836,6 @@
 +(void)saveDSTitle2:(NSArray *)titles
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSLog(@"1111111-->>");
         for (NSDictionary * title in titles) {
             [self saveTitle:title Loco:localContext];
         }

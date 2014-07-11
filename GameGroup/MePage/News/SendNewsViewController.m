@@ -285,6 +285,7 @@
             //保存发送的动态 放置“我” 界面
             if (responseObject&&[responseObject isKindOfClass:[NSDictionary class]]) {
                 [DataStoreManager saveDSlatestDynamic:responseObject];
+                [[NSNotificationCenter defaultCenter] postNotificationName:UpdateLastDynicmicInfo object:responseObject userInfo:nil];
             }
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"dynamicFromMe_wx"];
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
