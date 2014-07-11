@@ -159,15 +159,32 @@
     }
     else
     {
+//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+//            cell.authBtn.hidden = YES;
+//            cell.authBg.image= KUIImage(@"chara_auth_1");
+//        }
+//        else
+//        {
+//            cell.authBtn.hidden = NO;
+//            cell.authBg.image= KUIImage(@"chara_auth_2");
+//        }
+        
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
             cell.authBtn.hidden = YES;
             cell.authBg.image= KUIImage(@"chara_auth_1");
         }
-        else
+        else if([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"0"])
         {
-            cell.authBtn.hidden = NO;
             cell.authBg.image= KUIImage(@"chara_auth_2");
+            cell.authBtn.hidden = NO;
+        }else{
+            cell.authBg.image = KUIImage(@"");
+            cell.authBtn.hidden = YES;
         }
+
+        
+        
+        
         NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
         if ([GameCommon isEmtity:gameImageId]) {
             cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];

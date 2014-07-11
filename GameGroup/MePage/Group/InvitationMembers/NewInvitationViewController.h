@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AddGroupMemberCell.h"
 
-@interface NewInvitationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
+
+
+@interface NewInvitationViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,addGroupMemberDelegate>
 @property(nonatomic,copy)NSString *groupId;
 @property(nonatomic,copy)NSString *realmStr;
-
 @end
