@@ -43,6 +43,7 @@
     
     NSLog(@"%@gameid_%@",path,self.gameNum);
     m_realmsIndexArray = [[m_realmsDic allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    
     m_realmsTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX-(KISHighVersion_7?0:20))];
     if(KISHighVersion_7){
         m_realmsTableView.sectionIndexBackgroundColor = [UIColor clearColor];
@@ -64,6 +65,7 @@
     [searchController setDelegate:self];
     [searchController setSearchResultsDataSource:self];
     [searchController setSearchResultsDelegate:self];
+    searchController.searchResultsTableView.tableHeaderView = mSearchBar;
     m_realmsTableView.tableHeaderView = mSearchBar;
 }
 #pragma mark 表格
