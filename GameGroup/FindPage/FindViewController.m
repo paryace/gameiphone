@@ -123,13 +123,22 @@
         }
     }
     
+        NSMutableArray *asr = [NSMutableArray array];
     for (int i = 0; i<drawView.tableArray.count; i++) {
-        NSArray *array = [drawView.tableDic objectForKey:drawView.tableArray[i]];
+        NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
+        NSArray *array = [drawView.tableDic objectForKey:str];
         if (!array||array.count<1) {
-            [drawView.tableDic removeObjectForKey:drawView.tableArray[i]];
-            [drawView.tableArray removeObjectAtIndex:i];
+            [drawView.tableDic removeObjectForKey:str];
+            [asr addObject:str];
         }
     }
+        for (NSString *str in asr) {
+            if ([drawView.tableArray containsObject:str]) {
+                [drawView.tableArray removeObject:str];
+            }
+        }
+        
+        
     [drawView.tv reloadData];
 
     }
@@ -150,7 +159,7 @@
     //添加Tab上的小红点
     myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
-
+    [self setDynamicImage];
 
 }
 #pragma mark 接收到好友动态消息通知
