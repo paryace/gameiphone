@@ -731,10 +731,13 @@ static GameCommon *my_gameCommon = NULL;
             }
         }
         }        
-        NSArray *charachers = [responseObject objectForKey:@"characters"];
+//        NSArray *charachers = [responseObject objectForKey:@"characters"];
+//        
+//        for (NSMutableDictionary *characher in charachers) {
+//            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
         
-        for (NSMutableDictionary *characher in charachers) {
-            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
+            [[UserManager singleton]saveUserInfo:responseObject];
+            
             
 //            NSMutableArray *array = [NSMutableArray array];
 //            if (![array containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characher, @"gameid")]]) {
@@ -742,7 +745,7 @@ static GameCommon *my_gameCommon = NULL;
 //            }
 //
 //            [[NSUserDefaults standardUserDefaults]setObject:array forKey:[NSString stringWithFormat:@"findpageGameList_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
-        }
+      //  }
 
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
