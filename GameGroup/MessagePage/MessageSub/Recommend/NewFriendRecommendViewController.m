@@ -317,7 +317,7 @@
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     
-    NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+    NSString * imageids=KISDictionaryHaveKey(tempDict, @"headImgID");
     if (indexPath.row ==addMemArray.count-1) {
         cell.imageView.placeholderImage = KUIImage(imageids);
         cell.imageView.imageURL = nil;
