@@ -96,10 +96,7 @@ static UserManager *userManager = NULL;
     if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
         return;
     }
-//    dispatch_async([[UserManager singleton] queueDb], ^{
-        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
-            return;
-        }
+    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -137,10 +134,10 @@ static UserManager *userManager = NULL;
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
         }
         [self updateMsgInfo:dicUser];
-//        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
              [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
-//        });
-//    });
+        });
+    });
 }
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict

@@ -1284,8 +1284,7 @@
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
-        NSLog(@"save UserInfo start");
+//    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
         NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
         NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
         NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];
@@ -1336,7 +1335,7 @@
         if ([GameCommon isEmtity:nameIndex]) {
             nameIndex=@"#";
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
             if (![GameCommon isEmtity:userId]) {
                 [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
                     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -1391,9 +1390,8 @@
                     }
                 }];
             }
-         NSLog(@"save UserInfo end");
-        });
-    });
+//        });
+//    });
     
     
 //    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
@@ -2797,8 +2795,34 @@
 #pragma mark - 保存角色
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid
 {
+    NSString * auth = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"auth")];
+    NSString * failedmsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"failedmsg")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"gameid")];
+    NSString * charactersId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
+    NSString * name = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"name")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
+    NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value1")];
+    NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
+    NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
+    //    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        [self saveCharacter:characters UserId:userid Loco:localContext];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
+        if (!dscharacters)
+            dscharacters = [DSCharacters MR_createInContext:localContext];
+        dscharacters.userid=userid;
+        dscharacters.auth=auth;
+        dscharacters.failedmsg=failedmsg;
+        dscharacters.gameid=gameid;
+        dscharacters.charactersId=charactersId;
+        dscharacters.img=img;
+        dscharacters.name=name;
+        dscharacters.realm=realm;
+        dscharacters.value1=value1;
+        dscharacters.value2=value2;
+        dscharacters.value3=value3;
+        //    dscharacters.simpleRealm=[NSString stringWithFormat:@"%@",simpleRealm] ;
     }];
 }
 #pragma mark - 批量保存角色
@@ -2845,10 +2869,40 @@
 
 
 #pragma mark - 保存头衔
-+(void)saveDSTitle:(NSDictionary *)titles
++(void)saveDSTitle:(NSDictionary *)titless
 {
+    NSString * characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"characterid")];
+    NSString * charactername = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"charactername")];
+    NSString * clazz = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"clazz")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"gameid")];
+    NSString * hasDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"hasDate")];
+    NSString * hide = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"hide")];
+    NSString * titleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"titleid")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"realm")];
+    NSString * sortnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"sortnum")];
+    NSString * ids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"id")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"userid")];
+    NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"userimg")];
+    NSDictionary * titleObjects = KISDictionaryHaveKey(titless, @"titleObj");
+    [self saveDSTitleObject:titleObjects];
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-         [self saveTitle:titles Loco:localContext];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@",ids];
+        DSTitle * titles = [DSTitle MR_findFirstWithPredicate:predicate];
+        if (!titles)
+            titles = [DSTitle MR_createInContext:localContext];
+        titles.characterid=characterid;
+        titles.charactername=charactername;
+        titles.clazz=clazz;
+        titles.gameid=gameid;
+        titles.hasDate=hasDate;
+        titles.hide=hide;
+        titles.titleId=titleId;
+        titles.realm=realm;
+        titles.sortnum=sortnum;
+        titles.ids=ids;
+        titles.userid=userid;
+        titles.userimg=userimg;
+
     }];
 }
 #pragma mark - 批量保存头衔
@@ -2895,6 +2949,57 @@
     titles.userimg=userimg;
     [self saveTitleObject:titleObjects Loco:localContext];
 }
+
+#pragma mark - 保存TitleObject
++(void)saveDSTitleObject:(NSDictionary *)titleObjects
+{
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"createDate")];
+    NSString * evolution = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"evolution")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"gameid")];
+    NSString * icon = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"icon")];
+    NSString * titleId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"id")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"img")];
+    NSString * rank = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rank")];
+    NSString * ranktype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"ranktype")];
+    NSString * rankvaltype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rankvaltype")];
+    NSString * rarememo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rarememo")];
+    NSString * rarenum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"rarenum")];
+    NSString * remark = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"remark")];
+    NSString * remarkDetail = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"remarkDetail")];
+    NSString * simpletitle = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"simpletitle")];
+    NSString * sortnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"sortnum")];
+    NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"title")];
+    NSString * titlekey = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"titlekey")];
+    NSString * titletype = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"titletype")];
+    
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"titleId==[c]%@",titleId];
+        DSTitleObject * titleObject = [DSTitleObject MR_findFirstWithPredicate:predicate];
+        if (!titleObject)
+            titleObject = [DSTitleObject MR_createInContext:localContext];
+        titleObject.createDate=createDate;
+        titleObject.evolution=evolution;
+        titleObject.gameid=gameid;
+        titleObject.icon=icon;
+        titleObject.titleId=titleId;
+        titleObject.img=img;
+        titleObject.rank=rank;
+        titleObject.ranktype=ranktype;
+        titleObject.rankvaltype=rankvaltype;
+        titleObject.rarememo=rarememo;
+        titleObject.rarenum=rarenum;
+        titleObject.remark=remark;
+        titleObject.remarkDetail=remarkDetail;
+        titleObject.simpletitle=simpletitle;
+        titleObject.sortnum=sortnum;
+        titleObject.title=title;
+        titleObject.titlekey=titlekey;
+        titleObject.titletype=titletype;
+    }];
+}
+
+
 +(void)saveTitleObject:(NSDictionary *)titleObjects Loco:(NSManagedObjectContext*)localContext
 {
     NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titleObjects, @"createDate")];

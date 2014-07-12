@@ -324,7 +324,7 @@
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
-//    dispatch_async(queue, ^{
+    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         if (result.count>0) {
             for (int i=0; i<[keys count]; i++) {
                 NSString *key=[keys objectAtIndex:i];
@@ -335,7 +335,7 @@
                 }
             }
         }
-//    });
+    });
 }
 
 //查询用户列表
