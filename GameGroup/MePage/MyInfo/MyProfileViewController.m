@@ -480,12 +480,12 @@
             [topBg addSubview:m_ageLabel];
             
             if ([self.hostInfo.gender isEqualToString:@"0"]) {//男♀♂
-                m_ageLabel.text = [@"♂ " stringByAppendingString:self.hostInfo.age];
+                m_ageLabel.text = [NSString stringWithFormat:@"%@%@",@"♂ ",self.hostInfo.age?self.hostInfo.age:@""];
                 m_ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
             }
             else
             {
-                m_ageLabel.text = [@"♀ " stringByAppendingString:self.hostInfo.age];
+                m_ageLabel.text = [NSString stringWithFormat:@"%@%@",@"♀ ",self.hostInfo.age?self.hostInfo.age:@""];
                 m_ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
             }
             CGSize ageSize = [m_ageLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:10.0] constrainedToSize:CGSizeMake(100, 12) lineBreakMode:NSLineBreakByWordWrapping];

@@ -736,7 +736,7 @@ static GameCommon *my_gameCommon = NULL;
 //        for (NSMutableDictionary *characher in charachers) {
 //            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
         
-//            [[UserManager singleton]saveUserInfo:responseObject];
+            [[UserManager singleton]saveUserInfo:responseObject];
         
             
 //            NSMutableArray *array = [NSMutableArray array];

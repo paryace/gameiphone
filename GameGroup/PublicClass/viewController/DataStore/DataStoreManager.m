@@ -20,11 +20,18 @@
 #import "DSGroupApplyMsg.h"
 #import "DSGroupUser.h"
 #import "DSLatestDynamic.h"
-
 @implementation DataStoreManager
 
 -(void)nothing
 {}
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+//        self.queueDb = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
+    }
+    return self;
+}
 + (void)reSetMyAction:(BOOL)action
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -291,7 +298,7 @@
 #pragma mark - 保存群组聊天记录
 +(void)saveDSGroupMsg:(NSDictionary *)msg
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
         groupMsg.sender = [msg objectForKey:@"sender"];
         groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
@@ -302,7 +309,10 @@
         groupMsg.status = @"1";
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];
 }
 #pragma mark - 存储消息相关
 +(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
@@ -1274,7 +1284,8 @@
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
+//    dispatch_async([[UserManager singleton] queueDb], ^{
+        NSLog(@"save UserInfo start");
         NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
         NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
         NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];
@@ -1325,7 +1336,7 @@
         if ([GameCommon isEmtity:nameIndex]) {
             nameIndex=@"#";
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
             if (![GameCommon isEmtity:userId]) {
                 [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
                     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -1380,8 +1391,9 @@
                     }
                 }];
             }
-        });
-    });
+         NSLog(@"save UserInfo end");
+//        });
+//    });
 //    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
 //    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
 //    NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];

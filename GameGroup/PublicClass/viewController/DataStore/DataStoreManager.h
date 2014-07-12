@@ -31,6 +31,7 @@
 
 #import "DSOfflineZan.h"
 @interface DataStoreManager : NSObject
+
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
 + (BOOL)savedMsgWithID:(NSString*)msgId;//正常聊天消息是否已存
