@@ -11,11 +11,7 @@
 
 static UserManager *userManager = NULL;
 
-@implementation UserManager{
-    dispatch_queue_t queue;
-    
-}
-
+@implementation UserManager
 + (UserManager*)singleton
 {
     @synchronized(self)
@@ -32,9 +28,7 @@ static UserManager *userManager = NULL;
     if (self) {
         self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
         self.cacheUserids = [NSMutableArray array];
-        queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
-        self.queueDb = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
-        NSLog(@"v44444 - create queue - userinfo ");
+        self.queueDb = dispatch_queue_create("com.living.game.NewFriendControllerSaveaa", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
 }
@@ -123,7 +117,7 @@ static UserManager *userManager = NULL;
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
         }
-        [self saveCharaterAndTitle:charachers Titles:titles UserId:KISDictionaryHaveKey(dicUser, @"id")];
+        [self saveCharaterAndTitle:charachers Titles:titles UserId:KISDictionaryHaveKey(dicUser, @"userid")];
         [self updateMsgInfo:dicUser];
 //        dispatch_async(dispatch_get_main_queue(), ^{
              [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];

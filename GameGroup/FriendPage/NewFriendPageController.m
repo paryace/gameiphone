@@ -32,7 +32,7 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
-    dispatch_queue_t queue ;
+//    dispatch_queue_t queue ;
 }
 @end
 
@@ -61,7 +61,7 @@
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
-    queue = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
+//    queue = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -324,18 +324,18 @@
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
-    if (result.count>0) {
-        for (int i=0; i<[keys count]; i++) {
-            NSString *key=[keys objectAtIndex:i];
-            for (NSMutableDictionary * dict in [result objectForKey:key]) {
-                [dict setObject:key forKey:@"nameIndex"];
-                NSString *shiptype=[dict objectForKey:@"shiptype"];
-//                dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        if (result.count>0) {
+            for (int i=0; i<[keys count]; i++) {
+                NSString *key=[keys objectAtIndex:i];
+                for (NSMutableDictionary * dict in [result objectForKey:key]) {
+                    [dict setObject:key forKey:@"nameIndex"];
+                    NSString *shiptype=[dict objectForKey:@"shiptype"];
                     [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
-//                });
+                }
             }
         }
-    }
+//    });
 }
 
 //查询用户列表
