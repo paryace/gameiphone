@@ -167,6 +167,7 @@
 
 -(void)didClickChooseAll:(UIButton *)sender
 {
+    NSDictionary *customDic = [NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil];
     switch (m_tabTag) {
         case 1:
             if (sender.selected) {
@@ -193,7 +194,11 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                if ([addMemArray containsObject:customDic]) {
+                    [addMemArray removeObject:customDic];
+                }
                 [addMemArray addObjectsFromArray:m_rArray];
+                [addMemArray addObject:customDic];
                 if (addMemArray.count==0) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
@@ -232,7 +237,12 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                if ([addMemArray containsObject:customDic]) {
+                    [addMemArray removeObject:customDic];
+                }
                 [addMemArray addObjectsFromArray:m_gArray];
+                [addMemArray addObject:customDic];
+
                 if (addMemArray.count==0) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
@@ -268,7 +278,11 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                if ([addMemArray containsObject:customDic]) {
+                    [addMemArray removeObject:customDic];
+                }
                 [addMemArray addObjectsFromArray:m_bArray];
+                [addMemArray addObject:customDic];
                 if (addMemArray.count==0) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
@@ -416,6 +430,12 @@
                 }else{
                     [m_gArray addObjectsFromArray:responseObject];
                 }
+                
+                for (int i =0 ;i <m_gArray.count;i++) {
+                    NSMutableDictionary *dic = [m_gArray objectAtIndex:i];
+                    [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
+                }
+                
                 m_nearByCount+=20;
                 [m_gTableView reloadData];
                 [m_foot1 endRefreshing];
@@ -433,6 +453,11 @@
                 }else{
                     [m_bArray addObjectsFromArray:responseObject];
                 }
+                for (int i =0 ;i <m_bArray.count;i++) {
+                    NSMutableDictionary *dic = [m_bArray objectAtIndex:i];
+                    [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
+                }
+
                 m_sameRealmCount+=20;
                 [m_bTableView reloadData];
                 [m_foot1 endRefreshing];
@@ -474,23 +499,11 @@
         for (NSMutableDictionary *dic in array) {
             [dic setValue:@"1" forKey:@"choose"];
             [dic setValue:@"friends" forKeyPath:@"tabType"];
+            [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
         }
         [m_rArray addObjectsFromArray:array];
     }
     [m_rTableView reloadData];
-//    [keyArr removeAllObjects];
-//    [resultDict removeAllObjects];
-//    [keyArr addObjectsFromArray:keys];
-//    resultDict = result;
-//    for (int i =0; i<keyArr.count; i++) {
-//        NSArray *arr = [resultDict objectForKey:keyArr[i]];
-//        for (int j = 0; j<arr.count; j++) {
-//            NSDictionary *dic = arr[j];
-//            [dic setValue:@"1" forKey:@"choose"];
-//        }
-//    }
-//    [m_myTableView reloadData];
-    //    }];
 }
 
 
@@ -686,7 +699,7 @@
         cell.chooseImg.image = KUIImage(@"choose");
         NSDictionary *dic = tempDict;
         [tempDict setObject:@"2" forKey:@"choose"];
-        [dic setValue:@(indexPath.row) forKey:@"row"];
+//        [dic setValue:@(indexPath.row) forKey:@"row"];
         [addMemArray insertObject:dic atIndex:addMemArray.count-1];
         
     }else{
@@ -694,7 +707,7 @@
         NSDictionary *dic = tempDict;
         [tempDict setObject:@"1" forKey:@"choose"];
         
-        [dic setValue:@(indexPath.row) forKey:@"row"];
+//        [dic setValue:@(indexPath.row) forKey:@"row"];
         
         [addMemArray removeObject:dic];
     }
@@ -767,7 +780,10 @@
     }
     
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
+    
+    
     int row = [KISDictionaryHaveKey(tempDict, @"row")intValue];
+    
     NSString *tabCut = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"tabType")];
     
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:0];

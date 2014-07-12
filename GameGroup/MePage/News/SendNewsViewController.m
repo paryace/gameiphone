@@ -419,6 +419,7 @@
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
     selectImage =nil;
+    
 }
 
 //将图片保存到本地，返回保存的路径
@@ -444,7 +445,6 @@
     NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
     return imageData;
 }
-
 
 
 
