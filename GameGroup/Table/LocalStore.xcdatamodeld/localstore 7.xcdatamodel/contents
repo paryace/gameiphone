@@ -299,7 +299,6 @@
         <attribute name="fromStr" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="headImgID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="recommendMsg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="recommendReason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
@@ -414,7 +413,7 @@
         <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
         <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
-        <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
+        <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="165"/>
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="270"/>
         <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
