@@ -425,7 +425,7 @@
         groupView.ComeType =SETUP_SAMEREALM;
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
         groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"simpleRealm")] ;
-        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
+        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"simpleRealm")] ;
     }
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"nearby"]) {
         ;

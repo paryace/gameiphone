@@ -1530,7 +1530,7 @@ typedef enum : NSUInteger {
         if ([KISDictionaryHaveKey(dic, @"id")intValue]==[KISDictionaryHaveKey([m_dataArray objectAtIndex:delCellCount-100], @"id")intValue]) {
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dynamicFromMe_wx"];
         }
-        
+        [self getMyDyListFromNet];
         
         
         [m_dataArray removeObjectAtIndex:delCellCount-100];
@@ -1554,6 +1554,41 @@ typedef enum : NSUInteger {
         
     }];
 
+}
+
+-(void)getMyDyListFromNet
+{
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
+    [paramDic setObject:[NSString stringWithFormat:@"%d",0] forKey:@"pageIndex"];
+    [paramDic setObject:@"20" forKey:@"maxSize"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"192" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSMutableArray * dataArray = KISDictionaryHaveKey(responseObject, @"dynamicMsgList");
+            if ([self.userId isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+                if (dataArray.count>0) {
+                    [self setLastDy:[dataArray objectAtIndex:0]];
+                }else{
+                    [DataStoreManager deleteDSlatestDynamic:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+                }
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+}
+
+-(void)setLastDy:(NSMutableDictionary*)dyDic
+{
+    NSMutableDictionary * simpleUsertInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];;
+    [dyDic setObject:KISDictionaryHaveKey(simpleUsertInfo, @"img") forKey:@"userimg"];
+    [dyDic setObject:KISDictionaryHaveKey(simpleUsertInfo, @"nickname") forKey:@"nickname"];
+    [dyDic setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"userid"];
+    [DataStoreManager saveDSlatestDynamic:dyDic];
 }
 
 #pragma mark ---评论赞 点击方法

@@ -1527,7 +1527,6 @@
 +(void)delInfoWithType:(NSString *)shiptype
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"shiptype==[c]%@",shiptype];
     DSuser *user = [DSuser MR_findFirstWithPredicate:predicate];
     if (user) {
