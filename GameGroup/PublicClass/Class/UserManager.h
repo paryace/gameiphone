@@ -12,6 +12,7 @@
 @interface UserManager : NSObject
 @property(nonatomic, strong) NSMutableDictionary* userCache;
 @property(nonatomic, strong) NSMutableArray* cacheUserids;
+@property (strong,nonatomic) dispatch_queue_t queueDb;
 
 + (UserManager*)singleton;
 

@@ -13,6 +13,7 @@ static UserManager *userManager = NULL;
 
 @implementation UserManager{
     dispatch_queue_t queue;
+    
 }
 
 + (UserManager*)singleton
@@ -32,6 +33,7 @@ static UserManager *userManager = NULL;
         self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
         self.cacheUserids = [NSMutableArray array];
         queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
+        self.queueDb = dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT);
         NSLog(@"v44444 - create queue - userinfo ");
     }
     return self;
@@ -91,8 +93,13 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    
-//    dispatch_async(queue, ^{
+    if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+    dispatch_async([[UserManager singleton] queueDb], ^{
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+            return;
+        }
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -130,7 +137,7 @@ static UserManager *userManager = NULL;
         [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     }
     [self updateMsgInfo:dicUser];
-//    });
+    });
     [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表

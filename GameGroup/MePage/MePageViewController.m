@@ -84,22 +84,16 @@
 }
 
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
-    dispatch_async(mePagequeue, ^{
-       m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-        });
-    });
+    m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [m_myTableView reloadData];
+
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
-    dispatch_async(mePagequeue, ^{
-        m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-        });
-    });
+    m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
+    [m_myTableView reloadData];
+
 }
 -(void)refreUserInfo
 {
@@ -113,12 +107,8 @@
 
 -(void)iniUserInfo
 {
-    dispatch_async(mePagequeue, ^{
-        m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-        });
-    });
+    m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
+    [m_myTableView reloadData];
 
 }
 
@@ -152,6 +142,14 @@
     [info setObject:[GameCommon getNewStringWithId:zannum?zannum:@""] forKey:@"zannum"];
     [info setObject:[GameCommon getNewStringWithId:fansnum?fansnum:@""] forKey:@"fansnum"];
     return info;
+}
+
+-(void)getGameIds:(NSMutableArray*)chasss
+{
+    NSArray * gameidsarray = [[NSArray alloc] init];
+//    for (<#initialization#>; <#condition#>; <#increment#>) {
+//        <#statements#>
+//    }
 }
 
 -(void)reloadTableView:(id)sender

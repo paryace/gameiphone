@@ -138,8 +138,8 @@
     [registerButton addTarget:self action:@selector(registerButtonClick:) forControlEvents:UIControlEventTouchUpInside];
      [self.view addSubview:loginButton];
     [self.view addSubview:registerButton];
-    loginButton.hidden = YES;
-    registerButton.hidden = YES;
+    loginButton.hidden = NO;
+    registerButton.hidden = NO;
 }
 
 #pragma mark button click

@@ -324,7 +324,7 @@
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
-//    dispatch_async(queue, ^{
+    dispatch_async([[UserManager singleton] queueDb], ^{
         if (result.count>0) {
             for (int i=0; i<[keys count]; i++) {
                 NSString *key=[keys objectAtIndex:i];
@@ -335,15 +335,15 @@
                 }
             }
         }
-//    });
+    });
 }
 
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
-    dispatch_async(queueselect, ^{
-        NSLog(@"v333333 - in queue - getFriendDateFromDataSore");
+//    dispatch_queue_t queueselect = DataStoreManager ;
+    dispatch_async([[UserManager singleton] queueDb], ^{
+        NSLog(@"v333333 - in queue - getFriendDateFromDataSore start");
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
@@ -353,8 +353,9 @@
         [keyArr addObjectsFromArray:keys];
         resultArray = result;
         fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
+        NSLog(@"v333333 - in queue - getFriendDateFromDataSore end");
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"v333333 - MAIN THREAD updated UI - getFriendDateFromDataSore");
+            NSLog(@"v333333 - MAIN THREAD updated UI - getFriendDateFromDataSore ui");
             [m_myTableView reloadData];
             [self setFansNum];
         });
