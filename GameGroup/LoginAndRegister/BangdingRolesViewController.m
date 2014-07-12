@@ -441,6 +441,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [[TempData sharedInstance]isBindingRolesWithBool:YES];
+        [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];

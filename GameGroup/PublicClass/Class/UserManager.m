@@ -81,6 +81,7 @@ static UserManager *userManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheUserids removeObject:userId];
         [self saveUserInfo:responseObject];
+        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [self.cacheUserids removeObject:userId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
@@ -90,6 +91,10 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
+    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+        return;
+    }
+    
 //    dispatch_async(queue, ^{
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {

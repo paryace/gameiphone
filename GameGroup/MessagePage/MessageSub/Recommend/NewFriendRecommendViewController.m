@@ -169,7 +169,7 @@
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSArray * dRecommend = [DSRecommendList MR_findAllInContext:localContext];
         for (DSRecommendList* Recommend in dRecommend) {
-            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",Recommend.recommendReason,@"recommendReason",nil];
+            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",Recommend.recommendMsg,@"recommendMsg",Recommend.recommendReason,@"recommendReason",nil];
             [m_dataArray insertObject:tempDic atIndex:0];
         }
     }];
@@ -231,7 +231,7 @@
     }else{
         [cell.chooseImg setImage: KUIImage(@"unchoose") forState:UIControlStateNormal];
     }
-    cell.disLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"recommendReason")];
+    cell.disLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"recommendMsg")];
     cell.nameLabel.text = nickName;
     return cell;
 }

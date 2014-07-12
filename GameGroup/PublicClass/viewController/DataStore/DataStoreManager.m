@@ -2388,15 +2388,15 @@
     NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"userid")];
      NSString * recommendReason = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"recommendReason")];
     NSArray* headArr = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"img")] componentsSeparatedByString:@","];
+    
+    NSString * recommendMsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"recommendMsg")];
     NSString * headImgID = [headArr count] != 0 ? [headArr objectAtIndex:0] : @"";
     NSString * fromStr = userInfoDict[@"recommendMsg"];//推荐理由
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userName==[c]%@",userName];
         DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate];
         if (!Recommend)
-        {
             Recommend = [DSRecommendList MR_createInContext:localContext];
-        }
         Recommend.userName = userName;
         Recommend.nickName = userNickname;
 //        if ([DataStoreManager ifHaveThisUserInUserManager:fromID] || [DataStoreManager ifIsAttentionWithUserId:userid]) {
@@ -2410,7 +2410,7 @@
         Recommend.fromID = fromID;
         Recommend.userid = userid;
         Recommend.recommendReason=recommendReason;
-
+        Recommend.recommendMsg = recommendMsg;
     }];
 
 }
