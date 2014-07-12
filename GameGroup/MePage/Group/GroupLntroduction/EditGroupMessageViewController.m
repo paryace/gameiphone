@@ -273,8 +273,9 @@
     if ([tempStr rangeOfString:@"<local>"].location!=NSNotFound) {
         NSString *replaced = [tempStr stringByReplacingOccurrencesOfString:@"<local>" withString:@""];
         if ([uploadImagePathArray containsObject:[GameCommon getNewStringWithId:replaced]]) {
-            int tempIndex = [uploadImagePathArray indexOfObject:replaced];
-            [uploadImagePathArray removeObjectAtIndex:tempIndex];
+//            int tempIndex = [uploadImagePathArray indexOfObject:replaced];
+//            [uploadImagePathArray removeObjectAtIndex:tempIndex];
+            [uploadImagePathArray removeObject:replaced];
         }
     }
     else//需要删除的id
@@ -426,7 +427,9 @@
     }
     self.isChang = YES;
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
-    NSString * imageName=[NSString stringWithFormat:@"%d_group.jpg",self.headImgArray.count];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+
+    NSString * imageName=[NSString stringWithFormat:@"%@_group.jpg",uuid];
     [self writeImageToFile:upImage ImageName:imageName];//完整路径
     NSString * imageLocalUrl=[NSString stringWithFormat:@"<local>%@",imageName];//本地文件名
     NSMutableArray * tempArray;
