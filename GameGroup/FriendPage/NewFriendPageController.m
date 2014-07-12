@@ -324,18 +324,18 @@
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
 {
-    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-        if (result.count>0) {
-            for (int i=0; i<[keys count]; i++) {
-                NSString *key=[keys objectAtIndex:i];
-                for (NSMutableDictionary * dict in [result objectForKey:key]) {
-                    [dict setObject:key forKey:@"nameIndex"];
-                    NSString *shiptype=[dict objectForKey:@"shiptype"];
+    if (result.count>0) {
+        for (int i=0; i<[keys count]; i++) {
+            NSString *key=[keys objectAtIndex:i];
+            for (NSMutableDictionary * dict in [result objectForKey:key]) {
+                [dict setObject:key forKey:@"nameIndex"];
+                NSString *shiptype=[dict objectForKey:@"shiptype"];
+                dispatch_barrier_async([[UserManager singleton] queueDb], ^{
                     [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                }
+                });
             }
         }
-    });
+    }
 }
 
 //查询用户列表
