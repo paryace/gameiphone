@@ -42,7 +42,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:userInfoUpload object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateTitleInfo object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateCharacterInfo object:Nil];
-    
     [super viewWillDisappear:animated];
 }
 
@@ -84,16 +83,23 @@
 }
 
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
-    m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    [m_myTableView reloadData];
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+//        });
+//    });
 
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
-    m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
-    [m_myTableView reloadData];
-
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+        m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_myTableView reloadData];
+//        });
+//    });
 }
 -(void)refreUserInfo
 {
@@ -107,9 +113,13 @@
 
 -(void)iniUserInfo
 {
-    m_hostInfo = [[HostInfo alloc] initWithHostInfo:[self getLocalInfo]];
-    [m_myTableView reloadData];
-
+//    dispatch_async([[UserManager singleton] queueDb], ^{
+        NSMutableDictionary * dic = [self getLocalInfo];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+             m_hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
+            [m_myTableView reloadData];
+//        });
+//    });
 }
 
 //用户信息获取成功接收到的广播
@@ -120,8 +130,10 @@
         return;
     }
     NSDictionary *dictionary = notification.userInfo;
-    m_hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
-    [m_myTableView reloadData];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+        m_hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+        [m_myTableView reloadData];
+//    });
 }
 //加在本地数据
 -(NSMutableDictionary*)getLocalInfo

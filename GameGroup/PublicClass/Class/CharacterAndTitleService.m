@@ -53,11 +53,16 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 // 保存角色信息
 -(void)saveCharachers:(NSArray*)charachers Userid:(NSString*)userid
 {
-    [DataStoreManager deleteAllDSCharacters:userid];
-    for (NSMutableDictionary *characher in charachers) {
-        [DataStoreManager saveDSCharacters:characher UserId:userid];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        [DataStoreManager deleteAllDSCharacters:userid];
+        for (NSMutableDictionary *characher in charachers) {
+            [DataStoreManager saveDSCharacters:characher UserId:userid];
+        }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
+
+//        });
+//    });
 }
 
 
@@ -85,20 +90,24 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 //保存头衔信息
 -(void)saveTitleInfo:(NSString*)userId Titles:(NSArray*)titles Type:(NSString*)type
 {
-    if (!titles || ![titles isKindOfClass:[NSArray class]]) {
-        return;
-    }
-    if ([GameCommon isEmtity:type]) {
-        [DataStoreManager deleteAllDSTitle:userId];
-    }else{
-        [DataStoreManager deleteDSTitleByType:type Userid:userId];
-    }
-    if (titles.count==0) {
-        return;
-    }
-    for (NSMutableDictionary *title in titles) {
-        [DataStoreManager saveDSTitle:title];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        if (!titles || ![titles isKindOfClass:[NSArray class]]) {
+            return;
+        }
+        if ([GameCommon isEmtity:type]) {
+            [DataStoreManager deleteAllDSTitle:userId];
+        }else{
+            [DataStoreManager deleteDSTitleByType:type Userid:userId];
+        }
+        if (titles.count==0) {
+            return;
+        }
+        for (NSMutableDictionary *title in titles) {
+            [DataStoreManager saveDSTitle:title];
+        }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
+//        });
+//    });
 }
 @end

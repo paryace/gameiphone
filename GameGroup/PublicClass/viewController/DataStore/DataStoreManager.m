@@ -1284,7 +1284,7 @@
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-//    dispatch_async([[UserManager singleton] queueDb], ^{
+    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
         NSLog(@"save UserInfo start");
         NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
         NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
@@ -1336,7 +1336,7 @@
         if ([GameCommon isEmtity:nameIndex]) {
             nameIndex=@"#";
         }
-//        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             if (![GameCommon isEmtity:userId]) {
                 [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
                     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -1392,8 +1392,10 @@
                 }];
             }
          NSLog(@"save UserInfo end");
-//        });
-//    });
+        });
+    });
+    
+    
 //    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
 //    NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
 //    NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];
@@ -2664,46 +2666,48 @@
 #pragma mark - 保存最后一条动态
 +(void)saveDSlatestDynamic:(NSDictionary *)characters
 {
-    NSString * alias = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"alias")];
-    NSString * commentnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"commentnum")];
-    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"createDate")];
-    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
-    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
-    NSString * msg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"msg")];
-    NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"nickname")];
-    NSString * rarenum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"rarenum")];
-    NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"superstar")];
-    NSString * thumb = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"thumb")];
-    NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"title")];
-    NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"type")];
-    NSString * urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"urlLink")];
-    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userid")];
-    NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userimg")];
-    NSString * username = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"username")];
-    NSString * zannum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"zannum")];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
-        DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
-        if (!latestDynamic)
-            latestDynamic = [DSLatestDynamic MR_createInContext:localContext];
-        latestDynamic.alias = alias;
-        latestDynamic.commentnum= commentnum;
-        latestDynamic.createDate = createDate;
-        latestDynamic.msgId = msgId;
-        latestDynamic.img = img;
-        latestDynamic.msg = msg;
-        latestDynamic.nickname = nickname;
-        latestDynamic.rarenum = rarenum;
-        latestDynamic.superstar = superstar;
-        latestDynamic.thumb = thumb;
-        latestDynamic.title = title;
-        latestDynamic.type = type;
-        latestDynamic.urlLink = urlLink;
-        latestDynamic.userid = userid;
-        latestDynamic.userimg = userimg;
-        latestDynamic.username = username;
-        latestDynamic.zannum = zannum;
-    }];
+    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        NSString * alias = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"alias")];
+        NSString * commentnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"commentnum")];
+        NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"createDate")];
+        NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"id")];
+        NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"img")];
+        NSString * msg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"msg")];
+        NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"nickname")];
+        NSString * rarenum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"rarenum")];
+        NSString * superstar = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"superstar")];
+        NSString * thumb = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"thumb")];
+        NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"title")];
+        NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"type")];
+        NSString * urlLink = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"urlLink")];
+        NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userid")];
+        NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"userimg")];
+        NSString * username = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"username")];
+        NSString * zannum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"zannum")];
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+            DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicate];
+            if (!latestDynamic)
+                latestDynamic = [DSLatestDynamic MR_createInContext:localContext];
+            latestDynamic.alias = alias;
+            latestDynamic.commentnum= commentnum;
+            latestDynamic.createDate = createDate;
+            latestDynamic.msgId = msgId;
+            latestDynamic.img = img;
+            latestDynamic.msg = msg;
+            latestDynamic.nickname = nickname;
+            latestDynamic.rarenum = rarenum;
+            latestDynamic.superstar = superstar;
+            latestDynamic.thumb = thumb;
+            latestDynamic.title = title;
+            latestDynamic.type = type;
+            latestDynamic.urlLink = urlLink;
+            latestDynamic.userid = userid;
+            latestDynamic.userimg = userimg;
+            latestDynamic.username = username;
+            latestDynamic.zannum = zannum;
+        }];
+    });
 }
 
 //删除最后一条动太

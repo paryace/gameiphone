@@ -39,8 +39,7 @@ static UserManager *userManager = NULL;
     return self;
 }
 
-- (NSMutableDictionary*)getUser:(NSString* )userId
-{
+-(NSMutableDictionary*)getUser:(NSString*)userId{
     NSMutableDictionary * userDic = [self.userCache objectForKey:userId];
     if (userDic) {
         return userDic;
@@ -61,6 +60,7 @@ static UserManager *userManager = NULL;
         [self requestUserFromNet:userId];
     }
     return dict;
+
 }
 - (void)requestUserFromNet:(NSString*)userId {
     if ([userId hasPrefix:@"sys"]) {
@@ -96,7 +96,7 @@ static UserManager *userManager = NULL;
     if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
         return;
     }
-    dispatch_async([[UserManager singleton] queueDb], ^{
+//    dispatch_async([[UserManager singleton] queueDb], ^{
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
             return;
         }
@@ -129,16 +129,18 @@ static UserManager *userManager = NULL;
         for (NSMutableDictionary *title in titles) {
             [DataStoreManager saveDSTitle:title];
         }
-    if ([KISDictionaryHaveKey(dicUser, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
-            [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
+        if ([KISDictionaryHaveKey(dicUser, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+            if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
+                [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
+            }
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
         }
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    }
-    [self updateMsgInfo:dicUser];
-    });
-    [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
+        [self updateMsgInfo:dicUser];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+             [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
+//        });
+//    });
 }
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict
