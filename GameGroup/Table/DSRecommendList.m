@@ -20,5 +20,5 @@
 @dynamic userName;
 @dynamic sendTime;
 @dynamic recommendReason;
-@dynamic recommendMsg;
+//@dynamic recommendMsg;
 @end

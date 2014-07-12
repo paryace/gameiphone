@@ -680,7 +680,10 @@ typedef enum : NSUInteger {
             
             NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
             if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
+                
                 topImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+                [[NSUserDefaults standardUserDefaults]setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")] forKey :[NSString stringWithFormat:@"topImageHead_wx_%@",userid]];
+
             }
             NSArray *arraaay =KISDictionaryHaveKey(responseObject, @"dynamicMsgList");
             if (([arraaay isKindOfClass:[NSArray class]]&&arraaay.count>0)&&ishavehuancun) {
@@ -2122,7 +2125,6 @@ typedef enum : NSUInteger {
 -(void)uploadsuccessImg:(NSString *)img
 {
     NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-    [[NSUserDefaults standardUserDefaults]setObject:img forKey :[NSString stringWithFormat:@"topImageHead_wx_%@",userid]];
     
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -2132,7 +2134,8 @@ typedef enum : NSUInteger {
     [dict setObject:@"198" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        [[NSUserDefaults standardUserDefaults]setObject:img forKey :[NSString stringWithFormat:@"topImageHead_wx_%@",userid]];
+ 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
