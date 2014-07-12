@@ -113,6 +113,7 @@
     {
         return;
     }
+    
     NSDictionary *dictionary = notification.userInfo;
     [self saveUserInfo:self.userId UserInfo:dictionary];//保存
     NSArray *views = [self.view subviews];
