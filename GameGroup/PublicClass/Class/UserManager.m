@@ -91,9 +91,6 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
-        return;
-    }
     
 //    dispatch_async(queue, ^{
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");

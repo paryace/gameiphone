@@ -730,7 +730,13 @@ static GameCommon *my_gameCommon = NULL;
                 [[TempData sharedInstance]isBindingRolesWithBool:NO];  
             }
         }
-        }        
+        }
+        
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+            [[UserManager singleton]saveUserInfo:responseObject];
+        }
+
+        
 //        NSArray *charachers = [responseObject objectForKey:@"characters"];
 //        
 //        for (NSMutableDictionary *characher in charachers) {

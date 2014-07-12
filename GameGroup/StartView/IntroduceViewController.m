@@ -114,11 +114,11 @@
     
 //    m_currentPage = 0;
     
-    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?10:0), 120, 35)];
+    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?0:10), 160, 45)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
    
     
-    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 45-(KISHighVersion_7?10:0), 120, 35)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(160, m_myScrollView.frame.size.height - 45-(KISHighVersion_7?0:10), 160, 45)];
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
