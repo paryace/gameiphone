@@ -24,6 +24,20 @@
 
 @implementation JoinApplyViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    NSLog(@"%@",self.view.superview);
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -440,17 +454,18 @@
         NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
         inv.groupId = [GameCommon getNewStringWithId:groupId];
         [self.navigationController pushViewController:inv animated:YES];
+        return;
     }
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",groupId];
     kkchat.type = @"group";
     [self.navigationController pushViewController:kkchat animated:YES];
 }
-- (void)dealloc
-{
-    m_ApplyTableView.dataSource = nil;
-    m_ApplyTableView.delegate = nil;
-}
+//- (void)dealloc
+//{
+//    m_ApplyTableView.dataSource = nil;
+//    m_ApplyTableView.delegate = nil;
+//}
 
 - (void)didReceiveMemoryWarning
 {
