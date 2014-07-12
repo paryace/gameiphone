@@ -1684,6 +1684,7 @@ UINavigationControllerDelegate>
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
                 KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
                 [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
+//                [self.tView reloadData];
             }
         }
     }
