@@ -330,9 +330,9 @@
             for (NSMutableDictionary * dict in [result objectForKey:key]) {
                 [dict setObject:key forKey:@"nameIndex"];
                 NSString *shiptype=[dict objectForKey:@"shiptype"];
-                dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+//                dispatch_barrier_async([[UserManager singleton] queueDb], ^{
                     [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                });
+//                });
             }
         }
     }
@@ -343,7 +343,6 @@
 {
     dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
     dispatch_async(queueselect, ^{
-        NSLog(@"v333333 - in queue - getFriendDateFromDataSore");
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
@@ -354,7 +353,6 @@
         resultArray = result;
         fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"v333333 - MAIN THREAD updated UI - getFriendDateFromDataSore");
             [m_myTableView reloadData];
             [self setFansNum];
         });

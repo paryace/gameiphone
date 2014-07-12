@@ -1284,7 +1284,7 @@
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-//    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
+    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
         NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称
         NSString *rarenum = [GameCommon getNewStringWithId:[userInfo objectForKey:@"rarenum"]];//头衔等级
         NSString *actionStr=[GameCommon getNewStringWithId:[userInfo objectForKey:@"active"]];
@@ -1335,7 +1335,7 @@
         if ([GameCommon isEmtity:nameIndex]) {
             nameIndex=@"#";
         }
-//        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             if (![GameCommon isEmtity:userId]) {
                 [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
                     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
@@ -1390,8 +1390,8 @@
                     }
                 }];
             }
-//        });
-//    });
+        });
+    });
     
     
 //    NSString *title = [GameCommon getNewStringWithId:[userInfo objectForKey:@"titleName"]];//头衔名称

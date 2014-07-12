@@ -96,7 +96,7 @@ static UserManager *userManager = NULL;
     if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
         return;
     }
-    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
         if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
             [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -116,16 +116,6 @@ static UserManager *userManager = NULL;
             [dicUser setObject:titleObjLevel forKey:@"rarenum"];
         }
         [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
-        
-//        [DataStoreManager saveDSCharacters2:charachers UserId:KISDictionaryHaveKey(dicUser, @"userid")];
-//        [DataStoreManager saveDSTitle2:titles];
-    
-        for (NSMutableDictionary *characher in charachers) {
-            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
-        }
-        for (NSMutableDictionary *title in titles) {
-            [DataStoreManager saveDSTitle:title];
-        }
         if ([KISDictionaryHaveKey(dicUser, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
                 [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
@@ -133,11 +123,24 @@ static UserManager *userManager = NULL;
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
         }
+        [self saveCharaterAndTitle:charachers Titles:titles UserId:KISDictionaryHaveKey(dicUser, @"id")];
         [self updateMsgInfo:dicUser];
-        dispatch_async(dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
              [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
-        });
-    });
+//        });
+//    });
+}
+
+-(void)saveCharaterAndTitle:(NSMutableArray*) charachers Titles:(NSMutableArray*)titles UserId:(NSString*)userId
+{
+//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
+        for (NSMutableDictionary *characher in charachers) {
+            [DataStoreManager saveDSCharacters:characher UserId:userId];
+        }
+        for (NSMutableDictionary *title in titles) {
+            [DataStoreManager saveDSTitle:title];
+        }
+//    });
 }
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict
