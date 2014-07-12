@@ -139,7 +139,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otherMessageReceived:) name:kOtherMessage object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kOtherMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kRecommendMessage object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
     //申请加入群完成通知
@@ -257,7 +257,7 @@
 #pragma mark 收到推荐好友
 -(void)recommendFriendReceived:(NSNotification *)notification
 {
-   // [self displayMsgsForDefaultView];
+    [self displayMsgsForDefaultView];
 }
 //加入群
 -(void)joinGroupReceived:(NSNotification *)notification

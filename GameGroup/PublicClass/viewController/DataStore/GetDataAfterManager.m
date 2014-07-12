@@ -467,6 +467,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendMessage object:nil userInfo:info];
 }
 //--------------------------------------------动态消息
 
