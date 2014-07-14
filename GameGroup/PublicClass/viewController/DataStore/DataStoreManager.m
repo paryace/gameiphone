@@ -1283,13 +1283,10 @@
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
-    NSLog(@"保存单个用户信息-----》》");
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    NSLog(@"保存单个用户信息-----");
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveUserInfo:userInfo withshiptype:shiptype Loco:localContext];
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 
     
 //    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{

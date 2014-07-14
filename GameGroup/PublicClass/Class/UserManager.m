@@ -131,7 +131,7 @@ static UserManager *userManager = NULL;
 -(void)startToSave:(NSMutableDictionary*)dicUser{
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
 }
-
+//保存角色和头衔
 -(void)saveCharaterAndTitle:(NSMutableArray*) charachers Titles:(NSMutableArray*)titles UserId:(NSString*)userId
 {
     for (NSMutableDictionary *characher in charachers) {
