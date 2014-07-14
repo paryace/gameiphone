@@ -321,9 +321,9 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-    [queueme addOperation:task];
-//    [self saveFriendsList:result];
+//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
+//    [queueme addOperation:task];
+    [self saveFriendsList:result];
 }
 
 //保存用户列表信息
@@ -336,9 +336,9 @@
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * userInfo in [result objectForKey:key]) {
                 [userInfo setObject:key forKey:@"nameIndex"];
-                [DataStoreManager newSaveFriendList:userInfo withshiptype:KISDictionaryHaveKey(userInfo, @"shiptype")];
+//                [DataStoreManager newSaveFriendList:userInfo withshiptype:KISDictionaryHaveKey(userInfo, @"shiptype")];
                 
-//                [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
+                [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
             }
         }
     }

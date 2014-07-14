@@ -445,7 +445,6 @@
         [hud hide:YES];
         [[TempData sharedInstance]isBindingRolesWithBool:YES];
          [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];
