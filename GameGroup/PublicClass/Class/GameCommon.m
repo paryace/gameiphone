@@ -759,7 +759,7 @@ static GameCommon *my_gameCommon = NULL;
         
     }];
 }
-#pragma mark ---登陆成功重新获取open接口数据
+#pragma mark ---登陆成功重新获取open接口数据------>获取游戏列表
 -(void)LoginOpen
 {
     
@@ -778,21 +778,21 @@ static GameCommon *my_gameCommon = NULL;
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {
     //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
-    [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
+//    [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
     
     
     
-    if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
-        alert.tag = 21;
-        [alert show];
-    }
-    else
-    {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
-    }
+//    if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
+//        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
+//        alert.tag = 21;
+//        [alert show];
+//    }
+//    else
+//    {
+//        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
+//    }
     
     
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
