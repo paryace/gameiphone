@@ -38,6 +38,8 @@
 }
 -(void)showLoading:(id)sender
 {
+    
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];

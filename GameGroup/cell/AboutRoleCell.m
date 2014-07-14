@@ -30,14 +30,13 @@
 
         
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 44)];
-       // self.titleLabel.text = @"选择游戏";
         self.titleLabel.textColor = kColorWithRGB(102, 102, 102, 1.0);
         self.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
         self.titleLabel.backgroundColor= [UIColor clearColor];
         [self.contentView addSubview:self.titleLabel];
    
         
-        self.contentTF = [[UITextField alloc] initWithFrame:CGRectMake(100, 0, 180, 40)];
+        self.contentTF = [[UITextField alloc] initWithFrame:CGRectMake(80, 0, 200, 40)];
         self.contentTF.returnKeyType = UIReturnKeyDone;
         self.contentTF.delegate = self;
         self.contentTF.textAlignment = NSTextAlignmentRight;
@@ -48,8 +47,6 @@
         [self.contentView addSubview:self.contentTF];
 
         self.rightImageView = [[UIButton alloc] initWithFrame:CGRectMake(280, 0, 40, 40)];
-//        self.rightImageView seti
-//        (290, 16, 12, 8)
         [self.rightImageView setImage:KUIImage(@"arrow_bottom") forState:UIControlStateNormal];
         [self.rightImageView setImageEdgeInsets:UIEdgeInsetsMake(16, 10, 16, 18)];
         [self.rightImageView addTarget:self action:@selector(result:) forControlEvents:UIControlEventTouchUpInside];
@@ -61,7 +58,7 @@
         self.serverButton.hidden = YES;
         [self.contentView addSubview:self.serverButton];
 
-        self.gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(170, 13, 18, 18)];
+        self.gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(150, 13, 18, 18)];
         self.gameImg.hidden = YES;
         [self.contentView addSubview:self.gameImg];
 

@@ -33,7 +33,7 @@
 #define kChatImageSizeHigh @"200"
 
 #define padding 20
-#define spaceEnd 300
+#define spaceEnd 500
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
 
@@ -65,7 +65,8 @@ UINavigationControllerDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     BOOL endOfTable;
-    
+    BOOL oTherPage;
+    dispatch_queue_t queue;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -105,14 +106,32 @@ UINavigationControllerDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    oTherPage=NO;
+    //接收消息监听
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
+    //ack消息监听//消息是否发送成功
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     [self refreTitleText];
     if ([self.type isEqualToString:@"group"]) {
         [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
 }
+
+
 -(void)viewWillDisappear:(BOOL)animated
 {
-    [self changMsgToRead];
+    if (!oTherPage) {
+        //监听通知（收到新消息，与发送消息成功）
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
+        //ack反馈消息通知
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
+    }
+
+    if ([self.type isEqualToString:@"normal"]) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+    }else if ([self.type isEqualToString:@"group"]){
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+    }
 }
 //设置Title
 -(void)refreTitleText
@@ -143,16 +162,9 @@ UINavigationControllerDelegate>
 //初始化会话界面UI
 - (void)viewDidLoad
 {
-    NSLog(@"chat init");
     [super viewDidLoad];
-    //监听通知（收到新消息，与发送消息成功）
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
-    //ack反馈消息通知
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
-    //接收消息监听
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
-    //ack消息监听//消息是否发送成功
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
+
+
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
@@ -165,12 +177,15 @@ UINavigationControllerDelegate>
     //被剔出该群
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     //群动态消息
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg,self.chatWithUser] object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
     [self initMyInfo];
+    
     postDict = [NSMutableDictionary dictionary];
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
+    oTherPage= NO;
+    queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -188,25 +203,22 @@ UINavigationControllerDelegate>
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
-    //清空此人所有的未读消息
-    
-    [self changMsgToRead];
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
     ifAudio = NO;
     ifEmoji = NO;
-    
     [self.view addSubview:self.inPutView];  //输入框
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [self.view addSubview:self.unReadL]; //未读数量
+    [self changMsgToRead];
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
 //    [self.view addSubview:self.noReadView]; //未读数量
 
     if ([self.type isEqualToString:@"group"]) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
-        if (self.unreadMsgCount>20) {
+        if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
             _titleLabel.hidden = YES;
             [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
             
@@ -255,13 +267,17 @@ UINavigationControllerDelegate>
 {
     if ([self.type isEqualToString:@"normal"]) {
         [self sendReadedMesg];//发送已读消息
+    }
+    if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
     }else if ([self.type isEqualToString:@"group"]){
         [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
     }
-
-
+    [self readNoreadMsg];
+    [self setNoreadMsgView];
 }
+
+
 -(NSMutableArray*)getMsgArray:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
 {
     if([self.type isEqualToString:@"normal"]){
@@ -275,20 +291,22 @@ UINavigationControllerDelegate>
 //初始我的信息（激活状态，头像）
 -(void)initMyInfo
 {
+    myActive = YES;
     DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    myActive = [friend.action boolValue];
+//    myActive = [friend.action boolValue];
     self.myNickName = friend.nickName;
     self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
 }
 //改变我的激活状态
 - (void)changeMyActive:(NSNotification*)notification
 {
-    if ([notification.userInfo[@"active"] intValue] == 2) {
-        myActive = YES;
-    }else
-    {
-        myActive = NO;
-    }
+     myActive = YES;
+//    if ([notification.userInfo[@"active"] intValue] == 2) {
+//        myActive = YES;
+//    }else
+//    {
+//        myActive = NO;
+//    }
 }
 
 #pragma mark ---TabView 显示方法
@@ -377,7 +395,7 @@ UINavigationControllerDelegate>
     else if (kkChatMsgType == KKChatMsgTypeImage) {
         NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
         NSDictionary *payload = [payloadStr JSONValue];
-        static NSString *identifier = @"imgCell";
+        static NSString *identifier = @"imgMsgCell";
         KKImgCell *cell = (KKImgCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
             cell = [[KKImgCell alloc] initWithMessage:dict reuseIdentifier:identifier];
@@ -502,7 +520,7 @@ UINavigationControllerDelegate>
     //普通消息
     else
     {
-        static NSString *identifier = @"msgCell";
+        static NSString *identifier = @"normalMsgCell";
         KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
             cell = [[KKMessageCell alloc] initWithMessage:dict reuseIdentifier:identifier];
@@ -669,25 +687,43 @@ UINavigationControllerDelegate>
     }
     return _inPutView;
 }
+
+-(void)readNoreadMsg
+{
+    NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
+    _unreadNo  = [GameCommon getNoreadMsgCount:array];
+}
+
 //未读消息数红点
 - (UILabel *)unReadL{
     if (!_unReadL) {
         
         _unReadL = [[UILabel alloc] init];
         _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
-        if (_unreadNo>0) {
-            _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-        }
         _unReadL.backgroundColor = [UIColor redColor];
         _unReadL.layer.cornerRadius = 10;
         _unReadL.layer.masksToBounds=YES;
         _unReadL.textColor = [UIColor whiteColor];
         _unReadL.textAlignment = NSTextAlignmentCenter;
-        _unReadL.font = [UIFont systemFontOfSize:14];
+        _unReadL.font = [UIFont systemFontOfSize:12];
         _unReadL.hidden = YES;
-        
     }
     return _unReadL;
+}
+
+-(void)setNoreadMsgView
+{
+    if (_unreadNo>0) {
+         _unReadL.hidden = NO;
+        if (_unreadNo>99) {
+            _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
+            _unReadL.text = [NSString stringWithFormat:@"%@",@"N+"];
+        }else{
+             _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
+        }
+    }else{
+         _unReadL.hidden = YES;
+    }
 }
 
 -(UIView * )noReadView
@@ -695,7 +731,7 @@ UINavigationControllerDelegate>
     if(!_noReadView){
         _noReadView = [[UIView alloc] init];
         _noReadView.frame = CGRectMake(60,kScreenHeigth - startX - 20-20,200,20);
-        
+        _noReadView.hidden = YES;
         
         
         _noReadBtn = [[UIButton alloc] initWithFrame:CGRectMake(200-20,0,20,20)];
@@ -707,6 +743,7 @@ UINavigationControllerDelegate>
         
         _noReadLable = [[UILabel alloc] initWithFrame:CGRectMake(200-20-100,0,100,20)];
         _noReadLable .text = @"下方有未读消息";
+        _noReadLable.hidden = YES;
         _noReadLable.textAlignment = NSTextAlignmentRight;
         _noReadLable.backgroundColor = [UIColor clearColor];
         _noReadLable.font = [UIFont systemFontOfSize:12];
@@ -845,11 +882,10 @@ UINavigationControllerDelegate>
 #pragma mark 收到群动态消息
 -(void)receivedGroupDynamicMsg:(NSNotification*)sender
 {
-    NSDictionary * groupDic = sender.userInfo;
-    NSString * groupMsgId= KISDictionaryHaveKey(groupDic, @"groupId");
-    if ([self.chatWithUser isEqualToString:groupMsgId]) {
-        _groupCricleMsgCount++;
-        [self setGroupDynamicMsg:_groupCricleMsgCount];
+    if ([self.chatWithUser isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(sender.userInfo, @"groupId")]]) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(sender.userInfo, @"groupId")] isEqualToString:self.chatWithUser]) {
+            [self initGroupCricleMsgCount];
+        }
     }
 }
 //设置群动态的未读消息数
@@ -873,6 +909,7 @@ UINavigationControllerDelegate>
 //群动态入口
 - (void)groupCricleButtonClick:(UIButton *)sender{
     
+    oTherPage = YES;
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.chatWithUser]];
     [[NSUserDefaults standardUserDefaults] synchronize];
     _groupCricleMsgCount=0;
@@ -935,7 +972,7 @@ UINavigationControllerDelegate>
         self.unreadMsgCount=0;
     }
 }
-//发送已读消息
+//将当前会话的所有消息改为已读，发送已读消息
 - (void)sendReadedMesg
 {
     for(NSMutableDictionary* plainEntry in messages)
@@ -1091,7 +1128,6 @@ UINavigationControllerDelegate>
     }
     if(![self.finalImage objectForKey:uuid]) //如果没有这个uuid，才执行这个压缩过程
     {
-        NSLog(@"finalmesg添加%@",uuid);
         NSDictionary* payload = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
         NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
          NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
@@ -1231,7 +1267,6 @@ UINavigationControllerDelegate>
         [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
         return ;
     }
-    NSLog(@"%d",sender.tag);
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
 
@@ -1243,6 +1278,7 @@ UINavigationControllerDelegate>
                 imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+                oTherPage = YES;
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
                 [self presentViewController:imagePicker animated:YES completion:^{
                 }];
@@ -1261,6 +1297,7 @@ UINavigationControllerDelegate>
                 imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                oTherPage = YES;
                 imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
@@ -1307,7 +1344,6 @@ UINavigationControllerDelegate>
     }
     else
     {
-        NSLog(@"fail");
     }
     [self dismissViewControllerAnimated:YES completion:^{
         [hud hide:YES];
@@ -1446,7 +1482,6 @@ UINavigationControllerDelegate>
             [self.textView resignFirstResponder];
             
             self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
-            NSLog(@"-----%f",self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
             self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
@@ -1466,6 +1501,7 @@ UINavigationControllerDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
+    oTherPage = YES;
     if ([self.type isEqualToString:@"normal"]) {
         TestViewController *detailV = [[TestViewController alloc]init];
         detailV.userId = self.chatWithUser;
@@ -1625,13 +1661,46 @@ UINavigationControllerDelegate>
     return YES;
 }
 
+////消息发送成功
+//- (void)messageAck:(NSNotification *)notification
+//{
+//    NSDictionary* tempDic = notification.userInfo;
+//    NSString * msgId = KISDictionaryHaveKey(tempDic, @"src_id");
+//    NSInteger changeRow = [self getMsgRowWithId:msgId];
+//    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
+//}
+
+
 //消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
-    NSDictionary* tempDic = notification.userInfo;
-    NSInteger changeRow = [self getMsgRowWithId:KISDictionaryHaveKey(tempDic, @"src_id")];
-    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
+    NSDictionary* stateDic = notification.userInfo;
+    NSString * msgId = KISDictionaryHaveKey(stateDic, @"src_id");
+    if (messages.count>0 && msgId && msgId.length > 0)
+    {
+        for (int i = 0; i < [messages count]; i++) {
+            NSMutableDictionary* tempDic = [messages objectAtIndex:i];
+            if ([KISDictionaryHaveKey(tempDic, @"messageuuid") isEqualToString:msgId]) {
+                if (i<0) {
+                    return;
+                }
+                [tempDic setObject:KISDictionaryHaveKey(stateDic, @"msgState") forKey:@"status"];
+                if ([self.type isEqualToString:@"normal"]) {
+                    [DataStoreManager refreshMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
+                }else if([self.type isEqualToString:@"group"]){
+                    [DataStoreManager refreshGroupMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
+                }
+                NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+                KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
+                [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
+//                [self.tView reloadData];
+            }
+        }
+    }
 }
+
+
+
 
 //根据uuid获取message所在的RowIndex
 - (NSInteger)getMsgRowWithId:(NSString*)msgUUID
@@ -1919,13 +1988,10 @@ UINavigationControllerDelegate>
 }
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    CGFloat height = scrollView.frame.size.height;
-    CGFloat contentYoffset = scrollView.contentOffset.y;
-    CGFloat distanceFromBottom = scrollView.contentSize.height - contentYoffset;
-    if(distanceFromBottom - height<spaceEnd)
+    CGFloat distanceFromBottom = scrollView.contentSize.height - scrollView.contentOffset.y;
+    if(distanceFromBottom - scrollView.frame.size.height<spaceEnd)
     {
         endOfTable = YES;
-        NSLog(@"end of the table");
     }else{
         endOfTable = NO;
     }
@@ -2047,7 +2113,6 @@ UINavigationControllerDelegate>
         [payload setStringValue:payloadStr];
         [mes addChild:payload];
     }
-    NSLog(@"sendMsg------------>>>>%@",mes);
     [self.appDel.xmppHelper sendMessage:mes];
 }
 
@@ -2174,15 +2239,20 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
-        loadMoreMsgHeight = 0;
-        for (int i = 0; i < array.count; i++) {
-            [messages insertObject:array[i] atIndex:i];
-            CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
-            loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
-        }
-        loadHistoryArrayCount = array.count;
-        [header endRefreshing];
+//        dispatch_barrier_async(queue, ^{
+            array = [self getMsgArray:messages.count-historyMsg PageSize:20];
+            loadMoreMsgHeight = 0;
+            for (int i = 0; i < array.count; i++) {
+                [messages insertObject:array[i] atIndex:i];
+                CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
+                loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
+            }
+            loadHistoryArrayCount = array.count;
+//            dispatch_async(dispatch_get_main_queue(), ^{
+                [header endRefreshing];
+//            });
+//        });
+        
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
@@ -2284,13 +2354,13 @@ UINavigationControllerDelegate>
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
         [tempDic setValue:@"4" forKey:@"status"];
-        
-        if (messages.count>=60) {
+            
+        if (messages.count>=60&&endOfTable) {
             [self clearMessage];
             [self loadMessage:0 PageSize:20];
             [self.tView reloadData];
         }
-        
+            
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
         [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
@@ -2302,15 +2372,8 @@ UINavigationControllerDelegate>
     }
     else
     {
-        self.unReadL.hidden = NO;
         _unreadNo++;
-        if (_unreadNo>0) {
-            if (_unreadNo>99) {
-                self.unReadL.text =@"N+";
-            }else{
-                self.unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-            }
-        }
+        [self setNoreadMsgView];
     }
 }
 
@@ -2318,19 +2381,22 @@ UINavigationControllerDelegate>
 //发送已读消息
 - (void)comeBackDisplayed:(NSString*)sender msgId:(NSString*)msgId
 {
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Displayed",@"msgStatus", nil];
-    NSString* message=[dic JSONRepresentation];
-    NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
-    NSString *from=[fromUserId stringByAppendingString:domain];
-    NSString *to=[sender stringByAppendingString:domain];
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
-    if (![self.appDel.xmppHelper sendMessage:mes]) {
-        return;
-    }
-    [DataStoreManager refreshMessageStatusWithId:msgId status:@"4"];
+    dispatch_queue_t queueload = dispatch_queue_create("com.living.game.comeBack", NULL);
+    dispatch_async(queueload, ^{
+        NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:msgId,@"src_id",@"true",@"received",@"Displayed",@"msgStatus", nil];
+        NSString* message=[dic JSONRepresentation];
+        NSString* nowTime = [GameCommon getCurrentTime];
+        NSString* uuid = [[GameCommon shareGameCommon] uuid];
+        NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+        NSString *from=[fromUserId stringByAppendingString:domain];
+        NSString *to=[sender stringByAppendingString:domain];
+        NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+        if (![self.appDel.xmppHelper sendMessage:mes]) {
+            return;
+        }
+        [DataStoreManager refreshMessageStatusWithId:msgId status:@"4"];
+    });
 }
 
 
@@ -2359,7 +2425,6 @@ UINavigationControllerDelegate>
             }
         }
     }
-    NSLog(@"加载的图片地址：%@",str);
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
     [self presentViewController:photo animated:NO completion:^{
@@ -2380,6 +2445,11 @@ UINavigationControllerDelegate>
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
+- (void)dealloc
+{
+    [super dealloc];
+    NSLog(@"dealloc--ChatController");
+}
 //发送消息
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
 {
@@ -2390,9 +2460,9 @@ UINavigationControllerDelegate>
 {
     [self refreMessageStatus:cellIndex Status:@"0"];
 }
+
 - (void)didReceiveMemoryWarning
 {
-    NSLog(@"ChatPage--didReceiveMemoryWarning--->");
     [super didReceiveMemoryWarning];
 }
 @end

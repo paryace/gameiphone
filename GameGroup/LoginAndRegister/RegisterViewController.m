@@ -1176,7 +1176,7 @@
        NSMutableDictionary *userDic=KISDictionaryHaveKey(dic, @"gameproUser");
        [userDic setObject:KISDictionaryHaveKey(userDic, @"id") forKey:@"userid"];
        [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
-       [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:@"unknow"] ;
+       [[UserManager singleton] saveUserInfoToDb:userDic ShipType:@"unknow"];
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         [self dismissViewControllerAnimated:YES completion:^{
             if (_delegate && [_delegate respondsToSelector:@selector(RegisterViewControllerFinishRegister)]) {
@@ -1207,6 +1207,7 @@
     [postDict setObject:locationDict forKey:@"params"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"---->>>>%@",responseObject);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         

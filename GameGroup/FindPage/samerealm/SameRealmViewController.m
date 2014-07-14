@@ -14,6 +14,7 @@
 @interface SameRealmViewController ()
 {
     UIButton*           m_selectRealmButton;
+    UIButton*           m_selectImage;
     SelectView*         m_selectView;
     
     NSMutableArray*     m_realmsArray;
@@ -73,17 +74,23 @@
     
 
     
-    m_selectRealmButton = [[UIButton alloc] initWithFrame:CGRectMake(60, KISHighVersion_7 ? 20 : 0, 200, 44)];
-    [m_selectRealmButton setImage:KUIImage(@"toparrow_down") forState:UIControlStateNormal];
-    [m_selectRealmButton setImage:KUIImage(@"toparrow_up") forState:UIControlStateSelected];
-    m_selectRealmButton.imageEdgeInsets = UIEdgeInsetsMake(26, 160, 26, 26);
-    m_selectRealmButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 18);
+    m_selectRealmButton = [[UIButton alloc] initWithFrame:CGRectMake(60, KISHighVersion_7 ? 20 : 0, 200, 20)];
     [m_selectRealmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     m_selectRealmButton.titleLabel.font = [UIFont boldSystemFontOfSize:20.0];
     m_selectRealmButton.backgroundColor = [UIColor clearColor];
+    m_selectRealmButton.hidden = YES;
     [m_selectRealmButton addTarget:self action:@selector(selectRealmClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_selectRealmButton];
-    m_selectRealmButton.hidden = YES;
+    
+    
+    m_selectImage = [[UIButton alloc] initWithFrame:CGRectMake(265, KISHighVersion_7 ? 20 : 0, 20, 15)];
+    [m_selectImage setImage:KUIImage(@"toparrow_down") forState:UIControlStateNormal];
+    [m_selectImage setImage:KUIImage(@"toparrow_up") forState:UIControlStateSelected];
+    [m_selectImage setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    m_selectImage.titleLabel.font = [UIFont boldSystemFontOfSize:20.0];
+    m_selectImage.backgroundColor = [UIColor clearColor];
+    [m_selectImage addTarget:self action:@selector(selectRealmClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_selectImage];
 
     
     UIButton *menuButton=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -158,8 +165,10 @@
             if ([m_realmsArray count] > 0) {
                 if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]!=nil&&[[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]intValue]<m_realmsArray.count) {
                     [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:[[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_buttonTitleOfPage"]intValue]] forState:UIControlStateNormal];
+                    [self setTitleOrgin];
                 }else{
-             [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:0] forState:UIControlStateNormal];
+                    [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:0] forState:UIControlStateNormal];
+                    [self setTitleOrgin];
                 }
                 float viewHeight = 21 + [m_realmsArray count] * 40;
                 m_selectView.frame = CGRectMake(0, 0, kScreenWidth, viewHeight);
@@ -195,6 +204,14 @@
         [hud hide:YES];
     }];
 }
+
+-(void)setTitleOrgin
+{
+    CGSize nameSize = [m_selectRealmButton.titleLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:20.0] constrainedToSize:CGSizeMake(182, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    m_selectRealmButton.frame = CGRectMake((200-(nameSize.width>185?185:nameSize.width)+20-3)/2+50,KISHighVersion_7 ? 20 : 0, nameSize.width, 44);
+    m_selectImage.frame = CGRectMake(m_selectRealmButton.frame.origin.x+m_selectRealmButton.frame.size.width+3,KISHighVersion_7 ? 35 : 15, 20, 15);
+}
+
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -299,11 +316,11 @@
 #pragma mark 服务器筛选
 - (void)selectRealmClick:(id)sender
 {
-    m_selectRealmButton.selected = !m_selectRealmButton.selected;
+    m_selectImage.selected = !m_selectImage.selected;
     
     float viewHeight = 21 + [m_realmsArray count] * 40;
 //    [UIView animateWithDuration:0.4 animations:^{
-        if (m_selectRealmButton.selected) {
+        if (m_selectImage.selected) {
             m_selectView.center = CGPointMake(kScreenWidth/2, startX + viewHeight/2);
         }
         else
@@ -316,9 +333,9 @@
 - (void)selectButtonWithIndex:(NSInteger)buttonIndex
 {
     [self selectRealmClick:Nil];
-    
     m_searchType = 3;
     [m_selectRealmButton setTitle:[m_realmsArray objectAtIndex:buttonIndex] forState:UIControlStateNormal];
+    [self setTitleOrgin];
     [[NSUserDefaults standardUserDefaults]setObject:[NSString stringWithFormat:@"%d",buttonIndex] forKey:@"wx_buttonTitleOfPage"];
     if (m_selectRealmButton.titleLabel.text.length>6) {
         m_selectRealmButton.titleLabel.font = [UIFont systemFontOfSize:16];
@@ -328,7 +345,6 @@
     }
 
     m_currentPage = 0;
-//    [m_tabelData removeAllObjects];
     [self getSameRealmDataByNet];
 }
 
@@ -370,15 +386,18 @@
 
     if (buttonIndex == 0) {//男
         [m_selectRealmButton setTitle:[currentTitle stringByAppendingString:@"(男)"] forState:UIControlStateNormal];
+        [self setTitleOrgin];
         m_searchType = 0;
     }
     else if (buttonIndex == 1) {//女
         [m_selectRealmButton setTitle:[currentTitle stringByAppendingString:@"(女)"] forState:UIControlStateNormal];
+        [self setTitleOrgin];
         m_searchType = 1;
     }
     else//全部
     {
         [m_selectRealmButton setTitle:currentTitle forState:UIControlStateNormal];
+        [self setTitleOrgin];
         m_searchType = 3;
     }
     
@@ -436,24 +455,8 @@
         cell.ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
-//    if ([KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "]) {
-//            cell.headImageV.imageURL = nil;
-//        }else{
-    
-//    NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
-//        if (heardImgArray.count > 0) {
-//            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80/80"]];
-//            NSLog(@"-------===---%@",[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80"]);
-//        }else
-//        {
-//            cell.headImageV.imageURL = nil;
-//        }
-//
-//        }
     NSString * imageIdss=KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageV.imageURL = [ImageService getImageStr:imageIdss Width:80];
-    
-    
     NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
     if ([titleDic isKindOfClass:[NSDictionary class]]) {
         cell.distLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"title")] isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");

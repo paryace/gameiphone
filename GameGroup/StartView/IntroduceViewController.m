@@ -114,32 +114,32 @@
     
 //    m_currentPage = 0;
     
-    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(25, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?10:0), 120, 35)];
+    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0, m_myScrollView.frame.size.height - 45 -(KISHighVersion_7?0:10), 160, 45)];
     [loginButton addTarget:self action:@selector(loginButtonClick:) forControlEvents:UIControlEventTouchUpInside];
    
     
-    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(175, m_myScrollView.frame.size.height - 45-(KISHighVersion_7?10:0), 120, 35)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(160, m_myScrollView.frame.size.height - 45-(KISHighVersion_7?0:10), 160, 45)];
     
     if (iPhone5) {
         [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"second_login_normal") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"second_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"second_regist_normal") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"second_regist_click") forState:UIControlStateHighlighted];
 
     }
     else{
         [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateNormal];
-        [loginButton setBackgroundImage:KUIImage(@"first_login_normal") forState:UIControlStateHighlighted];
+        [loginButton setBackgroundImage:KUIImage(@"first_login_click") forState:UIControlStateHighlighted];
         [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateNormal];
-        [registerButton setBackgroundImage:KUIImage(@"first_regist_normal") forState:UIControlStateHighlighted];
+        [registerButton setBackgroundImage:KUIImage(@"first_regist_click") forState:UIControlStateHighlighted];
 
     }
 
     [registerButton addTarget:self action:@selector(registerButtonClick:) forControlEvents:UIControlEventTouchUpInside];
      [self.view addSubview:loginButton];
     [self.view addSubview:registerButton];
-    loginButton.hidden = YES;
-    registerButton.hidden = YES;
+    loginButton.hidden = NO;
+    registerButton.hidden = NO;
 }
 
 #pragma mark button click
@@ -167,8 +167,8 @@
 	NSInteger page = offsetofScrollView.x / m_myScrollView.frame.size.width;
 
     if(page==0||page==1||page==kMAXPAGE+1){
-        loginButton.hidden = YES;
-        registerButton.hidden = YES;
+        loginButton.hidden = NO;
+        registerButton.hidden = NO;
     }else{
         loginButton.hidden = NO;
         registerButton.hidden = NO;

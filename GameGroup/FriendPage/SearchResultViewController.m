@@ -104,7 +104,7 @@
                     [backpopAlertView show];
                     return ;
                 }
-                m_titleLabel.text =[NSString stringWithFormat: @"查询结果%@",KISDictionaryHaveKey(responseObject,@"userTotalNum")];
+                m_titleLabel.text =[NSString stringWithFormat: @"查询结果%@%@%@",@"(",KISDictionaryHaveKey(responseObject,@"userTotalNum"),@")"];
                 [m_tabelData removeAllObjects];
                 [m_tabelData addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"users")];
             }

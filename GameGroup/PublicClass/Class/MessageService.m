@@ -26,7 +26,6 @@
     [mes addAttributeWithName:@"msgTime" stringValue:nowTime];
     [mes addAttributeWithName:@"id" stringValue:uuid];
     [mes addChild:body];
-    NSLog(@"消息uuid ~!~~ %@", uuid);
     return mes;
 }
 

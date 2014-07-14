@@ -12,5 +12,6 @@
 @property(nonatomic,copy)NSString *groupId;
 @property (assign, nonatomic)  NSInteger shiptypeCount;
 @property (nonatomic,copy)NSString *CharacterInfo;
+@property(nonatomic,copy)NSString *realmStr;
 @property(nonatomic,assign)id<GroupEditRefreshInfoDelegate>myDelegate;
 @end

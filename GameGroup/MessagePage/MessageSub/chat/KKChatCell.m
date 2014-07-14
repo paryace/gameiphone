@@ -61,6 +61,7 @@
         //重连
         self.failImage = [[UIButton alloc]initWithFrame:CGRectZero];
         [self.failImage setBackgroundImage:KUIImage(@"fail_bg") forState:UIControlStateNormal];
+        self.failImage.hidden = YES;
         [self.contentView addSubview:self.failImage];
         
         self.statusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -175,8 +176,8 @@
     }
     else
     {
-        self.statusLabel.hidden = YES;
         self.failImage.hidden = YES;
+        self.statusLabel.hidden = YES;
         [self.activityView stopAnimating];
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];

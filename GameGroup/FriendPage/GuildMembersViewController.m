@@ -12,6 +12,7 @@
 #import "MJRefresh.h"
 #import "BinRoleViewController.h"
 #import "HelpViewController.h"
+#import "CharacterAndTitleService.h"
 @interface GuildMembersViewController ()
 {
     MJRefreshHeaderView *m_head;
@@ -350,8 +351,7 @@
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             
-            NSLog(@"%@", responseObject);
-            [DataStoreManager saveDSCharacters:dic UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+           [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
 
             
             [self showMessageWindowWithContent:@"添加成功" imageType:0];

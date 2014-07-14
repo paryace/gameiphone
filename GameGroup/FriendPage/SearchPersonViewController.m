@@ -364,8 +364,8 @@
         VC.hostInfo = hostInfo;
         NSMutableDictionary* dic = [NSMutableDictionary dictionaryWithCapacity:1];
         [dic addEntriesFromDictionary:hostInfo.infoDic];
-
-        [DataStoreManager newSaveAllUserWithUserManagerList:dic withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+         NSLog(@"111--保存查询出来的用户信息");
+         [[UserManager singleton] saveUserInfoToDb:dic ShipType:KISDictionaryHaveKey(responseObject, @"shiptype")];
 
         
         if ([hostInfo.relation isEqualToString:@"1"]) {

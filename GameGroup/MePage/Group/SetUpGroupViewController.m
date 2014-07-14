@@ -48,8 +48,10 @@
     table_arrow_two.image = KUIImage(@"group_cardtf");
     [self.view addSubview:table_arrow_two];
     
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, startX+25, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
+    UIButton* table_arrow = [[UIButton alloc] initWithFrame:CGRectMake(270, startX+10, 40, 40)];
+    [table_arrow setImageEdgeInsets:UIEdgeInsetsMake(16, 14, 16, 14)];
+    [table_arrow setImage:KUIImage(@"arrow_bottom") forState:UIControlStateNormal];
+    [table_arrow addTarget:self action:@selector(result:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:table_arrow];
 
     
@@ -99,6 +101,11 @@
     [shareButton addTarget:self action:@selector(updateInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
+}
+
+-(void)result:(id)sender
+{
+    [m_searchTf becomeFirstResponder];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if([m_searchTf isFirstResponder]){
@@ -169,8 +176,8 @@
     if ([gameInfoArray count] != 0) {
         placeholderL.text = @"";
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请入群\n",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
-        m_searchTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        m_textView.text = [NSString stringWithFormat:@"%@-%@ 申请入群\n",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
+        m_searchTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
         [m_searchTf resignFirstResponder];
         [m_textView becomeFirstResponder];
     }
@@ -202,7 +209,7 @@
     [customView addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
     label.backgroundColor =[ UIColor clearColor];
     [customView addSubview:label];
     return customView;

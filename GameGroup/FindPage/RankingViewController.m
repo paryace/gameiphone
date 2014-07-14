@@ -13,6 +13,7 @@
 #import "ShareToOther.h"
 #import "AddCharacterViewController.h"
 #import "BinRoleViewController.h"
+#import "CharacterAndTitleService.h"
 #define kSegmentFriend (0)
 #define kSegmentRealm (1)
 #define kSegmentCountry (2)
@@ -1209,8 +1210,7 @@
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             
-            NSLog(@"%@", responseObject);
-            [DataStoreManager saveDSCharacters:dic UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
 
             
             [self showMessageWindowWithContent:@"添加成功" imageType:0];

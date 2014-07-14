@@ -130,8 +130,8 @@
     NSString * maxMemberNum = KISDictionaryHaveKey(cellDic, @"maxMemberNum");
     NSString * currentMemberNum = KISDictionaryHaveKey(cellDic, @"currentMemberNum");
     NSString * gameImageId = [GameCommon putoutgameIconWithGameId:gameId];
-    cell.gameImageV.image = KUIImage(@"clazz_00.png");
-    cell.gameImageV.imageURL = [ImageService getImageUrl4:gameImageId];
+    cell.gameImageV.image = KUIImage(@"clazz_icon.png");
+    cell.gameImageV.imageURL = [ImageService getImageStr:gameImageId Width:100];
     cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
     cell.levelLable.text = [NSString stringWithFormat:@"%@",level];
     cell.cricleLable.text = KISDictionaryHaveKey(cellDic, @"info");

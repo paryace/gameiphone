@@ -8,6 +8,7 @@
 
 #import "MyTitleObjViewController.h"
 #import "TitleObjDetailViewController.h"
+#import "CharacterAndTitleService.h"
 
 @interface MyTitleObjViewController ()
 {
@@ -133,7 +134,6 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        NSLog(@"%@", responseObject);
         if ([KISDictionaryHaveKey(responseObject, @"0") isKindOfClass:[NSArray class]]) {//显示的
             [m_showDataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"0")];
         }
@@ -141,6 +141,10 @@
             [m_hideDataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"1")];
         }
         [m_showTitleObjTable reloadData];
+        [[CharacterAndTitleService singleton] saveTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Titles:KISDictionaryHaveKey(responseObject, @"0") Type:@"0"];
+        
+        [[CharacterAndTitleService singleton] saveTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Titles:KISDictionaryHaveKey(responseObject, @"1") Type:@"1"];
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -258,6 +262,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

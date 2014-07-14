@@ -19,6 +19,11 @@
 #import "XMPPping.h"
 #import "UserManager.h"
 #import "OfflineComment.h"
+#import "MagicalRecord.h"
+#import "CoreData+MagicalRecord.h"
+#import <objc/runtime.h>
+
+
 
 #import "FindViewController.h"
 #import "MePageViewController.h"
@@ -27,6 +32,11 @@
 #import "ItemBaseViewController.h"
 #import "MessagePageViewController.h"
 #import "LocationManager.h"
+
+//#import "ItemBaseViewController.h"
+#import "MessagePageViewController.h"
+#import "LocationManager.h"
+
 
 @implementation AppDelegate
 {
@@ -55,10 +65,9 @@
 //    }else{
 //    }
     
-    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
-    
+
     //消息页面
     MessagePageViewController* fist  = [[MessagePageViewController alloc] init];
     fist.hidesBottomBarWhenPushed = YES;
@@ -113,6 +122,7 @@
 
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
+        NSLog(@"v22222 - setDefaultDataBase");
         [DataStoreManager setDefaultDataBase:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] AndDefaultModel:@"LocalStore"];//根据用户名创建数据库
         [self.xmppHelper connect];
         [[ReconnectMessage singleton]sendDeviceToken];

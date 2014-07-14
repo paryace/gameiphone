@@ -664,6 +664,7 @@
     NSString * fialMsg=KISDictionaryHaveKey(tempDic, @"failedmsg");
     NSString* realm = KISDictionaryHaveKey(tempDic, @"value1");
      NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
+    cell.headerImageView.placeholderImage = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
     if ([fialMsg isEqualToString:@"404"])//角色不存在
     {
         cell.headerImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
@@ -674,10 +675,8 @@
         }else{
             cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
         }
-        cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"realm"),realm];
+        cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"simpleRealm"),realm];//realm
     }
-    
-   
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
    cell.gameTitleImage.imageURL = [ImageService getImageUrl4:gameImageId];
@@ -718,8 +717,6 @@
     NSMutableDictionary *paramDict =[[NSMutableDictionary alloc]init];
     self.characterId =KISDictionaryHaveKey(dic, @"id");
     [paramDict setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-//    clazzImageView.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:KISDictionaryHaveKey(dic, @"img")]];
-    
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
     clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
     clazzLabel.text =KISDictionaryHaveKey(dic, @"name");

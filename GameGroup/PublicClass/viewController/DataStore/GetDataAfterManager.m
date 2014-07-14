@@ -13,22 +13,53 @@
 #import "DSuser.h"
 #import "VibrationSong.h"
 #import "MyTask.h"
+#import "CharacterAndTitleService.h"
+#define mTime 0.5
 
-#define kBgQueue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
 @implementation GetDataAfterManager
-
+{
+    NSOperationQueue *queuenormal;
+    NSOperationQueue *queuegroup;
+    NSOperationQueue *queueme ;
+    
+    NSTimeInterval markTime;
+    NSTimeInterval markTimeGroup;
+   
+    int index;
+    int index2;
+    dispatch_queue_t queue;
+    dispatch_queue_t queue2;
+    
+    NSTimeInterval markTimeDy;
+    NSTimeInterval markTimeDyMe;
+    NSTimeInterval markTimeDyGroup;
+    
+    int dyMsgCount;
+    int dyMeMsgCount;
+    int dyGroupMsgCount;
+}
 static GetDataAfterManager *my_getDataAfterManager = NULL;
-NSOperationQueue *queuenormal ;
-NSOperationQueue *queuegroup ;
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        index=1;
+        index2=1;
+        dyMsgCount = 0;
+        dyMeMsgCount = 0;
+        dyGroupMsgCount = 0;
         queuenormal = [[NSOperationQueue alloc]init];
         [queuenormal setMaxConcurrentOperationCount:1];
         queuegroup = [[NSOperationQueue alloc]init];
         [queuegroup setMaxConcurrentOperationCount:1];
+        queueme = [[NSOperationQueue alloc]init];
+        [queueme setMaxConcurrentOperationCount:1];
+        queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
+        queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
+        self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
@@ -55,8 +86,6 @@ NSOperationQueue *queuegroup ;
 {
     [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_Vibration_tixing_count"];
 }
-
-
 
 - (void)changeMyActive:(NSNotification*)notification
 {
@@ -161,6 +190,7 @@ NSOperationQueue *queuegroup ;
         [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     }
 }
+
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
@@ -176,15 +206,24 @@ NSOperationQueue *queuegroup ;
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveaboutMeMessage:)object:messageContent];
+    [queueme addOperation:task];
+    
+}
+-(void)saveaboutMeMessage:(NSDictionary *)messageContent{
+    [self performSelectorOnMainThread:@selector(sendAboutMeNSNotification:) withObject:messageContent waitUntilDone:YES];
+}
+-(void)sendAboutMeNSNotification:(NSDictionary *)messageContent
+{
     [DataStoreManager saveDynamicAboutMe:messageContent];
 }
-
+//--------------------------------------------正常聊天消息
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
+
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
-        NSLog(@"黑名单用户 不作操作");
         return;
     }
     //1 打过招呼，2 未打过招呼
@@ -198,64 +237,119 @@ NSOperationQueue *queuegroup ;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
-    int index=1;
-    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:messageContent];
-    task.operationId=index++;
-    if ([[queuenormal operations] count]>0) {
-        MyTask *theBeforeTask=[[queuenormal operations] lastObject];
-        [task addDependency:theBeforeTask];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTime)*100<0.03*1000) {
+        markTime = [[NSDate date] timeIntervalSince1970];
+        if (self.cacheMsg) {
+            [self.cacheMsg addObject:messageContent];
+        }
+        if (![self.cellTimer isValid]) {
+            if (!self.cacheMsg) {
+                self.cacheMsg = [NSMutableArray array];
+            }
+            [self.cacheMsg addObject:messageContent];
+            self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
+        }
+        return;
     }
-    [queuenormal addOperation:task];
-//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+    markTime = [[NSDate date] timeIntervalSince1970];
+//    dispatch_barrier_async(queue, ^{
+        [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self setSoundOrVibrationopen];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            });
+        }];
+//    });
 }
-
--(void)saveNormalChatMessage:(NSDictionary *)messageContent{
-//    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-    [self performSelectorOnMainThread:@selector(sendNSNotification:) withObject:messageContent waitUntilDone:YES];
-}
--(void)sendNSNotification:(NSDictionary *)messageContent
+- (void)stopATime
 {
-    [DataStoreManager storeNewNormalChatMsgs:messageContent];
-     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+    NSMutableArray *array = [self.cacheMsg mutableCopy];
+    [self.cacheMsg removeAllObjects];
+    self.cacheMsg = nil;
+    if ([self.cellTimer isValid]) {
+        [self.cellTimer invalidate];
+        self.cellTimer = nil;
+    }
+    NSInvocationOperation * tasknormal = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveNormalChatMessage:)object:array];
+    if ([[queuenormal operations] count]>0) {
+        [tasknormal addDependency:[[queuenormal operations] lastObject]];
+    }
+    [queuenormal addOperation:tasknormal];
 }
 
--(void)sendGroupNSNotification:(NSDictionary *)messageContent
-{
-    [DataStoreManager storeNewGroupMsgs:messageContent];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+-(void)saveNormalChatMessage:(NSArray *)messageContent{
+   [DataStoreManager saveNewNormalChatMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+       dispatch_async(dispatch_get_main_queue(), ^{
+           [self setSoundOrVibrationopen];
+           [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+       });
+       [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+   }];
 }
-
+//--------------------------------------------群组聊天消息
 #pragma mark 收到群组聊天消息
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
-    if ([[GameCommon getMsgSettingStateByGroupId:[messageContent objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-        BOOL isVibrationopen=[self isVibrationopen];;
-        BOOL isSoundOpen = [self isSoundOpen];
-        if (isSoundOpen) {
-            [SoundSong soundSong];
-        }
-        if (isVibrationopen) {
-            [VibrationSong vibrationSong];
-        }
-    }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    int index=1;
-    MyTask *task = [[MyTask alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:messageContent];
-    task.operationId=index++;
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTimeGroup)*100<0.03*1000) {
+        markTimeGroup = [[NSDate date] timeIntervalSince1970];
+        if (self.cacheMsgGroup) {
+            [self.cacheMsgGroup addObject:messageContent];
+        }
+        if (![self.cellTimerGroup isValid]) {
+            if (!self.cacheMsgGroup) {
+                self.cacheMsgGroup = [NSMutableArray array];
+            }
+            [self.cacheMsgGroup addObject:messageContent];
+            self.cellTimerGroup = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATimeGroup) userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.cellTimerGroup forMode:NSRunLoopCommonModes];
+        }
+        return;
+    }
+    markTimeGroup = [[NSDate date] timeIntervalSince1970];
+//    dispatch_barrier_async(queue2, ^{
+        [DataStoreManager storeNewGroupMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([[GameCommon getMsgSettingStateByGroupId:[msgDic objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
+                    [self setSoundOrVibrationopen];
+                }
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            });
+        } ];
+//    });
+}
+- (void)stopATimeGroup
+{
+    NSMutableArray *array = [self.cacheMsgGroup mutableCopy];
+    [self.cacheMsgGroup removeAllObjects];
+    self.cacheMsgGroup = nil;
+    if ([self.cellTimerGroup isValid]) {
+        [self.cellTimerGroup invalidate];
+        self.cellTimerGroup = nil;
+    }
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveGroupChatMessage:)object:array];
     if ([[queuegroup operations] count]>0) {
-        MyTask *theBeforeTask=[[queuegroup operations] lastObject];
-        [task addDependency:theBeforeTask];
+        [task addDependency:[[queuegroup operations] lastObject]];
     }
     [queuegroup addOperation:task];
 }
-
--(void)saveGroupChatMessage:(NSDictionary *)messageContent{
-    NSLog(@"88888888888888");
-//    [DataStoreManager storeNewGroupMsgs:messageContent];
-    [self performSelectorOnMainThread:@selector(sendGroupNSNotification:) withObject:messageContent waitUntilDone:YES];
+-(void)saveGroupChatMessage:(NSArray *)messageContent{
+    [DataStoreManager saveNewGroupChatMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[GameCommon getMsgSettingStateByGroupId:[msgDic objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
+                [self setSoundOrVibrationopen];
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        });
+    }];
 }
-
+//--------------------------------------------群通知消息
 #pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
@@ -265,24 +359,22 @@ NSOperationQueue *queuegroup ;
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:messageContent];
     if ([msgType isEqualToString:@"disbandGroup"])
     {//解散群
         NSDictionary * dic = @{@"groupId":groupId};
         [self changGroupMessageReceived:messageContent];
-        
-        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
-        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     }
     if ([msgType isEqualToString:@"kickOffGroup"])
     {//被T出该群
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
@@ -292,6 +384,7 @@ NSOperationQueue *queuegroup ;
         [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
+    [self storeNewMessage:messageContent];
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
@@ -326,6 +419,7 @@ NSOperationQueue *queuegroup ;
     [DataStoreManager saveDSGroupMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+//--------------------------------------------
 #pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo
 {
@@ -351,17 +445,18 @@ NSOperationQueue *queuegroup ;
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
-
+//--------------------------------------------角色，头衔，战斗力变化，
 #pragma mark - 头衔、角色、战斗力变化等消息
 -(void)otherMessageReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:info];
-    
     [DataStoreManager saveOtherMsgsWithData:info];
+//    [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
 }
-
+//--------------------------------------------好友推荐
 #pragma mark 收到推荐好友消息
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
@@ -372,8 +467,242 @@ NSOperationQueue *queuegroup ;
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendMessage object:nil userInfo:info];
+}
+//--------------------------------------------动态消息
+
+-(void)dyMessageReceived:(NSDictionary *)info
+{
+    NSString * msgtype = KISDictionaryHaveKey(info, @"msgType");
+    NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
+    if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//好友动态
+        [self saveDyMessage:payload];
+    }
+    else if ([msgtype isEqualToString:@"mydynamicmsg"])//与我相关
+    {
+        [self newdynamicAboutMe:[payload JSONValue]];
+        [self saveAboutDyMessage:payload];
+    }
+    else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态
+        [self saveGroupDyMessage:payload];
+    }
+    //未知的动态
+    else
+    {
+        
+    }
+}
+//---------------------------------------好友动态
+
+-(void)saveDyMessage:(NSString *)payload
+{
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTimeDy)*100<0.5*1000) {
+        markTimeDy = [[NSDate date] timeIntervalSince1970];
+        dyMsgCount++;
+        if ([self.cellTimerDy isValid]) {
+            [self.cellTimerDy invalidate];
+            self.cellTimerDy = nil;
+        }
+        self.cellTimerDy = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(saveDyMsgTimer:) userInfo:payload repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerDy forMode:NSRunLoopCommonModes];
+        return;
+    }
+    markTimeDy = [[NSDate date] timeIntervalSince1970];
+    dyMsgCount++;
+    [self saveDyMsg:payload];
+}
+-(void)saveDyMsgTimer:(NSTimer*)timer
+{
+    [self saveDyMsg:timer.userInfo];
+}
+-(void)saveDyMsg:(NSString *)payload
+{
+    if ([self.cellTimerDy isValid]) {
+        [self.cellTimerDy invalidate];
+        self.cellTimerDy = nil;
+    }
+    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
+        i+=dyMsgCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
+    }else{
+        int i = 0;
+        i+=dyMsgCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
+    }
+    dyMsgCount = 0;
+     [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
 }
 
+//---------------------------------------与我相关
+-(void)saveAboutDyMessage:(NSString *)payload
+{
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTimeDyMe)*100<0.5*1000) {
+        markTimeDyMe = [[NSDate date] timeIntervalSince1970];
+        dyMeMsgCount++;
+        if ([self.cellTimerDyMe isValid]) {
+            [self.cellTimerDyMe invalidate];
+            self.cellTimerDyMe = nil;
+        }
+        self.cellTimerDyMe = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(saveDyMeMsgTimer:) userInfo:payload repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerDyMe forMode:NSRunLoopCommonModes];
+        return;
+    }
+    markTimeDyMe = [[NSDate date] timeIntervalSince1970];
+    dyMeMsgCount++;
+    [self saveDyMeMsg:payload];
+}
+
+-(void)saveDyMeMsgTimer:(NSTimer*)timer
+{
+    [self saveDyMeMsg:timer.userInfo];
+}
+
+-(void)saveDyMeMsg:(NSString *)payload
+{
+    if ([self.cellTimerDyMe isValid]) {
+        [self.cellTimerDyMe invalidate];
+        self.cellTimerDyMe = nil;
+    }
+    [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]];
+    
+    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    
+    if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
+        int i = 0;
+        i+=dyMeMsgCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
+    }else{
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
+        
+        i+=dyMeMsgCount;
+        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    dyMeMsgCount=0;
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+}
+
+//---------------------------------------群动态
+-(void)saveGroupDyMessage:(NSString *)payload
+{
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    if ((nowTime - markTimeDyGroup)*100<0.5*1000) {
+        markTimeDyGroup = [[NSDate date] timeIntervalSince1970];
+        dyGroupMsgCount++;
+        if ([self.cellTimerDyGroup isValid]) {
+            [self.cellTimerDyGroup invalidate];
+            self.cellTimerDyGroup = nil;
+        }
+        self.cellTimerDyGroup = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(saveDyGroupMsgTimer:) userInfo:payload repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerDyGroup forMode:NSRunLoopCommonModes];
+        return;
+    }
+    markTimeDyGroup = [[NSDate date] timeIntervalSince1970];
+    dyGroupMsgCount++;
+    [self saveDyGroupMsg:payload];
+}
+
+-(void)saveDyGroupMsgTimer:(NSTimer*)timer
+{
+    [self saveDyGroupMsg:timer.userInfo];
+}
+
+-(void)saveDyGroupMsg:(NSString *)payload
+{
+    if ([self.cellTimerDyGroup isValid]) {
+        [self.cellTimerDyGroup invalidate];
+        self.cellTimerDyGroup = nil;
+    }
+    NSDictionary* msgDic = [[NSString stringWithFormat:@"%@",payload] JSONValue];
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]]) {
+        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: [NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]]intValue];
+        i+=dyGroupMsgCount;
+         [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]];
+    }else{
+        int i = 0;
+        i+=dyGroupMsgCount;
+         [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,KISDictionaryHaveKey(msgDic, @"groupId")]];
+    }
+    dyGroupMsgCount = 0;
+    [[NSNotificationCenter defaultCenter]postNotificationName:GroupDynamic_msg object:nil userInfo:msgDic];
+}
+//---------------------------------------
+
+//保存最后一条动态消息
+-(NSDictionary*)getMyDynimacImageInfo:(NSDictionary*)payloadDic
+{
+    NSString *customObject;
+    NSString *customUser;
+    if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==4) {
+        customObject = @"zanObject";
+        customUser = @"zanUser";
+    }
+    else if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==5||[KISDictionaryHaveKey(payloadDic, @"type")intValue]==7)
+    {
+        customObject =@"commentObject";
+        customUser = @"commentUser";
+    }
+    NSString * cusUserImageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, customObject),customUser), @"img");
+    NSDictionary * imageDic = @{@"img":cusUserImageIds};
+    return imageDic;
+}
+-(void)saveLastMyDynimacUserImage:(NSDictionary*)payloadDic
+{
+    NSMutableData *data= [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:payloadDic forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic
+{
+    NSMutableData *data= [[NSMutableData alloc]init];
+    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
+    [archiver encodeObject:payloadDic forKey: @"getDatat"];
+    [archiver finishEncoding];
+    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+//--------------------------------------反馈消息
+#pragma mark 发送反馈消息
+- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId Type:(NSString*)type//发送送达消息
+{
+    NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender,@"type":type};
+    [self comeBack:dic];
+}
+- (void)comeBack:(NSDictionary*)msgDic
+{
+    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
+    NSString * nowTime=[GameCommon getCurrentTime];
+    NSString * message=[dic JSONRepresentation];
+    NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
+    NSString *to=[NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(msgDic, @"senderId"),[self getDomain:domaim Type:KISDictionaryHaveKey(msgDic, @"type")]];
+    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:KISDictionaryHaveKey(msgDic, @"msgId") From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    if (![self.appDel.xmppHelper sendMessage:mes]) {
+        return;
+    }
+}
+-(NSString*)getDomain:(NSString*)domain Type:(NSString*)type
+{
+    if ([type isEqualToString:@"normal"]) {
+        return domain;
+    }else if([type isEqualToString:@"group"]){
+        return [GameCommon getGroupDomain:domain];
+    }
+    return domain;
+}
+//--------------------------------------
 #pragma mark --获取你和谁说过话
 -(void)getSayHiUserIdWithInfo:(NSDictionary *)info
 {
@@ -384,7 +713,6 @@ NSOperationQueue *queuegroup ;
     [postDict setObject:@"154" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
         if ([responseObject isKindOfClass:[NSArray class]]) {

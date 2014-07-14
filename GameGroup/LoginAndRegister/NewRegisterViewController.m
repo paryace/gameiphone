@@ -641,7 +641,10 @@
         NSMutableDictionary *userDic=KISDictionaryHaveKey(dic, @"gameproUser");
         [userDic setObject:KISDictionaryHaveKey(userDic, @"id") forKey:@"userid"];
         [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
-        [DataStoreManager newSaveAllUserWithUserManagerList:userDic withshiptype:@"unknow"] ;
+        NSLog(@"111--保存注册成功返回的用户信息");
+        [[UserManager singleton] saveUserInfoToDb:userDic ShipType:@"unknow"];
+        
+        [DataStoreManager saveFriendRemarkName:KISDictionaryHaveKey(userDic, @"nickname") userid:KISDictionaryHaveKey(userDic, @"id")];
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         [self dismissViewControllerAnimated:YES completion:^{

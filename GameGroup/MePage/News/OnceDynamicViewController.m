@@ -64,7 +64,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-
+        
     }
     return self;
 }
@@ -105,6 +105,8 @@
     [self.view addSubview:hud];
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self getDataByNet];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
 }
 
 
@@ -808,6 +810,14 @@
     }
 }
 
+
+//消息发送成功
+- (void)messageAck:(NSNotification *)notification
+{
+    NSDictionary* tempDic = notification.userInfo;
+    [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:KISDictionaryHaveKey(tempDic, @"msgState")];
+}
+
 //广播给粉丝
 -(void)broadcastToFans
 {
@@ -952,7 +962,7 @@
     [self changeWebViewStyle:webView];
 
     //为图片添加点击响应
-//    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
+    NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
 //    NSLog(@"------finish=%@",str);
 }
 

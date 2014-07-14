@@ -61,11 +61,6 @@
     self.topImageView .backgroundColor = [UIColor grayColor];
     [self.firstScrollView addSubview:self.topImageView];
     
-//    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 210, 300, 40)];
-//    table_top.image = KUIImage(@"table_top");
-//    [self.firstScrollView addSubview:table_top];
-//    
-    
     
     UIImageView* table_arrow_two = [[UIImageView alloc] initWithFrame:CGRectMake(10,159+52, 300, 40)];
     table_arrow_two.image = KUIImage(@"group_cardtf");
@@ -77,8 +72,10 @@
     table_bottom.image = KUIImage(@"group_cardtf");
     [self.firstScrollView addSubview:table_bottom];
     
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(290, 174+52, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
+    UIButton* table_arrow = [[UIButton alloc] initWithFrame:CGRectMake(270, 158+52, 40, 40)];
+    [table_arrow setImageEdgeInsets:UIEdgeInsetsMake(16, 14, 16, 14)];
+    [table_arrow setImage:KUIImage(@"arrow_bottom") forState:UIControlStateNormal];
+    [table_arrow addTarget:self action:@selector(result:) forControlEvents:UIControlEventTouchUpInside];
     [self.firstScrollView addSubview:table_arrow];
 
     
@@ -118,7 +115,7 @@
     toolbar.items = @[rb_server];
 
     
-    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(80, 158+52, 180, 40)];
+    self.gameTextField = [[UITextField alloc] initWithFrame:CGRectMake(80, 158+52, 200, 40)];
     self.gameTextField.returnKeyType = UIReturnKeyDone;
     self.gameTextField.delegate = self;
     self.gameTextField.inputView = m_gamePickerView;
@@ -131,7 +128,6 @@
     self.gameTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     [self.firstScrollView addSubview:self.gameTextField];
-    
     
     self.groupNameTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 320, 180, 40)];
     self.groupNameTf.returnKeyType = UIReturnKeyDone;
@@ -151,6 +147,12 @@
     [self.firstScrollView addSubview:button];
 
 }
+
+-(void)result:(id)sender
+{
+    [self.gameTextField becomeFirstResponder];
+}
+
 -(void)buildSecondView
 {
     self.secondScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(320, 0, self.bounds.size.width, self.bounds.size.height)];
@@ -292,12 +294,6 @@
 {
     return gameInfoArray.count;
 }
-
-//- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-//{
-//    NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"name");
-//    return title;
-//}
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
     NSDictionary *dic = [gameInfoArray objectAtIndex:row];
@@ -308,7 +304,7 @@
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
     label.backgroundColor = [UIColor clearColor];
-    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
     [customView addSubview:label];
     return customView;
     
@@ -319,7 +315,8 @@
 {
     [self.groupNameTf resignFirstResponder];
     
-    if ([self.gameTextField.text isEqualToString: @""]||[self.realmTextField.text isEqualToString: @""]||[self.groupNameTf.text isEqualToString:@""]) {
+    
+    if ([GameCommon isEmtity:self.gameTextField.text]||[GameCommon isEmtity:self.groupNameTf.text]) {
         UIAlertView *al = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请将信息填写完整" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [al show];
         return;
@@ -372,7 +369,7 @@
 {
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        self.gameTextField.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        self.gameTextField.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
       
         if (self.myDelegate &&[self.myDelegate respondsToSelector:@selector(didClickGameListWithDel:dic:)]) {
             [self.myDelegate didClickGameListWithDel:self dic:dict];

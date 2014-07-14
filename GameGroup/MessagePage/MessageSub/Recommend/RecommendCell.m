@@ -30,7 +30,7 @@
         
         self.fromImage = [[UIImageView alloc] initWithFrame:CGRectMake(70, 43.5, 13, 13)];
         self.fromImage.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.fromImage];
+        [self.contentView addSubview:self.fromImage];
         
         self.fromLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 40, 150, 20)];
         [self.fromLabel setTextAlignment:NSTextAlignmentLeft];

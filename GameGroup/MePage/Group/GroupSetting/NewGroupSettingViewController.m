@@ -14,7 +14,7 @@
 #import "PublishBillboardViewController.h"
 #import "EGOImageView.h"
 #import "SoundSetCell.h"
-#import "InvitationViewController.h"
+#import "NewInvitationViewController.h"
 typedef enum : NSUInteger {
     TypeNormal,
     TypeAdministrator
@@ -70,7 +70,7 @@ typedef enum : NSUInteger {
     msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(320-25-8-50, 15, 40, 20)];
     msgHintLable.backgroundColor = [UIColor clearColor];
     msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
-    msgHintLable.text = @"无声";
+    msgHintLable.text = @"禁音模式";
     msgHintLable.font =[ UIFont systemFontOfSize:12];
     
     
@@ -218,7 +218,7 @@ typedef enum : NSUInteger {
             tlb.font =[ UIFont systemFontOfSize:14];
             [cell.contentView addSubview:tlb];
             
-            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(0, 15, 320-50, 20)];
+            groupNameLable = [[UITextField alloc]initWithFrame:CGRectMake(113, 15, 320-50-113, 20)];
             groupNameLable.backgroundColor = [UIColor clearColor];
             groupNameLable.textColor = kColorWithRGB(100,100,100, 0.7);
             groupNameLable.text = self.CharacterInfo;
@@ -321,6 +321,8 @@ typedef enum : NSUInteger {
     if (indexPath.section==0) {
         if (indexPath.row==0) {//群组消息设置
             [self hint];
+        }else if (indexPath.row ==1){
+            [groupNameLable becomeFirstResponder];
         }else if (indexPath.row ==2){
             [self new:nil];
         }
@@ -402,7 +404,7 @@ typedef enum : NSUInteger {
 //群组消息设置
 -(void)hint
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常接收",@"关闭模式",@"无声模式", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"禁音模式",@"无红点模式", nil];
     alertView.tag = 1002;
     [alertView show];
 }
@@ -414,8 +416,9 @@ typedef enum : NSUInteger {
 //邀请新成员
 -(void)new:(id)sender
 {
-    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
     inv.groupId = self.groupId;
+    inv.realmStr = self.realmStr;
     [self.navigationController pushViewController:inv animated:YES];
 }
 
@@ -500,14 +503,14 @@ typedef enum : NSUInteger {
             
         }else if (buttonIndex ==2)
         {
-            [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
-            [self settingMsgHint:@"1"];
+            [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
+            [self settingMsgHint:@"2"];
             
         }
         else if (buttonIndex ==3)
         {
-            [[NSUserDefaults standardUserDefaults] setObject:@"2" forKey:[GameCommon getNewStringWithId:self.groupId]];
-            [self settingMsgHint:@"2"];
+            [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:[GameCommon getNewStringWithId:self.groupId]];
+            [self settingMsgHint:@"1"];
         }
     }
 }
@@ -535,12 +538,12 @@ typedef enum : NSUInteger {
 -(NSString*)getCellMsgByState:(NSString*)groupMsgSettingState
 {
     if ([groupMsgSettingState isEqualToString:@"0"]) {
-        return @"正常接收";
+        return @"正常模式";
         
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
-        return @"关闭模式";
+        return @"无红点模式";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"无声模式";
+        return @"禁音模式";
     }
     return @"";
 }
@@ -556,9 +559,9 @@ typedef enum : NSUInteger {
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
+        [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
         [[GroupManager singleton] changGroupState:self.groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经解散该群"delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 789;
@@ -592,10 +595,10 @@ typedef enum : NSUInteger {
 -(void)changGroupState
 {
     NSDictionary * dic = @{@"groupId":self.groupId,@"state":@"2"};
-    [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
     [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
 //    [DataStoreManager deleteGroupInfoByGoupId:self.groupId];//删除群信息
     [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
+    [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
     [[GroupManager singleton] changGroupState:self.groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
     [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
 }
@@ -641,7 +644,7 @@ typedef enum : NSUInteger {
     [customView addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
     [customView addSubview:label];
     return customView;
     
@@ -651,7 +654,7 @@ typedef enum : NSUInteger {
 {
     if ([m_roleArray count] != 0) {
         NSDictionary *dict =[m_roleArray objectAtIndex:[m_rolePickView selectedRowInComponent:0]];
-        groupNameLable.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"realm"),KISDictionaryHaveKey(dict, @"name")];
+        groupNameLable.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
         NSMutableDictionary *dic =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"id"),@"characterId",self.groupId,@"groupId",KISDictionaryHaveKey(dict, @"gameid"),@"gameid", nil];
         [self getCardWithNetWithDic:dic];
         

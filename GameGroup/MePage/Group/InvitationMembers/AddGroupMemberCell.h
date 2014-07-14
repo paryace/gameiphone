@@ -7,9 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EGOImageView.h"
+#import "EGOImageButton.h"
+
+@protocol addGroupMemberDelegate;
+
 @interface AddGroupMemberCell : UITableViewCell
 @property(nonatomic,strong)UIImageView *chooseImg;
-@property(nonatomic,strong)EGOImageView *headImg;
+@property(nonatomic,strong)EGOImageButton *headImg;
 @property(nonatomic,strong)UILabel *nameLabel;
+@property(nonatomic,strong)UILabel *disLabel;
+@property(nonatomic,assign)id<addGroupMemberDelegate>myDelegate;
+
+@end
+@protocol addGroupMemberDelegate <NSObject>
+
+-(void)enterMembersInfoPageWithCell:(AddGroupMemberCell*)cell;
+
 @end

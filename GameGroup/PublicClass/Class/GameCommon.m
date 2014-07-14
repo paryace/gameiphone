@@ -656,6 +656,9 @@ static GameCommon *my_gameCommon = NULL;
 }
 +(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId
 {
+    if ([GameCommon isEmtity:[[NSUserDefaults standardUserDefaults] objectForKey:[self getNewStringWithId:groupId]]]) {
+        return @"0";
+    }
     return [[NSUserDefaults standardUserDefaults] objectForKey:[self getNewStringWithId:groupId]];
 }
 
@@ -682,18 +685,6 @@ static GameCommon *my_gameCommon = NULL;
     }return NO;
 }
 
-//+(NSURL*)getImageUrl:(NSString*)imageid
-//{
-//    if ([self isEmtity:imageid]) {
-//        return nil;
-//    }else{
-//        if ([GameCommon getNewStringWithId:imageid]) {
-//            return [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getNewStringWithId:imageid]]];
-//        }else{
-//            return  nil;
-//        }
-//    }
-//}
 #pragma mark 开机联网
 -(void)firtOpen
 {
@@ -741,11 +732,21 @@ static GameCommon *my_gameCommon = NULL;
                 [[TempData sharedInstance]isBindingRolesWithBool:NO];  
             }
         }
-        }        
-        NSArray *charachers = [responseObject objectForKey:@"characters"];
+        }
         
-        for (NSMutableDictionary *characher in charachers) {
-            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+            NSLog(@"111--OPen接口的用户信息");
+            [[UserManager singleton]saveUserInfo:responseObject];
+        }
+
+        
+//        NSArray *charachers = [responseObject objectForKey:@"characters"];
+//        
+//        for (NSMutableDictionary *characher in charachers) {
+//            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
+        
+//            [[UserManager singleton]saveUserInfo:responseObject];
+        
             
 //            NSMutableArray *array = [NSMutableArray array];
 //            if (![array containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characher, @"gameid")]]) {
@@ -753,7 +754,7 @@ static GameCommon *my_gameCommon = NULL;
 //            }
 //
 //            [[NSUserDefaults standardUserDefaults]setObject:array forKey:[NSString stringWithFormat:@"findpageGameList_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
-        }
+      //  }
 
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
         }
@@ -761,7 +762,7 @@ static GameCommon *my_gameCommon = NULL;
         
     }];
 }
-#pragma mark ---登陆成功重新获取open接口数据
+#pragma mark ---登陆成功重新获取open接口数据------>获取游戏列表
 -(void)LoginOpen
 {
     
@@ -780,21 +781,21 @@ static GameCommon *my_gameCommon = NULL;
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {
     //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
-    [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
+//    [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
     
     
     
-    if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
-        alert.tag = 21;
-        [alert show];
-    }
-    else
-    {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
-    }
+//    if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
+//        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
+//        [[NSUserDefaults standardUserDefaults] synchronize];
+//        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
+//        alert.tag = 21;
+//        [alert show];
+//    }
+//    else
+//    {
+//        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
+//    }
     
     
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
@@ -946,7 +947,24 @@ static GameCommon *my_gameCommon = NULL;
     }];
     
 }
-
+//未读消息的数量
++(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs
+{
+    int allUnread = 0;
+    for (int i = 0; i<msgs.count; i++) {
+        NSMutableDictionary * message = [msgs objectAtIndex:i];
+        if ([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
+            if ([[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"0"]
+                ||[[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"2"]) {
+                
+                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+            }
+        }else{
+            allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+        }
+    }
+    return allUnread;
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (21 == alertView.tag) {

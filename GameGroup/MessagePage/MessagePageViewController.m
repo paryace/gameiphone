@@ -15,7 +15,9 @@
 #import "AttentionMessageViewController.h"
 #import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
-#import "FriendRecommendViewController.h"
+//#import "FriendRecommendViewController.h"
+#import "NewFriendRecommendViewController.h"
+
 #import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
@@ -120,11 +122,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-
 
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemindBegin) name:@"StartGetFriendListForNet" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFriendForHttpToRemind) name:@"getFriendListForNet_wx" object:nil];
+    //好友动态
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
+    //与我相关
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
+    //群公告消息广播接收
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHelloReceived:) name:kFriendHelloReceived object:nil];
@@ -132,7 +138,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otherMessageReceived:) name:kOtherMessage object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kOtherMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kRecommendMessage object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
     //申请加入群完成通知
@@ -250,7 +256,7 @@
 #pragma mark 收到推荐好友
 -(void)recommendFriendReceived:(NSNotification *)notification
 {
-   // [self displayMsgsForDefaultView];
+    [self displayMsgsForDefaultView];
 }
 //加入群
 -(void)joinGroupReceived:(NSNotification *)notification
@@ -293,7 +299,7 @@
 - (void)displayMsgsForDefaultView
 {
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    if (nowTime - markTime<mTime*1000) {
+    if ((nowTime - markTime)*100<mTime*1000) {
         if ([self.cellTimer isValid]) {
             [self.cellTimer invalidate];
             self.cellTimer = nil;
@@ -327,20 +333,9 @@
 //红点通知
 -(void)displayTabbarNotification
 {
-    int allUnread = 0;
-    for (int i = 0; i<allMsgArray.count; i++) {
-        NSMutableDictionary * message = [allMsgArray objectAtIndex:i];
-        if ([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
-            if ([[GameCommon getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"0"]
-                ||[[GameCommon getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"2"]) {
-                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-            }
-        }else{
-            allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-        }
-    }
-    if (allUnread>0) {
-        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:allUnread OrDot:NO WithButtonIndex:0];
+    NSInteger msgCount  = [GameCommon getNoreadMsgCount:allMsgArray];
+    if (msgCount>0) {
+        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:0];
     }
     else
     {
@@ -390,6 +385,8 @@
                 cell.contentLabel.text =@"";
             }
             cell.nameLabel.text = @"有新的打招呼信息";
+            cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
+
         }
     }
     else if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"character"] ||
@@ -467,12 +464,24 @@
     
     [cell setNotReadMsgCount:message];
     //-- end
-    if (KISDictionaryHaveKey(message,@"sendTime")) {
-        cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
-        
+    
+    
+    if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHi"]) {//打招呼
+        if (firstSayHiMsg) {
+            if (KISDictionaryHaveKey(firstSayHiMsg,@"sendTime")) {
+                 cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(firstSayHiMsg,@"sendTime") substringToIndex:10]];
+            }
+        }
+    }else{
+        if (KISDictionaryHaveKey(message,@"sendTime")) {
+            cell.timeLabel.text = [GameCommon CurrentTime:[[GameCommon getCurrentTime] substringToIndex:10]AndMessageTime:[KISDictionaryHaveKey(message,@"sendTime") substringToIndex:10]];
+            
+        }
     }
     return cell;
 }
+
+
 -(NSDate*) convertDateFromString:(NSString*)uiDate
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init] ;
@@ -514,7 +523,7 @@
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友
     {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        FriendRecommendViewController* VC = [[FriendRecommendViewController alloc] init];
+        NewFriendRecommendViewController* VC = [[NewFriendRecommendViewController alloc] init];
         [self.navigationController pushViewController:VC animated:YES];
         [self cleanUnReadCountWithType:2 Content:@"" typeStr:@""];
         return;
@@ -545,17 +554,10 @@
         [self cleanUnReadCountWithType:1 Content:@"" typeStr:@""];
         return;
     }
-    int allUnread = 0;
-    for (int i = 0; i<allMsgArray.count; i++) {
-        allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
-    }
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
-        MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-        NSInteger no = [cell.unreadCountLabel.text intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
-        kkchat.unreadNo = allUnread-no;
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
@@ -563,10 +565,7 @@
         return;
     }
     
-    MessageCell * cell =(MessageCell*)[self tableView:m_messageTable cellForRowAtIndexPath:indexPath] ;
-    NSInteger no = [cell.unreadCountLabel.text intValue];
     KKChatController * kkchat = [[KKChatController alloc] init];
-    kkchat.unreadNo = allUnread-no;
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"senderId")];
     kkchat.type = @"normal";
     [self.navigationController pushViewController:kkchat animated:YES];
@@ -663,7 +662,22 @@
         [self displayMsgsForDefaultView];
     }
 }
+#pragma mark 接收到于我相关消息通知
+-(void)receivedMyDynamicMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
+#pragma mark 接收到好友动态消息通知
+-(void)receivedFriendDynamicMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
 
+#pragma mark 接收到公告消息通知
+-(void)receivedBillboardMsg:(NSNotification*)sender
+{
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+}
 
 - (void)didReceiveMemoryWarning
 {

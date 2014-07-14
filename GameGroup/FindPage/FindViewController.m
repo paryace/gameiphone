@@ -23,6 +23,7 @@
     UIButton *nearByBtn;
     UIButton *moGirlBtn;
     UIButton *encoBtn;
+    
     UIView *bottomView;
     UIImageView *m_notibgInfoImageView; //与我相关红点
     UIImageView *m_notibgCircleNewsImageView; //朋友圈红点
@@ -65,20 +66,30 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        //好友动态
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
-        //与我相关
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
-        //清除离线消息
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
-        //群公告消息广播接收
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
-    }
+           }
     return self;
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super  viewWillDisappear:animated];
+    
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    //好友动态
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedFriendDynamicMsg:) name:@"frienddunamicmsgChange_WX"object:nil];
+    //与我相关
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
+    //清除离线消息
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
+    //群公告消息广播接收
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
+
+    
+    
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     BOOL isTrue = [fileManager fileExistsAtPath:path];
@@ -112,13 +123,22 @@
         }
     }
     
+        NSMutableArray *asr = [NSMutableArray array];
     for (int i = 0; i<drawView.tableArray.count; i++) {
-        NSArray *array = [drawView.tableDic objectForKey:drawView.tableArray[i]];
+        NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
+        NSArray *array = [drawView.tableDic objectForKey:str];
         if (!array||array.count<1) {
-            [drawView.tableDic removeObjectForKey:drawView.tableArray[i]];
-            [drawView.tableArray removeObjectAtIndex:i];
+            [drawView.tableDic removeObjectForKey:str];
+            [asr addObject:str];
         }
     }
+        for (NSString *str in asr) {
+            if ([drawView.tableArray containsObject:str]) {
+                [drawView.tableArray removeObject:str];
+            }
+        }
+        
+        
     [drawView.tv reloadData];
 
     }
@@ -136,27 +156,18 @@
 #pragma mark 接收到于我相关消息通知
 -(void)receivedMyDynamicMsg:(NSNotification*)sender
 {
-    //添加Tab上的小红点
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
-    myDunamicmsgCount ++;
+
+    myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
-    
-    
-    //显示头像
-    NSString * headimageid = KISDictionaryHaveKey(sender.userInfo, @"img");
-    headImgView.imageURL = [ImageService getImageStr:headimageid Width:80];
+    [self setDynamicImage];
 
 }
 #pragma mark 接收到好友动态消息通知
 -(void)receivedFriendDynamicMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
-    friendDunamicmsgCount++;
+    friendDunamicmsgCount = [self getFriendDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
-    
-    //显示头像
-    NSString * headImage = KISDictionaryHaveKey(sender.userInfo, @"img");
-    headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
+    [self setDynamicImage];
 }
 
 #pragma mark 接收到公告消息通知
@@ -229,7 +240,7 @@
 //设置动态消息的头像
 -(void)setDynamicImage
 {
-    NSDictionary * dicInfo = [self getDynamicInfo];
+    NSDictionary * dicInfo = [self getFriendDynamicInfo];
     if (!dicInfo) {
         headImgView.imageURL = nil;
         [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
@@ -242,17 +253,11 @@
         }else{
             headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
             [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+            
         }
     }
 }
-//获取缓存的动态消息内容
--(NSDictionary*)getDynamicInfo
-{
-    if (![self getMyDynamicInfo]) {
-        return [self getFriendDynamicInfo];
-    }
-    return [self getMyDynamicInfo];
-}
+
 //获取缓存的动态消息内容
 -(NSDictionary*)getFriendDynamicInfo
 {
@@ -264,22 +269,6 @@
     [unarchiver finishDecoding];
     return dic;
 }
-
-//获取缓存的动态消息内容
--(NSDictionary*)getMyDynamicInfo
-{
-    NSMutableData *data= [NSMutableData data];
-    NSDictionary *dic = [NSDictionary dictionary];
-    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
-    if(!data){
-        return nil;
-    }
-    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    dic = [unarchiver decodeObjectForKey: @"getDatat"];
-    [unarchiver finishDecoding];
-    return dic;
-}
-
 
 //初始化公告未读消息数量
 -(void)initMsgCount
@@ -325,16 +314,20 @@
         NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
         if ([GameCommon isEmtity:groupImage]) {
             iconImageView.imageURL = nil;
-             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+            iconImageView.placeholderImage  = KUIImage(@"placeholder.png");
+//             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
             [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
+//            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+
         }
         
     }else
     {
         iconImageView.imageURL = nil;
-        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+        iconImageView.placeholderImage =KUIImage(@"find_billboard");
+//        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     }
 }
 -(NSMutableDictionary*)getBillboardGroupInfo
@@ -442,10 +435,11 @@
     
     iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
     [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+    iconImageView.placeholderImage =KUIImage(@"find_billboard");
     iconImageView.layer.cornerRadius = 5.0;
     iconImageView.layer.masksToBounds = YES;
     [bottomView addSubview:iconImageView];
-    
+
     //红点 - 公告
     gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 18, 18)];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
@@ -525,8 +519,10 @@
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
         NSString * imageId= KISDictionaryHaveKey(dic, @"img");
         m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
+        drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
     }else{
         [m_menuButton setBackgroundImage:KUIImage(@"menu_find_normal") forState:UIControlStateNormal];
+        drawView.textLabel.text = @"点击Go,开始您的游戏社交";
     }
     [self.view addSubview:m_menuButton];
 }
@@ -975,7 +971,7 @@
 {
     [self didClickMenu:nil];
     bottomView.hidden = NO;
-    [self.view sendSubviewToBack:drawView];
+    [self.view sendSubviewToBack :drawView];
     [self.view sendSubviewToBack:imgV];
 //    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
@@ -991,7 +987,7 @@
     m_menuButton.imageURL=[ImageService getImageUrl4:imageId2];
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-
+drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
     m_menuButton.center = CGPointMake(160, KISHighVersion_7?79:59);
     [self.view bringSubviewToFront:m_menuButton];
 

@@ -12,4 +12,4 @@
 @property (nonatomic,retain) id <NewRegisterViewControllerDelegate>delegate;
 @end
 
-#define kMAXPAGE  5//启动页数
+#define kMAXPAGE  4//启动页数

@@ -12,6 +12,7 @@
 @interface UserManager : NSObject
 @property(nonatomic, strong) NSMutableDictionary* userCache;
 @property(nonatomic, strong) NSMutableArray* cacheUserids;
+@property (strong,nonatomic) dispatch_queue_t queueDb;
 
 + (UserManager*)singleton;
 
@@ -35,4 +36,6 @@
 
 -(void)getOpenImageFromNet; //请求开机图
 -(UIImage*)getOpenImage;//获取开机图
+
+-(void)saveUserInfoToDb:(NSDictionary*)dicUser ShipType:(NSString*)shipType;
 @end

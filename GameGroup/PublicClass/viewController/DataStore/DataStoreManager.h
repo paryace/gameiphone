@@ -31,6 +31,7 @@
 
 #import "DSOfflineZan.h"
 @interface DataStoreManager : NSObject
+
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
 + (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
 + (BOOL)savedMsgWithID:(NSString*)msgId;//正常聊天消息是否已存
@@ -87,7 +88,7 @@
 //存储“好友”的关注人列表
 
 +(void)cleanIndexWithNameIndex:(NSString*)nameIndex withType:(NSString *)type;
-
++(void)deleteMemberFromListWithUserid:(NSString *)userid;
 
 
 +(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
@@ -200,7 +201,11 @@
 //
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid;//保存角色列表
 
++(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid;
+
 +(void)saveDSTitle:(NSDictionary *)titles;//保存头衔列表
+
++(void)saveDSTitle2:(NSArray *)titles;
 
 +(NSMutableArray *)queryCharacters:(NSString*)userId;//查找角色列表
 
@@ -302,18 +307,33 @@
 
 +(void)uploadStoreMsg:(NSDictionary *)msg;
 
-//保存群组聊天消息
-+(void)storeNewGroupMsgs:(NSDictionary *)msg;
-
-//保存正常聊天的消息
-+(void)storeNewNormalChatMsgs:(NSDictionary *)msg;
-
 //删除所有的群
 +(void)deleteAllDSGroupList;
 
-
-
-
 +(NSArray * )qAllThumbMessagesWithType:(NSString *)type;
+
 +(NSMutableDictionary*)qSayHiMsg:(NSString *)type;
+
+//保存群组聊天消息
++(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
+//保存正常聊天的消息
++(void)storeNewNormalChatMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
++(void)saveNewNormalChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
++(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
++(void)deleteDSlatestDynamic:(NSString*)userid;
+
++(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias;
+
+//删除单个角色
++(void)deleteDSCharactersByCharactersId:(NSString*)charactersId;
+
+//根据角色id删除头衔
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId;
+
+//根据Type删除头衔
++(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;
 @end

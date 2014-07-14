@@ -14,6 +14,7 @@
 #import "BinRoleViewController.h"
 #import "TestViewController.h"
 #import "AddCharacterViewController.h"
+#import "CharacterAndTitleService.h"
 @interface SearchWithGameViewController ()
 {
     NSMutableArray *m_dataArray;
@@ -125,32 +126,18 @@
             cell.glazzImgView.placeholderImage = KUIImage(@"clazz_0");
         }
         
-        
-        NSString * imageIds=KISDictionaryHaveKey(dict, @"img");
-        cell.glazzImgView.imageURL = [ImageService getImageStr2:imageIds];
-        
+        cell.glazzImgView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dict, @"img") Width:30];
         cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
         if ([KISDictionaryHaveKey(dict,@"user")isKindOfClass:[NSDictionary class]]) {
             NSDictionary *dic = KISDictionaryHaveKey(dict, @"user");
             cell.nickNameLabel.text =KISDictionaryHaveKey(dic, @"nickname");
-            
             NSString *sex = KISDictionaryHaveKey(dic, @"gender");
             if ([sex isEqualToString:@"1"]) {
                 cell.genderImgView.image = KUIImage(@"gender_girl");
             }else{
                 cell.genderImgView.image = KUIImage(@"gender_boy");
             }
-            
-//            if ([KISDictionaryHaveKey(dic, @"img")isEqualToString:@""]||[KISDictionaryHaveKey(dic, @"img")isEqualToString:@" "]) {
-//                cell.headImgBtn.imageURL = nil;
-//            }else{
-//                
-////                cell.headImgBtn.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString:[GameCommon getHeardImgId:KISDictionaryHaveKey(dic, @"img")]]];
-//            }
-            
-            
-            NSString * imageIds2=KISDictionaryHaveKey(dic, @"img");
-            cell.headImgBtn.imageURL = [ImageService getImageStr2:imageIds2];
+            cell.headImgBtn.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dic, @"img") Width:80];
         }else{
             cell.headImgBtn.imageURL = nil;
             cell.genderImgView.image = KUIImage(@"weibangding");
@@ -196,19 +183,12 @@
 {
     NSDictionary *dic = [[NSDictionary alloc]init];
     dic = [m_dataArray objectAtIndex:m_infoNum];
-    
-    NSLog(@"%@----%@",KISDictionaryHaveKey(dic, @"nickname"),KISDictionaryHaveKey(dic, @"charactername"));
-    if (alertView.tag ==1001)//点击没有被绑定的角色
+        if (alertView.tag ==1001)//点击没有被绑定的角色
     {
         if (buttonIndex ==0) {
             NSLog(@"0");
         }else if (buttonIndex ==1)
         {
-            NSLog(@"去绑定");//去绑定
-//            AddCharacterViewController *addVC = [[AddCharacterViewController alloc]init];
-//            addVC.viewType = CHA_TYPE_Add;
-//            // addVC.contentDic =
-//            [self.navigationController pushViewController:addVC animated:YES];
             [self bangdingroleWithdic:dic];
         }else{
             
@@ -217,8 +197,6 @@
             binRole.type=@"1";
             binRole.gameId=self.gameid;
             [self.navigationController pushViewController:binRole animated:YES];
-            
-            NSLog(@"通知好友绑定");
         }
     }
     else//点击已经被绑定的角色
@@ -275,7 +253,7 @@
     [body setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary* dic = responseObject;
+        NSMutableDictionary* dic = responseObject;
         
         
         NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
@@ -290,11 +268,7 @@
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body_two   success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
-            
-            NSLog(@"%@", responseObject);
-            
-            [DataStoreManager saveDSCharacters:dic UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            
+            [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];
             

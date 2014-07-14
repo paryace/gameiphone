@@ -32,6 +32,8 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
+    
+    NSOperationQueue *queueme ;
 }
 @end
 
@@ -45,6 +47,7 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
+     [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -57,9 +60,11 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
-    
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
+    queueme = [[NSOperationQueue alloc]init];
+    [queueme setMaxConcurrentOperationCount:1];
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -72,6 +77,7 @@
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     if(KISHighVersion_7){
         m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     }
@@ -315,32 +321,32 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-    [self saveFriendsList:result Keys:keys];
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
+    [queueme addOperation:task];
+//    [self saveFriendsList:result];
 }
 
 //保存用户列表信息
--(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
+-(void)saveFriendsList:(NSDictionary*)result
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
-    dispatch_async(queue, ^{
-        if (result.count>0) {
-            for (int i=0; i<[keys count]; i++) {
-                NSString *key=[keys objectAtIndex:i];
-                for (NSMutableDictionary * dict in [result objectForKey:key]) {
-                    [dict setObject:key forKey:@"nameIndex"];
-                    NSString *shiptype=[dict objectForKey:@"shiptype"];
-                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
-                }
+    NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
+    [keys sortUsingSelector:@selector(compare:)];
+    if (result.count>0) {
+        for (int i=0; i<[keys count]; i++) {
+            NSString *key=[keys objectAtIndex:i];
+            for (NSMutableDictionary * userInfo in [result objectForKey:key]) {
+                [userInfo setObject:key forKey:@"nameIndex"];
+                [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
             }
         }
-    });
+    }
 }
 
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.NewFriendController", NULL);
-    dispatch_async(queue, ^{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
+    dispatch_async(queueselect, ^{
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];

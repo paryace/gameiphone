@@ -283,9 +283,11 @@
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             //保存发送的动态 放置“我” 界面
+            if (responseObject&&[responseObject isKindOfClass:[NSDictionary class]]) {
+                [DataStoreManager saveDSlatestDynamic:responseObject];
+                [[NSNotificationCenter defaultCenter] postNotificationName:UpdateLastDynicmicInfo object:responseObject userInfo:nil];
+            }
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"dynamicFromMe_wx"];
-            
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"dynamicFromMe_wx_notification" object:nil userInfo:nil];
             if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListAddOneDynamic:)])
                 [self.delegate dynamicListAddOneDynamic:responseObject];
         }
@@ -417,6 +419,7 @@
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
     selectImage =nil;
+    
 }
 
 //将图片保存到本地，返回保存的路径
@@ -442,7 +445,6 @@
     NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
     return imageData;
 }
-
 
 
 

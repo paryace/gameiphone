@@ -183,7 +183,10 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)setGroupList:(NSMutableArray*)responseObject
 {
     [myGroupArray removeAllObjects];
-    [myGroupArray addObjectsFromArray:responseObject];
+    myGroupArray = [responseObject mutableCopy];
+    [myGroupArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+         return (NSComparisonResult)NSOrderedAscending;
+    }];
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
     [myGroupArray addObject:dic];
     if (myGroupArray.count<4) {

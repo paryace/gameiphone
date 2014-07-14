@@ -42,10 +42,13 @@
 {
     [super viewWillAppear:animated];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
-    }];
+//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+//        self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
+//    }];
+    
+    self.hostInfo = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
     
     m_titleLabel.text = self.hostInfo.nickName;
     
@@ -352,25 +355,33 @@
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
     
     [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
-    
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
-        NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
-        for (int i=0; i<reponseStrArray.count; i++) {
-            NSString * a= [uploadImagePathArray objectAtIndex:i];
-            for (int i = 0;i<a1.count;i++) {
-                if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
-                    [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
-                }
-            }
-        }
-        self.headImgArray = a1;
-        [self refreshMyInfo:[self getImageIdsStr:self.headImgArray]];
+        [self replyImage];
     }else{
-        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        if (uploadImagePathArray.count>imageImdex) {
+            [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        }
     }
     imageImdex++;
 }
+
+-(void)replyImage
+{
+    NSMutableArray * a1 = [NSMutableArray arrayWithArray:self.headImgArray];//压缩图 头像
+    for (int i=0; i<reponseStrArray.count; i++) {
+        NSString * a= [uploadImagePathArray objectAtIndex:i];
+        for (int i = 0;i<a1.count;i++) {
+            if ([[a1 objectAtIndex:i] isEqualToString:[NSString stringWithFormat:@"<local>%@",a]]) {
+                [a1 replaceObjectAtIndex:i withObject:[reponseStrArray objectForKey:a]];
+            }
+        }
+    }
+    self.headImgArray = a1;
+    [self refreshMyInfo:[self getImageIdsStr:self.headImgArray]];
+}
+
+
 -(NSString*)getImageIdsStr:(NSArray*)imageIdArray
 {
     NSString* headImgStr = @"";
@@ -405,24 +416,20 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"104" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [responseObject setObject:[responseObject objectForKey:@"id"] forKey:@"userid"];
             [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
-            [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
+             NSLog(@"111--保存跟新用户头像的用户信息");
+            [[UserManager singleton] saveUserInfoToDb:responseObject ShipType:@"unkonw"];
         }
-        
         [self showMessageWindowWithContent:@"保存成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
-
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
-                
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
                 [alert show];
             }
@@ -474,12 +481,12 @@
             [topBg addSubview:m_ageLabel];
             
             if ([self.hostInfo.gender isEqualToString:@"0"]) {//男♀♂
-                m_ageLabel.text = [@"♂ " stringByAppendingString:self.hostInfo.age];
+                m_ageLabel.text = [NSString stringWithFormat:@"%@%@",@"♂ ",self.hostInfo.age?self.hostInfo.age:@""];
                 m_ageLabel.backgroundColor = kColorWithRGB(33, 193, 250, 1.0);
             }
             else
             {
-                m_ageLabel.text = [@"♀ " stringByAppendingString:self.hostInfo.age];
+                m_ageLabel.text = [NSString stringWithFormat:@"%@%@",@"♀ ",self.hostInfo.age?self.hostInfo.age:@""];
                 m_ageLabel.backgroundColor = kColorWithRGB(238, 100, 196, 1.0);
             }
             CGSize ageSize = [m_ageLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:10.0] constrainedToSize:CGSizeMake(100, 12) lineBreakMode:NSLineBreakByWordWrapping];
@@ -821,10 +828,8 @@
         hud.labelText = @"保存成功";
         hud.mode = MBProgressHUDModeCustomView;
         [hud hide:YES afterDelay:4];
-
-        NSLog(@"%@", responseObject);
-        
-        [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"5"];
+         NSLog(@"111--保存更新用户信息之后的信息");
+        [[UserManager singleton] saveUserInfoToDb:responseObject ShipType:@"5"];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

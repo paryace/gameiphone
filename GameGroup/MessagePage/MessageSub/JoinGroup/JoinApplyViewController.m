@@ -13,7 +13,7 @@
 #import "GroupInformationViewController.h"
 #import "KKChatController.h"
 #import "HelpViewController.h"
-#import "InvitationViewController.h"
+#import "NewInvitationViewController.h"
 
 @interface JoinApplyViewController ()
 {
@@ -23,6 +23,20 @@
 @end
 
 @implementation JoinApplyViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    NSLog(@"%@",self.view.superview);
+}
 
 - (void)viewDidLoad
 {
@@ -46,6 +60,10 @@
     m_ApplyTableView.delegate = self;
     [self.view addSubview:m_ApplyTableView];
     [self getJoinGroupMsg];
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
 }
 
 #pragma mark -清空
@@ -90,7 +108,6 @@
     NSMutableDictionary *dict = [m_applyArray objectAtIndex:indexPath.row];
     NSString * msgType = KISDictionaryHaveKey(dict, @"msgType");
     if ([msgType isEqualToString:@"joinGroupApplicationReject"]
-        ||[msgType isEqualToString:@"groupLevelUp"]
         ||[msgType isEqualToString:@"groupBillboard"]
         ||[msgType isEqualToString:@"disbandGroup"]
         ||[msgType isEqualToString:@"groupUsershipTypeChange"]
@@ -172,7 +189,6 @@
     }
     //（通过，拒绝,群升级,好友加入群,解散群,群成员身份变化,被踢出群的消息）
     else if ([msgType isEqualToString:@"joinGroupApplicationReject"]
-             ||[msgType isEqualToString:@"groupLevelUp"]
              ||[msgType isEqualToString:@"groupBillboard"]
              ||[msgType isEqualToString:@"disbandGroup"]
              ||[msgType isEqualToString:@"groupUsershipTypeChange"]
@@ -197,6 +213,7 @@
              ||[msgType isEqualToString:@"groupApplicationUnderReview"]
              ||[msgType isEqualToString:@"groupApplicationAccept"]
              ||[msgType isEqualToString:@"groupApplicationReject"]
+              ||[msgType isEqualToString:@"groupLevelUp"]
              ||[msgType isEqualToString:@"groupRecommend"]) {
         
         static NSString *identifier = @"ApplicationUnderCell";
@@ -238,6 +255,13 @@
             cell.threeBtn.hidden=YES;
             cell.foreBtn.hidden=NO;
             [cell.foreBtn setTitle:@"查看详情" forState:UIControlStateNormal];
+        }
+        else if([msgType isEqualToString:@"groupLevelUp"]){
+            cell.oneBtn.hidden=YES;
+            cell.twoBtn.hidden=YES;
+            cell.threeBtn.hidden=YES;
+            cell.foreBtn.hidden=NO;
+            [cell.foreBtn setTitle:@"邀请新成员" forState:UIControlStateNormal];
         }
         [cell setGroupMsg:backgroundImg GroupName:groupName MsgTime:senTime];
         return cell;
@@ -324,6 +348,7 @@
 // 同意，拒绝申请
 -(void)msgEdit:(NSString*)state Dic:(NSMutableDictionary*)dict
 {
+    [hud show:YES];
     NSString * applicationId = KISDictionaryHaveKey(dict, @"applicationId");
     NSString * clickstate = KISDictionaryHaveKey(dict, @"state");
     if (![clickstate isEqualToString:@"0"]) {
@@ -339,10 +364,12 @@
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         [self changState:dict State:state];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[self getSuccessMsg:state]delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             NSString* warn = [error objectForKey:kFailMessageKey];
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100069"]) {
@@ -393,7 +420,7 @@
 -(void)inviteClick:(CreateGroupMsgCell*)sender
 {
      NSMutableDictionary * dict = [m_applyArray objectAtIndex:sender.tag];
-    InvitationViewController *inv = [[InvitationViewController alloc]init];
+    NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
     inv.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"groupId")];
     [self.navigationController pushViewController:inv animated:YES];
 }
@@ -423,17 +450,22 @@
         gr.groupId =[GameCommon getNewStringWithId:groupId];
         [self.navigationController pushViewController:gr animated:YES];
         return;
+    }else if ([msgType isEqualToString:@"groupLevelUp"]){
+        NewInvitationViewController *inv = [[NewInvitationViewController alloc]init];
+        inv.groupId = [GameCommon getNewStringWithId:groupId];
+        [self.navigationController pushViewController:inv animated:YES];
+        return;
     }
     KKChatController * kkchat = [[KKChatController alloc] init];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",groupId];
     kkchat.type = @"group";
     [self.navigationController pushViewController:kkchat animated:YES];
 }
-- (void)dealloc
-{
-    m_ApplyTableView.dataSource = nil;
-    m_ApplyTableView.delegate = nil;
-}
+//- (void)dealloc
+//{
+//    m_ApplyTableView.dataSource = nil;
+//    m_ApplyTableView.delegate = nil;
+//}
 
 - (void)didReceiveMemoryWarning
 {

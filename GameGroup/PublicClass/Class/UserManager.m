@@ -9,10 +9,10 @@
 #import "UserManager.h"
 #import "LocationManager.h"
 #import "DownloadImageService.h"
+
 static UserManager *userManager = NULL;
 
 @implementation UserManager
-
 + (UserManager*)singleton
 {
     @synchronized(self)
@@ -29,12 +29,12 @@ static UserManager *userManager = NULL;
     if (self) {
         self.userCache = [NSMutableDictionary dictionaryWithCapacity:30];
         self.cacheUserids = [NSMutableArray array];
+        self.queueDb = dispatch_queue_create("com.living.game.NewFriendControllerSaveaa", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
 }
 
-- (NSMutableDictionary*)getUser:(NSString* )userId
-{
+-(NSMutableDictionary*)getUser:(NSString*)userId{
     NSMutableDictionary * userDic = [self.userCache objectForKey:userId];
     if (userDic) {
         return userDic;
@@ -55,6 +55,7 @@ static UserManager *userManager = NULL;
         [self requestUserFromNet:userId];
     }
     return dict;
+
 }
 - (void)requestUserFromNet:(NSString*)userId {
     if ([userId hasPrefix:@"sys"]) {
@@ -76,7 +77,9 @@ static UserManager *userManager = NULL;
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheUserids removeObject:userId];
+        NSLog(@"111--个人详情UserManager的用户信息");
         [self saveUserInfo:responseObject];
+        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [self.cacheUserids removeObject:userId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
@@ -86,15 +89,16 @@ static UserManager *userManager = NULL;
 //保存用户信息  新接口
 -(void)saveUserInfo:(id)responseObject
 {
-    dispatch_queue_t queue = dispatch_queue_create("com.living.game.SavePersonInfo", NULL);
-    dispatch_async(queue, ^{
+    if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
 
     NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
     if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
         [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
     }
     
-    NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @"title");
+    NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @   "title");
     NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
     NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
     
@@ -107,23 +111,37 @@ static UserManager *userManager = NULL;
         [dicUser setObject:titleObj forKey:@"titleName"];
         [dicUser setObject:titleObjLevel forKey:@"rarenum"];
     }
-    [DataStoreManager deleteAllDSCharacters:KISDictionaryHaveKey(dicUser, @"userid")];
-    [DataStoreManager deleteAllDSTitle:KISDictionaryHaveKey(dicUser, @"userid")];
-    
-    [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shiptype")];
+    [self saveUserInfoToDb:dicUser ShipType:KISDictionaryHaveKey(responseObject, @"shiptype")];
+    if ([KISDictionaryHaveKey(dicUser, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
+            [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"fansnum") forKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"zannum") forKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    }
+    [self saveCharaterAndTitle:charachers Titles:titles UserId:KISDictionaryHaveKey(dicUser, @"userid")];
+    [self updateMsgInfo:dicUser];
+    [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
+}
 
+-(void)saveUserInfoToDb:(NSMutableDictionary*)dicUser ShipType:(NSString*)shipType
+{
+    [dicUser setObject:shipType forKey:@"sT"];
+    [self startToSave:dicUser];
+}
+
+-(void)startToSave:(NSMutableDictionary*)dicUser{
+    [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
+}
+//保存角色和头衔
+-(void)saveCharaterAndTitle:(NSMutableArray*) charachers Titles:(NSMutableArray*)titles UserId:(NSString*)userId
+{
     for (NSMutableDictionary *characher in charachers) {
-        [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(dicUser, @"userid")];
+        [DataStoreManager saveDSCharacters:characher UserId:userId];
     }
     for (NSMutableDictionary *title in titles) {
         [DataStoreManager saveDSTitle:title];
     }
-    if (latestDynamicMsg&&[latestDynamicMsg isKindOfClass:[NSDictionary class]]) {
-        [DataStoreManager saveDSlatestDynamic:latestDynamicMsg];
-    }
-    [self updateMsgInfo:dicUser]; 
-    });
-    [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
 }
 //更新消息表
 -(void)updateMsgInfo:(NSMutableDictionary*) userDict

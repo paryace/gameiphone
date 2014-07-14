@@ -113,7 +113,9 @@
     {
         return;
     }
+    
     NSDictionary *dictionary = notification.userInfo;
+    NSLog(@"111--个人详情的用户信息");
     [self saveUserInfo:self.userId UserInfo:dictionary];//保存
     NSArray *views = [self.view subviews];
     for(UIView* view in views)
@@ -747,7 +749,7 @@
     }
     for (int i = 0; i < [charactersArr count]; i++) {
         NSDictionary* characterDic = [charactersArr objectAtIndex:i];
-        NSString* realm =  KISDictionaryHaveKey(characterDic, @"realm");//服务器
+        NSString* realm =  KISDictionaryHaveKey(characterDic, @"simpleRealm");//服务器realm
         NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(characterDic, @"gameid")];//游戏Id
         NSString* v1=KISDictionaryHaveKey(characterDic, @"value1");//部落
         NSString* v2=KISDictionaryHaveKey(characterDic, @"value2");//战斗力
@@ -759,7 +761,7 @@
         
         if ([failedmsg intValue ]==404)//角色不存在
         {
-            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:@"角色不存在" pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:[GameCommon getNewStringWithId:auth] Pro:v2];
+            UIView* myCharacter = [CommonControlOrView setCharactersViewWithName:name gameId:gameId realm:[[realm stringByAppendingString:@" "] stringByAppendingString:v1] pveScore:[NSString stringWithFormat:@"%@",v3] img:@"" auth:@"00" Pro:v2];
             myCharacter.frame = CGRectMake(0, m_currentStartY, kScreenWidth, 60);
             [m_myScrollView addSubview:myCharacter];
         }
@@ -1262,10 +1264,7 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
-        [hudadd hide:YES];
-        
-        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
-        
+        [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
         if ([type isEqualToString:@"2"]) {
@@ -1288,6 +1287,7 @@
             
             [self showMessageWindowWithContent:@"关注成功" imageType:0];
         }
+        [hudadd hide:YES];
         if ([type isEqualToString:@"2"]) {
             if (self.isFansPage) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
@@ -1339,7 +1339,7 @@
 - (void)photoWallPhotoTaped:(NSUInteger)index WithPhotoWall:(UIView *)photoWall
 {
     //放大
-     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:[self imageToURL:littleImgArray] images:self.hostInfo.headImgArray indext:index];
+     PhotoViewController * pV = [[PhotoViewController alloc] initWithSmallImages:nil images:self.hostInfo.headImgArray indext:index];
     [self presentViewController:pV animated:NO completion:^{
         
     }];

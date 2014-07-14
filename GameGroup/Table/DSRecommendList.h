@@ -21,5 +21,5 @@
 @property (nonatomic, retain) NSString * userName;
 @property (nonatomic, retain) NSDate * sendTime;
 @property (nonatomic, retain) NSString * recommendReason;
-
+@property (nonatomic, retain) NSString * recommendMsg;
 @end

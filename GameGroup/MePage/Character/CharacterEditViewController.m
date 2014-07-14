@@ -9,6 +9,7 @@
 #import "CharacterEditViewController.h"
 #import "AuthViewController.h"
 #import "AddCharacterViewController.h"
+#import "CharacterAndTitleService.h"
 
 @interface CharacterEditViewController ()
 {
@@ -72,7 +73,9 @@
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [m_characterArray removeAllObjects];
             [m_characterArray addObjectsFromArray:responseObject];
-             [m_myTabelView reloadData];
+            [m_myTabelView reloadData];
+            
+            [[CharacterAndTitleService singleton] saveCharachers:responseObject Userid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -141,45 +144,58 @@
         cell = [[MyCharacterEditCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.heardImg.placeholderImage = [UIImage imageNamed:@"clazz_icon.png"];
+    cell.authBg.hidden = NO;
     
     NSDictionary* tempDic = [m_characterArray objectAtIndex:indexPath.row];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
-        cell.authBtn.hidden = YES;
-        cell.authBg.hidden = NO;
-    }
-    else
-    {
-        cell.authBtn.hidden = NO;
-        cell.authBg.hidden = YES;
-    }
-
+    cell.realmLabel.text = [[KISDictionaryHaveKey(tempDic, @"simpleRealm") stringByAppendingString:@" "] stringByAppendingString:KISDictionaryHaveKey(tempDic, @"value1")];
+    
     if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
     {
-        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
-        cell.realmLabel.text = @"角色不存在";
-        cell.editBtn.hidden = NO;
         cell.authBtn.hidden = YES;
+        cell.authBg.image= KUIImage(@"chara_auth_3");
+        cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
+        cell.editBtn.hidden = NO;
     }
     else
     {
+//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+//            cell.authBtn.hidden = YES;
+//            cell.authBg.image= KUIImage(@"chara_auth_1");
+//        }
+//        else
+//        {
+//            cell.authBtn.hidden = NO;
+//            cell.authBg.image= KUIImage(@"chara_auth_2");
+//        }
+        
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+            cell.authBtn.hidden = YES;
+            cell.authBg.image= KUIImage(@"chara_auth_1");
+        }
+        else if([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"0"])
+        {
+            cell.authBg.image= KUIImage(@"chara_auth_2");
+            cell.authBtn.hidden = NO;
+        }else{
+            cell.authBg.image = KUIImage(@"");
+            cell.authBtn.hidden = YES;
+        }
+
+        
+        
+        
         NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
         if ([GameCommon isEmtity:gameImageId]) {
             cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
         }else{
             cell.heardImg.imageURL = [ImageService getImageUrl4:gameImageId];
         }
-        NSString* realm = [KISDictionaryHaveKey(tempDic, @"raceObj") isKindOfClass:[NSDictionary class]] ? KISDictionaryHaveKey(KISDictionaryHaveKey(tempDic, @"raceObj"), @"sidename") : @"";
-        cell.realmLabel.text = [KISDictionaryHaveKey(tempDic, @"realm") stringByAppendingString:realm];
         cell.editBtn.hidden = YES;
     }
-    
-    
-    
-    
     cell.myIndexPath = indexPath;
     cell.myDelegate = self;
-    NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
-    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
+    NSString * imageId=[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"gameid")]];
     
     if ([GameCommon isEmtity:imageId]) {
         cell.gameImg.imageURL=nil;
@@ -246,7 +262,6 @@
         
         NSDictionary* dic = [m_characterArray objectAtIndex:alertView.tag - 1];
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-//        [params setObject:@"1" forKey:@"gameid"];
         [params setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
         [params setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterid"];
         
@@ -258,10 +273,11 @@
         
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
-            
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];
             [m_myTabelView reloadData];
-            
+            [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
+            [DataStoreManager deleteDSTitleByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
+//            [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -274,17 +290,7 @@
         }];
     }
 }
-//-(void)backButtonClick:(UIButton *)sender
-//{
-//    if (self.isFromMeet) {
-//        NewFindViewController *nf = [[NewFindViewController alloc]init];
-//        [self.navigationController popToViewController:nf animated:YES];
-//
-//    }else{
-//        [self.navigationController popViewControllerAnimated:YES];
-//
-//    }
-//}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

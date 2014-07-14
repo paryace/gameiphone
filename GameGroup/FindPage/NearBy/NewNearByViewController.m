@@ -167,6 +167,7 @@ typedef enum : NSUInteger {
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
 
     m_layout = [[UICollectionViewFlowLayout alloc]init];
@@ -272,7 +273,6 @@ typedef enum : NSUInteger {
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
 
-    
     self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
     self.textView.isScrollable = NO;
     self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
@@ -1424,6 +1424,7 @@ typedef enum : NSUInteger {
         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
             [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype")];
+            [DataStoreManager deleteMemberFromListWithUserid:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid")];
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
         }
         for (int i = 0 ;i<m_dataArray.count;i++) {

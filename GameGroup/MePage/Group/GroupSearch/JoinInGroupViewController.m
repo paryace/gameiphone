@@ -23,7 +23,7 @@
     UILabel *realmLabel;
     EGOImageView *clazzImg;
     EGOImageView *gameImg;
-    UIImageView *authBg;
+//    UIImageView *authBg;
     UILabel *nameLabel;
     UIPickerView *m_gamePickerView;
     UIScrollView *m_baseScrollView;
@@ -151,20 +151,20 @@
     
     [myView addSubview:clazzImg];
     
-    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
-    authBg.backgroundColor = [UIColor clearColor];
-    NSString *auth;
-    if (gameInfoArray.count>0) {
-        auth =[gameInfoArray[0]objectForKey:@"auth"];
-    }else{
-        auth = @"0";
-    }
-    if ([auth intValue]==0) {
-        authBg.image = KUIImage(@"chara_auth_2");
-    }else{
-        authBg.image = KUIImage(@"chara_auth_1");
-    }
-    [myView addSubview:authBg];
+//    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
+//    authBg.backgroundColor = [UIColor clearColor];
+//    NSString *auth;
+//    if (gameInfoArray.count>0) {
+//        auth =[gameInfoArray[0]objectForKey:@"auth"];
+//    }else{
+//        auth = @"0";
+//    }
+//    if ([auth intValue]==0) {
+//        authBg.image = KUIImage(@"chara_auth_2");
+//    }else{
+//        authBg.image = KUIImage(@"chara_auth_1");
+//    }
+//    [myView addSubview:authBg];
     
     nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 120, 20)];
     nameLabel.backgroundColor = [UIColor clearColor];
@@ -181,6 +181,7 @@
     
     gameImg = [[EGOImageView alloc] initWithFrame:CGRectMake(55, 31, 18, 18)];
     gameImg.backgroundColor = [UIColor clearColor];
+    gameImg.placeholderImage = KUIImage(@"clazz_icon.png");
     gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(gameInfoArray[0], @"gameid")]];
     [myView addSubview:gameImg];
     
@@ -189,7 +190,7 @@
     realmLabel.textColor = kColorWithRGB(102, 102, 102, 1.0) ;
     realmLabel.font = [UIFont boldSystemFontOfSize:14.0];
     if (gameInfoArray.count>0) {
-        realmLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"realm");
+        realmLabel.text = KISDictionaryHaveKey(gameInfoArray[0], @"simpleRealm");
     }else{
         realmLabel.text = @"";
     }
@@ -275,7 +276,7 @@
             listDict  = responseObject;
             [hud hide:YES];
             
-            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"猜你喜欢",@"tagId":@"hot"}, nil];
+            NSArray *array = [NSArray arrayWithObjects:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"simpleRealm")],@"tagId":@"realm"},@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"猜你喜欢",@"tagId":@"hot"}, nil];
             allkeysArr = [NSMutableArray arrayWithArray:KISDictionaryHaveKey(responseObject, @"sortList")];
             [allkeysArr insertObject:[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")]] atIndex:0];
 
@@ -301,7 +302,13 @@
 }
 
 -(void)searchStrToNextPage:(id)sender
-{    
+{
+    if ([GameCommon isEmtity:m_searchTf.text])
+    {
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"搜索条件不能为空" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
     SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
     groupView.conditiona = m_searchTf.text;
     groupView.ComeType = SETUP_Search;
@@ -417,8 +424,8 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"realm"]) {
         groupView.ComeType =SETUP_SAMEREALM;
         groupView.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")];
-        groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
-        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")] ;
+        groupView.realmStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"simpleRealm")] ;
+        groupView.titleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"simpleRealm")] ;
     }
     else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"tagId")]isEqualToString:@"nearby"]) {
         ;
@@ -455,16 +462,17 @@
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
         clazzImg.imageURL = [ImageService getImageStr2:KISDictionaryHaveKey(dict, @"img")];
-        realmLabel.text = KISDictionaryHaveKey(dict, @"realm");
+        realmLabel.text = KISDictionaryHaveKey(dict, @"simpleRealm");
+        gameImg.placeholderImage = KUIImage(@"clazz_icon.png");
         gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")]];
         nameLabel.text = KISDictionaryHaveKey(dict, @"name");
         NSString *auth =[dict objectForKey:@"auth"];
         //    BOOL isAuth = [auth boolValue];
-        if ([auth intValue]==0) {
-            authBg.image = KUIImage(@"chara_auth_2");
-        }else{
-            authBg.image = KUIImage(@"chara_auth_1");
-        }
+//        if ([auth intValue]==0) {
+//            authBg.image = KUIImage(@"chara_auth_2");
+//        }else{
+//            authBg.image = KUIImage(@"chara_auth_1");
+//        }
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
         
         [self getCardWithNetWithDic:dic];
@@ -495,7 +503,7 @@
     [customView addSubview:imageView];
     
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
     label.backgroundColor = [UIColor clearColor];
     [customView addSubview:label];
     return customView;
