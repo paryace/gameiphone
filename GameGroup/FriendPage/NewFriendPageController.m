@@ -47,11 +47,10 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-     [self getFriendDateFromDataSore];
+//     [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendListFromNet];
     }
 }
@@ -61,6 +60,7 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
     queueme = [[NSOperationQueue alloc]init];
@@ -116,6 +116,12 @@
 {
     [self getFriendDateFromDataSore];
 }
+
+//-(void)black:(NSNotification*)notification
+//{
+//    
+//}
+
 
 - (void)topBtnAction:(UIButton *)sender{
     switch (sender.tag) {

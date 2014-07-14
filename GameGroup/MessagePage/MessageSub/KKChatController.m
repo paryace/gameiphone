@@ -108,8 +108,10 @@ UINavigationControllerDelegate>
     [super viewWillAppear:animated];
     oTherPage=NO;
     //接收消息监听
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
     //ack消息监听//消息是否发送成功
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     [self refreTitleText];
     if ([self.type isEqualToString:@"group"]) {

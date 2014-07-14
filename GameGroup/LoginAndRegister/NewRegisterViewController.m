@@ -650,8 +650,6 @@
         [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
         NSLog(@"111--保存注册成功返回的用户信息");
         [[UserManager singleton] saveUserInfoToDb:userDic ShipType:@"unknow"];
-        
-
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         [self dismissViewControllerAnimated:YES completion:^{
