@@ -9,6 +9,7 @@
 #import "NewRegisterViewController.h"
 #import "ShowTextViewController.h"
 #import "HelpViewController.h"
+
 @interface NewRegisterViewController ()
 {
     UIImageView *m_topImage;//条图
@@ -650,7 +651,7 @@
         NSLog(@"111--保存注册成功返回的用户信息");
         [[UserManager singleton] saveUserInfoToDb:userDic ShipType:@"unknow"];
         
-        [DataStoreManager saveFriendRemarkName:KISDictionaryHaveKey(userDic, @"nickname") userid:KISDictionaryHaveKey(userDic, @"id")];
+
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         [self dismissViewControllerAnimated:YES completion:^{

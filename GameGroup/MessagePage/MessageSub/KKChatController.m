@@ -2425,6 +2425,7 @@ UINavigationControllerDelegate>
             }
         }
     }
+    oTherPage=YES;
     NSArray *array = [NSArray arrayWithObjects:str, nil];
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
     [self presentViewController:photo animated:NO completion:^{
