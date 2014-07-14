@@ -47,6 +47,7 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
+     [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -320,9 +321,9 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-//    [queueme addOperation:task];
-    [self saveFriendsList:result];
+    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
+    [queueme addOperation:task];
+//    [self saveFriendsList:result];
 }
 
 //保存用户列表信息

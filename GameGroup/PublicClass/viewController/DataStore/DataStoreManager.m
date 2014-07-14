@@ -1458,6 +1458,12 @@
     if ([GameCommon isEmtity:userId]) {
         return;
     }
+   
+    NSPredicate * predicated = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
+    DSLatestDynamic * latestDynamic = [DSLatestDynamic MR_findFirstWithPredicate:predicated];
+    latestDynamic.alias = alias?alias:@"";
+    latestDynamic.nickname = nickName?nickName:@"";
+    latestDynamic.userimg = headImgID?headImgID:@"";
     
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
     DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
@@ -2584,7 +2590,7 @@
 
 +(void)SaveBlackListWithDic:(NSDictionary *)dic WithType:(NSString *)type
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         
         NSString *userid = KISDictionaryHaveKey(dic, @"userid");
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
@@ -2817,7 +2823,7 @@
     NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
     //    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
         DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
         if (!dscharacters)
@@ -2896,7 +2902,7 @@
     NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"userimg")];
     NSDictionary * titleObjects = KISDictionaryHaveKey(titless, @"titleObj");
     [self saveDSTitleObject:titleObjects];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@",ids];
         DSTitle * titles = [DSTitle MR_findFirstWithPredicate:predicate];
         if (!titles)
@@ -3197,7 +3203,7 @@
     
     [self upDataDSGroupApplyMsgByGroupId:groupId GroupName:groupName GroupBackgroundImg:backgroundImg];//更新群通知消息列表
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate];
         if (!groupInfo)
