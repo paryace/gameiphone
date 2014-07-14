@@ -1280,10 +1280,13 @@
     }
 }
 
-+(void)newSaveFriendList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
++(void)newSaveFriendList:(NSArray *)array withshiptype:(NSString *)nameindex
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        [self saveUserInfo:userInfo withshiptype:shiptype Loco:localContext];
+        for (NSMutableDictionary * userInfo in array){
+            [userInfo setObject:nameindex forKey:@"nameIndex"];
+            [self saveUserInfo:userInfo withshiptype:KISDictionaryHaveKey(userInfo, @"shiptype") Loco:localContext];
+        }
     }];
 }
 

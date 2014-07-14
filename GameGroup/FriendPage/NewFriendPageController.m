@@ -341,14 +341,25 @@
         for (int i=0; i<[keys count]; i++) {
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * userInfo in [result objectForKey:key]) {
-                [userInfo setObject:key forKey:@"nameIndex"];
-//                [DataStoreManager newSaveFriendList:userInfo withshiptype:KISDictionaryHaveKey(userInfo, @"shiptype")];
-                
+                [userInfo setObject:key forKey:@"nameIndex"];                
                 [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
             }
         }
     }
 }
+
+////保存用户列表信息
+//-(void)saveFriendsList:(NSDictionary*)result
+//{
+//    NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
+//    [keys sortUsingSelector:@selector(compare:)];
+//    if (result.count>0) {
+//        for (int i=0; i<[keys count]; i++) {
+//            NSString *key=[keys objectAtIndex:i];
+//            [DataStoreManager newSaveFriendList:[result objectForKey:key] withshiptype:key];
+//        }
+//    }
+//}
 
 //查询用户列表
 -(void) getFriendDateFromDataSore

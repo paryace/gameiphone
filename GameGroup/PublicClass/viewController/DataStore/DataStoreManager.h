@@ -337,5 +337,5 @@
 //根据Type删除头衔
 +(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;
 
-+(void)newSaveFriendList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
++(void)newSaveFriendList:(NSArray *)array withshiptype:(NSString *)nameindex;
 @end

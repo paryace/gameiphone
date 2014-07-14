@@ -226,7 +226,8 @@
     UIButton* step1Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 96, 300, 40)];
     [step1Button setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    if ([[TempData sharedInstance] registerNeedMsg]) {
+//    if ([[TempData sharedInstance] registerNeedMsg]) {
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
         [step1Button setTitle:@"获取验证码" forState:UIControlStateNormal];
     }else{
         [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
@@ -313,7 +314,8 @@
 //        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号" buttonTitle:@"确定"];
 //        return;
 //    }
-    if ([[TempData sharedInstance] registerNeedMsg]) {
+//    if ([[TempData sharedInstance] registerNeedMsg]) {
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
         [self getVerificationCode];
     }else{
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
