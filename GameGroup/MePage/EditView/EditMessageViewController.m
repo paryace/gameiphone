@@ -170,7 +170,7 @@
             [responseObject setObject:[responseObject objectForKey:@"id"] forKey:@"userid"];
             [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
              NSLog(@"111--EditMessageViewController的用户信息");
-            [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
+            [[UserManager singleton] saveUserInfoToDb:responseObject ShipType:@"unkonw"];
         }
         [self.navigationController popViewControllerAnimated:YES];
         

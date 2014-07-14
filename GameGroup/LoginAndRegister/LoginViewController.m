@@ -185,7 +185,7 @@
         [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
         
         NSString * host = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"address");
-         NSString * domain = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name");
+        NSString * domain = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name");
         
         [[NSUserDefaults standardUserDefaults] setObject:host forKey:@"host"];
         [[NSUserDefaults standardUserDefaults] setObject:domain forKey:kDOMAIN];
@@ -195,33 +195,25 @@
         
         
         AppDelegate* app=(AppDelegate*)[UIApplication sharedApplication].delegate;
-        
         [app.xmppHelper connect];
         
         NSLog(@"111--登陆成功的用户信息");
         [[UserManager singleton] saveUserInfo:responseObject];
-        
-//        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");
-//        [dicUser setObject:[dicUser objectForKey:@"id"] forKey:@"userid"];
-//        [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(responseObject, @"shipType")] ;
-        
-//        [[UserManager singleton]getSayHiUserId];//获取打招呼id
+
         [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"sayhellolist") forKey:@"sayHello_wx_info_id"];
 
+//        [[UserManager singleton]getSayHiUserId];//获取打招呼id
         
         [UserManager getBlackListFromNet];//获取黑名单信息
-        
+//
         [[GameCommon shareGameCommon]LoginOpen];
-        
+//
         [UserManager getGroupSettingState];
-        
+//
         [UserManager getGroupListFromNet];//获取群列表
         
-//        [SFHFKeychainUtils storeUsername:LOCALTOKEN andPassword:[[dic objectForKey:@"token"] objectForKey:@"token"] forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-//        
-//        [SFHFKeychainUtils storeUsername:ACCOUNT andPassword:phoneTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
-//        
-//        [SFHFKeychainUtils storeUsername:PASSWORD andPassword:passwordTextField.text forServiceName:LOCALACCOUNT updateExisting:YES error:nil];
+        
+        
        // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表
         NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
         if (!arr||![arr isKindOfClass:[NSArray class]]) {

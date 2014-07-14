@@ -65,6 +65,7 @@ UINavigationControllerDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     BOOL endOfTable;
+    BOOL oTherPage;
     dispatch_queue_t queue;
 }
 
@@ -105,6 +106,7 @@ UINavigationControllerDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    oTherPage=NO;
     //接收消息监听
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
     //ack消息监听//消息是否发送成功
@@ -118,11 +120,13 @@ UINavigationControllerDelegate>
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    //监听通知（收到新消息，与发送消息成功）
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
-    //ack反馈消息通知
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
-    
+    if (!oTherPage) {
+        //监听通知（收到新消息，与发送消息成功）
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
+        //ack反馈消息通知
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
+    }
+
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
     }else if ([self.type isEqualToString:@"group"]){
@@ -180,6 +184,7 @@ UINavigationControllerDelegate>
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
+    oTherPage= NO;
     queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
 
     uDefault = [NSUserDefaults standardUserDefaults];
@@ -904,6 +909,7 @@ UINavigationControllerDelegate>
 //群动态入口
 - (void)groupCricleButtonClick:(UIButton *)sender{
     
+    oTherPage = YES;
     [[NSUserDefaults standardUserDefaults]setObject:0 forKey:[NSString stringWithFormat:@"%@%@",GroupDynamic_msg_count,self.chatWithUser]];
     [[NSUserDefaults standardUserDefaults] synchronize];
     _groupCricleMsgCount=0;
@@ -1272,6 +1278,7 @@ UINavigationControllerDelegate>
                 imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+                oTherPage = YES;
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
                 [self presentViewController:imagePicker animated:YES completion:^{
                 }];
@@ -1290,6 +1297,7 @@ UINavigationControllerDelegate>
                 imagePicker.allowsEditing = NO;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                oTherPage = YES;
                 imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
@@ -1493,6 +1501,7 @@ UINavigationControllerDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
+    oTherPage = YES;
     if ([self.type isEqualToString:@"normal"]) {
         TestViewController *detailV = [[TestViewController alloc]init];
         detailV.userId = self.chatWithUser;
@@ -2230,7 +2239,7 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-        dispatch_barrier_async(queue, ^{
+//        dispatch_barrier_async(queue, ^{
             array = [self getMsgArray:messages.count-historyMsg PageSize:20];
             loadMoreMsgHeight = 0;
             for (int i = 0; i < array.count; i++) {
@@ -2239,10 +2248,10 @@ UINavigationControllerDelegate>
                 loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
             }
             loadHistoryArrayCount = array.count;
-            dispatch_async(dispatch_get_main_queue(), ^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
                 [header endRefreshing];
-            });
-        });
+//            });
+//        });
         
     };
     
@@ -2436,6 +2445,11 @@ UINavigationControllerDelegate>
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
+- (void)dealloc
+{
+    [super dealloc];
+    NSLog(@"dealloc--ChatController");
+}
 //发送消息
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
 {
@@ -2446,6 +2460,7 @@ UINavigationControllerDelegate>
 {
     [self refreMessageStatus:cellIndex Status:@"0"];
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

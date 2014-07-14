@@ -453,7 +453,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [self storeNewMessage:info];
     [DataStoreManager saveOtherMsgsWithData:info];
 //    [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//    [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
+    [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
 }
 //--------------------------------------------好友推荐

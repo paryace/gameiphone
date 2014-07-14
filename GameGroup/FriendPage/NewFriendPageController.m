@@ -320,28 +320,10 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-    [queueme addOperation:task];
-//    [self saveFriendsList:result];
+//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
+//    [queueme addOperation:task];
+    [self saveFriendsList:result];
 }
-
-////保存用户列表信息
-//-(void)saveFriendsList:(NSDictionary*)result Keys:(NSArray*)keys
-//{
-////    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-//        if (result.count>0) {
-//            for (int i=0; i<[keys count]; i++) {
-//                NSString *key=[keys objectAtIndex:i];
-//                for (NSMutableDictionary * dict in [result objectForKey:key]) {
-//                    [dict setObject:key forKey:@"nameIndex"];
-//                    NSString *shiptype=[dict objectForKey:@"shiptype"];
-//                    [DataStoreManager newSaveAllUserWithUserManagerList:dict withshiptype:shiptype];
-//                }
-//            }
-//        }
-////    });
-//}
-
 
 //保存用户列表信息
 -(void)saveFriendsList:(NSDictionary*)result
@@ -353,7 +335,7 @@
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * userInfo in [result objectForKey:key]) {
                 [userInfo setObject:key forKey:@"nameIndex"];
-                [DataStoreManager newSaveAllUserWithUserManagerList:userInfo withshiptype:KISDictionaryHaveKey(userInfo, @"shiptype")];
+                [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
             }
         }
     }

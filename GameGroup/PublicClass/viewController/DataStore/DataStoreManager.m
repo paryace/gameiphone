@@ -1284,9 +1284,12 @@
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
 {
     NSLog(@"保存单个用户信息-----》》");
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         [self saveUserInfo:userInfo withshiptype:shiptype Loco:localContext];
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];
 
     
 //    dispatch_async(dispatch_queue_create("com.living.game.NewFriendControllerSave", DISPATCH_QUEUE_CONCURRENT), ^{
@@ -1342,7 +1345,7 @@
 //        }
 //        dispatch_async(dispatch_get_main_queue(), ^{
 //            if (![GameCommon isEmtity:userId]) {
-//                [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//                [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
 //                    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
 //                    DSuser * dUser= [DSuser MR_findFirstWithPredicate:predicate];
 //                    if (!dUser)
@@ -1393,7 +1396,10 @@
 //                            return;
 //                        }
 //                    }
-//                }];
+//                }
+//                 completion:^(BOOL success, NSError *error) {
+//                     NSLog(@"保存联系人成功--->>.");
+//                 }];
 //            }
 //        });
 //    });
