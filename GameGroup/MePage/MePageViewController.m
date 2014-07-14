@@ -83,23 +83,15 @@
 }
 
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-        m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-//        });
-//    });
+    m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [m_myTableView reloadData];
 
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-        m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
-//        dispatch_async(dispatch_get_main_queue(), ^{
+    m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
             [m_myTableView reloadData];
-//        });
-//    });
 }
 -(void)refreUserInfo
 {
@@ -154,14 +146,6 @@
     [info setObject:[GameCommon getNewStringWithId:zannum?zannum:@""] forKey:@"zannum"];
     [info setObject:[GameCommon getNewStringWithId:fansnum?fansnum:@""] forKey:@"fansnum"];
     return info;
-}
-
--(void)getGameIds:(NSMutableArray*)chasss
-{
-    NSArray * gameidsarray = [[NSArray alloc] init];
-//    for (<#initialization#>; <#condition#>; <#increment#>) {
-//        <#statements#>
-//    }
 }
 
 -(void)reloadTableView:(id)sender

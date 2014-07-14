@@ -2681,7 +2681,6 @@
 #pragma mark - 保存最后一条动态
 +(void)saveDSlatestDynamic:(NSDictionary *)characters
 {
-    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         NSString * alias = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"alias")];
         NSString * commentnum = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"commentnum")];
         NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"createDate")];
@@ -2722,7 +2721,6 @@
             latestDynamic.username = username;
             latestDynamic.zannum = zannum;
         }];
-    });
 }
 
 //删除最后一条动太

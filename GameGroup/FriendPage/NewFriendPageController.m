@@ -321,9 +321,10 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-    [queueme addOperation:task];
-//    [self saveFriendsList:result];
+//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
+//    [queueme addOperation:task];
+    [self saveFriendsList:result];
+    
 }
 
 //保存用户列表信息

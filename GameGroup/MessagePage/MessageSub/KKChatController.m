@@ -33,7 +33,7 @@
 #define kChatImageSizeHigh @"200"
 
 #define padding 20
-#define spaceEnd 500
+#define spaceEnd 100
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
 

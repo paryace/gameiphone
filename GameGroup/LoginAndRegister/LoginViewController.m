@@ -203,10 +203,10 @@
         [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"sayhellolist") forKey:@"sayHello_wx_info_id"];
 
 //        [[UserManager singleton]getSayHiUserId];//获取打招呼id
-        [UserManager getBlackListFromNet];//获取黑名单信息
+        [[UserManager singleton] getBlackListFromNet];//获取黑名单信息
         [[GameCommon shareGameCommon]LoginOpen];
         [UserManager getGroupSettingState];
-        [UserManager getGroupListFromNet];//获取群列表
+        [[UserManager singleton] getGroupListFromNet];//获取群列表
         
         
        // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表

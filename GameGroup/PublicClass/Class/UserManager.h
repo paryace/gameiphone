@@ -22,11 +22,11 @@
 
 -(void)getSayHiUserId;
 
-+(void)getBlackListFromNet;
+-(void)getBlackListFromNet;
 
 +(void)createGroup:(NSString*)groupName Info:(NSString*)info GroupIconImg:(NSString*)groupIconImg;
 
-+(void)getGroupListFromNet;
+-(void)getGroupListFromNet;
 
 -(void)saveUserInfo:(id)responseObject;
 

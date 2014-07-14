@@ -102,6 +102,7 @@
 {
     firstSayHiMsg = [DataStoreManager qSayHiMsg:@"2"];
     if (!firstSayHiMsg) {
+        
         [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
     }
 }

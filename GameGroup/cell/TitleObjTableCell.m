@@ -18,7 +18,7 @@
         self.headImageV.backgroundColor = [UIColor clearColor];
         [self addSubview:self.headImageV];
 
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 0, 200, 50)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 50)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];

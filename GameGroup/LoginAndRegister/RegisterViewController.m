@@ -1170,7 +1170,7 @@
        [app.xmppHelper connect];
        
        [[UserManager singleton]getSayHiUserId];//获取打招呼id
-       [UserManager getBlackListFromNet];//获取黑名单信息
+       [[UserManager singleton] getBlackListFromNet];//获取黑名单信息
        [[GameCommon shareGameCommon]LoginOpen];//获取游戏列表信息
        
        NSMutableDictionary *userDic=KISDictionaryHaveKey(dic, @"gameproUser");
