@@ -421,6 +421,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [responseObject setObject:[responseObject objectForKey:@"id"] forKey:@"userid"];
             [responseObject setObject:[responseObject objectForKey:@"birthdate"] forKey:@"birthday"];
+             NSLog(@"111--保存跟新用户头像的用户信息");
             [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"unkonw"];
         }
         [self showMessageWindowWithContent:@"保存成功" imageType:0];
@@ -829,7 +830,7 @@
         [hud hide:YES afterDelay:4];
 
         NSLog(@"%@", responseObject);
-        
+         NSLog(@"111--保存更新用户信息之后的信息");
         [DataStoreManager newSaveAllUserWithUserManagerList:responseObject withshiptype:@"5"];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

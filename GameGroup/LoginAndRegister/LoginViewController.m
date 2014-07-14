@@ -198,7 +198,7 @@
         
         [app.xmppHelper connect];
         
-        
+        NSLog(@"111--登陆成功的用户信息");
         [[UserManager singleton] saveUserInfo:responseObject];
         
 //        NSMutableDictionary * dicUser=KISDictionaryHaveKey(responseObject, @"user");

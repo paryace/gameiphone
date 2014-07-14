@@ -733,6 +733,7 @@ static GameCommon *my_gameCommon = NULL;
         }
         
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+            NSLog(@"111--OPen接口的用户信息");
             [[UserManager singleton]saveUserInfo:responseObject];
         }
 

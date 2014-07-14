@@ -115,6 +115,7 @@
     }
     
     NSDictionary *dictionary = notification.userInfo;
+    NSLog(@"111--个人详情的用户信息");
     [self saveUserInfo:self.userId UserInfo:dictionary];//保存
     NSArray *views = [self.view subviews];
     for(UIView* view in views)

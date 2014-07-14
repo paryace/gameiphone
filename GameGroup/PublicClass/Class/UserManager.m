@@ -76,6 +76,7 @@ static UserManager *userManager = NULL;
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheUserids removeObject:userId];
+        NSLog(@"111--个人详情UserManager的用户信息");
         [self saveUserInfo:responseObject];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

@@ -336,5 +336,4 @@
 
 //根据Type删除头衔
 +(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;
-
 @end

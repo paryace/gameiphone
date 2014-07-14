@@ -411,6 +411,7 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        NSLog(@"111--好友推荐重新请求之后的用户信息");
         [[UserManager singleton] saveUserInfo:responseObject];
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
