@@ -1126,10 +1126,16 @@
             [postDict setObject:tempDict forKey:@"params"];
             
             [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                
-                [DataStoreManager changeBlackListTypeWithUserid:self.hostInfo.userId];
-                
-                [self showAlertViewWithTitle:@"提示" message:@"拉黑成功" buttonTitle:@"确定"];
+                dispatch_queue_t queue = dispatch_queue_create("com.living.game.", NULL);
+                dispatch_async(queue, ^{
+                    [DataStoreManager changeBlackListTypeWithUserid:self.hostInfo.userId];
+                    [self updateDb:@"unknow"];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self refreFansNum:@"0"];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+                        [self showAlertViewWithTitle:@"提示" message:@"拉黑成功" buttonTitle:@"确定"];
+                    });
+                });
             } failure:^(AFHTTPRequestOperation *operation, id error) {
                 if ([error isKindOfClass:[NSDictionary class]]) {
                     if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
