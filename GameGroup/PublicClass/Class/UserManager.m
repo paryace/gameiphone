@@ -125,10 +125,10 @@ static UserManager *userManager = NULL;
 -(void)saveUserInfoToDb:(NSMutableDictionary*)dicUser ShipType:(NSString*)shipType
 {
     [dicUser setObject:shipType forKey:@"sT"];
-    [self save:dicUser];
+    [self startToSave:dicUser];
 }
 
--(void)save:(NSMutableDictionary*)dicUser{
+-(void)startToSave:(NSMutableDictionary*)dicUser{
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
 }
 
