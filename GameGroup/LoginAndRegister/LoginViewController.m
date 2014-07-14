@@ -202,7 +202,7 @@
 
         [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"sayhellolist") forKey:@"sayHello_wx_info_id"];
 
-//        [[UserManager singleton]getSayHiUserId];//获取打招呼id
+        [[UserManager singleton]getSayHiUserId];//获取打招呼id
         [[UserManager singleton] getBlackListFromNet];//获取黑名单信息
         [[GameCommon shareGameCommon]LoginOpen];
         [UserManager getGroupSettingState];
