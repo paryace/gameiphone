@@ -44,16 +44,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"组队" withBackButton:NO];
+    [self setTopViewWithTitle:@"组队" withBackButton:YES];
     
-    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+//    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     //    [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     //    [collectionBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
     
-    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
-    collectionBtn.backgroundColor = [UIColor clearColor];
-    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:collectionBtn];
+//    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
+//    collectionBtn.backgroundColor = [UIColor clearColor];
+//    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:collectionBtn];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
