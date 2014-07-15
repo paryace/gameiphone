@@ -1696,7 +1696,7 @@ UINavigationControllerDelegate>
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
                 KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
                 [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
-//                [self.tView reloadData];
+                [self.tView reloadData];
             }
         }
     }
@@ -2243,20 +2243,15 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-//        dispatch_barrier_async(queue, ^{
-            array = [self getMsgArray:messages.count-historyMsg PageSize:20];
-            loadMoreMsgHeight = 0;
-            for (int i = 0; i < array.count; i++) {
-                [messages insertObject:array[i] atIndex:i];
-                CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
-                loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
-            }
-            loadHistoryArrayCount = array.count;
-//            dispatch_async(dispatch_get_main_queue(), ^{
-                [header endRefreshing];
-//            });
-//        });
-        
+        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
+        loadMoreMsgHeight = 0;
+        for (int i = 0; i < array.count; i++) {
+            [messages insertObject:array[i] atIndex:i];
+            CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
+            loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
+        }
+        loadHistoryArrayCount = array.count;
+        [header endRefreshing];
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
