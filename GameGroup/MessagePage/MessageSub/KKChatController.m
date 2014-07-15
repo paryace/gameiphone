@@ -1520,6 +1520,7 @@ UINavigationControllerDelegate>
 
 -(void)toContactProfile:(NSString*)userId
 {
+    oTherPage = YES;
     TestViewController * detailV = [[TestViewController alloc] init];
     detailV.userId = userId;
     [self.navigationController pushViewController:detailV animated:YES];
@@ -1841,6 +1842,7 @@ UINavigationControllerDelegate>
 //点击我的头像
 -(void)myHeadImgClicked:(id)Sender
 {
+    oTherPage = YES;
     TestViewController * detailV = [[TestViewController alloc] init];
     detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
