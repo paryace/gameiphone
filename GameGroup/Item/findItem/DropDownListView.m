@@ -25,17 +25,15 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor whiteColor];
+        self.backgroundColor = UIColorFromRGBA(0xbbbbbb, 0.6);
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
         
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
-            
             sectionNum = [self.dropDownDataSource numberOfSections];
         }
-        
         if (sectionNum == 0) {
             self = nil;
         }
@@ -43,6 +41,12 @@
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
+            UIImageView * tabIcon = [[UIImageView alloc] initWithFrame:CGRectMake(i*sectionWidth+5, (self.frame.size.height-20)/2, 20, 20)];
+            [tabIcon setImage:[UIImage imageNamed:[NSString stringWithFormat:@"item_%d",i+1]]];
+            [tabIcon setContentMode:UIViewContentModeScaleToFill];
+            [self addSubview:tabIcon];
+            
+            
             UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionWidth*i, 1, sectionWidth, frame.size.height-2)];
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];

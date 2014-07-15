@@ -15,11 +15,16 @@
 @interface FindItemViewController ()
 {
     UITableView *m_myTabelView;
-    NSMutableArray *m_dataArray;
+    DropDownListView * dropDownView;
     UITextField *roleTextf;
-    UIPickerView *m_gamePickerView;
-    ChooseTab *chooseView;
+    UISearchBar * mSearchBar;
+    UIView *tagView;
+    
+    
+    
+    NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
+    NSMutableArray *m_charaArray;
 }
 @end
 
@@ -36,37 +41,42 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    chooseView.coreArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    m_charaArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    [dropDownView.mTableView reloadData];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"组队" withBackButton:YES];
+    //初始化数据源
+    m_dataArray = [NSMutableArray array];
+    m_charaArray = [NSMutableArray array];
+    roleDict = [NSMutableDictionary dictionary];
+    m_charaArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
-
-    
-    
+    //收藏
     UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [collectionBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
     [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
     collectionBtn.backgroundColor = [UIColor clearColor];
     [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:collectionBtn];
-    
+    //    [self.view addSubview:collectionBtn];
+    //创建
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(didClickCreateItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
+    //菜单
+    dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,startX, 320, 40) dataSource:self delegate:self];
+    dropDownView.mSuperView = self.view;
+    [self.view addSubview:dropDownView];
     
-    //初始化数据源
-    m_dataArray = [NSMutableArray array];
-    //    [m_dataArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"萌萌的",@"title",@"本人意识卓越 劲舞团反向19连P。劲乐团困难贵族1600连。泡泡堂海盗14 1V5 ，澄海3C 1控8 DOTA龙骑士守3路无人破。求生之路杀害3名队友后单人通关。魂斗罗一命不开枪通关。拳皇各种满星电脑被我虐。星际2全国第2.传奇全国第一把谷雨.石器时代家族战第一庄园。喝3打啤酒9小时不上厕所。如有此队友哪里找",@"msg", nil]];
-    roleDict = [NSMutableDictionary dictionary];
-    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
+    
+    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
     m_myTabelView.delegate = self;
     m_myTabelView.dataSource  = self;
     [GameCommon setExtraCellLineHidden:m_myTabelView];
@@ -78,21 +88,21 @@
     [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:screenBtn];
     
+    //初始化搜索条
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    mSearchBar.backgroundColor = [UIColor grayColor];
+    [mSearchBar setPlaceholder:@"输入搜索条件"];
+    mSearchBar.delegate = self;
+    [mSearchBar sizeToFit];
+    m_myTabelView.tableHeaderView = mSearchBar;
     
-    chooseView =[[ ChooseTab alloc]initWithFrame:CGRectMake(0, startX+40, 200, 0)];
-    chooseView.coreArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    chooseView.mydelegate = self;
-//    [self.view addSubview:chooseView];
-//    [chooseView reloadData];
-    
-    
-    
-    DropDownListView * dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,startX, 200, 40) dataSource:self delegate:self];
-    dropDownView.mSuperView = self.view;
-    [self.view addSubview:dropDownView];
+    tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40, 320, kScreenHeigth-(startX+40))];
+    tagView.hidden = YES;
+    [self.view addSubview:tagView];
+    UILabel * tagLable = [[UILabel alloc] initWithFrame:CGRectMake(270/2, (kScreenHeigth-(startX+40)-20)/2, 50, 20)];
+    tagLable.text = @"Tag";
+    [tagView addSubview:tagLable];
 }
-
-
 
 #pragma mark -- dropDownListDelegate
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
@@ -103,24 +113,20 @@
 #pragma mark -- dropdownList DataSource
 -(NSInteger)numberOfSections
 {
-    return 1;
+    return 2;
 }
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
-    return [chooseView.coreArray count];
+    return [m_charaArray count];
 }
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
 {
-    return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(chooseView.coreArray[index], @"simpleRealm"),KISDictionaryHaveKey(chooseView.coreArray[index], @"name")];
+    return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
 }
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
     return 0;
 }
-
-
-
-
 
 -(void)collectionBtn:(id)sender
 {
@@ -154,14 +160,6 @@
 {
     sender.titleLabel.textColor = [UIColor grayColor];
     [self getInfoFromNetWithDic:roleDict];
-    
-}
--(void)didClicknime:(id)sender
-{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    chooseView.frame = CGRectMake(0, startX+40, 200, 100);
-    [UIView commitAnimations];
     
 }
 
@@ -252,79 +250,40 @@
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
 
--(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 40)];
-    view.backgroundColor =UIColorFromRGBA(0xf7f7f7, 1);
-    
-    m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, startX+40, 200, 200)];
-    m_gamePickerView.dataSource = self;
-    m_gamePickerView.delegate = self;
-    m_gamePickerView.showsSelectionIndicator = YES;
-    
-    UIToolbar *toolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar.items = @[rb_server];
-    
-    roleTextf = [GameCommon buildTextFieldWithFrame:CGRectMake(0, 0, 200, 39) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] textAlignment:NSTextAlignmentCenter placeholder:@"pleaseChooseRoleORgame"];
-    //    roleTextf.inputView = m_gamePickerView;
-    //    roleTextf.inputAccessoryView = toolbar;
-    roleTextf.userInteractionEnabled = NO;
-    [view addSubview:roleTextf];
-    
-    UIButton *btn1 = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 200, 39)];
-    btn1.backgroundColor = [UIColor clearColor];
-    [btn1 addTarget:self action:@selector(didClicknime:) forControlEvents:UIControlEventTouchUpInside];
-    [view addSubview:btn1];
-    
-    
-    
-    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(201, 0, 119, 39)];
-    [button setTitle:@"筛选" forState:UIControlStateNormal];
-    button.titleLabel.textColor = [UIColor grayColor];
-    button.backgroundColor = [UIColor whiteColor];
-    [button addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
-    [view addSubview:button];
-    return view;
-}
-
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 40;
-}
-
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60;
 }
-
--(void)didClickChooseWithView:(ChooseTab *)view info:(NSDictionary *)info
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
-    roleDict = [NSMutableDictionary dictionaryWithDictionary:info];
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    chooseView.frame = CGRectMake(0, startX+40, 200, 0);
-    [UIView commitAnimations];
-    
-    roleTextf.text = [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(info, @"simpleRealm"),KISDictionaryHaveKey(info, @"name")];
+    [self setTopViewWithTitle:@"组队" withBackButton:YES];
+    return YES;
 }
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
+{
+    return YES;
+}
+/*取消按钮*/
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
+    [self doSearch:searchBar];
+}
+
+/*键盘搜索按钮*/
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    [searchBar resignFirstResponder];
+    [self doSearch:searchBar];
+}
+
+/*搜索*/
+- (void)doSearch:(UISearchBar *)searchBar{
+    NSLog(@"searchBar-Text-%@",searchBar.text);
+}
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end
