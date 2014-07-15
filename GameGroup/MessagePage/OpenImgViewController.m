@@ -38,8 +38,6 @@
 }
 -(void)showLoading:(id)sender
 {
-//    self.modalPresentationStyle =UIModalPresentationPageSheet;
-    
     
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self dismissViewControllerAnimated:YES completion:^{

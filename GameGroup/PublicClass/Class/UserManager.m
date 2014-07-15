@@ -8,6 +8,7 @@
 
 #import "UserManager.h"
 #import "LocationManager.h"
+#import "DownloadImageService.h"
 
 static UserManager *userManager = NULL;
 
@@ -91,6 +92,7 @@ static UserManager *userManager = NULL;
     if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
         return;
     }
+
     NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
     if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
         [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
@@ -274,7 +276,6 @@ static UserManager *userManager = NULL;
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
-
 #pragma mark 获取用户位置
 -(void)getUserLocation
 {
@@ -363,6 +364,5 @@ static UserManager *userManager = NULL;
     }
     return KUIImage(@"Default.png");
 }
-
 
 @end

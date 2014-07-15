@@ -156,7 +156,7 @@
 #pragma mark 接收到于我相关消息通知
 -(void)receivedMyDynamicMsg:(NSNotification*)sender
 {
-    //添加Tab上的小红点
+
     myDunamicmsgCount = [self getMyDynamicMsgCount];
     [self setDynamicMsgCount:friendDunamicmsgCount MydynamicmsgCount:myDunamicmsgCount];
     [self setDynamicImage];
@@ -300,7 +300,7 @@
             groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
         }else {
              m_notibgGbImageView.hidden = NO;
-            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:1 OrDot:YES WithButtonIndex:2];
+            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:1 OrDot:YES WithButtonIndex:3];
             groupMsgTitleLable.text =@"您还未加入组织";
         }
     }

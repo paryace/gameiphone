@@ -24,10 +24,15 @@
 #import <objc/runtime.h>
 
 
+
 #import "FindViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "NewFriendPageController.h"
+#import "ItemBaseViewController.h"
+#import "MessagePageViewController.h"
+#import "LocationManager.h"
+
 //#import "ItemBaseViewController.h"
 #import "MessagePageViewController.h"
 #import "LocationManager.h"
@@ -62,6 +67,7 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
+
     //消息页面
     MessagePageViewController* fist  = [[MessagePageViewController alloc] init];
     fist.hidesBottomBarWhenPushed = YES;
@@ -75,10 +81,10 @@
     
     // 组队页面
     
-    //    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
-    //    itemBase.hidesBottomBarWhenPushed = YES;
-    //    UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
-    //    navigationController_center.navigationBarHidden  = YES;
+    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
+    itemBase.hidesBottomBarWhenPushed = YES;
+    UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
+    navigationController_center.navigationBarHidden  = YES;
     
     
     //发现页面
@@ -93,14 +99,12 @@
     navigationController_Fourth.navigationBarHidden = YES;
     
     Custom_tabbar *  ryc_tabbarController = [[Custom_tabbar alloc] init];
-    //  AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second,/*navigationController_center,*/ navigationController_Third, navigationController_Fourth, nil];
-    
+    ryc_tabbarController.viewControllers = [NSArray arrayWithObjects:navigationController_First,navigationController_Second,navigationController_center, navigationController_Third, navigationController_Fourth, nil];
     
     
     // Override point for customization after application launch.
 //    self.startViewController = [[StartViewController alloc] init];
-    self.window.rootViewController = ryc_tabbarController	;
+    self.window.rootViewController = ryc_tabbarController;
     
     //网络变化
     self.reach = [Reachability reachabilityForInternetConnection];
@@ -125,7 +129,6 @@
         
         [[UserManager singleton] getBlackListFromNet];
     }
-   
     [[LocationManager sharedInstance] initLocation];//定位
     [[UserManager singleton] getUserLocation];
     [[UserManager singleton ]getOpenImageFromNet];

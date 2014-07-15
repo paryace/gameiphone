@@ -35,7 +35,6 @@
 -(void)getUserLocation; //  定位
 
 -(void)getOpenImageFromNet; //请求开机图
-
 -(UIImage*)getOpenImage;//获取开机图
 
 -(void)saveUserInfoToDb:(NSDictionary*)dicUser ShipType:(NSString*)shipType;

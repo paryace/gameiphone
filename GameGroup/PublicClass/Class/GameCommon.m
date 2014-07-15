@@ -593,7 +593,7 @@ static GameCommon *my_gameCommon = NULL;
     {
         int value = [[[NSUserDefaults standardUserDefaults] objectForKey:haveMyNews] intValue];
         if (value!=0) {
-            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+            [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
         }
         else
         {
@@ -711,6 +711,8 @@ static GameCommon *my_gameCommon = NULL;
         if (!responseObject) {
             return;
         }
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        
         if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
             if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken])//本地没有token的情况下不需要请求登陆失败的原因
             {
@@ -755,6 +757,7 @@ static GameCommon *my_gameCommon = NULL;
       //  }
 
         [self openSuccessWithInfo:responseObject From:@"firstOpen"];
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
@@ -994,6 +997,16 @@ static GameCommon *my_gameCommon = NULL;
     return label;
 }
 
++(UITextField *)buildTextFieldWithFrame:(CGRect)frame font:(UIFont*)font textColor:(UIColor*)textColor backgroundColor:(UIColor *)backgroundColor textAlignment:(NSTextAlignment)Alignment placeholder:(NSString *)placeholder
+{
+    UITextField *textField = [[UITextField alloc] initWithFrame:frame];
+    textField.textAlignment = Alignment;
+    textField.font = font;
+    textField.backgroundColor = backgroundColor;
+    textField.textColor = textColor;
+    textField.placeholder = placeholder;
+    return textField;
+}
 
 +(NSString*)getGroupDomain:(NSString*)domain
 {

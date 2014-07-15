@@ -32,8 +32,11 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)init_tab
 {
-	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"find_normal.png",@"wo_normal.png",nil];
-	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"find_click.png",@"wo_click.png",nil];
+	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"Item_normal.png",@"find_normal.png",@"wo_normal.png",nil];
+	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"Item_click.png",@"find_click.png",@"wo_click.png",nil];
+
+//	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",/*@"friend_normal.png",*/@"find_normal.png",@"wo_normal.png",nil];
+//	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",/*@"friend_click.png",*/@"find_click.png",@"wo_click.png",nil];
     
     float startY = [[UIScreen mainScreen] bounds].size.height;
     tabBarView = [[UIView alloc] initWithFrame:CGRectMake(0, startY - 50, 320, 50)];
@@ -73,7 +76,7 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)add_custom_tabbar_elements
 {
-	int tab_num = 4;
+	int tab_num = 5;
 	
 	[self.view addSubview:tabBarView];
 	
@@ -115,12 +118,14 @@ static Custom_tabbar *s_tabbar = NULL;
 			[[tab_btn objectAtIndex:1]setSelected:false];
 			[[tab_btn objectAtIndex:2]setSelected:false];
 			[[tab_btn objectAtIndex:3]setSelected:false];
+            [[tab_btn objectAtIndex:4]setSelected:false];
 			break;
 		case 1:
 			[[tab_btn objectAtIndex:0]setSelected:false];
 			[[tab_btn objectAtIndex:1]setSelected:true];
 			[[tab_btn objectAtIndex:2]setSelected:false];
 			[[tab_btn objectAtIndex:3]setSelected:false];
+            [[tab_btn objectAtIndex:4]setSelected:false];
 
 			break;
 		case 2:
@@ -128,6 +133,8 @@ static Custom_tabbar *s_tabbar = NULL;
 			[[tab_btn objectAtIndex:1]setSelected:false];
 			[[tab_btn objectAtIndex:2]setSelected:true];
 			[[tab_btn objectAtIndex:3]setSelected:false];
+            [[tab_btn objectAtIndex:4]setSelected:false];
+
 			break;
             
         case 3:
@@ -136,8 +143,20 @@ static Custom_tabbar *s_tabbar = NULL;
             [[tab_btn objectAtIndex:1]setSelected:false];
             [[tab_btn objectAtIndex:2]setSelected:false];
             [[tab_btn objectAtIndex:3]setSelected:true];
+            [[tab_btn objectAtIndex:4]setSelected:false];
+
 			break;
         }
+            case 4:
+        {
+            [[tab_btn objectAtIndex:0]setSelected:false];
+            [[tab_btn objectAtIndex:1]setSelected:false];
+            [[tab_btn objectAtIndex:2]setSelected:false];
+            [[tab_btn objectAtIndex:3]setSelected:false];
+            [[tab_btn objectAtIndex:4]setSelected:true];
+ 
+        }
+            break;
 		default:
 			break;
 	}
