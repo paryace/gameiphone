@@ -20,8 +20,7 @@
     UISearchBar * mSearchBar;
     UIView *tagView;
     
-    
-    
+    NSArray *arrayTag;
     NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
     NSMutableArray *m_charaArray;
@@ -59,6 +58,7 @@
     roleDict = [NSMutableDictionary dictionary];
     m_charaArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
+    arrayTag = [[NSArray alloc] initWithObjects:@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Fooasdasdasdasdad",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo", nil];
     //收藏
     UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
@@ -103,16 +103,24 @@
     tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40+44, 320, kScreenHeigth-(startX+40))];
     tagView.hidden = YES;
     tagView.backgroundColor = [UIColor whiteColor];
-    
-    UILabel * tagLable = [[UILabel alloc] initWithFrame:CGRectMake(270/2, (kScreenHeigth-(startX+40)-20)/2, 50, 20)];
-    tagLable.text = @"Tag";
-    [tagView addSubview:tagLable];
-    
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [tagView addGestureRecognizer:tapGr];
     
+    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(20.0f, 20.0f, 280.0f, 300.0f)];
+    [tagList setTags:arrayTag];
+    tagList.tagDelegate=self;
+    [tagView addSubview:tagList];
+    
     [self.view addSubview:tagView];
 
+}
+
+-(void)tagClick:(UIButton*)sender
+{
+    mSearchBar.text = [arrayTag objectAtIndex:sender.tag];
+    if([mSearchBar isFirstResponder]){
+        [mSearchBar resignFirstResponder];
+    }
 }
 
 -(void)viewTapped:(UITapGestureRecognizer*)sender
@@ -311,6 +319,7 @@
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
     }
+    [self reloadView:0];
 }
 
 
@@ -322,6 +331,17 @@
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
+    [self reloadView:40];
+}
+
+-(void)reloadView:(float)offHight
+{
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    mSearchBar.frame = CGRectMake(0, startX+offHight, 320, 44);
+    tagView.frame = CGRectMake(0, startX+offHight+44, 320, kScreenHeigth-(startX+offHight));
+    [UIView commitAnimations];
+
 }
 
 

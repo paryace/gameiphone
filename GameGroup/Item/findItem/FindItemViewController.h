@@ -9,7 +9,10 @@
 #import "BaseViewController.h"
 #import "ChooseTab.h"
 #import "DropDownChooseDelegate.h"
+#import "DWTagList.h"
 
-@interface FindItemViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource>
-
+@interface FindItemViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource,DWTagDelegate>
+{
+    DWTagList *tagList;
+}
 @end
