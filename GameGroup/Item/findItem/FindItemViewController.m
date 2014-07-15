@@ -12,6 +12,8 @@
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"
 #import "DropDownListView.h"
+#import "CreateTeamCell.h"
+
 @interface FindItemViewController ()
 {
     UITableView *m_myTabelView;
@@ -47,7 +49,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"组队" withBackButton:YES];
+    [self setTopViewWithTitle:@"寻找组队" withBackButton:YES];
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -80,7 +83,8 @@
     [self.view addSubview:dropDownView];
     
     
-    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
+    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40+44, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
+    m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     m_myTabelView.delegate = self;
     m_myTabelView.dataSource  = self;
     [GameCommon setExtraCellLineHidden:m_myTabelView];
@@ -228,14 +232,35 @@
 
 
 #pragma mark ----tableview delegate  datasourse
-
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return  2;
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section==0) {
+        return 1;
+    }
     return m_dataArray.count;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section==0) {
+        return 0;
+    }else{
+        return 20;
+    }
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section==0) {
+        if (indexPath.row == 0) {
+            static NSString * stringCellTop = @"createTream";
+            CreateTeamCell * cellTop = [[CreateTeamCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
+            cellTop.imageV.image = KUIImage(@"state_icon");
+            return cellTop;
+        }
+    }
     static NSString *indifience = @"cell";
     BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
     if (!cell) {
@@ -259,6 +284,13 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section==0) {
+        if (indexPath.row == 0) {
+            NSLog(@"创建组队");
+            return;
+        }
+    }
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     

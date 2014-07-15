@@ -37,6 +37,7 @@
     #import "UserManager.h"
     #import "GroupManager.h"
     #import "DownloadImageService.h"
+    #import "EGOImageButton.h"
    #endif
 
 #define appType @"91"//91、appStore
