@@ -90,7 +90,7 @@
     screenBtn.backgroundColor = [UIColor blackColor];
     [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
     [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:screenBtn];
+//    [self.view addSubview:screenBtn];
     
     //初始化搜索条
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40, 320, 44)];
