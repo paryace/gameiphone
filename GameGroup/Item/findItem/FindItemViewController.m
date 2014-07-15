@@ -49,6 +49,10 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"组队" withBackButton:YES];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
     //初始化数据源
     m_dataArray = [NSMutableArray array];
     m_charaArray = [NSMutableArray array];
@@ -89,19 +93,33 @@
     [self.view addSubview:screenBtn];
     
     //初始化搜索条
-    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40, 320, 44)];
     mSearchBar.backgroundColor = [UIColor grayColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];
-    m_myTabelView.tableHeaderView = mSearchBar;
+    [self.view addSubview:mSearchBar];
     
-    tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40, 320, kScreenHeigth-(startX+40))];
+    tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40+44, 320, kScreenHeigth-(startX+40))];
     tagView.hidden = YES;
-    [self.view addSubview:tagView];
+    tagView.backgroundColor = [UIColor whiteColor];
+    
     UILabel * tagLable = [[UILabel alloc] initWithFrame:CGRectMake(270/2, (kScreenHeigth-(startX+40)-20)/2, 50, 20)];
     tagLable.text = @"Tag";
     [tagView addSubview:tagLable];
+    
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    [tagView addGestureRecognizer:tapGr];
+    
+    [self.view addSubview:tagView];
+
+}
+
+-(void)viewTapped:(UITapGestureRecognizer*)sender
+{
+    if([mSearchBar isFirstResponder]){
+        [mSearchBar resignFirstResponder];
+    }
 }
 
 #pragma mark -- dropDownListDelegate
@@ -280,6 +298,31 @@
     NSLog(@"searchBar-Text-%@",searchBar.text);
 }
 
+
+
+#pragma mark -
+#pragma mark UI/UE : 响应各种交互操作
+- (void)keyboardWillShow:(NSNotification *)notification {
+
+    NSDictionary *userInfo = [notification userInfo];
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    if (tagView.hidden==YES) {
+        tagView.hidden=NO;
+    }
+}
+
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSDictionary* userInfo = [notification userInfo];
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    if (tagView.hidden==NO) {
+        tagView.hidden=YES;
+    }
+}
 
 
 - (void)didReceiveMemoryWarning

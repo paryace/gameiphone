@@ -47,7 +47,7 @@
             [self addSubview:tabIcon];
             
             
-            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionWidth*i, 1, sectionWidth, frame.size.height-2)];
+            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(i*sectionWidth+5+2+20, 1, sectionWidth-7-12-20, frame.size.height-2)];
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];
             NSString *sectionBtnTitle = @"--";

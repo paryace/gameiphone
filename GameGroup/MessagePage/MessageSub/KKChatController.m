@@ -1797,7 +1797,8 @@ UINavigationControllerDelegate>
     }
     
     
-}-(NSString *)selectedEmoji:(NSString *)ssss
+}
+-(NSString *)selectedEmoji:(NSString *)ssss
 {
 	if (self.textView.text == nil) {
 		self.textView.text = ssss;
