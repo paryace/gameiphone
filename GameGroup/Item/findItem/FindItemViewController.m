@@ -280,16 +280,11 @@
 {
     return 60;
 }
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    [self setTopViewWithTitle:@"组队" withBackButton:YES];
-    return YES;
+
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar{
+    [self doSearch:searchBar];
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    return YES;
-}
 /*取消按钮*/
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
     [self doSearch:searchBar];
@@ -307,9 +302,7 @@
 }
 
 
-
-#pragma mark -
-#pragma mark UI/UE : 响应各种交互操作
+#pragma mark UI/UE :键盘显示
 - (void)keyboardWillShow:(NSNotification *)notification {
 
     NSDictionary *userInfo = [notification userInfo];
@@ -322,7 +315,7 @@
     [self reloadView:0];
 }
 
-
+#pragma mark UI/UE :键盘隐藏
 - (void)keyboardWillHide:(NSNotification *)notification {
     NSDictionary* userInfo = [notification userInfo];
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
@@ -341,7 +334,6 @@
     mSearchBar.frame = CGRectMake(0, startX+offHight, 320, 44);
     tagView.frame = CGRectMake(0, startX+offHight+44, 320, kScreenHeigth-(startX+offHight));
     [UIView commitAnimations];
-
 }
 
 
