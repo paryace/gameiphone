@@ -132,6 +132,9 @@ static UserManager *userManager = NULL;
 
 -(void)startToSave:(NSMutableDictionary*)dicUser{
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
+//    dispatch_async(self.queueDb, ^{
+//        [DataStoreManager newSaveFriendList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
+//    });
 }
 //保存角色和头衔
 -(void)saveCharaterAndTitle:(NSMutableArray*) charachers Titles:(NSMutableArray*)titles UserId:(NSString*)userId
@@ -153,6 +156,7 @@ static UserManager *userManager = NULL;
     NSString * userImg=KISDictionaryHaveKey(userDict,@"img");
     NSString * userId=KISDictionaryHaveKey(userDict,@"userid");
     [DataStoreManager updateRecommendImgAndNickNameWithUser:userId nickName:nickName andImg:userImg];
+
     [DataStoreManager storeThumbMsgUser:userId nickName:nickName andImg:userImg];
 }
 -(void)getSayHiUserId
@@ -174,9 +178,8 @@ static UserManager *userManager = NULL;
     }];
 }
 
-+(void)getBlackListFromNet
+-(void)getBlackListFromNet
 {
-    
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
         NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -189,11 +192,8 @@ static UserManager *userManager = NULL;
             
             if ([responseObject isKindOfClass:[NSArray class]]) {
                 NSArray *array = responseObject;
-                //                    [DataStoreManager deleteAllBlackList];
                 if (array.count>0) {
-                    for (NSDictionary *dic in array) {
-                        [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];
-                    }
+                    [self saveBlackList:array];
                 }
             }
 
@@ -202,6 +202,14 @@ static UserManager *userManager = NULL;
             
         }];
 }
+
+-(void)saveBlackList:(NSArray*)array
+{
+    for (NSDictionary *dic in array) {
+        [DataStoreManager SaveBlackListWithDic:dic WithType:@"2"];
+    }
+}
+
 
 //创建群
 +(void)createGroup:(NSString*)groupName Info:(NSString*)info GroupIconImg:(NSString*)groupIconImg
@@ -223,7 +231,7 @@ static UserManager *userManager = NULL;
     }];
 }
 //获取群列表
-+(void)getGroupListFromNet
+-(void)getGroupListFromNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -233,15 +241,20 @@ static UserManager *userManager = NULL;
         [DataStoreManager deleteAllDSGroupList];
         NSLog(@"success%@",responseObject);
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
-            for (NSMutableDictionary * groupInfo in responseObject) {
-                [DataStoreManager saveDSGroupList:groupInfo];
-            }
+            [self saveGroupList:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
 }
 
+//保存群组列表
+-(void)saveGroupList:(NSArray*)array
+{
+    for (NSMutableDictionary * groupInfo in array) {
+        [DataStoreManager saveDSGroupList:groupInfo];
+    }
+}
 
 //请求群的消息设置状态
 +(void)getGroupSettingState

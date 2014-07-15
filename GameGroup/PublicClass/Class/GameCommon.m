@@ -780,11 +780,11 @@ static GameCommon *my_gameCommon = NULL;
 
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {
-//        NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
-   [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
+//    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+    [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
     
-    
-    
+    [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
+    [[NSUserDefaults standardUserDefaults] synchronize];    
     if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
         [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
         [[NSUserDefaults standardUserDefaults] synchronize];

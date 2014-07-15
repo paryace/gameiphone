@@ -32,8 +32,6 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
-    
-    NSOperationQueue *queueme ;
 }
 @end
 
@@ -47,11 +45,9 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-     [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
         [self getFriendListFromNet];
     }
 }
@@ -61,10 +57,9 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
-    queueme = [[NSOperationQueue alloc]init];
-    [queueme setMaxConcurrentOperationCount:1];
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -321,9 +316,7 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-    [queueme addOperation:task];
-//    [self saveFriendsList:result];
+    [self saveFriendsList:result];
 }
 
 //保存用户列表信息
@@ -335,12 +328,25 @@
         for (int i=0; i<[keys count]; i++) {
             NSString *key=[keys objectAtIndex:i];
             for (NSMutableDictionary * userInfo in [result objectForKey:key]) {
-                [userInfo setObject:key forKey:@"nameIndex"];
+                [userInfo setObject:key forKey:@"nameIndex"];                
                 [[UserManager singleton] saveUserInfoToDb:userInfo ShipType:KISDictionaryHaveKey(userInfo, @"shiptype")];
             }
         }
     }
 }
+
+////保存用户列表信息
+//-(void)saveFriendsList:(NSDictionary*)result
+//{
+//    NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
+//    [keys sortUsingSelector:@selector(compare:)];
+//    if (result.count>0) {
+//        for (int i=0; i<[keys count]; i++) {
+//            NSString *key=[keys objectAtIndex:i];
+//            [DataStoreManager newSaveFriendList:[result objectForKey:key] withshiptype:key];
+//        }
+//    }
+//}
 
 //查询用户列表
 -(void) getFriendDateFromDataSore

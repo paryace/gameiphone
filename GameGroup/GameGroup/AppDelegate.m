@@ -127,7 +127,7 @@
         [self.xmppHelper connect];
         [[ReconnectMessage singleton]sendDeviceToken];
         
-        [UserManager getBlackListFromNet];
+        [[UserManager singleton] getBlackListFromNet];
     }
     [[LocationManager sharedInstance] initLocation];//定位
     [[UserManager singleton] getUserLocation];

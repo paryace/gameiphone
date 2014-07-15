@@ -9,6 +9,7 @@
 #import "BangdingRolesViewController.h"
 #import "AboutRoleCell.h"
 #import "HelpViewController.h"
+#import "CharacterAndTitleService.h"
 @interface BangdingRolesViewController ()
 {
     UITableView *m_myTableView;
@@ -274,6 +275,8 @@
             [hud hide:YES];
             
             NSLog(@"%@", responseObject);
+            [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             
             [[TempData sharedInstance]isBindingRolesWithBool:YES];
             [self dismissViewControllerAnimated:YES completion:^{
@@ -441,7 +444,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [[TempData sharedInstance]isBindingRolesWithBool:YES];
-        [[NSNotificationCenter defaultCenter] postNotificationName:userInfoUpload object:nil userInfo:responseObject];
+         [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];

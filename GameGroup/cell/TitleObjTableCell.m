@@ -31,6 +31,13 @@
         self.userdButton.titleLabel.font = [UIFont boldSystemFontOfSize:13.0];
         [self addSubview:self.userdButton];
         self.userdButton.hidden = YES;
+        
+        self.noTitle = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 50)];
+        [self.noTitle setTextAlignment:NSTextAlignmentLeft];
+        [self.noTitle setFont:[UIFont fontWithName:@"Helvetica-Bold" size:14]];
+        [self.noTitle setBackgroundColor:[UIColor clearColor]];
+        self.noTitle.hidden=YES;
+        [self addSubview:self.noTitle];
 
     }
     return self;

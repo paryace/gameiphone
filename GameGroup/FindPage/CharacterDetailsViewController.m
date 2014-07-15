@@ -15,6 +15,7 @@
 #import "WXApiObject.h"
 #import "ShareToOther.h"
 #import "HelpViewController.h"
+#import "CharacterAndTitleService.h"
 
 @interface CharacterDetailsViewController ()
 @end
@@ -484,6 +485,8 @@
             [m_contentTableView reloadData];
             [m_countryTableView reloadData];
             [m_reamlTableView reloadData];
+            
+            [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             
             NSString *changeBtnTitle =[NSString stringWithFormat:@"上次更新时间：%@",[GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rankingtime")]]];
             

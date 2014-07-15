@@ -53,16 +53,11 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 // 保存角色信息
 -(void)saveCharachers:(NSArray*)charachers Userid:(NSString*)userid
 {
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         [DataStoreManager deleteAllDSCharacters:userid];
         for (NSMutableDictionary *characher in charachers) {
             [DataStoreManager saveDSCharacters:characher UserId:userid];
         }
-//        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
-
-//        });
-//    });
+        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
 }
 
 
@@ -90,7 +85,6 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 //保存头衔信息
 -(void)saveTitleInfo:(NSString*)userId Titles:(NSArray*)titles Type:(NSString*)type
 {
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
         if (!titles || ![titles isKindOfClass:[NSArray class]]) {
             return;
         }
@@ -105,9 +99,7 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
         for (NSMutableDictionary *title in titles) {
             [DataStoreManager saveDSTitle:title];
         }
-//        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
-//        });
-//    });
+        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
+
 }
 @end

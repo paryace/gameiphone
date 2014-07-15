@@ -9,6 +9,7 @@
 #import "NewRegisterViewController.h"
 #import "ShowTextViewController.h"
 #import "HelpViewController.h"
+
 @interface NewRegisterViewController ()
 {
     UIImageView *m_topImage;//条图
@@ -173,7 +174,9 @@
     UIButton* step1Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 96, 300, 40)];
     [step1Button setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-    if ([[TempData sharedInstance] registerNeedMsg]) {
+    
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+//    if ([[TempData sharedInstance] registerNeedMsg]) {
         [step1Button setTitle:@"获取验证码" forState:UIControlStateNormal];
     }else{
         [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
@@ -252,7 +255,8 @@
     //        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号" buttonTitle:@"确定"];
     //        return;
     //    }
-    if ([[TempData sharedInstance] registerNeedMsg]) {
+//    if ([[TempData sharedInstance] registerNeedMsg]) {
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
         [self getVerificationCode];
     }else{
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
@@ -628,6 +632,12 @@
         NSDictionary* dic = responseObject;
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"user"]objectForKey:@"active" ] forKey:@"active_wx"];
         
+        NSString * host = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"address");
+        NSString * domain = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"chatServer"), @"name");
+        
+        [[NSUserDefaults standardUserDefaults] setObject:host forKey:@"host"];
+        [[NSUserDefaults standardUserDefaults] setObject:domain forKey:kDOMAIN];
+
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"userid"] forKey:kMYUSERID];
         [[NSUserDefaults standardUserDefaults]setObject:[[dic objectForKey:@"token"] objectForKey:@"token"] forKey:kMyToken];
         [DataStoreManager setDefaultDataBase:[[dic objectForKey:@"token"] objectForKey:@"userid"] AndDefaultModel:@"LocalStore"];
@@ -643,8 +653,6 @@
         [userDic setObject:KISDictionaryHaveKey(userDic, @"birthdate") forKey:@"birthday"];
         NSLog(@"111--保存注册成功返回的用户信息");
         [[UserManager singleton] saveUserInfoToDb:userDic ShipType:@"unknow"];
-        
-        [DataStoreManager saveFriendRemarkName:KISDictionaryHaveKey(userDic, @"nickname") userid:KISDictionaryHaveKey(userDic, @"id")];
         [self upLoadUserLocationWithLat:[[TempData sharedInstance] returnLat] Lon:[[TempData sharedInstance] returnLon]];
         
         [self dismissViewControllerAnimated:YES completion:^{

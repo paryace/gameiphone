@@ -9,6 +9,7 @@
 #import "AuthViewController.h"
 #import "EGOImageView.h"
 #import "CharacterEditViewController.h"
+#import "CharacterAndTitleService.h"
 @interface AuthViewController ()
 {
     UIWebView * m_myWebView;
@@ -115,7 +116,8 @@
     [self showMessageWindowWithContent:@"认证成功" imageType:0];
     if (self.isComeFromFirstOpen) {
         [[TempData sharedInstance]isBindingRolesWithBool:YES];
-
+        [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+        [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         [self dismissViewControllerAnimated:YES completion:^{
 //            [self.authDelegate authCharacterRegist];
         }];

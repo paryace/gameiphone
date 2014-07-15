@@ -14,5 +14,6 @@
 @property (strong,nonatomic) UIImageView * headImageV;
 @property (strong,nonatomic) UILabel * nameLabel;
 @property (strong,nonatomic) UIButton* userdButton;
+@property (strong,nonatomic) UILabel * noTitle;
 
 @end

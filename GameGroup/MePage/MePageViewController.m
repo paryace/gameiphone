@@ -83,23 +83,15 @@
 }
 
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-        m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-//        });
-//    });
+    m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [m_myTableView reloadData];
 
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{
-//    dispatch_barrier_async([[UserManager singleton] queueDb], ^{
-        m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-        m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
-//        dispatch_async(dispatch_get_main_queue(), ^{
+    m_hostInfo.charactersArr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    m_hostInfo.achievementArray = [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
             [m_myTableView reloadData];
-//        });
-//    });
 }
 -(void)refreUserInfo
 {
@@ -113,13 +105,9 @@
 
 -(void)iniUserInfo
 {
-//    dispatch_async([[UserManager singleton] queueDb], ^{
-        NSMutableDictionary * dic = [self getLocalInfo];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-             m_hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
-            [m_myTableView reloadData];
-//        });
-//    });
+    NSMutableDictionary * dic = [self getLocalInfo];
+    m_hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
+    [m_myTableView reloadData];
 }
 
 //用户信息获取成功接收到的广播
@@ -130,10 +118,8 @@
         return;
     }
     NSDictionary *dictionary = notification.userInfo;
-//    dispatch_async(dispatch_get_main_queue(), ^{
-        m_hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
+    m_hostInfo = [[HostInfo alloc] initWithHostInfo:dictionary];
         [m_myTableView reloadData];
-//    });
 }
 //加在本地数据
 -(NSMutableDictionary*)getLocalInfo
@@ -154,14 +140,6 @@
     [info setObject:[GameCommon getNewStringWithId:zannum?zannum:@""] forKey:@"zannum"];
     [info setObject:[GameCommon getNewStringWithId:fansnum?fansnum:@""] forKey:@"fansnum"];
     return info;
-}
-
--(void)getGameIds:(NSMutableArray*)chasss
-{
-    NSArray * gameidsarray = [[NSArray alloc] init];
-//    for (<#initialization#>; <#condition#>; <#increment#>) {
-//        <#statements#>
-//    }
 }
 
 -(void)reloadTableView:(id)sender
@@ -481,7 +459,9 @@
         {
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.headImageV.hidden = YES;
-            cell.nameLabel.text = @"没有头衔展示";
+            cell.nameLabel.hidden=YES;
+            cell.noTitle.text = @"没有头衔展示";
+            cell.noTitle.hidden=NO;
             cell.nameLabel.textColor = [UIColor blackColor];
             return cell;
         }
@@ -490,6 +470,8 @@
         NSDictionary* infoDic = [m_hostInfo.achievementArray objectAtIndex:indexPath.row];
         NSString* rarenum = [NSString stringWithFormat:@"rarenum_small_%@", [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(infoDic, @"titleObj") , @"rarenum")]];
         cell.headImageV.hidden = NO;
+        cell.nameLabel.hidden=NO;
+        cell.noTitle.hidden=YES;
         cell.headImageV.image = KUIImage(rarenum);
         cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(infoDic, @"titleObj"), @"title");
         cell.nameLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(KISDictionaryHaveKey(infoDic, @"titleObj"), @"rarenum") integerValue]];

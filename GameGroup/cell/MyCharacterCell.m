@@ -62,7 +62,7 @@
         self.pveTitle.text = @"PVE战斗力";
         [myView addSubview:self.pveTitle];
         
-        self.noCharacterLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, 320, 60)];
+        self.noCharacterLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 5, 320, 60)];
         self.noCharacterLabel.backgroundColor = [UIColor clearColor];
         self.noCharacterLabel.textColor = kColorWithRGB(51, 51, 51, 1.0);
         self.noCharacterLabel.font = [UIFont boldSystemFontOfSize:15.0];
