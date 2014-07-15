@@ -11,7 +11,7 @@
 #import "CreateItemViewController.h"
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"
-
+#import "DropDownListView.h"
 @interface FindItemViewController ()
 {
     UITableView *m_myTabelView;
@@ -29,7 +29,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -38,7 +37,6 @@
 {
     [super viewWillAppear:animated];
     chooseView.coreArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-
 }
 
 - (void)viewDidLoad
@@ -46,13 +44,15 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"组队" withBackButton:YES];
     
-//    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    //    [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    //    [collectionBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+
     
-//    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
-//    collectionBtn.backgroundColor = [UIColor clearColor];
-//    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [collectionBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
+    collectionBtn.backgroundColor = [UIColor clearColor];
+    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:collectionBtn];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -65,9 +65,7 @@
     //初始化数据源
     m_dataArray = [NSMutableArray array];
     //    [m_dataArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"萌萌的",@"title",@"本人意识卓越 劲舞团反向19连P。劲乐团困难贵族1600连。泡泡堂海盗14 1V5 ，澄海3C 1控8 DOTA龙骑士守3路无人破。求生之路杀害3名队友后单人通关。魂斗罗一命不开枪通关。拳皇各种满星电脑被我虐。星际2全国第2.传奇全国第一把谷雨.石器时代家族战第一庄园。喝3打啤酒9小时不上厕所。如有此队友哪里找",@"msg", nil]];
-    
     roleDict = [NSMutableDictionary dictionary];
-    
     m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
     m_myTabelView.delegate = self;
     m_myTabelView.dataSource  = self;
@@ -84,22 +82,51 @@
     chooseView =[[ ChooseTab alloc]initWithFrame:CGRectMake(0, startX+40, 200, 0)];
     chooseView.coreArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     chooseView.mydelegate = self;
-    [self.view addSubview:chooseView];
-    [chooseView reloadData];
+//    [self.view addSubview:chooseView];
+//    [chooseView reloadData];
     
     
     
-    // Do any additional setup after loading the view.
+    DropDownListView * dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,startX, 200, 40) dataSource:self delegate:self];
+    dropDownView.mSuperView = self.view;
+    [self.view addSubview:dropDownView];
 }
+
+
+
+#pragma mark -- dropDownListDelegate
+-(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
+{
+    NSLog(@"选了section:%d ,index:%d",section,index);
+}
+
+#pragma mark -- dropdownList DataSource
+-(NSInteger)numberOfSections
+{
+    return 1;
+}
+-(NSInteger)numberOfRowsInSection:(NSInteger)section
+{
+    return [chooseView.coreArray count];
+}
+-(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
+{
+    return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(chooseView.coreArray[index], @"simpleRealm"),KISDictionaryHaveKey(chooseView.coreArray[index], @"name")];
+}
+-(NSInteger)defaultShowSection:(NSInteger)section
+{
+    return 0;
+}
+
+
+
 
 
 -(void)collectionBtn:(id)sender
 {
-    //    [self showMessageWindowWithContent:@"没有收藏" imageType:1];
+    //[self showMessageWindowWithContent:@"没有收藏" imageType:1];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
     MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
-    
     CATransition* transition = [CATransition animation];
     transition.duration = 0.5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -120,7 +147,6 @@
 -(void)didClickCreateItem:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
     CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
@@ -282,41 +308,8 @@
     chooseView.frame = CGRectMake(0, startX+40, 200, 0);
     [UIView commitAnimations];
     
-    roleTextf.text = KISDictionaryHaveKey(info, @"name");
+    roleTextf.text = [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(info, @"simpleRealm"),KISDictionaryHaveKey(info, @"name")];
 }
-
-#pragma mark 选择器
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    return 1;
-}
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    //    return gameInfoArray.count;
-    return 10;
-}
-
-- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-{
-    return [NSString stringWithFormat:@"%ld",(long)row];
-}
-//- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
-//{
-//    NSDictionary *dic = [gameInfoArray objectAtIndex:row];
-//    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-//    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
-//    imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
-//    [customView addSubview:imageView];
-//
-//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-//    label.backgroundColor = [UIColor clearColor];
-//    label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"realm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
-//    [customView addSubview:label];
-//    return customView;
-//    
-//}
-
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

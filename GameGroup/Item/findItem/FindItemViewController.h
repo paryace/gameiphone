@@ -8,7 +8,8 @@
 
 #import "BaseViewController.h"
 #import "ChooseTab.h"
+#import "DropDownChooseDelegate.h"
 
-@interface FindItemViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIPickerViewDataSource,UIPickerViewDelegate,chooseTabDelegate>
+@interface FindItemViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,chooseTabDelegate,DropDownChooseDelegate,DropDownChooseDataSource>
 
 @end
