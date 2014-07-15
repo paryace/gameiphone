@@ -1696,7 +1696,7 @@ UINavigationControllerDelegate>
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
                 KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
                 [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
-                [self.tView reloadData];
+//                [self.tView reloadData];
             }
         }
     }
@@ -1933,7 +1933,7 @@ UINavigationControllerDelegate>
 - (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
 }
