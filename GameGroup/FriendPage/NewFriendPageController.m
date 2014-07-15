@@ -32,8 +32,6 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
-    
-    NSOperationQueue *queueme ;
 }
 @end
 
@@ -47,7 +45,6 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-//     [self getFriendDateFromDataSore];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:isFirstOpen]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:isFirstOpen];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -63,8 +60,6 @@
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
     resultArray =[NSMutableDictionary dictionary];
     keyArr=[NSMutableArray array];
-    queueme = [[NSOperationQueue alloc]init];
-    [queueme setMaxConcurrentOperationCount:1];
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -116,12 +111,6 @@
 {
     [self getFriendDateFromDataSore];
 }
-
-//-(void)black:(NSNotification*)notification
-//{
-//    
-//}
-
 
 - (void)topBtnAction:(UIButton *)sender{
     switch (sender.tag) {
@@ -327,8 +316,6 @@
     resultArray = result;
     [m_myTableView reloadData];
     [self setFansNum];
-//    NSInvocationOperation *task = [[NSInvocationOperation alloc]initWithTarget:self selector:@selector(saveFriendsList:)object:result];
-//    [queueme addOperation:task];
     [self saveFriendsList:result];
 }
 
