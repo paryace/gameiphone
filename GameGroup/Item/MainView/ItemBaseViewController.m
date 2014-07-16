@@ -41,6 +41,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
+    
+    
+    
+    
+    
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
@@ -72,9 +80,9 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
 
-    [self getMyRoomFromNet];
+//    [self getMyRoomFromNet];
     
-//    [self getPreferencesWithNet];
+    [self getPreferencesWithNet];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
         customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
         [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:@"firstItem"];
@@ -89,6 +97,10 @@
     }
     
     
+}
+-(void)refreshMyList:(id)sender
+{
+    [self getMyRoomFromNet];
 }
 -(void)getPreferencesWithNet
 {

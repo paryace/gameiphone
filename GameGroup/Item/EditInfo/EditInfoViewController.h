@@ -12,4 +12,5 @@
 @property(nonatomic,copy)NSString *firstStr;
 @property(nonatomic,copy)NSString *secondStr;
 @property(nonatomic,copy)NSString *itemId;
+@property(nonatomic,assign)BOOL isStyle;
 @end

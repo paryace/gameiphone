@@ -50,31 +50,65 @@
     firstTextView.text = self.firstStr;
     [self.view addSubview:firstTextView];
     
-    secondTextView =  [[UITextView alloc]initWithFrame:CGRectMake(20, startX+90, 280, 70)];
-    secondTextView.font = [UIFont systemFontOfSize:14];
-    secondTextView.text = self.secondStr;
-    secondTextView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:secondTextView];
+//    secondTextView =  [[UITextView alloc]initWithFrame:CGRectMake(20, startX+90, 280, 70)];
+//    secondTextView.font = [UIFont systemFontOfSize:14];
+//    secondTextView.text = self.secondStr;
+//    secondTextView.backgroundColor = [UIColor whiteColor];
+//    [self.view addSubview:secondTextView];
 
-    UIButton *dissolutionRoom = [[UIButton alloc]initWithFrame:CGRectMake(20, startX+180, 280, 44)];
-//    [dissolutionRoom setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
-//    [dissolutionRoom setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
-    dissolutionRoom.backgroundColor = [UIColor grayColor];
-    [dissolutionRoom setTitle:@"解散群组" forState:UIControlStateNormal];
-//    dissolutionRoom.backgroundColor = [UIColor clearColor];
-    [dissolutionRoom addTarget:self action:@selector(dissolutionRoom:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:dissolutionRoom];
+//    UIButton *dissolutionRoom = [[UIButton alloc]initWithFrame:CGRectMake(20, startX+180, 280, 44)];
+////    [dissolutionRoom setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+////    [dissolutionRoom setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+//    dissolutionRoom.backgroundColor = [UIColor grayColor];
+//    [dissolutionRoom setTitle:@"解散群组" forState:UIControlStateNormal];
+////    dissolutionRoom.backgroundColor = [UIColor clearColor];
+//    [dissolutionRoom addTarget:self action:@selector(dissolutionRoom:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:dissolutionRoom];
 
-    
+    hud = [[MBProgressHUD alloc]initWithView: self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"保存中...";
     // Do any additional setup after loading the view.
 }
 
 -(void)saveChanged:(id)sender
 {
+    [hud show:YES];
     [firstTextView resignFirstResponder];
-    [secondTextView resignFirstResponder];
-    [self showMessageWindowWithContent:@"暂时不能提交" imageType:0];
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.itemId forKey:@"roomId"];
+    if (self.isStyle) {
+        [paramDict setObject:firstTextView.text forKey:@"description"];
+    }else{
+        [paramDict setObject:firstTextView.text forKey:@"options"];
+ 
+    }
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"274" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self.navigationController popViewControllerAnimated:YES];
+        [self showMessageWindowWithContent:@"修改成功" imageType:0];
+ 
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+
 }
+
+
+
 
 -(void)dissolutionRoom:(id)sender
 {
