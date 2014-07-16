@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EGOImageView.h"
 @protocol firstCellDelegate;
 
 @interface FirstCell : UITableViewCell
 @property(nonatomic,strong)UILabel *nameLabel;
 @property(nonatomic,strong)UIImageView *headImgView;
-@property(nonatomic,strong)UIImageView *gameIconImg;
+@property(nonatomic,strong)EGOImageView *gameIconImg;
 @property(nonatomic,strong)UILabel *realmLabel;
 @property(nonatomic,strong)UILabel * editLabel;
 @property(nonatomic,assign)id<firstCellDelegate>myDelegate;

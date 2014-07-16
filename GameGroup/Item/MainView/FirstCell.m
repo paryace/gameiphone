@@ -25,8 +25,11 @@
         bgImg.image = KUIImage(@"other_normal2");
         [self.contentView addSubview:bgImg];
         
+        UIImageView *lodImageView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
+        lodImageView.image = KUIImage(@"start_team_bj");
+        [self.contentView addSubview:lodImageView];
         
-        UIImage *aImage = KUIImage(@"clazz_0");
+        UIImage *aImage = KUIImage(@"start_team_bj1");
         self.headImgView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
         self.headImgView.image = aImage;
         [self.contentView addSubview:self.headImgView];
@@ -40,15 +43,15 @@
         self.nameLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 10, 140, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self.contentView addSubview:self.nameLabel];
         
-        self.gameIconImg = [[UIImageView alloc]initWithFrame:CGRectMake(80, 30, 15, 15)];
-        self.gameIconImg.image = [UIImage imageNamed:@"1"];
+        self.gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 20, 20)];
+//        self.gameIconImg.image = [UIImage imageNamed:@"1"];
         [self.contentView addSubview:self.gameIconImg];
+
         
-        
-        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 30, 120, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(105, 35, 120, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self.contentView addSubview:self.realmLabel];
         
-        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(270, 20, 30, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(270, 20, 40, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self.contentView addSubview:self.editLabel];
         
         editBtn = [[UIButton alloc]initWithFrame:CGRectMake(270, 0, 30, 60)];
@@ -78,7 +81,7 @@
 -(void)didRow
 {
     [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.01];
+    [UIView setAnimationDuration:0.1];
     [UIView setAnimationDelegate:self];
     if (!isrow) {
         [UIView setAnimationDidStopSelector:@selector(endAnimation)];
