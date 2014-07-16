@@ -779,8 +779,10 @@ static GameCommon *my_gameCommon = NULL;
 {
 //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
     [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
+    if ([[dict allKeys] containsObject:@"registerNeedMsg"]) {
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
+    }
+
     [[NSUserDefaults standardUserDefaults] synchronize];    
     if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
         [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
