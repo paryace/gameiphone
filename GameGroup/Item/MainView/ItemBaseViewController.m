@@ -67,7 +67,7 @@
     
     
     firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
-    firstView.backgroundColor = [UIColor yellowColor];
+    firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     [customView addSubview:firstView];
 
@@ -98,6 +98,11 @@
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
 }
+-(void)enterEditPageWithRow:(NSInteger)row
+{
+    [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
+}
+
 
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
