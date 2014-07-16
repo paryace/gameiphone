@@ -271,12 +271,15 @@
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 127)];
     view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
     
-    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 0, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
+    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 26, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
     [view addSubview:view1];
     
-    UIView *view2 = [self buildViewWithFrame:CGRectMake(0, 51, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1]  leftImg:@"item_list2" title:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
+    UIView *view2 = [self buildViewWithFrame:CGRectMake(0, 77, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1]  leftImg:@"item_list2" title:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
     
-    UIView *view3 = [[UIView alloc]initWithFrame:CGRectMake(0, 102, 320, 25)];
+    [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
+    [view2 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo2)]];
+    
+    UIView *view3 = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
     view3.backgroundColor =UIColorFromRGBA(0x43474a, 1);
     UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
     lb1.backgroundColor =[ UIColor clearColor];
@@ -301,6 +304,27 @@
     [view addSubview:view2];
     return view;
 }
+-(void)changeInfo1
+{
+    EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
+    editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+    editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
+//    editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
+    editInfo.isStyle = YES;
+    [self.navigationController pushViewController:editInfo animated:YES];
+
+}
+-(void)changeInfo2
+{
+    EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
+    editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+//    editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
+    editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"options")];
+    editInfo.isStyle = NO;
+    [self.navigationController pushViewController:editInfo animated:YES];
+
+}
+
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *itemShipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")] ;

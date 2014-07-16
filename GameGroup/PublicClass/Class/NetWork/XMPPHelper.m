@@ -302,6 +302,9 @@
             [dict setObject:msgtype forKey:@"msgType"];
             NSArray* arr = [msg JSONValue];
             NSString* dis = @"";
+            if (arr.count<1) {
+                return;
+            }
             if ([arr isKindOfClass:[NSArray class]]) {
                 if ([arr count] != 0) {
                     NSMutableDictionary* dic = [arr objectAtIndex:0];
