@@ -71,9 +71,9 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
 
-    [self getMyRoomFromNet];
+//    [self getMyRoomFromNet];
     
-   
+    [self getPreferencesWithNet];
 //    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
 //        UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
 //        imageView.image = KUIImage(@"item_test.jpg");
@@ -88,13 +88,42 @@
     
     
 }
+-(void)getPreferencesWithNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"276" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+
+}
+
+
+
+
 -(void)enterSearchRoomPageWithView:(FirstView *)view
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
 }
 -(void)enterSearchTape:(id)sender
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
 }
@@ -168,6 +197,8 @@
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
