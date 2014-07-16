@@ -18,6 +18,7 @@
     FirstView  *firstView;
     MyRoomView  *room;
     UITableView * m_mylistTableView;
+    UIImageView *customImageView;
     
 }
 @end
@@ -71,20 +72,21 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
 
-//    [self getMyRoomFromNet];
+    [self getMyRoomFromNet];
     
-    [self getPreferencesWithNet];
-//    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
-//        UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
-//        imageView.image = KUIImage(@"item_test.jpg");
-//        imageView.userInteractionEnabled = YES;
-//        [self.view addSubview:imageView];
-//        
-//        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, imageView.bounds.size.height-200, 160, 44)];
-//        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
-//        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
-//        [imageView addSubview:enterSearchBtn];
-//    }
+//    [self getPreferencesWithNet];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
+        customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:@"firstItem"];
+        customImageView.image = KUIImage(@"item_test.jpg");
+        customImageView.userInteractionEnabled = YES;
+        [self.view addSubview:customImageView];
+        
+        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, customImageView.bounds.size.height-200, 160, 44)];
+        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
+        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
+        [customImageView addSubview:enterSearchBtn];
+    }
     
     
 }
@@ -123,9 +125,10 @@
 -(void)enterSearchTape:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
+    [customImageView removeFromSuperview];
+
 }
 -(void)enterEditPageWithRow:(NSInteger)row
 {
