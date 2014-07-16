@@ -19,6 +19,7 @@
     MyRoomView  *room;
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
+    UISegmentedControl *seg ;
     
 }
 @end
@@ -56,7 +57,7 @@
     topImageView.image = KUIImage(@"nav_bg");
     [self.view addSubview:topImageView];
     
-    UISegmentedControl *seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"主页",@"我的组队", nil]];
+    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"主页",@"我的组队", nil]];
     seg.frame = CGRectMake(100, KISHighVersion_7 ? 25 : 5, 120, 34);
     seg.selectedSegmentIndex = 0;
 
@@ -100,6 +101,7 @@
 }
 -(void)refreshMyList:(id)sender
 {
+     seg.selectedSegmentIndex = 1;
     [self getMyRoomFromNet];
 }
 -(void)getPreferencesWithNet
