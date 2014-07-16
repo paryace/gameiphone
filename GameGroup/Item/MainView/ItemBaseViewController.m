@@ -18,6 +18,7 @@
     FirstView  *firstView;
     MyRoomView  *room;
     UITableView * m_mylistTableView;
+    UIImageView *customImageView;
     
 }
 @end
@@ -73,30 +74,61 @@
 
     [self getMyRoomFromNet];
     
-   
-//    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
-//        UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
-//        imageView.image = KUIImage(@"item_test.jpg");
-//        imageView.userInteractionEnabled = YES;
-//        [self.view addSubview:imageView];
-//        
-//        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, imageView.bounds.size.height-200, 160, 44)];
-//        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
-//        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
-//        [imageView addSubview:enterSearchBtn];
-//    }
+//    [self getPreferencesWithNet];
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
+        customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
+        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:@"firstItem"];
+        customImageView.image = KUIImage(@"item_test.jpg");
+        customImageView.userInteractionEnabled = YES;
+        [self.view addSubview:customImageView];
+        
+        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, customImageView.bounds.size.height-200, 160, 44)];
+        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
+        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
+        [customImageView addSubview:enterSearchBtn];
+    }
     
     
 }
+-(void)getPreferencesWithNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"276" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+        [hud hide:YES];
+    }];
+
+}
+
+
+
+
 -(void)enterSearchRoomPageWithView:(FirstView *)view
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
 }
 -(void)enterSearchTape:(id)sender
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
+    [customImageView removeFromSuperview];
+
 }
 -(void)enterEditPageWithRow:(NSInteger)row
 {
@@ -168,6 +200,8 @@
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {

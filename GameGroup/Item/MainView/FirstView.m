@@ -73,14 +73,14 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 50;
+
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UIView *view = [[UIView alloc]init];
     
    UIView *topView = [self buildViewWithFrame:CGRectMake(0, 0, 320, 40) leftImg:@"item_1" title:@"目前有77人在寻找组队"];
-    
-    [view addSubview:topView];
+        [view addSubview:topView];
     
     UILabel *lb = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 50, 30, 20) font:[UIFont boldSystemFontOfSize:14] textColor:[UIColor darkGrayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
     lb.text = @"点击";
