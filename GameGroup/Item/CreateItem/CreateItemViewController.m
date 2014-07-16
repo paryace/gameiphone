@@ -119,7 +119,6 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    
     [hud show:YES];
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
