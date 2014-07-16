@@ -305,6 +305,9 @@
             if ([arr isKindOfClass:[NSArray class]]) {
                 if ([arr count] != 0) {
                     NSMutableDictionary* dic = [arr objectAtIndex:0];
+                    if (![dic isKindOfClass:[NSDictionary class]]) {
+                        return;
+                    }
                     dis = [NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(dic, @"recommendMsg") ,KISDictionaryHaveKey(dic, @"nickname")];
                 }
             }
