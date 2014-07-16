@@ -277,7 +277,6 @@
             NSLog(@"%@", responseObject);
             [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            
             [[TempData sharedInstance]isBindingRolesWithBool:YES];
             [self dismissViewControllerAnimated:YES completion:^{
             [self showMessageWindowWithContent:@"添加成功" imageType:0];

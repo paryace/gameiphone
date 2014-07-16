@@ -654,10 +654,7 @@
 
 -(void)viewDidDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"contentOfjuese" object:nil];
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"typePerson" object:nil];
-    
-    
 }
 
 - (NSString*)getTimeWithMessageTime:(NSString*)messageTime

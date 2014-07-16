@@ -24,6 +24,7 @@
 #import "GroupInformationViewController.h"
 #import "FunsOfOtherViewController.h"
 #import "MyCircleViewController.h"
+#import "H5CharacterDetailsViewController.h"
 
 @interface MePageViewController ()
 {
@@ -531,8 +532,7 @@
     {
     }
     else if(indexPath.section == 2)
-    {
-        
+    {//
          NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
         if ([characterArray count]>0){
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
@@ -543,12 +543,19 @@
             if(![fileMsg isEqualToString:@"notSupport"])
             {
                 [[Custom_tabbar showTabBar] hideTabBar:YES];
-                CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
-                VC.characterId = chatId;
-                VC.gameId = gameId;
-                VC.myViewType = CHARA_INFO_MYSELF;
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
-                [self.navigationController pushViewController:VC animated:YES];
+                if ([gameId intValue]==1) {
+                    CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+                    VC.characterId = chatId;
+                    VC.gameId = gameId;
+                    VC.myViewType = CHARA_INFO_MYSELF;
+                    [self.navigationController pushViewController:VC animated:YES];
+                }else if([gameId intValue]==2){
+                    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+                    VC.characterId = chatId;
+                    VC.gameId = gameId;
+                    VC.characterName = KISDictionaryHaveKey(dic, @"name");
+                    [self.navigationController pushViewController:VC animated:YES];
+                }
             }else{
                 [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             }

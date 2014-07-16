@@ -8,12 +8,12 @@
 
 #import "H5CharacterDetailsViewController.h"
 #import "ShareToOther.h"
+#import "SendNewsViewController.h"
 
 @interface H5CharacterDetailsViewController ()
 {
     UIWebView * m_myWebView;
     UIAlertView * webViewAlert;
-    UIView *bgView;
 }
 
 @end
@@ -44,7 +44,8 @@
     m_myWebView.delegate = self;
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@&type=%@&from=from_client_ios",BaseAuthRoleUrl,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],@"",@"",self.gameId,@""];
+//    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&realm=%@&charactername=%@&gameid=%@&type=%@&from=from_client_ios",BaseLolRoleDetail,[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken],@"",@"",self.gameId,@""];
+    NSString * urlStr = BaseLolRoleDetail;
     NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     
@@ -58,15 +59,6 @@
 #pragma mark ---分享button方法
 -(void)shareBtnClick:(UIButton *)sender
 {
-    if (bgView != nil) {
-        [bgView removeFromSuperview];
-    }
-    bgView = [[UIView alloc] init];
-    bgView.frame = CGRectMake(328, 0, kScreenHeigth-320, kScreenWidth);
-    bgView.backgroundColor = [UIColor blackColor];
-    bgView.alpha = 0.4;
-    [self.view addSubview:bgView];
-    
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"分享到"
                                   delegate:self
@@ -103,9 +95,51 @@
         
         [[ShareToOther singleton] sendImageContentWithImage:viewImage];
     }
-    if (bgView != nil) {
-        [bgView removeFromSuperview];
+}
+
+- (void)pushSendNews
+{
+    UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
+    NSString * imagePath=[self writeImageToFile:viewImage ImageName:imageName];//完整路径
+    if (imagePath) {
+        SendNewsViewController* VC = [[SendNewsViewController alloc] init];
+        VC.titleImage = viewImage;
+        VC.titleImageName = imageName;
+        VC.delegate = self;
+        VC.isComeFromMe = NO;
+        VC.defaultContent = [NSString stringWithFormat:@"分享了%@的数据",self.characterName];
+        [self.navigationController pushViewController:VC animated:NO];
     }
+}
+
+//将图片保存到本地，返回保存的路径
+-(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
+{
+    NSData * imageDate=[self compressImage:thumbimg];
+    NSString *path = [RootDocPath stringByAppendingPathComponent:@"tempImage"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:path] == NO)
+    {
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString  *openImgPath = [NSString stringWithFormat:@"%@/%@",path,imageName];
+    if ([imageDate writeToFile:openImgPath atomically:YES]) {
+        return openImgPath;
+    }
+    return nil;
+}
+//压缩图片
+-(NSData*)compressImage:(UIImage*)thumbimg
+{
+    UIImage * a = [NetManager compressImage:thumbimg targetSizeX:640 targetSizeY:1136];
+    NSData *imageData = UIImageJPEGRepresentation(a, 0.7);
+    return imageData;
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView

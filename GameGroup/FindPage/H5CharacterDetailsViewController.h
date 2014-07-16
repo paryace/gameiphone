@@ -7,8 +7,10 @@
 //
 
 #import "BaseViewController.h"
+#import "SendNewsViewController.h"
 
-@interface H5CharacterDetailsViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate,UIActionSheetDelegate>
+@interface H5CharacterDetailsViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate,UIActionSheetDelegate,TableViewDatasourceDidChange>
 @property(nonatomic,strong)NSString* gameId;
+@property(nonatomic,strong)NSString* characterName;
 @property(nonatomic,strong)NSString* characterId;
 @end
