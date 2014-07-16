@@ -182,7 +182,6 @@
 }
 -(void)didClickCreateItem:(id)sender
 {
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
     CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
@@ -240,7 +239,8 @@
     if (section==0) {
         return 1;
     }
-    return m_dataArray.count;
+//    return m_dataArray.count;
+    return 10;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -266,46 +266,43 @@
     if (!cell) {
         cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
+//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
-    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
-    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-    
-    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
-    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-    
-    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-    
-    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+    cell.headImg.image = KUIImage(@"wow");
+//    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
+//    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+//    
+//    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+//    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+//    
+//    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+//    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
+//    
+//    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section==0) {
         if (indexPath.row == 0) {
-            NSLog(@"创建组队");
+            CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
+            [self.navigationController pushViewController:cretItm animated:YES];
             return;
         }
     }
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
-    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
-    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        itemInfo.isCaptain = YES;
-    }else{
-        itemInfo.isCaptain =NO;
-    }
-    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
-    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-    [self.navigationController pushViewController:itemInfo animated:YES];
+//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
+//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+//        itemInfo.isCaptain = YES;
+//    }else{
+//        itemInfo.isCaptain =NO;
+//    }
+//    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+//    [self.navigationController pushViewController:itemInfo animated:YES];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
