@@ -47,16 +47,16 @@
             [self addSubview:tabIcon];
             
             
-            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(i*sectionWidth+5+2+20, 1, sectionWidth-7-12-20, frame.size.height-2)];
+            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(i*sectionWidth+5+2+20, 1, sectionWidth-7-12-20-3, frame.size.height-2)];
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];
-            NSString *sectionBtnTitle = @"--";
+            NSString *sectionBtnTitle = @"-";
             if ([self.dropDownDataSource respondsToSelector:@selector(titleInSection:index:)]) {
                 sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
             }
             [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
             [sectionBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
+            sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
             [self addSubview:sectionBtn];
             
             UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
@@ -223,7 +223,7 @@
     }
     
     cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-    cell.textLabel.font = [UIFont systemFontOfSize:14];
+    cell.textLabel.font = [UIFont systemFontOfSize:12];
     return cell;
 }
 
