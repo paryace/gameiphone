@@ -553,6 +553,7 @@
                     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
                     VC.characterId = chatId;
                     VC.gameId = gameId;
+                    VC.isMe = @"1";
                     VC.characterName = KISDictionaryHaveKey(dic, @"name");
                     [self.navigationController pushViewController:VC animated:YES];
                 }

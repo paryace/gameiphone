@@ -799,7 +799,8 @@ static GameCommon *my_gameCommon = NULL;
     
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     NSMutableDictionary* openData = [NSMutableDictionary dictionaryWithContentsOfFile:path] ? [NSMutableDictionary dictionaryWithContentsOfFile:path] : [NSMutableDictionary dictionaryWithCapacity:1];
-    
+//    [[NSUserDefaults standardUserDefaults]setObject:dict forKey:@"standby_openData_wx"];
+
     if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
         
         /* 这里略乱 临时添加尚未修改 */
