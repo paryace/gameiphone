@@ -46,7 +46,7 @@
     self.waitImageView.animationDuration = 0.8;//越大越慢
     self.waitImageView.animationRepeatCount = 0;//无限次
     [self.waitImageView startAnimating];
-    self.rightBgImage.imageURL = [ImageService getImageUrl4:self.rightImageId];
+    self.rightBgImage.imageURL = [ImageService getImageUrl:self.rightImageId Width:800 Height:451];
 //    [self getImageByNetWithImageId:self.rightImageId];
     [self addSubview:self.rightBgImage];
     [self addSubview:self.waitImageView];
