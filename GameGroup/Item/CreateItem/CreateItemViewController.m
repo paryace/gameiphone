@@ -28,7 +28,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -40,8 +39,8 @@
     [self setTopViewWithTitle:@"创建组队" withBackButton:YES];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
@@ -63,11 +62,11 @@
 
     
     
-    firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"arrow_bottom" placeholder:@"点击选择角色"isPicker:YES isTurn:NO tag:0];
+    firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择角色"isPicker:YES isTurn:NO tag:0];
     
-    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" placeholder:@"点击选择分类"isPicker:NO isTurn:NO tag:0];
-    thirdTf = [self buildViewWithFrame:CGRectMake(0, startX+82, 320, 40) leftImg:@"item_4" title:@"描述" rightImg:@"right" placeholder:@"填写描述"isPicker:NO isTurn:YES tag:1];
-    forthTf =  [self buildViewWithFrame:CGRectMake(0, startX+140, 320, 40) leftImg:@"item_5" title:@"搞基" rightImg:@"right" placeholder:@"搞基条件"isPicker:NO isTurn:YES tag:2];
+    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:NO tag:0];
+    thirdTf = [self buildViewWithFrame:CGRectMake(0, startX+82, 320, 40) leftImg:@"item_4" title:@"描述" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"填写描述"isPicker:NO isTurn:YES tag:1];
+    forthTf =  [self buildViewWithFrame:CGRectMake(0, startX+140, 320, 40) leftImg:@"item_5" title:@"高级" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"高级条件"isPicker:NO isTurn:YES tag:2];
 
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
@@ -79,7 +78,7 @@
 
 
 //创建快捷方式
--(UITextField *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title rightImg:(NSString *)rightImg placeholder:(NSString *)placeholder isPicker:(BOOL)ispicker isTurn:(BOOL)isTurn tag:(NSInteger)tag
+-(UITextField *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title rightImg:(NSString *)rightImg RightImageSize:(CGSize)rightImageSize placeholder:(NSString *)placeholder isPicker:(BOOL)ispicker isTurn:(BOOL)isTurn tag:(NSInteger)tag
 {
     UIView *customView = [[UIView alloc]initWithFrame:frame];
     customView.backgroundColor =[ UIColor whiteColor];
@@ -92,11 +91,11 @@
     titleLabel.text = title;
     [customView addSubview:titleLabel];
     
-    UIImageView *rightImgView = [[UIImageView alloc]initWithFrame:CGRectMake(305, 15, 10, 10)];
+    UIImageView *rightImgView = [[UIImageView alloc]initWithFrame:CGRectMake(300, 15, rightImageSize.width, rightImageSize.height)];
     rightImgView.image = KUIImage(rightImg);
     [customView addSubview:rightImgView];
     
-   UITextField* tf = [GameCommon buildTextFieldWithFrame:CGRectMake(140, 0, 160, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight placeholder:placeholder];
+   UITextField* tf = [GameCommon buildTextFieldWithFrame:CGRectMake(140, 0, 155, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight placeholder:placeholder];
     if (ispicker) {
         tf.inputView = m_gamePickerView;
         tf.inputAccessoryView = toolbar;
@@ -122,7 +121,6 @@
 {
     
     [hud show:YES];
-    
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")] forKey:@"characterId"];
@@ -157,15 +155,14 @@
 //点击进入其他界面输入上传资料
 -(void)enterOtherPage:(UIButton *)sender
 {
-    if (sender.tag ==1) {
-        NSLog(@"123123131231");
+    if (sender.tag ==1) {//描述
         FillInInfoViewController *fill = [[FillInInfoViewController alloc]init];
         fill.mydelegate = self;
         [self.navigationController pushViewController:fill animated:YES];
     }
     else if (sender.tag ==2)
     {
-         NSLog(@"123123131231");
+         NSLog(@"123123131231");//高级
     }
 }
 //点击toolbar 确定button

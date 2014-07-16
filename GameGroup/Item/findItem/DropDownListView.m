@@ -25,7 +25,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorFromRGBA(0xbbbbbb, 0.6);
+        self.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;

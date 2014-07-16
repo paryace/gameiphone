@@ -31,8 +31,8 @@
     
     [self setTopViewWithTitle:@"填写描述" withBackButton:YES];
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(backToBeforePage:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];

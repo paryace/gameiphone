@@ -65,7 +65,7 @@
     arrayTag = [[NSArray alloc] initWithObjects:@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Fooasdasdasdasdad",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo", nil];
     
     [self getTeamType];
-//    [self getTeamLable];
+    [self getTeamLable];
     //收藏
     UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
@@ -105,10 +105,14 @@
     [mSearchBar sizeToFit];
     [self.view addSubview:mSearchBar];
     mSearchBar.frame = CGRectMake(0, startX+40, 260, 44);
-    
+ 
     screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40, 60, 44)];
-    screenView.backgroundColor = UIColorFromRGBA(0xbbbbbb, 0.6);
+    screenView.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
     [self.view addSubview:screenView];
+    
+    UIImageView * lineImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0, 60, 0.5)];
+    lineImageV.backgroundColor = kColorWithRGB(169, 169, 171, 0.8);
+    [screenView addSubview:lineImageV];
     
     UIButton *screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
     [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
@@ -358,10 +362,10 @@
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
     }
-    if (screenView.hidden==NO) {
-        screenView.hidden=YES;
-    }
-    [self reloadView:0 offWidth:60];
+//    if (screenView.hidden==NO) {
+//        screenView.hidden=YES;
+//    }
+    [self reloadView:0 offWidth:60 offWidth2:0];
 }
 
 #pragma mark UI/UE :键盘隐藏
@@ -373,18 +377,19 @@
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
-    if (screenView.hidden==YES) {
-        screenView.hidden=NO;
-    }
-    [self reloadView:40 offWidth:0];
+//    if (screenView.hidden==YES) {
+//        screenView.hidden=NO;
+//    }
+    [self reloadView:40 offWidth:0 offWidth2:60];
 }
 
--(void)reloadView:(float)offHight offWidth:(float)offWidth
+-(void)reloadView:(float)offHight offWidth:(float)offWidth offWidth2:(float)offWidth2
 {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
     mSearchBar.frame = CGRectMake(0, startX+offHight, 260+offWidth, 44);
     tagView.frame = CGRectMake(0, startX+offHight+44, 320, kScreenHeigth-(startX+offHight));
+    screenView.frame =CGRectMake(320-offWidth2, startX+offHight, 60, 44);
     [UIView commitAnimations];
 }
 
@@ -399,7 +404,7 @@
     [postDict setObject:@"277" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        NSLog(@"getTeamType--%@",responseObject);
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlertView:error];
         [hud hide:YES];
@@ -418,7 +423,7 @@
     [postDict setObject:@"278" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        NSLog(@"getTeamLable--%@",responseObject);
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlertView:error];
         [hud hide:YES];
