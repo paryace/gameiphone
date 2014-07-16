@@ -21,6 +21,7 @@
     UITextField *roleTextf;
     UISearchBar * mSearchBar;
     UIView *tagView;
+    UIView *screenView;
     
     NSArray *arrayTag;
     NSMutableArray *m_dataArray;
@@ -62,6 +63,9 @@
     m_charaArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
     arrayTag = [[NSArray alloc] initWithObjects:@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Fooasdasdasdasdad",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo", nil];
+    
+    [self getTeamType];
+//    [self getTeamLable];
     //收藏
     UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
@@ -90,19 +94,34 @@
     [GameCommon setExtraCellLineHidden:m_myTabelView];
     [self.view addSubview:m_myTabelView];
     
-    UIButton *screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(260, kScreenHeigth-50-startX-(KISHighVersion_7?0:20), 40, 40)];
-    screenBtn.backgroundColor = [UIColor blackColor];
-    [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
-    [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:screenBtn];
     
     //初始化搜索条
-    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40, 320, 44)];
-    mSearchBar.backgroundColor = [UIColor grayColor];
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
+    
+    mSearchBar.backgroundColor = [UIColor clearColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
+    mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];
     [self.view addSubview:mSearchBar];
+    mSearchBar.frame = CGRectMake(0, startX+40, 260, 44);
+    
+    screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40, 60, 44)];
+    screenView.backgroundColor = UIColorFromRGBA(0xbbbbbb, 0.6);
+    [self.view addSubview:screenView];
+    
+    UIButton *screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
+    [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
+    [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
+    [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
+    [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
+    screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
+    screenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [screenBtn.layer setMasksToBounds:YES];
+    [screenBtn.layer setCornerRadius:3];
+    [screenView addSubview:screenBtn];
+
+    
     
     tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40+44, 320, kScreenHeigth-(startX+40))];
     tagView.hidden = YES;
@@ -225,8 +244,6 @@
         }
         [hud hide:YES];
     }];
-    
-    
 }
 
 
@@ -341,7 +358,10 @@
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
     }
-    [self reloadView:0];
+    if (screenView.hidden==NO) {
+        screenView.hidden=YES;
+    }
+    [self reloadView:0 offWidth:60];
 }
 
 #pragma mark UI/UE :键盘隐藏
@@ -353,18 +373,69 @@
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
-    [self reloadView:40];
+    if (screenView.hidden==YES) {
+        screenView.hidden=NO;
+    }
+    [self reloadView:40 offWidth:0];
 }
 
--(void)reloadView:(float)offHight
+-(void)reloadView:(float)offHight offWidth:(float)offWidth
 {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
-    mSearchBar.frame = CGRectMake(0, startX+offHight, 320, 44);
+    mSearchBar.frame = CGRectMake(0, startX+offHight, 260+offWidth, 44);
     tagView.frame = CGRectMake(0, startX+offHight+44, 320, kScreenHeigth-(startX+offHight));
     [UIView commitAnimations];
 }
 
+#pragma mark ----获取组队分类
+-(void)getTeamType
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:@"1" forKey:@"gameid"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"277" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [self showErrorAlertView:error];
+        [hud hide:YES];
+    }];
+}
+
+#pragma mark ----获取组队偏好标签 gameid，typeId
+-(void)getTeamLable
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:@"1" forKey:@"typeId"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"278" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [self showErrorAlertView:error];
+        [hud hide:YES];
+    }];
+}
+
+-(void)showErrorAlertView:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+
+}
 
 - (void)didReceiveMemoryWarning
 {
