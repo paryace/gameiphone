@@ -91,8 +91,8 @@
     NSLog(@"dicttt%@",dict);
     if([[[m_tableData objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"character"])//角色
     {
-        NSString* imageName = [self getCharacterHeardWithID:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")]];
-        cell.headImageV.image = KUIImage(imageName);
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
+        cell.headImageV.imageURL = [ImageService getImageUrl4:gameImageId];
     }
     else if([[[m_tableData objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"title"])
     {
