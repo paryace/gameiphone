@@ -66,7 +66,6 @@ UINavigationControllerDelegate>
     NSInteger historyMsg;
     BOOL endOfTable;
     BOOL oTherPage;
-    dispatch_queue_t queue;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -187,7 +186,6 @@ UINavigationControllerDelegate>
     historyMsg = 0;
     endOfTable = YES;
     oTherPage= NO;
-    queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
