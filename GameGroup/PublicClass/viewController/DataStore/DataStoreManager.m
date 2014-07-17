@@ -3073,6 +3073,9 @@
 
 +(NSMutableDictionary*)getCharacter:(DSCharacters*)character
 {
+    if (!character) {
+        return nil;
+    }
     NSMutableDictionary * characterDic = [NSMutableDictionary dictionary];
     [characterDic setObject:character.auth forKey:@"auth"];
     [characterDic setObject:character.failedmsg forKey:@"failedmsg"];

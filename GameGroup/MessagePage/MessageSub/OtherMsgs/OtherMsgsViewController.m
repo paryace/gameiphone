@@ -189,11 +189,18 @@
             [self.navigationController pushViewController:VC animated:YES];
         }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
             NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
+            NSString * charaName ;
+            if (charaInfo) {
+                charaName = KISDictionaryHaveKey(charaInfo, @"name");
+            }
+            else {
+                charaName = @"";
+            }
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];		
             VC.isMe = @"1";
-            VC.characterName = KISDictionaryHaveKey(charaInfo, @"name");
+            VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];
         }
 
