@@ -416,7 +416,7 @@
 //保存正常聊天的消息
 +(void)storeNewNormalChatMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
         }
     ];
@@ -504,7 +504,7 @@
 //保存接收到群组的消息
 +(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
     }];
     if (block) {
