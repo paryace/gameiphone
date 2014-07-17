@@ -181,7 +181,6 @@
 //        [self.navigationController pushViewController:charVC animated:YES];
         
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
-        NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
         if ([dic[@"gameid"] intValue]==1) {
             CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
@@ -189,6 +188,7 @@
             VC.myViewType = CHARA_INFO_MYSELF;
             [self.navigationController pushViewController:VC animated:YES];
         }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+            NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];		
