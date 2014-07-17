@@ -191,7 +191,7 @@
         }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
-            VC.gameId = dic[@"gameid"];
+            VC.gameId = dic[@"gameid"];		
             VC.isMe = @"1";
             VC.characterName = KISDictionaryHaveKey(dic, @"name");
             [self.navigationController pushViewController:VC animated:YES];
