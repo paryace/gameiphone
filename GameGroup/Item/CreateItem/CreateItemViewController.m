@@ -119,7 +119,10 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+    [self showMessageWindowWithContent:@"创建成功" imageType:0];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    return;
     [hud show:YES];
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];

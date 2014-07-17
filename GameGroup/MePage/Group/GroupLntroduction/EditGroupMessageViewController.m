@@ -110,7 +110,7 @@
     m_layout.minimumInteritemSpacing = 1;
     m_layout.minimumLineSpacing =2;
     m_layout.itemSize = CGSizeMake(292/3, 292/3);
-    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, 300) collectionViewLayout:m_layout];
+    m_photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10, startX+130, 300, kScreenHeigth-startX-130) collectionViewLayout:m_layout];
     m_photoCollectionView.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
     m_photoCollectionView.scrollEnabled = YES;
     m_photoCollectionView.delegate = self;

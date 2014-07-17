@@ -52,7 +52,8 @@
         self.realmLabel.adjustsLetterSpacingToFitWidth = YES;
         [self.contentView addSubview:self.realmLabel];
         
-        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(270, 20, 40, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 20, 40, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.editLabel.adjustsFontSizeToFitWidth = YES;
         [self.contentView addSubview:self.editLabel];
         
         editBtn = [[UIButton alloc]initWithFrame:CGRectMake(270, 0, 30, 60)];

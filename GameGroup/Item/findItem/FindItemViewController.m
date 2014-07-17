@@ -140,6 +140,15 @@
     
     [self.view addSubview:tagView];
 
+    if (self.isInitialize) {
+        [self InitializeInfo];
+    }
+    
+}
+
+-(void)InitializeInfo
+{
+    
 }
 
 -(void)tagClick:(UIButton*)sender

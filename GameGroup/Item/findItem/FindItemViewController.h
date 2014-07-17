@@ -15,4 +15,6 @@
 {
     DWTagList *tagList;
 }
+@property(nonatomic,strong)NSDictionary *mainDict;//初始化数据
+@property(nonatomic,assign)BOOL isInitialize;//初始化数据
 @end

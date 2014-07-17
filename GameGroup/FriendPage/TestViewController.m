@@ -21,6 +21,7 @@
 #import "ImageService.h"
 #import "GroupInformationViewController.h"
 #import "GroupListViewController.h"
+#import "H5CharacterDetailsViewController.h"
 
 @interface TestViewController ()
 {
@@ -793,11 +794,26 @@
     NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
     NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
     if ([gameId intValue]==1||[gameId intValue]==2) {
-        CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
-        CVC.characterId = KISDictionaryHaveKey(dic, @"id");
-        CVC.gameId = gameId;
-        CVC.myViewType = CHARA_INFO_PERSON;
-        [self.navigationController pushViewController:CVC animated:YES];
+//        CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
+//        CVC.characterId = KISDictionaryHaveKey(dic, @"id");
+//        CVC.gameId = gameId;
+//        CVC.myViewType = CHARA_INFO_PERSON;
+//        [self.navigationController pushViewController:CVC animated:YES];
+        
+        if ([gameId intValue]==1) {
+            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+            VC.characterId = KISDictionaryHaveKey(dic, @"id");
+            VC.gameId = gameId;
+            VC.myViewType = CHARA_INFO_MYSELF;
+            [self.navigationController pushViewController:VC animated:YES];
+        }else if([gameId intValue]==2){
+            H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+            VC.characterId = KISDictionaryHaveKey(dic, @"id");
+            VC.gameId = gameId;
+            VC.isMe = @"0";
+            VC.characterName = KISDictionaryHaveKey(dic, @"name");
+            [self.navigationController pushViewController:VC animated:YES];
+        }
     }else{
         [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
     }

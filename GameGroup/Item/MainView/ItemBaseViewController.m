@@ -19,6 +19,7 @@
     MyRoomView  *room;
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
+    UISegmentedControl *seg ;
     
 }
 @end
@@ -56,7 +57,7 @@
     topImageView.image = KUIImage(@"nav_bg");
     [self.view addSubview:topImageView];
     
-    UISegmentedControl *seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"主页",@"我的组队", nil]];
+    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"主页",@"我的组队", nil]];
     seg.frame = CGRectMake(100, KISHighVersion_7 ? 25 : 5, 120, 34);
     seg.selectedSegmentIndex = 0;
 
@@ -100,6 +101,7 @@
 }
 -(void)refreshMyList:(id)sender
 {
+     seg.selectedSegmentIndex = 1;
     [self getMyRoomFromNet];
 }
 -(void)getPreferencesWithNet
@@ -151,6 +153,11 @@
         [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
     }else{
         [self showMessageWindowWithContent:@"查看队伍" imageType:0];
+        FindItemViewController *findView = [[FindItemViewController alloc]init];
+        findView.mainDict = [NSDictionary dictionaryWithDictionary:[firstView.firstDataArray objectAtIndex:row]];
+        findView.isInitialize = YES;
+        [self.navigationController pushViewController:findView animated:YES];
+        
     }
 }
 

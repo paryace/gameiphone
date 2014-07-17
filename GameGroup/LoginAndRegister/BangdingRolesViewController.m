@@ -63,13 +63,6 @@
     
     NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
     
-    NSArray *arr =[dict allKeys];
-    
-    if (![dict isKindOfClass:[NSDictionary class]]||![arr isKindOfClass:[NSArray class]]||arr.count<1) {
-        dict = [[NSUserDefaults standardUserDefaults]objectForKey:@"openData.plist"];
-    }
-
-    
     NSArray *allkeys = [dict allKeys];
     for (int i = 0; i <allkeys.count; i++) {
         NSArray *array = [dict objectForKey:allkeys[i]];
@@ -284,7 +277,6 @@
             NSLog(@"%@", responseObject);
             [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            
             [[TempData sharedInstance]isBindingRolesWithBool:YES];
             [self dismissViewControllerAnimated:YES completion:^{
             [self showMessageWindowWithContent:@"添加成功" imageType:0];
