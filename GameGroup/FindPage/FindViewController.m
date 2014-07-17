@@ -510,7 +510,7 @@
     commentLabel.font = [UIFont systemFontOfSize:11];
     [circleView addSubview:commentLabel];
 
-    leaderImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-60)];
+    leaderImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?60:80))];
     leaderImage.image = KISHighVersion_7?KUIImage(@"find_leader5"):KUIImage(@"find_leader4");
     leaderImage.hidden = YES;
     UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(enterLeaderImage:)];
