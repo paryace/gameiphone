@@ -510,18 +510,19 @@
     commentLabel.font = [UIFont systemFontOfSize:11];
     [circleView addSubview:commentLabel];
 
-    
+    leaderImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-60)];
+    leaderImage.image = KISHighVersion_7?KUIImage(@"find_leader5"):KUIImage(@"find_leader4");
+    leaderImage.hidden = YES;
+    UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(enterLeaderImage:)];
+    [leaderImage addGestureRecognizer:longPress];
+    [self.view addSubview:leaderImage];
     
     m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 42.24, 44)];
     m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
     [m_menuButton addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_menuButton];
     
-    leaderImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-60)];
-    leaderImage.image = KISHighVersion_7?KUIImage(@"find_leader5"):KUIImage(@"find_leader4");
-    leaderImage.hidden = YES;
-    [leaderImage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterLeaderImage:)]];
-    [self.view addSubview:leaderImage];
+
     
     [self setDynamicImage];//设置动态消息图片
     
@@ -899,9 +900,6 @@
 
 -(void)enterLeaderImage:(id)sender
 {
-    if (leaderImage.hidden == NO) {
-        leaderImage.hidden = YES;
-    }
 }
 
 #pragma mark --改变顶部图片
