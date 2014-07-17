@@ -22,7 +22,6 @@
 #import "JSON.h"
 #import "GameXmppStream.h"
 #import "GameXmppReconnect.h"
-#import "MyTask.h"
 @implementation XMPPHelper
 //@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 

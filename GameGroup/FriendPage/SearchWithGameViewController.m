@@ -77,6 +77,9 @@
     helpLbel.textAlignment = NSTextAlignmentCenter;
     [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
     [self.view addSubview:helpLbel];
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"绑定中...";
+    [self.view addSubview:hud];
 }
 -(void)enterToHelpPage:(id)sender
 {

@@ -3057,23 +3057,36 @@
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
     NSArray *array = [DSCharacters MR_findAllWithPredicate:predicate];
     for (DSCharacters *character in array) {
-        NSMutableDictionary * characterDic = [NSMutableDictionary dictionary];
-        [characterDic setObject:character.auth forKey:@"auth"];
-         [characterDic setObject:character.failedmsg forKey:@"failedmsg"];
-         [characterDic setObject:character.gameid forKey:@"gameid"];
-         [characterDic setObject:character.charactersId forKey:@"id"];
-         [characterDic setObject:character.img forKey:@"img"];
-         [characterDic setObject:character.name forKey:@"name"];
-         [characterDic setObject:character.realm forKey:@"simpleRealm"];
-         [characterDic setObject:character.value1 forKey:@"value1"];
-         [characterDic setObject:character.value2 forKey:@"value2"];
-         [characterDic setObject:character.value3 forKey:@"value3"];
-//        [characterDic setObject:character.simpleRealm forKey:@"simpleRealm"];
-        [charactersArray addObject:characterDic];
+        [charactersArray addObject:[self getCharacter:character]];
     }
     return charactersArray;
 }
 
+//查询单个角色信息
++(NSMutableDictionary*)queryCharacter:(NSString*)characterId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",characterId];
+    DSCharacters * character = [DSCharacters MR_findFirstWithPredicate:predicate];
+    return [self getCharacter:character];
+}
+
+
++(NSMutableDictionary*)getCharacter:(DSCharacters*)character
+{
+    NSMutableDictionary * characterDic = [NSMutableDictionary dictionary];
+    [characterDic setObject:character.auth forKey:@"auth"];
+    [characterDic setObject:character.failedmsg forKey:@"failedmsg"];
+    [characterDic setObject:character.gameid forKey:@"gameid"];
+    [characterDic setObject:character.charactersId forKey:@"id"];
+    [characterDic setObject:character.img forKey:@"img"];
+    [characterDic setObject:character.name forKey:@"name"];
+    [characterDic setObject:character.realm forKey:@"simpleRealm"];
+    [characterDic setObject:character.value1 forKey:@"value1"];
+    [characterDic setObject:character.value2 forKey:@"value2"];
+    [characterDic setObject:character.value3 forKey:@"value3"];
+    //[characterDic setObject:character.simpleRealm forKey:@"simpleRealm"];
+    return characterDic;
+}
 
 //查找最后一条动态
 +(NSMutableDictionary *)queryLatestDynamic:(NSString*)userId
