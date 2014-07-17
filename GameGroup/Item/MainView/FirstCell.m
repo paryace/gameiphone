@@ -11,7 +11,7 @@
 @implementation FirstCell
 {
     float dd;
-    BOOL isrow;
+    
     UIButton *editBtn;
 }
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -19,7 +19,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        isrow = YES;
+        self.isrow = YES;
         
         UIImageView *bgImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 300, 60)];
         bgImg.image = KUIImage(@"other_normal2");
@@ -36,7 +36,7 @@
         
         UIButton *button  =[[UIButton alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
         button.backgroundColor = [UIColor clearColor];
-        [button addTarget:self action:@selector(didClickRow:) forControlEvents:UIControlEventTouchUpInside];
+        [button addTarget:self action:@selector(didClickSearch:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:button];
         
         
@@ -48,7 +48,8 @@
         [self.contentView addSubview:self.gameIconImg];
 
         
-        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(105, 35, 120, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(105, 35, 160, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.realmLabel.adjustsLetterSpacingToFitWidth = YES;
         [self.contentView addSubview:self.realmLabel];
         
         self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(270, 20, 40, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
@@ -62,28 +63,43 @@
     return self;
 }
 
--(void)didClickRow:(id)sender
+-(void)didClickRow
 {
-    if ([self.myDelegate respondsToSelector:@selector(didClickRowWithCell:)]) {
-        [self.myDelegate didClickRowWithCell:self];
-    }
-    if (!isrow) {
-        isrow = YES;
-        editBtn.hidden  = NO;
+    
+    NSLog(@"%hhd",self.isrow);
+    if (!self.isrow) {
+        self.isrow = YES;
         self.editLabel.text = @"编辑";
     }else{
-        isrow =NO;
-        editBtn.hidden  =YES;
-        self.editLabel.text = @"2/5人";
+        self.isrow =NO;
+        self.editLabel.text = [NSString stringWithFormat:@"%@支队伍",self.machCountStr];
     }
     [self didRow];
 }
+
+-(void)didClickSearch:(id)sender
+{
+//    NSLog(@"%hhd",self.isrow);
+//    if (!self.isrow) {
+//        self.isrow = YES;
+//        self.editLabel.text = @"编辑";
+//    }else{
+//        self.isrow =NO;
+//        
+//    }
+    if ([self.myDelegate respondsToSelector:@selector(didClickRowWithCell:isRow:)]) {
+        [self.myDelegate didClickRowWithCell:self isRow:self.isrow];
+    }
+//    [self didRow];
+}
+
+
 -(void)didRow
 {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.1];
     [UIView setAnimationDelegate:self];
-    if (!isrow) {
+    if (!self.isrow) {
         [UIView setAnimationDidStopSelector:@selector(endAnimation)];
     }
     self.headImgView.transform = CGAffineTransformMakeRotation(dd * (M_PI / 180.0f));
@@ -97,8 +113,8 @@
 
 -(void)enterEditPage:(id)sender
 {
-    if ([self.myDelegate respondsToSelector:@selector(didClickEnterEditPageWithCell:)]) {
-        [self.myDelegate didClickEnterEditPageWithCell:self];
+    if ([self.myDelegate respondsToSelector:@selector(didClickEnterEditPageWithCell:isrow:)]) {
+        [self.myDelegate didClickEnterEditPageWithCell:self isrow:self.isrow];
     }
 }
 

@@ -13,11 +13,13 @@
 @interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,firstCellDelegate>
 @property(nonatomic,strong)UITableView *myTableView;
 @property(nonatomic,strong)UIButton *searchRoomBtn;
+@property(nonatomic,strong)NSMutableArray *firstDataArray;
 @property(nonatomic,assign)id<firstViewDelegate>myDelegate;
 @end
 
 @protocol firstViewDelegate <NSObject>
 
 -(void)enterSearchRoomPageWithView:(FirstView *)view;
--(void)enterEditPageWithRow:(NSInteger)row;
+-(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
+-(void)didClickPreferenceToNetWithRow:(NSInteger)row;
 @end

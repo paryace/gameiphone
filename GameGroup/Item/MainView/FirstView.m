@@ -33,7 +33,7 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3;
+    return self.firstDataArray.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -44,13 +44,23 @@
         cell = [[FirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
+    NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
     cell.myDelegate = self;
-    cell.nameLabel.text = @"吃不套不吐葡萄皮";
-    cell.realmLabel.text  = @"塔克拉玛干";
-    cell.editLabel.text = @"编辑";
-    cell.gameIconImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:@"1"]];
-
+    cell.tag = indexPath.row;
+    BOOL isOpen =[KISDictionaryHaveKey(dic, @"isOpen")boolValue];
+    
+    if (isOpen) {
+        [cell didClickRow];
+        cell.editLabel.text = [NSString stringWithFormat:@"%@支队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"matchCount")]];
+    }else{
+        cell.editLabel.text = @"编辑";
+    }
+    
+    cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterName")];
+    cell.realmLabel.text  = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"desc")];
+//    cell.editLabel.text = @"编辑";
+    cell.gameIconImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
+ 
     return cell;
 }
 
@@ -110,44 +120,70 @@
 }
 
 #pragma mark ---firstCell delegate
--(void)didClickEnterEditPageWithCell:(FirstCell*)cell
+-(void)didClickEnterEditPageWithCell:(FirstCell*)cell isrow:(BOOL)row
 {
-    [self.myDelegate enterEditPageWithRow:cell.tag];
+    [self.myDelegate enterEditPageWithRow:cell.tag isRow:row];
 }
 
+#pragma mark ---点击雷达 向后台发送偏好开关
 
--(void)didClickRowWithCell:(FirstCell*)cell
+-(void)didClickRowWithCell:(FirstCell*)cell isRow:(BOOL)isRow
 {
-    if (isRun) {
-      //
-        
-//        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform"];
-        
-//        animation.delegate = self;
-//        animation.toValue = [NSValue valueWithCATransform3D:CATransform3DMakeRotation(M_PI, 0, 0, 1.0)];
-//
-////        animation.byValue =[NSValue valueWithCATransform3D:CATransform3DMakeRotation(M_PI, 0, 0, 1.0)];
-//        animation.byValue =[NSValue valueWithCATransform3D:CATransform3DMakeRotation(M_PI/2, 0, 0, 1.0)];
-//
-//
-//        //执行时间
-//        
-//        animation.duration = 10;
-//        
-//        animation.cumulative = YES;//累积的
-//        
-//        //执行次数
-//        
-//        animation.repeatCount = INT_MAX;
-//        
-//        animation.autoreverses=YES;//是否自动重复
-//        
-//        [cell.headImgView.layer addAnimation:animation forKey:@"animation"];
-        
+    NSMutableDictionary *dic = [self.firstDataArray objectAtIndex:cell.tag];
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+    BOOL isOpen = [KISDictionaryHaveKey(dic, @"isOpen")boolValue];
+    
+    NSLog(@"%@---%hhd",KISDictionaryHaveKey(dic, @"isOpen"),isOpen);
+    if (isOpen) {
+        [paramDict setObject:@"0" forKey:@"isOpen"];
     }else{
-        isRun=YES;
+        [paramDict setObject:@"1" forKey:@"isOpen"];
     }
+    
+    
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"284" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if (isOpen) {
+            [dic setObject:@"0" forKey:@"isOpen"];
+            cell.isrow =NO;
+
+        }else{
+            [dic setObject:@"1" forKey:@"isOpen"];
+            cell.isrow = YES;
+
+        }
+        [cell didClickRow];
+
+        [self.firstDataArray removeObjectAtIndex:cell.tag];
+        [self.firstDataArray insertObject:dic atIndex:cell.tag];
+        //        [firstView.myTableView reloadData];
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
 }
+
+
+
+
+
+
+
 //创建快捷方式
 -(UIView *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title
 {

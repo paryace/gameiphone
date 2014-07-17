@@ -36,7 +36,13 @@
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
     NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+    NSArray *arr =[dict allKeys];
     
+    if (![dict isKindOfClass:[NSDictionary class]]||![arr isKindOfClass:[NSArray class]]||arr.count<1) {
+        dict = [[NSUserDefaults standardUserDefaults]objectForKey:@"openData.plist"];
+    }
+   
+
     NSArray *allkeysArray = [dict allKeys];
     for (int i = 0; i<allkeysArray.count; i++) {
         NSArray *arr = [dict objectForKey:allkeysArray[i]];

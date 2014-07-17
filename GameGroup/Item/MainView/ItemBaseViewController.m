@@ -80,7 +80,7 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
 
-//    [self getMyRoomFromNet];
+    [self getMyRoomFromNet];
     
     [self getPreferencesWithNet];
     if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
@@ -109,7 +109,10 @@
     [postDict setObject:@"276" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            firstView.firstDataArray = responseObject;
+            [firstView.myTableView reloadData];
+        }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -142,9 +145,13 @@
     [customImageView removeFromSuperview];
 
 }
--(void)enterEditPageWithRow:(NSInteger)row
+-(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow
 {
-    [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
+    if (isrow) {
+        [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
+    }else{
+        [self showMessageWindowWithContent:@"查看队伍" imageType:0];
+    }
 }
 
 
@@ -225,6 +232,10 @@
     [self.navigationController pushViewController:itemInfo animated:YES];
 
 }
+
+
+
+
 
 - (void)didReceiveMemoryWarning
 {

@@ -20,6 +20,7 @@
     BOOL isJoinIn;
     ItemRoleButton *itemRoleBtn;
     RoleTabView *roleTabView;
+    UIAlertView *jiesanAlert;
 }
 @end
 
@@ -40,7 +41,7 @@
     [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setTitle:@"转发" forState:UIControlStateNormal];
+    [createBtn setTitle:@"退出" forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
@@ -96,8 +97,46 @@
 #pragma mark --分享组队
 -(void)didClickShareItem:(id)sender
 {
-    ReviewapplicationViewController *review = [[ReviewapplicationViewController alloc]init];
-    [self.navigationController pushViewController:review animated:YES];
+//    ReviewapplicationViewController *review = [[ReviewapplicationViewController alloc]init];
+//    [self.navigationController pushViewController:review animated:YES];
+    jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+    [jiesanAlert show];
+
+
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==1) {
+        
+        NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+        
+        [paramDict setObject:self.itemId forKey:@"roomId"];
+        [postDict setObject:paramDict forKey:@"params"];
+        
+        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [postDict setObject:@"270" forKey:@"method"];
+        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            [self showMessageWindowWithContent:@"解散成功" imageType:1];
+            
+            
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+            [hud hide:YES];
+        }];
+        
+
+    }
 }
 
 #pragma mark ---创建底部button

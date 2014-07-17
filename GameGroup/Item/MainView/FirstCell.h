@@ -16,12 +16,15 @@
 @property(nonatomic,strong)EGOImageView *gameIconImg;
 @property(nonatomic,strong)UILabel *realmLabel;
 @property(nonatomic,strong)UILabel * editLabel;
+@property(nonatomic,copy)NSString *machCountStr;
+@property(nonatomic,assign)BOOL isrow;
 @property(nonatomic,assign)id<firstCellDelegate>myDelegate;
+-(void)didClickRow;
 @end
 
 @protocol firstCellDelegate <NSObject>
 
--(void)didClickRowWithCell:(FirstCell*)cell;
--(void)didClickEnterEditPageWithCell:(FirstCell*)cell;
+-(void)didClickRowWithCell:(FirstCell*)cell isRow:(BOOL)isRow ;
+-(void)didClickEnterEditPageWithCell:(FirstCell*)cell isrow:(BOOL)row;
 
 @end

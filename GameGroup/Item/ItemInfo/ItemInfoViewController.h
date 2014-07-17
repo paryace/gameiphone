@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "RoleTabView.h"
 
-@interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate>
+@interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate,UIAlertViewDelegate>
 @property(nonatomic,strong)NSMutableDictionary *infoDict;
 @property(nonatomic,strong)NSString *itemId;
 @property(nonatomic,assign)BOOL isCaptain;
