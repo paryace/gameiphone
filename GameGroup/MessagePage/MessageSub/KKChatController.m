@@ -2052,7 +2052,8 @@ UINavigationControllerDelegate>
     //添加新消息
     NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
     NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
-    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
+//    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
+    NSString* sendtime = [GameCommon getCurrentTime];
     NSString* msgType = KISDictionaryHaveKey(messageDict, @"msgType");
     NSString* payloadStr = KISDictionaryHaveKey(messageDict, @"payload");
     NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
