@@ -223,6 +223,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
+         [self comeBackDelivered:sender msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         return;
     }
     //1 打过招呼，2 未打过招呼

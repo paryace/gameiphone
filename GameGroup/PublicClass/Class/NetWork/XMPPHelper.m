@@ -227,7 +227,6 @@
                 return;
             }
             NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
-//            NSString * to=[NSString stringWithFormat:@"%@%@%@",[[message attributeForName:@"groupid"] stringValue],@"@group.",[[from componentsSeparatedByString:@"@"] objectAtIndex:1]];
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             
             [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
@@ -238,7 +237,6 @@
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
             [self.chatDelegate newGroupMessageReceived:dict];
-//            [self comeBackDelivered:to msgId:msgId];//发送群组的反馈消息（注意此时的应该反馈的对象是聊天群的JID）
             return;
         }
         
@@ -256,7 +254,6 @@
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [self.chatDelegate newMessageReceived:dict];
-//            [self comeBackDelivered:from msgId:msgId];//反馈消息
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
             [self comeBackDelivered:from msgId:msgId];//反馈消息
@@ -297,7 +294,6 @@
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:msgtype forKey:@"msgType"];
             NSArray* arr = [msg JSONValue];
             NSString* dis = @"";
@@ -326,7 +322,6 @@
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:msgtype forKey:@"msgType"];
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
@@ -342,7 +337,6 @@
             }
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
-            
             [self.chatDelegate changGroupMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
