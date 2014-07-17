@@ -40,8 +40,8 @@
     #import "EGOImageButton.h"
    #endif
 
-#define appType @"91"//91、appStore
-#define appChannel @"wx_test"//wx_test、91、appStore、tbt、pp、ky,(如果测试请用"wx_test")
+#define appType @"appStore"//91、appStore
+#define appChannel @"appStore"//wx_test、91、appStore、tbt、pp、ky,(如果测试请用"wx_test")
 
 
 
@@ -57,6 +57,7 @@
 #define BinRoleUrl @"http://58.83.193.120/share/role.html?"
 #define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
 #define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
+#define BaseLolRoleDetail @ "http://www.momotalk.com/share/rolesinfo.html?"
 
 
 //#define BaseClientUrl @"http://www.momotalk.com/gamepro/request"//开机联网地址
@@ -82,6 +83,7 @@
 //#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
 //#define BaseAuthRoleUrl @"http://221.122.66.243/share/certificate.html?"//角色认证
 //#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
+//#define BaseLolRoleDetail @ "http://www.momotalk.com/share/rolesinformation.html?"
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

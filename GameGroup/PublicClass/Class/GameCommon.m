@@ -782,8 +782,10 @@ static GameCommon *my_gameCommon = NULL;
 {
 //    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
     [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
+    if ([[dict allKeys] containsObject:@"registerNeedMsg"]) {
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
+    }
+
     [[NSUserDefaults standardUserDefaults] synchronize];    
     if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
         [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
@@ -800,7 +802,8 @@ static GameCommon *my_gameCommon = NULL;
     
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     NSMutableDictionary* openData = [NSMutableDictionary dictionaryWithContentsOfFile:path] ? [NSMutableDictionary dictionaryWithContentsOfFile:path] : [NSMutableDictionary dictionaryWithCapacity:1];
-    
+//    [[NSUserDefaults standardUserDefaults]setObject:dict forKey:@"standby_openData_wx"];
+
     if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
         
         /* 这里略乱 临时添加尚未修改 */

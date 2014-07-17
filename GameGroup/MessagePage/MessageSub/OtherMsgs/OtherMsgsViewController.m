@@ -11,6 +11,7 @@
 #import "CharacterEditViewController.h"
 #import "MyTitleObjViewController.h"
 #import "CharacterDetailsViewController.h"
+#import "H5CharacterDetailsViewController.h"
 @interface OtherMsgsViewController ()
 {
     UITableView*   m_myTableView;
@@ -172,13 +173,31 @@
     }
     if ([KISDictionaryHaveKey(tempDict, @"msgType") isEqualToString:@"pveScore"])
     {
-        CharacterDetailsViewController *charVC = [[CharacterDetailsViewController alloc]init];
+//        CharacterDetailsViewController *charVC = [[CharacterDetailsViewController alloc]init];
+//        NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
+//        charVC.characterId = dic[@"characterid"];
+//        charVC.gameId = dic[@"gameid"];
+//        charVC.myViewType = CHARA_INFO_MYSELF;
+//        [self.navigationController pushViewController:charVC animated:YES];
+        
+        
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
-        charVC.characterId = dic[@"characterid"];
-//        charVC.gameId = @"1";
-        charVC.gameId = dic[@"gameid"];
-        charVC.myViewType = CHARA_INFO_MYSELF;
-        [self.navigationController pushViewController:charVC animated:YES];
+        if ([dic[@"gameid"] intValue]==1) {
+            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+            VC.characterId = dic[@"characterid"];
+            VC.gameId = dic[@"gameid"];
+            VC.myViewType = CHARA_INFO_MYSELF;
+            [self.navigationController pushViewController:VC animated:YES];
+        }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+            H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+            VC.characterId = dic[@"characterid"];
+            VC.gameId = dic[@"gameid"];		
+            VC.isMe = @"1";
+            VC.characterName = KISDictionaryHaveKey(dic, @"name");
+            [self.navigationController pushViewController:VC animated:YES];
+        }
+
+        
         return;
     }
 }

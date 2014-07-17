@@ -15,7 +15,6 @@
 #import "AttentionMessageViewController.h"
 #import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
-//#import "FriendRecommendViewController.h"
 #import "NewFriendRecommendViewController.h"
 
 #import "AddAddressBookViewController.h"

@@ -1520,6 +1520,7 @@ UINavigationControllerDelegate>
 
 -(void)toContactProfile:(NSString*)userId
 {
+    oTherPage = YES;
     TestViewController * detailV = [[TestViewController alloc] init];
     detailV.userId = userId;
     [self.navigationController pushViewController:detailV animated:YES];
@@ -1842,6 +1843,7 @@ UINavigationControllerDelegate>
 //点击我的头像
 -(void)myHeadImgClicked:(id)Sender
 {
+    oTherPage = YES;
     TestViewController * detailV = [[TestViewController alloc] init];
     detailV.userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     detailV.nickName = [DataStoreManager queryRemarkNameForUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -1932,7 +1934,7 @@ UINavigationControllerDelegate>
 - (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:dictionary];
 }
@@ -2242,20 +2244,15 @@ UINavigationControllerDelegate>
     header.activityView.center = header.arrowImage.center;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self hideUnReadLable];
-//        dispatch_barrier_async(queue, ^{
-            array = [self getMsgArray:messages.count-historyMsg PageSize:20];
-            loadMoreMsgHeight = 0;
-            for (int i = 0; i < array.count; i++) {
-                [messages insertObject:array[i] atIndex:i];
-                CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
-                loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
-            }
-            loadHistoryArrayCount = array.count;
-//            dispatch_async(dispatch_get_main_queue(), ^{
-                [header endRefreshing];
-//            });
-//        });
-        
+        array = [self getMsgArray:messages.count-historyMsg PageSize:20];
+        loadMoreMsgHeight = 0;
+        for (int i = 0; i < array.count; i++) {
+            [messages insertObject:array[i] atIndex:i];
+            CGFloat  msgHight=[self overReadMsgToArray:array[i] Index:i];
+            loadMoreMsgHeight+=[self getCellHight:array[i] msgHight:msgHight];
+        }
+        loadHistoryArrayCount = array.count;
+        [header endRefreshing];
     };
     
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {

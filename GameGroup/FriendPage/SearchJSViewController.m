@@ -95,7 +95,10 @@
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     
     NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-
+//    NSArray *arr =[dict allKeys];
+//    if (![dict isKindOfClass:[NSDictionary class]]||![arr isKindOfClass:[NSArray class]]||arr.count<1) {
+//        dict = [[NSUserDefaults standardUserDefaults]objectForKey:@"standby_openData_wx"];
+//    }
 
     NSArray *allkeys = [dict allKeys];
     for (int i = 0; i <allkeys.count; i++) {
