@@ -2445,11 +2445,7 @@ UINavigationControllerDelegate>
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
-- (void)dealloc
-{
-    [super dealloc];
-    NSLog(@"dealloc--ChatController");
-}
+
 //发送消息
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
 {
