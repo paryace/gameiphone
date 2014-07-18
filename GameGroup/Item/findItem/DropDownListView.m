@@ -221,7 +221,7 @@
     }
     
     cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-    cell.textLabel.adjustsFontSizeToFitWidth=YES;
+//    cell.textLabel.adjustsFontSizeToFitWidth=YES;
     cell.textLabel.font = [UIFont systemFontOfSize:12];
     return cell;
 }

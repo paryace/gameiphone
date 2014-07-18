@@ -35,6 +35,7 @@
     
     NSMutableDictionary * selectCharacter ;
     NSMutableDictionary * selectType;
+    NSMutableDictionary * selectFilter;
 }
 @end
 
@@ -162,7 +163,9 @@
 
 -(void)tagClick:(UIButton*)sender
 {
-    mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");    
+    mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"id")];
+
     if([mSearchBar isFirstResponder]){
         [mSearchBar resignFirstResponder];
     }
@@ -217,7 +220,8 @@
 }
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:nil FilterId:KISDictionaryHaveKey([arrayFilter objectAtIndex:sender.tag], @"id")];
+    selectFilter = [arrayFilter objectAtIndex:sender.tag];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:nil FilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectFilter, @"id")]];
 }
 
 #pragma mark -- dropDownListDelegate
@@ -408,7 +412,7 @@
 #pragma mark ----搜索
 - (void)doSearch:(UISearchBar *)searchBar{
     NSLog(@"searchBar-Text-%@",searchBar.text);
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:searchBar.text FilterId:nil];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:searchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"id")];
 }
 
 #pragma mark ----获得焦点
@@ -457,12 +461,12 @@
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
-    [paramDict setObject:typeId forKey:@"typeId"];
-    if (description) {
+    [paramDict setObject:[GameCommon getNewStringWithId:typeId] forKey:@"typeId"];
+    if (![GameCommon isEmtity:description]) {
         [paramDict setObject:description forKey:@"description"];
     }
-    if (filterId) {
-        [paramDict setObject:filterId forKey:@"filterId"];
+    if (![GameCommon isEmtity:[GameCommon getNewStringWithId:filterId]]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:filterId] forKey:@"filterId"];
     }
     [paramDict setObject:@"0" forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
