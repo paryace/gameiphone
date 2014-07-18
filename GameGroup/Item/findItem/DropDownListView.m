@@ -81,25 +81,23 @@
 -(void)sectionBtnTouch:(UIButton *)btn
 {
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
-    
-    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-    }];
-    
-    if (currentExtendSection == section) {
-        [self hideExtendedChooseView];
-    }else{
-        currentExtendSection = section;
-        currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+    BOOL isOpen = [self.dropDownDelegate clickAtSection:section];
+    if (isOpen) {
+        UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
         [UIView animateWithDuration:0.3 animations:^{
             currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
         }];
-        
-        [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
+        if (currentExtendSection == section) {
+            [self hideExtendedChooseView];
+        }else{
+            currentExtendSection = section;
+            currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+            [UIView animateWithDuration:0.3 animations:^{
+                currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+            }];
+            [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
+        }
     }
-    
 }
 
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section

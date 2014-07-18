@@ -13,6 +13,8 @@
 #import "MyRoomViewController.h"
 #import "DropDownListView.h"
 #import "CreateTeamCell.h"
+#import "ItemManager.h"
+#import "KxMenu.h"
 
 @interface FindItemViewController ()
 {
@@ -22,11 +24,17 @@
     UISearchBar * mSearchBar;
     UIView *tagView;
     UIView *screenView;
+    UIButton *screenBtn;
     
     NSArray *arrayTag;
+    NSArray *arrayType;
+    NSArray *arrayFilter;
     NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
     NSMutableArray *m_charaArray;
+    
+    NSMutableDictionary * selectCharacter ;
+    NSMutableDictionary * selectType;
 }
 @end
 
@@ -44,7 +52,6 @@
 {
     [super viewWillAppear:animated];
     m_charaArray =[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    [dropDownView.mTableView reloadData];
 }
 
 - (void)viewDidLoad
@@ -53,27 +60,19 @@
     [self setTopViewWithTitle:@"寻找组队" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamType:) name:UpdateTeamType object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamLable:) name:UpdateTeamLable object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFilterId:) name:UpdateFilterId object:nil];
     
     //初始化数据源
     m_dataArray = [NSMutableArray array];
     m_charaArray = [NSMutableArray array];
     roleDict = [NSMutableDictionary dictionary];
     m_charaArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    arrayTag = [NSArray array];
+    arrayType = [NSArray array];
+    arrayFilter = [NSArray array];
     
-    arrayTag = [[NSArray alloc] initWithObjects:@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Foo", @"Tag Label 1", @"Tag Label 2", @"Tag Label 3", @"Tag Label 4", @"Tag Label 5",@"Fooasdasdasdasdad",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo",@"Foo", nil];
-    
-    [self getTeamType];
-    [self getTeamLable];
-    //收藏
-    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [collectionBtn setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    [collectionBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
-    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
-    collectionBtn.backgroundColor = [UIColor clearColor];
-    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-    //    [self.view addSubview:collectionBtn];
     //创建
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
@@ -86,7 +85,6 @@
     dropDownView.mSuperView = self.view;
     [self.view addSubview:dropDownView];
     
-    
     m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40+44, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
     m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     m_myTabelView.delegate = self;
@@ -97,7 +95,6 @@
     
     //初始化搜索条
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
-    
     mSearchBar.backgroundColor = [UIColor clearColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
     mSearchBar.showsCancelButton=NO;
@@ -114,7 +111,7 @@
     lineImageV.backgroundColor = kColorWithRGB(169, 169, 171, 0.8);
     [screenView addSubview:lineImageV];
     
-    UIButton *screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
+    screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
     [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
     [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
     [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
@@ -124,9 +121,17 @@
     [screenBtn.layer setMasksToBounds:YES];
     [screenBtn.layer setCornerRadius:3];
     [screenView addSubview:screenBtn];
+    
+    //收藏
+    UIButton* collectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(kScreenWidth-10-50, kScreenHeigth-10-50, 40, 40)];
+    [collectionBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
+    [collectionBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
+    [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
+    [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:collectionBtn];
 
     
-    
+    //标签布局
     tagView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+40+44, 320, kScreenHeigth-(startX+40))];
     tagView.hidden = YES;
     tagView.backgroundColor = [UIColor whiteColor];
@@ -134,16 +139,20 @@
     [tagView addGestureRecognizer:tapGr];
     
     tagList = [[DWTagList alloc] initWithFrame:CGRectMake(20.0f, 20.0f, 280.0f, 300.0f)];
-    [tagList setTags:arrayTag];
     tagList.tagDelegate=self;
     [tagView addSubview:tagList];
-    
     [self.view addSubview:tagView];
-
+    
+    [dropDownView setTitle:@"请选择角色" inSection:0];
+    [dropDownView setTitle:@"请选择分类" inSection:1];
+    
     if (self.isInitialize) {
         [self InitializeInfo];
     }
     
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"搜索中...";
+    [self.view addSubview:hud];
 }
 
 -(void)InitializeInfo
@@ -153,7 +162,7 @@
 
 -(void)tagClick:(UIButton*)sender
 {
-    mSearchBar.text = [arrayTag objectAtIndex:sender.tag];
+    mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");    
     if([mSearchBar isFirstResponder]){
         [mSearchBar resignFirstResponder];
     }
@@ -165,11 +174,78 @@
         [mSearchBar resignFirstResponder];
     }
 }
+#pragma mark -- 分类请求成功通知
+-(void)updateTeamType:(NSNotification*)notification
+{
+    NSArray * responseObject = notification.object;
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        arrayType = responseObject;
+        [dropDownView.mTableView reloadData];
+    }
+}
+#pragma mark -- 标签请求成功通知
+-(void)updateTeamLable:(NSNotification*)notification
+{
+     NSArray * responseObject = notification.object;
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        arrayTag = responseObject;
+        [tagList setTags:arrayTag];
+    }
+}
+#pragma mark -- Filter请求成功通知
+-(void)updateFilterId:(NSNotification*)notification
+{
+    NSArray * responseObject = notification.object;
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        arrayFilter = responseObject;
+        [self showFilterMenu];
+    }
+}
+
+-(void)showFilterMenu
+{
+    NSMutableArray *menuItems = [NSMutableArray array];
+    for (int i = 0; i<arrayFilter.count; i++) {
+       KxMenuItem *menuItem = [KxMenuItem menuItem:KISDictionaryHaveKey([arrayFilter objectAtIndex:i], @"value") image:nil target:self action:@selector(pushMenuItem:)];
+        menuItem.tag =i;
+        [menuItems addObject:menuItem];
+    }
+    KxMenuItem *first = [KxMenuItem menuItem:@"组队筛选" image:nil target:nil action:NULL];
+    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+    first.alignment = NSTextAlignmentCenter;
+    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX+40+10, 50, 25) menuItems:menuItems];
+}
+- (void) pushMenuItem:(KxMenuItem*)sender
+{
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:nil FilterId:KISDictionaryHaveKey([arrayFilter objectAtIndex:sender.tag], @"id")];
+}
 
 #pragma mark -- dropDownListDelegate
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
-    NSLog(@"选了section:%d ,index:%d",section,index);
+    if (section==0) {
+        selectCharacter = [m_charaArray objectAtIndex:index];
+    }
+    else if (section == 1){
+        selectType =[arrayType objectAtIndex:index];
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:nil FilterId:nil];
+    }
+}
+
+//点击选项
+-(BOOL) clickAtSection:(NSInteger)section
+{
+    if (section==0) {
+        return YES;
+    }else if(section == 1){
+        if(!selectCharacter){//还未选择游戏的状态
+            [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
+            return NO;
+        }
+        [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark -- dropdownList DataSource
@@ -179,17 +255,28 @@
 }
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
-    return [m_charaArray count];
+    if (section==0) {
+        return [m_charaArray count];
+    }
+    return arrayType.count;
 }
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
 {
-    return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
+    if (section==0) {
+         return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
+    }else if (section == 1){
+        if (arrayType.count>0) {
+            return KISDictionaryHaveKey([arrayType objectAtIndex:index], @"value");
+        }
+        return @"";
+    }
+    return @"";
 }
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
     return 0;
 }
-
+//收藏
 -(void)collectionBtn:(id)sender
 {
     //[self showMessageWindowWithContent:@"没有收藏" imageType:1];
@@ -212,53 +299,25 @@
     
     //    [self.navigationController pushViewController:myRoom animated:YES];
 }
+//创建组队
 -(void)didClickCreateItem:(id)sender
 {
     CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
+//筛选
 -(void)didClickScreen:(UIButton *)sender
 {
-    sender.titleLabel.textColor = [UIColor grayColor];
-    [self getInfoFromNetWithDic:roleDict];
-    
+    if (!selectCharacter) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        return;
+    }
+    if (!selectType) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        return;
+    }
+    [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(selectCharacter, @"gameid")];
 }
-
-#pragma mark ----NET
--(void)getInfoFromNetWithDic:(NSDictionary *)dic
-{
-    
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")] forKey:@"characterId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
-    [paramDict setObject:@"1" forKey:@"typeIds"];
-    [paramDict setObject:@"0" forKey:@"firstResult"];
-    [paramDict setObject:@"20" forKey:@"maxSize"];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"264" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [m_dataArray removeAllObjects];
-            [m_dataArray addObjectsFromArray:responseObject];
-            [m_myTabelView reloadData];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
-    }];
-}
-
 
 #pragma mark ----tableview delegate  datasourse
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -270,7 +329,7 @@
         return 1;
     }
 //    return m_dataArray.count;
-    return 10;
+     return 20;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -280,7 +339,6 @@
         return 20;
     }
 }
-
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==0) {
@@ -301,14 +359,11 @@
     cell.headImg.image = KUIImage(@"wow");
 //    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
 //    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-//    
 //    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
 //    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-//    
 //    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
 //    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-//    
-//    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+//   cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
 }
 
@@ -340,56 +395,51 @@
     return 60;
 }
 
-- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar{
-    [self doSearch:searchBar];
-}
-
-/*取消按钮*/
+#pragma mark ----取消按钮
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
     [self doSearch:searchBar];
 }
 
-/*键盘搜索按钮*/
+#pragma mark ----键盘搜索按钮
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     [searchBar resignFirstResponder];
     [self doSearch:searchBar];
 }
 
-/*搜索*/
+#pragma mark ----搜索
 - (void)doSearch:(UISearchBar *)searchBar{
     NSLog(@"searchBar-Text-%@",searchBar.text);
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:searchBar.text FilterId:nil];
 }
 
-
-#pragma mark UI/UE :键盘显示
-- (void)keyboardWillShow:(NSNotification *)notification {
-
-    NSDictionary *userInfo = [notification userInfo];
-    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
-    NSTimeInterval animationDuration;
-    [animationDurationValue getValue:&animationDuration];
+#pragma mark ----获得焦点
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    if (!selectCharacter) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        return NO;
+    }
+    if (!selectType) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        return NO;
+    }
+    
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
+        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"id")];
+        
     }
-//    if (screenView.hidden==NO) {
-//        screenView.hidden=YES;
-//    }
     [self reloadView:0 offWidth:60 offWidth2:0];
+    return YES;
 }
-
-#pragma mark UI/UE :键盘隐藏
-- (void)keyboardWillHide:(NSNotification *)notification {
-    NSDictionary* userInfo = [notification userInfo];
-    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
-    NSTimeInterval animationDuration;
-    [animationDurationValue getValue:&animationDuration];
+#pragma mark ----失去焦点
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
+{
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
-//    if (screenView.hidden==YES) {
-//        screenView.hidden=NO;
-//    }
     [self reloadView:40 offWidth:0 offWidth2:60];
+    return YES;
 }
 
 -(void)reloadView:(float)offHight offWidth:(float)offWidth offWidth2:(float)offWidth2
@@ -401,44 +451,42 @@
     screenView.frame =CGRectMake(320-offWidth2, startX+offHight, 60, 44);
     [UIView commitAnimations];
 }
-
-#pragma mark ----获取组队分类
--(void)getTeamType
+#pragma mark ----NET
+-(void)getInfoFromNetWithDic:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId
 {
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:@"1" forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    [paramDict setObject:typeId forKey:@"typeId"];
+    if (description) {
+        [paramDict setObject:description forKey:@"description"];
+    }
+    if (filterId) {
+        [paramDict setObject:filterId forKey:@"filterId"];
+    }
+    [paramDict setObject:@"0" forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"277" forKey:@"method"];
+    [postDict setObject:@"264" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"getTeamType--%@",responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [self showErrorAlertView:error];
         [hud hide:YES];
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            [m_dataArray removeAllObjects];
+            [m_dataArray addObjectsFromArray:responseObject];
+            [m_myTabelView reloadData];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [m_dataArray removeAllObjects];
+        [m_myTabelView reloadData];
+        [self showErrorAlertView:error];
     }];
 }
-
-#pragma mark ----获取组队偏好标签 gameid，typeId
--(void)getTeamLable
-{
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:@"1" forKey:@"gameid"];
-    [paramDict setObject:@"1" forKey:@"typeId"];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"278" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"getTeamLable--%@",responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [self showErrorAlertView:error];
-        [hud hide:YES];
-    }];
-}
-
+//弹出提示框
 -(void)showErrorAlertView:(id)error
 {
     if ([error isKindOfClass:[NSDictionary class]]) {
@@ -448,7 +496,6 @@
             [alert show];
         }
     }
-
 }
 
 - (void)didReceiveMemoryWarning

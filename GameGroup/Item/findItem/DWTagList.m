@@ -59,7 +59,8 @@
     CGRect previousFrame = CGRectZero;
     BOOL gotPreviousFrame = NO;
     for (int i = 0;i<textArray.count;i++) {
-        NSString * text = [textArray objectAtIndex:i];
+        ;
+        NSString * text = KISDictionaryHaveKey([textArray objectAtIndex:i], @"value");
         CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:FONT_SIZE] constrainedToSize:CGSizeMake(self.frame.size.width, 1500) lineBreakMode:NSLineBreakByCharWrapping];
         textSize.width += HORIZONTAL_PADDING*2;
         textSize.height += VERTICAL_PADDING*2;

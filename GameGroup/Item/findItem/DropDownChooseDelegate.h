@@ -13,6 +13,8 @@
 @optional
 
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index;
+
+-(BOOL) clickAtSection:(NSInteger)section;
 @end
 
 @protocol DropDownChooseDataSource <NSObject>

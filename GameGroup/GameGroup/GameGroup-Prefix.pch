@@ -164,6 +164,13 @@
 #define UpdateTitleInfo @"ritleInfo"//更新头衔信息
 #define UpdateLastDynicmicInfo @"lastDynicmicInfo"//更新最后一条动太信息
 
+
+
+///组队
+#define UpdateTeamType @"updateTeamType"//更新组队标签
+#define UpdateTeamLable @"updateTeamLable"//更新组队分类
+#define UpdateFilterId @"updateFilterId"//组队房间过滤
+
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])
 #define RootDocPath ([NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0])
