@@ -94,15 +94,87 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    if (indexPath.section ==0) {
+        NSArray * arr = [self.listDict objectForKey:@"OwnedRooms"];
+        if (arr||[arr isKindOfClass:[NSArray class]]) {
+            return 60;
+        }else
+        {
+            return 0;
+        }
+    }else{
+        NSArray * arr = [self.listDict objectForKey:@"joinedRooms"];
+        if (arr||[arr isKindOfClass:[NSArray class]]) {
+            return 60;
+        }else
+        {
+            return 0;
+        }
+
+
+    }
+
 }
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (section ==0) {
-        return @"我创建的队伍";
+        NSArray * arr = [self.listDict objectForKey:@"OwnedRooms"];
+        if (arr||[arr isKindOfClass:[NSArray class]]) {
+            return @"我创建的队伍";
+        }else
+        {
+            return nil;
+        }
+        
     }else{
-        return @"我加入的队伍";
+        NSArray * arr = [self.listDict objectForKey:@"joinedRooms"];
+        if (arr.count>0) {
+            return @"我加入的队伍";
+        }else
+        {
+            return nil;
+        }
+
     }
+}
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    if (section ==1) {
+        UIView *view =[[ UIView alloc]init];
+        view.backgroundColor = [UIColor whiteColor];
+        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+        headImg.image =KUIImage(@"clazz_11");
+        [view addSubview:headImg];
+        UILabel *label =[GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 200, 60) font:[UIFont boldSystemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        label.text = @"历史组队";
+        [view addSubview:label];
+        [self setOneLineWithY:0 view:view];
+        [self setOneLineWithY:59 view:view];
+
+        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHistoryReamList:)]];
+        return view;
+    }else{
+        return nil;
+    }
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    if (section==0) {
+        return 0;
+    }else{
+        return 60;
+    }
+}
+-(void)enterHistoryReamList:(id)sender
+{
+    NSLog(@"查看历史组队");
+}
+- (void)setOneLineWithY:(float)frameY view:(UIView *)view
+{
+    UIImageView* lineImg = [[UIImageView alloc] initWithFrame:CGRectMake(0, frameY, kScreenWidth, 2)];
+    lineImg.image = KUIImage(@"line");
+    lineImg.backgroundColor = [UIColor clearColor];
+    [view addSubview:lineImg];
 }
 
 /*
