@@ -40,8 +40,8 @@
     #import "EGOImageButton.h"
    #endif
 
-#define appType @"appStore"//91、appStore
-#define appChannel @"appStore"//wx_test、91、appStore、tbt、pp、ky,(如果测试请用"wx_test")
+#define appType @"91"//91、appStore
+#define appChannel @"wx_test"//wx_test、91、appStore、tbt、pp、ky,(如果测试请用"wx_test")
 
 
 
