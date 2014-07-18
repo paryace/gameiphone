@@ -203,7 +203,6 @@
     hud.labelText = @"获取好友信息中...";
 }
 
-
 #pragma mark ----获取XMPP服务器成功
 -(void)getConnectSuccess:(NSNotification*)notification
 {

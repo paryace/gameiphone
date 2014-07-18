@@ -42,6 +42,7 @@
     UIImageView *m_notibgGbImageView;//群公告红点
     EGOImageButton *iconImageView ;//群头像
     NSInteger    billboardMsgCount;//群公告消息
+    UIImageView * leaderImage;
    
    
     
@@ -105,7 +106,6 @@
     NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     
     NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
-    
     
     drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
     
@@ -509,22 +509,38 @@
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
     [circleView addSubview:commentLabel];
-    
-    [self setDynamicImage];//设置动态消息图片
+
+    leaderImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?60:80))];
+    leaderImage.image = KISHighVersion_7?KUIImage(@"find_leader5"):KUIImage(@"find_leader4");
+    leaderImage.hidden = YES;
+    UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(enterLeaderImage:)];
+    [leaderImage addGestureRecognizer:longPress];
+    [self.view addSubview:leaderImage];
     
     m_menuButton = [[EGOImageButton alloc]initWithFrame:CGRectMake(0,drawView.bounds.size.height, 42.24, 44)];
     m_menuButton.center = CGPointMake(160,drawView.bounds.size.height);
     [m_menuButton addTarget:self action:@selector(dropdown) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_menuButton];
+    
+
+    
+    [self setDynamicImage];//设置动态消息图片
+    
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"];
         NSString * imageId= KISDictionaryHaveKey(dic, @"img");
         m_menuButton.imageURL= [ImageService getImageUrl4:imageId];
         drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
+        if(leaderImage.hidden == NO){
+            leaderImage.hidden = YES;
+        }
     }else{
         [m_menuButton setBackgroundImage:KUIImage(@"menu_find_normal") forState:UIControlStateNormal];
         drawView.textLabel.text = @"点击Go,开始您的游戏社交";
+        if(leaderImage.hidden == YES){
+            leaderImage.hidden = NO;
+        }
     }
-    [self.view addSubview:m_menuButton];
 }
 - (UIImage *) dealDefaultImage: (UIImage *) image centerInSize: (CGSize) viewsize
 {
@@ -882,6 +898,10 @@
     [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
 }
 
+-(void)enterLeaderImage:(id)sender
+{
+}
+
 #pragma mark --改变顶部图片
 -(void)changeTopImage:(UILongPressGestureRecognizer*)sender
 {
@@ -947,19 +967,22 @@
 {
     bottomView.hidden =YES;
     if (drawView.showList) {
+        if (![[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
+            leaderImage.hidden=NO;
+        }
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-
         m_menuButton.center = CGPointMake(160,KISHighVersion_7?79:59);
         [self.view bringSubviewToFront:m_menuButton];
         [UIView commitAnimations];
 
     }else{
+        if (![[NSUserDefaults standardUserDefaults]objectForKey:@"find_initial_game"]) {
+            leaderImage.hidden=YES;
+        }
         [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-
         m_menuButton.center = CGPointMake(160,kScreenHeigth-90);
-
         [UIView commitAnimations];
 
     }
@@ -987,7 +1010,10 @@
     m_menuButton.imageURL=[ImageService getImageUrl4:imageId2];
     [UIView beginAnimations:@"ResizeForKeyBoard"context:nil];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
+    drawView.textLabel.text = @"选择游戏,开始您的游戏社交";
+    if (leaderImage.hidden == NO) {
+        leaderImage.hidden = YES;
+    }
     m_menuButton.center = CGPointMake(160, KISHighVersion_7?79:59);
     [self.view bringSubviewToFront:m_menuButton];
 

@@ -43,7 +43,7 @@
     m_myWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     m_myWebView.delegate = self;
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    NSString *urlStr =[NSString stringWithFormat:@"%@characterid=%@&gameid=%@&isMe=%@",BaseLolRoleDetail,self.characterId,self.gameId,self.isMe];
+    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&characterid=%@&gameid=%@",BaseLolRoleDetail,[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken],self.characterId,self.gameId];
     NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     

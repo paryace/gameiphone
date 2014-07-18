@@ -91,8 +91,8 @@
     NSLog(@"dicttt%@",dict);
     if([[[m_tableData objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"character"])//角色
     {
-        NSString* imageName = [self getCharacterHeardWithID:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")]];
-        cell.headImageV.image = KUIImage(imageName);
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
+        cell.headImageV.imageURL = [ImageService getImageUrl4:gameImageId];
     }
     else if([[[m_tableData objectAtIndex:indexPath.row] objectForKey:@"msgType"] isEqualToString:@"title"])
     {
@@ -180,7 +180,6 @@
 //        charVC.myViewType = CHARA_INFO_MYSELF;
 //        [self.navigationController pushViewController:charVC animated:YES];
         
-        
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
         if ([dic[@"gameid"] intValue]==1) {
             CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
@@ -189,11 +188,19 @@
             VC.myViewType = CHARA_INFO_MYSELF;
             [self.navigationController pushViewController:VC animated:YES];
         }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+            NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
+            NSString * charaName ;
+            if (charaInfo) {
+                charaName = KISDictionaryHaveKey(charaInfo, @"name");
+            }
+            else {
+                charaName = @"";
+            }
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];		
             VC.isMe = @"1";
-            VC.characterName = KISDictionaryHaveKey(dic, @"name");
+            VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];
         }
 

@@ -223,6 +223,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
+         [self comeBackDelivered:sender msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         return;
     }
     //1 打过招呼，2 未打过招呼
@@ -253,7 +254,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTime = [[NSDate date] timeIntervalSince1970];
-//    dispatch_barrier_async(queue, ^{
+    dispatch_barrier_async(queue, ^{
         [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -261,7 +262,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
             });
         }];
-//    });
+    });
 }
 - (void)stopATime
 {
@@ -310,7 +311,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         return;
     }
     markTimeGroup = [[NSDate date] timeIntervalSince1970];
-//    dispatch_barrier_async(queue2, ^{
+    dispatch_barrier_async(queue2, ^{
         [DataStoreManager storeNewGroupMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -320,7 +321,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
             });
         } ];
-//    });
+    });
 }
 - (void)stopATimeGroup
 {
@@ -451,7 +452,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [info setValue:@"1" forKey:@"sayHiType"];
     [self storeNewMessage:info];
     [DataStoreManager saveOtherMsgsWithData:info];
-//    [[CharacterAndTitleService singleton] getCharacterInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
 }

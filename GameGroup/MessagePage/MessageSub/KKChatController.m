@@ -66,7 +66,6 @@ UINavigationControllerDelegate>
     NSInteger historyMsg;
     BOOL endOfTable;
     BOOL oTherPage;
-    dispatch_queue_t queue;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -187,7 +186,6 @@ UINavigationControllerDelegate>
     historyMsg = 0;
     endOfTable = YES;
     oTherPage= NO;
-    queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -2055,7 +2053,8 @@ UINavigationControllerDelegate>
     //添加新消息
     NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
     NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
-    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
+//    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
+    NSString* sendtime = [GameCommon getCurrentTime];
     NSString* msgType = KISDictionaryHaveKey(messageDict, @"msgType");
     NSString* payloadStr = KISDictionaryHaveKey(messageDict, @"payload");
     NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
@@ -2446,11 +2445,7 @@ UINavigationControllerDelegate>
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
-- (void)dealloc
-{
-    [super dealloc];
-    NSLog(@"dealloc--ChatController");
-}
+
 //发送消息
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
 {
