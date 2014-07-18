@@ -146,7 +146,7 @@
     
     [dropDownView setTitle:@"请选择角色" inSection:0];
     [dropDownView setTitle:@"请选择分类" inSection:1];
-    
+    NSLog(@"mainDict%@",self.mainDict);
     if (self.isInitialize) {
         [self InitializeInfo];
     }
@@ -158,7 +158,11 @@
 
 -(void)InitializeInfo
 {
+    [dropDownView setTitle:KISDictionaryHaveKey(self.mainDict, @"characterName") inSection:0];
+    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
     
+    
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.mainDict, @"gameid") CharacterId:KISDictionaryHaveKey(self.mainDict, @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"id") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"id")];
 }
 
 -(void)tagClick:(UIButton*)sender
