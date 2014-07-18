@@ -48,14 +48,14 @@
         [self.contentView addSubview:self.gameIconImg];
 
         
-        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(105, 35, 160, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(100, 35, 160, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor  grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         self.realmLabel.adjustsLetterSpacingToFitWidth = YES;
         [self.contentView addSubview:self.realmLabel];
         
-        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 20, 40, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-        self.editLabel.adjustsFontSizeToFitWidth = YES;
+        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 20, 50, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//        self.editLabel.adjustsFontSizeToFitWidth = YES;
         [self.contentView addSubview:self.editLabel];
-        
+    
         editBtn = [[UIButton alloc]initWithFrame:CGRectMake(270, 0, 30, 60)];
         editBtn.backgroundColor = [UIColor clearColor];
         [editBtn addTarget:self action:@selector(enterEditPage:) forControlEvents:UIControlEventTouchUpInside];

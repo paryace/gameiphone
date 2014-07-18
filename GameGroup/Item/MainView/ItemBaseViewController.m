@@ -12,6 +12,7 @@
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"
 #import "FindItemViewController.h"
+#import "PreferenceEditViewController.h"
 @interface ItemBaseViewController ()
 {
     UIView *customView;
@@ -149,10 +150,21 @@
 }
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow
 {
+    
     if (isrow) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+
         [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
+        PreferenceEditViewController *preferec = [[PreferenceEditViewController alloc]init];
+        preferec.mainDict = [firstView.firstDataArray objectAtIndex:row];
+        [self.navigationController pushViewController:preferec animated:YES];
+        
+        
+        
     }else{
         [self showMessageWindowWithContent:@"查看队伍" imageType:0];
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+
         FindItemViewController *findView = [[FindItemViewController alloc]init];
         findView.mainDict = [NSDictionary dictionaryWithDictionary:[firstView.firstDataArray objectAtIndex:row]];
         findView.isInitialize = YES;
