@@ -328,8 +328,7 @@
     if (section==0) {
         return 1;
     }
-//    return m_dataArray.count;
-     return 20;
+    return m_dataArray.count;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -354,16 +353,16 @@
     if (!cell) {
         cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
-//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
     cell.headImg.image = KUIImage(@"wow");
-//    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
-//    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-//    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
-//    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-//    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-//    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-//   cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
+    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
+   cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
 }
 
@@ -377,17 +376,17 @@
             return;
         }
     }
-//    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
-//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-//        itemInfo.isCaptain = YES;
-//    }else{
-//        itemInfo.isCaptain =NO;
-//    }
-//    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
-//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-//    [self.navigationController pushViewController:itemInfo animated:YES];
+    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
+    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        itemInfo.isCaptain = YES;
+    }else{
+        itemInfo.isCaptain =NO;
+    }
+    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    [self.navigationController pushViewController:itemInfo animated:YES];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
