@@ -96,7 +96,7 @@
 -(BOOL)onClick:(UIButton *)btn IsShow:(BOOL)isShow{
     if (isShow) {
         if(!selectCharacter){//还未选择游戏的状态
-            [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
+            [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
          [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid") reSuccess:^(id responseObject) {
@@ -179,7 +179,7 @@
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"id")] forKey:@"typeId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")] forKey:@"maxVol"];
     [paramDict setObject:@"" forKey:@"options"];
     

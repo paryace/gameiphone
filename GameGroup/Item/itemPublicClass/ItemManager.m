@@ -31,11 +31,26 @@ static ItemManager *itemManager = NULL;
     return self;
 }
 
+-(BOOL)getUpdate:(NSString*)fileName
+{
+    NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:fileName];
+    long long nowTime = [self getCurrentTime];
+    long long oldTime = [time longLongValue];
+    if ((nowTime-oldTime)>24*60*60*1000) {
+        NSString *alltimeString=[NSString stringWithFormat:@"%lld",nowTime];
+        [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:fileName];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        return YES;
+    }
+    return NO;
+}
+
+
 #pragma mark ----获取组队分类
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
-    if (arrayType) {
+    if (arrayType&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"TeamType",gameId]]) {
         if (resuccess) {
             resuccess(arrayType);
         }
@@ -67,7 +82,7 @@ static ItemManager *itemManager = NULL;
 -(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@",@"TeamLable",gameId,typeId]];
-    if (arrayTag) {
+    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@",@"TeamLable",gameId,typeId]]) {
         if (resuccess) {
             resuccess(arrayTag);
         }
@@ -100,7 +115,7 @@ static ItemManager *itemManager = NULL;
 -(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayFilterId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"FilterId",gameId]];
-    if (arrayFilterId) {
+    if (arrayFilterId&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"FilterId",gameId]]) {
         if (resuccess) {
             resuccess(arrayFilterId);
         }
@@ -155,5 +170,12 @@ static ItemManager *itemManager = NULL;
             refailure(error);
         }
     }];
+}
+
+
+-(long long)getCurrentTime{
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    nowTime = nowTime*1000;
+    return (long long)nowTime;
 }
 @end

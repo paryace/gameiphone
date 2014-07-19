@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 @protocol InfoDelegate;
 
-@interface FillInInfoViewController : BaseViewController
+@interface FillInInfoViewController : BaseViewController<UITextViewDelegate>
 @property(nonatomic,assign)id<InfoDelegate>mydelegate;
 
 @end
