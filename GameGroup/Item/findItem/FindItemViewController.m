@@ -291,6 +291,7 @@
     [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"id")
     reSuccess:^(id responseObject) {
          [self showMessageWindowWithContent:@"收藏成功" imageType:0];
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
     } reError:^(id error) {
         [self showErrorAlertView:error];
     }];
