@@ -82,8 +82,6 @@
     dropDownView.mSuperView = self.view;
     [self.view addSubview:dropDownView];
     
-    
-    
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"提交中...";
@@ -98,7 +96,6 @@
 }
 -(BOOL)onClick:(UIButton *)btn IsShow:(BOOL)isShow{
     if (isShow) {
-        NSLog(@"去你大爷的...");
         if(!selectCharacter){//还未选择游戏的状态
             [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
@@ -175,10 +172,6 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-    [self showMessageWindowWithContent:@"创建成功" imageType:0];
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    return;
     [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
@@ -198,17 +191,22 @@
         //发送通知 刷新我的组队页面
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
-        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popToRootViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+        [self showErrorAlert:error];
         [hud hide:YES];
     }];
+}
+
+-(void)showErrorAlert:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 
 }
 

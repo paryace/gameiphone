@@ -109,7 +109,7 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark ----收藏组队偏好 gameid，characterId，typeId，description，filterId
--(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId
+-(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
@@ -127,9 +127,13 @@ static ItemManager *itemManager = NULL;
     [postDict setObject:@"282" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"shoucang--->>%@",responseObject);
+        if (resuccess) {
+            resuccess(responseObject);
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"error--->>%@",error);
+        if (refailure) {
+            refailure(error);
+        }
     }];
 }
 @end
