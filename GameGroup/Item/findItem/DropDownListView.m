@@ -16,7 +16,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
     }
     return self;
 }
@@ -37,7 +36,6 @@
         if (sectionNum == 0) {
             self = nil;
         }
-        
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
@@ -63,9 +61,7 @@
             [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
-            
             [self addSubview: sectionBtnIv];
-            
             if (i<sectionNum && i != 0) {
                 UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
                 lineView.backgroundColor = [UIColor lightGrayColor];
@@ -221,20 +217,8 @@
     }
     
     cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-//    cell.textLabel.adjustsFontSizeToFitWidth=YES;
     cell.textLabel.font = [UIFont systemFontOfSize:12];
     return cell;
 }
-
-
-
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect
- {
- // Drawing code
- }
- */
 
 @end

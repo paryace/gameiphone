@@ -107,4 +107,29 @@ static ItemManager *itemManager = NULL;
     } failure:^(AFHTTPRequestOperation *operation, id error) {
     }];
 }
+
+#pragma mark ----收藏组队偏好 gameid，characterId，typeId，description，filterId
+-(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:typeId] forKey:@"typeId"];
+    if (![GameCommon isEmtity:description]) {
+        [paramDict setObject:description forKey:@"description"];
+    }
+    if (![GameCommon isEmtity:[GameCommon getNewStringWithId:filterId]]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:filterId] forKey:@"filterId"];
+    }
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"282" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"shoucang--->>%@",responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"error--->>%@",error);
+    }];
+}
 @end

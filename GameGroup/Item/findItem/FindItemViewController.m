@@ -287,25 +287,26 @@
 //收藏
 -(void)collectionBtn:(id)sender
 {
-    //[self showMessageWindowWithContent:@"没有收藏" imageType:1];
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
-    CATransition* transition = [CATransition animation];
-    transition.duration = 0.5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush; //kCATransitionMoveIn; //, kCATransitionPush, kCATransitionReveal, kCATransitionFade
-    //transition.subtype = kCATransitionFromTop; //kCATransitionFromLeft, kCATransitionFromRight, kCATransitionFromTop, kCATransitionFromBottom
-    transition.subtype = kCATransitionFromLeft;
-    [self.navigationController.view.layer addAnimation:transition forKey:nil];
-    [[self navigationController] pushViewController:myRoom animated:NO];
-    //    [UIView  beginAnimations:nil context:NULL];
-    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    //    [UIView setAnimationDuration:0.75];
-    //    [self.navigationController pushViewController:myRoom animated:NO];
-    //    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.navigationController.view cache:NO];
-    //    [UIView commitAnimations];
     
-    //    [self.navigationController pushViewController:myRoom animated:YES];
+    [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"id")];
+    
+    
+//    MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
+//    CATransition* transition = [CATransition animation];
+//    transition.duration = 0.5;
+//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    transition.type = kCATransitionPush; //kCATransitionMoveIn; //, kCATransitionPush, kCATransitionReveal, kCATransitionFade
+//    //transition.subtype = kCATransitionFromTop; //kCATransitionFromLeft, kCATransitionFromRight, kCATransitionFromTop, kCATransitionFromBottom
+//    transition.subtype = kCATransitionFromLeft;
+//    [self.navigationController.view.layer addAnimation:transition forKey:nil];
+//    [[self navigationController] pushViewController:myRoom animated:NO];
+//    //    [UIView  beginAnimations:nil context:NULL];
+//    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//    //    [UIView setAnimationDuration:0.75];
+//    //    [self.navigationController pushViewController:myRoom animated:NO];
+//    //    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.navigationController.view cache:NO];
+//    //    [UIView commitAnimations];
+//    //    [self.navigationController pushViewController:myRoom animated:YES];
 }
 //创建组队
 -(void)didClickCreateItem:(id)sender

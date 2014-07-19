@@ -19,4 +19,7 @@
 
 //组队房间过滤
 -(void)getFilterId:(NSString*)gameId;
+
+//收藏组队偏好
+-(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId;
 @end

@@ -8,6 +8,7 @@
 
 #import "CreateItemViewController.h"
 #import "EGOImageView.h"
+#import "ChooseListView.h"
 @interface CreateItemViewController ()
 {
     UITableView *m_myTableView;
@@ -45,8 +46,7 @@
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
 
-    
-    
+
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     m_listDict = [NSMutableDictionary dictionary];
     m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
@@ -64,16 +64,38 @@
     
     firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择角色"isPicker:YES isTurn:NO tag:0];
     
-    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:NO tag:0];
+    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:YES tag:3];
     thirdTf = [self buildViewWithFrame:CGRectMake(0, startX+82, 320, 40) leftImg:@"item_4" title:@"描述" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"填写描述"isPicker:NO isTurn:YES tag:1];
     forthTf =  [self buildViewWithFrame:CGRectMake(0, startX+140, 320, 40) leftImg:@"item_5" title:@"高级" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"高级条件"isPicker:NO isTurn:YES tag:2];
 
+    ChooseListView * dropDownView = [[ChooseListView alloc] initWithFrame:CGRectMake(0, startX+41, 320, 40) dataSource:self delegate:self];
+    dropDownView.backgroundColor = [UIColor clearColor];
+    dropDownView.mSuperView = self.view;
+    [self.view addSubview:dropDownView];
+    
+    
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"提交中...";
 
     
+}
+#pragma mark -- dropDownListDelegate
+-(void) chooseAtSection:(NSInteger)index
+{
+    secondTf.text = @"你大爷";
+}
+-(NSInteger)numberOfRowsInSection{
+    return 10;
+}
+-(NSString *)titleInSection:(NSInteger) index
+{
+    return @"选择分类";
+}
+-(NSInteger)defaultShowSection:(NSInteger)section
+{
+    return 0;
 }
 
 
@@ -168,6 +190,8 @@
     else if (sender.tag ==2)
     {
          NSLog(@"123123131231");//高级
+    }else if (sender.tag==3){
+         NSLog(@"123123131231");//分类
     }
 }
 //点击toolbar 确定button
@@ -222,18 +246,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
