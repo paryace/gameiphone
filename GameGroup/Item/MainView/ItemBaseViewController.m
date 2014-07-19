@@ -46,6 +46,7 @@
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
     
     
     
@@ -105,6 +106,13 @@
      seg.selectedSegmentIndex = 1;
     [self getMyRoomFromNet];
 }
+-(void)refreshPreference:(id)sender
+{
+    seg.selectedSegmentIndex = 0;
+    [self getPreferencesWithNet];
+}
+
+
 -(void)getPreferencesWithNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

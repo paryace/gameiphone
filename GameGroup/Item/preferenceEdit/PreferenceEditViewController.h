@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface PreferenceEditViewController : BaseViewController
+@interface PreferenceEditViewController : BaseViewController<UIPickerViewDelegate,UIPickerViewDataSource>
 @property(nonatomic,strong)NSDictionary * mainDict;
 
 @end

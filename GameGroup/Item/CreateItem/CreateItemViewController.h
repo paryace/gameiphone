@@ -9,6 +9,6 @@
 #import "BaseViewController.h"
 #import "FillInInfoViewController.h"
 
-@interface CreateItemViewController : BaseViewController<UIPickerViewDelegate,UIPickerViewDataSource,InfoDelegate>
+@interface CreateItemViewController : BaseViewController<UIPickerViewDelegate,UIPickerViewDataSource,InfoDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 
 @end
