@@ -177,9 +177,9 @@
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"id")] forKey:@"typeIds"];
-    [paramDict setObject:@"25" forKey:@"maxVol"];
-    [paramDict setObject:secondTf.text forKey:@"options"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"id")] forKey:@"typeId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")] forKey:@"maxVol"];
+    [paramDict setObject:@"" forKey:@"options"];
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
