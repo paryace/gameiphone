@@ -56,7 +56,7 @@
 //        self.editLabel.adjustsFontSizeToFitWidth = YES;
         [self.contentView addSubview:self.editLabel];
     
-        editBtn = [[UIButton alloc]initWithFrame:CGRectMake(270, 0, 30, 60)];
+        editBtn = [[UIButton alloc]initWithFrame:CGRectMake(250, 0, 50, 60)];
         editBtn.backgroundColor = [UIColor clearColor];
         [editBtn addTarget:self action:@selector(enterEditPage:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:editBtn];
