@@ -247,7 +247,7 @@
         return YES;
     }else if(section == 1){
         if(!selectCharacter){//还未选择游戏的状态
-            [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
+            [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
@@ -287,25 +287,31 @@
 //收藏
 -(void)collectionBtn:(id)sender
 {
-    //[self showMessageWindowWithContent:@"没有收藏" imageType:1];
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
-    CATransition* transition = [CATransition animation];
-    transition.duration = 0.5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush; //kCATransitionMoveIn; //, kCATransitionPush, kCATransitionReveal, kCATransitionFade
-    //transition.subtype = kCATransitionFromTop; //kCATransitionFromLeft, kCATransitionFromRight, kCATransitionFromTop, kCATransitionFromBottom
-    transition.subtype = kCATransitionFromLeft;
-    [self.navigationController.view.layer addAnimation:transition forKey:nil];
-    [[self navigationController] pushViewController:myRoom animated:NO];
-    //    [UIView  beginAnimations:nil context:NULL];
-    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    //    [UIView setAnimationDuration:0.75];
-    //    [self.navigationController pushViewController:myRoom animated:NO];
-    //    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.navigationController.view cache:NO];
-    //    [UIView commitAnimations];
     
-    //    [self.navigationController pushViewController:myRoom animated:YES];
+    [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"id") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"id")
+    reSuccess:^(id responseObject) {
+         [self showMessageWindowWithContent:@"收藏成功" imageType:0];
+    } reError:^(id error) {
+        [self showErrorAlertView:error];
+    }];
+    
+    
+//    MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
+//    CATransition* transition = [CATransition animation];
+//    transition.duration = 0.5;
+//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    transition.type = kCATransitionPush; //kCATransitionMoveIn; //, kCATransitionPush, kCATransitionReveal, kCATransitionFade
+//    //transition.subtype = kCATransitionFromTop; //kCATransitionFromLeft, kCATransitionFromRight, kCATransitionFromTop, kCATransitionFromBottom
+//    transition.subtype = kCATransitionFromLeft;
+//    [self.navigationController.view.layer addAnimation:transition forKey:nil];
+//    [[self navigationController] pushViewController:myRoom animated:NO];
+//    //    [UIView  beginAnimations:nil context:NULL];
+//    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//    //    [UIView setAnimationDuration:0.75];
+//    //    [self.navigationController pushViewController:myRoom animated:NO];
+//    //    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.navigationController.view cache:NO];
+//    //    [UIView commitAnimations];
+//    //    [self.navigationController pushViewController:myRoom animated:YES];
 }
 //创建组队
 -(void)didClickCreateItem:(id)sender

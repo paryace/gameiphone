@@ -8,6 +8,7 @@
 
 #import "PreferenceEditViewController.h"
 #import "EGOImageView.h"
+#import "ItemManager.h"
 @interface PreferenceEditViewController ()
 {
     UITableView *m_myTableView;
@@ -43,8 +44,17 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"偏好设置" withBackButton:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFilter:) name:UpdateFilterId object:nil];
+    
     gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]] ];
-    m_roleArray =[NSMutableArray arrayWithArray:[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+    m_roleArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"FilterId_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]]];
+    
+    if (m_roleArray.count<1) {
+        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]];
+    }
+    
+    
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
@@ -58,15 +68,23 @@
     
 }
 
+-(void)getFilter:(NSNotification*)notification
+{
+    m_roleArray = notification.object;
+    [m_rolePickerView reloadInputViews];
+}
+
 -(void)didUploadInfo:(id)sender
 {
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+    NSDictionary *filDic = [m_roleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"preferenceId")] forKey:@"preferenceId"];
     [paramDict setObject:m_dsTextView.text forKey:@"description"];
     [paramDict setObject:secondTf.text forKey:@"options"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(filDic, @"constId")] forKey:@"filterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")] forKey:@"typeId"]
     ;
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -196,7 +214,7 @@
     if ([thirdTf isFirstResponder]) {
         if ([m_roleArray count] != 0) {
             NSDictionary *dict =[m_roleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
-            thirdTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"name")];
+            thirdTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"value")];
             [thirdTf resignFirstResponder];
             
         }
@@ -229,7 +247,7 @@
 {
     if (pickerView ==m_rolePickerView) {
         NSDictionary *dic = [m_roleArray objectAtIndex:row];
-        return [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+        return [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value")];
     }else{
     NSString *title = KISDictionaryHaveKey([gameInfoArray objectAtIndex:row], @"value");
     return title;

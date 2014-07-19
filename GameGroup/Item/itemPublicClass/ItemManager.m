@@ -102,9 +102,39 @@ static ItemManager *itemManager = NULL;
         NSLog(@"getFilterId--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"FilterId",gameId]];
-            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamLable object:responseObject];
+            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateFilterId object:responseObject];
+            
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
+}
+
+#pragma mark ----收藏组队偏好 gameid，characterId，typeId，description，filterId
+-(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:typeId] forKey:@"typeId"];
+    if (![GameCommon isEmtity:description]) {
+        [paramDict setObject:description forKey:@"description"];
+    }
+    if (![GameCommon isEmtity:[GameCommon getNewStringWithId:filterId]]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:filterId] forKey:@"filterId"];
+    }
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"282" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
     }];
 }
 @end

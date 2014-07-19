@@ -8,6 +8,9 @@
 
 #import "CreateItemViewController.h"
 #import "EGOImageView.h"
+#import "ChooseListView.h"
+#import "ItemManager.h"
+
 @interface CreateItemViewController ()
 {
     UITableView *m_myTableView;
@@ -19,6 +22,11 @@
     UITextField *thirdTf;
     UITextField *forthTf;
     UIToolbar *toolbar;
+    ChooseListView * dropDownView;
+    
+    NSMutableDictionary * selectCharacter ;
+    NSMutableDictionary * selectType;
+    NSArray *arrayType;
 }
 @end
 
@@ -37,6 +45,8 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建组队" withBackButton:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamType:) name:UpdateTeamType object:nil];
+    arrayType = [NSArray array];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
@@ -45,8 +55,7 @@
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
 
-    
-    
+
     gameInfoArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     m_listDict = [NSMutableDictionary dictionary];
     m_gamePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
@@ -64,10 +73,14 @@
     
     firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择角色"isPicker:YES isTurn:NO tag:0];
     
-    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:NO tag:0];
+    secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:YES tag:3];
     thirdTf = [self buildViewWithFrame:CGRectMake(0, startX+82, 320, 40) leftImg:@"item_4" title:@"描述" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"填写描述"isPicker:NO isTurn:YES tag:1];
     forthTf =  [self buildViewWithFrame:CGRectMake(0, startX+140, 320, 40) leftImg:@"item_5" title:@"高级" rightImg:@"right" RightImageSize:CGSizeMake(12.5, 12.5) placeholder:@"高级条件"isPicker:NO isTurn:YES tag:2];
 
+    dropDownView = [[ChooseListView alloc] initWithFrame:CGRectMake(0, startX+41, 320, 40) dataSource:self delegate:self];
+    dropDownView.backgroundColor = [UIColor clearColor];
+    dropDownView.mSuperView = self.view;
+    [self.view addSubview:dropDownView];
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
@@ -75,7 +88,47 @@
 
     
 }
-
+#pragma mark --
+-(void) chooseAtSection:(NSInteger)index
+{
+    selectType = [arrayType objectAtIndex:index];
+    secondTf.text = KISDictionaryHaveKey(selectType, @"value");
+}
+-(BOOL)onClick:(UIButton *)btn IsShow:(BOOL)isShow{
+    if (isShow) {
+        if(!selectCharacter){//还未选择游戏的状态
+            [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
+            return NO;
+        }
+         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
+        return YES;
+    }
+    return YES;
+}
+#pragma mark --
+-(NSInteger)numberOfRowsInSection{
+    return arrayType.count;
+}
+-(NSString *)titleInSection:(NSInteger) index
+{
+    if (arrayType.count>0) {
+        return KISDictionaryHaveKey([arrayType objectAtIndex:index], @"value");
+    }
+    return @"";
+}
+-(NSInteger)defaultShowSection:(NSInteger)section
+{
+    return 0;
+}
+#pragma mark -- 分类请求成功通知
+-(void)updateTeamType:(NSNotification*)notification
+{
+    NSArray * responseObject = notification.object;
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        arrayType = responseObject;
+        [dropDownView.mTableView reloadData];
+    }
+}
 
 //创建快捷方式
 -(UITextField *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title rightImg:(NSString *)rightImg RightImageSize:(CGSize)rightImageSize placeholder:(NSString *)placeholder isPicker:(BOOL)ispicker isTurn:(BOOL)isTurn tag:(NSInteger)tag
@@ -119,17 +172,12 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-    [self showMessageWindowWithContent:@"创建成功" imageType:0];
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    return;
     [hud show:YES];
-    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")] forKey:@"characterId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
-    [paramDict setObject:@"1" forKey:@"typeIds"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"id")] forKey:@"typeIds"];
     [paramDict setObject:@"25" forKey:@"maxVol"];
     [paramDict setObject:secondTf.text forKey:@"options"];
     
@@ -143,17 +191,22 @@
         //发送通知 刷新我的组队页面
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
-        [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popToRootViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+        [self showErrorAlert:error];
         [hud hide:YES];
     }];
+}
+
+-(void)showErrorAlert:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 
 }
 
@@ -168,16 +221,18 @@
     else if (sender.tag ==2)
     {
          NSLog(@"123123131231");//高级
+    }else if (sender.tag==3){
+         NSLog(@"123123131231");//分类
     }
 }
 //点击toolbar 确定button
 -(void)selectServerNameOK:(id)sender
 {
     if ([gameInfoArray count] != 0) {
-        NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
-        firstTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(dict, @"simpleRealm"),KISDictionaryHaveKey(dict, @"name")];
+        selectCharacter =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
+        firstTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
         [firstTf resignFirstResponder];
-        m_listDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
+        m_listDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")],@"characterId", nil];
         
     }
 }
@@ -222,18 +277,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
