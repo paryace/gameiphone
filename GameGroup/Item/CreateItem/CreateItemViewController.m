@@ -174,6 +174,18 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
+    if (!selectCharacter) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        return;
+    }
+    if (!selectType) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        return;
+    }
+    if ([GameCommon isEmtity:thirdTf.text]) {
+        [self showAlertViewWithTitle:@"提示" message:@"组队描述内容不能为空" buttonTitle:@"OK"];
+        return;
+    }
     [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
