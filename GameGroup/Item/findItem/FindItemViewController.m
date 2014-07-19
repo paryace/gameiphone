@@ -61,10 +61,6 @@
     [self setTopViewWithTitle:@"寻找组队" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamType:) name:UpdateTeamType object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamLable:) name:UpdateTeamLable object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFilterId:) name:UpdateFilterId object:nil];
-    
     //初始化数据源
     m_dataArray = [NSMutableArray array];
     m_charaArray = [NSMutableArray array];
@@ -182,33 +178,30 @@
     }
 }
 #pragma mark -- 分类请求成功通知
--(void)updateTeamType:(NSNotification*)notification
+-(void)updateTeamType:(id)responseObject
 {
-    NSArray * responseObject = notification.object;
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
         [dropDownView.mTableView reloadData];
     }
 }
 #pragma mark -- 标签请求成功通知
--(void)updateTeamLable:(NSNotification*)notification
+-(void)updateTeamLable:(id)responseObject
 {
-     NSArray * responseObject = notification.object;
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayTag = responseObject;
         [tagList setTags:arrayTag];
     }
 }
 #pragma mark -- Filter请求成功通知
--(void)updateFilterId:(NSNotification*)notification
+-(void)updateFilterId:(id)responseObject
 {
-    NSArray * responseObject = notification.object;
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayFilter = responseObject;
         [self showFilterMenu];
     }
 }
-
+//显示房间过滤菜单
 -(void)showFilterMenu
 {
     NSMutableArray *menuItems = [NSMutableArray array];
@@ -222,6 +215,7 @@
     first.alignment = NSTextAlignmentCenter;
     [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX+40+10, 50, 25) menuItems:menuItems];
 }
+#pragma mark -- 筛选
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
     selectFilter = [arrayFilter objectAtIndex:sender.tag];
@@ -250,7 +244,11 @@
             [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
-        [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
+        [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
+                [self updateTeamType:responseObject];
+        } reError:^(id error) {
+                [self showErrorAlertView:error];
+        }];
         return YES;
     }
     return NO;
@@ -331,7 +329,11 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-    [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(selectCharacter, @"gameid")];
+    [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
+        [self updateFilterId:responseObject];
+    } reError:^(id error) {
+        [self showErrorAlertView:error];
+    }];
 }
 
 #pragma mark ----tableview delegate  datasourse
@@ -440,7 +442,11 @@
     
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
-        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"id")];
+        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"id")reSuccess:^(id responseObject) {
+            [self updateTeamLable:responseObject];
+        } reError:^(id error) {
+            [self showErrorAlertView:error];
+        }];
         
     }
     [self reloadView:0 offWidth:60 offWidth2:0];

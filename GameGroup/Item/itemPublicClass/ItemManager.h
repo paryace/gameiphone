@@ -12,13 +12,13 @@
 + (ItemManager*)singleton;
 
 //获取类型列表
--(void)getTeamType:(NSString*)gameId;
+-(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 //获取标签列表
--(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId;
+-(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 //组队房间过滤
--(void)getFilterId:(NSString*)gameId;
+-(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 //收藏组队偏好
 -(void)collectionItem:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;

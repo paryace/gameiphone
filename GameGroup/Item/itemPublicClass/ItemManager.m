@@ -32,11 +32,13 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark ----获取组队分类
--(void)getTeamType:(NSString*)gameId
+-(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
     if (arrayType) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamType object:arrayType];
+        if (resuccess) {
+            resuccess(arrayType);
+        }
         return;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
@@ -50,19 +52,25 @@ static ItemManager *itemManager = NULL;
         NSLog(@"getTeamType--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
-             [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamType object:responseObject];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-
+        if (refailure) {
+            refailure(error);
+        }
     }];
 }
 
 #pragma mark ----获取组队偏好标签 gameid，typeId
--(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId
+-(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@",@"TeamLable",gameId,typeId]];
     if (arrayTag) {
-         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamLable object:arrayTag];
+        if (resuccess) {
+            resuccess(arrayTag);
+        }
         return;
     }    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
@@ -77,18 +85,25 @@ static ItemManager *itemManager = NULL;
         NSLog(@"getTeamLable--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
            [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@%@",@"TeamLable",gameId,typeId]];
-            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamLable object:responseObject];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
     }];
 }
 
 #pragma mark ----组队房间过滤 gameid
--(void)getFilterId:(NSString*)gameId
+-(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayFilterId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"FilterId",gameId]];
     if (arrayFilterId) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateFilterId object:arrayFilterId];
+        if (resuccess) {
+            resuccess(arrayFilterId);
+        }
         return;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
@@ -102,9 +117,14 @@ static ItemManager *itemManager = NULL;
         NSLog(@"getFilterId--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"FilterId",gameId]];
-            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamLable object:responseObject];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
     }];
 }
 

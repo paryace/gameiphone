@@ -45,7 +45,6 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"创建组队" withBackButton:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTeamType:) name:UpdateTeamType object:nil];
     arrayType = [NSArray array];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -100,7 +99,11 @@
             [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
-         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
+         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid") reSuccess:^(id responseObject) {
+             [self updateTeamType:responseObject];
+         } reError:^(id error) {
+             [self showErrorAlert:error];
+         }];
         return YES;
     }
     return YES;
@@ -121,9 +124,8 @@
     return 0;
 }
 #pragma mark -- 分类请求成功通知
--(void)updateTeamType:(NSNotification*)notification
+-(void)updateTeamType:(id)responseObject
 {
-    NSArray * responseObject = notification.object;
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
         [dropDownView.mTableView reloadData];
@@ -221,8 +223,6 @@
     else if (sender.tag ==2)
     {
          NSLog(@"123123131231");//高级
-    }else if (sender.tag==3){
-         NSLog(@"123123131231");//分类
     }
 }
 //点击toolbar 确定button
@@ -271,9 +271,6 @@
 {
     thirdTf.text = info;
 }
-
-
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
