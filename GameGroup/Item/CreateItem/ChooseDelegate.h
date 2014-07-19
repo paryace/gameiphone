@@ -13,6 +13,7 @@
 @optional
 
 -(void) chooseAtSection:(NSInteger)index;
+-(BOOL)onClick:(UIButton *)btn IsShow:(BOOL)isShow;
 @end
 
 @protocol ChooseDataSource <NSObject>

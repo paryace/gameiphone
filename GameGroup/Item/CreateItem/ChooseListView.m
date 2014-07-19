@@ -39,12 +39,17 @@
 
 -(void)sectionBtnTouch:(UIButton *)btn
 {
+   
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
     if (currentExtendSection == section) {
+        [self.dropDownDelegate onClick:btn IsShow:NO];
         [self hideExtendedChooseView];
     }else{
-        currentExtendSection = section;
-        [self showChooseListViewInSection:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
+         BOOL open = [self.dropDownDelegate onClick:btn IsShow:YES];
+        if (open) {
+            currentExtendSection = section;
+            [self showChooseListViewInSection:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
+        }
     }
 }
 
