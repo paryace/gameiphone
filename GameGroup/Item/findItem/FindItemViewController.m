@@ -15,6 +15,7 @@
 #import "CreateTeamCell.h"
 #import "ItemManager.h"
 #import "KxMenu.h"
+#import "MJRefresh.h"
 
 @interface FindItemViewController ()
 {
@@ -25,6 +26,11 @@
     UIView *tagView;
     UIView *screenView;
     UIButton *screenBtn;
+    
+    MJRefreshHeaderView *m_header;
+    MJRefreshFooterView *m_footer;
+    NSInteger           m_totalPage;
+    NSInteger           m_currentPage;
     
     NSArray *arrayTag;
     NSArray *arrayType;
@@ -140,6 +146,9 @@
     [tagView addSubview:tagList];
     [self.view addSubview:tagView];
     
+    [self addFooter];
+    [self addHeader];
+    
     [dropDownView setTitle:@"请选择角色" inSection:0];
     [dropDownView setTitle:@"请选择分类" inSection:1];
     NSLog(@"mainDict%@",self.mainDict);
@@ -157,13 +166,14 @@
     [dropDownView setTitle:KISDictionaryHaveKey(self.mainDict, @"characterName") inSection:0];
     [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
     
-    
+    m_currentPage = 0;
     [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.mainDict, @"gameid") CharacterId:KISDictionaryHaveKey(self.mainDict, @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId")];
 }
 
 -(void)tagClick:(UIButton*)sender
 {
     mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
+    m_currentPage = 0;
     [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")];
 
     if([mSearchBar isFirstResponder]){
@@ -219,6 +229,7 @@
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
     selectFilter = [arrayFilter objectAtIndex:sender.tag];
+    m_currentPage = 0;
     [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectFilter, @"constId")]];
 }
 
@@ -230,6 +241,7 @@
     }
     else if (section == 1){
         selectType =[arrayType objectAtIndex:index];
+        m_currentPage = 0;
         [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:nil];
     }
 }
@@ -293,24 +305,6 @@
     } reError:^(id error) {
         [self showErrorAlertView:error];
     }];
-    
-    
-//    MyRoomViewController *myRoom = [[MyRoomViewController alloc]init];
-//    CATransition* transition = [CATransition animation];
-//    transition.duration = 0.5;
-//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//    transition.type = kCATransitionPush; //kCATransitionMoveIn; //, kCATransitionPush, kCATransitionReveal, kCATransitionFade
-//    //transition.subtype = kCATransitionFromTop; //kCATransitionFromLeft, kCATransitionFromRight, kCATransitionFromTop, kCATransitionFromBottom
-//    transition.subtype = kCATransitionFromLeft;
-//    [self.navigationController.view.layer addAnimation:transition forKey:nil];
-//    [[self navigationController] pushViewController:myRoom animated:NO];
-//    //    [UIView  beginAnimations:nil context:NULL];
-//    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-//    //    [UIView setAnimationDuration:0.75];
-//    //    [self.navigationController pushViewController:myRoom animated:NO];
-//    //    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.navigationController.view cache:NO];
-//    //    [UIView commitAnimations];
-//    //    [self.navigationController pushViewController:myRoom animated:YES];
 }
 //创建组队
 -(void)didClickCreateItem:(id)sender
@@ -425,6 +419,7 @@
 #pragma mark ----搜索
 - (void)doSearch:(UISearchBar *)searchBar{
     NSLog(@"searchBar-Text-%@",searchBar.text);
+    m_currentPage = 0;
     [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:searchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")];
 }
 
@@ -485,7 +480,7 @@
     if (![GameCommon isEmtity:[GameCommon getNewStringWithId:filterId]]) {
         [paramDict setObject:[GameCommon getNewStringWithId:filterId] forKey:@"filterId"];
     }
-    [paramDict setObject:@"0" forKey:@"firstResult"];
+    [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_currentPage] forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
@@ -493,6 +488,8 @@
     [postDict setObject:@"264" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_footer endRefreshing];
+        [m_header endRefreshing];
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [m_dataArray removeAllObjects];
@@ -500,6 +497,8 @@
             [m_myTabelView reloadData];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [m_footer endRefreshing];
+        [m_header endRefreshing];
         [hud hide:YES];
         [m_dataArray removeAllObjects];
         [m_myTabelView reloadData];
@@ -516,6 +515,63 @@
             [alert show];
         }
     }
+}
+
+
+#pragma mark --加载刷新
+- (void)addFooter
+{
+    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
+    CGRect headerRect = footer.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    footer.arrowImage.frame = headerRect;
+    footer.activityView.center = footer.arrowImage.center;
+    footer.scrollView = m_myTabelView;
+        footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+            if (!selectCharacter) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+                [m_footer endRefreshing];
+                [m_header endRefreshing];
+                return;
+            }
+            if (!selectType) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+                [m_footer endRefreshing];
+                [m_header endRefreshing];
+                return;
+            }
+            m_currentPage=m_dataArray.count;
+            [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")];
+        
+    };
+    m_footer = footer;
+    
+}
+- (void)addHeader
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = m_myTabelView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        if (!selectCharacter) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+            [m_footer endRefreshing];
+            [m_header endRefreshing];
+            return;
+        }
+        if (!selectType) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+            [m_footer endRefreshing];
+            [m_header endRefreshing];
+            return;
+        }
+        m_currentPage = 0;
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")];
+    };
+    m_header = header;
 }
 
 - (void)didReceiveMemoryWarning
