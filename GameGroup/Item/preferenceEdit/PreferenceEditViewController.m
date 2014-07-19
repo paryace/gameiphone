@@ -45,13 +45,15 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"偏好设置" withBackButton:YES];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getFilter:) name:UpdateFilterId object:nil];
-    
     gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]] ];
     m_roleArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"FilterId_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]]];
     
     if (m_roleArray.count<1) {
-        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]];
+        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")] reSuccess:^(id responseObject) {
+            [self getFilter:responseObject];
+        } reError:^(id error) {
+            [self showErrorAlertView:error];
+        }];
     }
     
     
@@ -68,9 +70,10 @@
     
 }
 
--(void)getFilter:(NSNotification*)notification
+-(void)getFilter:(id)responseObject
 {
-    m_roleArray = notification.object;
+    NSMutableArray * resp = responseObject;
+    m_roleArray = resp;
     [m_rolePickerView reloadInputViews];
 }
 
@@ -99,16 +102,21 @@
         [self showMessageWindowWithContent:@"修改成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+        [self showErrorAlertView:error];
         [hud hide:YES];
     }];
 
+}
+//弹出提示框
+-(void)showErrorAlertView:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 }
 
 
