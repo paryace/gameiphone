@@ -49,9 +49,6 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
     
     
-    
-    
-    
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
@@ -103,12 +100,21 @@
 }
 -(void)refreshMyList:(id)sender
 {
-     seg.selectedSegmentIndex = 1;
+    if (seg.selectedSegmentIndex ==1) {
+    }else{
+        seg.selectedSegmentIndex = 1;
+        [self changeView:nil];
+    }
     [self getMyRoomFromNet];
 }
 -(void)refreshPreference:(id)sender
 {
+    if (seg.selectedSegmentIndex ==0) {
+        
+    }else{
     seg.selectedSegmentIndex = 0;
+    [self changeView:nil];
+    }
     [self getPreferencesWithNet];
 }
 
@@ -208,11 +214,11 @@
 }
 
 
--(void)changeView:(UISegmentedControl*)seg
+-(void)changeView:(UISegmentedControl*)segment
 {
 //    NSLog(@"%@",self.view.subviews)
 
-    switch (seg.selectedSegmentIndex) {
+    switch (segment.selectedSegmentIndex) {
         case 0:
             [UIView beginAnimations:@"animation" context:nil];
             [UIView setAnimationDuration:1.0f];
@@ -255,6 +261,7 @@
     }else{
         itemInfo.isCaptain =NO;
     }
+    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     [self.navigationController pushViewController:itemInfo animated:YES];
 

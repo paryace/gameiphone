@@ -49,6 +49,7 @@
     m_roleArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"FilterId_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]]];
     
     if (m_roleArray.count<1) {
+        
         [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")] reSuccess:^(id responseObject) {
             [self getFilter:responseObject];
         } reError:^(id error) {

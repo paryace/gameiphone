@@ -12,5 +12,6 @@
 @interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate,UIAlertViewDelegate>
 @property(nonatomic,strong)NSMutableDictionary *infoDict;
 @property(nonatomic,strong)NSString *itemId;
+@property(nonatomic,strong)NSString *gameid;
 @property(nonatomic,assign)BOOL isCaptain;
 @end
