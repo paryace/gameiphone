@@ -218,8 +218,8 @@
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:self.itemId forKey:@"roomId"];
-    [paramDict setObject:self.gameid forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
 
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
