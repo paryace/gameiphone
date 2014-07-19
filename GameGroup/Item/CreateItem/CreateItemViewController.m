@@ -25,6 +25,7 @@
     ChooseListView * dropDownView;
     
     NSMutableDictionary * selectCharacter ;
+    NSMutableDictionary * selectType;
     NSArray *arrayType;
 }
 @end
@@ -92,7 +93,8 @@
 #pragma mark --
 -(void) chooseAtSection:(NSInteger)index
 {
-    secondTf.text = KISDictionaryHaveKey([arrayType objectAtIndex:index], @"value");
+    selectType = [arrayType objectAtIndex:index];
+    secondTf.text = KISDictionaryHaveKey(selectType, @"value");
 }
 -(BOOL)onClick:(UIButton *)btn IsShow:(BOOL)isShow{
     if (isShow) {
@@ -178,12 +180,11 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
     return;
     [hud show:YES];
-    NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")] forKey:@"characterId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
-    [paramDict setObject:@"1" forKey:@"typeIds"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"id")] forKey:@"typeIds"];
     [paramDict setObject:@"25" forKey:@"maxVol"];
     [paramDict setObject:secondTf.text forKey:@"options"];
     

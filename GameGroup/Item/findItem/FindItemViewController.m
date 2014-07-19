@@ -247,7 +247,7 @@
         return YES;
     }else if(section == 1){
         if(!selectCharacter){//还未选择游戏的状态
-            [self showAlertViewWithTitle:@"警告" message:@"请先选择游戏角色" buttonTitle:@"OK"];
+            [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")];
