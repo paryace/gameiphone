@@ -334,4 +334,6 @@
 +(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;
 
 +(void)newSaveFriendList:(NSArray *)array withshiptype:(NSString *)nameindex;
+
++(void)newSaveFriendInfo:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 @end

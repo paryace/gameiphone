@@ -1235,6 +1235,12 @@
         }
     }];
 }
++(void)newSaveFriendInfo:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [self saveUserInfo:userInfo withshiptype:shiptype Loco:localContext];
+    }];
+}
 
 #pragma mark-存储所有人的列表信息 (新)
 +(void)newSaveAllUserWithUserManagerList:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype
