@@ -23,11 +23,9 @@
 #import "GameXmppStream.h"
 #import "GameXmppReconnect.h"
 @implementation XMPPHelper
-//@synthesize xmppStream,xmppvCardStorage,xmppvCardTempModule,xmppvCardAvatarModule,xmppvCardTemp,account,password,buddyListDelegate,chatDelegate,xmpprosterDelegate,processFriendDelegate,xmpptype,success,fail,regsuccess,regfail,xmppRosterscallback,myVcardTemp,xmppRosterMemoryStorage,xmppRoster;
 
 {
     NSOperationQueue *queuemecomback ;
-    dispatch_queue_t queue;
 }
 
 -(id)init
@@ -35,7 +33,6 @@
     self = [super init];
     if (self) {
         
-        queue = dispatch_queue_create("com.dispatch.normalcomback", NULL);
         queuemecomback = [[NSOperationQueue alloc]init];
         [queuemecomback setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
@@ -74,14 +71,6 @@
 	[[self xmppStream] sendElement:presence];
 }
 -(BOOL)connect{
-
-//    host = @"192.168.0.133";
-    
- //   host = @"221.122.114.216";
-//    theaccount = @"15100000000@52pet.net";
-//    thepassword = @"0AB89AC5C55D40198EF10B39257DA1C4";
-
-
     if (![self.xmppStream isDisconnected]) {
         return YES;
         NSLog(@"连接不成功");
@@ -94,10 +83,6 @@
     host = [hostArray objectAtIndex:0];
     
     [self.xmppStream setHostName:host];
-
-    //连接服务器
-   // NSError *err = nil;
-    
     [self.xmppReconnect manualStart];
     
     return YES;
@@ -251,7 +236,6 @@
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             [dict setObject:@"sayHello" forKey:@"msgType"];
             NSString * shiptype = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if (shiptype.length > 0) {
@@ -263,8 +247,6 @@
         }
         else if([msgtype isEqualToString:@"deletePerson"])//取消关注
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:@"deletePerson" forKey:@"msgType"];
             NSString * shiptype = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if (shiptype.length > 0) {
@@ -277,16 +259,13 @@
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             [dict setObject:msgtype forKey:@"msgType"];
-            NSString *payloStr = [[message elementForName:@"payload"] stringValue];
-            NSString *title = KISDictionaryHaveKey([payloStr JSONValue],@"title");
+            NSString *title = KISDictionaryHaveKey([[[message elementForName:@"payload"] stringValue] JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             [dict setObject:msgtype forKey:@"msgType"];
             NSArray* arr = [msg JSONValue];
             NSString* dis = @"";
@@ -309,7 +288,6 @@
                 || [msgtype isEqualToString:@"mydynamicmsg"]//与我相关
                 || [msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:payload forKey:@"payLoad"];
@@ -317,7 +295,6 @@
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             [dict setObject:msgtype forKey:@"msgType"];
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
@@ -326,7 +303,6 @@
         else if([msgtype isEqualToString:@"inGroupSystemMsgJoinGroup"]//好友加入群
                 ||[msgtype isEqualToString:@"inGroupSystemMsgQuitGroup"])//好友退出群
         {
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payloadStr = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             if (payloadStr.length>0) {
                 [dict setObject:payloadStr forKey:@"payload"];
@@ -347,8 +323,6 @@
                 ||[msgtype isEqualToString:@"kickOffGroup"]//被踢出群的消息
                 ||[msgtype isEqualToString:@"groupRecommend"]//群推荐
                 ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
@@ -361,7 +335,6 @@
         //群组公告消息
         else if ([msgtype isEqualToString:@"groupBillboard"])
         {
-            [self comeBackDelivered:from msgId:msgId];
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
@@ -432,32 +405,9 @@
     }
     return @"新的群消息";
 }
-#pragma mark 发送反馈消息
-- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId//发送送达消息
-{
-    NSDictionary * dic = @{@"msgId":msgId,@"senderId":sender};
-    dispatch_barrier_async(queue, ^{
-        [self comeBack:dic];
-    });
-}
-- (void)comeBack:(NSDictionary*)msgDic
-{
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(msgDic, @"msgId"),@"src_id",@"true",@"received",@"Delivered",@"msgStatus", nil];
-    NSString *to=[[KISDictionaryHaveKey(msgDic, @"senderId") componentsSeparatedByString:@"/"] objectAtIndex:0];
-    NSString * nowTime=[GameCommon getCurrentTime];
-    NSString * message=[dic JSONRepresentation];
-    NSString * userid = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    NSString * domaim = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
-    NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
-    NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:KISDictionaryHaveKey(msgDic, @"msgId") From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
-    if (![self sendMessage:mes]) {
-        return;
-    }
-}
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence
 {
 }
-
 //接受到好友状态更新
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence{
 }
@@ -492,7 +442,6 @@
 - (void)xmppPing:(XMPPPing *)sender didNotReceivePong:(NSString *)pingID dueToTimeout:(NSTimeInterval)timeout{
     [self disconnect];
 }
-
 - (void)xmppPing:(XMPPPing *)sender didReceivePong:(XMPPIQ *)pong withRTT:(NSTimeInterval)rtt{
 }
 

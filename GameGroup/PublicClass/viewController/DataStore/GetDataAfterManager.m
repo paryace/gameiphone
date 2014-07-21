@@ -80,6 +80,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[MessageSetting singleton] setSoundOrVibrationopen];
     [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
     [DataStoreManager saveDSNewsMsgs:messageContent];
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
 //--------------------------------------------收到与我相关动态消息
@@ -96,6 +97,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)sendAboutMeNSNotification:(NSDictionary *)messageContent
 {
     [DataStoreManager saveDynamicAboutMe:messageContent];
+     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 //--------------------------------------------正常聊天消息
 #pragma mark 收到聊天消息
@@ -267,6 +269,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [[MessageSetting singleton] setSoundOrVibrationopen];
     [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
+     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
 
@@ -274,6 +277,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent
 {
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
+     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter]postNotificationName:Billboard_msg object:nil userInfo:messageContent];
     if (![[NSUserDefaults standardUserDefaults]objectForKey: Billboard_msg_count]) {
         int i=1;
@@ -294,6 +298,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent];
+     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
 //--------------------------------------------
@@ -303,6 +308,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * fromUser = [userInfo objectForKey:@"sender"];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
+     [self comeBackDelivered:KISDictionaryHaveKey(userInfo, @"sender") msgId:KISDictionaryHaveKey(userInfo, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];
 }
@@ -313,8 +319,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * fromUser = [userInfo objectForKey:@"sender"];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");    
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
-     DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
+    DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
     [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
+    [self comeBackDelivered:KISDictionaryHaveKey(userInfo, @"sender") msgId:KISDictionaryHaveKey(userInfo, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
@@ -327,6 +334,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
     [DataStoreManager saveOtherMsgsWithData:info];
     [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
+    [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
 }
 //--------------------------------------------好友推荐
@@ -340,6 +348,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
     }
+    [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kRecommendMessage object:nil userInfo:info];
 }
 //--------------------------------------------动态消息
@@ -363,6 +372,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     else
     {
     }
+    [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
 //---------------------------------------好友动态
 
@@ -551,6 +561,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * from =[NSString stringWithFormat:@"%@%@",userid,domaim];
     NSString *to=[NSString stringWithFormat:@"%@%@",KISDictionaryHaveKey(msgDic, @"senderId"),[self getDomain:domaim Type:KISDictionaryHaveKey(msgDic, @"type")]];
     NSXMLElement *mes = [MessageService createMes:nowTime Message:message UUid:KISDictionaryHaveKey(msgDic, @"msgId") From:from To:to FileType:@"text" MsgType:@"msgStatus" Type:@"normal"];
+    NSLog(@"GetDataAfterManager--sendComBackMessage--->>%@",mes);
     if (![self.appDel.xmppHelper sendMessage:mes]) {
         return;
     }
