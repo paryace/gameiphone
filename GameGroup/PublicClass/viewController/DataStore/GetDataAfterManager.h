@@ -35,6 +35,4 @@
 
 + (GetDataAfterManager*)shareManageCommon;
 
-//-(void)setSoundOrVibrationopen;
-
 @end

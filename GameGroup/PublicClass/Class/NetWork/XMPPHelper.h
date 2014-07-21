@@ -22,10 +22,8 @@ typedef void (^CallBackBlockErr) (NSError *result);
 
 @property (nonatomic,strong) XMPPStream *xmppStream;
 @property (nonatomic,strong) XMPPPing *xmppPing;
-
 @property (nonatomic,strong) NSString *account;
 @property (nonatomic,strong) NSString *password;
-
 @property (nonatomic, assign)id addReqDelegate;
 @property (nonatomic, assign)id commentDelegate;
 @property (nonatomic, assign)id chatDelegate;
@@ -34,23 +32,17 @@ typedef void (^CallBackBlockErr) (NSError *result);
 @property (nonatomic,assign) id deletePersonDelegate;
 @property (nonatomic,assign) id otherMsgReceiveDelegate;
 @property (nonatomic,assign) id recommendReceiveDelegate;
-
 @property (strong,nonatomic) XMPPReconnect* xmppReconnect;
 @property (strong,nonatomic) NSMutableArray * rosters;
-
-//-(BOOL)isDisconnected;
-//-(BOOL)isConnecting;
-//-(BOOL)isConnected;
 
 - (void) setupStream;
 - (void) goOnline;
 - (void) goOffline;
--(BOOL)isConnecting;
--(BOOL)isDisconnected;
--(BOOL)isConnected;
--(BOOL)connect;
-
--(void)disconnect;
--(BOOL)sendMessage:(NSXMLElement *)message;
-- (void)comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId;
+- (BOOL) isConnecting;
+- (BOOL) isDisconnected;
+- (BOOL) isConnected;
+- (BOOL) connect;
+- (void) disconnect;
+- (BOOL) sendMessage:(NSXMLElement *)message;
+- (void) comeBackDelivered:(NSString*)sender msgId:(NSString*)msgId;
 @end

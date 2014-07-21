@@ -23,29 +23,19 @@
 #import "GameXmppStream.h"
 #import "GameXmppReconnect.h"
 @implementation XMPPHelper
-
-{
-    NSOperationQueue *queuemecomback ;
-}
-
 -(id)init
 {
     self = [super init];
     if (self) {
-        
-        queuemecomback = [[NSOperationQueue alloc]init];
-        [queuemecomback setMaxConcurrentOperationCount:1];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActiveWithNet:) name:kReachabilityChangedNotification object:nil];
     }
     return self;
 }
 
-
 -(void)setupStream
 {
     self.xmppStream = [[GameXmppStream alloc] init];
     [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
-
     self.xmppStream.enableBackgroundingOnSocket = YES;
     self.xmppReconnect = [[GameXmppReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
     [self.xmppReconnect setAutoReconnect:YES];
