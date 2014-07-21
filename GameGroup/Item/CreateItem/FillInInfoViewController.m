@@ -31,7 +31,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"填写描述" withBackButton:YES];
-    m_maxZiShu = 100;
+    m_maxZiShu = 30;
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
