@@ -10,6 +10,7 @@
 #import "TitleObjDetailViewController.h"
 #import "CharacterAndTitleService.h"
 
+
 @interface MyTitleObjViewController ()
 {
     UITableView*  m_showTitleObjTable;//显示的头衔界面
