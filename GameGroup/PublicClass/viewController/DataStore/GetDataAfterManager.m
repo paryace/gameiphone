@@ -13,22 +13,21 @@
 #import "DSuser.h"
 #import "VibrationSong.h"
 #import "CharacterAndTitleService.h"
+#import "MessageSetting.h"
 #define mTime 0.5
+static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 @implementation GetDataAfterManager
 {
     NSOperationQueue *queuenormal;
     NSOperationQueue *queuegroup;
     NSOperationQueue *queueme ;
-    
     NSTimeInterval markTime;
     NSTimeInterval markTimeGroup;
-   
     int index;
     int index2;
     dispatch_queue_t queue;
     dispatch_queue_t queue2;
-    
     NSTimeInterval markTimeDy;
     NSTimeInterval markTimeDyMe;
     NSTimeInterval markTimeDyGroup;
@@ -37,7 +36,18 @@
     int dyMeMsgCount;
     int dyGroupMsgCount;
 }
-static GetDataAfterManager *my_getDataAfterManager = NULL;
+
++ (GetDataAfterManager*)shareManageCommon
+{
+    @synchronized(self)
+    {
+		if (my_getDataAfterManager == nil)
+		{
+			my_getDataAfterManager = [[self alloc] init];
+		}
+	}
+	return my_getDataAfterManager;
+}
 
 - (id)init
 {
@@ -57,139 +67,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         queue = dispatch_queue_create("com.dispatch.normal", DISPATCH_QUEUE_SERIAL);
         queue2 = dispatch_queue_create("com.dispatch.group", DISPATCH_QUEUE_SERIAL);
         self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:) name:@"wxr_myActiveBeChanged" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOff:) name:@"wx_sounds_open" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeSoundOpen:) name:@"wx_sounds_off" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeVibrationOff:) name:@"wx_vibration_off" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeVibrationOn:) name:@"wx_vibration_open" object:nil];
 
     }
     return self;
 }
--(void)changeSoundOpen:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults]setObject:@"1" forKey:@"wx_sound_tixing_count"];
-    
-}
--(void)changeSoundOff:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_sound_tixing_count"];
-}
--(void)changeVibrationOff:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults]setObject:@"1" forKey:@"wx_Vibration_tixing_count"];
-}
--(void)changeVibrationOn:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:@"wx_Vibration_tixing_count"];
-}
 
-- (void)changeMyActive:(NSNotification*)notification
-{
-    if ([notification.userInfo[@"active"] intValue] == 2) {
-        [DataStoreManager reSetMyAction:YES];
-    }else
-    {
-        [DataStoreManager reSetMyAction:NO];
-    }
-}
-+ (GetDataAfterManager*)shareManageCommon
-{
-    @synchronized(self)
-    {
-		if (my_getDataAfterManager == nil)
-		{
-			my_getDataAfterManager = [[self alloc] init];
-		}
-	}
-	return my_getDataAfterManager;
-}
-
-//声音
--(BOOL)isSoundOpen
-{
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"])
-    {
-        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_sound_tixing_count"]intValue]==1) {
-             return YES;
-        }else{
-             return NO;
-        }
-    }else{
-        return YES;
-    }
-}
-//震动
--(BOOL)isVibrationopen
-{
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"])
-    {
-        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"wx_Vibration_tixing_count"]intValue]==1) {
-            return YES;
-        }else{
-            return NO;
-        }
-    }else{
-        return YES;
-    }
-}
-//设置声音或者震动
--(void)setSoundOrVibrationopen
-{
-    BOOL isVibrationopen=[self isVibrationopen];;
-    BOOL isSoundOpen = [self isSoundOpen];
-    if (isSoundOpen) {
-        [SoundSong soundSong];
-    }
-    if (isVibrationopen) {
-        [VibrationSong vibrationSong];
-    }
-}
-
-//根据类型保存消息
--(void)storeNewMessage:(NSDictionary *)messageContent
-{
-
-    NSString * type = KISDictionaryHaveKey(messageContent, @"msgType")?KISDictionaryHaveKey(messageContent, @"msgType"):@"notype";
-    if ([GameCommon isEmtity:KISDictionaryHaveKey(messageContent, @"msgId")]) {
-        return;
-    }
-    else if([type isEqualToString:@"recommendfriend"])//好友推荐
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:RECOMMENDFRIEND];//好友推荐
-    }
-    else if([type isEqualToString:@"dailynews"])//每日一闻
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
-        
-    }else if ([type isEqualToString:@"character"] || [type isEqualToString:@"pveScore"]
-              || [type isEqualToString:@"title"])//头衔，角色，战斗力
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:OTHERMESSAGE];//其他消息
-    }
-    else if ([type isEqualToString:@"joinGroupApplication"]
-             ||[type isEqualToString:@"joinGroupApplicationAccept"]
-             ||[type isEqualToString:@"joinGroupApplicationReject"]
-             ||[type isEqualToString:@"groupApplicationUnderReview"]
-             ||[type isEqualToString:@"groupApplicationAccept"]
-             ||[type isEqualToString:@"groupApplicationReject"]
-             ||[type isEqualToString:@"groupLevelUp"]//群等级提升
-             ||[type isEqualToString:@"friendJoinGroup"]//群组消息
-             ||[type isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
-             ||[type isEqualToString:@"kickOffGroup"]//被踢出群的消息
-             ||[type isEqualToString:@"groupRecommend"]//群推荐
-             ||[type isEqualToString:@"disbandGroup"])//解散群
-    {
-        [self setSoundOrVibrationopen];
-        [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
-    }
-}
-
+//--------------------------------------------收到新闻消息
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
@@ -198,10 +81,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     if ([DataStoreManager savedNewsMsgWithID:msgId]) {
         return;
     }
-    [self storeNewMessage:messageContent];
+    [[MessageSetting singleton] setSoundOrVibrationopen];
+    [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
     [DataStoreManager saveDSNewsMsgs:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewsMessage object:nil userInfo:messageContent];
 }
+//--------------------------------------------收到与我相关动态消息
 #pragma mark --收到与我相关动态消息
 -(void)newdynamicAboutMe:(NSDictionary *)messageContent;
 {
@@ -220,7 +105,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到聊天消息
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
-
     NSString * sender = [messageContent objectForKey:@"sender"];
     if ([DataStoreManager isBlack:sender]) {
          [self comeBackDelivered:sender msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
@@ -258,7 +142,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self setSoundOrVibrationopen];
+                [[MessageSetting singleton] setSoundOrVibrationopen];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
             });
         }];
@@ -283,7 +167,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)saveNormalChatMessage:(NSArray *)messageContent{
    [DataStoreManager saveNewNormalChatMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
        dispatch_async(dispatch_get_main_queue(), ^{
-           [self setSoundOrVibrationopen];
+           [[MessageSetting singleton] setSoundOrVibrationopen];
            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
        });
        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
@@ -316,7 +200,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([[GameCommon getMsgSettingStateByGroupId:[msgDic objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-                    [self setSoundOrVibrationopen];
+                    [[MessageSetting singleton] setSoundOrVibrationopen];
                 }
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
             });
@@ -343,7 +227,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([[GameCommon getMsgSettingStateByGroupId:[msgDic objectForKey:@"groupId"]] isEqualToString:@"0"]) {//正常模式
-                [self setSoundOrVibrationopen];
+                [[MessageSetting singleton] setSoundOrVibrationopen];
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
@@ -384,7 +268,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
     }
-    [self storeNewMessage:messageContent];
+    [[MessageSetting singleton] setSoundOrVibrationopen];
+    [DataStoreManager storeNewMsgs:messageContent senderType:JOINGROUPMSG];//其他消息
     [DataStoreManager saveDSGroupApplyMsg:messageContent];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
@@ -425,7 +310,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
     NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
-    [self storeNewMessage:userInfo];
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kFriendHelloReceived object:nil userInfo:userInfo];
@@ -435,13 +319,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)deletePersonReceived:(NSDictionary *)userInfo
 {
     NSString * fromUser = [userInfo objectForKey:@"sender"];
-    NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");
-    [self storeNewMessage:userInfo];
-    
+    NSString * shiptype = KISDictionaryHaveKey(userInfo, @"shiptype");    
     [DataStoreManager changshiptypeWithUserId:fromUser type:shiptype];
      DSuser *dUser = [DataStoreManager getInfoWithUserId:fromUser];
     [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"1"];
-
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeleteAttention object:nil userInfo:userInfo];
 }
@@ -450,7 +331,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)otherMessageReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:info];
+    [[MessageSetting singleton] setSoundOrVibrationopen];
+    [DataStoreManager storeNewMsgs:info senderType:OTHERMESSAGE];//其他消息
     [DataStoreManager saveOtherMsgsWithData:info];
     [[CharacterAndTitleService singleton] getTitleInfo:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Type:@""];
     [[NSNotificationCenter defaultCenter] postNotificationName:kOtherMessage object:nil userInfo:info];
@@ -460,8 +342,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)recommendFriendReceived:(NSDictionary *)info
 {
     [info setValue:@"1" forKey:@"sayHiType"];
-    [self storeNewMessage:info];//保存消息
-    
+    [[MessageSetting singleton] setSoundOrVibrationopen];
+    [DataStoreManager storeNewMsgs:info senderType:RECOMMENDFRIEND];//好友推荐
     NSArray* recommendArr = [KISDictionaryHaveKey(info, @"msg") JSONValue];
     for (NSDictionary* tempDic in recommendArr) {
         [DataStoreManager saveRecommendWithData:tempDic];
@@ -488,7 +370,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     //未知的动态
     else
     {
-        
     }
 }
 //---------------------------------------好友动态
@@ -521,7 +402,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self.cellTimerDy invalidate];
         self.cellTimerDy = nil;
     }
-    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
         int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
         i+=dyMsgCount;
@@ -566,9 +447,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self.cellTimerDyMe invalidate];
         self.cellTimerDyMe = nil;
     }
-    [self saveLastMyDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]];
+    [self saveLastFriendDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]FileName:@"mydynamicmsg_huancun_wx"];
     
-    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
     
     if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
         int i = 0;
@@ -651,17 +532,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSDictionary * imageDic = @{@"img":cusUserImageIds};
     return imageDic;
 }
--(void)saveLastMyDynimacUserImage:(NSDictionary*)payloadDic
-{
-    NSMutableData *data= [[NSMutableData alloc]init];
-    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-    [archiver encodeObject:payloadDic forKey: @"getDatat"];
-    [archiver finishEncoding];
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"mydynamicmsg_huancun_wx"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
--(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic
+-(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic FileName:(NSString*)fileName
 {
     NSMutableData *data= [[NSMutableData alloc]init];
     NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];

@@ -3390,9 +3390,6 @@
     
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     
-//    if([msgType isEqualToString:@"disbandGroup"]){
-//        [self deleteMsgByGroupId:groupId];
-//    }
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
         DSGroupApplyMsg * commonMsg = [DSGroupApplyMsg MR_findFirstWithPredicate:predicate];
