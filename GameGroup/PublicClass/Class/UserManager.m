@@ -92,16 +92,13 @@ static UserManager *userManager = NULL;
     if (!responseObject||![responseObject isKindOfClass:[NSDictionary class]]) {
         return;
     }
-
     NSMutableDictionary * dicUser = KISDictionaryHaveKey(responseObject, @"user");
     if ([GameCommon isEmtity:KISDictionaryHaveKey(dicUser, @"userid")]) {
         [dicUser setObject:KISDictionaryHaveKey(dicUser, @"id") forKey:@"userid"];
     }
-    
     NSMutableArray * titles = KISDictionaryHaveKey(responseObject, @   "title");
     NSMutableArray * charachers = KISDictionaryHaveKey(responseObject, @"characters");
     NSMutableDictionary *  latestDynamicMsg = KISDictionaryHaveKey(responseObject, @"latestDynamicMsg");
-    
     [dicUser setObject:[responseObject objectForKey:@"gameids"]forKey:@"gameids"];
     if ([titles isKindOfClass:[NSArray class]] && [titles count] != 0) {//头衔
         NSDictionary *titleDictionary=[titles objectAtIndex:0];
@@ -132,9 +129,6 @@ static UserManager *userManager = NULL;
 
 -(void)startToSave:(NSMutableDictionary*)dicUser{
     [DataStoreManager newSaveAllUserWithUserManagerList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
-//    dispatch_async(self.queueDb, ^{
-//        [DataStoreManager newSaveFriendList:dicUser withshiptype:KISDictionaryHaveKey(dicUser, @"sT")];
-//    });
 }
 //保存角色和头衔
 -(void)saveCharaterAndTitle:(NSMutableArray*) charachers Titles:(NSMutableArray*)titles UserId:(NSString*)userId
@@ -185,18 +179,14 @@ static UserManager *userManager = NULL;
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [postDict setObject:@"228" forKey:@"method"];
         [postDict setObject:paramDict forKey:@"params"];
-        
         [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-        
         [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
             if ([responseObject isKindOfClass:[NSArray class]]) {
                 NSArray *array = responseObject;
                 if (array.count>0) {
                     [self saveBlackList:array];
                 }
             }
-
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             NSLog(@"deviceToken fail");
             
@@ -223,7 +213,6 @@ static UserManager *userManager = NULL;
     [postDict setObject:@"229" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
          NSLog(@"success%@",responseObject);
     } failure:^(AFHTTPRequestOperation *operation, id error) {

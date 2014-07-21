@@ -76,11 +76,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 收到新闻消息
 -(void)dailynewsReceived:(NSDictionary * )messageContent
 {
-    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    if ([DataStoreManager savedNewsMsgWithID:msgId]) {
-        return;
-    }
     [[MessageSetting singleton] setSoundOrVibrationopen];
     [DataStoreManager storeNewMsgs:messageContent senderType:DAILYNEWS];
     [DataStoreManager saveDSNewsMsgs:messageContent];
@@ -295,10 +291,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
-    NSString* msgId = KISDictionaryHaveKey(messageContent, @"msgId");
-    if ([DataStoreManager isHasdGroMsg:msgId]) {
-        return;
-    }
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent];

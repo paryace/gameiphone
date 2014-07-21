@@ -33,9 +33,6 @@
 @interface DataStoreManager : NSObject
 
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
-+ (BOOL)savedOtherMsgWithID:(NSString *)msgID;//角色动态消息是否存在
-+ (BOOL)savedMsgWithID:(NSString*)msgId;//正常聊天消息是否已存
-+ (BOOL)savedNewsMsgWithID:(NSString*)msgId;//每日一闻消息是否已存
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
 +(void)saveDSNewsMsgs:(NSDictionary*)msgDict;//保存每日一闻消息
 +(void)saveDSCommonMsg:(NSDictionary *)msg;
@@ -159,7 +156,6 @@
 
 +(id)queryDUser:(NSString*)userId;
 
-+(void)deleteAllDSCommonMsgs;
 
 //-----删除所有的normalchat显示消息消息
 +(void)deleteThumbMsgsByMsgType:(NSString *)msgType;
@@ -218,8 +214,6 @@
 + (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize;//查询群组历史消息
 
 +(void)saveDSGroupMsg:(NSDictionary *)msg;//保存群组消息
-
-+ (BOOL)isHasdGroMsg:(NSString*)msgId;//判断群组消息是否存在
 
 +(void)deleteGroupMsgByMsgType:(NSString *)msgType;//删除所有的群组消息
 

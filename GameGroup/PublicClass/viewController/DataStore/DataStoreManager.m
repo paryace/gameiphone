@@ -31,6 +31,8 @@
     }
     return self;
 }
+
+//激活
 + (void)reSetMyAction:(BOOL)action
 {
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
@@ -46,54 +48,11 @@
     [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:[NSString stringWithFormat:@"%@.sqlite",dataBaseName]];
 }
 
-+ (BOOL)savedMsgWithID:(NSString*)msgId//正常聊天消息是否已存
-{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
-    DSCommonMsgs * msg = [DSCommonMsgs MR_findFirstWithPredicate:predicate];
-    if (msg)
-    {
-        return YES;
-    }
-    return NO;
-}
-+ (BOOL)isHasdGroMsg:(NSString*)msgId//群组聊天消息是否已存
-{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
-    DSGroupMsgs * msg = [DSGroupMsgs MR_findFirstWithPredicate:predicate];
-    if (msg)
-    {
-        return YES;
-    }
-    return NO;
-}
-
-+ (BOOL)savedOtherMsgWithID:(NSString *)msgID//其他消息是否存在
-{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgID];
-    DSOtherMsgs * msg = [DSOtherMsgs MR_findFirstWithPredicate:predicate];
-    if (msg)
-    {
-        return YES;
-    }
-    return NO;
-}
-
-+ (BOOL)savedNewsMsgWithID:(NSString*)msgId//每日一闻消息是否已存
-{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",msgId];
-    DSNewsMsgs * msg = [DSNewsMsgs MR_findFirstWithPredicate:predicate];
-    if (msg)
-    {
-        return YES;
-    }
-    return NO;
-}
-#pragma mark - 会话列表界面 - thumbMsg
+#pragma mark - 更新会话列表界面消息
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",userid];
-        
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs)
         {
@@ -102,12 +61,11 @@
         }
     }];
 }
-
+#pragma mark - 更新会话列表界面消息
 +(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType=[c]%@",userid,@"normalchat"];
-        
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
         if (thumbMsgs)
         {
@@ -115,10 +73,7 @@
         }
     }];
 }
-
-
-
-
+#pragma mark - 更新会话列表界面消息
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -131,7 +86,7 @@
         }
     }];
 }
-
+//删除所有的显示消息
 +(void)deleteAllThumbMsg
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
@@ -141,16 +96,7 @@
         }
     }];
 }
-//------
-+(void)deleteAllDSCommonMsgs
-{
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSArray * comonMsgs = [DSCommonMsgs MR_findAllInContext:localContext];
-        for (DSCommonMsgs* msg in comonMsgs) {
-            [msg deleteInContext:localContext];
-        }
-    }];
-}
+
 //-----
 +(void)deleteThumbMsgWithSender:(NSString *)sender
 {
@@ -2458,11 +2404,6 @@
     }];
 }
 #pragma mark 头衔、角色、战斗力等消息
-//@dynamic messageuuid;
-//@dynamic msgContent;
-//@dynamic msgType;
-//@dynamic sendTime;
-//@dynamic myTitle;
 
 +(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict
 {
