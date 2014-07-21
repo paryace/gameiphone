@@ -196,11 +196,9 @@
 - (void)xmppStreamWillConnect:(XMPPStream *)sender{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
 }
-
 #pragma mark 收到消息后调用
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{
     NSString *msg = [[message elementForName:@"body"] stringValue];
-
     if(msg==nil){
         return;
     }
@@ -212,13 +210,11 @@
     NSString *type = [[message attributeForName:@"type"] stringValue];
     NSString * time = [[message attributeForName:@"msgTime"] stringValue];
     NSString *msgTime = time?time:[GameCommon getCurrentTime];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];//消息内容
     [dict setObject:fromId forKey:@"sender"];//发送者用户id
     [dict setObject:msgId forKey:@"msgId"];//消息id
     [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
-    
     if ([type isEqualToString:@"chat"])
     {
         if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
@@ -228,7 +224,6 @@
             }
             NSString* bodyPayload = [GameCommon getNewStringWithId:msg];
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
-            
             [dict setObject:KISDictionaryHaveKey([bodyPayload JSONValue], @"content") forKey:@"msg"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -275,20 +270,18 @@
             if (shiptype.length > 0) {
                 [dict setObject:KISDictionaryHaveKey([shiptype JSONValue], @"shiptype") forKey:@"shiptype"];
             }
-            else
-                [dict setObject:@""  forKey:@"shiptype"];
-            
+            else{
+                 [dict setObject:@""  forKey:@"shiptype"];
+            }
             [self.deletePersonDelegate deletePersonReceived:dict];
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
             [self comeBackDelivered:from msgId:msgId];//反馈消息
-            
             [dict setObject:msgtype forKey:@"msgType"];
-            NSString *title = [[message elementForName:@"payload"] stringValue];
-            title = KISDictionaryHaveKey([title JSONValue],@"title");
+            NSString *payloStr = [[message elementForName:@"payload"] stringValue];
+            NSString *title = KISDictionaryHaveKey([payloStr JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
-            
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
@@ -316,10 +309,10 @@
                 || [msgtype isEqualToString:@"mydynamicmsg"]//与我相关
                 || [msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
         {
+            [self comeBackDelivered:from msgId:msgId];//反馈消息
             NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
             [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:payload forKey:@"payLoad"];
-            [self comeBackDelivered:from msgId:msgId];//反馈消息
             [self.chatDelegate dyMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
@@ -345,11 +338,9 @@
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
                 ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]//入群申请通过
                 ||[msgtype isEqualToString:@"joinGroupApplicationReject"]//入群申请拒绝
-                
                 ||[msgtype isEqualToString:@"groupApplicationUnderReview"]//群审核已提交
                 ||[msgtype isEqualToString:@"groupApplicationAccept"]///群审核通过
                 ||[msgtype isEqualToString:@"groupApplicationReject"]//群审核被拒绝
-                
                 ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升disbandGroup
                 ||[msgtype isEqualToString:@"disbandGroup"]//解散群
                 ||[msgtype isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
@@ -391,7 +382,6 @@
                 return;
             }
             NSString * msgStatus = KISDictionaryHaveKey(bodyDic, @"msgStatus");
-            
             if ([msgStatus isEqualToString:@"Delivered"]) {//是否送达
                 [bodyDic setValue:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0" forKeyPath:@"msgState"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
@@ -414,6 +404,9 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
     }
 }
+
+
+
 -(NSString*)getMsgTitle:(NSString*)msgtype
 {
     if([msgtype isEqualToString:@"joinGroupApplication"]){
@@ -461,8 +454,6 @@
         return;
     }
 }
-
-
 - (void)xmppRoster:(XMPPRoster *)sender didReceivePresenceSubscriptionRequest:(XMPPPresence *)presence
 {
 }
