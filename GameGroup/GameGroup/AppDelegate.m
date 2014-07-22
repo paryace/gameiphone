@@ -36,6 +36,7 @@
 #import "MessageSetting.h"
 #import "MessagePageViewController.h"
 #import "LocationManager.h"
+#import "RecceiveMessageService.h"
 
 
 @implementation AppDelegate
@@ -109,17 +110,19 @@
     //网络变化
     self.reach = [Reachability reachabilityForInternetConnection];
     [_reach startNotifier];
-    GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
     self.xmppHelper=[[XMPPHelper alloc] init];
     [self.xmppHelper setupStream];
-    self.xmppHelper.chatDelegate = getDataAfterManager;
-    self.xmppHelper.addReqDelegate = getDataAfterManager;
-    self.xmppHelper.commentDelegate = getDataAfterManager;
-    self.xmppHelper.deletePersonDelegate = getDataAfterManager;
-    self.xmppHelper.otherMsgReceiveDelegate = getDataAfterManager;
-    self.xmppHelper.recommendReceiveDelegate = getDataAfterManager;
+    GetDataAfterManager *getDataAfterManager=[GetDataAfterManager shareManageCommon];
     getDataAfterManager.xmppHelper=self.xmppHelper;
-
+    RecceiveMessageService * receiveMessageManager = [RecceiveMessageService shareManageCommon];
+    receiveMessageManager.chatDelegate = getDataAfterManager;
+    receiveMessageManager.addReqDelegate = getDataAfterManager;
+    receiveMessageManager.commentDelegate = getDataAfterManager;
+    receiveMessageManager.deletePersonDelegate = getDataAfterManager;
+    receiveMessageManager.otherMsgReceiveDelegate = getDataAfterManager;
+    receiveMessageManager.recommendReceiveDelegate = getDataAfterManager;
+    self.xmppHelper.receiveMessageDelegate = receiveMessageManager;
+    
     
     if ([[TempData sharedInstance] isHaveLogin] ) {
         NSLog(@"v22222 - setDefaultDataBase");

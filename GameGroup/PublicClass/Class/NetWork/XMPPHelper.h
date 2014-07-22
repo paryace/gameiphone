@@ -24,16 +24,17 @@ typedef void (^CallBackBlockErr) (NSError *result);
 @property (nonatomic,strong) XMPPPing *xmppPing;
 @property (nonatomic,strong) NSString *account;
 @property (nonatomic,strong) NSString *password;
-@property (nonatomic, assign)id addReqDelegate;
-@property (nonatomic, assign)id commentDelegate;
-@property (nonatomic, assign)id chatDelegate;
-@property (nonatomic, assign)id xmpprosterDelegate;
-@property (nonatomic,assign) id notConnect;
-@property (nonatomic,assign) id deletePersonDelegate;
-@property (nonatomic,assign) id otherMsgReceiveDelegate;
-@property (nonatomic,assign) id recommendReceiveDelegate;
+//@property (nonatomic,assign)id addReqDelegate;
+//@property (nonatomic,assign)id commentDelegate;
+//@property (nonatomic,assign)id chatDelegate;
+//@property (nonatomic,assign)id xmpprosterDelegate;
+//@property (nonatomic,assign)id notConnect;
+//@property (nonatomic,assign)id deletePersonDelegate;
+//@property (nonatomic,assign)id otherMsgReceiveDelegate;
+//@property (nonatomic,assign)id recommendReceiveDelegate;
+
+@property (nonatomic,assign)id receiveMessageDelegate;
 @property (strong,nonatomic) XMPPReconnect* xmppReconnect;
-@property (strong,nonatomic) NSMutableArray * rosters;
 
 - (void) setupStream;
 - (void) goOnline;
