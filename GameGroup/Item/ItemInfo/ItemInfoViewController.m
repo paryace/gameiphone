@@ -42,7 +42,14 @@
     [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setTitle:@"退出" forState:UIControlStateNormal];
+    
+    if (self.isCaptain) {
+        [createBtn setTitle:@"解散" forState:UIControlStateNormal];
+    }else{
+        [createBtn setTitle:@"退出" forState:UIControlStateNormal];
+    }
+    
+    
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
@@ -100,43 +107,90 @@
 {
 //    ReviewapplicationViewController *review = [[ReviewapplicationViewController alloc]init];
 //    [self.navigationController pushViewController:review animated:YES];
-    jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
-    [jiesanAlert show];
+    if (self.isCaptain) {
+        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+        jiesanAlert.tag = 10000001;
+        [jiesanAlert show];
+  
+    }else{
+        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
+        jiesanAlert.tag =10000002;
+        [jiesanAlert show];
 
+    }
 
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex==1) {
-        
-        NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-        
-        [paramDict setObject:self.itemId forKey:@"roomId"];
-        [postDict setObject:paramDict forKey:@"params"];
-        
-        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [postDict setObject:@"270" forKey:@"method"];
-        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    if (alertView.tag ==10000001) {
+        if (buttonIndex==1) {
             
-            [self.navigationController popToRootViewControllerAnimated:YES];
-            [self showMessageWindowWithContent:@"解散成功" imageType:1];
+            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
             
+            [paramDict setObject:self.itemId forKey:@"roomId"];
+            [paramDict setObject:self.gameid forKey:@"gameid"];
+            [postDict setObject:paramDict forKey:@"params"];
             
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:@"270" forKey:@"method"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+                
+                
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                [self showMessageWindowWithContent:@"解散成功" imageType:1];
+                
+                
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
                 }
-            }
-            [hud hide:YES];
-        }];
-        
+                [hud hide:YES];
+            }];
+            
+            
+        }
 
+    }else{
+        if (buttonIndex==1) {
+            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+            
+            [paramDict setObject:self.itemId forKey:@"roomId"];
+            [paramDict setObject:self.gameid forKey:@"gameid"];
+            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+            [paramDict setObject:userid forKey:@"userid"];
+            [postDict setObject:paramDict forKey:@"params"];
+            
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:@"269" forKey:@"method"];
+            [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                [self showMessageWindowWithContent:@"退出成功" imageType:1];
+                
+                
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                if ([error isKindOfClass:[NSDictionary class]]) {
+                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                    {
+                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                        [alert show];
+                    }
+                }
+                [hud hide:YES];
+            }];
+
+        }
     }
 }
 
@@ -175,7 +229,8 @@
     else if(sender.tag ==101)
     {
         InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
-        editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
 //        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
 //        editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
         [self.navigationController pushViewController:editInfo animated:YES];
