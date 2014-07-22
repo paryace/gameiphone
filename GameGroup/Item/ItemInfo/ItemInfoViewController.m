@@ -12,6 +12,7 @@
 #import "ItemRoleButton.h"
 #import "EditInfoViewController.h"
 #import "ReviewapplicationViewController.h"
+#import "InvitationMembersViewController.h"
 @interface ItemInfoViewController ()
 {
     UITableView *m_myTableView;
@@ -173,10 +174,10 @@
     }
     else if(sender.tag ==101)
     {
-        EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
-        editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
-        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
-        editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
+        InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
+        editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+//        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
+//        editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
         [self.navigationController pushViewController:editInfo animated:YES];
    
     }
@@ -282,9 +283,33 @@
     cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
     
     cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
-    cell.value1Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value1")];
-    cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value2")];
+    [cell refreshViewFrameWithText:cell.nickLabel.text];
     
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gender")] isEqualToString:@"0"]) {//男♀♂
+        
+        cell.genderImgView.image = KUIImage(@"gender_boy");
+        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+    }
+    else
+    {
+        cell.genderImgView.image = KUIImage(@"gender_girl");
+        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+    }
+    
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"userid")]]) {
+        cell.MemberImgView.backgroundColor = [UIColor redColor];
+    }else{
+        cell.MemberImgView.backgroundColor = [UIColor greenColor];
+    }
+    
+    NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
+    cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
+
+    cell.value1Lb.text = [NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"realm")]/*,[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"memberInfo")]*/];
+    cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"memberInfo")];
+    cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"position")];
+
 //    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
 }
@@ -326,7 +351,13 @@
     lb1.backgroundColor =[ UIColor clearColor];
     lb1.textColor = [UIColor whiteColor];
     lb1.font = [UIFont boldSystemFontOfSize:14];
-    lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"typeName")];
+    
+    if ([[m_mainDict allKeys]containsObject:@"type"]) {
+        lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+    }else{
+        lb1.text = @"";
+    }
+    
     lb1.textAlignment = NSTextAlignmentCenter;
     [view3 addSubview:lb1];
     

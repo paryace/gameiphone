@@ -10,7 +10,6 @@
 #import "EGOImageView.h"
 #import "ChooseListView.h"
 #import "ItemManager.h"
-
 @interface CreateItemViewController ()
 {
     UITableView *m_myTableView;
@@ -235,6 +234,23 @@
     else if (sender.tag ==2)
     {
          NSLog(@"123123131231");//高级
+        if (!selectCharacter) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+            return;
+        }
+        if (!selectType) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+            return;
+        }
+        
+        SeniorViewController *seniorV = [[SeniorViewController alloc]init];
+        seniorV.mydelegate = self;
+        seniorV.mainDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")],@"characterId",thirdTf.text,@"description",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")],@"typeId",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")],@"maxVol",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")],@"gameid", nil];
+        
+        
+        seniorV.charaterId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")];
+        [self.navigationController pushViewController:seniorV animated:YES];
+        
     }
 }
 //点击toolbar 确定button

@@ -42,6 +42,11 @@
     FirstCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
     if (!cell) {
         cell = [[FirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+    }else{
+        for (UIView *view in cell.subviews) {
+            [view removeFromSuperview];
+        }
+        cell = [[FirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
@@ -50,12 +55,17 @@
     BOOL isOpen =[KISDictionaryHaveKey(dic, @"isOpen")boolValue];
     
     if (isOpen) {
-        [cell didClickRow];
+        cell.isrow = YES;
+        [cell.headImgView.layer removeAllAnimations];
         cell.editLabel.text = [NSString stringWithFormat:@"%@支队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"matchCount")]];
     }else{
         cell.editLabel.text = @"编辑";
+        cell.isrow = NO;
+        [cell.headImgView.layer removeAllAnimations];
+
     }
-    
+    [cell didClickRow];
+
     cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterName")];
     cell.realmLabel.text  = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"desc")];
 //    cell.editLabel.text = @"编辑";
@@ -133,7 +143,7 @@
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
     BOOL isOpen = [KISDictionaryHaveKey(dic, @"isOpen")boolValue];
     

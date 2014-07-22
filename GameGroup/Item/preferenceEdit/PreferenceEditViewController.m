@@ -45,12 +45,12 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"偏好设置" withBackButton:YES];
     
-    gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]] ];
+    gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"gameid")]] ];
     m_roleArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"FilterId_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]]];
     
     if (m_roleArray.count<1) {
         
-        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")] reSuccess:^(id responseObject) {
+        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"gameid")] reSuccess:^(id responseObject) {
             [self getFilter:responseObject];
         } reError:^(id error) {
             [self showErrorAlertView:error];
@@ -83,13 +83,13 @@
     NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gamePickerView selectedRowInComponent:0]];
     NSDictionary *filDic = [m_roleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"gameid")] forKey:@"gameid"];
     [paramDict setObject:thirdTf.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"preferenceId")] forKey:@"preferenceId"];
     [paramDict setObject:m_dsTextView.text forKey:@"description"];
     [paramDict setObject:secondTf.text forKey:@"options"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(filDic, @"constId")] forKey:@"filterId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")] forKey:@"typeId"]
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")]?[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")]:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") forKey:@"typeId"]
     ;
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
@@ -147,7 +147,7 @@
 
     
     firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"nil" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:nil isPicker:YES isTurn:NO tag:0];
-    firstTf.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"realm")],[self.mainDict objectForKey:@"characterName"]];
+    firstTf.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"characterName")]];
     firstTf.userInteractionEnabled = NO;
 //    firstTf.inputAccessoryView = toolbar1;
 //    firstTf.inputView = m_rolePickerView;
@@ -171,7 +171,10 @@
     
     firstTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"characterName")];
     secondTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value")];
+    
+    
     thirdTf.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"value")];
+    
     m_dsTextView.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"desc")];
 
     
