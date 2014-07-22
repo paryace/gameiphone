@@ -1,14 +1,14 @@
 //
-//  ItemInfoCell.h
+//  MemberView.h
 //  GameGroup
 //
-//  Created by 魏星 on 14-7-2.
+//  Created by 魏星 on 14-7-21.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
-@interface ItemInfoCell : UITableViewCell
+@interface MemberView : UIView
 @property(nonatomic,strong)EGOImageView *headImageView;
 @property(nonatomic,strong)UIImageView *genderImgView;
 @property(nonatomic,strong)UIImageView *MemberImgView;
@@ -18,4 +18,5 @@
 @property(nonatomic,strong)UILabel *value2Lb;
 @property(nonatomic,strong)UILabel *value3Lb;
 -(void)refreshViewFrameWithText:(NSString *)text;
+
 @end

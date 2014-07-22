@@ -13,6 +13,7 @@
     float dd;
     
     UIButton *editBtn;
+    UIImageView *customImgView;
 }
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -33,6 +34,14 @@
         self.headImgView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
         self.headImgView.image = aImage;
         [self.contentView addSubview:self.headImgView];
+        
+        
+        customImgView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
+        customImgView.image = KUIImage(@"clazz_0");
+        customImgView.hidden = YES;
+        [self.contentView addSubview:customImgView];
+        
+        
         
         UIButton *button  =[[UIButton alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
         button.backgroundColor = [UIColor clearColor];
@@ -70,9 +79,11 @@
     NSLog(@"%hhd",self.isrow);
     if (!self.isrow) {
         self.isrow = YES;
+        customImgView.hidden = NO;
         self.editLabel.text = @"编辑";
     }else{
         self.isrow =NO;
+        customImgView.hidden = YES;
         self.editLabel.text = [NSString stringWithFormat:@"%@支队伍",self.machCountStr];
     }
     [self didRow];

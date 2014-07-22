@@ -1,55 +1,52 @@
 //
-//  NewInvitationViewController.m
+//  InvitationMembersViewController.m
 //  GameGroup
 //
-//  Created by 魏星 on 14-7-8.
+//  Created by 魏星 on 14-7-21.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
-#import "NewInvitationViewController.h"
-#import "EGOImageView.h"
+#import "InvitationMembersViewController.h"
+#import "MJRefresh.h"
+#import "AddGroupMemberCell.h"
 #import "ImgCollCell.h"
 #import "LocationManager.h"
-#import "MJRefresh.h"
 #import "TestViewController.h"
-@interface NewInvitationViewController ()
+@interface InvitationMembersViewController ()
 {
-    UIScrollView     *  m_mainScroll;
-    UITableView      *  m_rTableView;
-    UITableView      *  m_gTableView;
-    UITableView      *  m_bTableView;
-    NSMutableArray   *  m_rArray;
-    NSMutableArray   *  m_gArray;
-    NSMutableArray   *  m_bArray;
-    NSMutableArray   *  addMemArray;
+    UIScrollView                       *  m_mainScroll;
+    UITableView                        *  m_rTableView;//好友界面
+    UITableView                        *  m_gTableView;//xx界面
+    NSMutableArray                     *  m_rArray;//好友数据
+    NSMutableArray                     *  m_gArray;//xx数据
+    NSMutableArray                     *  addMemArray;//邀请人数数据
     
-    UIButton         *  m_button;
-    UICollectionView *  m_customCollView;
-    UICollectionViewFlowLayout   *  m_layout;
-    UIView           *  m_listView;
+    UIButton                           *  m_button;
+    UICollectionView                   *  m_customCollView;//邀请人员列表
+    UICollectionViewFlowLayout         *  m_layout;
+    UIView                             *  m_listView;
     
-    NSInteger           m_nearByCount;
-    NSInteger           m_sameRealmCount;
-    BOOL                isFirstNearBy;
-    BOOL                isFirstSameRealm;
-    MJRefreshFooterView *m_foot1;
-    MJRefreshFooterView *m_foot2;
-
-    AddGroupMemberCell*cell1;
+    NSInteger                             m_nearByCount;//用来翻页----附近
+    NSInteger                             m_sameRealmCount;//用来记录翻页 ---服务器
+    BOOL                                  isFirstNearBy;// 第一次点击附近
+    BOOL                                  isFirstSameRealm;//第一次点击服务器
+    MJRefreshFooterView                *  m_foot1;//上拉加载---附近
+    MJRefreshFooterView                *  m_foot2;//上拉加载----服务器
     
-    UIButton *m_btn1;
-    UIButton *m_btn2;
-    UIButton *m_btn3;
+    AddGroupMemberCell                 *  cell1; //
     
-    NSInteger      m_tabTag;
-    UIButton * chooseAllBtn;
+    UIButton                           *  m_btn1;
+    UIButton                           *  m_btn2;
     
-    NSString *m_realmStr;
+    NSInteger                             m_tabTag;
+    UIButton                           * chooseAllBtn;
+    
+    NSString                           * m_realmStr;
     
 }
 @end
 
-@implementation NewInvitationViewController
+@implementation InvitationMembersViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -63,6 +60,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // Do any additional setup after loading the view.
     [self setTopViewWithTitle:@"添加成员" withBackButton:YES];
     
     chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -71,11 +69,10 @@
     [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateSelected];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
-
+    
     
     m_rArray = [NSMutableArray array];
     m_gArray = [NSMutableArray array];
-    m_bArray = [NSMutableArray array];
     m_nearByCount =0;
     m_sameRealmCount =0;
     isFirstNearBy = YES;
@@ -83,7 +80,7 @@
     m_tabTag = 1;
     addMemArray = [NSMutableArray array];
     
-[addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
+    [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
     
     [self buildTopView];
     [self buildMainView];
@@ -96,13 +93,11 @@
     
     [self getInfo];
     [self addFootView1];
-    [self addFootView2];
-    // Do any additional setup after loading the view.
-}
 
+}
 -(void)buildTopView
 {
-
+    
     m_btn1 = [self buildButtonWithFrame:CGRectMake(0, startX, kScreenWidth/3, 56) img1:@"seg1_normal" img2:@"seg1_click"];
     m_btn1.tag =100001;
     m_btn1.selected = YES;
@@ -112,13 +107,6 @@
     m_btn2.tag = 100002;
     [m_btn2 addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_btn2];
-
-    
-    m_btn3 = [self buildButtonWithFrame:CGRectMake(kScreenWidth/3*2, startX, kScreenWidth/3, 56) img1:@"seg3_normal" img2:@"seg3_click"];
-    m_btn3.tag = 100003;
-    [m_btn3 addTarget:self action:@selector(qiehuantype:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:m_btn3];
-
 }
 
 -(UIButton *)buildButtonWithFrame:(CGRect)frame img1:(NSString *)img1 img2:(NSString*)img2
@@ -184,12 +172,12 @@
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];
                 }
                 
-
+                
             }else{
                 sender.selected = YES;
                 for (NSMutableDictionary *dic in m_rArray) {
                     [dic setObject:@"2" forKey:@"choose"];
-
+                    
                     if ([addMemArray containsObject:dic]) {
                         [addMemArray removeObject:dic];
                     }
@@ -204,12 +192,12 @@
                 }else{
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
                 
-
+                
             }
             
             [m_rTableView reloadData];
-
-
+            
+            
             
             break;
         case 2:
@@ -217,7 +205,7 @@
                 sender.selected = NO;
                 for (NSMutableDictionary *dic in m_gArray) {
                     [dic setObject:@"1" forKey:@"choose"];
-
+                    
                     if ([addMemArray containsObject:dic]) {
                         [addMemArray removeObject:dic];
                     }
@@ -227,12 +215,12 @@
                 }else{
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
                 
-
+                
             }else{
                 sender.selected = YES;
                 for (NSMutableDictionary *dic in m_gArray) {
                     [dic setObject:@"2" forKey:@"choose"];
-
+                    
                     if ([addMemArray containsObject:dic]) {
                         [addMemArray removeObject:dic];
                     }
@@ -242,58 +230,18 @@
                 }
                 [addMemArray addObjectsFromArray:m_gArray];
                 [addMemArray addObject:customDic];
-
+                
                 if (addMemArray.count==0) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
                 
-
+                
             }
             [m_gTableView reloadData];
-
+            
             break;
-        case 3:
-            if (sender.selected) {
-                sender.selected = NO;
-                for (NSMutableDictionary *dic in m_bArray) {
-                    [dic setObject:@"1" forKey:@"choose"];
-
-                    if ([addMemArray containsObject:dic]) {
-                        [addMemArray removeObject:dic];
-                    }
-                }
-                if (addMemArray.count==0) {
-                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
-                }else{
-                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
-                
-
-            }else{
-                sender.selected = YES;
-                for (NSMutableDictionary *dic in m_bArray) {
-                    [dic setObject:@"2" forKey:@"choose"];
-
-                    if ([addMemArray containsObject:dic]) {
-                        [addMemArray removeObject:dic];
-                    }
-                }
-                if ([addMemArray containsObject:customDic]) {
-                    [addMemArray removeObject:customDic];
-                }
-                [addMemArray addObjectsFromArray:m_bArray];
-                [addMemArray addObject:customDic];
-                if (addMemArray.count==0) {
-                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
-                }else{
-                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
-                
-
-            }
-            [m_bTableView reloadData];
-
-            break;
-   
+            
         default:
             break;
     }
@@ -304,8 +252,8 @@
 
 -(void)qiehuantype:(UIButton *)seg
 {
-//    UISegmentedControl *segmentedControl = (UISegmentedControl *)seg;
-//    NSInteger segment = segmentedControl.selectedSegmentIndex;
+    //    UISegmentedControl *segmentedControl = (UISegmentedControl *)seg;
+    //    NSInteger segment = segmentedControl.selectedSegmentIndex;
     UIButton *button = (UIButton *)seg;
     
     switch (button.tag) {
@@ -315,7 +263,6 @@
             }
             m_btn1.selected =YES;
             m_btn2.selected = NO;
-            m_btn3.selected = NO;
             chooseAllBtn.selected = NO;
             m_tabTag = 1;
             m_mainScroll.contentOffset = CGPointMake(0, 0);
@@ -327,14 +274,13 @@
             }
             m_btn1.selected =NO;
             m_btn2.selected = YES;
-            m_btn3.selected = NO;
             chooseAllBtn.selected = NO;
             m_tabTag = 2;
             m_mainScroll.contentOffset = CGPointMake(320, 0);
             if (isFirstNearBy) {
                 [self DetectNetwork];
                 [hud show:YES];
-
+                
                 [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
                     isFirstNearBy = NO;
                     [[TempData sharedInstance] setLat:lat Lon:lon];
@@ -342,29 +288,14 @@
                 } Failure:^{
                     [hud hide:YES];
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-                        [alert show];
+                    [alert show];
                 }
                  ];
-              }
+            }
             
             NSLog(@"222222");
             break;
-        case 100003:
-            if (button.selected) {
-                return;
-            }
-            m_btn1.selected =NO;
-            m_btn2.selected = NO;
-            m_btn3.selected = YES;
-            chooseAllBtn.selected = NO;
-            m_tabTag =3;
-            m_mainScroll.contentOffset = CGPointMake(640, 0);
-            if (isFirstSameRealm) {
-                [self getMembersFromNetWithMethod:@"294"];
-            }
-            NSLog(@"333333");
-            break;
-    
+            
         default:
             break;
     }
@@ -374,7 +305,7 @@
 {
     m_mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX+56, kScreenWidth, kScreenHeigth-startX-96)];
     m_mainScroll.scrollEnabled = NO;
-    m_mainScroll.contentSize  = CGSizeMake(960, 0);
+    m_mainScroll.contentSize  = CGSizeMake(640, 0);
     [self.view addSubview:m_mainScroll];
     
     m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeigth-startX-96)];
@@ -386,11 +317,6 @@
     m_gTableView.delegate = self;
     m_gTableView.dataSource =self;
     [m_mainScroll addSubview:m_gTableView];
-    
-    m_bTableView = [[UITableView alloc]initWithFrame:CGRectMake(kScreenWidth*2,0,  kScreenWidth, kScreenHeigth-startX-96)];
-    m_bTableView.delegate = self;
-    m_bTableView.dataSource =self;
-    [m_mainScroll addSubview:m_bTableView];
     
 }
 -(void)getMembersFromNetWithMethod:(NSString *)method
@@ -440,38 +366,11 @@
                 [m_gTableView reloadData];
                 [m_foot1 endRefreshing];
                 [m_foot2 endRefreshing];
-
+                
             }
-            else if ([method isEqualToString:@"294"])
-            {
-                isFirstSameRealm = NO;
-                if (m_sameRealmCount==0) {
-                    
-                    NSArray *arr = responseObject;
-                    if (arr.count>0) {
-                        m_realmStr = [[responseObject objectAtIndex:0]objectForKey:@"groupRealm"];
-                    }else{
-                        m_realmStr = @" ";
-                    }
-
-                    [m_bArray removeAllObjects];
-                    [m_bArray addObjectsFromArray:responseObject];
-                }else{
-                    [m_bArray addObjectsFromArray:responseObject];
-                }
-                for (int i =0 ;i <m_bArray.count;i++) {
-                    NSMutableDictionary *dic = [m_bArray objectAtIndex:i];
-                    [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
-                }
-
-                m_sameRealmCount+=20;
-                [m_bTableView reloadData];
-                [m_foot1 endRefreshing];
-                [m_foot2 endRefreshing];
-
-            }
+            
         }
-
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
         [hud hide:YES];
@@ -533,7 +432,7 @@
         
         [self updataInfoWithId:[self getImageIdsStr:arr]];
     }
-
+    
 }
 
 -(NSString*)getImageIdsStr:(NSArray*)imageIdArray
@@ -581,22 +480,6 @@
     return 1;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    if (tableView ==m_bTableView) {
-        return 30;
-    }else{
-        return 0;
-    }
-}
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if (tableView == m_bTableView) {
-        return m_realmStr?m_realmStr:@"";
-    }else{
-        return nil;
-    }
-}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -608,10 +491,7 @@
     {
         return m_gArray.count;
     }
-    else if (tableView ==m_bTableView)
-    {
-        return m_bArray.count;
-    }else{
+    else{
         return 0;
     }
 }
@@ -655,11 +535,6 @@
         cell.disLabel .text = allStr;
         
     }
-    else if (tableView ==m_bTableView)
-    {
-        tempDict = m_bArray[indexPath.row];
-        cell.disLabel.hidden = YES;
-    }
     
     
     
@@ -695,17 +570,13 @@
         cell =(AddGroupMemberCell*)[m_gTableView cellForRowAtIndexPath:indexPath];
         tempDict = m_gArray[indexPath.row];
     }
-    else if (tableView ==m_bTableView)
-    {
-        cell =(AddGroupMemberCell*)[m_bTableView cellForRowAtIndexPath:indexPath];
-        tempDict = m_bArray[indexPath.row];
-    }
+
     
     if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
         cell.chooseImg.image = KUIImage(@"choose");
         NSDictionary *dic = tempDict;
         [tempDict setObject:@"2" forKey:@"choose"];
-//        [dic setValue:@(indexPath.row) forKey:@"row"];
+        //        [dic setValue:@(indexPath.row) forKey:@"row"];
         [addMemArray insertObject:dic atIndex:addMemArray.count-1];
         
     }else{
@@ -713,7 +584,7 @@
         NSDictionary *dic = tempDict;
         [tempDict setObject:@"1" forKey:@"choose"];
         
-//        [dic setValue:@(indexPath.row) forKey:@"row"];
+        //        [dic setValue:@(indexPath.row) forKey:@"row"];
         
         [addMemArray removeObject:dic];
     }
@@ -763,11 +634,7 @@
         case 2:
             tempDict = m_gArray[cell.tag-100];
             break;
-        case 3:
-            tempDict = m_bArray[cell.tag-100];
-            break;
-   
-        default:
+         default:
             break;
     }
     TestViewController *test =[[ TestViewController alloc]init];
@@ -793,7 +660,7 @@
     NSString *tabCut = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"tabType")];
     
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:0];
-
+    
     
     NSMutableDictionary *dic;
     
@@ -801,16 +668,12 @@
     {
         dic = [m_rArray objectAtIndex:row];
         cell1 = (AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:path];
-
+        
     }else if ([tabCut isEqualToString:@"location"])
     {
         dic = [m_gArray objectAtIndex:row];
         cell1 = (AddGroupMemberCell*)[m_gTableView cellForRowAtIndexPath:path];
-  
-    }else if ([tabCut isEqualToString:@"realm"])
-    {
-        dic = [m_bArray objectAtIndex:row];
-        cell1 = (AddGroupMemberCell*)[m_bTableView cellForRowAtIndexPath:path];
+        
     }
     
     [dic setObject:@"1" forKey:@"choose"];
@@ -830,7 +693,6 @@
     [UIView setAnimationDuration:0.3];
     m_customCollView.contentOffset = CGPointMake(addMemArray.count*44, 0);
     [UIView commitAnimations];
-    
 }
 
 //头像默认图片
@@ -870,22 +732,6 @@
     };
     m_foot1 = footer;
 }
--(void)addFootView2
-{
-    MJRefreshFooterView *footer = [MJRefreshFooterView footer];
-    CGRect headerRect = footer.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    footer.arrowImage.frame = headerRect;
-    footer.activityView.center = footer.arrowImage.center;
-    footer.scrollView = m_bTableView;
-    
-    footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        [self getMembersFromNetWithMethod:@"294"];
-    };
-    m_foot2 = footer;
-}
-
-
 
 - (void)didReceiveMemoryWarning
 {

@@ -49,6 +49,7 @@ static UserManager *userManager = NULL;
             alis = dUser.nickName;
         }
         [dict setObject:alis?alis:@"" forKey:@"nickname"];
+        [dict setObject:dUser.gender forKey:@"gender"];
         [self.userCache setObject:dict forKey:userId];
     }
     else{
