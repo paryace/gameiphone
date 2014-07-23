@@ -252,7 +252,12 @@
 {
     if (isTeam) {
         self.leveImageV.hidden=NO;
-        self.levelLable.text = teamPosition;
+        
+        if (![GameCommon isEmtity:teamPosition]) {
+            self.levelLable.text = teamPosition;
+        }else{
+            self.levelLable.text = @"未选";
+        }
         [self.leveImageV setFrame:CGRectMake(320-10-40, padding*2-15+40+3, 40, 25)];
     }else{
         self.leveImageV.hidden=YES;
@@ -263,8 +268,12 @@
 {
     if (isTeam) {
         self.leveImageV.hidden=NO;
-        self.levelLable.text = teamPosition;
-        [self.leveImageV setFrame:CGRectMake(320-10-40, padding*2-15+40+3, 40, 25)];
+        if (![GameCommon isEmtity:teamPosition]) {
+            self.levelLable.text = teamPosition;
+        }else{
+            self.levelLable.text = @"未选";
+        }
+        [self.leveImageV setFrame:CGRectMake(10, padding*2-15+40+3, 40, 25)];
     }else{
         self.leveImageV.hidden=YES
         ;

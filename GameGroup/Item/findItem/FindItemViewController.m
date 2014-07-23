@@ -189,7 +189,7 @@
     }
 }
 #pragma mark -- 分类请求成功通知
--(void):(id)responseObject
+-(void)updateTeamType:(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
@@ -258,7 +258,7 @@
             return NO;
         }
         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
-//                [self updateTeamType:responseObject];
+            [self updateTeamType:responseObject];
         } reError:^(id error) {
                 [self showErrorAlertView:error];
         }];
@@ -406,7 +406,7 @@
     }
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         itemInfo.isCaptain = YES;
     }else{

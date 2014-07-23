@@ -556,8 +556,7 @@
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
         NSDictionary * dict = [KISDictionaryHaveKey(message,@"payload") JSONValue];
-       
-        
+    
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadMsgCount  = unreadMsgCount;

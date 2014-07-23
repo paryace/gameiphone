@@ -66,6 +66,8 @@ UINavigationControllerDelegate>
     NSMutableArray *wxSDArray;
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
+    
+    NSInteger screenHeigth;
     BOOL endOfTable;
     BOOL oTherPage;
     
@@ -194,6 +196,17 @@ UINavigationControllerDelegate>
     historyMsg = 0;
     endOfTable = YES;
     oTherPage= NO;
+    if([self.type isEqualToString:@"normal"]){
+        offHight = 0;
+    }else if([self.type isEqualToString:@"group"])
+    {
+        offHight = 20;
+        if (self.isTeam) {
+            startX += 40 ;
+        }else{
+            startX +=0;
+        }
+    }
 
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -202,12 +215,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:self.tView];
     [self kkChatAddRefreshHeadView];//添加下拉刷新组件
     
-    if([self.type isEqualToString:@"normal"]){
-        offHight = 0;
-    }else if([self.type isEqualToString:@"group"])
-    {
-        offHight = 20;
-    }
+
     //从数据库中取出与这个人的聊天记录
     messages = [self getMsgArray:0 PageSize:20];
     [self normalMsgToFinalMsg];
@@ -716,7 +724,7 @@ UINavigationControllerDelegate>
 //表情按钮
 - (EmojiView *)theEmojiView{
     if (!_theEmojiView) {
-        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.frame.size.height-253,320,253)WithSendBtn:YES];
+        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,kScreenHeigth-253,320,253)WithSendBtn:YES];
         _theEmojiView.delegate = self;
     }
     return _theEmojiView;
@@ -725,7 +733,7 @@ UINavigationControllerDelegate>
 - (UIView *)kkChatAddView{
     if (!_kkChatAddView) {
         _kkChatAddView = [[UIView alloc] init];
-        _kkChatAddView.frame = CGRectMake(0, self.view.frame.size.height-125, 320,125);
+        _kkChatAddView.frame = CGRectMake(0, kScreenHeigth-125, 320,125);
         _kkChatAddView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatMorebg.png"]];
         NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         for (int i = 0; i < 2; i++) {
@@ -751,7 +759,7 @@ UINavigationControllerDelegate>
 - (UIView *)inPutView{
     if (!_inPutView) {
         _inPutView = [[UIView alloc] init];
-        _inPutView.frame = CGRectMake(0, self.view.frame.size.height-50,320,50);
+        _inPutView.frame = CGRectMake(0, kScreenHeigth-50,320,50);
         UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
@@ -933,7 +941,7 @@ UINavigationControllerDelegate>
 
 - (UITableView *)tView{
     if(!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-55)style:UITableViewStylePlain];
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX,320,kScreenHeigth-startX-55)style:UITableViewStylePlain];
         [tView setBackgroundColor:[UIColor clearColor]];
         tView.delegate = self;
         tView.dataSource = self;
@@ -1556,10 +1564,10 @@ UINavigationControllerDelegate>
         case KKChatInputTypeEmoji:
         {
             [self.textView resignFirstResponder];
-            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            self.inPutView.frame = CGRectMake(0,kScreenHeigth-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = NO;
             self.kkChatAddView.hidden = YES;
-            self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+            self.theEmojiView.frame = CGRectMake(0,kScreenHeigth-253,320,253);
             [self autoMovekeyBoard:253];
         }
             break;
@@ -1567,10 +1575,10 @@ UINavigationControllerDelegate>
         {
             [self.textView resignFirstResponder];
             
-            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            self.inPutView.frame = CGRectMake(0,kScreenHeigth-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
-            self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
+            self.kkChatAddView.frame = CGRectMake(0,kScreenHeigth-125,320,125);
             [self autoMovekeyBoard:125];
         }
             break;
@@ -1673,12 +1681,12 @@ UINavigationControllerDelegate>
     
     if (messages.count<4) {
         CGRect cgmm = self.tView.frame;
-        cgmm.size.height=self.view.frame.size.height-startX-55-h;
+        cgmm.size.height=kScreenHeigth-startX-55-h;
         self.tView.frame=cgmm;
     }else{
         CGRect cgmm = self.tView.frame;
-        if (cgmm.size.height<(self.view.frame.size.height-startX-55)) {
-            cgmm.size.height=self.view.frame.size.height-startX-55;
+        if (cgmm.size.height<(kScreenHeigth-startX-55)) {
+            cgmm.size.height=kScreenHeigth-startX-55;
         }
         if (self.inPutView.frame.size.height>50) {
             h+=(self.inPutView.frame.size.height-50);
@@ -1687,18 +1695,17 @@ UINavigationControllerDelegate>
         self.tView.frame=cgmm;
     }
     [UIView commitAnimations];
-    
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
     if (h>0&&canAdd) {
         canAdd = NO;
-        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,kScreenHeigth-startX-self.inPutView.frame.size.height-h)];
         [clearView setBackgroundColor:[UIColor clearColor]];
         [self.view addSubview:clearView];
     }
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        [clearView setFrame:CGRectMake(0,startX, 320,kScreenHeigth-startX-self.inPutView.frame.size.height-h)];
     }
 }
 #pragma mark HPExpandingTextView delegate

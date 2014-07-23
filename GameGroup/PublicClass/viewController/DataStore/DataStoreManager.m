@@ -3483,12 +3483,10 @@
     NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm")];
     NSString * characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterName")];
     NSString * description =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"description")];
-//    NSString *createUserid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"userid")];
     NSString * groupId  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
     NSString * teamInfo =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamInfo")];
     NSString * teamName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamName")];
     NSString * teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
-    
     NSString * type =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"type")];
     NSString * mask =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"mask")];
     NSString * maskValue =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
@@ -3518,6 +3516,12 @@
         commonMsg.realm = realm;
     }];
 }
+
+
+//+(void)queDSTeam
+//{
+//    
+//}
 
 
 
