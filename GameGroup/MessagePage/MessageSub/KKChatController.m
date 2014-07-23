@@ -24,6 +24,8 @@
 #import "KKSystemMsgCell.h"
 #import "KKHistoryMsgCell.h"
 #import "GroupCricleViewController.h"
+#import "TeamChatListView.h"
+#import "ItemManager.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -66,6 +68,9 @@ UINavigationControllerDelegate>
     NSInteger historyMsg;
     BOOL endOfTable;
     BOOL oTherPage;
+    
+    NSArray *typeArray;
+    NSMutableDictionary * selectType;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -76,6 +81,8 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
+
+@property (nonatomic, strong) TeamChatListView * dropDownView;
 
 
 @end
@@ -182,6 +189,7 @@ UINavigationControllerDelegate>
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
+    typeArray = [NSArray array];
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
@@ -258,10 +266,82 @@ UINavigationControllerDelegate>
     [self.view bringSubviewToFront:profileButton];
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
+    if (self.isTeam) {
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,60, self.view.frame.size.width, 40) dataSource:self delegate:self];
+        self.dropDownView.mSuperView = self.view;
+        [self.dropDownView setTitle:@"选择位置" inSection:0];
+        [self.dropDownView setTitle:@"申请加入" inSection:1];
+        [self.view addSubview:self.dropDownView];
+    }
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
+
+#pragma mark -- 分类请求成功通知
+-(void)updateTeamType:(id)responseObject
+{
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        typeArray = responseObject;
+        [self.dropDownView.customPhotoCollectionView reloadData];
+    }
+}
+#pragma mark -- dropDownListDelegate
+-(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
+{
+    if (section == 0){
+        selectType =[typeArray objectAtIndex:index];
+    }
+}
+-(BOOL) clickAtSection:(NSInteger)section
+{
+    if (section==0) {
+        [[ItemManager singleton] getMyGameLocation:@"2" reSuccess:^(id responseObject) {
+            NSLog(@"%@",responseObject);
+            [self updateTeamType:responseObject];
+        } reError:^(id error) {
+            NSLog(@"%@",error);
+        }];
+        return YES;
+    }else if(section == 1){
+        return NO;
+    }
+    return NO;
+}
+#pragma mark -- dropdownList DataSource
+-(NSInteger)numberOfSections
+{
+    return 2;
+}
+-(NSInteger)numberOfRowsInSection:(NSInteger)section
+{
+    if (section==0) {
+        if (typeArray.count>0) {
+            return typeArray.count;
+        }
+    }
+    return 0;
+}
+-(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
+{
+    if (section==0) {
+        if (typeArray.count>0) {
+            return KISDictionaryHaveKey([typeArray objectAtIndex:index], @"value");
+        }
+        return @"";
+    }else if (section == 1){
+        return @"";
+    }
+    return @"";
+
+}
+-(NSInteger)defaultShowSection:(NSInteger)section
+{
+    return 0;
+}
+
+
 
 -(void)changMsgToRead
 {

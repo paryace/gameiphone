@@ -253,7 +253,7 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
 
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         itemInfo.isCaptain = YES;
     }else{

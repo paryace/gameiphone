@@ -38,6 +38,7 @@
 
     cardArray = [NSMutableArray  array];
     numArray =[NSMutableArray array];
+    
     layout = [[UICollectionViewFlowLayout alloc]init];
     layout.minimumInteritemSpacing = 10;
     layout.minimumLineSpacing =10;
