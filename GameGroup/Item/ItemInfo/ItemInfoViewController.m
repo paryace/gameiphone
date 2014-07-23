@@ -13,6 +13,7 @@
 #import "EditInfoViewController.h"
 #import "ReviewapplicationViewController.h"
 #import "InvitationMembersViewController.h"
+#import "KKChatController.h"
 @interface ItemInfoViewController ()
 {
     UITableView *m_myTableView;
@@ -226,7 +227,12 @@
 {
     if (sender.tag ==100)
     {
-        [self showMessageWindowWithContent:@"发消息" imageType:0];
+        KKChatController * kkchat = [[KKChatController alloc] init];
+        kkchat.unreadMsgCount  = 0;
+        kkchat.chatWithUser = @"groupid";
+        kkchat.type = @"group";
+        kkchat.isTeam = YES;
+        [self.navigationController pushViewController:kkchat animated:YES];
     }
     else if(sender.tag ==101)
     {
@@ -243,8 +249,12 @@
 {
     if (sender.tag ==110)
     {
-        [self showMessageWindowWithContent:@"发消息" imageType:0];
-   
+        KKChatController * kkchat = [[KKChatController alloc] init];
+        kkchat.unreadMsgCount  = 0;
+        kkchat.chatWithUser = @"groupid";
+        kkchat.type = @"group";
+        kkchat.isTeam = YES;
+        [self.navigationController pushViewController:kkchat animated:YES];
     }
     else if(sender.tag ==111)
     {

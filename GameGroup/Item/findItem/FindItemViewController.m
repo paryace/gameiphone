@@ -89,7 +89,7 @@
     dropDownView.mSuperView = self.view;
     [self.view addSubview:dropDownView];
     
-    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40+44, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
+    m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX+40+44, kScreenWidth, kScreenHeigth-startX-60-44) style:UITableViewStylePlain];
     m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     m_myTabelView.delegate = self;
     m_myTabelView.dataSource  = self;
@@ -505,7 +505,9 @@
         [m_header endRefreshing];
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSArray class]]) {
-            [m_dataArray removeAllObjects];
+            if (m_currentPage == 0 ) {
+                [m_dataArray removeAllObjects];
+            }
             [m_dataArray addObjectsFromArray:responseObject];
             [m_myTabelView reloadData];
         }

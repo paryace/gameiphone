@@ -172,6 +172,38 @@ static ItemManager *itemManager = NULL;
     }];
 }
 
+#pragma mark ---获取我的位置
+-(void)getMyGameLocation:(NSString*)gameid reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"MyGameLocation",gameid]];
+    if (arrayType&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"MyGameLocation",gameid]]) {
+        if (resuccess) {
+            resuccess(arrayType);
+        }
+        return;
+    }
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"281" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"MyGameLocation--%@",responseObject);
+        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+            [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"MyGameLocation",gameid]];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
 
 -(long long)getCurrentTime{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];

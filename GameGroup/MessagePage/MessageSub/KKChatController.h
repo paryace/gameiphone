@@ -22,6 +22,7 @@
 #import "KKChatCell.h"
 #import "KKImgCell.h"
 #import "QiniuUploadDelegate.h"
+#import "DropDownChooseDelegate.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -41,7 +42,7 @@ HPGrowingTextViewDelegate,
 KKChatCellDelegate,
 EmojiViewDelegate,
 QiniuUploadDelegate,
-SendMsgDeleGate>
+SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
 {
     NSString * userName;
     NSUserDefaults * uDefault;
@@ -112,6 +113,8 @@ SendMsgDeleGate>
 @property(nonatomic, retain) NSString *nickName;
 @property(nonatomic, retain)   NSString *type;//聊天类型normal：跟某个用户聊天 group：群聊
 @property (assign, nonatomic)  NSInteger unreadMsgCount;//未读的消息数
+@property (assign, nonatomic)  BOOL isTeam;//是否是组队消息
+
 
 
 
