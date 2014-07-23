@@ -28,7 +28,7 @@
 #import "DSNewsMsgs.h"//新闻
 #import "DSuser.h"
 #import "DSThumbMsgs.h"
-
+#import "DSTeamList.h"
 #import "DSOfflineZan.h"
 @interface DataStoreManager : NSObject
 
@@ -336,4 +336,15 @@
 +(void)newSaveFriendList:(NSArray *)array withshiptype:(NSString *)nameindex;
 
 +(void)newSaveFriendInfo:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
+
+
++(void)saveTeamInfoWithDict:(NSDictionary *)dic;
+
+
+
+
+
+
+
+
 @end

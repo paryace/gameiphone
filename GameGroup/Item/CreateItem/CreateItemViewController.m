@@ -68,7 +68,6 @@
     toolbar.items = @[rb_server];
 
     
-    
     firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择角色"isPicker:YES isTurn:NO tag:0];
     
     secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:YES tag:3];

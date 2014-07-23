@@ -122,6 +122,51 @@
 {
     return 70;
 }
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle ==UITableViewCellEditingStyleDelete) {
+        NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+        
+        NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+        NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+        [postDict setObject:paramDict forKey:@"params"];
+        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [postDict setObject:@"289" forKey:@"method"];
+        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.firstDataArray removeObjectAtIndex:indexPath.row];
+            [self.myTableView reloadData];
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+        }];
+
+        
+        
+        
+        
+        
+        
+        
+        
+
+    }
+}
+
+
+
+
 -(void)enterSearchPage:(id)sender
 {
     if ([self.myDelegate respondsToSelector:@selector(enterSearchRoomPageWithView:)]) {
