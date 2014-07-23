@@ -123,7 +123,7 @@
     }
     NSMutableDictionary * cellDic = [m_groupArray objectAtIndex:indexPath.row];
     cell.headImageV.placeholderImage = KUIImage(@"group_icon");
-    cell.headImageV.imageURL = [ImageService getImageUrl3:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:80];
+    cell.headImageV.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:100];
     cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
     NSString * level = KISDictionaryHaveKey(cellDic, @"level");

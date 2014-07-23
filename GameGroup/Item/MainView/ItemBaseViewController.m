@@ -98,6 +98,26 @@
     
     
 }
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
+        firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+        [firstView.myTableView reloadData];
+    }else{
+        [self getPreferencesWithNet];
+    }
+
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]) {
+        room.listDict =[NSMutableDictionary dictionaryWithDictionary:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]];
+        [room.myListTableView reloadData];
+    }else{
+        [self getMyRoomFromNet];
+    }
+}
+
+
 -(void)refreshMyList:(id)sender
 {
     if (seg.selectedSegmentIndex ==1) {
@@ -121,12 +141,16 @@
 
 -(void)getPreferencesWithNet
 {
+    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"276" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
             firstView.firstDataArray = responseObject;
             [firstView.myTableView reloadData];
         }
@@ -189,12 +213,16 @@
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
+    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]];
             room.listDict = [NSMutableDictionary dictionaryWithDictionary:responseObject];
             [room.myListTableView reloadData];
         }

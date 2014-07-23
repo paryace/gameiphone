@@ -23,6 +23,7 @@
     ItemRoleButton *itemRoleBtn;
     RoleTabView *roleTabView;
     UIAlertView *jiesanAlert;
+    UIButton *m_getOutBtn;
 }
 @end
 
@@ -42,20 +43,20 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
     
-    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
     if (self.isCaptain) {
-        [createBtn setTitle:@"解散" forState:UIControlStateNormal];
+        [m_getOutBtn setTitle:@"解散" forState:UIControlStateNormal];
     }else{
-        [createBtn setTitle:@"退出" forState:UIControlStateNormal];
+        [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
     }
     
     
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
-    createBtn.backgroundColor = [UIColor clearColor];
-    [createBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:createBtn];
+    m_getOutBtn.backgroundColor = [UIColor clearColor];
+    [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_getOutBtn];
 
     isJoinIn = YES;
     
@@ -300,17 +301,23 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             
+            
+            [DataStoreManager saveTeamInfoWithDict:responseObject];
+            
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             NSArray *arr = [NSArray array] ;
             if ([teamUsershipType intValue]==0) {
                 arr = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                m_getOutBtn.hidden = NO;
             }
             else if([teamUsershipType intValue]==1)
             {
                 arr = @[@"sendMsg_normal.jpg",@"goout_item"];
+                m_getOutBtn.hidden = NO;
             }
             else
             {
+                m_getOutBtn.hidden = YES;
                 arr = @[@"joinInBtn_Item"];
             }
             [self buildbelowbutotnWithArray:arr shiptype:[teamUsershipType intValue]];
@@ -499,7 +506,7 @@
     
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"teamId")] forKey:@"teamId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] forKey:@"roomId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] forKey:@"memberId"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

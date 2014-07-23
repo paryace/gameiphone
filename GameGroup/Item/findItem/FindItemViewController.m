@@ -9,6 +9,7 @@
 #import "FindItemViewController.h"
 #import "BaseItemCell.h"
 #import "CreateItemViewController.h"
+#import "NewCreateItemViewController.h"
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"
 #import "DropDownListView.h"
@@ -188,7 +189,7 @@
     }
 }
 #pragma mark -- 分类请求成功通知
--(void)updateTeamType:(id)responseObject
+-(void):(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
@@ -257,7 +258,7 @@
             return NO;
         }
         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
-                [self updateTeamType:responseObject];
+//                [self updateTeamType:responseObject];
         } reError:^(id error) {
                 [self showErrorAlertView:error];
         }];
@@ -317,7 +318,8 @@
 //创建组队
 -(void)didClickCreateItem:(id)sender
 {
-    CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
+//    CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
+    NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
 //筛选
