@@ -3489,7 +3489,7 @@
     NSString *typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",roomId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@",roomId];
         DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
         if (!commonMsg)
             commonMsg = [DSTeamList MR_createInContext:localContext];

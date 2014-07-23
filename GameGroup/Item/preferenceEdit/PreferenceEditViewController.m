@@ -45,12 +45,12 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"偏好设置" withBackButton:YES];
     
-    gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"gameid")]] ];
+    gameInfoArray  = [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"TeamType_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid")]] ];
     m_roleArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"FilterId_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.mainDict, @"gameid")]]];
     
     if (m_roleArray.count<1) {
         
-        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"gameid")] reSuccess:^(id responseObject) {
+        [[ItemManager singleton]getFilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid")] reSuccess:^(id responseObject) {
             [self getFilter:responseObject];
         } reError:^(id error) {
             [self showErrorAlertView:error];
@@ -152,7 +152,7 @@
 //    firstTf.inputAccessoryView = toolbar1;
 //    firstTf.inputView = m_rolePickerView;
     
-    UIView *roleView = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightText:[NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"characterName")]]];
+    UIView *roleView = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightText:[NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName")]]];
     
     [self.view addSubview:roleView];
     
