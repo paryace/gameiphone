@@ -29,6 +29,7 @@
     NSMutableArray  *  m_RoleArray;
     NSMutableArray  *  m_countArray;
     
+    NSMutableDictionary  *m_uploadDict;
     
 }
 @end
@@ -48,11 +49,23 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"创建队伍" withBackButton:YES];
+    
+    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    createBtn.backgroundColor = [UIColor clearColor];
+    [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:createBtn];
+
+    
+    
+    
     m_maxZiShu = 30;
     m_tagsArray = [NSMutableArray array];
-    m_RoleArray = [NSMutableArray array];
+    m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     m_flArray  = [NSMutableArray array];
     m_countArray  = [NSMutableArray array];
+    m_uploadDict = [NSMutableDictionary dictionary];
     [self buildPickView];
     
     m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择游戏" rightImg:@"right" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
@@ -107,8 +120,52 @@
     // Do any additional setup after loading the view.
 }
 
+-(void)buildSwitchViewWithDic:(NSDictionary *)dic
+{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(170, startX+110, 140, 40)];
+    view.backgroundColor = [UIColor whiteColor];
+    view.layer.borderWidth = 1;
+    view.layer.borderColor = [[UIColor grayColor]CGColor];
+    view.layer.cornerRadius = 5;
+    view.layer.masksToBounds=YES;
+    [self.view addSubview:view];
+    
+    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 60, 40)];
+    lb.text = @"跨服";
+    lb.backgroundColor = [UIColor clearColor];
+    lb.font = [UIFont boldSystemFontOfSize:14];
+    lb.textColor = [UIColor blackColor];
+    lb.textAlignment = NSTextAlignmentCenter;
+    [view addSubview:lb];
+    
+    UISwitch *switchView = [[UISwitch alloc]initWithFrame:CGRectMake(60, 5, 80, 30)];
+    BOOL isOpen = [KISDictionaryHaveKey(dic, @"mask")boolValue];
+    switch (isOpen) {
+        case YES:
+            [switchView setOn:YES] ;
 
+            break;
+        case NO:
+            [switchView setOn:NO] ;
+            
+            break;
+   
+        default:
+            break;
+    }
+    [switchView addTarget:self action:@selector(changeValue:) forControlEvents:UIControlEventValueChanged];
+    [view addSubview:switchView];
+}
 
+-(void)changeValue:(UISwitch*)sender
+{
+    BOOL isButtonOn = [sender isOn];
+    if (isButtonOn) {
+        [m_uploadDict setObject:@"1" forKey:@"crossServer"];
+    }else {
+        [m_uploadDict setObject:@"0" forKey:@"crossServer"];
+    }
+}
 -(void)buildPickView
 {
     m_rolePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
@@ -151,6 +208,48 @@
 }
 -(void)tagClick:(UIButton*)sender
 {
+    m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+    placeholderL.text = @"";
+}
+//点击toolbar 确定button
+-(void)selectServerNameOK:(id)sender
+{
+    if ([m_gameTf isFirstResponder]) {
+        if ([m_RoleArray count] != 0) {
+         NSDictionary *   selectCharacter =[m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
+            m_gameTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
+            [m_gameTf resignFirstResponder];
+            [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+            
+            [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+            
+        }
+    }
+    else if ([m_tagTf isFirstResponder])
+    {
+        if ([m_tagsArray count] != 0) {
+            NSDictionary *  selectCharacter =[m_tagsArray objectAtIndex:[m_tagsPickView selectedRowInComponent:0]];
+            m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"value")];
+
+            [m_tagTf resignFirstResponder];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"constId")] forKey:@"typeId"];
+            
+            [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"constId")]];
+        }
+    }
+    else{
+        if ([m_countArray count] != 0) {
+            NSDictionary *  selectCharacter =[m_countArray objectAtIndex:[m_countPickView selectedRowInComponent:0]];
+            m_countTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"value")];
+            [m_countTf resignFirstResponder];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"mask")] forKey:@"maxVol"];
+        }
+
+    }
+    
+    
 }
 
 
@@ -161,30 +260,20 @@
 }
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    if (pickerView ==m_rolePickerView) {
-        return m_RoleArray.count;
-    }else if (pickerView == m_countPickView)
+    if (pickerView ==m_rolePickerView)
     {
-        return m_countArray.count;
+        return m_RoleArray.count;
     }
-    else{
+    else if (pickerView == m_tagsPickView)
+    {
+        return m_tagsArray.count;
+    }
+    else
+    {
         return m_countArray.count;
     }
 }
 
-- (NSString *) pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger) row forComponent:(NSInteger) component
-{
-    if (pickerView ==m_rolePickerView) {
-        return nil;
-    }
-    else if (pickerView == m_countPickView)
-    {
-        return KISDictionaryHaveKey([m_flArray objectAtIndex:row], @"name");
-    }
-    else{
-        return KISDictionaryHaveKey([m_countArray objectAtIndex:row], @"name");
-    }
-}
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
     if (pickerView ==m_rolePickerView) {
@@ -201,9 +290,83 @@
         return customView;
 
     }
-    return nil;
+    else if (pickerView ==m_tagsPickView)
+    {
+        UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+        label.backgroundColor = [UIColor clearColor];
+        label.text = KISDictionaryHaveKey([m_tagsArray objectAtIndex:row], @"value");
+        [customView addSubview:label];
+        return customView;
+
+    }else
+    {
+        UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+        
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+        label.backgroundColor = [UIColor clearColor];
+        label.text = KISDictionaryHaveKey([m_countArray objectAtIndex:row], @"value");
+        [customView addSubview:label];
+        return customView;
+    }
+}
+-(void)getfenleiFromNetWithGameid:(NSString *)gameid
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:gameid forKey:@"gameid"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"277" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            [m_tagsArray removeAllObjects];
+            [m_tagsArray addObjectsFromArray:responseObject];
+            [m_tagsPickView reloadInputViews];
+        }
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+//        [self showErrorAlert:error];
+        [hud hide:YES];
+    }];
+
+    
 }
 
+-(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:gameid forKey:@"gameid"];
+    [paramDict setObject:typeId forKey:@"typeId"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"298" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [m_countArray removeAllObjects];
+            [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
+            [m_countPickView reloadInputViews];
+            [self buildSwitchViewWithDic:KISDictionaryHaveKey(responseObject, @"crossServer")];
+            
+            [m_uploadDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask") forKey:@"crossFire"];
+
+        }
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        //        [self showErrorAlert:error];
+        [hud hide:YES];
+    }];
+    
+    
+}
 
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -248,12 +411,12 @@
 
 
 #pragma MARK ---联网获取标签
--(void)getcardWithNet
+-(void)getcardFromNetWithGameid:(NSString*)gameid
 {
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@"20" forKey:@"maxSize"];
-    [paramDict setObject:(self.gameid?self.gameid:self.gameid) forKey:@"gameid"];
+    [paramDict setObject:gameid forKey:@"gameid"];
     
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"285" forKey:@"method"];
@@ -262,8 +425,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSArray class]]) {
-            [m_tagsArray removeAllObjects];
-            [m_tagsArray addObjectsFromArray:responseObject];
+            [m_flArray removeAllObjects];
+            [m_flArray addObjectsFromArray:responseObject];
             [tagList setTags:responseObject];
         }
         
@@ -279,6 +442,71 @@
             }
         }
     }];
+    
+}
+
+
+#pragma mark --创建
+-(void)createItem:(id)sender
+{
+    if ([GameCommon isEmtity:m_gameTf.text]) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        return;
+    }
+    if ([GameCommon isEmtity:m_tagTf.text]) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        return;
+    }
+    if ([GameCommon isEmtity:m_countTf.text]) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择人数" buttonTitle:@"OK"];
+        return;
+    }
+    if ([GameCommon isEmtity:m_miaoshuTV.text]) {
+        [self showAlertViewWithTitle:@"提示" message:@"组队描述内容不能为空" buttonTitle:@"OK"];
+    }
+    [hud show:YES];
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"characterId")] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"typeId")] forKey:@"typeId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"maxVol")] forKey:@"maxVol"];
+    
+    
+    if ([[m_uploadDict allKeys]containsObject:@"crossServer"]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossServer")] forKey:@"crossServer"];
+    }else{
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossFire")] forKey:@"crossServer"];
+    }
+
+
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"265" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        //发送通知 刷新我的组队页面
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        [self showMessageWindowWithContent:@"创建成功" imageType:0];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [self showErrorAlert:error];
+        [hud hide:YES];
+    }];
+}
+
+-(void)showErrorAlert:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
     
 }
 
