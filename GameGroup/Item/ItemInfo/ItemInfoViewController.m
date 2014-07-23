@@ -197,12 +197,13 @@
 #pragma mark ---创建底部button
 -(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeigth-(KISHighVersion_7?50:60), 320, (KISHighVersion_7?50:60))];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
+    view.backgroundColor = [UIColor redColor];
     [self.view addSubview:view];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
-        [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
+        [button setImage:KUIImage(array[i]) forState:UIControlStateNormal];
         button.tag = i+100+shiptype*10;
         if (shiptype ==0) {
             [button addTarget:self action:@selector(EditItem:) forControlEvents:UIControlEventTouchUpInside];
@@ -211,7 +212,7 @@
         {
             [button addTarget:self action:@selector(members:) forControlEvents:UIControlEventTouchUpInside];
         }
-        else{
+        else if(shiptype ==2){
             [button addTarget:self action:@selector(joinInItem:) forControlEvents:UIControlEventTouchUpInside];
         }
         [view addSubview:button];
@@ -296,7 +297,7 @@
             }
             else
             {
-                arr = @[@"joinInBtn_item"];
+                arr = @[@"joinInBtn_Item"];
             }
             [self buildbelowbutotnWithArray:arr shiptype:[teamUsershipType intValue]];
             [m_dataArray removeAllObjects];

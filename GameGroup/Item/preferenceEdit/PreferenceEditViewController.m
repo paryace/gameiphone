@@ -89,8 +89,8 @@
     [paramDict setObject:m_dsTextView.text forKey:@"description"];
     [paramDict setObject:secondTf.text forKey:@"options"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(filDic, @"constId")] forKey:@"filterId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")]?[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")]:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") forKey:@"typeId"]
-    ;
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"constId")]?[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"constId")]:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId")]forKey:@"typeId"];
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -146,11 +146,15 @@
     toolbar1.items = @[rb_server1];
 
     
-    firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"nil" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:nil isPicker:YES isTurn:NO tag:0];
-    firstTf.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"characterName")]];
-    firstTf.userInteractionEnabled = NO;
+//    firstTf = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightImg:@"nil" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:nil isPicker:YES isTurn:NO tag:0];
+//    firstTf.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"characterName")]];
+//    firstTf.userInteractionEnabled = NO;
 //    firstTf.inputAccessoryView = toolbar1;
 //    firstTf.inputView = m_rolePickerView;
+    
+    UIView *roleView = [self buildViewWithFrame:CGRectMake(0, startX, 320, 40) leftImg:@"item_1" title:@"角色" rightText:[NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"teamUser"), @"characterName")]]];
+    
+    [self.view addSubview:roleView];
     
     secondTf = [self buildViewWithFrame:CGRectMake(0, startX+41, 320, 40) leftImg:@"item_2" title:@"分类" rightImg:@"arrow_bottom" RightImageSize:CGSizeMake(12.5, 8.5) placeholder:@"点击选择分类"isPicker:NO isTurn:NO tag:0];
     secondTf.inputView = m_gamePickerView;
@@ -181,6 +185,30 @@
     
     
 }
+
+-(UIView *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title rightText:(NSString *)rightText
+{
+    UIView *customView = [[UIView alloc]initWithFrame:frame];
+    customView.backgroundColor =[ UIColor whiteColor];
+    
+    UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(5, 5, 30, 30)];
+    imageView.image = KUIImage(leftImg);
+    [customView addSubview:imageView];
+    
+    UILabel *titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(35, 0, 100, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    titleLabel.text = title;
+    [customView addSubview:titleLabel];
+    
+    
+    UILabel *rightLb = [GameCommon buildLabelinitWithFrame:CGRectMake(140, 0, 155, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight ];
+    rightLb.text = rightText;
+    [customView addSubview:rightLb];
+    return customView;
+}
+
+
+
+
 //创建快捷方式
 -(UITextField *)buildViewWithFrame:(CGRect)frame  leftImg:(NSString *)leftImg title:(NSString *)title rightImg:(NSString *)rightImg RightImageSize:(CGSize)rightImageSize placeholder:(NSString *)placeholder isPicker:(BOOL)ispicker isTurn:(BOOL)isTurn tag:(NSInteger)tag
 {
