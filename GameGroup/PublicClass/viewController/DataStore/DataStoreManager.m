@@ -20,6 +20,7 @@
 #import "DSGroupApplyMsg.h"
 #import "DSGroupUser.h"
 #import "DSLatestDynamic.h"
+#import "DSTeamList.h"
 @implementation DataStoreManager
 
 -(void)nothing
@@ -496,6 +497,7 @@
         thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
         thumbMsgs.status = @"1";
         thumbMsgs.sayHiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
+        thumbMsgs.payLoad = KISDictionaryHaveKey(msg, @"payload");
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         
         //
@@ -509,6 +511,7 @@
         groupMsg.status = @"1";
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
     }
 }
 
@@ -631,6 +634,7 @@
         thumbMsgs.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
         thumbMsgs.status = @"2";//发送中
         thumbMsgs.groupId = groupId;
+        thumbMsgs.payLoad = KISDictionaryHaveKey(message, @"payload");
         thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         
         //
@@ -646,6 +650,7 @@
         commonMsg.status = KISDictionaryHaveKey(message, @"status");
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         commonMsg.groupId = groupId;
+        commonMsg.teamPosition = KISDictionaryHaveKey(message, @"teamPosition");
     }];
 }
 
@@ -968,6 +973,7 @@
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] payload]?[[DSArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] messageuuid]?[[DSArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] status]?[[DSArray objectAtIndex:i] status] : @"" forKey:@"status"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] teamPosition]?[[DSArray objectAtIndex:i] teamPosition] : @"" forKey:@"teamPosition"];
         [msgArray addObject:thumbMsgsDict];
     }
     return msgArray;
@@ -1134,6 +1140,7 @@
     [msgDic setObject:msgDS.status?msgDS.status:@"" forKey:@"status"];
     [msgDic setObject:msgDS.sayHiType?msgDS.sayHiType:@"" forKey:@"sayHiType"];
     [msgDic setObject:msgDS.receiveTime?msgDS.receiveTime:@"" forKey:@"receiveTime"];
+    [msgDic setObject:msgDS.payLoad?msgDS.payLoad:@"" forKey:@"payload"];
     return msgDic;
 }
 

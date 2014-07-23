@@ -23,5 +23,6 @@
 @dynamic senTime;
 @dynamic status;
 @dynamic groupId;
+@dynamic teamPosition;
 
 @end

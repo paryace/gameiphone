@@ -26,5 +26,6 @@
 @dynamic sayHiType;
 @dynamic receiveTime;
 @dynamic groupId;
+@dynamic payLoad;
 
 @end

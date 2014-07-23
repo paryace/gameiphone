@@ -205,6 +205,7 @@
         <attribute name="senderNickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamPosition" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSGroupUser" representedClassName="DSGroupUser" syncable="YES">
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
@@ -330,6 +331,7 @@
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payLoad" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receiver" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sayHiType" optional="YES" attributeType="String" defaultValueString="1" syncable="YES"/>
@@ -424,7 +426,7 @@
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="298"/>
-        <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="223"/>
+        <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="240"/>
         <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
         <element name="DSLatestDynamic" positionX="-90" positionY="-54" width="128" height="315"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
@@ -436,12 +438,12 @@
         <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
-        <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="270"/>
+        <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="313"/>
+        <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="283"/>
         <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="313"/>
         <element name="Entity" positionX="-54" positionY="-18" width="128" height="45"/>
     </elements>
 </model>

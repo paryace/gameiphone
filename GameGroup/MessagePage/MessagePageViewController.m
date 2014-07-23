@@ -555,11 +555,19 @@
     }
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
+        NSDictionary * dict = [KISDictionaryHaveKey(message,@"payload") JSONValue];
+       
+        
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
+        if (KISDictionaryHaveKey(dict, @"team")) {
+            kkchat.isTeam = YES;
+            kkchat.roomId = KISDictionaryHaveKey(dict, @"roomId");
+            kkchat.gameId = KISDictionaryHaveKey(dict, @"gameid");
+        }
         [self.navigationController pushViewController:kkchat animated:YES];
         return;
     }

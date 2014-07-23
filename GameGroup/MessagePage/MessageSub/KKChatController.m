@@ -436,7 +436,7 @@ UINavigationControllerDelegate>
         if ([sender isEqualToString:@"you"]) {
             //头像
             [cell setHeadImgByMe:self.myHeadImg];
-            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
             bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
@@ -454,7 +454,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
-            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
             }else if([self.type isEqualToString:@"group"]){
@@ -496,7 +496,7 @@ UINavigationControllerDelegate>
         if ([sender isEqualToString:@"you"])
         {
             [cell setHeadImgByMe:self.myHeadImg];
-            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.bgImageView setTag:(indexPath.row+1)];
             
             [cell.failImage setTag:(indexPath.row+1)];
@@ -535,7 +535,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
-            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
             }else if([self.type isEqualToString:@"group"]){
@@ -625,7 +625,7 @@ UINavigationControllerDelegate>
         //你自己发送的消息
         if ([sender isEqualToString:@"you"]) {
             [cell setHeadImgByMe:self.myHeadImg];
-            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             cell.senderNickName.hidden =YES;
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
             bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
@@ -641,7 +641,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
-            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;

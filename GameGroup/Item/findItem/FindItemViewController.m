@@ -377,9 +377,16 @@
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
     cell.headImg.image = KUIImage(@"wow");
-    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
-    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+    NSMutableDictionary * createTeamUser = KISDictionaryHaveKey(dic, @"createTeamUser");
+    if (createTeamUser) {
+        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
+        cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+        cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+    }else{
+        cell.titleLabel.text = @"meihao";
+    }
+   
+
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
     NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
     NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
