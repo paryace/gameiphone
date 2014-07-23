@@ -19,7 +19,6 @@
         dd = 10.0f;
         // Initialization code
         
-        
         self.myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myTableView.delegate = self;
         self.myTableView.dataSource = self;
@@ -133,7 +132,7 @@
         
         NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
         NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
-        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
         [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
         [postDict setObject:paramDict forKey:@"params"];
         [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -184,11 +183,11 @@
 
 -(void)didClickRowWithCell:(FirstCell*)cell isRow:(BOOL)isRow
 {
-    NSMutableDictionary *dic = [self.firstDataArray objectAtIndex:cell.tag];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[self.firstDataArray objectAtIndex:cell.tag]];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
     BOOL isOpen = [KISDictionaryHaveKey(dic, @"isOpen")boolValue];
     
@@ -207,6 +206,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if (isOpen) {
+            [dic removeObjectForKey:@"isOpen"];
             [dic setObject:@"0" forKey:@"isOpen"];
             cell.isrow =NO;
 
@@ -218,6 +218,7 @@
         [cell didClickRow];
 
         [self.firstDataArray removeObjectAtIndex:cell.tag];
+        
         [self.firstDataArray insertObject:dic atIndex:cell.tag];
         //        [firstView.myTableView reloadData];
         
