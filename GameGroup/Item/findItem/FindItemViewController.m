@@ -189,7 +189,7 @@
     }
 }
 #pragma mark -- 分类请求成功通知
--(void):(id)responseObject
+-(void)updateTeamType:(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
@@ -258,7 +258,7 @@
             return NO;
         }
         [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
-//                [self updateTeamType:responseObject];
+            [self updateTeamType:responseObject];
         } reError:^(id error) {
                 [self showErrorAlertView:error];
         }];
@@ -377,9 +377,9 @@
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
     cell.headImg.image = KUIImage(@"wow");
-    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"img")];
+    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
     cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname")];
+    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
     NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
     NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
@@ -399,7 +399,7 @@
     }
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"user"), @"userid")];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         itemInfo.isCaptain = YES;
     }else{

@@ -151,7 +151,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-            firstView.firstDataArray = responseObject;
+            
+            firstView.firstDataArray = [NSMutableArray arrayWithArray:responseObject];
             [firstView.myTableView reloadData];
         }
         
