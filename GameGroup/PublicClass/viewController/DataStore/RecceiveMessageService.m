@@ -53,11 +53,14 @@ static RecceiveMessageService *recceiveMessageService = NULL;
     NSString * time = [[message attributeForName:@"msgTime"] stringValue];
     NSString *msgTime = time?time:[GameCommon getCurrentTime];
     NSString* payload = [GameCommon getNewStringWithId:[[message elementForName:@"payload"] stringValue]];
+    
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:msg forKey:@"msg"];//消息内容
     [dict setObject:fromId forKey:@"sender"];//发送者用户id
-    [dict setObject:msgId forKey:@"msgId"];//消息id
+    [dict setObject:msgId?msgId:@"" forKey:@"msgId"];//消息id
     [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
+    [dict setObject:msgtype?msgtype:@"" forKey:@"msgType"];
+    
     if ([type isEqualToString:@"chat"])
     {
         if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
@@ -69,8 +72,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
             [self.chatDelegate newGroupMessageReceived:dict];
             return;
@@ -83,15 +84,9 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            if ([payload JSONValue][@"active"]){//发送通知 判断账号是否激活
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[payload JSONValue]];
-            }
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [self.chatDelegate newMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
-            [dict setObject:@"sayHello" forKey:@"msgType"];
             if (payload.length > 0) {
                 [dict setObject:KISDictionaryHaveKey([payload JSONValue], @"shiptype") forKey:@"shiptype"];
             }
@@ -101,7 +96,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
         }
         else if([msgtype isEqualToString:@"deletePerson"])//取消关注
         {
-            [dict setObject:@"deletePerson" forKey:@"msgType"];
             if (payload.length > 0) {
                 [dict setObject:KISDictionaryHaveKey([payload JSONValue], @"shiptype") forKey:@"shiptype"];
             }
@@ -112,14 +106,12 @@ static RecceiveMessageService *recceiveMessageService = NULL;
         }
         else if ([msgtype isEqualToString:@"character"] || [msgtype isEqualToString:@"pveScore"] || [msgtype isEqualToString:@"title"])//角色信息改变
         {
-            [dict setObject:msgtype forKey:@"msgType"];
             NSString *title = KISDictionaryHaveKey([payload JSONValue],@"title");
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.otherMsgReceiveDelegate otherMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
         {
-            [dict setObject:msgtype forKey:@"msgType"];
             NSArray* arr = [msg JSONValue];
             NSString* dis = @"";
             if (arr.count<1) {
@@ -141,13 +133,11 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 || [msgtype isEqualToString:@"mydynamicmsg"]//与我相关
                 || [msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
         {
-            [dict setObject:msgtype forKey:@"msgType"];
             [dict setObject:payload forKey:@"payLoad"];
             [self.chatDelegate dyMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
-            [dict setObject:msgtype forKey:@"msgType"];
             NSString *title = [[message elementForName:@"payload"] stringValue];
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
@@ -158,8 +148,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [self.chatDelegate changGroupMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
@@ -174,8 +162,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 ||[msgtype isEqualToString:@"kickOffGroup"]//被踢出群的消息
                 ||[msgtype isEqualToString:@"groupRecommend"]//群推荐
                 ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -185,8 +171,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
         //群组公告消息
         else if ([msgtype isEqualToString:@"groupBillboard"])
         {
-            [dict setObject:msgtype forKey:@"msgType"];
-            [dict setObject:msgId?msgId:@"" forKey:@"msgId"];
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];

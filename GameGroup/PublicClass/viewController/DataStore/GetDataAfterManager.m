@@ -104,9 +104,14 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)newMessageReceived:(NSDictionary *)messageContent
 {
     NSString * sender = [messageContent objectForKey:@"sender"];
+    //黑名单
     if ([DataStoreManager isBlack:sender]) {
          [self comeBackDelivered:sender msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         return;
+    }
+    //账号激活
+    if ([KISDictionaryHaveKey(messageContent, @"payload") JSONValue][@"active"]){//发送通知 判断账号是否激活
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]];
     }
     //1 打过招呼，2 未打过招呼
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]) {
@@ -119,6 +124,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }else{
         [self getSayHiUserIdWithInfo:messageContent];
     }
+    
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     if ((nowTime - markTime)*100<0.03*1000) {
         markTime = [[NSDate date] timeIntervalSince1970];
@@ -130,7 +136,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
                 self.cacheMsg = [NSMutableArray array];
             }
             [self.cacheMsg addObject:messageContent];
-            self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATime) userInfo:nil repeats:YES];
+            self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(stopATimeNormal) userInfo:nil repeats:YES];
             [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
         }
         return;
@@ -146,7 +152,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         }];
     });
 }
-- (void)stopATime
+- (void)stopATimeNormal
 {
     NSMutableArray *array = [self.cacheMsg mutableCopy];
     [self.cacheMsg removeAllObjects];
