@@ -7,13 +7,15 @@
 //
 
 #import "BaseViewController.h"
+#import "AddGroupMemberCell.h"
 
 @interface InvitationMembersViewController : BaseViewController
 <UITableViewDataSource,
 UITableViewDelegate,
 UICollectionViewDataSource,
-UICollectionViewDelegate
-
+UICollectionViewDelegate,
+addGroupMemberDelegate
 >
-@property(nonatomic,copy)NSString     *     groupId;
+@property(nonatomic,copy)NSString     *     roomId;
+@property(nonatomic,copy)NSString     *     gameId;
 @end
