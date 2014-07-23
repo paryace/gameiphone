@@ -18,21 +18,18 @@
 @interface KKChatCell : UITableViewCell
 
 @property(nonatomic, retain) NSMutableDictionary *message; //ChatCell对应的数据源
-
 @property(nonatomic, retain) EGOImageButton * headImgV;   //头像
 @property(assign,nonatomic)id<KKChatCellDelegate> myChatCellDelegate;   //头像点击代理
-
 @property(nonatomic, retain) UILabel *senderAndTimeLabel;     //时间与发送人 标签
-
 @property(nonatomic, retain) UILabel *senderNickName;
-
 @property(nonatomic, retain) UIButton *bgImageView; //气泡背景
-
 //重连相关
 @property (nonatomic, retain) UIButton* failImage; //重连图标
 @property (nonatomic, retain) NSTimer* cellTimer;//发送5秒
 @property (nonatomic, retain) UIActivityIndicatorView *activityView; //可用
 @property (nonatomic, retain) UILabel*  statusLabel;//已读 送达
+@property (nonatomic, retain) UILabel*  levelLable;//位置
+@property (nonatomic, retain) UIImageView * leveImageV;//位置背景
 
 //初始化方法
 - (id)initWithMessage:(NSMutableDictionary *)msg reuseIdentifier:(NSString *)reuseIdentifier; //用这个比较好， 直接赋值
@@ -47,6 +44,9 @@
 //头像 
 - (void)setHeadImgByMe:(NSString*) myHeadImg; //头像是自己
 - (void)setHeadImgByChatUser:(NSString*) chatUserImg; //把头像设置为聊天对像
+-(void)setMePosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition;
+-(void)setUserPosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition;
+
 -(void)setViewState:(NSString*)status;
 @end
 

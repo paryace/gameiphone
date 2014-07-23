@@ -436,6 +436,7 @@ UINavigationControllerDelegate>
         if ([sender isEqualToString:@"you"]) {
             //头像
             [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
             bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
@@ -453,6 +454,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
             }else if([self.type isEqualToString:@"group"]){
@@ -494,6 +496,7 @@ UINavigationControllerDelegate>
         if ([sender isEqualToString:@"you"])
         {
             [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
             [cell.bgImageView setTag:(indexPath.row+1)];
             
             [cell.failImage setTag:(indexPath.row+1)];
@@ -532,6 +535,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
             }else if([self.type isEqualToString:@"group"]){
@@ -621,6 +625,7 @@ UINavigationControllerDelegate>
         //你自己发送的消息
         if ([sender isEqualToString:@"you"]) {
             [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:@"上单"];
             cell.senderNickName.hidden =YES;
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
             bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
@@ -636,6 +641,7 @@ UINavigationControllerDelegate>
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:@"上单"];
             bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
@@ -1009,7 +1015,7 @@ UINavigationControllerDelegate>
     historyMsg = 1;
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"historyMsg"];
+    NSString * payloadStr=[MessageService createPayLoadStr:@"historyMsg"];
     NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"以上是历史消息" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
@@ -2011,10 +2017,19 @@ UINavigationControllerDelegate>
 #pragma mark将发送图片的消息保存数据库
 - (void)sendImageMsgD:(NSString *)imageMsg BigImagePath:(NSString*)bigimagePath UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
-     NSMutableDictionary *dictionary =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
-    [dictionary setObject:payloadStr forKey:@"payload"];
-    [self addNewMessageToTable:dictionary];
+    NSString* payloadStr;
+    if (self.isTeam) {
+         payloadStr=[MessageService createPayLoadStr:imageMsg title:bigimagePath shiptype:@"" messageid:@"" msg:@"" type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        
+    }else{
+       payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
+    }
+     NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    if (self.isTeam) {
+        [messageDict setObject:KISDictionaryHaveKey(selectType, @"value")forKey:@"teamPosition"];
+    }
+    [messageDict setObject:payloadStr forKey:@"payload"];
+    [self addNewMessageToTable:messageDict];
 }
 
 #pragma mark 发送图片消息
@@ -2032,8 +2047,17 @@ UINavigationControllerDelegate>
     NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString* strThumb = KISDictionaryHaveKey(pay, @"thumb");
     NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
-    NSString * payloadStr=[MessageService createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
+    NSString * payloadStr;
+    
+    if (self.isTeam) {
+         payloadStr=[MessageService createPayLoadStr:imageMsg title:srtBigImage shiptype:@"" messageid:@"" msg:@"" type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    }else{
+       payloadStr=[MessageService createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
+    }
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
+    if (self.isTeam) {
+        [messageDict setObject:KISDictionaryHaveKey(selectType, @"value") forKey:@"teamPosition"];
+    }
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
     [self reSendMsg:messageDict];
     [self refreWX];
@@ -2045,10 +2069,18 @@ UINavigationControllerDelegate>
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
 
-    [self addNewMessageToTable:[self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]]];
-    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:nil];
+    NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    NSString * payloadStr= nil;
+    if (self.isTeam) {
+         payloadStr=[MessageService createPayLoadStr:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        [messageDict setObject:KISDictionaryHaveKey(selectType, @"value") forKey:@"teamPosition"];
+        [messageDict setObject:payloadStr forKey:@"payload"];
+    }
+    [self addNewMessageToTable:messageDict];
+    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
     [self refreWX];
 }
+
 
 -(NSString*)getDomain:(NSString*)domain
 {
@@ -2118,7 +2150,7 @@ UINavigationControllerDelegate>
 {
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"inGroupSystemMsg"];
+    NSString * payloadStr=[MessageService createPayLoadStr:@"inGroupSystemMsg"];
     NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
@@ -2133,7 +2165,6 @@ UINavigationControllerDelegate>
     //添加新消息
     NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
     NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
-//    NSString* sendtime = KISDictionaryHaveKey(messageDict, @"time");
     NSString* sendtime = [GameCommon getCurrentTime];
     NSString* msgType = KISDictionaryHaveKey(messageDict, @"msgType");
     NSString* payloadStr = KISDictionaryHaveKey(messageDict, @"payload");

@@ -230,6 +230,8 @@
         kkchat.unreadMsgCount  = 0;
         kkchat.chatWithUser = @"groupid";
         kkchat.type = @"group";
+        kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
         kkchat.isTeam = YES;
         [self.navigationController pushViewController:kkchat animated:YES];
     }
@@ -252,6 +254,8 @@
         kkchat.unreadMsgCount  = 0;
         kkchat.chatWithUser = @"groupid";
         kkchat.type = @"group";
+        kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
         kkchat.isTeam = YES;
         [self.navigationController pushViewController:kkchat animated:YES];
     }

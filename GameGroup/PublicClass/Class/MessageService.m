@@ -46,4 +46,27 @@
                            @"type":type};
     return [dic JSONFragment];
 }
+
++(NSString*)createPayLoadStr:(NSString*)thumb title:(NSString*)title shiptype:(NSString*)shiptype messageid:(NSString*)messageid msg:(NSString*)msg type:(NSString*)type TeamPosition:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team
+{
+    NSDictionary * dic = @{@"thumb":thumb,
+                           @"title":title,
+                           @"shiptype": shiptype,
+                           @"messageid":messageid,
+                           @"msg":msg,
+                           @"type":type,
+                           @"teamPosition":teamPosition,
+                           @"gameid":gameid,
+                           @"roomId": roomId,
+                           @"team":team};
+    return [dic JSONFragment];
+}
+
++(NSString*)createPayLoadStr:(NSString*)msgType{
+    return [self createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:msgType TeamPosition:@"" gameid:@"" roomId:@"" team:@""];
+}
+
++(NSString*)createPayLoadStr:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team{
+    return [self createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"" TeamPosition:teamPosition gameid:gameid roomId:roomId team:team];
+}
 @end

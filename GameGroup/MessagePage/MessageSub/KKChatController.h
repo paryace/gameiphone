@@ -114,6 +114,8 @@ SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
 @property(nonatomic, retain)   NSString *type;//聊天类型normal：跟某个用户聊天 group：群聊
 @property (assign, nonatomic)  NSInteger unreadMsgCount;//未读的消息数
 @property (assign, nonatomic)  BOOL isTeam;//是否是组队消息
+@property(nonatomic, retain)   NSString *gameId;
+@property(nonatomic, retain)   NSString *roomId;
 
 
 
