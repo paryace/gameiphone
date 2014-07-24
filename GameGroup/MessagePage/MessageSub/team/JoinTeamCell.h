@@ -21,4 +21,9 @@
 @property(nonatomic,strong)UILabel * timeLable;//时间
 
 
+//同意，拒绝button
+@property(nonatomic,strong)UIButton * agreeButton;  //同意
+@property(nonatomic,strong)UIButton * refuseButton;       //拒绝
+
+
 @end
