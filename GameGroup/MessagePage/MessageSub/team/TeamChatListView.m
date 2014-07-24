@@ -184,6 +184,7 @@
             self.mTableView.dataSource = self;
             [self.customPhotoCollectionView removeFromSuperview];
             self.customPhotoCollectionView = nil;
+            self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
             [self.mBgView addSubview:self.mTableView];
             
             
@@ -255,7 +256,7 @@
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 149;
+    return 140;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -265,10 +266,11 @@
         
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
         [self hideExtendedChooseView];
+
     }
+
 }
 
 #pragma mark -- UITableView DataSource
@@ -290,7 +292,8 @@
     JoinTeamCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         cell = [[JoinTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = kColorWithRGB(5,5,5, 0.7);
+
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.headImageV.image = KUIImage(@"find_role");
