@@ -60,6 +60,7 @@
     }
     else
     {
+        
         [[Custom_tabbar showTabBar] hideTabBar:NO];
     }
 }
