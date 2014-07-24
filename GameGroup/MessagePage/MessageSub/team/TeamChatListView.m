@@ -68,9 +68,10 @@
             
         }
         
-        hud = [[MBProgressHUD alloc] initWithView:self];
-        hud.labelText = @"加载中...";
-        [self addSubview:hud];
+//        hud = [[MBProgressHUD alloc] initWithView:self];
+//        hud.frame = CGRectMake((320-80)/2, (960-80)/2, 80, 80);
+//        hud.labelText = @"加载中...";
+//        [self addSubview:hud];
     }
     return self;
 }
@@ -355,15 +356,15 @@
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
-     [hud show:YES];
+//     [hud show:YES];
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-         [hud hide:YES];
+//         [hud hide:YES];
          [self changState:msgDic State:@"1"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-         [hud hide:YES];
+//         [hud hide:YES];
         [self showErrorAlertView:error];
     }];
     
@@ -371,15 +372,15 @@
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
 {
-    [hud show:YES];
+//    [hud show:YES];
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-         [hud hide:YES];
+//         [hud hide:YES];
         [self changState:msgDic State:@"2"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-         [hud hide:YES];
+//         [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
