@@ -78,12 +78,12 @@
     arrayFilter = [NSArray array];
     
     //创建
-    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
-    createBtn.backgroundColor = [UIColor clearColor];
-    [createBtn addTarget:self action:@selector(didClickCreateItem:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:createBtn];
+//    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+//    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+//    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+//    createBtn.backgroundColor = [UIColor clearColor];
+//    [createBtn addTarget:self action:@selector(didClickCreateItem:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:createBtn];
     //菜单
     dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,startX, 320, 40) dataSource:self delegate:self];
     dropDownView.mSuperView = self.view;
@@ -164,11 +164,11 @@
 
 -(void)InitializeInfo
 {
-    [dropDownView setTitle:KISDictionaryHaveKey(self.mainDict, @"characterName") inSection:0];
+    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
     [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
     
     m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.mainDict, @"gameid") CharacterId:KISDictionaryHaveKey(self.mainDict, @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
 }
 
 -(void)tagClick:(UIButton*)sender
@@ -310,7 +310,13 @@
     [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")
     reSuccess:^(id responseObject) {
          [self showMessageWindowWithContent:@"收藏成功" imageType:0];
-         [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
+        
+        if (self.isInitialize) {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"replacePreference_wx" object:nil userInfo:self.mainDict];
+        }else{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
+        }
+        
     } reError:^(id error) {
         [self showErrorAlertView:error];
     }];
@@ -320,6 +326,10 @@
 {
 //    CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
     NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
+    cretItm.roleDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:selectCharacter,@"character",selectType,@"type", nil];
+    
+//    [cretItm.roleDict setObject:selectCharacter forKey:@"character"];
+//    [cretItm.roleDict setObject:selectType forKey:@"type"];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
 //筛选
@@ -393,7 +403,8 @@
      [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section==0) {
         if (indexPath.row == 0) {
-            CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
+            NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
+            cretItm.roleDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:selectCharacter,@"character",selectType,@"type", nil];
             [self.navigationController pushViewController:cretItm animated:YES];
             return;
         }

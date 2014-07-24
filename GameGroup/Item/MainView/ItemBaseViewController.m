@@ -47,7 +47,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
@@ -102,11 +102,14 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
-        firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-        [firstView.myTableView reloadData];
-    }else{
-        [self getPreferencesWithNet];
+
+    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"refreshPreference_wx"];
+    if ([str isEqualToString:@"refreshPreference"]) {
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
+            firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+            [firstView.myTableView reloadData];
+        }
+            [self getPreferencesWithNet];
     }
 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]) {
@@ -137,7 +140,31 @@
     }
     [self getPreferencesWithNet];
 }
+-(void)replacepreference:(NSNotification*)sender
+{
+    NSDictionary *dic =sender.userInfo;
+    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"289" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self getPreferencesWithNet];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
 
+    
+}
 
 -(void)getPreferencesWithNet
 {
@@ -151,9 +178,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-            
-            firstView.firstDataArray = [NSMutableArray arrayWithArray:responseObject];
+            firstView.firstDataArray =responseObject;
             [firstView.myTableView reloadData];
+            [[NSUserDefaults standardUserDefaults]setObject:@"stopRefreshPreference" forKey:@"refreshPreference_wx"];
+                            
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

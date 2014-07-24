@@ -10,5 +10,5 @@
 #import "DWTagList.h"
 @interface NewCreateItemViewController : BaseViewController<UITextFieldDelegate,UITextViewDelegate,DWTagDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 @property(nonatomic,copy)NSString *gameid;
-@property(nonatomic,copy)NSString *roleDict;
+@property(nonatomic,strong)NSMutableDictionary *roleDict;
 @end

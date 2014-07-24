@@ -10,10 +10,11 @@
 #import "ItemInfoCell.h"
 #import "TestViewController.h"
 #import "ItemRoleButton.h"
-#import "EditInfoViewController.h"
 #import "ReviewapplicationViewController.h"
 #import "InvitationMembersViewController.h"
 #import "KKChatController.h"
+#import "H5CharacterDetailsViewController.h"
+#import "CharacterDetailsViewController.h"
 @interface ItemInfoViewController ()
 {
     UITableView *m_myTableView;
@@ -73,27 +74,32 @@
     
     
     [self GETInfoWithNet];
-    [self buildRoleView];
 
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
     roleTabView.hidden = YES;
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
+    [self buildRoleView];
+
     // Do any additional setup after loading the view.
 }
 
 -(void)buildRoleView
 {
+    
+    NSDictionary *dic = roleTabView.coreArray[0];
+    self.infoDict = roleTabView.coreArray[0];
     itemRoleBtn =[[ItemRoleButton alloc]initWithFrame:CGRectMake(85, kScreenHeigth-startX -50-(KISHighVersion_7?0:20), 150, 35)];
     itemRoleBtn.hidden = YES;
     itemRoleBtn.backgroundColor = [UIColor blackColor];
-    itemRoleBtn.headImageV.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
-    itemRoleBtn.nameLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
-    itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"realm")];
+    itemRoleBtn.headImageV.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
+    itemRoleBtn.nameLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
+    itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")];
     [itemRoleBtn addTarget:self action:@selector(showRoleTableView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:itemRoleBtn];
 }
@@ -103,7 +109,11 @@
     roleTabView.hidden= NO;
     [self.view bringSubviewToFront:roleTabView];
 }
-
+#pragma mark ----delegate
+-(void)refreshMyTeamInfoWithViewController:(UIViewController *)vc
+{
+    [self GETInfoWithNet];
+}
 #pragma mark --分享组队
 -(void)didClickShareItem:(id)sender
 {
@@ -141,7 +151,6 @@
             [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-                
                 
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"解散成功" imageType:1];
@@ -396,31 +405,44 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-    NSString *nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
+//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+//    NSString *nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
+//    
+//    
+//    TestViewController *itemInfo = [[TestViewController alloc]init];
+//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+//        itemInfo.viewType = VIEW_TYPE_Self1;
+//    }
+//    itemInfo.userId = userid;
+//    itemInfo.nickName = nickName;
+//    [self.navigationController pushViewController:itemInfo animated:YES];
     
-    
-    TestViewController *itemInfo = [[TestViewController alloc]init];
-    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        itemInfo.viewType = VIEW_TYPE_Self1;
+    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
+        CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
+        [self.navigationController pushViewController:VC animated:YES];
+    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+        VC.isMe = @"1";
+        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
+        VC.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
+        [self.navigationController pushViewController:VC animated:YES];
     }
-    itemInfo.userId = userid;
-    itemInfo.nickName = nickName;
-    [self.navigationController pushViewController:itemInfo animated:YES];
+
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 127)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 77)];
     view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
     
     UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 26, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
     [view addSubview:view1];
     
-    UIView *view2 = [self buildViewWithFrame:CGRectMake(0, 77, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1]  leftImg:@"item_list2" title:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
     
     [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
-    [view2 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo2)]];
     
     UIView *view3 = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
     view3.backgroundColor =UIColorFromRGBA(0x43474a, 1);
@@ -450,7 +472,6 @@
     [view3 addSubview:lb2];
     
     [view addSubview:view3];
-    [view addSubview:view2];
     return view;
 }
 -(void)changeInfo1
@@ -458,18 +479,8 @@
     EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
     editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
     editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
-//    editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
-    editInfo.isStyle = YES;
-    [self.navigationController pushViewController:editInfo animated:YES];
-
-}
--(void)changeInfo2
-{
-    EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
-    editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
-//    editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
-    editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"options")];
-    editInfo.isStyle = NO;
+    editInfo.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
+    editInfo.delegate = self;
     [self.navigationController pushViewController:editInfo animated:YES];
 
 }
@@ -547,7 +558,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 127;
+    return 77;
 }
 //-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 //{
@@ -587,7 +598,7 @@
     self.infoDict = [NSMutableDictionary dictionaryWithDictionary:info];
     itemRoleBtn.headImageV.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
     itemRoleBtn.nameLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
-    itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"realm")];
+    itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
 
 }
 

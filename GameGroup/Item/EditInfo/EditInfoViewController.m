@@ -77,13 +77,8 @@
     [firstTextView resignFirstResponder];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:self.itemId forKey:@"roomId"];
-    if (self.isStyle) {
-        [paramDict setObject:firstTextView.text forKey:@"description"];
-    }else{
-        [paramDict setObject:firstTextView.text forKey:@"options"];
- 
-    }
-    
+    [paramDict setObject:firstTextView.text forKey:@"description"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -92,6 +87,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [self.navigationController popViewControllerAnimated:YES];
+        [self.delegate refreshMyTeamInfoWithViewController:self];
         [self showMessageWindowWithContent:@"修改成功" imageType:0];
  
     } failure:^(AFHTTPRequestOperation *operation, id error) {

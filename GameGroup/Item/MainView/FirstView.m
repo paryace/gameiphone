@@ -56,13 +56,16 @@
     if (isOpen) {
         cell.isrow = YES;
         [cell.headImgView.layer removeAllAnimations];
-        cell.editLabel.text = [NSString stringWithFormat:@"%@支队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"matchCount")]];
+        NSString *str =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
+        NSLog(@"%@",str);
+        cell.editLabel.text = str;
     }else{
         cell.editLabel.text = @"编辑";
         cell.isrow = NO;
         [cell.headImgView.layer removeAllAnimations];
 
     }
+    cell.machCountStr =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
     [cell didClickRow];
 
     cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterName")];
@@ -92,7 +95,6 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 50;
-
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
@@ -127,6 +129,7 @@
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
         
@@ -140,6 +143,9 @@
         [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
         [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [self.firstDataArray removeObjectAtIndex:indexPath.row];
+            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
+            [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
             [self.myTableView reloadData];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
@@ -150,15 +156,6 @@
                 }
             }
         }];
-
-        
-        
-        
-        
-        
-        
-        
-        
 
     }
 }
@@ -206,7 +203,6 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         if (isOpen) {
-            [dic removeObjectForKey:@"isOpen"];
             [dic setObject:@"0" forKey:@"isOpen"];
             cell.isrow =NO;
 
@@ -217,9 +213,20 @@
         }
         [cell didClickRow];
 
-        [self.firstDataArray removeObjectAtIndex:cell.tag];
+        NSMutableArray *arr = [NSMutableArray arrayWithArray:self.firstDataArray];
+        NSLog(@"--=%@",[[arr objectAtIndex:cell.tag]objectForKey:@"isOpen"]);
         
-        [self.firstDataArray insertObject:dic atIndex:cell.tag];
+        
+        [arr replaceObjectAtIndex:cell.tag withObject:dic];
+        
+        NSLog(@"==-%@",[[arr objectAtIndex:cell.tag]objectForKey:@"isOpen"]);
+        self.firstDataArray = arr;
+        NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+        
+        [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+//        [self.firstDataArray replaceObjectAtIndex:cell.tag withObject:dic];
+        
+//        [self.firstDataArray insertObject:dic atIndex:cell.tag];
         //        [firstView.myTableView reloadData];
         
         
