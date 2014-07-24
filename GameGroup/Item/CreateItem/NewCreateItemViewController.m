@@ -387,45 +387,32 @@
     }
     
 }
-/*
+
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
+    [customView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
+    label.backgroundColor = [UIColor clearColor];
+    [customView addSubview:label];
+
     if (pickerView ==m_rolePickerView) {
         NSDictionary *dic = [m_RoleArray objectAtIndex:row];
-        UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-        EGOImageView *imageView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 20, 20)];
         imageView.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
-        [customView addSubview:imageView];
-        
-        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-        label.backgroundColor = [UIColor clearColor];
         label.text = [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
-        [customView addSubview:label];
-        return customView;
-
     }
     else if (pickerView ==m_tagsPickView)
     {
-        UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-
-        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-        label.backgroundColor = [UIColor clearColor];
         label.text = KISDictionaryHaveKey([m_tagsArray objectAtIndex:row], @"value");
-        [customView addSubview:label];
-        return customView;
-
     }else
     {
-        UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-        
-        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(60, 0, 250, 30)];
-        label.backgroundColor = [UIColor clearColor];
         label.text = KISDictionaryHaveKey([m_countArray objectAtIndex:row], @"value");
-        [customView addSubview:label];
-        return customView;
     }
+    return customView;
 }
- */
+
 -(void)getfenleiFromNetWithGameid:(NSString *)gameid
 {
     [hud show:YES];
