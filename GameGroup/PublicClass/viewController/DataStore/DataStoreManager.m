@@ -3554,6 +3554,7 @@
     NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"value1")];
     NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"value2")];
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"img")];
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
@@ -3585,6 +3586,7 @@
         DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
         if (!commonMsg)
             commonMsg = [DSTeamNotificationMsg MR_createInContext:localContext];
+        commonMsg.state = @"0";
         commonMsg.fromId = fromid;
         commonMsg.toId = toid;
         commonMsg.msgId = msgId;
@@ -3603,8 +3605,55 @@
         commonMsg.value1 = value1;
         commonMsg.value2 = value2;
         commonMsg.groupId = groupId;
+        commonMsg.userImg = userimg;
+        commonMsg.receiveTime=[GameCommon getCurrentTime];
     }];
 }
+
+
++(NSMutableArray*)queDSTeamNotificationMsgByMsgType:(NSString*)msgType
+{
+    NSMutableArray * msgList = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
+    NSArray * groupArrlyList = [DSTeamNotificationMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
+    for (DSTeamNotificationMsg * apm in groupArrlyList) {
+        [msgList addObject:[self queryDSTeamNotificationMsg:apm]];
+    }
+    return msgList;
+}
+
++(NSMutableDictionary*)queryDSTeamNotificationMsg:(DSTeamNotificationMsg*)msgDS
+{
+    if (!msgDS) {
+        return nil;
+    }
+    NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
+    [msgDic setObject:msgDS.state forKey:@"state"];
+    [msgDic setObject:msgDS.fromId forKey:@"fromId"];
+    [msgDic setObject:msgDS.toId forKey:@"toId"];
+    [msgDic setObject:msgDS.msgId forKey:@"msgId"];
+    [msgDic setObject:msgDS.msgType forKey:@"msgType"];
+    [msgDic setObject:msgDS.body forKey:@"body"];
+    NSTimeInterval uu = [msgDS.msgTime timeIntervalSince1970];
+    [msgDic setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"senTime"];
+    [msgDic setObject:msgDS.payload forKey:@"payload"];
+    [msgDic setObject:msgDS.characterName forKey:@"characterName"];
+    [msgDic setObject:msgDS.realm forKey:@"realm"];
+    [msgDic setObject:msgDS.nickname forKey:@"nickname"];
+    [msgDic setObject:msgDS.userid forKey:@"userid"];
+    [msgDic setObject:msgDS.gender forKey:@"gender"];
+    [msgDic setObject:msgDS.roomId forKey:@"roomId"];
+    [msgDic setObject:msgDS.characterId forKey:@"characterId"];
+    [msgDic setObject:msgDS.gameid forKey:@"gameid"];
+    [msgDic setObject:msgDS.value1 forKey:@"value1"];
+    [msgDic setObject:msgDS.value2 forKey:@"value2"];
+    [msgDic setObject:msgDS.groupId forKey:@"groupId"];
+    [msgDic setObject:msgDS.userImg forKey:@"userImg"];
+    [msgDic setObject:msgDS.receiveTime forKey:@"receiveTime"];
+    return msgDic;
+}
+
+
 
 
 @end

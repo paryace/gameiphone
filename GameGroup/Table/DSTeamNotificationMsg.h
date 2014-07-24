@@ -31,5 +31,7 @@
 @property (nonatomic, retain) NSString * value2;
 @property (nonatomic, retain) NSString * state;
 @property (nonatomic, retain) NSString * groupId;
+@property (nonatomic, retain) NSString * userImg;
+@property (nonatomic, retain) NSString * receiveTime;
 
 @end

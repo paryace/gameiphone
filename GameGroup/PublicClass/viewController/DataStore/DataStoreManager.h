@@ -347,8 +347,8 @@
 +(void)saveTeamNotifityMsg:(NSDictionary *)msg;
 
 
-
-
+//查询组队通知列表
++(NSMutableArray*)queDSTeamNotificationMsgByMsgType:(NSString*)msgType;
 
 
 

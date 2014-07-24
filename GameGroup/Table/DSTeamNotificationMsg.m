@@ -30,5 +30,7 @@
 @dynamic value2;
 @dynamic state;
 @dynamic groupId;
+@dynamic userImg;
+@dynamic receiveTime;
 
 @end

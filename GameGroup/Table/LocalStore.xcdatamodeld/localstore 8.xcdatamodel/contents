@@ -340,10 +340,12 @@
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="receiveTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -464,6 +466,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSTeamNotificationMsg" positionX="-54" positionY="-18" width="128" height="328"/>
+        <element name="DSTeamNotificationMsg" positionX="-54" positionY="-18" width="128" height="358"/>
     </elements>
 </model>

@@ -81,6 +81,13 @@
     if (currentExtendSection == section) {
         [self hideExtendedChooseView];
     }else{
+        if (section==1) {
+            [self getZU];
+            if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
+                [self showErrorAlertView];
+                return;
+            }
+        }
         currentExtendSection = section;
         [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
     }
@@ -179,6 +186,7 @@
             self.customPhotoCollectionView = nil;
             [self.mBgView addSubview:self.mTableView];
             
+            
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
@@ -191,6 +199,17 @@
         self.mTableBaseView.alpha = 0.0;
         [self.mTableView reloadData];
     }
+}
+
+-(void)getZU
+{
+   self.teamNotifityMsg =  [DataStoreManager queDSTeamNotificationMsgByMsgType:@"requestJoinTeam"];
+    NSLog(@"%@",self.teamNotifityMsg);
+}
+-(void)showErrorAlertView
+{
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"暂没有群通知" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
 }
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
@@ -261,7 +280,8 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
+//    return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
+    return self.teamNotifityMsg.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
