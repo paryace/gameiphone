@@ -10,6 +10,7 @@
 #import "CardCell.h"
 #import "CardTitleView.h"
 #import "JoinTeamCell.h"
+#import "ItemManager.h"
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
@@ -282,7 +283,6 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-//    return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
     return self.teamNotifityMsg.count;
 }
 
@@ -295,6 +295,7 @@
         cell.backgroundColor = kColorWithRGB(233, 233 ,233, 0.7);
 
     }
+    cell.tag = indexPath.row;
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
     cell.delegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -340,11 +341,43 @@
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
     NSLog(@"同意加入");
+    NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
+    [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
+         NSLog(@"同意成功,%@",responseObject);
+        
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+    } reError:^(id error) {
+        NSLog(@"同意失败,%@",error);
+        [self showErrorAlertView:error];
+    }];
+    
 }
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
 {
     NSLog(@"拒绝加入");
+    NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
+    [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
+        NSLog(@"拒绝成功,%@",responseObject);
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+    } reError:^(id error) {
+        NSLog(@"拒绝失败,%@",error);
+        [self showErrorAlertView:error];
+    }];
+}
+
+//弹出提示框
+-(void)showErrorAlertView:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 }
 
 @end
