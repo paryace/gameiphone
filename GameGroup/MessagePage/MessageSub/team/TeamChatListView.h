@@ -14,6 +14,7 @@
 #define SECTION_IV_TAG_BEGIN    3000
 @interface TeamChatListView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,TeamDetailDelegate>{
     NSInteger currentExtendSection;     //当前展开的section ，默认－1时，表示都没有展开
+    MBProgressHUD* hud;//提示框
 }
 
 @property (nonatomic, assign) id<DropDownChooseDelegate> dropDownDelegate;

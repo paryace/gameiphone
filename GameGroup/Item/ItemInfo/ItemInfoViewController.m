@@ -177,8 +177,9 @@
             
             [paramDict setObject:self.itemId forKey:@"roomId"];
             [paramDict setObject:self.gameid forKey:@"gameid"];
-            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-            [paramDict setObject:userid forKey:@"userid"];
+            [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] forKey:@"memberId"];
+//            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+//            [paramDict setObject:userid forKey:@"userid"];
             [postDict setObject:paramDict forKey:@"params"];
             
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -635,8 +636,8 @@
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] forKey:@"memberId"];
-    
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"269" forKey:@"method"];

@@ -314,6 +314,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSLog(@"%@",messageContent);
     [[MessageSetting singleton] setSoundOrVibrationopen];
     [DataStoreManager saveTeamNotifityMsg:messageContent];
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
+    [payloadDic setValue:@"inGroupSystemMsg" forKey:@"type"];
+    [messageContent setValue:[payloadDic JSONFragment] forKey:@"payload"];
+    [DataStoreManager saveDSGroupMsg:messageContent];
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
 }
