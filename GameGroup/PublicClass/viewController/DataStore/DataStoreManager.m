@@ -21,6 +21,7 @@
 #import "DSGroupUser.h"
 #import "DSLatestDynamic.h"
 #import "DSTeamList.h"
+#import "DSTeamNotificationMsg.h"
 @implementation DataStoreManager
 
 -(void)nothing
@@ -3529,12 +3530,81 @@
     }];
 }
 
+#pragma mark - 保存申请加入群的消息
++(void)saveTeamNotifityMsg:(NSDictionary *)msg
+{
+    NSString * fromid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"sender")];
+    NSString * toid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"toId")];
+    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgId")];
+    NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgType")];
+    NSString * body = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msg")];
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+    
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    [payloadDic setValue:@"teamchat" forKey:@"team"];
+    NSString * characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"characterName")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"realm")];
+    NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"nickname")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
+    NSString * gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gender")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")];
+    NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"characterId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")];
+    NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"value1")];
+    NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"value2")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates];
+        int unread;
+        if (!thumbMsgs){
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            unread =0;
+        }else{
+            unread = [thumbMsgs.unRead intValue];
+        }
+        thumbMsgs.sender = userid;
+        thumbMsgs.senderNickname = nickname;
+        thumbMsgs.msgContent = body;
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = GROUPMSG;
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.msgType = @"groupchat";
+        thumbMsgs.messageuuid = msgId;
+        thumbMsgs.status = @"1";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.payLoad = [payloadDic JSONFragment];
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
 
-//+(void)queDSTeam
-//{
-//    
-//}
-
+        
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
+        DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+        if (!commonMsg)
+            commonMsg = [DSTeamNotificationMsg MR_createInContext:localContext];
+        commonMsg.fromId = fromid;
+        commonMsg.toId = toid;
+        commonMsg.msgId = msgId;
+        commonMsg.msgType = msgType;
+        commonMsg.body = body;
+        commonMsg.msgTime = sendTime;
+        commonMsg.payload = payloadStr;
+        commonMsg.characterName = characterName;
+        commonMsg.realm= realm;
+        commonMsg.nickname = nickname;
+        commonMsg.userid = userid;
+        commonMsg.gender = gender;
+        commonMsg.roomId = roomId;
+        commonMsg.characterId = characterId;
+        commonMsg.gameid = gameid;
+        commonMsg.value1 = value1;
+        commonMsg.value2 = value2;
+        commonMsg.groupId = groupId;
+    }];
+}
 
 
 @end

@@ -307,6 +307,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
      [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
     [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
 }
+
+#pragma mark 组队通知消息
+-(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent
+{
+    NSLog(@"%@",messageContent);
+    [[MessageSetting singleton] setSoundOrVibrationopen];
+    [DataStoreManager saveTeamNotifityMsg:messageContent];
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
+    [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:messageContent];
+}
+
+
 //--------------------------------------------
 #pragma mark 收到验证好友请求消息
 -(void)newAddReq:(NSDictionary *)userInfo

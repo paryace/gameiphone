@@ -46,9 +46,10 @@ static RecceiveMessageService *recceiveMessageService = NULL;
     }
     NSString *msgtype = [[message attributeForName:@"msgtype"] stringValue];
     NSString *from = [[message attributeForName:@"from"] stringValue];
+    NSString *to = [[message attributeForName:@"to"] stringValue];
     NSString *msgId = [[message attributeForName:@"id"] stringValue];
-    NSRange range = [from rangeOfString:@"@"];
-    NSString * fromId = [from substringToIndex:(range.location == NSNotFound) ? 0 : range.location];
+    NSString * fromId = [from substringToIndex:([from rangeOfString:@"@"].location == NSNotFound) ? 0 : [from rangeOfString:@"@"].location];
+    NSString * toId = [to substringToIndex:([to rangeOfString:@"@"].location == NSNotFound) ? 0 : [to rangeOfString:@"@"].location];
     NSString *type = [[message attributeForName:@"type"] stringValue];
     NSString * time = [[message attributeForName:@"msgTime"] stringValue];
     NSString *msgTime = time?time:[GameCommon getCurrentTime];
@@ -60,6 +61,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
     [dict setObject:msgId?msgId:@"" forKey:@"msgId"];//消息id
     [dict setObject: msgTime forKey:@"time"];//消息接收到的时间
     [dict setObject:msgtype?msgtype:@"" forKey:@"msgType"];
+    [dict setObject:toId forKey:@"toId"];
     
     if ([type isEqualToString:@"chat"])
     {
@@ -183,6 +185,13 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate groupBillBoardMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"requestJoinTeam"]){//申请加入组队
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate TeamNotifityMessageReceived:dict];
         }
     }
     
