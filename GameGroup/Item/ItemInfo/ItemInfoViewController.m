@@ -229,7 +229,7 @@
     {
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadMsgCount  = 0;
-        kkchat.chatWithUser = @"groupid";
+        kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         kkchat.type = @"group";
         kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
@@ -253,7 +253,7 @@
     {
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadMsgCount  = 0;
-        kkchat.chatWithUser = @"groupid";
+        kkchat.chatWithUser = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         kkchat.type = @"group";
         kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];

@@ -885,6 +885,18 @@
     }];
 }
 
++(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userid];
+        NSArray * commonMsgs = [DSGroupMsgs MR_findAllWithPredicate:predicate];
+        for (int i = 0; i<commonMsgs.count; i++) {
+            DSGroupMsgs * common = [commonMsgs objectAtIndex:i];
+            common.teamPosition = teamPosition;
+        }
+    }];
+}
+
 //-----
 
 +(void)deleteMsgInCommentWithUUid:(NSString *)uuid

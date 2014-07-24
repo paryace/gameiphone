@@ -71,6 +71,13 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             [dict setObject:KISDictionaryHaveKey([msg JSONValue], @"content") forKey:@"msg"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
+                NSDictionary * teamPosition = [payload JSONValue];
+                if (teamPosition && [KISDictionaryHaveKey(teamPosition, @"team") isEqualToString:@"teamchat"]) {
+                    [dict setObject:KISDictionaryHaveKey(teamPosition, @"teamPosition") forKey:@"teamPosition"];
+                    if ([KISDictionaryHaveKey(teamPosition, @"type") isEqualToString:@"selectTeamPosition"]) {
+                        [DataStoreManager changGroupMsgLocation:[[message attributeForName:@"groupid"] stringValue] UserId:fromId TeamPosition:KISDictionaryHaveKey(teamPosition, @"teamPosition")];
+                    }
+                }
             }
             [dict setObject:[[message attributeForName:@"groupid"] stringValue] forKey:@"groupId"];
             [self.chatDelegate newGroupMessageReceived:dict];

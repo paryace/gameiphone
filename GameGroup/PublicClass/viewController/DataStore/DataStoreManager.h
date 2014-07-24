@@ -340,6 +340,9 @@
 
 +(void)saveTeamInfoWithDict:(NSDictionary *)dic;
 
+//更改位置
++(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition;
+
 
 
 

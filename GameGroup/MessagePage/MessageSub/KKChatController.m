@@ -66,11 +66,9 @@ UINavigationControllerDelegate>
     NSMutableArray *wxSDArray;
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
-    
     NSInteger screenHeigth;
     BOOL endOfTable;
     BOOL oTherPage;
-    
     NSArray *typeArray;
     NSMutableDictionary * selectType;
 }
@@ -83,10 +81,7 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
-
 @property (nonatomic, strong) TeamChatListView * dropDownView;
-
-
 @end
 
 @implementation KKChatController
@@ -300,8 +295,21 @@ UINavigationControllerDelegate>
 {
     if (section == 0){
         selectType =[typeArray objectAtIndex:index];
+        [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+        [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+        [self.tView reloadData];
     }
 }
+
+-(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
+{
+    for (NSDictionary * msgDic in messages) {
+        if ([KISDictionaryHaveKey(msgDic, @"sender") isEqualToString:userid]) {
+            [msgDic setValue:teamPosition forKey:@"teamPosition"];
+        }
+    }
+}
+
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
@@ -1100,6 +1108,11 @@ UINavigationControllerDelegate>
     }
     theH += padding*2 + 10;
     CGFloat height = theH;
+    if (self.isTeam) {
+        if (height<70) {
+            height+=20;
+        }
+    }
     return height;
 }
 
@@ -2450,6 +2463,14 @@ UINavigationControllerDelegate>
        ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]){
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];
+        //改变组队位置
+        if (self.isTeam) {
+            if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {
+                [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
+                [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
+                [self.tView reloadData];
+            }
+        }
     }else{
         NSString * sender = KISDictionaryHaveKey(tempDic, @"sender");
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");

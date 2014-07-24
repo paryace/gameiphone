@@ -562,7 +562,7 @@
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
-        if (KISDictionaryHaveKey(dict, @"team")) {
+        if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"team")]) {
             kkchat.isTeam = YES;
             kkchat.roomId = KISDictionaryHaveKey(dict, @"roomId");
             kkchat.gameId = KISDictionaryHaveKey(dict, @"gameid");
