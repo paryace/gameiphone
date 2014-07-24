@@ -70,7 +70,6 @@ UINavigationControllerDelegate>
     NSInteger screenHeigth;
     BOOL endOfTable;
     BOOL oTherPage;
-    NSMutableArray *typeList;
     NSMutableDictionary * selectType;
 }
 
@@ -81,6 +80,7 @@ UINavigationControllerDelegate>
 @property (nonatomic, strong) UIView *kkChatAddView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, strong) NSMutableArray *messages;
+@property (nonatomic, strong) NSArray *typeData_list;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 @property (nonatomic, strong) TeamChatListView * dropDownView;
 @end
@@ -187,7 +187,7 @@ UINavigationControllerDelegate>
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
-    typeList = [NSMutableArray array];
+    self.typeData_list = [NSArray array];
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
@@ -289,7 +289,7 @@ UINavigationControllerDelegate>
 -(void)updateTeamType:(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-        typeList = responseObject;
+        self.typeData_list = responseObject;
         [self.dropDownView.customPhotoCollectionView reloadData];
     }
 }
@@ -297,7 +297,7 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
-        selectType =[typeList objectAtIndex:index];
+        selectType =[self.typeData_list objectAtIndex:index];
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
         [self sendOtherMsg:KISDictionaryHaveKey(selectType, @"value")];
         [self changLocation];
@@ -343,10 +343,9 @@ UINavigationControllerDelegate>
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        if (typeList&&typeList.count>0) {
-            return typeList.count;
+        if (self.typeData_list.count>0) {
+            return self.typeData_list.count;
         }
-        return 0;
     }else if (section == 1){
         return 10;
     }
@@ -355,10 +354,9 @@ UINavigationControllerDelegate>
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
 {
     if (section==0) {
-        if (typeList&&typeList.count>0) {
-            return KISDictionaryHaveKey([typeList objectAtIndex:index], @"value");
+        if (self.typeData_list.count>0) {
+            return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
-        return @"";
     }else if (section == 1){
         return @"tongyi";
     }

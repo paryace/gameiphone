@@ -27,4 +27,6 @@
 
 -(void)dyMessageReceived:(NSDictionary *)payloadStr;//动态消息
 
+-(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent;//组队通知消息
+
 @end

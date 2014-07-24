@@ -326,6 +326,27 @@
         <attribute name="typeId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="typeValue" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSTeamNotificationMsg" representedClassName="DSTeamNotificationMsg" syncable="YES">
+        <attribute name="body" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="characterId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="characterName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSThumbMsgs" representedClassName="DSThumbMsgs" syncable="YES">
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
@@ -410,7 +431,6 @@
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="Entity" syncable="YES"/>
     <elements>
         <element name="DSAttentionNameIndex" positionX="-18" positionY="432" width="128" height="60"/>
         <element name="DSAttentions" positionX="-18" positionY="-9" width="128" height="240"/>
@@ -444,6 +464,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="Entity" positionX="-54" positionY="-18" width="128" height="45"/>
+        <element name="DSTeamNotificationMsg" positionX="-54" positionY="-18" width="128" height="328"/>
     </elements>
 </model>

@@ -343,6 +343,9 @@
 //更改位置
 +(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition;
 
+//保存组队通知消息
++(void)saveTeamNotifityMsg:(NSDictionary *)msg;
+
 
 
 
