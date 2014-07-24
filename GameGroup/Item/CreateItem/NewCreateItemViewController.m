@@ -261,6 +261,7 @@
     m_rolePickerView.delegate = self;
     m_rolePickerView.showsSelectionIndicator = YES;
     
+    
     m_tagsPickView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
     m_tagsPickView.dataSource = self;
     m_tagsPickView.delegate = self;
@@ -354,6 +355,7 @@
 {
     return 1;
 }
+
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
     if (pickerView ==m_rolePickerView)
@@ -369,7 +371,23 @@
         return m_countArray.count;
     }
 }
-
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    if (pickerView ==m_rolePickerView) {
+        NSDictionary *dic = [m_RoleArray objectAtIndex:row];
+        return [NSString stringWithFormat:@"%@-%@-%@",KISDictionaryHaveKey(dic, @"simpleRealm"),KISDictionaryHaveKey(dic, @"value1"),KISDictionaryHaveKey(dic, @"name")];
+    }
+    else if (pickerView ==m_tagsPickView)
+    {
+        return KISDictionaryHaveKey([m_tagsArray objectAtIndex:row], @"value");
+        
+    }else
+    {
+        return KISDictionaryHaveKey([m_countArray objectAtIndex:row], @"value");
+    }
+    
+}
+/*
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
     if (pickerView ==m_rolePickerView) {
@@ -407,6 +425,7 @@
         return customView;
     }
 }
+ */
 -(void)getfenleiFromNetWithGameid:(NSString *)gameid
 {
     [hud show:YES];
