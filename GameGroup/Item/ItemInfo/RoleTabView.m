@@ -41,7 +41,7 @@
     NSDictionary *dic = [self.coreArray objectAtIndex:indexPath.row];
     cell.headImageV.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:80];
     cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
-    cell.distLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"realm")];
+    cell.distLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")];
     
     return cell;
 }

@@ -61,11 +61,11 @@
         self.realmLabel.adjustsLetterSpacingToFitWidth = YES;
         [self.contentView addSubview:self.realmLabel];
         
-        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 20, 50, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.editLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(240, 20, 70, 20) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
 //        self.editLabel.adjustsFontSizeToFitWidth = YES;
         [self.contentView addSubview:self.editLabel];
     
-        editBtn = [[UIButton alloc]initWithFrame:CGRectMake(250, 0, 50, 60)];
+        editBtn = [[UIButton alloc]initWithFrame:CGRectMake(240, 0, 70, 60)];
         editBtn.backgroundColor = [UIColor clearColor];
         [editBtn addTarget:self action:@selector(enterEditPage:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:editBtn];
@@ -84,7 +84,7 @@
     }else{
         self.isrow =NO;
         customImgView.hidden = YES;
-        self.editLabel.text = [NSString stringWithFormat:@"%@支队伍",self.machCountStr];
+        self.editLabel.text = self.machCountStr;
     }
     [self didRow];
 }

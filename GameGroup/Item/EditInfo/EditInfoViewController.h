@@ -8,9 +8,18 @@
 
 #import "BaseViewController.h"
 
+@protocol editInfoDelegate;
+
 @interface EditInfoViewController : BaseViewController
 @property(nonatomic,copy)NSString *firstStr;
 @property(nonatomic,copy)NSString *secondStr;
 @property(nonatomic,copy)NSString *itemId;
+@property(nonatomic,copy)NSString *gameid;
 @property(nonatomic,assign)BOOL isStyle;
+@property(nonatomic,assign)id<editInfoDelegate>delegate;
+@end
+@protocol editInfoDelegate <NSObject>
+
+-(void)refreshMyTeamInfoWithViewController:(UIViewController *)vc;
+
 @end
