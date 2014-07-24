@@ -91,11 +91,17 @@
 - (void)agreeButtonAction:(UIButton *)button
 {
     NSLog(@"同意");
+    if (self.delegate) {
+        [self.delegate onAgreeClick:self];
+    }
 }
 
 - (void)refuseButtonAction:(UIButton *)button
 {
     NSLog(@"拒绝");
+    if (self.delegate) {
+        [self.delegate onDisAgreeClick:self];
+    }
 }
 
 - (void)awakeFromNib   

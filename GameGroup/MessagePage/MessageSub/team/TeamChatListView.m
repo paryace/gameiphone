@@ -292,14 +292,59 @@
     JoinTeamCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         cell = [[JoinTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.backgroundColor = kColorWithRGB(5,5,5, 0.7);
+        cell.backgroundColor = kColorWithRGB(233, 233 ,233, 0.7);
 
     }
+    NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
+    cell.delegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.headImageV.image = KUIImage(@"find_role");
-    cell.genderImageV.image = KUIImage(@"gender_girl");
-    cell.gameImageV.image = KUIImage(@"wow");
+    cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+    cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"userImg") Width:80];
+    cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+    NSString * gameImageId=[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(msgDic, @"gameid")];
+    if ([GameCommon isEmtity:gameImageId]) {
+        cell.gameImageV.image=KUIImage(@"clazz_0");
+    }else{
+        cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
+    }
+    cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
+    cell.positionLable.hidden=YES;
+    cell.realmLable.text = KISDictionaryHaveKey(msgDic, @"value1");
+    cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
     return cell;
+}
+
+//头像默认图片
+-(NSString*)headPlaceholderImage:(NSString*)gender
+{
+    if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
+        return @"people_man.png";
+    }
+    else
+    {
+        return @"people_woman.png";
+    }
+}
+//性别图标
+-(NSString*)genderImage:(NSString*)gender
+{
+    if ([gender intValue]==0)
+    {
+        return @"gender_boy";
+    }else
+    {
+        return @"gender_girl";
+    }
+}
+//同意288
+-(void)onAgreeClick:(JoinTeamCell*)sender
+{
+    NSLog(@"同意加入");
+}
+//拒绝273
+-(void)onDisAgreeClick:(JoinTeamCell*)sender
+{
+    NSLog(@"拒绝加入");
 }
 
 @end

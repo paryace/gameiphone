@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
 
+@protocol TeamDetailDelegate;
+
 @interface JoinTeamCell : UITableViewCell
 @property(nonatomic,strong)UIImageView *bgV;//背景
 @property(nonatomic,strong)EGOImageView * headImageV;//群头像
@@ -21,9 +23,16 @@
 @property(nonatomic,strong)UILabel * timeLable;//时间
 
 
+@property(nonatomic,assign)id<TeamDetailDelegate>delegate;
+
 //同意，拒绝button
 @property(nonatomic,strong)UIButton * agreeButton;  //同意
 @property(nonatomic,strong)UIButton * refuseButton;       //拒绝
+@end
 
+@protocol TeamDetailDelegate <NSObject>
+
+-(void)onAgreeClick:(JoinTeamCell*)sender;
+-(void)onDisAgreeClick:(JoinTeamCell*)sender;
 
 @end
