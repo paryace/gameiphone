@@ -9,6 +9,7 @@
 #import "TeamChatListView.h"
 #import "CardCell.h"
 #import "CardTitleView.h"
+#import "JoinTeamCell.h"
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
@@ -101,8 +102,6 @@
 }
 -  (void)hideExtendedChooseView
 {
-    UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
-    currentSectionBtn.backgroundColor = [UIColor whiteColor];
     if (currentExtendSection != -1) {
         currentExtendSection = -1;
         CGRect rect = self.mBgView.frame;
@@ -123,7 +122,7 @@
 {
     UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + section];
     currentSectionBtn.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    if (!self.customPhotoCollectionView) {
+    if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
         
@@ -132,47 +131,73 @@
         
         self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 120 )];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-        
-        
-        self.layout = [[UICollectionViewFlowLayout alloc]init];
-        self.layout.minimumInteritemSpacing = 10;
-        self.layout.minimumLineSpacing =10;
-        self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        self.layout.itemSize = CGSizeMake(88, 30);
-        self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,100) collectionViewLayout:self.layout];
-        self.customPhotoCollectionView.delegate = self;
-        self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
-        self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
-        self.customPhotoCollectionView.dataSource = self;
-        [self.customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
-        self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
-        [self.mBgView addSubview:self.customPhotoCollectionView];
+
     }
-    //修改tableview的frame
-    CGRect rect = self.mBgView.frame;
-    rect.origin.x =0;
-    rect.size.width = 320;
-    rect.size.height = 0;
-    rect.size.height = 120;
-    self.mBgView.frame = rect;
-    [self.mSuperView addSubview:self.mTableBaseView];
-    [self.mSuperView addSubview:self.mBgView];
-    self.mBgView.frame =  rect;
-    self.mBgView.alpha = 1.0;
-    //动画设置位置
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        self.mTableBaseView.alpha = 0.2;
-        self.mTableBaseView.alpha = 1.0;
-    }];
-    [self.customPhotoCollectionView reloadData];
+    if (section == 0) {
+        if (!self.customPhotoCollectionView){
+            self.layout = [[UICollectionViewFlowLayout alloc]init];
+            self.layout.minimumInteritemSpacing = 10;
+            self.layout.minimumLineSpacing =10;
+            self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+            self.layout.itemSize = CGSizeMake(88, 30);
+            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,100) collectionViewLayout:self.layout];
+            self.customPhotoCollectionView.delegate = self;
+            self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
+            self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
+            self.customPhotoCollectionView.dataSource = self;
+            [self.customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
+            self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
+            [self.mTableView removeFromSuperview];
+            self.mTableView = nil;
+            [self.mBgView addSubview:self.customPhotoCollectionView];
+        }
+        //修改tableview的frame
+        CGRect rect = self.mBgView.frame;
+        rect.origin.x =0;
+        rect.size.width = 320;
+        NSInteger num = ( [self.dropDownDataSource numberOfRowsInSection:currentExtendSection]-1)/3+1;//标签行数
+        rect.size.height = (num*(30+10)+10)>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):(num*(30+10)+10);
+        self.mBgView.frame = rect;
+        self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
+        [self.mSuperView addSubview:self.mTableBaseView];
+        [self.mSuperView addSubview:self.mBgView];
+        self.mBgView.frame =  rect;
+        self.mBgView.alpha = 1.0;
+        //动画设置位置
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.mTableBaseView.alpha = 0.2;
+            self.mTableBaseView.alpha = 1.0;
+        }];
+        [self.customPhotoCollectionView reloadData];
+    }else{
+        if (!self.mTableView) {
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40) style:UITableViewStylePlain];
+            self.mTableView.delegate = self;
+            self.mTableView.dataSource = self;
+            [self.customPhotoCollectionView removeFromSuperview];
+            self.customPhotoCollectionView = nil;
+            [self.mBgView addSubview:self.mTableView];
+            
+        }
+        [self.mSuperView addSubview:self.mTableBaseView];
+        [self.mSuperView addSubview:self.mBgView];
+        CGRect rect = self.mBgView.frame;
+        rect.origin.x =0;
+        rect.size.width = 320;
+        rect.size.height = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
+        self.mBgView.frame =  rect;
+        self.mBgView.alpha = 1.0;
+        self.mTableBaseView.alpha = 0.0;
+        [self.mTableView reloadData];
+    }
 }
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
     [self hideExtendedChooseView];
 }
-
+//----------
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
@@ -204,6 +229,54 @@
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
         [self hideExtendedChooseView];
     }
+}
+
+//-------
+
+#pragma mark -- UITableView Delegate
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 149;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
+        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        
+        UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
+        [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
+        
+        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
+        [self hideExtendedChooseView];
+    }
+}
+
+#pragma mark -- UITableView DataSource
+
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifier = @"simpleApplicationCell";
+    JoinTeamCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+    if (!cell) {
+        cell = [[JoinTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.headImageV.image = KUIImage(@"find_role");
+    cell.genderImageV.image = KUIImage(@"gender_girl");
+    cell.gameImageV.image = KUIImage(@"wow");
+    return cell;
 }
 
 @end

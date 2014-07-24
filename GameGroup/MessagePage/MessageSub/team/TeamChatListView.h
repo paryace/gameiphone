@@ -24,6 +24,8 @@
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) UICollectionView *customPhotoCollectionView;
 
+@property (nonatomic, strong) UITableView *mTableView;
+
 - (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate;
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section;
 

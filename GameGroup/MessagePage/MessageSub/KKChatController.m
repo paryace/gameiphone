@@ -303,7 +303,7 @@ UINavigationControllerDelegate>
         [self changLocation];
     }
 }
-
+//改变位置
 -(void)changLocation
 {
     [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
@@ -331,7 +331,7 @@ UINavigationControllerDelegate>
         }];
         return YES;
     }else if(section == 1){
-        return NO;
+        return YES;
     }
     return NO;
 }
@@ -347,6 +347,8 @@ UINavigationControllerDelegate>
             return typeList.count;
         }
         return 0;
+    }else if (section == 1){
+        return 10;
     }
     return 0;
 }
@@ -358,7 +360,7 @@ UINavigationControllerDelegate>
         }
         return @"";
     }else if (section == 1){
-        return @"";
+        return @"tongyi";
     }
     return @"";
 
