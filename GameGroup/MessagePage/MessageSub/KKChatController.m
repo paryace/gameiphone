@@ -26,6 +26,7 @@
 #import "GroupCricleViewController.h"
 #import "TeamChatListView.h"
 #import "ItemManager.h"
+#import "ItemInfoViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -69,7 +70,7 @@ UINavigationControllerDelegate>
     NSInteger screenHeigth;
     BOOL endOfTable;
     BOOL oTherPage;
-    NSArray *typeArray;
+    NSMutableArray *typeList;
     NSMutableDictionary * selectType;
 }
 
@@ -186,7 +187,7 @@ UINavigationControllerDelegate>
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
-    typeArray = [NSArray array];
+    typeList = [NSMutableArray array];
     canAdd = YES;
     historyMsg = 0;
     endOfTable = YES;
@@ -275,8 +276,10 @@ UINavigationControllerDelegate>
         [self.dropDownView setTitle:@"选择位置" inSection:0];
         [self.dropDownView setTitle:@"申请加入" inSection:1];
         [self.view addSubview:self.dropDownView];
+        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectType"];
+        [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
+        [self changLocation];
     }
-    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
@@ -286,7 +289,7 @@ UINavigationControllerDelegate>
 -(void)updateTeamType:(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-        typeArray = responseObject;
+        typeList = responseObject;
         [self.dropDownView.customPhotoCollectionView reloadData];
     }
 }
@@ -294,11 +297,18 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
-        selectType =[typeArray objectAtIndex:index];
-        [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-        [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-        [self.tView reloadData];
+        selectType =[typeList objectAtIndex:index];
+        [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
+        [self sendOtherMsg:KISDictionaryHaveKey(selectType, @"value")];
+        [self changLocation];
     }
+}
+
+-(void)changLocation
+{
+    [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+    [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+    [self.tView reloadData];
 }
 
 -(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
@@ -333,17 +343,18 @@ UINavigationControllerDelegate>
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        if (typeArray.count>0) {
-            return typeArray.count;
+        if (typeList&&typeList.count>0) {
+            return typeList.count;
         }
+        return 0;
     }
     return 0;
 }
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
 {
     if (section==0) {
-        if (typeArray.count>0) {
-            return KISDictionaryHaveKey([typeArray objectAtIndex:index], @"value");
+        if (typeList&&typeList.count>0) {
+            return KISDictionaryHaveKey([typeList objectAtIndex:index], @"value");
         }
         return @"";
     }else if (section == 1){
@@ -1617,6 +1628,13 @@ UINavigationControllerDelegate>
         [self.navigationController pushViewController:detailV animated:YES];
     }else if([self.type isEqualToString:@"group"])
     {
+        if (self.isTeam) {//队伍详情
+            ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+            itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
+            itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
+            [self.navigationController pushViewController:itemInfo animated:YES];
+            return;
+        }
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
         gr.groupId =[GameCommon getNewStringWithId:self.chatWithUser];
         [self.navigationController pushViewController:gr animated:YES];
@@ -2051,6 +2069,23 @@ UINavigationControllerDelegate>
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
 }
+
+///
+#pragma mark 发送其他消息
+-(void)sendOtherMsg:(NSString *)message
+{
+    NSString * uuid = [[GameCommon shareGameCommon] uuid];
+    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
+    NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+    NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:message gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    [messageDict setObject:payloadStr forKey:@"payload"];
+    [self addNewMessageToTable:messageDict];
+    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
+}
+
+
+
 
 #pragma mark 发送图片消息
 - (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{
