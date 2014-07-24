@@ -219,10 +219,8 @@ static ItemManager *itemManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"agreeJoinTeam--%@",responseObject);
-        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-            if (resuccess) {
-                resuccess(responseObject);
-            }
+        if (resuccess) {
+            resuccess(responseObject);
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if (refailure) {
@@ -245,10 +243,8 @@ static ItemManager *itemManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"disAgreeJoinTeam--%@",responseObject);
-        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-            if (resuccess) {
-                resuccess(responseObject);
-            }
+        if (resuccess) {
+            resuccess(responseObject);
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if (refailure) {

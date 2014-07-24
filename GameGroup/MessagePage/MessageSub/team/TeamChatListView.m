@@ -340,15 +340,12 @@
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
-    NSLog(@"同意加入");
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-         NSLog(@"同意成功,%@",responseObject);
-        
+         [self changState:msgDic State:@"1"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-        NSLog(@"同意失败,%@",error);
         [self showErrorAlertView:error];
     }];
     
@@ -356,14 +353,12 @@
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
 {
-    NSLog(@"拒绝加入");
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-        NSLog(@"拒绝成功,%@",responseObject);
+        [self changState:msgDic State:@"2"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-        NSLog(@"拒绝失败,%@",error);
         [self showErrorAlertView:error];
     }];
 }
@@ -378,6 +373,20 @@
             [alert show];
         }
     }
+}
+
+//改变消息状态
+-(void)changState:(NSMutableDictionary*)dict State:(NSString*)state
+{
+    
+    for (NSMutableDictionary * clickDic in self.teamNotifityMsg) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")]) {
+            [clickDic setObject:state forKey:@"state"];
+        }
+    }
+    [self.mTableView reloadData];
+    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(dict, @"userid") State:state];
+    
 }
 
 @end

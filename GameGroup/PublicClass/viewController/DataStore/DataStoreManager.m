@@ -3653,6 +3653,18 @@
     return msgDic;
 }
 
++(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@",userid];
+        NSArray * commMsgs = [DSTeamNotificationMsg findAllWithPredicate:predicate];
+        for (DSTeamNotificationMsg * commonMsg in commMsgs) {
+            if (commonMsg) {
+                commonMsg.state = state;
+            }
+        }
+    }];
+}
 
 
 
