@@ -15,8 +15,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 128)];
-        self.bgV.image = KUIImage(@"group_cell_bg");
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 85)];
+        self.bgV.image = KUIImage(@"upimage");
         self.bgV.userInteractionEnabled =YES;
         
         self.headImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
@@ -67,30 +67,41 @@
         self.timeLable.text = @"时间";
         self.timeLable.font =[ UIFont systemFontOfSize:12];
         [self.bgV addSubview:self.timeLable];
-        
         [self.contentView addSubview:self.bgV];
         
         
         self.agreeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.agreeButton.frame = CGRectMake(1,bgVImageHeight - 36,154, 36);
+        self.agreeButton.frame = CGRectMake(5,85,155, 36);
         [self.agreeButton setBackgroundImage:[UIImage imageNamed:@"agree.png"] forState:UIControlStateNormal];
         [self.agreeButton addTarget:self action:@selector(agreeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [self.bgV addSubview:self.agreeButton];
+        [self.contentView addSubview:self.agreeButton];
         
         self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.refuseButton.frame = CGRectMake(155,bgVImageHeight - 36,154, 36);
+        self.refuseButton.frame = CGRectMake(160,85,155, 36);
         [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"refuse.png"] forState:UIControlStateNormal];
         [self.refuseButton addTarget:self action:@selector(refuseButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [self.bgV addSubview:self.refuseButton];
-
+        [self.contentView addSubview:self.refuseButton];
         
+        
+        self.detailLable = [[UILabel alloc]initWithFrame:CGRectMake(7, 86, 303, 33)];
+        self.detailLable.backgroundColor = [UIColor whiteColor];
+        self.detailLable.textAlignment = NSTextAlignmentCenter;
+        self.detailLable.textColor = kColorWithRGB(5,5,5, 0.7);
+        self.detailLable.text = @"已经处理";
+        self.detailLable.font =[ UIFont systemFontOfSize:12];
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.detailLable.bounds byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight cornerRadii:CGSizeMake(5, 5)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.frame = self.detailLable.bounds;
+        maskLayer.path = maskPath.CGPath;
+        self.detailLable.hidden=YES;
+        self.detailLable.layer.mask = maskLayer;
+        [self.contentView addSubview:self.detailLable];
     }
     return self;
 }
 
 - (void)agreeButtonAction:(UIButton *)button
 {
-    NSLog(@"同意");
     if (self.delegate) {
         [self.delegate onAgreeClick:self];
     }
@@ -98,7 +109,6 @@
 
 - (void)refuseButtonAction:(UIButton *)button
 {
-    NSLog(@"拒绝");
     if (self.delegate) {
         [self.delegate onDisAgreeClick:self];
     }

@@ -293,7 +293,6 @@
     if (!cell) {
         cell = [[JoinTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         cell.backgroundColor = kColorWithRGB(233, 233 ,233, 0.7);
-
     }
     cell.tag = indexPath.row;
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
@@ -312,6 +311,19 @@
     cell.positionLable.hidden=YES;
     cell.realmLable.text = KISDictionaryHaveKey(msgDic, @"value1");
     cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
+    if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]) {
+        cell.detailLable.hidden=YES;
+    }else{
+        cell.detailLable.hidden=NO;
+        if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {
+            cell.detailLable.text=@"已同意";
+        }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){
+            cell.detailLable.text=@"已拒绝";
+        }else {
+            cell.detailLable.text=@"已处理";
+        }
+
+    }
     return cell;
 }
 

@@ -22,6 +22,8 @@
 @property(nonatomic,strong)UILabel * pveLable;//战斗力
 @property(nonatomic,strong)UILabel * timeLable;//时间
 
+@property(nonatomic,strong)UILabel * detailLable;//处理
+
 
 @property(nonatomic,assign)id<TeamDetailDelegate>delegate;
 
