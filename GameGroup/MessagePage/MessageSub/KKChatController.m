@@ -228,7 +228,7 @@ UINavigationControllerDelegate>
     [titleBtn addSubview:self.titleLabel]; //导航条标题
 //    [self.view addSubview:self.noReadView]; //未读数量
 
-    if ([self.type isEqualToString:@"group"]) {
+    if ([self.type isEqualToString:@"group"]&&!self.isTeam) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
         if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
             _titleLabel.hidden = YES;

@@ -3666,6 +3666,27 @@
     }];
 }
 
++(void)deleteTeamNotifityMsgState
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * commMsgs = [DSTeamNotificationMsg findAll];
+        for (DSTeamNotificationMsg * commonMsg in commMsgs) {
+            [commonMsg deleteInContext:localContext];
+        }
+    }];
+}
+
++(void)deleteTeamNotifityMsgStateByGroupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+         NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * commMsgs = [DSTeamNotificationMsg findAllWithPredicate:predicate];
+        for (DSTeamNotificationMsg * commonMsg in commMsgs) {
+            [commonMsg deleteInContext:localContext];
+        }
+    }];
+}
+
 
 
 @end

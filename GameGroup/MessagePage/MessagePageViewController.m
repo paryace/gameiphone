@@ -291,6 +291,7 @@
             [DataStoreManager deleteCommonMsgsByMsgType:@"normalchat"];//删除所有的normalchat历史记录
             [DataStoreManager deleteThumbMsgsByMsgType:@"groupchat"];//删除所有的groupchat显示消息
             [DataStoreManager clearGroupChatHistroyMsg];//删除所有群聊历史消息//
+            [DataStoreManager deleteTeamNotifityMsgState];//删除所有的组队通知消息
             [self displayMsgsForDefaultView];
         }
     }
@@ -649,6 +650,7 @@
             NSString * groupId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"groupId")];
             [DataStoreManager deleteThumbMsgWithGroupId:groupId];
             [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+            [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
             
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {

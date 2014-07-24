@@ -354,4 +354,11 @@
 +(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state;
 
 
+//删除组队通知消息
++(void)deleteTeamNotifityMsgState;
+
+
+//根据groupId删除组队通知消息
++(void)deleteTeamNotifityMsgStateByGroupId:(NSString*)groupId;
+
 @end
