@@ -38,7 +38,7 @@
     }
     return self;
 }
-
+//teamUsershipType 组队关系:0房主，1队员，2陌生人
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -46,21 +46,14 @@
     
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     
-    if (self.isCaptain) {
-        [m_getOutBtn setTitle:@"解散" forState:UIControlStateNormal];
-    }else{
-        [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
-    }
     
-    
+    [self setRightBtn];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_getOutBtn];
-
     isJoinIn = YES;
-    
     m_mainDict = [NSMutableDictionary dictionary];
     m_dataArray = [NSMutableArray array];
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
@@ -87,6 +80,16 @@
     [self buildRoleView];
 
     // Do any additional setup after loading the view.
+}
+
+-(void)setRightBtn
+{
+    if (self.isCaptain) {
+        [m_getOutBtn setTitle:@"解散" forState:UIControlStateNormal];
+    }else{
+        [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
+    }
+
 }
 
 -(void)buildRoleView
@@ -310,32 +313,15 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
-            
-            
-            [DataStoreManager saveTeamInfoWithDict:responseObject];
-            
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
-            NSArray *arr = [NSArray array] ;
-            if ([teamUsershipType intValue]==0) {
-                arr = @[@"sendMsg_normal.jpg",@"groupEdit"];
-                m_getOutBtn.hidden = NO;
-            }
-            else if([teamUsershipType intValue]==1)
-            {
-                arr = @[@"sendMsg_normal.jpg",@"goout_item"];
-                m_getOutBtn.hidden = NO;
-            }
-            else
-            {
-                m_getOutBtn.hidden = YES;
-                arr = @[@"joinInBtn_Item"];
-            }
-            [self buildbelowbutotnWithArray:arr shiptype:[teamUsershipType intValue]];
+            [self setGetOutBtn:teamUsershipType];
+            [self setCaptain:teamUsershipType];
+            [self setRightBtn];
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
             [m_myTableView reloadData];
+            [DataStoreManager saveTeamInfoWithDict:responseObject];
         }
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -346,7 +332,36 @@
         }
         [hud hide:YES];
     }];
+}
 
+-(void)setGetOutBtn:(NSString*)teamUsershipType
+{
+    NSArray *arr = [NSArray array] ;
+    if ([teamUsershipType intValue]==0) {
+        arr = @[@"sendMsg_normal.jpg",@"groupEdit"];
+        m_getOutBtn.hidden = NO;
+    }
+    else if([teamUsershipType intValue]==1)
+    {
+        arr = @[@"sendMsg_normal.jpg",@"goout_item"];
+        m_getOutBtn.hidden = NO;
+    }
+    else
+    {
+        m_getOutBtn.hidden = YES;
+        arr = @[@"joinInBtn_Item"];
+    }
+    [self buildbelowbutotnWithArray:arr shiptype:[teamUsershipType intValue]];
+}
+
+-(void)setCaptain:(NSString*)shipType
+{
+    if ([shipType intValue] == 0) {
+        self.isCaptain = YES;
+    }
+    else{
+        self.isCaptain = NO;
+    }
 }
 
 #pragma mark ----tableview delegate  datasourse

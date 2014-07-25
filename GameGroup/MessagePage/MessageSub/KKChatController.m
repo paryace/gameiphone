@@ -271,7 +271,7 @@ UINavigationControllerDelegate>
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
     if (self.isTeam) {
-        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,60, self.view.frame.size.width, 40) dataSource:self delegate:self];
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,60, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"选择位置" inSection:0];
         [self.dropDownView setTitle:@"申请加入" inSection:1];

@@ -29,7 +29,7 @@
 
 @property (strong, nonatomic)  NSMutableArray * teamNotifityMsg;
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate;
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView;
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section;
 
 - (BOOL)isShow;

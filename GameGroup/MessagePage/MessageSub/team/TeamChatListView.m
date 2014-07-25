@@ -19,7 +19,7 @@
 
 
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -68,10 +68,10 @@
             
         }
         
-//        hud = [[MBProgressHUD alloc] initWithView:self];
-//        hud.frame = CGRectMake((320-80)/2, (960-80)/2, 80, 80);
-//        hud.labelText = @"加载中...";
-//        [self addSubview:hud];
+        hud = [[MBProgressHUD alloc] initWithView:supView];
+        hud.frame = CGRectMake((320-80)/2, (960-80)/2, 80, 80);
+        hud.labelText = @"加载中...";
+        [supView addSubview:hud];
     }
     return self;
 }
@@ -173,10 +173,8 @@
         self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
-        self.mBgView.frame =  rect;
         self.mBgView.alpha = 1.0;
         //动画设置位置
-        
         [UIView animateWithDuration:0.3 animations:^{
             self.mTableBaseView.alpha = 0.2;
             self.mTableBaseView.alpha = 1.0;
@@ -191,8 +189,6 @@
             self.customPhotoCollectionView = nil;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
             [self.mBgView addSubview:self.mTableView];
-            
-            
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
@@ -201,8 +197,12 @@
         rect.size.width = 320;
         rect.size.height = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
         self.mBgView.frame =  rect;
+        self.mTableView.frame = CGRectMake(0, 0, 320,rect.size.height-20);
         self.mBgView.alpha = 1.0;
-        self.mTableBaseView.alpha = 0.0;
+        [UIView animateWithDuration:0.3 animations:^{
+            self.mTableBaseView.alpha = 0.2;
+            self.mTableBaseView.alpha = 1.0;
+        }];
         [self.mTableView reloadData];
     }
 }
@@ -356,15 +356,15 @@
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
-//     [hud show:YES];
+     [hud show:YES];
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-//         [hud hide:YES];
+         [hud hide:YES];
          [self changState:msgDic State:@"1"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-//         [hud hide:YES];
+         [hud hide:YES];
         [self showErrorAlertView:error];
     }];
     
@@ -372,15 +372,15 @@
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
 {
-//    [hud show:YES];
+    [hud show:YES];
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-//         [hud hide:YES];
+         [hud hide:YES];
         [self changState:msgDic State:@"2"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-//         [hud hide:YES];
+         [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
