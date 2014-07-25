@@ -11,6 +11,7 @@
 #import "ImgCollCell.h"
 #import "LocationManager.h"
 #import "TestViewController.h"
+#import "InviationGroupViewController.h"
 @interface InvitationMembersViewController ()
 {
     UIScrollView                       *  m_mainScroll;
@@ -187,8 +188,53 @@
     m_rTableView.dataSource =self;
     [self.view addSubview:m_rTableView];
     
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+    view.backgroundColor = [UIColor whiteColor];
+    
+    NSArray *array   =[NSArray arrayWithObjects:@"qq",@"微信",@"群组", nil];
+    for (int i =0; i<3; i++) {
+        UIButton *Butotn = [[ UIButton alloc]initWithFrame:CGRectMake(20+60*i, 10, 50, 50)];
+        [Butotn setBackgroundImage:KUIImage(@"placeholder") forState:UIControlStateNormal];
+        Butotn.tag = 100+i;
+        [Butotn addTarget:self action:@selector(enterOtherInvitationPage:) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:Butotn];
+        
+        UILabel *label = [GameCommon buildLabelinitWithFrame:CGRectMake(20+60*i, 70, 50, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] textAlignment:NSTextAlignmentCenter];
+        label.text = array[i];
+        label.shadowColor = [UIColor colorWithWhite:0.1f alpha:0.8f];
+        [view addSubview:label];
+        
+        m_rTableView.tableHeaderView = view;
+        
+    }
+    
 }
-
+-(void)enterOtherInvitationPage:(UIButton *)sender
+{
+    NSString *str;
+    InviationGroupViewController *invgro;
+    if (!invgro) {
+        invgro = [[InviationGroupViewController alloc]init];
+    }
+    switch (sender.tag) {
+        case 100:
+            str=@"qq";
+            break;
+        case 101:
+            str=@"微信";
+            break;
+        case 102:
+            str=@"群组";
+            invgro.gameId = self.gameId;
+            invgro.roomId = self.roomId;
+            [self.navigationController pushViewController:invgro animated:YES];
+            break;
+  
+        default:
+            break;
+    }
+    [self showMessageWithContent:str point:self.view.center];
+}
 
 -(void)getInfo
 {
