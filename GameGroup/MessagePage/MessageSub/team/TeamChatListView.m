@@ -41,7 +41,7 @@
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
-            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionWidth*i, 1, sectionWidth, frame.size.height-2)];
+            UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionWidth*i, 1, sectionWidth, frame.size.height)];
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];
             NSString *sectionBtnTitle = @"--";
@@ -132,8 +132,6 @@
 
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
-    UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + section];
-    currentSectionBtn.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
@@ -146,6 +144,7 @@
 
     }
     if (section == 0) {
+       [self setBtnBg:0];
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
@@ -181,8 +180,10 @@
         }];
         [self.customPhotoCollectionView reloadData];
     }else{
-        if (!self.mTableView) {
+            [self setBtnBg:1];
+            if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40) style:UITableViewStylePlain];
+            self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
             [self.customPhotoCollectionView removeFromSuperview];
@@ -204,6 +205,21 @@
             self.mTableBaseView.alpha = 1.0;
         }];
         [self.mTableView reloadData];
+    }
+}
+
+-(void)setBtnBg:(NSInteger)position
+{
+    if (position == 0) {
+        UIButton *twoBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + 0];
+        twoBtn.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        UIButton *oneBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + 1];
+        oneBtn.backgroundColor = [UIColor whiteColor];
+    }else if (position == 1) {
+            UIButton *onwBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + 1];
+            onwBtn.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+            UIButton *twoBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + 0];
+            twoBtn.backgroundColor = [UIColor whiteColor];
     }
 }
 
@@ -296,8 +312,8 @@
     JoinTeamCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         cell = [[JoinTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.backgroundColor = kColorWithRGB(233, 233 ,233, 0.7);
     }
+    cell.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     cell.tag = indexPath.row;
     NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
     cell.delegate = self;

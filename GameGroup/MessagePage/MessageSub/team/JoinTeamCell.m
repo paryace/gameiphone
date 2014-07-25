@@ -15,7 +15,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 310, 85)];
+        self.bgV = [[UIImageView alloc]initWithFrame:CGRectMake(5, 10, 310, 85)];
         self.bgV.image = KUIImage(@"upimage");
         self.bgV.userInteractionEnabled =YES;
         
@@ -71,19 +71,19 @@
         
         
         self.agreeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.agreeButton.frame = CGRectMake(5,85,155, 36);
+        self.agreeButton.frame = CGRectMake(5,95,155, 36);
         [self.agreeButton setBackgroundImage:[UIImage imageNamed:@"agree.png"] forState:UIControlStateNormal];
         [self.agreeButton addTarget:self action:@selector(agreeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.agreeButton];
         
         self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.refuseButton.frame = CGRectMake(160,85,155, 36);
+        self.refuseButton.frame = CGRectMake(160,95,155, 36);
         [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"refuse.png"] forState:UIControlStateNormal];
         [self.refuseButton addTarget:self action:@selector(refuseButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.refuseButton];
         
         
-        self.detailLable = [[UILabel alloc]initWithFrame:CGRectMake(7, 86, 303, 33)];
+        self.detailLable = [[UILabel alloc]initWithFrame:CGRectMake(7, 96, 303, 33)];
         self.detailLable.backgroundColor = [UIColor whiteColor];
         self.detailLable.textAlignment = NSTextAlignmentCenter;
         self.detailLable.textColor = kColorWithRGB(5,5,5, 0.7);

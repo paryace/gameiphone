@@ -29,7 +29,6 @@
 @property (nonatomic, retain) UIActivityIndicatorView *activityView; //可用
 @property (nonatomic, retain) UILabel*  statusLabel;//已读 送达
 @property (nonatomic, retain) UILabel*  levelLable;//位置
-@property (nonatomic, retain) UIImageView * leveImageV;//位置背景
 
 //初始化方法
 - (id)initWithMessage:(NSMutableDictionary *)msg reuseIdentifier:(NSString *)reuseIdentifier; //用这个比较好， 直接赋值

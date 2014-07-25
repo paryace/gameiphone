@@ -277,8 +277,10 @@ UINavigationControllerDelegate>
         [self.dropDownView setTitle:@"申请加入" inSection:1];
         [self.view addSubview:self.dropDownView];
         selectType = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectType"];
-        [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
-        [self changLocation];
+        if (selectType) {
+            [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
+        }
+        [self changPosition];
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
@@ -300,11 +302,11 @@ UINavigationControllerDelegate>
         selectType =[self.typeData_list objectAtIndex:index];
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
         [self sendOtherMsg:KISDictionaryHaveKey(selectType, @"value")];
-        [self changLocation];
+        [self changPosition];
     }
 }
 //改变位置
--(void)changLocation
+-(void)changPosition
 {
     [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
     [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
@@ -324,10 +326,8 @@ UINavigationControllerDelegate>
 {
     if (section==0) {
         [[ItemManager singleton] getMyGameLocation:@"2" reSuccess:^(id responseObject) {
-            NSLog(@"%@",responseObject);
             [self updateTeamType:responseObject];
         } reError:^(id error) {
-            NSLog(@"%@",error);
         }];
         return YES;
     }else if(section == 1){
@@ -346,8 +346,6 @@ UINavigationControllerDelegate>
         if (self.typeData_list.count>0) {
             return self.typeData_list.count;
         }
-    }else if (section == 1){
-        return 10;
     }
     return 0;
 }
@@ -357,8 +355,6 @@ UINavigationControllerDelegate>
         if (self.typeData_list.count>0) {
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
-    }else if (section == 1){
-        return @"tongyi";
     }
     return @"";
 
@@ -2083,9 +2079,6 @@ UINavigationControllerDelegate>
     [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
 }
-
-
-
 
 #pragma mark 发送图片消息
 - (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{

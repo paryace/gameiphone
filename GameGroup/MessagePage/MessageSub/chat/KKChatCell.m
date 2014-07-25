@@ -74,18 +74,14 @@
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [self.contentView addSubview:self.activityView];
         
-        
-        
-        self.leveImageV = [[UIImageView alloc] initWithFrame:CGRectMake(10, 5, 40, 25)];
-        self.leveImageV.backgroundColor = [UIColor clearColor];
-        self.leveImageV.image = KUIImage(@"level_image.png");
-        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 40, 20)];
+        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 30, 15)];
         [self.levelLable setTextAlignment:NSTextAlignmentCenter];
-        self.levelLable.backgroundColor = [UIColor clearColor];
+        self.levelLable.backgroundColor = [UIColor blueColor];
+        self.levelLable.layer.cornerRadius = 3;
+        self.levelLable.layer.masksToBounds=YES;
         self.levelLable.textColor = [UIColor whiteColor];
-        [self.levelLable setFont:[UIFont boldSystemFontOfSize:12.0]];
-        [self.leveImageV addSubview:self.levelLable];
-        [self.contentView addSubview:self.leveImageV];
+        [self.levelLable setFont:[UIFont boldSystemFontOfSize:10.0]];
+        [self.contentView addSubview:self.levelLable];
     }
     return self;
 }
@@ -224,7 +220,7 @@
 {
     [self.headImgV setFrame:CGRectMake(320-10-40,padding*2-15,40,40)];
     
-    [self.leveImageV setFrame:CGRectMake(320-10-40, padding*2-15+40+3, 40, 25)];
+    [self.levelLable setFrame:CGRectMake(320-10-40+7.5, padding*2-15+40+3, 25, 12)];
     
     if ([GameCommon isEmtity:myHeadImg]) {
         self.headImgV.imageURL = nil;
@@ -240,7 +236,7 @@
 {
     //头像居左
     [self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
-    [self.leveImageV setFrame:CGRectMake(10, padding*2-15+40+3, 40, 25)];
+    [self.levelLable setFrame:CGRectMake(17.5, padding*2-15+40+3, 25, 12)];
     //头像设置为对方的
     self.headImgV.imageURL=[ImageService getImageStr:chatUserImg Width:80];
     //点击事件
@@ -251,31 +247,29 @@
 -(void)setMePosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition
 {
     if (isTeam) {
-        self.leveImageV.hidden=NO;
+        self.levelLable.hidden=NO;
         
         if (![GameCommon isEmtity:teamPosition]) {
             self.levelLable.text = teamPosition;
         }else{
             self.levelLable.text = @"未选";
         }
-        [self.leveImageV setFrame:CGRectMake(320-10-40, padding*2-15+40+3, 40, 25)];
     }else{
-        self.leveImageV.hidden=YES;
+        self.levelLable.hidden=YES;
     }
     
 }
 -(void)setUserPosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition
 {
     if (isTeam) {
-        self.leveImageV.hidden=NO;
+        self.levelLable.hidden=NO;
         if (![GameCommon isEmtity:teamPosition]) {
             self.levelLable.text = teamPosition;
         }else{
             self.levelLable.text = @"未选";
         }
-        [self.leveImageV setFrame:CGRectMake(10, padding*2-15+40+3, 40, 25)];
     }else{
-        self.leveImageV.hidden=YES
+        self.levelLable.hidden=YES
         ;
     }
     
