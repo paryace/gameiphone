@@ -45,14 +45,13 @@
     [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
     
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    
-    
-    [self setRightBtn];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
 //    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_getOutBtn];
+    [self setRightBtn];
+    
     isJoinIn = YES;
     m_mainDict = [NSMutableDictionary dictionary];
     m_dataArray = [NSMutableArray array];
@@ -73,7 +72,6 @@
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
     roleTabView.hidden = YES;
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
@@ -89,7 +87,6 @@
     }else{
         [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
     }
-
 }
 
 -(void)buildRoleView
@@ -177,14 +174,10 @@
         if (buttonIndex==1) {
             NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
             NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-            
             [paramDict setObject:self.itemId forKey:@"roomId"];
             [paramDict setObject:self.gameid forKey:@"gameid"];
             [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] forKey:@"memberId"];
-//            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-//            [paramDict setObject:userid forKey:@"userid"];
             [postDict setObject:paramDict forKey:@"params"];
-            
             [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
             [postDict setObject:@"269" forKey:@"method"];
             [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
@@ -192,8 +185,6 @@
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"退出成功" imageType:1];
-                
-                
             } failure:^(AFHTTPRequestOperation *operation, id error) {
                 if ([error isKindOfClass:[NSDictionary class]]) {
                     if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
