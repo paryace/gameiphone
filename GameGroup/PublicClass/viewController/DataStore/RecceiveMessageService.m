@@ -189,43 +189,37 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [self.chatDelegate TeamNotifityMessageReceived:dict];
+            [self.chatDelegate TeamNotifityMessageReceived:dict];//
         }
-        else if ([msgtype isEqualToString:@"teamMemberChange"]){//同意添加
+        else if ([msgtype isEqualToString:@"teamMemberChange"]){//同意添加,踢出组织,退出组织,占坑,填坑
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [self.chatDelegate teamMemberMessageReceived:dict];
-        }
-        else if ([msgtype isEqualToString:@"teamKickType"]){//踢出组织
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
+            NSMutableDictionary * payloadDis = [payload JSONValue];
+            NSString * payLoadType = KISDictionaryHaveKey(payloadDis, @"type");
+            
+            if([payLoadType isEqualToString:@"teamAddType"]){
+                [self.chatDelegate teamMemberMessageReceived:dict];
             }
-            [self.chatDelegate teamKickTypeMessageReceived:dict];
+            else if ([payLoadType isEqualToString:@"teamKickType"]){//踢出组织
+                [self.chatDelegate teamKickTypeMessageReceived:dict];
+            }
+            else if ([payLoadType isEqualToString:@"teamQuitType"]){//退出组织
+                [self.chatDelegate teamQuitTypeMessageReceived:dict];
+            }
+            else if ([payLoadType isEqualToString:@"teamClaimAddType"]){//占坑
+                [self.chatDelegate teamClaimAddTypeMessageReceived:dict];
+            }
+            else if ([payLoadType isEqualToString:@"teamOccupyType"]){//填坑
+                [self.chatDelegate teamOccupyTypeMessageReceived:dict];
+            }
         }
+        
         else if ([msgtype isEqualToString:@"disbandTeam"]){//解散组织
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamTissolveTypeMessageReceived:dict];
-        }
-        else if ([msgtype isEqualToString:@"teamQuitType"]){//退出组织
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-            [self.chatDelegate teamQuitTypeMessageReceived:dict];
-        }
-        else if ([msgtype isEqualToString:@"teamClaimAddType"]){//占坑
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-            [self.chatDelegate teamClaimAddTypeMessageReceived:dict];
-        }
-        else if ([msgtype isEqualToString:@"teamOccupyType"]){//填坑
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-            [self.chatDelegate teamOccupyTypeMessageReceived:dict];
         }
     }
     

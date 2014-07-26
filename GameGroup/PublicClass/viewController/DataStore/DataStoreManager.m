@@ -69,17 +69,14 @@
 #pragma mark - 更新会话列表界面消息
 +(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType=[c]%@",userid,@"normalchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (thumbMsgs)
         {
             thumbMsgs.sayHiType = type;
         }
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 }
 #pragma mark - 更新会话列表界面消息
 +(void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName
@@ -2879,7 +2876,7 @@
 
 +(void)deletePersonFromBlackListWithUserid:(NSString *)userid
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSBlackList * dblack = [DSBlackList MR_findFirstWithPredicate:predicate inContext:localContext];
 
@@ -2887,10 +2884,7 @@
             [dblack MR_deleteInContext:localContext];
         }
 
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 
 }
 
@@ -4118,10 +4112,10 @@
 }
 
 
-+(NSMutableArray*)queDSTeamNotificationMsgByMsgType:(NSString*)msgType
++(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId
 {
     NSMutableArray * msgList = [NSMutableArray array];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",msgType];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@ and groupId==[c]%@",msgType,groupId];
     NSArray * groupArrlyList = [DSTeamNotificationMsg MR_findAllSortedBy:@"receiveTime" ascending:NO withPredicate:predicate];
     for (DSTeamNotificationMsg * apm in groupArrlyList) {
         [msgList addObject:[self queryDSTeamNotificationMsg:apm]];

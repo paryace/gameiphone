@@ -524,6 +524,7 @@
     
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid]  forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] forKey:@"roomId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] forKey:@"memberId"];
     [postDict setObject:paramDict forKey:@"params"];

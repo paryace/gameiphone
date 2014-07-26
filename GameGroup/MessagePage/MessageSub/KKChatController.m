@@ -273,7 +273,7 @@ UINavigationControllerDelegate>
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
     if (self.isTeam) {
-        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view];
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"选择位置" inSection:0];
         [self.dropDownView setTitle:@"申请加入" inSection:1];
@@ -1315,7 +1315,8 @@ UINavigationControllerDelegate>
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"])//退出组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"])//解散组队
     {
         return KKChatMsgTypeSystem;
     }
@@ -1362,7 +1363,7 @@ UINavigationControllerDelegate>
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
     
     if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
-        [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
+        [self showAlertViewWithTitle:@"提示" message:self.isTeam?@"你已经被踢出该组队":@"你已被踢出该群" buttonTitle:@"确定"];
         return ;
     }
     UIImagePickerController *imagePicker = nil;
@@ -2013,7 +2014,7 @@ UINavigationControllerDelegate>
         return ;
     }
     if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
-        [self showAlertViewWithTitle:@"提示" message:@"你已被踢出该群" buttonTitle:@"确定"];
+        [self showAlertViewWithTitle:@"提示" message:self.isTeam?@"你已经被踢出该组队":@"你已被踢出该群" buttonTitle:@"确定"];
         return ;
     }
     if (message.length>255) {
@@ -2152,22 +2153,20 @@ UINavigationControllerDelegate>
         [self loadMessage:0 PageSize:20];
         [self.tView reloadData];
     }
-    [messages addObject:dictionary];//添加到当前消息集合 内存
-    [self newMsgToArray:dictionary];//计算高度，添加高度到内存｀
+    if([self.type isEqualToString:@"group"]){
+        [dictionary setObject:self.chatWithUser forKey:@"groupId"];
+        if (![self isGroupAvaitable]) {//本群不可用
+            [dictionary setObject:@"1" forKey:@"status"];
+        }
+        [self addNewOneMessageToTable:dictionary];
+        if (![self isGroupAvaitable]) {//本群不可用
+            [self groupNotAvailable];
+        }
+    }
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager storeMyMessage:dictionary];//正常聊天消息添加到数据库
     }else if([self.type isEqualToString:@"group"]){
-        [dictionary setObject:self.chatWithUser forKey:@"groupId"];
-        if (![self isGroupAvaitable]) {//本群不可用
-            [self groupNotAvailable];
-            [dictionary setObject:@"1" forKey:@"status"];
-        }
         [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
-    }
-    [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
-    
-    if (messages.count>0) {//定位到列表最后
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
 }
 //群是否可用
@@ -2183,14 +2182,26 @@ UINavigationControllerDelegate>
 {
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:@"inGroupSystemMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"本群不可用" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    NSString * payloadStr=[MessageService createPayLoadStr:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:self.isTeam?@"本组队已经解散":@"本群已经解散" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
-    [messages addObject:dictionary];
-    [self newMsgToArray:dictionary];
+    [self addNewOneMessageToTable:dictionary];
     [DataStoreManager storeMyGroupMessage:dictionary];
 }
+
+
+-(void)addNewOneMessageToTable:(NSDictionary*)dictionary
+{
+    [messages addObject:dictionary];
+    [self newMsgToArray:dictionary];
+    [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    
+    if (messages.count>0) {//定位到列表最后
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
+}
+
 
 #pragma mark 重新发文本消息
 - (void)reSendMsg:(NSMutableDictionary*)messageDict
@@ -2474,9 +2485,10 @@ UINavigationControllerDelegate>
        ||[msgType isEqualToString:@"disbandGroup"]
        ||[msgType isEqualToString:@"inGroupSystemMsgJoinGroup"]
        ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]
-       ||[msgType isEqualToString:@"teamAddType"]//加入
-       ||[msgType isEqualToString:@"teamQuitType"]//退出
-       ||[msgType isEqualToString:@"teamKickType"]){//解散
+       ||[msgType isEqualToString:@"requestJoinTeam"]//申请加入组队
+       ||[msgType isEqualToString:@"teamMemberChange"]//加入,退出,踢出
+       ||[msgType isEqualToString:@"disbandTeam"])//解散
+        {
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];
         //改变组队位置

@@ -349,7 +349,7 @@
 
 
 //查询组队通知列表
-+(NSMutableArray*)queDSTeamNotificationMsgByMsgType:(NSString*)msgType;
++(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
 
 //更新组队通知状态
 +(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state;

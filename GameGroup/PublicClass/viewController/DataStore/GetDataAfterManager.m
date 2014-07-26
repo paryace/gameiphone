@@ -213,19 +213,24 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [[MessageSetting singleton] setSoundOrVibrationopen];
         [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
     }];
 }
 
 #pragma mark 踢出组对
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
-    [self changGroupMessageReceived:messageContent];
+    NSString * userId = [self getUserIdFromPayload:messageContent];
+    if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
+        [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
+        [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
+        [[GroupManager singleton] deleteGrpuoInfo:groupId];//删除群消息
+    }else {
+        [self changGroupMessageReceived:messageContent];
+    }
     [messageContent setValue:groupId forKey:@"groupId"];
     NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
-    [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
@@ -237,9 +242,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
     [self changGroupMessageReceived:messageContent];
     NSDictionary * dic = @{@"groupId":groupId};
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
@@ -252,7 +254,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [[MessageSetting singleton] setSoundOrVibrationopen];
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
     }];
     [self changGroupMessageReceived:messageContent];
 }
@@ -263,7 +264,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [[MessageSetting singleton] setSoundOrVibrationopen];
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
     }];
     [self changGroupMessageReceived:messageContent];
 }
@@ -280,6 +280,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
     return [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+}
+-(NSString*)getUserIdFromPayload:(NSDictionary *)messageContent{
+    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    return [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
 }
 
 

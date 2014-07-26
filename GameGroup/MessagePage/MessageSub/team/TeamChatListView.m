@@ -19,7 +19,7 @@
 
 
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -27,7 +27,7 @@
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
-        
+        self.groipId = groupId;
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
             
@@ -225,7 +225,7 @@
 
 -(void)getZU
 {
-   self.teamNotifityMsg =  [DataStoreManager queDSTeamNotificationMsgByMsgType:@"requestJoinTeam"];
+    self.teamNotifityMsg =  [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:@"self.groipId"];
     NSLog(@"%@",self.teamNotifityMsg);
 }
 -(void)showErrorAlertView

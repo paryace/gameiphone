@@ -510,7 +510,8 @@
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"])//退出组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
+              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"])//解散队伍
     {
         return 1;
     }
