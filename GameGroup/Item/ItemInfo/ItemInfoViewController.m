@@ -267,7 +267,7 @@
     else if(sender.tag ==111)
     {
 //        [self showMessageWindowWithContent:@"退出群" imageType:0];
-        [self gooutRoomWithNet];
+//        [self gooutRoomWithNet];
     }
 }
 
@@ -483,12 +483,15 @@
 }
 -(void)changeInfo1
 {
-    EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
-    editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
-    editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
-    editInfo.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
-    editInfo.delegate = self;
-    [self.navigationController pushViewController:editInfo animated:YES];
+    
+    if (self.isCaptain) {
+        EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
+        editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
+        editInfo.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
+        editInfo.delegate = self;
+        [self.navigationController pushViewController:editInfo animated:YES];
+    }
 
 }
 
