@@ -51,7 +51,7 @@ static GroupManager *groupManager = NULL;
 {
     [self.groupCache removeObjectForKey:groupId];
 }
-
+//type：0系统创建的群，1个人创建的群，2组队的群
 -(void)getGroupInfoWithNet:(NSString*)groupId
 {
     

@@ -3531,6 +3531,7 @@
     NSString * info = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"info")];
     NSString * infoImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"infoImg")];
     NSString * location = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"location")];
+    NSString * type = [GameCommon getNewStringWithId:KISDictionaryHaveKey(groupList, @"type")];
     
     NSMutableArray * userList = KISDictionaryHaveKey(groupList, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
@@ -3562,6 +3563,7 @@
         groupInfo.info = info;
         groupInfo.infoImg = infoImg;
         groupInfo.location = location;
+        groupInfo.groupType = type;
         NSString * avb = groupInfo.available?groupInfo.available:@"0";
         groupInfo.available =[avb isEqualToString:@"0"]?@"0":avb;
     }
@@ -3628,9 +3630,8 @@
 //查询群组列表
 +(NSMutableArray *)queryGroupInfoList
 {
-    
     NSMutableArray *titlesArray = [NSMutableArray array];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@",@"3"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and groupType!=[c]%@",@"3",@"3"];
     NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     for (DSGroupList * group in array) {
         NSMutableDictionary * grouoDic = [self queryGroupInfo:group];
@@ -3642,7 +3643,7 @@
 
 +(NSInteger)queryGroupCount
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and available==[c]%@",@"3",@"0"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and available==[c]%@ and groupType!=[c]%@",@"3",@"0",@"3"];
     NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     if (array>0) {
         return array.count;
@@ -3673,6 +3674,7 @@
     [groupInfo setObject:group.infoImg forKey:@"infoImg"];
     [groupInfo setObject:group.location forKey:@"location"];
     [groupInfo setObject:group.available forKey:@"available"];
+    [groupInfo setObject:group.groupType forKey:@"type"];
     return groupInfo;
 }
 

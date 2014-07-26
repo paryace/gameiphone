@@ -28,4 +28,5 @@
 @dynamic infoImg;
 @dynamic location;
 @dynamic available;
+@dynamic groupType;
 @end

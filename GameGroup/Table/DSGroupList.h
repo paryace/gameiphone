@@ -30,6 +30,7 @@
 @property (nonatomic, retain) NSString * infoImg;
 @property (nonatomic, retain) NSString * location;
 @property (nonatomic, retain) NSString * available;
+@property (nonatomic, retain) NSString * groupType;
 
 
 
