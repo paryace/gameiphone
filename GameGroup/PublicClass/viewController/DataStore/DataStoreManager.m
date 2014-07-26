@@ -3631,7 +3631,7 @@
 +(NSMutableArray *)queryGroupInfoList
 {
     NSMutableArray *titlesArray = [NSMutableArray array];
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and groupType!=[c]%@",@"3",@"3"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and groupType!=[c]%@",@"3",@"2"];
     NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     for (DSGroupList * group in array) {
         NSMutableDictionary * grouoDic = [self queryGroupInfo:group];
@@ -3643,7 +3643,7 @@
 
 +(NSInteger)queryGroupCount
 {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and available==[c]%@ and groupType!=[c]%@",@"3",@"0",@"3"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupUsershipType!=[c]%@ and available==[c]%@ and groupType!=[c]%@",@"3",@"0",@"2"];
     NSArray *array = [DSGroupList MR_findAllWithPredicate:predicate];
     if (array>0) {
         return array.count;

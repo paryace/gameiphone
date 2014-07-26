@@ -434,40 +434,33 @@
         NSString * groupId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message,@"groupId")];
         NSString * sender = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message,@"senderId")];
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
-        
-        if (!groupInfo) {
-            cell.contentLabel.text = @"";
-            cell.nameLabel.text =@"";
-            cell.headImageV.image = KUIImage(@"group_icon");
+        NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+        NSString * available = KISDictionaryHaveKey(groupInfo, @"available");
+        NSString * backgroundImg = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
+        NSString * groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
+        NSString * content = KISDictionaryHaveKey(message,@"msgContent");
+        NSString * senderNickname =[self getNickUserNameBySender:sender];
+        cell.headImageV.placeholderImage = KUIImage(@"group_icon");
+        if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
+            cell.contentLabel.text =[self getMsg:message];
         }else
         {
-            NSString * nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
-            NSString * available = KISDictionaryHaveKey(groupInfo, @"available");
-            NSString * backgroundImg = KISDictionaryHaveKey(groupInfo, @"backgroundImg");
-            NSString * groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
-            NSString * content = KISDictionaryHaveKey(message,@"msgContent");
-            NSString * senderNickname =[self getNickUserNameBySender:sender];
-            if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
-                cell.contentLabel.text =[self getMsg:message];
-            }else
-            {
-                if ([self msgType:message]==0) {
-                    if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
-                        cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
-                    }else{
-                        cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
-                    }
-                    
+            if ([self msgType:message]==0) {
+                if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
+                    cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
                 }else{
                     cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
                 }
-            }
-            cell.nameLabel.text =nickName;
-            if ([GameCommon isEmtity:backgroundImg]) {
-                cell.headImageV.image = KUIImage(@"group_icon");
+                
             }else{
-                cell.headImageV.imageURL = [ImageService getImageStr:backgroundImg Width:80];
+                cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
             }
+        }
+        cell.nameLabel.text =nickName;
+        if ([GameCommon isEmtity:backgroundImg]) {
+            cell.headImageV.image = KUIImage(@"group_icon");
+        }else{
+            cell.headImageV.imageURL = [ImageService getImageStr:backgroundImg Width:80];
         }
     } else if([KISDictionaryHaveKey(message,@"msgType") isEqualToString:GROUPAPPLICATIONSTATE]){//申请加入群组
         cell.headImageV.imageURL =nil;
@@ -475,7 +468,6 @@
         cell.contentLabel.text = KISDictionaryHaveKey(message,@"msgContent");
         cell.nameLabel.text =@"群通知";
     }
-    
     [cell setNotReadMsgCount:message];
     //-- end
     
@@ -499,12 +491,12 @@
 {
     if ([self msgType:message]==0) {
         if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
-            return @"本群不可用";
+            return @"该群不可用";
         }else{
-            return @"本组队不可用";
+            return @"该组队不可用";
         }
     }else{
-        return @"本组队不可用";
+        return @"该组队不可用";
     }
 
 }
