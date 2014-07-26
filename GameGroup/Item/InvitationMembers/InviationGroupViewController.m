@@ -51,8 +51,14 @@
 -(void)getGroupListFromNet
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.gameId forKey:@"gameid"];
+    [paramDict setObject:self.roomId forKey:@"roomId"];
+    [paramDict setObject:@"0" forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"230" forKey:@"method"];
+    [postDict setObject:@"286" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -97,14 +103,36 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
+    NSMutableDictionary * cellDic = m_dataArray[indexPath.row];
+
+    [self inviationGroupWithRoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"groupId")]];
 }
+
+-(void)inviationGroupWithRoomId:(NSString *)roomId
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:self.gameId forKey:@"gameid"];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"287" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self showMessageWindowWithContent:@"发送成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        NSLog(@"faile");
+    }];
+
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 30.0f;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60.0f;
+    return 70.0f;
 }
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
