@@ -153,10 +153,6 @@
     helpVC.myUrl = @"release.html";
     [self.navigationController pushViewController:helpVC animated:YES];
 }
-- (void)dealloc
-{
-    alert1.delegate = nil;
-}
 
 - (void)backButtonClick:(id)sender
 {
@@ -497,6 +493,12 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [_dynamicTV resignFirstResponder];
+}
+- (void)dealloc
+{
+    alert1.delegate = nil;
+    self.addActionSheet.delegate = nil;
+    
 }
 
 - (void)didReceiveMemoryWarning

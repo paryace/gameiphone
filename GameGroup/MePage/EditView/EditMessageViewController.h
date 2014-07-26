@@ -17,8 +17,17 @@ typedef enum
     EDIT_TYPE_hobby,
 }EditType;
 
+@protocol editMessageDelegate;
+
 @interface EditMessageViewController : BaseViewController<UITextViewDelegate, UIAlertViewDelegate>
 
 @property(nonatomic,assign)EditType editType;
 @property(nonatomic,strong)NSString* placeHold;
+@property(nonatomic,assign)id<editMessageDelegate>delegate;
+@end
+
+@protocol editMessageDelegate <NSObject>
+
+-(void)changeMessageWithType:(EditType)type text:(NSString*)text;
+
 @end

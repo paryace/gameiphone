@@ -160,6 +160,16 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"搜索中...";
     [self.view addSubview:hud];
+    
+    if ([[self.mainDict allKeys]containsObject:@"createTeamUser"]) {
+        NSDictionary *dic = KISDictionaryHaveKey(self.mainDict, @"createTeamUser");
+        
+        selectCharacter =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dic, @"characterId"),@"id",KISDictionaryHaveKey(dic, @"characterName"),@"name",KISDictionaryHaveKey(dic, @"gameid"),@"gameid",KISDictionaryHaveKey(dic, @"realm"),@"simpleRealm", nil];
+        selectType  = KISDictionaryHaveKey(self.mainDict, @"type");
+        
+        
+    }
+    
 }
 
 -(void)InitializeInfo
@@ -239,9 +249,12 @@
 {
     if (section==0) {
         selectCharacter = [m_charaArray objectAtIndex:index];
+         NSLog(@"%@",selectCharacter);
     }
     else if (section == 1){
+
         selectType =[arrayType objectAtIndex:index];
+
         m_currentPage = 0;
         [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:nil  IsRefre:NO];
     }

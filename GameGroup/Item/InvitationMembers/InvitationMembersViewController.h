@@ -14,8 +14,11 @@
 UITableViewDelegate,
 UICollectionViewDataSource,
 UICollectionViewDelegate,
-addGroupMemberDelegate
+addGroupMemberDelegate,
+UISearchBarDelegate,
+UISearchDisplayDelegate
 >
 @property(nonatomic,copy)NSString     *     roomId;
 @property(nonatomic,copy)NSString     *     gameId;
+@property(nonatomic,copy)NSString     *     imgStr;
 @end

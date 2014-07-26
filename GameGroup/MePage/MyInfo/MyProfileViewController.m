@@ -8,7 +8,6 @@
 
 #import "MyProfileViewController.h"
 #import "PhotoViewController.h"
-#import "EditMessageViewController.h"
 #import "EGOImageView.h"
 
 @interface MyProfileViewController ()
@@ -746,6 +745,7 @@
     if([[GameCommon getNewStringWithId:self.hostInfo.superstar] isEqualToString:@"1"])//有认证
     {
         EditMessageViewController* editVC = [[EditMessageViewController alloc] init];
+        editVC.delegate =self;
         switch (indexPath.row) {
             case 0:
             case 1:
@@ -774,6 +774,7 @@
         return;
     }
     EditMessageViewController* editVC = [[EditMessageViewController alloc] init];
+    editVC.delegate = self;
     switch (indexPath.row) {
         case 0:
             return;
@@ -833,6 +834,27 @@
         }
         [hud hide:YES];
     }];
+}
+
+-(void)changeMessageWithType:(EditType)type text:(NSString*)text
+{
+    switch (type) {
+        case EDIT_TYPE_nickName:
+            self.hostInfo.nickName =text;
+            break;
+        case EDIT_TYPE_birthday:
+            self.hostInfo.birthday = text;
+            break;
+        case EDIT_TYPE_signature:
+            self.hostInfo.signature = text;
+            break;
+        case EDIT_TYPE_hobby:
+            self.hostInfo.hobby = text;
+            break;
+        default:
+            break;
+    }
+    [m_myTableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning

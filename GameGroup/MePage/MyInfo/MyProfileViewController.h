@@ -12,12 +12,16 @@
 #import "DSuser.h"
 #import "TextLabelTableCell.h"
 #import "QiniuUploadDelegate.h"
+#import "EditMessageViewController.h"
 
 typedef  enum
 {
     ActionSheetTypeChoosePic = 1,
     ActionSheetTypeOperationPic
 }ActionSheetType;
+
+
+
 
 @interface MyProfileViewController : BaseViewController
 <
@@ -29,13 +33,13 @@ UINavigationControllerDelegate,
 HGPhotoWallDelegate,
 UIAlertViewDelegate,
 BirthDayDelegate,
-QiniuUploadDelegate
+QiniuUploadDelegate,
+editMessageDelegate
 >
 
 @property(nonatomic,strong)NSString*  nickName;
 @property(nonatomic,strong)NSString*  userName;
 @property(nonatomic,strong)DSuser*  hostInfo;
-
 @property(nonatomic,strong)NSArray*    headImgArray;
 
 @end

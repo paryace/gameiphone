@@ -172,6 +172,36 @@
              NSLog(@"111--EditMessageViewController的用户信息");
             [[UserManager singleton] saveUserInfoToDb:responseObject ShipType:@"unkonw"];
         }
+        
+        
+        switch (self.editType) {
+            case EDIT_TYPE_nickName:
+                if ([self.delegate respondsToSelector:@selector(changeMessageWithType:text:)]) {
+                    [self.delegate changeMessageWithType:EDIT_TYPE_nickName text:m_contentTextView.text];
+                }
+                break;
+            case EDIT_TYPE_birthday:
+                if ([self.delegate respondsToSelector:@selector(changeMessageWithType:text:)]) {
+                    [self.delegate changeMessageWithType:EDIT_TYPE_birthday text:m_contentTextView.text];
+                }
+
+                break;
+            case EDIT_TYPE_signature:
+                if ([self.delegate respondsToSelector:@selector(changeMessageWithType:text:)]) {
+                    [self.delegate changeMessageWithType:EDIT_TYPE_signature text:m_contentTextView.text];
+                }
+
+                break;
+            case EDIT_TYPE_hobby:
+                if ([self.delegate respondsToSelector:@selector(changeMessageWithType:text:)]) {
+                    [self.delegate changeMessageWithType:EDIT_TYPE_hobby text:m_contentTextView.text];
+                }
+
+                break;
+            default:
+                break;
+        }
+        
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

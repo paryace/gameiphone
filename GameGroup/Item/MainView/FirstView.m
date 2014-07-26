@@ -68,8 +68,8 @@
     cell.machCountStr =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
     [cell didClickRow];
 
-    cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterName")];
-    cell.realmLabel.text  = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"desc")];
+    cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterName")];
+    cell.realmLabel.text  = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"desc")];
 //    cell.editLabel.text = @"编辑";
     cell.gameIconImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")]];
  
