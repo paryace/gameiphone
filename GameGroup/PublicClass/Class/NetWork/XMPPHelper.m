@@ -30,7 +30,7 @@
 -(void)setupStream
 {
     self.xmppStream = [[GameXmppStream alloc] init];
-    [self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
+    [self.xmppStream addDelegate:self delegateQueue:dispatch_queue_create("com.dispatch.xmpphelper", DISPATCH_QUEUE_SERIAL)];
     self.xmppStream.enableBackgroundingOnSocket = YES;
     self.xmppReconnect = [[GameXmppReconnect alloc] initWithDispatchQueue:dispatch_get_main_queue()];
     [self.xmppReconnect setAutoReconnect:YES];
@@ -111,7 +111,9 @@
 //此方法在stream开始连接服务器的时候调用
 - (void)xmppStreamDidConnect:(XMPPStream *)sender{
     NSError *error = nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
+    });
     //验证密码
     [[self xmppStream] authenticateWithPassword:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] error:&error];
     if(error!=nil)
@@ -121,7 +123,9 @@
 
 //此方法在stream连接断开的时候调用
 - (void)xmppStreamDidDisconnect:(XMPPStream *)sender withError:(NSError *)error{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_disconnect" object:nil userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"Notification_disconnect" object:nil userInfo:nil];
+    });
 }
 
 // 2.关于验证的
@@ -142,7 +146,10 @@
     [self.xmppvCardTempModule   activate:self.xmppStream];
     [self.xmppvCardAvatarModule activate:self.xmppStream];
     [self getmyvcard];*/
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"connectSuccess" object:nil userInfo:nil];
+    });
+   
     [self goOnline];
     
 }

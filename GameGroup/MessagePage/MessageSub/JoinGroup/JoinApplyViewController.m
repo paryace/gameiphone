@@ -77,8 +77,9 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-            [DataStoreManager clearJoinGroupApplicationMsg];
-            [self getJoinGroupMsg];
+            [DataStoreManager clearJoinGroupApplicationMsg:^(BOOL success) {
+                [self getJoinGroupMsg];
+            }];
         }
     }
 }

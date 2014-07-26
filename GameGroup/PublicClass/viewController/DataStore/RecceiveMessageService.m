@@ -177,9 +177,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate JoinGroupMessageReceived:dict];
         }
-        //群组公告消息
-        else if ([msgtype isEqualToString:@"groupBillboard"])
-        {
+        else if ([msgtype isEqualToString:@"groupBillboard"]){//群组公告消息
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -192,6 +190,42 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate TeamNotifityMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamMemberChange"]){//同意添加
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamMemberMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamKickType"]){//踢出组织
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamKickTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"disbandTeam"]){//解散组织
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamTissolveTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamQuitType"]){//退出组织
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamQuitTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamClaimAddType"]){//占坑
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamClaimAddTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamOccupyType"]){//填坑
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamOccupyTypeMessageReceived:dict];
         }
     }
     
@@ -206,11 +240,16 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             NSString * msgStatus = KISDictionaryHaveKey(bodyDic, @"msgStatus");
             if ([msgStatus isEqualToString:@"Delivered"]) {//是否送达
                 [bodyDic setValue:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"3" : @"0" forKeyPath:@"msgState"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
+                });
             }
             else if ([msgStatus isEqualToString:@"Displayed"]) {//是否已读
                 [bodyDic setValue:[KISDictionaryHaveKey(bodyDic, @"received") boolValue] ? @"4" : @"0" forKeyPath:@"msgState"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:bodyDic];
+                });
             }
         }
     }
@@ -223,7 +262,9 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             return;
         }
         [msgData setValue:@"1" forKeyPath:@"msgState"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:msgData];
+        });
     }}
 
 -(NSString*)getMsgTitle:(NSString*)msgtype

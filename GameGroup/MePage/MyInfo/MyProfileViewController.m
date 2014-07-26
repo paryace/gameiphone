@@ -42,16 +42,9 @@
 {
     [super viewWillAppear:animated];
     
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//        self.hostInfo = [DSuser MR_findFirstWithPredicate:predicate];
-//    }];
-    
     self.hostInfo = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    
     m_titleLabel.text = self.hostInfo.nickName;
-    
+
     if ([self.headImgArray count] == 0) {
         self.headImgArray = [ImageService getImageIds:self.hostInfo.headImgID];
         [m_photoWall setPhotos:[self imageToURL:self.headImgArray]];

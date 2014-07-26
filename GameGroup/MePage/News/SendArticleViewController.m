@@ -266,19 +266,6 @@
     
 }
 
-//- (void)addNewNewsToStore:(NSDictionary*)dic
-//{
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSArray * dMyNews = [DSMyNewsList MR_findAllInContext:localContext];
-//        if ([dMyNews count] >= 20) {
-//            DSMyNewsList* news = [dMyNews lastObject];
-//            [news deleteInContext:localContext];//删除最后面一个
-//        }
-//    }];
-//    [DataStoreManager saveMyNewsWithData:dic];
-//}
-
-
 #pragma mark 照片
 -(void)getAnActionSheet
 {

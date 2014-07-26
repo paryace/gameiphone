@@ -418,7 +418,7 @@
 {
     
     for (NSMutableDictionary * clickDic in self.teamNotifityMsg) {
-        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")]) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")] && [KISDictionaryHaveKey(dict, @"state") isEqualToString:@"0"]) {
             [clickDic setObject:state forKey:@"state"];
         }
     }

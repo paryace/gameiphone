@@ -671,7 +671,9 @@ static GameCommon *my_gameCommon = NULL;
     else
     {
         [DataStoreManager deleteAllCommonMsg];
-        [DataStoreManager deleteAllHello];
+        [DataStoreManager deleteAllHello:^(BOOL success, NSError *error) {
+            
+        }];
     }
     NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
     [[NSUserDefaults standardUserDefaults] setValue:version forKey:kLastVersion];

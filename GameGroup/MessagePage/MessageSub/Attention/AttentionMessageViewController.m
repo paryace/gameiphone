@@ -95,9 +95,9 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-            [DataStoreManager deleteAllHello];
-            
-            [self.navigationController popViewControllerAnimated:YES];
+            [DataStoreManager deleteAllHello:^(BOOL success, NSError *error) {
+                 [self.navigationController popViewControllerAnimated:YES];
+            }];
         }
     }
 }
@@ -150,11 +150,14 @@
     [self.navigationController pushViewController:kkchat animated:YES];
     
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         thumbMsgs.unRead = @"0";
-    }];//清数字
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];//清数字
 
     
 }
@@ -167,8 +170,9 @@
 {
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
-            [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]]];
-        [self initTableList];
+            [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]] Successcompletion:^(BOOL success, NSError *error) {
+                [self initTableList];
+            }];
     }
 }
 - (void)dealloc

@@ -134,9 +134,13 @@ UINavigationControllerDelegate>
     }
 
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+            
+        }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+            
+        }];
     }
 }
 //设置Title
@@ -197,13 +201,12 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"])
     {
         offHight = 20;
-        if (self.isTeam) {
-            startX += 40 ;
-        }else{
-            startX +=0;
-        }
+//        if (self.isTeam) {
+//            startX += 40 ;
+//        }else{
+//            startX +=0;
+//        }
     }
-
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
     self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -226,7 +229,6 @@ UINavigationControllerDelegate>
     [self changMsgToRead];
     UIButton * titleBtn = self.titleButton;
     [titleBtn addSubview:self.titleLabel]; //导航条标题
-//    [self.view addSubview:self.noReadView]; //未读数量
 
     if ([self.type isEqualToString:@"group"]&&!self.isTeam) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
@@ -271,7 +273,7 @@ UINavigationControllerDelegate>
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     
     if (self.isTeam) {
-        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,60, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view];
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"选择位置" inSection:0];
         [self.dropDownView setTitle:@"申请加入" inSection:1];
@@ -299,9 +301,10 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
+        NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         selectType =[self.typeData_list objectAtIndex:index];
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
-        [self sendOtherMsg:KISDictionaryHaveKey(selectType, @"value")];
+        [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")]];
         [self changPosition];
     }
 }
@@ -372,12 +375,17 @@ UINavigationControllerDelegate>
         [self sendReadedMesg];//发送已读消息
     }
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser];
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+            [self readNoreadMsg];
+            [self setNoreadMsgView];
+        }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser];
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+            [self readNoreadMsg];
+            [self setNoreadMsgView];
+        }];
     }
-    [self readNoreadMsg];
-    [self setNoreadMsgView];
+    
 }
 
 
@@ -609,7 +617,7 @@ UINavigationControllerDelegate>
         cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
         cell.lineImage1.frame=CGRectMake(5, 10, (320-textSize.width)/2-10, 1);
         cell.lineImage2.frame=CGRectMake(cell.timeLable.frame.origin.x+cell.timeLable.frame.size.width+5, 10, (320-textSize.width)/2-10, 1);
-        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(320, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
@@ -739,7 +747,7 @@ UINavigationControllerDelegate>
 //表情按钮
 - (EmojiView *)theEmojiView{
     if (!_theEmojiView) {
-        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,kScreenHeigth-253,320,253)WithSendBtn:YES];
+        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.frame.size.height-253,320,253)WithSendBtn:YES];
         _theEmojiView.delegate = self;
     }
     return _theEmojiView;
@@ -748,7 +756,7 @@ UINavigationControllerDelegate>
 - (UIView *)kkChatAddView{
     if (!_kkChatAddView) {
         _kkChatAddView = [[UIView alloc] init];
-        _kkChatAddView.frame = CGRectMake(0, kScreenHeigth-125, 320,125);
+        _kkChatAddView.frame = CGRectMake(0, self.view.frame.size.height-125, 320,125);
         _kkChatAddView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatMorebg.png"]];
         NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         for (int i = 0; i < 2; i++) {
@@ -774,7 +782,7 @@ UINavigationControllerDelegate>
 - (UIView *)inPutView{
     if (!_inPutView) {
         _inPutView = [[UIView alloc] init];
-        _inPutView.frame = CGRectMake(0, kScreenHeigth-50,320,50);
+        _inPutView.frame = CGRectMake(0, self.view.frame.size.height-50,320,50);
         UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
@@ -782,8 +790,7 @@ UINavigationControllerDelegate>
         entryImageView.frame = CGRectMake(10, 7, 225, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
-        UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13
-                                                                 topCapHeight:22];
+        UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
         imageView.frame = CGRectMake(0,0,self.inPutView.frame.size.width,self.inPutView.frame.size.height);
         imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -835,33 +842,6 @@ UINavigationControllerDelegate>
     }
 }
 
--(UIView * )noReadView
-{
-    if(!_noReadView){
-        _noReadView = [[UIView alloc] init];
-        _noReadView.frame = CGRectMake(60,kScreenHeigth - startX - 20-20,200,20);
-        _noReadView.hidden = YES;
-        
-        
-        _noReadBtn = [[UIButton alloc] initWithFrame:CGRectMake(200-20,0,20,20)];
-        _noReadBtn.backgroundColor = [UIColor clearColor];
-        [_noReadBtn setBackgroundImage:KUIImage(@"chat_group_circle_normal") forState:UIControlStateNormal];
-        [_noReadBtn addTarget:self action:@selector(msgNoReadButtonClick:)forControlEvents:UIControlEventTouchUpInside];
-        [_noReadView addSubview:_noReadBtn];
-        
-        
-        _noReadLable = [[UILabel alloc] initWithFrame:CGRectMake(200-20-100,0,100,20)];
-        _noReadLable .text = @"下方有未读消息";
-        _noReadLable.hidden = YES;
-        _noReadLable.textAlignment = NSTextAlignmentRight;
-        _noReadLable.backgroundColor = [UIColor clearColor];
-        _noReadLable.font = [UIFont systemFontOfSize:12];
-        _noReadLable.textColor = [UIColor grayColor];
-        [_noReadView addSubview:_noReadLable];
-
-    }
-    return _noReadView;
-}
 
 //群动态入口
 - (UIButton *)groupCircleImage{
@@ -956,7 +936,7 @@ UINavigationControllerDelegate>
 
 - (UITableView *)tView{
     if(!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX,320,kScreenHeigth-startX-55)style:UITableViewStylePlain];
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,self.isTeam?startX+40:startX,320,self.view.frame.size.height-(self.isTeam?startX+40:startX)-55)style:UITableViewStylePlain];
         [tView setBackgroundColor:[UIColor clearColor]];
         tView.delegate = self;
         tView.dataSource = self;
@@ -1331,7 +1311,11 @@ UINavigationControllerDelegate>
         
     }
     //系统消息
-    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"])
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"])//退出组队
     {
         return KKChatMsgTypeSystem;
     }
@@ -1584,10 +1568,10 @@ UINavigationControllerDelegate>
         case KKChatInputTypeEmoji:
         {
             [self.textView resignFirstResponder];
-            self.inPutView.frame = CGRectMake(0,kScreenHeigth-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = NO;
             self.kkChatAddView.hidden = YES;
-            self.theEmojiView.frame = CGRectMake(0,kScreenHeigth-253,320,253);
+            self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
             [self autoMovekeyBoard:253];
         }
             break;
@@ -1595,10 +1579,10 @@ UINavigationControllerDelegate>
         {
             [self.textView resignFirstResponder];
             
-            self.inPutView.frame = CGRectMake(0,kScreenHeigth-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
             self.theEmojiView.hidden = YES;
             self.kkChatAddView.hidden = NO;
-            self.kkChatAddView.frame = CGRectMake(0,kScreenHeigth-125,320,125);
+            self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
             [self autoMovekeyBoard:125];
         }
             break;
@@ -1705,20 +1689,20 @@ UINavigationControllerDelegate>
     CGRect containerFrame = self.inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
 	self.inPutView.frame = containerFrame;
-    
     if (messages.count<4) {
         CGRect cgmm = self.tView.frame;
-        cgmm.size.height=kScreenHeigth-startX-55-h;
+        cgmm.size.height=self.view.frame.size.height-startX-55-h-(self.isTeam?40:0);
         self.tView.frame=cgmm;
     }else{
         CGRect cgmm = self.tView.frame;
-        if (cgmm.size.height<(kScreenHeigth-startX-55)) {
-            cgmm.size.height=kScreenHeigth-startX-55;
+        if (cgmm.size.height<(self.view.frame.size.height-startX-55)) {
+            cgmm.size.height=self.view.frame.size.height-startX-55;
         }
         if (self.inPutView.frame.size.height>50) {
             h+=(self.inPutView.frame.size.height-50);
         }
-        cgmm.origin.y = startX-h;
+        cgmm.origin.y = startX-h+(self.isTeam?40:0);
+        cgmm.size.height = self.isTeam?cgmm.size.height-40:cgmm.size.height;
         self.tView.frame=cgmm;
     }
     [UIView commitAnimations];
@@ -1727,12 +1711,12 @@ UINavigationControllerDelegate>
     }
     if (h>0&&canAdd) {
         canAdd = NO;
-        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,kScreenHeigth-startX-self.inPutView.frame.size.height-h)];
+        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
         [clearView setBackgroundColor:[UIColor clearColor]];
         [self.view addSubview:clearView];
     }
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0,startX, 320,kScreenHeigth-startX-self.inPutView.frame.size.height-h)];
+        [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
     }
 }
 #pragma mark HPExpandingTextView delegate
@@ -1813,8 +1797,9 @@ UINavigationControllerDelegate>
                 }
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
                 KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
-                [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
-//                [self.tView reloadData];
+                if (![cell isKindOfClass:[KKSystemMsgCell class]]) {
+                    [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
+                }
             }
         }
     }
@@ -2488,7 +2473,10 @@ UINavigationControllerDelegate>
     if([msgType isEqualToString:@"groupchat"]
        ||[msgType isEqualToString:@"disbandGroup"]
        ||[msgType isEqualToString:@"inGroupSystemMsgJoinGroup"]
-       ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]){
+       ||[msgType isEqualToString:@"inGroupSystemMsgQuitGroup"]
+       ||[msgType isEqualToString:@"teamAddType"]//加入
+       ||[msgType isEqualToString:@"teamQuitType"]//退出
+       ||[msgType isEqualToString:@"teamKickType"]){//解散
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];
         //改变组队位置

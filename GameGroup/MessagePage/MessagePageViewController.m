@@ -70,11 +70,10 @@
     
     if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        
         IntroduceViewController* vc = [[IntroduceViewController alloc] init];
         vc.delegate = self;
         UINavigationController * navi = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self presentViewController:navi animated:NO completion:^{
+            [self presentViewController:navi animated:NO completion:^{
         }];
     }
     else
@@ -102,7 +101,9 @@
     firstSayHiMsg = [DataStoreManager qSayHiMsg:@"2"];
     if (!firstSayHiMsg) {
         
-        [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];
+        [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"] Successcompletion:^(BOOL success, NSError *error) {
+            
+        }];
     }
 }
 -(void)NewRegisterViewControllerFinishRegister
@@ -148,6 +149,8 @@
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //解散群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMsgUploaded:) name:kteamMessage object:nil];
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
@@ -268,6 +271,10 @@
 {
     [self displayMsgsForDefaultView];
 }
+-(void)teamMsgUploaded:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
 #pragma mark 收到下线
 - (void)catchStatus:(NSNotification *)notification
 {
@@ -285,14 +292,11 @@
 {
     if (alertView.tag == 345) {
         if (alertView.cancelButtonIndex != buttonIndex) {
-            [DataStoreManager deleteThumbMsgsByMsgType:@"payloadchat"];//旧版本的payload消息
-            [DataStoreManager deleteThumbMsgsByMsgType:@"sayHi"];//删除打招呼的显示消息
-            [DataStoreManager deleteThumbMsgsByMsgType:@"normalchat"];//删除所有的normalchat显示消息
-            [DataStoreManager deleteCommonMsgsByMsgType:@"normalchat"];//删除所有的normalchat历史记录
-            [DataStoreManager deleteThumbMsgsByMsgType:@"groupchat"];//删除所有的groupchat显示消息
-            [DataStoreManager clearGroupChatHistroyMsg];//删除所有群聊历史消息//
-            [DataStoreManager deleteTeamNotifityMsgState];//删除所有的组队通知消息
-            [self displayMsgsForDefaultView];
+            [DataStoreManager clearAllChatMessage:^(BOOL success) {
+                if (success) {
+                    [self displayMsgsForDefaultView];
+                }
+            }];
         }
     }
 }
@@ -447,7 +451,16 @@
                 cell.contentLabel.text =  @"本群不可用";
             }else
             {
-                cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
+                if ([self msgType:message]==0) {
+                    if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
+                        cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
+                    }else{
+                        cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
+                    }
+                    
+                }else{
+                    cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
+                }
             }
             cell.nameLabel.text =nickName;
             if ([GameCommon isEmtity:backgroundImg]) {
@@ -483,6 +496,31 @@
 }
 
 
+
+-(NSInteger)msgType:(NSDictionary*) plainEntry
+{
+    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
+    if([GameCommon isEmtity:payLoadStr])
+    {
+        return 0;
+    }
+    NSDictionary * payloadDic = [payLoadStr JSONValue];
+    NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
+   if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"])//退出组队
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
 -(NSDate*) convertDateFromString:(NSString*)uiDate
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init] ;
@@ -494,6 +532,9 @@
 
 -(NSString*)getNickUserNameBySender:(NSString*)sender
 {
+    if ([GameCommon isEmtity:sender]) {
+        return @"";
+    }
     if ([sender isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
         return  [NSString stringWithFormat:@"%@%@",@"我",@":"];
     }
@@ -582,51 +623,69 @@
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
 {
     if (1 == type) {//头衔、角色、战斗力
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     else if (2 == type)//推荐的人
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     else if (3 == type)//关注
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     else if (4 == type)//新闻
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     else if (5 == type)//打招呼
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     else if (6 == type)//申请加入群
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }];//清数字
+        }
+         completion:^(BOOL success, NSError *error) {
+             
+         }];//清数字
     }
     
 }
@@ -654,13 +713,17 @@
             
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {
-            [DataStoreManager clearJoinGroupApplicationMsg];
+            [DataStoreManager clearJoinGroupApplicationMsg:^(BOOL success) {
+                
+            }];
             [DataStoreManager deleteJoinGroupApplication];
         }
         else{
             if ([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"senderId")isEqual:@"1234567wxxxxxxxxx"])
             {
-                [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"]];//删除打招呼显示的消息
+                [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",@"1234567wxxxxxxxxx"] Successcompletion:^(BOOL success, NSError *error) {
+                    
+                }];//删除打招呼显示的消息
                 [DataStoreManager deleteSayHiMsgWithSenderAndSayType:COMMONUSER SayHiType:@"2"];//删除打所有打招呼的消息
             }
             [DataStoreManager deleteMsgsWithSender:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"senderId")] Type:COMMONUSER];
@@ -668,7 +731,6 @@
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
-        [self displayMsgsForDefaultView];
     }
 }
 #pragma mark 接收到于我相关消息通知

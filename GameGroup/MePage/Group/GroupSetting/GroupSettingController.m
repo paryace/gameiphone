@@ -474,7 +474,9 @@
 -(void)changGroupState
 {
     NSDictionary * dic = @{@"groupId":self.groupId,@"state":@"2"};
-    [DataStoreManager deleteThumbMsgWithSender:self.groupId];
+    [DataStoreManager deleteThumbMsgWithSender:self.groupId Successcompletion:^(BOOL success, NSError *error) {
+        
+    }];
     [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];
     [[GroupManager singleton] changGroupState:self.groupId GroupState:@"2" GroupShipType:@"3"];
     [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];

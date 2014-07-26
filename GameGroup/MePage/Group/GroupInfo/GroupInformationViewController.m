@@ -900,7 +900,6 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSArray *tags = KISDictionaryHaveKey(m_mainDict, @"tags");
-    if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
         NSArray * photoArray =[ImageService getImageIds2:KISDictionaryHaveKey(m_mainDict, @"infoImg") Width:160];
         if (![GameCommon isEmtity:KISDictionaryHaveKey(m_mainDict, @"guild")]) {
             switch (indexPath.row) {
@@ -913,14 +912,21 @@
                 case 2:
                     return 40;
                     break;
-                case 3:
-                    NSLog(@"--------%d",tags.count/2);
-                    if (tags.count==0) {
-                        return 10;
-                    }else{
-                        NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
-                        return  tagsRowCount*30+tagsRowCount*5+10;
+                case 3:{
+                    if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
+                        NSLog(@"--------%d",tags.count/2);
+                        if (tags.count==0) {
+                            return 10;
+                        }else{
+                            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+                            return  tagsRowCount*30+tagsRowCount*5+10;
+                        }
                     }
+                    else{
+                        return 40;
+                    }
+                }
+                   
                     break;
                 case 4:
                 {
@@ -951,12 +957,17 @@
                     break;
                 case 2:
                 {
-                    NSLog(@"--------%d",tags.count/2);
-                    if (tags.count==0) {
-                        return 10;
-                    }else{
-                        NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
-                        return  tagsRowCount*30+tagsRowCount*5+10;
+                    if (tags&&[tags isKindOfClass:[NSArray class]]&&tags.count>0) {
+                        NSLog(@"--------%d",tags.count/2);
+                        if (tags.count==0) {
+                            return 10;
+                        }else{
+                            NSInteger tagsRowCount = (tags.count-1)/2+1;//标签行数
+                            return  tagsRowCount*30+tagsRowCount*5+10;
+                        }
+                    }
+                    else{
+                        return 40;
                     }
                 }
                     break;
@@ -980,9 +991,6 @@
                     break;
             }
         }
-    }else{
-        return 40;
-    }
 }
 
 

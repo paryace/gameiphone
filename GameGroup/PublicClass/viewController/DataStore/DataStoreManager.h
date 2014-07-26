@@ -34,14 +34,14 @@
 
 + (void)reSetMyAction:(BOOL)action;//重置我的激活状态
 + (void)setDefaultDataBase:(NSString *)dataBaseName AndDefaultModel:(NSString *)modelName;
-+(void)saveDSNewsMsgs:(NSDictionary*)msgDict;//保存每日一闻消息
++(void)saveDSNewsMsgs:(NSDictionary*)msgDict SaveSuccess:(void (^)(NSDictionary *msgDic))block;//保存每日一闻消息
 +(void)saveDSCommonMsg:(NSDictionary *)msg;
 //ThumbMsg
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img;
 + (void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type;
 + (void)storeThumbMsgUser:(NSString*)userid nickName:(NSString*)nickName;//修改别名
 + (void)deleteAllThumbMsg;
-+ (void)deleteThumbMsgWithSender:(NSString *)sender;
++(void)deleteThumbMsgWithSender:(NSString *)sender Successcompletion:(MRSaveCompletionHandler)successcompletion;
 + (void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
 + (NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
 
@@ -56,7 +56,7 @@
 
 + (NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
 + (NSString *)queryMsgHeadImageForUser:(NSString *)userid;
-+ (void)blankMsgUnreadCountForUser:(NSString *)userid;
++(void)blankMsgUnreadCountForUser:(NSString *)userid  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 + (NSArray *)queryUnreadCountForCommonMsg;
 + (void)deleteAllNewsMsgs;
 + (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;    //删除指定发送者的所有消息
@@ -88,7 +88,7 @@
 +(void)deleteMemberFromListWithUserid:(NSString *)userid;
 
 
-+(void)saveDynamicAboutMe:(NSDictionary *)info;//储存朋友圈 与我相关信息
++(void)saveDynamicAboutMe:(NSDictionary *)info SaveSuccess:(void (^)(NSDictionary *msgDic))block;//储存朋友圈 与我相关信息
 +(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)UnRead;
 +(void)deletecommentWithMsgId:(NSString*)msgid;
 +(void)deleteAllcomment;
@@ -123,7 +123,8 @@
 +(NSString *)qureyUnreadForReceivedHellos;
 +(void)blankReceivedHellosUnreadCount;
 
-+(void)deleteAllHello;//清除打招呼列表
++(void)clearAllChatMessage:(void (^)(BOOL success))block;//清空消息
++(void)deleteAllHello:(MRSaveCompletionHandler)successcompletion;//清除打招呼列表
 
 
 +(void)saveMyNewsWithData:(NSDictionary*)dataDic;
@@ -132,11 +133,11 @@
 +(void)cleanFriendsNewsList;
 
 
-+(void)saveRecommendWithData:(NSDictionary*)dataDic;
++(void)saveRecommendWithData:(NSArray*)recommendArr MsgInfo:(NSDictionary *)info SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 +(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userName;
 
 
-+(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict;
++(void)saveOtherMsgsWithData:(NSDictionary*)userInfoDict  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 +(NSArray *)queryAllOtherMsg;
 +(void)cleanOtherMsg;
 +(void)deleteOtherMsgWithUUID:(NSString *)uuid;
@@ -197,11 +198,11 @@
 //
 +(void)saveDSCharacters:(NSDictionary *)characters UserId:(NSString*)userid;//保存角色列表
 
-+(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid;
++(void)saveDSCharacters2:(NSArray *)characters UserId:(NSString*)userid successCompletion:(MRSaveCompletionHandler)successCompletion;
 
 +(void)saveDSTitle:(NSDictionary *)titles;//保存头衔列表
 
-+(void)saveDSTitle2:(NSArray *)titles;
++(void)saveDSTitle2:(NSArray *)titles successCompletion:(MRSaveCompletionHandler)successCompletion;
 
 +(NSMutableArray *)queryCharacters:(NSString*)userId;//查找角色列表
 
@@ -213,7 +214,7 @@
 
 + (NSMutableArray *)qureyGroupMessagesGroupID:(NSString *)groupid FetchOffset:(NSInteger)integer PageSize:(NSInteger)pageSize;//查询群组历史消息
 
-+(void)saveDSGroupMsg:(NSDictionary *)msg;//保存群组消息
++(void)saveDSGroupMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;//保存群组消息
 
 +(void)deleteGroupMsgByMsgType:(NSString *)msgType;//删除所有的群组消息
 
@@ -245,11 +246,11 @@
 
 +(void)storeMyGroupThumbMessage:(NSDictionary *)message;//保存我发送的群组消息
 
-+(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId;//清除群组的未读消息
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  SaveSuccess:(void (^)(NSDictionary *msgDic))block;//清除群组的未读消息
 
 + (NSMutableArray *)qureyCommonMessagesWithMsgType:(NSString *)msgType;//根据msgType查询消息
 
-+(void)saveDSGroupApplyMsg:(NSDictionary *)msg;//保存申请假如群的消息
++(void)saveDSGroupApplyMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;//保存申请假如群的消息
 
 +(NSMutableArray*)queryDSGroupApplyMsg;//查询群通知消息
 
@@ -299,7 +300,7 @@
 +(NSMutableDictionary *)queryLatestDynamic:(NSString*)userId;
 
 //清空群组通知
-+(void)clearJoinGroupApplicationMsg;
++(void)clearJoinGroupApplicationMsg:(void (^)(BOOL success))block;
 
 +(void)uploadStoreMsg:(NSDictionary *)msg;
 
@@ -344,7 +345,7 @@
 +(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition;
 
 //保存组队通知消息
-+(void)saveTeamNotifityMsg:(NSDictionary *)msg;
++(void)saveTeamNotifityMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
 
 //查询组队通知列表
@@ -360,5 +361,7 @@
 
 //根据groupId删除组队通知消息
 +(void)deleteTeamNotifityMsgStateByGroupId:(NSString*)groupId;
+
++(void)saveTeamThumbMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
 @end

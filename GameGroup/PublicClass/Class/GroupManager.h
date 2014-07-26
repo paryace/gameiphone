@@ -24,4 +24,5 @@
 
 -(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state GroupShipType:(NSString*)groupShipType;//更新该群的本地可用状态
 
+-(void)deleteGrpuoInfo:(NSString*)groupId;//删除群组信息
 @end

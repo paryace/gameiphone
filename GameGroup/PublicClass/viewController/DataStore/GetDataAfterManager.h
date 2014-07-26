@@ -19,6 +19,7 @@
 #define kDisbandGroup    @"disbandGroup"//解散群组
 #define kKickOffGroupGroup    @"kickOffGroupGroup"//解散群组
 #define kMessageAck @"messageAck"
+#define kteamMessage    @"teamMessage"
 
 @interface GetDataAfterManager : NSObject
 

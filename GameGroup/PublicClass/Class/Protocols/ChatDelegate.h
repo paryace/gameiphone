@@ -24,9 +24,21 @@
 
 -(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent;//群公告消息
 
-
 -(void)dyMessageReceived:(NSDictionary *)payloadStr;//动态消息
 
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent;//组队通知消息
+
+
+-(void)teamMemberMessageReceived:(NSDictionary *)messageContent;//加入组队
+
+-(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent;//退出组队
+
+-(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent;//踢出组队
+
+-(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent;//解散组队
+
+-(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent;//占坑
+
+-(void)teamOccupyTypeMessageReceived:(NSDictionary *)messageContent;//填坑
 
 @end

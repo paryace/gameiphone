@@ -137,7 +137,7 @@
 //网络获取自己发表参与的内容
 - (void)getDataWithMyStore
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSArray * dMyNews = [DSMyNewsList MR_findAllInContext:localContext];
         for (DSMyNewsList* news in dMyNews) {
             NSLog(@"dMyNews%@",dMyNews);
@@ -161,12 +161,15 @@
                                             news.superstar, @"superstar",nil];
             [m_newsArray addObject:tempDic];
         }
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];
 }
 //获取好友的发表内容
 - (void)getDataWithFriendStore
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSArray * dFriendsNews = [DSFriendsNewsList MR_findAllInContext:localContext];
         for (DSFriendsNewsList* news in dFriendsNews) {
             
@@ -191,7 +194,10 @@
                                             news.superstar, @"superstar",nil];
             [m_newsArray addObject:tempDic];
         }
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         
+     }];
 }
 //获取系统推送内容
 - (void)getNewsDataByNet

@@ -53,11 +53,9 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 // 保存角色信息
 -(void)saveCharachers:(NSArray*)charachers Userid:(NSString*)userid
 {
-        [DataStoreManager deleteAllDSCharacters:userid];
-        for (NSMutableDictionary *characher in charachers) {
-            [DataStoreManager saveDSCharacters:characher UserId:userid];
-        }
-        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
+        [DataStoreManager saveDSCharacters2:charachers UserId:userid successCompletion:^(BOOL success, NSError *error) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:UpdateCharacterInfo object:charachers userInfo:nil];
+        }];
 }
 
 
@@ -96,10 +94,8 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
         if (titles.count==0) {
             return;
         }
-        for (NSMutableDictionary *title in titles) {
-            [DataStoreManager saveDSTitle:title];
-        }
+    [DataStoreManager saveDSTitle2:titles successCompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
-
+    }];
 }
 @end

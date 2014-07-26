@@ -95,4 +95,10 @@ static GroupManager *groupManager = NULL;
     [[GroupManager singleton] clearGroupCache:grouoId];
 }
 
+
+-(void)deleteGrpuoInfo:(NSString*)groupId{
+    [DataStoreManager deleteGroupInfoByGoupId:groupId];
+    [[GroupManager singleton] clearGroupCache:groupId];
+}
+
 @end
