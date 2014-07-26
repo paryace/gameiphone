@@ -644,8 +644,6 @@
     }else{
         [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossFire")] forKey:@"crossServer"];
     }
-
-
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];

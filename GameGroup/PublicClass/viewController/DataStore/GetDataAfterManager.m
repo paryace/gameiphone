@@ -217,7 +217,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }];
 }
 
-#pragma mark 踢出组对
+#pragma mark 踢出组队
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
     NSString * userId = [self getUserIdFromPayload:messageContent];
@@ -226,28 +226,30 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] deleteGrpuoInfo:groupId];//删除群消息
+        NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
+        });
     }else {
         [self changGroupMessageReceived:messageContent];
+        [messageContent setValue:groupId forKey:@"groupId"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+        });
     }
-    [messageContent setValue:groupId forKey:@"groupId"];
-    NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
-    });
 }
 
 #pragma mark 解散组队
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [self changGroupMessageReceived:messageContent];
     NSDictionary * dic = @{@"groupId":groupId};
-    [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
     });
 }
-#pragma mark 加入组对
+#pragma mark 加入组队
 -(void)teamMemberMessageReceived:(NSDictionary *)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
     [messageContent setValue:groupId forKey:@"groupId"];
@@ -257,7 +259,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }];
     [self changGroupMessageReceived:messageContent];
 }
-#pragma mark 退出组对
+#pragma mark 退出组队
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
     [messageContent setValue:groupId forKey:@"groupId"];

@@ -436,8 +436,8 @@
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
         
         if (!groupInfo) {
-            cell.contentLabel.text = @"";
-            cell.nameLabel.text =@"";
+            cell.contentLabel.text = KISDictionaryHaveKey(message,@"msgContent");
+            cell.nameLabel.text =([self msgType:message]==0)?@"群组消息":@"组队消息";
             cell.headImageV.image = KUIImage(@"group_icon");
         }else
         {
