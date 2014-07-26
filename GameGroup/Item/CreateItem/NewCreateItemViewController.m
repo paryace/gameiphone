@@ -86,7 +86,7 @@
     m_uploadDict = [NSMutableDictionary dictionary];
     [self buildPickView];
     
-    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择游戏" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择角色" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_gameTf.delegate = self;
     m_gameTf.inputAccessoryView = toolbar;
     m_gameTf.inputView = m_rolePickerView;
@@ -306,7 +306,9 @@
 }
 -(void)lableClick:(UIButton*)sender
 {
-    m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+    NSString *str = m_miaoshuTV.text;
+    
+    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
 }
 //点击toolbar 确定button
@@ -575,7 +577,7 @@
 -(void)createItem:(id)sender
 {
     if ([GameCommon isEmtity:m_gameTf.text]) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return;
     }
     if ([GameCommon isEmtity:m_tagTf.text]) {

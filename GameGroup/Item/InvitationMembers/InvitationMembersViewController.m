@@ -17,7 +17,7 @@
 #define SHAREIMAGE [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"]
 #define SHARETITLE @"我在陌游开启了组队，你快来吧！"
 #define SHAREMESSAGE @"我再陌游里面创建了魔兽世界6.0备战德拉诺的组队,你快来加入吧！"
-#define SHAREURL @"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"
+#define SHAREURL(x,y)  [NSString stringWithFormat:@"http://221.122.66.243/share/teamroom.html?roomId=%@&gameid=%@",x,y]
 @interface InvitationMembersViewController ()
 {
     UIScrollView                       *  m_mainScroll;
@@ -82,6 +82,7 @@
     [self.view addSubview:hud];
     hud.labelText = @"获取中...";
     
+    ;
     
     [self getInfo];
 
@@ -199,16 +200,15 @@
 #pragma mark ---分享方法
 -(void)shareToqq:(UIButton *)sender
 {
-    
-    
     NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
-    
     
     if (m_shareBtn.tag ==10001) {
         
-        [[ShareToOther singleton] onTShareImage:img Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL];
+        [[ShareToOther singleton] onTShareImage:img Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL(self.roomId,self.gameId)];
     }else{
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:img] Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL];
+        
+        NSLog(@"%@",SHAREURL(self.roomId,self.gameId));
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:img] Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL(self.roomId,self.gameId)];
     }
     [self clanceToShare:nil];
 
@@ -238,8 +238,7 @@
 -(void)didClickChooseAll:(UIButton *)sender
 {
     NSDictionary *customDic = [NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil];
-    switch (m_tabTag) {
-        case 1:
+    
             if (sender.selected) {
                 sender.selected = NO;
                 for (NSMutableDictionary *dic in m_rArray) {
@@ -247,8 +246,10 @@
                     if ([addMemArray containsObject:dic]) {
                         [addMemArray removeObject:dic];
                     }
+                    
                 }
-                if (addMemArray.count==0) {
+                
+                if (addMemArray.count==1) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];
@@ -264,12 +265,13 @@
                         [addMemArray removeObject:dic];
                     }
                 }
+                
                 if ([addMemArray containsObject:customDic]) {
                     [addMemArray removeObject:customDic];
                 }
                 [addMemArray addObjectsFromArray:m_rArray];
                 [addMemArray addObject:customDic];
-                if (addMemArray.count==0) {
+                if (addMemArray.count==1) {
                     [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
                 }else{
                     [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
@@ -279,13 +281,7 @@
             
             [m_rTableView reloadData];
             
-            
-            
-            break;
-            
-        default:
-            break;
-    }
+    
     [m_customCollView reloadData];
     
 }
@@ -360,7 +356,7 @@
     
     NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
     NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-    
+    NSMutableArray *customArr = [NSMutableArray array];
     for (int i =0; i<keys.count; i++) {
         NSArray *array = [result objectForKey:keys[i]];
         for (NSMutableDictionary *dic in array) {
@@ -368,8 +364,18 @@
             [dic setValue:@"friends" forKeyPath:@"tabType"];
             [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
         }
-        [m_rArray addObjectsFromArray:array];
+        [customArr addObjectsFromArray:array];
     }
+//    NSArray *sortedResources = [[NSArray arrayWithArray:customArr] sortedArrayUsingSelector:@selector(compare:)];
+
+    for (int i =0;i<customArr.count;i++) {
+        NSMutableDictionary *dic = customArr[i];
+        [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
+        NSLog(@"---------%@",KISDictionaryHaveKey(dic, @"row"));
+
+        [m_rArray addObject:dic];
+    }
+    
     [m_rTableView reloadData];
 }
 
@@ -492,6 +498,7 @@
 {
     AddGroupMemberCell*cell;
     NSMutableDictionary * tempDict;
+    
         cell =(AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:indexPath];
         tempDict = m_rArray[indexPath.row];
 

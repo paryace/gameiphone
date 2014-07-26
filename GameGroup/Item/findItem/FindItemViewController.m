@@ -313,7 +313,7 @@
 {
     
     if (!selectCharacter) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return;
     }
     if (!selectType) {
@@ -349,7 +349,7 @@
 -(void)didClickScreen:(UIButton *)sender
 {
     if (!selectCharacter) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return;
     }
     if (!selectType) {
@@ -463,7 +463,7 @@
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
     if (!selectCharacter) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return NO;
     }
     if (!selectType) {
@@ -569,7 +569,7 @@
     footer.scrollView = m_myTabelView;
         footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
             if (!selectCharacter) {
-                [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+                [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
                 [m_footer endRefreshing];
                 [m_header endRefreshing];
                 return;
@@ -597,7 +597,7 @@
     header.scrollView = m_myTabelView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         if (!selectCharacter) {
-            [self showAlertViewWithTitle:@"提示" message:@"请选择游戏" buttonTitle:@"OK"];
+            [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;

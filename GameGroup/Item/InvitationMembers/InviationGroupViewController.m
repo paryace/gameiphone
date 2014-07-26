@@ -38,8 +38,9 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
     
-    
+    [self.view addSubview:hud];
     // Do any additional setup after loading the view.
 }
 
@@ -50,6 +51,7 @@
 }
 -(void)getGroupListFromNet
 {
+    [hud show:YES];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.gameId forKey:@"gameid"];
@@ -61,13 +63,14 @@
     [postDict setObject:@"286" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSMutableArray class]]) {
             [m_dataArray addObjectsFromArray:responseObject];
             [m_myTableView reloadData];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
+        [hud hide: YES];
     }];
 }
 
