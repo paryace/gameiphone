@@ -166,17 +166,11 @@
 {
     hud.labelText = @"获取中...";
     [m_dataArray removeAllObjects];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSArray * dRecommend = [DSRecommendList MR_findAllInContext:localContext];
-        for (DSRecommendList* Recommend in dRecommend) {
-            NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",Recommend.recommendMsg,@"recommendMsg",Recommend.recommendReason,@"recommendReason",nil];
-            [m_dataArray insertObject:tempDic atIndex:0];
-        }
+    NSArray * dRecommend = [DSRecommendList MR_findAll];
+    for (DSRecommendList* Recommend in dRecommend) {
+        NSMutableDictionary* tempDic = [NSMutableDictionary dictionaryWithObjectsAndKeys:Recommend.headImgID, @"headImgID", Recommend.nickName, @"nickname", Recommend.userName, @"username", Recommend.state, @"state", Recommend.fromID, @"type", Recommend.fromStr,@"dis",Recommend.userid,@"userid",Recommend.recommendMsg,@"recommendMsg",Recommend.recommendReason,@"recommendReason",nil];
+        [m_dataArray insertObject:tempDic atIndex:0];
     }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
-    
     for (NSDictionary *dic  in m_dataArray) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"state")]isEqualToString:@"0"]) {
             [addMemArray insertObject:dic atIndex:addMemArray.count-1];

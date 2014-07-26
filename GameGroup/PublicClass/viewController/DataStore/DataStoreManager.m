@@ -2122,17 +2122,14 @@
 
 +(void)deleteMemberFromListWithUserid:(NSString *)userid
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate inContext:localContext];
         if (Recommend)
         {
             [Recommend MR_deleteInContext:localContext];
         }
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
      
 }
 
@@ -2603,6 +2600,26 @@
 +(void)saveRecommendWithData:(NSArray*)recommendArr MsgInfo:(NSDictionary *)info SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        
+        NSString * msgType = KISDictionaryHaveKey(info, @"msgType");
+        NSString * msgId = KISDictionaryHaveKey(info, @"msgId");
+        NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[info objectForKey:@"time"] doubleValue]];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender = @"12345";
+        thumbMsgs.senderNickname = @"推荐好友";
+        thumbMsgs.msgContent = KISDictionaryHaveKey(info, @"disStr");
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = RECOMMENDFRIEND;
+        thumbMsgs.msgType = msgType;
+        thumbMsgs.unRead = @"1";
+        thumbMsgs.messageuuid = msgId;
+        thumbMsgs.status = @"1";//已发送
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        
         for (NSDictionary* userInfoDict in recommendArr) {
             NSString * userName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"username")];
             NSString * userNickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"nickname")];
@@ -2640,17 +2657,14 @@
 
 +(void)updateRecommendStatus:(NSString *)theStatus ForPerson:(NSString *)userId
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
          DSRecommendList * Recommend = [DSRecommendList MR_findFirstWithPredicate:predicate inContext:localContext];
         if (Recommend)
         {
             Recommend.state = theStatus;
         }
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 }
 
 +(void)updateRecommendImgAndNickNameWithUser:(NSString*)userid nickName:(NSString*)nickName andImg:(NSString*)img

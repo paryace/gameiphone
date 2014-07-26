@@ -138,9 +138,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHelloReceived:) name:kFriendHelloReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deletePersonReceived:) name:kDeleteAttention object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otherMessageReceived:) name:kOtherMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otherMsgReceived:) name:kOtherMessage object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendReceived:) name:kRecommendMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendMessageReceived:) name:kRecommendMessage object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
     //申请加入群完成通知
@@ -252,12 +252,12 @@
 }
 
 #pragma mark - 其他消息 头衔、角色等
--(void)otherMessageReceived:(NSNotification *)notification
+-(void)otherMsgReceived:(NSNotification *)notification
 {
     [self displayMsgsForDefaultView];
 }
 #pragma mark 收到推荐好友
--(void)recommendFriendReceived:(NSNotification *)notification
+-(void)recommendFriendMessageReceived:(NSNotification *)notification
 {
     [self displayMsgsForDefaultView];
 }
