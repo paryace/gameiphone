@@ -2159,14 +2159,13 @@ UINavigationControllerDelegate>
             [dictionary setObject:@"1" forKey:@"status"];
         }
         [self addNewOneMessageToTable:dictionary];
+        [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
         if (![self isGroupAvaitable]) {//本群不可用
             [self groupNotAvailable];
         }
     }
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager storeMyMessage:dictionary];//正常聊天消息添加到数据库
-    }else if([self.type isEqualToString:@"group"]){
-        [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
     }
 }
 //群是否可用

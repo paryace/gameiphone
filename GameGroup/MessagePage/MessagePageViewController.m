@@ -436,8 +436,8 @@
         NSMutableDictionary * groupInfo = [[GroupManager singleton] getGroupInfo:groupId];
         
         if (!groupInfo) {
-            cell.contentLabel.text = KISDictionaryHaveKey(message,@"msgContent");
-            cell.nameLabel.text =([self msgType:message]==0)?@"群组消息":@"组队消息";
+            cell.contentLabel.text = @"";
+            cell.nameLabel.text =@"";
             cell.headImageV.image = KUIImage(@"group_icon");
         }else
         {
@@ -448,7 +448,7 @@
             NSString * content = KISDictionaryHaveKey(message,@"msgContent");
             NSString * senderNickname =[self getNickUserNameBySender:sender];
             if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
-                cell.contentLabel.text =  @"本群不可用";
+                cell.contentLabel.text =[self getMsg:message];
             }else
             {
                 if ([self msgType:message]==0) {
@@ -495,7 +495,19 @@
     return cell;
 }
 
+-(NSString*)getMsg:(NSDictionary*)message
+{
+    if ([self msgType:message]==0) {
+        if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
+            return @"本群不可用";
+        }else{
+            return @"本组队不可用";
+        }
+    }else{
+        return @"本组队不可用";
+    }
 
+}
 
 -(NSInteger)msgType:(NSDictionary*) plainEntry
 {
