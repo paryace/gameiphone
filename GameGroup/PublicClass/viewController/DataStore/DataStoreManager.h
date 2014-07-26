@@ -352,7 +352,7 @@
 +(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
 
 //更新组队通知状态
-+(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state;
++(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state GroupId:(NSString*)groupId;
 
 
 //删除组队通知消息

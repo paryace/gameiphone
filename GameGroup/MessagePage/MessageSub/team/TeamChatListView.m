@@ -225,7 +225,7 @@
 
 -(void)getZU
 {
-    self.teamNotifityMsg =  [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:@"self.groipId"];
+    self.teamNotifityMsg =  [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:self.groipId];
     NSLog(@"%@",self.teamNotifityMsg);
 }
 -(void)showErrorAlertView
@@ -418,12 +418,13 @@
 {
     
     for (NSMutableDictionary * clickDic in self.teamNotifityMsg) {
-        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")] && [KISDictionaryHaveKey(dict, @"state") isEqualToString:@"0"]) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")] && [KISDictionaryHaveKey(dict, @"state") isEqualToString:@"0"]&&
+            [KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:self.groipId]) {
             [clickDic setObject:state forKey:@"state"];
         }
     }
     [self.mTableView reloadData];
-    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(dict, @"userid") State:state];
+    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(dict, @"userid") State:state GroupId:self.groipId];
     
 }
 

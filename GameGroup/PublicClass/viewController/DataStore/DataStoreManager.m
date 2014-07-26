@@ -4156,10 +4156,10 @@
     return msgDic;
 }
 
-+(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state
++(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state GroupId:(NSString*)groupId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@",userid];
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"userid==[c]%@ and state==[c]%@ and groupId==[c]%@",userid,@"0",groupId];
         NSArray * commMsgs = [DSTeamNotificationMsg findAllWithPredicate:predicate inContext:localContext];
         for (DSTeamNotificationMsg * commonMsg in commMsgs) {
             if (commonMsg) {
