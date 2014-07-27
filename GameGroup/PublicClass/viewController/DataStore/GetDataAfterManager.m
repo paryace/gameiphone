@@ -220,6 +220,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 踢出组队
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    [messageContent setValue:groupId forKey:@"groupId"];
     NSString * userId = [self getUserIdFromPayload:messageContent];
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
@@ -232,7 +233,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         });
     }else {
         [self changGroupMessageReceived:messageContent];
-        [messageContent setValue:groupId forKey:@"groupId"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
         });
@@ -242,6 +242,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 解散组队
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
+     [messageContent setValue:groupId forKey:@"groupId"];
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [self changGroupMessageReceived:messageContent];
     NSDictionary * dic = @{@"groupId":groupId};
@@ -343,28 +344,27 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }];
 }
 //--------------------------------------------动态消息
-
+#pragma mark 好友动态消息
 -(void)dyMessageReceived:(NSDictionary *)info
 {
-    NSString * msgtype = KISDictionaryHaveKey(info, @"msgType");
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
-    if ([msgtype isEqualToString:@"frienddynamicmsg"]) {//好友动态
-        [self saveDyMessage:payload];
-    }
-    else if ([msgtype isEqualToString:@"mydynamicmsg"])//与我相关
-    {
-        [self newdynamicAboutMe:[payload JSONValue]];
-        [self saveAboutDyMessage:payload];
-    }
-    else if([msgtype isEqualToString:@"groupDynamicMsgChange"]){//群组动态
-        [self saveGroupDyMessage:payload];
-    }
-    //未知的动态
-    else
-    {
-    }
+    [self saveDyMessage:payload];
     [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
+#pragma mark 与我相关动态消息
+-(void)dyMeMessageReceived:(NSDictionary *)info{
+    NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
+    [self newdynamicAboutMe:[payload JSONValue]];
+    [self saveAboutDyMessage:payload];
+     [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
+}
+#pragma mark 群动态消息
+-(void)dyGroupMessageReceived:(NSDictionary *)info{
+    NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
+    [self saveGroupDyMessage:payload];
+     [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
+}
+
 //---------------------------------------好友动态
 
 -(void)saveDyMessage:(NSString *)payload

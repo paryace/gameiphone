@@ -140,6 +140,7 @@
     //注册离线系统  里面监听重连事件 自动提交赞与评论 未来可以添加其他离线的内容
     [OfflineComment singleton];
     [MessageSetting singleton];
+    [MessageAckService singleton];
     
 //    [DDLog addLogger:[DDTTYLogger sharedInstance]];//打印xmpp输出
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];

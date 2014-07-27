@@ -173,8 +173,6 @@ UINavigationControllerDelegate>
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
@@ -201,11 +199,6 @@ UINavigationControllerDelegate>
     }else if([self.type isEqualToString:@"group"])
     {
         offHight = 20;
-//        if (self.isTeam) {
-//            startX += 40 ;
-//        }else{
-//            startX +=0;
-//        }
     }
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -238,7 +231,6 @@ UINavigationControllerDelegate>
             
             CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
             _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2, 10, textSize.width, 20);
-            
             _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 13.5, 13, 13)];
             [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_normal") forState:UIControlStateNormal];
             [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_click") forState:UIControlStateHighlighted];
@@ -1012,20 +1004,6 @@ UINavigationControllerDelegate>
     
 }
 
-//以上是历史消息
--(void)addGroupHistoryMsg
-{
-    historyMsg = 1;
-    NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:@"historyMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"以上是历史消息" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
-    [dictionary setObject:payloadStr forKey:@"payload"];
-    [dictionary setObject:self.chatWithUser forKey:@"groupId"];
-    [messages insertObject:dictionary atIndex:0];
-    [self overReadMsgToArray:dictionary Index:0];
-}
-
 //加载全部
 - (void)loadMoreMsg:(UIButton *)sender{
     if (self.unreadMsgCount<20) {
@@ -1767,7 +1745,7 @@ UINavigationControllerDelegate>
     return YES;
 }
 
-////消息发送成功
+//#pragma mark -消息发送成功
 //- (void)messageAck:(NSNotification *)notification
 //{
 //    NSDictionary* tempDic = notification.userInfo;
@@ -1777,7 +1755,7 @@ UINavigationControllerDelegate>
 //}
 
 
-//消息发送成功
+#pragma mark -消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
     NSDictionary* stateDic = notification.userInfo;
@@ -1839,8 +1817,6 @@ UINavigationControllerDelegate>
     }
     return  dict;
 }
-
-#pragma mark -
 #pragma mark UI/UE : 响应各种交互操作
 - (void)keyboardWillShow:(NSNotification *)notification {
 
@@ -2049,22 +2025,11 @@ UINavigationControllerDelegate>
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value")forKey:@"teamPosition"];
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
+    [[MessageAckService singleton] addMessage:messageDict];
     [self addNewMessageToTable:messageDict];
 }
 
-///
-#pragma mark 发送其他消息
--(void)sendOtherMsg:(NSString *)message
-{
-    NSString * uuid = [[GameCommon shareGameCommon] uuid];
-    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
-    NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
-    NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
-    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:message gameid:self.gameId roomId:self.roomId team:@"teamchat"];
-    [messageDict setObject:payloadStr forKey:@"payload"];
-    [self addNewMessageToTable:messageDict];
-    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
-}
+
 
 #pragma mark 发送图片消息
 - (void)sendImageMsg:(NSString *)imageMsg  UUID:(NSString *)uuid{
@@ -2110,6 +2075,7 @@ UINavigationControllerDelegate>
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value") forKey:@"teamPosition"];
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
+    [[MessageAckService singleton] addMessage:messageDict];
     [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
     [self refreWX];
@@ -2165,6 +2131,7 @@ UINavigationControllerDelegate>
         }
     }
     if ([self.type isEqualToString:@"normal"]) {
+        [self addNewOneMessageToTable:dictionary];
         [DataStoreManager storeMyMessage:dictionary];//正常聊天消息添加到数据库
     }
 }
@@ -2176,7 +2143,8 @@ UINavigationControllerDelegate>
     }
     return YES;
 }
-//本群不可用
+
+#pragma mark 添加本群不可用消息
 -(void)groupNotAvailable
 {
     NSString* nowTime = [GameCommon getCurrentTime];
@@ -2188,7 +2156,32 @@ UINavigationControllerDelegate>
     [self addNewOneMessageToTable:dictionary];
     [DataStoreManager storeMyGroupMessage:dictionary];
 }
+#pragma mark 添加以上是历史消息
+-(void)addGroupHistoryMsg
+{
+    historyMsg = 1;
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    NSString * payloadStr=[MessageService createPayLoadStr:@"historyMsg"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:@"以上是历史消息" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    [dictionary setObject:payloadStr forKey:@"payload"];
+    [dictionary setObject:self.chatWithUser forKey:@"groupId"];
+    [messages insertObject:dictionary atIndex:0];
+    [self overReadMsgToArray:dictionary Index:0];
+}
 
+#pragma mark 发送其他消息（位置变更，...）
+-(void)sendOtherMsg:(NSString *)message
+{
+    NSString * uuid = [[GameCommon shareGameCommon] uuid];
+    NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
+    NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
+    NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:message gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    [messageDict setObject:payloadStr forKey:@"payload"];
+    [self addNewMessageToTable:messageDict];
+    [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
+}
 
 -(void)addNewOneMessageToTable:(NSDictionary*)dictionary
 {
@@ -2220,6 +2213,7 @@ UINavigationControllerDelegate>
     if (payloadStr!=nil&&![payloadStr isEqualToString:@""]) {
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
+    [[MessageAckService singleton] addMessage:messageDict];
     [self refreMessageStatus2:messageDict Status:@"2"];
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"text" Type:@"chat" Payload:payloadStr];
 }

@@ -10,6 +10,6 @@
 
 @interface MessageAckService : NSObject
 + (MessageAckService*)singleton;
-@property(nonatomic, strong) NSMutableArray* cacheMessages;
+@property(nonatomic, strong) NSMutableDictionary* cacheMessages;
 -(void)addMessage:(NSMutableDictionary*)message;
 @end

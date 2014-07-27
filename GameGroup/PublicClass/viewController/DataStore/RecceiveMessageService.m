@@ -138,12 +138,20 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             [dict setObject:dis forKey:@"disStr"];
             [self.recommendReceiveDelegate recommendFriendReceived:dict];
         }
-        else if([msgtype isEqualToString:@"frienddynamicmsg"]//好友动态
-                || [msgtype isEqualToString:@"mydynamicmsg"]//与我相关
-                || [msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
+        else if([msgtype isEqualToString:@"frienddynamicmsg"])//好友动态
         {
             [dict setObject:payload forKey:@"payLoad"];
             [self.chatDelegate dyMessageReceived:dict];
+        }
+        else if([msgtype isEqualToString:@"mydynamicmsg"])//与我相关动态
+        {
+            [dict setObject:payload forKey:@"payLoad"];
+            [self.chatDelegate dyMeMessageReceived:dict];
+        }
+        else if([msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
+        {
+            [dict setObject:payload forKey:@"payLoad"];
+            [self.chatDelegate dyGroupMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"dailynews"])//新闻
         {
@@ -198,7 +206,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             NSMutableDictionary * payloadDis = [payload JSONValue];
             NSString * payLoadType = KISDictionaryHaveKey(payloadDis, @"type");
             
-            if([payLoadType isEqualToString:@"teamAddType"]){
+            if([payLoadType isEqualToString:@"teamAddType"]){//同意添加
                 [self.chatDelegate teamMemberMessageReceived:dict];
             }
             else if ([payLoadType isEqualToString:@"teamKickType"]){//踢出组织

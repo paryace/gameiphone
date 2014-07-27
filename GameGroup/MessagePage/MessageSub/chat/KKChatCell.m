@@ -135,31 +135,18 @@
         self.failImage.hidden = NO;
         self.statusLabel.hidden = YES;
         [self.activityView stopAnimating];
-        
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
     }
     else if([status isEqualToString:@"2"])//发送中
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES;
         [self.activityView startAnimating];
-        if (![self.cellTimer isValid]) {
-            self.cellTimer = [NSTimer scheduledTimerWithTimeInterval:mSendTime target:self selector:@selector(stopActivity) userInfo:nil repeats:YES];
-            [[NSRunLoop currentRunLoop] addTimer:self.cellTimer forMode:NSRunLoopCommonModes];
-        }
     }
     else if ([status isEqualToString:@"3"])//送达
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = NO;
         [self.activityView stopAnimating];
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
         self.statusLabel.text = @"送达";
     }
     else if ([status isEqualToString:@"4"])//已读
@@ -167,10 +154,6 @@
         self.failImage.hidden = YES;
         self.statusLabel.hidden = NO;
         [self.activityView stopAnimating];
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
         self.statusLabel.text = @"已读";
     }
     else if ([status isEqualToString:@"1"])//已发送，对方未收到
@@ -178,20 +161,12 @@
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES; //这种情况不显示状态
         [self.activityView stopAnimating];
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
     }
     else
     {
         self.failImage.hidden = YES;
         self.statusLabel.hidden = YES;
         [self.activityView stopAnimating];
-        if ([self.cellTimer isValid]) {
-            [self.cellTimer invalidate];
-            self.cellTimer = nil;
-        }
     }
 }
 
@@ -201,16 +176,6 @@
     [self setViewPoint:point];
     [self setViewState:status];
     
-}
-
-
-//设置为发送失败，菊花停止转动
-- (void)stopActivity
-{
-    NSString* uuid = KISDictionaryHaveKey(self.message, @"messageuuid");
-    NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"true", @"received",@"0",@"msgState",nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
-    //10秒后通知大家检查现在的status状态
 }
 
 

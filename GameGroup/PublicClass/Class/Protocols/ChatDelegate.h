@@ -24,7 +24,11 @@
 
 -(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent;//群公告消息
 
--(void)dyMessageReceived:(NSDictionary *)payloadStr;//动态消息
+-(void)dyMessageReceived:(NSDictionary *)payloadStr;//好友动态消息
+
+-(void)dyMeMessageReceived:(NSDictionary *)payloadStr;//与我相关动态消息
+
+-(void)dyGroupMessageReceived:(NSDictionary *)payloadStr;//群动态消息
 
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent;//组队通知消息
 
