@@ -4161,7 +4161,7 @@
 }
 
 #pragma mark  -----组队
-+(void)saveTeamInfoWithDict:(NSDictionary *)dic
++(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId
 {
     NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")];
     NSString * crossServer  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"crossServer")];
@@ -4187,7 +4187,7 @@
         }
     }
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@",roomId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
         DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!commonMsg)
             commonMsg = [DSTeamList MR_createInContext:localContext];
@@ -4206,6 +4206,7 @@
         commonMsg.teamName = teamName;
         commonMsg.teamUsershipType = teamUsershipType;
         commonMsg.typeId = typeId;
+        commonMsg.gameId = [GameCommon getNewStringWithId:gameId];
     }
     completion:^(BOOL success, NSError *error) {
                                                    
@@ -4288,7 +4289,38 @@
     completion:^(BOOL success, NSError *error) {
                                                    
     }];
+}
 
+//请求组队详情信息
++(NSMutableDictionary*)queryDSTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId
+{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
+    DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
+    return [self getDSTeamInfo:commonMsg];
+}
+
++(NSMutableDictionary*)getDSTeamInfo:(DSTeamList*)commonMsg
+{
+    if (!commonMsg) {
+        return nil;
+    }
+    NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
+    [msgDic setObject:commonMsg.createDate forKey:@"createDate"];
+     [msgDic setObject:commonMsg.crossServer forKey:@"crossServer"];
+     [msgDic setObject:commonMsg.descriptions forKey:@"descriptions"];
+     [msgDic setObject:commonMsg.dismissDate forKey:@"dismissDate"];
+     [msgDic setObject:commonMsg.groupId forKey:@"groupId"];
+     [msgDic setObject:commonMsg.maxVol forKey:@"maxVol"];
+     [msgDic setObject:commonMsg.memberCount forKey:@"memberCount"];
+     [msgDic setObject:commonMsg.minLevelId forKey:@"minLevelId"];
+     [msgDic setObject:commonMsg.myMemberId forKey:@"myMemberId"];
+     [msgDic setObject:commonMsg.roomId forKey:@"roomId"];
+     [msgDic setObject:commonMsg.teamInfo forKey:@"teamInfo"];
+     [msgDic setObject:commonMsg.teamName forKey:@"teamName"];
+     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
+    [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
+    [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
+    return msgDic;
 }
 
 

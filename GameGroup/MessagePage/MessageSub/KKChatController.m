@@ -163,7 +163,12 @@ UINavigationControllerDelegate>
         }else{
             available = KISDictionaryHaveKey(groupInfo, @"available");
             groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
-            self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+            if (self.isTeam) {
+                NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
+                self.nickName = [NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),KISDictionaryHaveKey(groupInfo, @"groupName")];
+            }else{
+                self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
+            }
         }
     }
     self.titleLabel.text = self.nickName;

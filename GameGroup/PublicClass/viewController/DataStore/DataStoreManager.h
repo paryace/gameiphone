@@ -339,14 +339,11 @@
 +(void)newSaveFriendInfo:(NSDictionary *)userInfo withshiptype:(NSString *)shiptype;
 
 
-+(void)saveTeamInfoWithDict:(NSDictionary *)dic;
-
 //更改位置
 +(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition;
 
 //保存组队通知消息
 +(void)saveTeamNotifityMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
-
 
 //查询组队通知列表
 +(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
@@ -354,14 +351,18 @@
 //更新组队通知状态
 +(void)updateTeamNotifityMsgState:(NSString*)userid State:(NSString*)state GroupId:(NSString*)groupId;
 
-
 //删除组队通知消息
 +(void)deleteTeamNotifityMsgState;
-
 
 //根据groupId删除组队通知消息
 +(void)deleteTeamNotifityMsgStateByGroupId:(NSString*)groupId;
 
 +(void)saveTeamThumbMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
+//保存组队信息
++(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId;
+
+//查询组队信息
++(NSMutableDictionary*)queryDSTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;
 
 @end

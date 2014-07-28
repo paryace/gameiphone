@@ -36,6 +36,7 @@
     #import "MessageService.h"
     #import "UserManager.h"
     #import "GroupManager.h"
+    #import "TeamManager.h"
     #import "DownloadImageService.h"
     #import "EGOImageButton.h"
     #import "MessageAckService.h"
@@ -160,6 +161,7 @@
 
 #define groupInfoUpload @"groupInfoUpdatedSuccess"//更新群信息
 #define userInfoUpload @"userInfoUpdatedSuccess"//更新用户信息
+#define teamInfoUpload @"teamInfoUpdatedSuccess"//更新组队信息
 
 #define UpdateCharacterInfo @"characterInfo"//更新角色信息
 #define UpdateTitleInfo @"ritleInfo"//更新头衔信息

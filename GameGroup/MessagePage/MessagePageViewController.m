@@ -147,6 +147,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
     //群信息更新完成通知
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
+    //
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTeamUpdate:) name:teamInfoUpload object:nil];
     //解散群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
     
@@ -441,22 +443,35 @@
         NSString * content = KISDictionaryHaveKey(message,@"msgContent");
         NSString * senderNickname =[self getNickUserNameBySender:sender];
         cell.headImageV.placeholderImage = KUIImage(@"group_icon");
+        
         if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
-            cell.contentLabel.text =[self getMsg:message];
+            if ([self msgType:message]==0) {//群聊天消息
+                cell.nameLabel.text =nickName;
+                cell.contentLabel.text = [self getMsg:message];
+            }else if([self msgType:message]==1){//组队通知消息
+                cell.nameLabel.text =nickName;
+                cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
+            }else if([self msgType:message]==2){//组队聊天消息
+                cell.nameLabel.text =nickName;
+                cell.contentLabel.text = [self getMsg:message];
+            }
         }else
         {
-            if ([self msgType:message]==0) {
-                if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
-                    cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
-                }else{
-                    cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
-                }
+            if ([self msgType:message]==0) {//群聊天消息
+                cell.nameLabel.text =nickName;
+                 cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
+            }else if([self msgType:message]==1){//组队通知消息
+                NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")]];
                 
-            }else{
+                cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
+            }else if([self msgType:message]==2){//组队聊天消息
+                 NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid") RoomId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")];
+                cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
+                cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
             }
         }
-        cell.nameLabel.text =nickName;
+        
         if ([GameCommon isEmtity:backgroundImg]) {
             cell.headImageV.image = KUIImage(@"group_icon");
         }else{
@@ -501,6 +516,8 @@
 
 }
 
+
+//0群聊天消息，1组队通知消息，2组队聊天消息
 -(NSInteger)msgType:(NSDictionary*) plainEntry
 {
     NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
@@ -521,7 +538,10 @@
     }
     else
     {
-        return 0;
+        if ([GameCommon isEmtity:KISDictionaryHaveKey(payloadDic, @"team")]) {
+            return 0;
+        }
+        return 2;
     }
 }
 
@@ -604,13 +624,12 @@
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"])// 群组聊天
     {
         NSDictionary * dict = [KISDictionaryHaveKey(message,@"payload") JSONValue];
-    
         NSInteger unreadMsgCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
-        if (![GameCommon isEmtity:KISDictionaryHaveKey(dict, @"team")]) {
+        if ([self msgType:message]==1||[self msgType:message]==2) {
             kkchat.isTeam = YES;
             kkchat.roomId = KISDictionaryHaveKey(dict, @"roomId");
             kkchat.gameId = KISDictionaryHaveKey(dict, @"gameid");
@@ -761,6 +780,9 @@
 }
 
 -(void) onUserUpdate:(NSNotification*)notification{
+    [self displayMsgsForDefaultView];
+}
+-(void) onTeamUpdate:(NSNotification*)notification{
     [self displayMsgsForDefaultView];
 }
 

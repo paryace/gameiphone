@@ -27,5 +27,6 @@
 @property (nonatomic, retain) NSString * teamName;
 @property (nonatomic, retain) NSString * teamUsershipType;
 @property (nonatomic, retain) NSString * typeId;
+@property (nonatomic, retain) NSString * gameId;
 
 @end

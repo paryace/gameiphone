@@ -26,5 +26,6 @@
 @dynamic teamName;
 @dynamic teamUsershipType;
 @dynamic typeId;
+@dynamic gameId;
 
 @end

@@ -232,10 +232,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
     }else {
-        [self changGroupMessageReceived:messageContent];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
-        });
+        [messageContent setValue:@"1" forKey:@"sayHiType"];
+        [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            
+        }];
+        [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        }];
     }
 }
 
@@ -243,12 +248,18 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
      [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
-    [self changGroupMessageReceived:messageContent];
-    NSDictionary * dic = @{@"groupId":groupId};
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        NSDictionary * dic = @{@"groupId":groupId};
         [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
-    });
+        [[MessageSetting singleton] setSoundOrVibrationopen];
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+    }];
 }
 #pragma mark 加入组队
 -(void)teamMemberMessageReceived:(NSDictionary *)messageContent{
