@@ -22,6 +22,11 @@
 #import "DSLatestDynamic.h"
 #import "DSTeamList.h"
 #import "DSTeamNotificationMsg.h"
+#import "DSMemberUserInfo.h"
+#import "DSTeamUserInfo.h"
+#import "DSTeamUser.h"
+
+
 @implementation DataStoreManager
 
 -(void)nothing
@@ -3932,51 +3937,7 @@
      }];
 }
 
-#pragma mark  -----组队
-+(void)saveTeamInfoWithDict:(NSDictionary *)dic
-{
-    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")];
-    NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")];
-    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm")];
-    NSString * characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterName")];
-    NSString * description =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"description")];
-    NSString * groupId  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
-    NSString * teamInfo =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamInfo")];
-    NSString * teamName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamName")];
-    NSString * teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
-    NSString * type =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"type")];
-    NSString * mask =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"mask")];
-    NSString * maskValue =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
-    NSString * constId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"constId")];
-    NSString *typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
-    
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@",roomId];
-        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
-        if (!commonMsg)
-            commonMsg = [DSTeamList MR_createInContext:localContext];
 
-        commonMsg.roomId = roomId;
-        commonMsg.gameid = gameid;
-        commonMsg.characterId = characterId;
-        commonMsg.characterName = characterName;
-        commonMsg.tdescription = description;
-        commonMsg.groupId  = groupId;
-        commonMsg.teamInfo = teamInfo;
-        commonMsg.teamName = teamName;
-        commonMsg.teamUsershipType = teamUsershipType;
-        commonMsg.type = type;
-        commonMsg.mask = mask;
-        commonMsg.typeValue = maskValue;
-        commonMsg.typeId = typeId;
-        commonMsg.constId = constId;
-        commonMsg.realm = realm;
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
-}
 
 
 
@@ -4171,7 +4132,7 @@
          
      }];
 }
-
+//删除组队通知消息
 +(void)deleteTeamNotifityMsgState
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
@@ -4184,7 +4145,7 @@
          
      }];
 }
-
+//根据groupId删除组队通知消息
 +(void)deleteTeamNotifityMsgStateByGroupId:(NSString*)groupId
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
@@ -4199,6 +4160,136 @@
      }];
 }
 
+#pragma mark  -----组队
++(void)saveTeamInfoWithDict:(NSDictionary *)dic
+{
+    NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")];
+    NSString * crossServer  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"crossServer")];
+    NSString * descriptions =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+    NSString * dismissDate =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"dismissDate")];
+    NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
+    NSString * maxVol = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")];
+    NSString * memberCount  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")];
+    NSString * minLevelId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"minLevelId")];
+    NSString * minPower =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"minPower")];
+    NSString * myMemberId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    NSString * teamInfo  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamInfo")];
+    NSString * teamName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamName")];
+    NSString * teamUsershipType =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
+    NSString * typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
+    
+    NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
+    if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
+        for (NSMutableDictionary * user in userList) {
+            [self saveMemberUserInfo:user];
+            [self saveTeamUser:user RoomId:roomId];
+        }
+    }
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@",roomId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!commonMsg)
+            commonMsg = [DSTeamList MR_createInContext:localContext];
+        commonMsg.createDate = createDate;
+        commonMsg.crossServer = crossServer;
+        commonMsg.descriptions = descriptions;
+        commonMsg.dismissDate = dismissDate;
+        commonMsg.groupId = groupId;
+        commonMsg.maxVol = maxVol;
+        commonMsg.memberCount = memberCount;
+        commonMsg.minLevelId = minLevelId;
+        commonMsg.minPower = minPower;
+        commonMsg.myMemberId = myMemberId;
+        commonMsg.roomId = roomId;
+        commonMsg.teamInfo = teamInfo;
+        commonMsg.teamName = teamName;
+        commonMsg.teamUsershipType = teamUsershipType;
+        commonMsg.typeId = typeId;
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+}
+
+
+//保存组队成员列表信息
++(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo
+{
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")];
+    NSString * gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gender")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"img")];
+    NSString * joinDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"joinDate")];
+    NSString * leaveDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"leaveDate")];
+    NSString * memberId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"memberId")];
+    NSString * memberTeamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"memberTeamUserId")];
+    NSString * nickname = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"nickname")];
+    NSString * position = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"position")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")];
+    NSString * teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"teamUsershipType")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")];
+    
+    NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(memberUserInfo, @"teamUser");
+    NSString * teamUsercharacterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"characterId")];
+    NSString * teamUsercharacterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"characterName")];
+    NSString * teamUsergameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"gameid")];
+    NSString * teamUsermemberInfo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"memberInfo")];
+    NSString * teamUserrealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"realm")];
+    NSString * teamUserteamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"teamUserId")];
+    NSString * teamUseruserid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamUserDic, @"userid")];
+    
+    
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and memberId==[c]%@",gameid, memberId];
+        DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicates inContext:localContext];
+        if (!commonMsg)
+            commonMsg = [DSMemberUserInfo MR_createInContext:localContext];
+        commonMsg.gameid = gameid;
+        commonMsg.gender = gender;
+        commonMsg.img = img;
+        commonMsg.joinDate = joinDate;
+        commonMsg.leaveDate = leaveDate;
+        commonMsg.memberId= memberId;
+        commonMsg.memberTeamUserId = memberTeamUserId;
+        commonMsg.nickname = nickname;
+        commonMsg.position = position;
+        commonMsg.roomId = roomId;
+        commonMsg.teamUsershipType = teamUsershipType;
+        commonMsg.userid = userid;
+        
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+         DSTeamUserInfo * commonMsgTeamUser = [DSTeamUserInfo MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (!commonMsgTeamUser)
+            commonMsgTeamUser = [DSTeamUserInfo MR_createInContext:localContext];
+        commonMsgTeamUser.characterId = teamUsercharacterId;
+        commonMsgTeamUser.characterName = teamUsercharacterName;
+        commonMsgTeamUser.gameid = teamUsergameid;
+        commonMsgTeamUser.memberInfo = teamUsermemberInfo;
+        commonMsgTeamUser.realm = teamUserrealm;
+        commonMsgTeamUser.teamUserId = teamUserteamUserId;
+        commonMsgTeamUser.userid = teamUseruserid;
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+}
+
+
++(void)saveTeamUser:(NSMutableDictionary*)user RoomId:(NSString*)roomId{
+    NSString * userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(user, @"userid")];
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@ and userid==[c]%@",roomId,userId];
+        DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!teamUserInfo)
+            teamUserInfo = [DSTeamUser MR_createInContext:localContext];
+        teamUserInfo.roomId = roomId;
+        teamUserInfo.userid = userId;
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+
+}
 
 
 @end

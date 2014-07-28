@@ -11,23 +11,20 @@
 
 @implementation DSTeamList
 
+@dynamic createDate;
+@dynamic crossServer;
+@dynamic descriptions;
+@dynamic dismissDate;
+@dynamic groupId;
+@dynamic maxVol;
+@dynamic memberCount;
+@dynamic minLevelId;
+@dynamic minPower;
+@dynamic myMemberId;
 @dynamic roomId;
 @dynamic teamInfo;
-@dynamic gameid;
-@dynamic characterName;
-@dynamic characterId;
-@dynamic createDate;
 @dynamic teamName;
-@dynamic memberInfo;
-@dynamic realm;
-@dynamic teamUserId;
-@dynamic tdescription;
-@dynamic constId;
-@dynamic mask;
-@dynamic type;
-@dynamic typeValue;
 @dynamic teamUsershipType;
-@dynamic groupId;
 @dynamic typeId;
 
 @end

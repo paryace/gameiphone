@@ -294,7 +294,7 @@ UINavigationControllerDelegate>
 {
     if (section == 0){
         selectType =[self.typeData_list objectAtIndex:index];
-        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"id") reSuccess:^(id responseObject) {
+        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"constId") reSuccess:^(id responseObject) {
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
             [self changPosition];

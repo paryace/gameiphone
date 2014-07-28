@@ -232,6 +232,20 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSMemberUserInfo" representedClassName="DSMemberUserInfo" syncable="YES">
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="joinDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="leaveDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberTeamUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="position" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamUsershipType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSMyNewsList" representedClassName="DSMyNewsList" syncable="YES">
         <attribute name="bigTitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="commentObj" optional="YES" attributeType="String" syncable="YES"/>
@@ -308,24 +322,21 @@
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSTeamList" representedClassName="DSTeamList" syncable="YES">
-        <attribute name="characterId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="characterName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="constId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="createDate" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="crossServer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="descriptions" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dismissDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="mask" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="memberInfo" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="maxVol" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberCount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="minLevelId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="minPower" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="myMemberId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="tdescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamInfo" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="teamUserId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamUsershipType" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="typeId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="typeValue" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSTeamNotificationMsg" representedClassName="DSTeamNotificationMsg" syncable="YES">
         <attribute name="body" optional="YES" attributeType="String" syncable="YES"/>
@@ -349,6 +360,19 @@
         <attribute name="userImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSTeamUser" representedClassName="DSTeamUser" syncable="YES">
+        <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DSTeamUserInfo" representedClassName="DSTeamUserInfo" syncable="YES">
+        <attribute name="characterId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="characterName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberInfo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSThumbMsgs" representedClassName="DSThumbMsgs" syncable="YES">
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
@@ -452,6 +476,7 @@
         <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="240"/>
         <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
         <element name="DSLatestDynamic" positionX="-90" positionY="-54" width="128" height="315"/>
+        <element name="DSMemberUserInfo" positionX="-81" positionY="-45" width="128" height="225"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
         <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="88"/>
@@ -461,8 +486,10 @@
         <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
-        <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="313"/>
+        <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="270"/>
         <element name="DSTeamNotificationMsg" positionX="-54" positionY="-18" width="128" height="358"/>
+        <element name="DSTeamUser" positionX="-63" positionY="-27" width="128" height="75"/>
+        <element name="DSTeamUserInfo" positionX="-72" positionY="-36" width="128" height="150"/>
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="283"/>
         <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
