@@ -15,4 +15,11 @@
 + (TeamManager*)singleton;
 
 -(NSMutableDictionary*)getTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;
+
+-(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;
+
+-(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;
+
+-(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount;
+
 @end

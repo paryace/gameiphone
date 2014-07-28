@@ -219,14 +219,16 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 #pragma mark 踢出组队
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
-    NSString * userId = [self getUserIdFromPayload:messageContent];
+    NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] deleteGrpuoInfo:groupId];//删除群消息
+        [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
@@ -237,6 +239,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             
         }];
         [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
             [[MessageSetting singleton] setSoundOrVibrationopen];
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
@@ -263,23 +266,40 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 #pragma mark 加入组队
 -(void)teamMemberMessageReceived:(NSDictionary *)messageContent{
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+       
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [[TeamManager singleton] addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
         [[MessageSetting singleton] setSoundOrVibrationopen];
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
     }];
+
+    
     [self changGroupMessageReceived:messageContent];
 }
 #pragma mark 退出组队
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent{
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
         [[MessageSetting singleton] setSoundOrVibrationopen];
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
     }];
-    [self changGroupMessageReceived:messageContent];
 }
 #pragma mark 占坑
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent{
@@ -299,6 +319,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
     return [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
+}
+
+
+-(NSMutableDictionary*)getPayloadDic:(NSDictionary *)messageContent{
+    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSMutableDictionary *payloadDic = [payloadStr JSONValue];
+    return payloadDic;
 }
 
 

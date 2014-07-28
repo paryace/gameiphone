@@ -365,4 +365,13 @@
 //查询组队信息
 +(NSMutableDictionary*)queryDSTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;
 
+//组队人数+1
++(void)addMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//组队人数-1
++(void)removeMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//更新组队人数
++(void)updateMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 @end

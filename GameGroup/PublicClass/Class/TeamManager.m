@@ -68,10 +68,36 @@ static TeamManager *teamManager = NULL;
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [DataStoreManager saveTeamInfoWithDict:responseObject GameId:gameId];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:teamInfoUpload object:nil userInfo:responseObject];
+            [[NSNotificationCenter defaultCenter] postNotificationName:teamInfoUpload object:nil userInfo:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     }];
 }
+
+
+-(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
+{
+    [DataStoreManager addMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
+        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
+    }];
+    
+}
+-(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
+{
+    [DataStoreManager removeMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
+        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
+    }];
+}
+
+-(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount
+{
+    [DataStoreManager updateMemBerCount:gameId RoomId:roomId MemberCount:memberCount Successcompletion:^(BOOL success, NSError *error) {
+        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
+    }];
+}
+
 @end

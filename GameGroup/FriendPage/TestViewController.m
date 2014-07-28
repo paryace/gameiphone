@@ -801,16 +801,25 @@
 //        [self.navigationController pushViewController:CVC animated:YES];
         
         if ([gameId intValue]==1) {
-            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//            VC.characterId = KISDictionaryHaveKey(dic, @"id");
+//            VC.gameId = gameId;
+//            VC.myViewType = CHARA_INFO_MYSELF;
+//            [self.navigationController pushViewController:VC animated:YES];
+            
+            H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = KISDictionaryHaveKey(dic, @"id");
             VC.gameId = gameId;
-            VC.myViewType = CHARA_INFO_MYSELF;
+            VC.isMe = @"0";
+            VC.gameUrl = @"moshouRole.html?";
+            VC.characterName = KISDictionaryHaveKey(dic, @"name");
             [self.navigationController pushViewController:VC animated:YES];
         }else if([gameId intValue]==2){
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = KISDictionaryHaveKey(dic, @"id");
             VC.gameId = gameId;
             VC.isMe = @"0";
+            VC.gameUrl = @"rolesinfo.html?";
             VC.characterName = KISDictionaryHaveKey(dic, @"name");
             [self.navigationController pushViewController:VC animated:YES];
         }

@@ -32,7 +32,6 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"角色详情" withBackButton:YES];
-    
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"share_normal.png") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"share_click.png") forState:UIControlStateHighlighted];
@@ -43,7 +42,7 @@
     m_myWebView = [[UIWebView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     m_myWebView.delegate = self;
     m_myWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    NSString *urlStr =[NSString stringWithFormat:@"%@token=%@&characterid=%@&gameid=%@",BaseLolRoleDetail,[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken],self.characterId,self.gameId];
+    NSString *urlStr =[NSString stringWithFormat:@"%@%@token=%@&characterid=%@&gameid=%@",BaseLolRoleDetail,self.gameUrl,[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken],self.characterId,self.gameId];
     NSURL *url =[NSURL URLWithString:[urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [m_myWebView loadRequest:[NSURLRequest requestWithURL:url]];
     

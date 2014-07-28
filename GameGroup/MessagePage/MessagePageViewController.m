@@ -149,9 +149,11 @@
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTeamUpdate:) name:teamInfoUpload object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
     //解散群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
-    
+    //组队消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMsgUploaded:) name:kteamMessage object:nil];
     
     //获取xmpp服务器是否连接成功
@@ -783,6 +785,10 @@
     [self displayMsgsForDefaultView];
 }
 -(void) onTeamUpdate:(NSNotification*)notification{
+    [self displayMsgsForDefaultView];
+}
+
+-(void)teamMemberCountChang:(NSNotification*)notification{
     [self displayMsgsForDefaultView];
 }
 

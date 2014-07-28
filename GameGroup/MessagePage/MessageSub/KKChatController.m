@@ -191,6 +191,8 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     //群动态消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
+    //组队人数变化
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
@@ -2433,6 +2435,11 @@ UINavigationControllerDelegate>
     }
     [self refreTitleText];
     [self.tView reloadData];
+}
+
+-(void)teamMemberCountChang:(NSNotification *)notification
+{
+    [self refreTitleText];
 }
 
 #pragma mark 用户信息更新完成

@@ -181,25 +181,35 @@
 //        [self.navigationController pushViewController:charVC animated:YES];
         
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
+        NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
+        NSString * charaName ;
+        if (charaInfo) {
+            charaName = KISDictionaryHaveKey(charaInfo, @"name");
+        }
+        else {
+            charaName = @"";
+        }
         if ([dic[@"gameid"] intValue]==1) {
-            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//            CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//            VC.characterId = dic[@"characterid"];
+//            VC.gameId = dic[@"gameid"];
+//            VC.myViewType = CHARA_INFO_MYSELF;
+//            [self.navigationController pushViewController:VC animated:YES];
+            
+            
+            H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];
-            VC.myViewType = CHARA_INFO_MYSELF;
+            VC.isMe = @"1";
+            VC.gameUrl = @"moshouRole.html?";
+            VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];
         }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
-            NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
-            NSString * charaName ;
-            if (charaInfo) {
-                charaName = KISDictionaryHaveKey(charaInfo, @"name");
-            }
-            else {
-                charaName = @"";
-            }
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];		
             VC.isMe = @"1";
+            VC.gameUrl = @"rolesinfo.html?";
             VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];
         }

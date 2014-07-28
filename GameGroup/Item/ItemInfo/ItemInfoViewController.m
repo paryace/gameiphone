@@ -425,14 +425,22 @@
 //    [self.navigationController pushViewController:itemInfo animated:YES];
     
     if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
-        CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//        CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+//        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+//        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
+        
+        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
         VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
+        VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
+        VC.isMe = @"1";
+        VC.gameUrl = @"moshouRole.html?";
+        VC.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
         [self.navigationController pushViewController:VC animated:YES];
     }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
         VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
         VC.isMe = @"1";
+        VC.gameUrl = @"rolesinfo.html?";
         VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
         VC.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
         [self.navigationController pushViewController:VC animated:YES];

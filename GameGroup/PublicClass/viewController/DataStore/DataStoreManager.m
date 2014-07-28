@@ -4306,21 +4306,72 @@
     }
     NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
     [msgDic setObject:commonMsg.createDate forKey:@"createDate"];
-     [msgDic setObject:commonMsg.crossServer forKey:@"crossServer"];
-     [msgDic setObject:commonMsg.descriptions forKey:@"descriptions"];
-     [msgDic setObject:commonMsg.dismissDate forKey:@"dismissDate"];
-     [msgDic setObject:commonMsg.groupId forKey:@"groupId"];
-     [msgDic setObject:commonMsg.maxVol forKey:@"maxVol"];
-     [msgDic setObject:commonMsg.memberCount forKey:@"memberCount"];
-     [msgDic setObject:commonMsg.minLevelId forKey:@"minLevelId"];
-     [msgDic setObject:commonMsg.myMemberId forKey:@"myMemberId"];
-     [msgDic setObject:commonMsg.roomId forKey:@"roomId"];
-     [msgDic setObject:commonMsg.teamInfo forKey:@"teamInfo"];
-     [msgDic setObject:commonMsg.teamName forKey:@"teamName"];
-     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
+    [msgDic setObject:commonMsg.crossServer forKey:@"crossServer"];
+    [msgDic setObject:commonMsg.descriptions forKey:@"descriptions"];
+    [msgDic setObject:commonMsg.dismissDate forKey:@"dismissDate"];
+    [msgDic setObject:commonMsg.groupId forKey:@"groupId"];
+    [msgDic setObject:commonMsg.maxVol forKey:@"maxVol"];
+    [msgDic setObject:commonMsg.memberCount forKey:@"memberCount"];
+    [msgDic setObject:commonMsg.minLevelId forKey:@"minLevelId"];
+    [msgDic setObject:commonMsg.myMemberId forKey:@"myMemberId"];
+    [msgDic setObject:commonMsg.roomId forKey:@"roomId"];
+    [msgDic setObject:commonMsg.teamInfo forKey:@"teamInfo"];
+    [msgDic setObject:commonMsg.teamName forKey:@"teamName"];
+    [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
     return msgDic;
+}
+
++(void)addMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (commonMsg) {
+            int unread = [commonMsg.memberCount intValue];
+            commonMsg.memberCount = [NSString stringWithFormat:@"%d",unread+1];
+        }
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
+     }];
+}
+
++(void)removeMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
+        if (commonMsg) {
+            int unread = [commonMsg.memberCount intValue];
+            commonMsg.memberCount = [NSString stringWithFormat:@"%d",unread>0?(unread-1):0];
+        }
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
+     }];
+}
+
+
++(void)updateMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
+        if (commonMsg) {
+            commonMsg.memberCount = memberCount;
+        }
+        }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
+     }];
 }
 
 
