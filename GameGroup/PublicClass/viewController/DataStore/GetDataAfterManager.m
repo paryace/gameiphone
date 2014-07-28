@@ -228,9 +228,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
         [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
         [[GroupManager singleton] deleteGrpuoInfo:groupId];//删除群消息
-        [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
+            [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
     }else {
