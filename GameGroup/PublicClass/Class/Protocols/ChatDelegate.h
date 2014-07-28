@@ -37,12 +37,14 @@
 
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent;//退出组队
 
--(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent;//踢出组队
+-(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent;//踢出组队//
 
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent;//解散组队
 
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent;//占坑
 
 -(void)teamOccupyTypeMessageReceived:(NSDictionary *)messageContent;//填坑
+
+-(void)teamInviteTypeMessageReceived:(NSDictionary *)messageContent;//邀请加入组队
 
 @end

@@ -192,7 +192,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate groupBillBoardMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"requestJoinTeam"]){//申请加入组队
+        else if ([msgtype isEqualToString:@"reqeustJoinTeam"]||[msgtype isEqualToString:@"refuseJoinTeam"]){//申请加入组队
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -228,6 +228,12 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamTissolveTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamInvite"]){//解散组织
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamInviteTypeMessageReceived:dict];
         }
     }
     

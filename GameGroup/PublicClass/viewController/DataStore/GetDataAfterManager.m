@@ -250,7 +250,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 解散组队
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
-     [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -303,11 +303,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 #pragma mark 占坑
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent{
-
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 填坑
 -(void)teamOccupyTypeMessageReceived:(NSDictionary *)messageContent{
-
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
+}
+#pragma mark 邀请加入
+-(void)teamInviteTypeMessageReceived:(NSDictionary *)messageContent{
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 
 -(NSString*)getGroupIdFromPayload:(NSDictionary *)messageContent{
