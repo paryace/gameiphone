@@ -293,11 +293,15 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
-        NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         selectType =[self.typeData_list objectAtIndex:index];
-        [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
-        [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")]];
-        [self changPosition];
+        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"id") reSuccess:^(id responseObject) {
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
+            [self changPosition];
+            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")]];
+        } reError:^(id error) {
+            [self showErrorAlertView:error];
+        }];
     }
 }
 //改变位置
@@ -2620,5 +2624,18 @@ UINavigationControllerDelegate>
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+}
+
+
+//弹出提示框
+-(void)showErrorAlertView:(id)error
+{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 }
 @end

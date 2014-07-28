@@ -169,7 +169,9 @@
 
 
 - (void)xmppStreamWillConnect:(XMPPStream *)sender{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"startConnect" object:nil];
+    });
 }
 #pragma mark 收到消息后调用
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message{

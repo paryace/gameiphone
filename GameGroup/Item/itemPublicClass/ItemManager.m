@@ -253,6 +253,31 @@ static ItemManager *itemManager = NULL;
     }];
 }
 
+#pragma mark ---设置组队位置
+-(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTagId:(NSString*)positionTagId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:userid] forKey:@"userid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:roomId] forKey:@"roomId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:positionTagId] forKey:@"positionTagId"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"299" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"setTeamPosition--%@",responseObject);
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
 
 -(long long)getCurrentTime{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
