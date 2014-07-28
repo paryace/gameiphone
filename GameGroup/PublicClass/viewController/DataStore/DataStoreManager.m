@@ -4344,7 +4344,7 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
-        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
         if (commonMsg) {
             int unread = [commonMsg.memberCount intValue];
             commonMsg.memberCount = [NSString stringWithFormat:@"%d",unread>0?(unread-1):0];
@@ -4362,7 +4362,7 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and roomId==[c]%@",gameId,roomId];
-        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
         if (commonMsg) {
             commonMsg.memberCount = memberCount;
         }

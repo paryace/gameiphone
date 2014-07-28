@@ -48,7 +48,7 @@ static TeamManager *teamManager = NULL;
     
 }
 
-#pragma mark ---NET
+#pragma mark ---请求组队详情信息
 -(void)GETInfoWithNet:(NSString*)gameId RoomId:(NSString*)roomId
 {
     [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
