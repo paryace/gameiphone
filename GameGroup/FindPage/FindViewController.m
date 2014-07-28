@@ -88,60 +88,62 @@
     //群公告消息广播接收
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
 
-    
-    
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-    BOOL isTrue = [fileManager fileExistsAtPath:path];
-    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
-    
-    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    }else{
-        [[GameCommon shareGameCommon]firtOpen];
-        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    }
-    
-    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    
-    NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
-    
-    drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
-    
-    if (gameidss &&gameidss.count>0) {
-        
-    
-    for (int i =0; i<drawView.tableArray.count; i++) {
-        NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
-        for (int j =0; j<arr.count; j++) {
-            NSDictionary *dic = arr[j];
-            if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
-                [arr removeObject:dic];
-                [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
-            }
+    [[GameListManager singleton] getGameListDicFromLocal:^(id responseObject) {
+        if (responseObject) {
+            [self initGameList:responseObject];
         }
-    }
-    
-        NSMutableArray *asr = [NSMutableArray array];
-    for (int i = 0; i<drawView.tableArray.count; i++) {
-        NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
-        NSArray *array = [drawView.tableDic objectForKey:str];
-        if (!array||array.count<1) {
-            [drawView.tableDic removeObjectForKey:str];
-            [asr addObject:str];
-        }
-    }
-        for (NSString *str in asr) {
-            if ([drawView.tableArray containsObject:str]) {
-                [drawView.tableArray removeObject:str];
-            }
-        }
+    } reError:^(id error) {
         
-        
-    [drawView.tv reloadData];
+    }];
 
-    }
+    
+    
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+//    BOOL isTrue = [fileManager fileExistsAtPath:path];
+//    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
+//    
+//    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+//        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+//    }else{
+//        [[GameCommon shareGameCommon]firtOpen];
+//        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+//    }
+    
+//    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+//    
+//    NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
+//    
+//    drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
+//    
+//    if (gameidss &&gameidss.count>0) {
+//        for (int i =0; i<drawView.tableArray.count; i++) {
+//            NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
+//            for (int j =0; j<arr.count; j++) {
+//                NSDictionary *dic = arr[j];
+//                if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
+//                    [arr removeObject:dic];
+//                    [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
+//                }
+//            }
+//        }
+//        
+//        NSMutableArray *asr = [NSMutableArray array];
+//        for (int i = 0; i<drawView.tableArray.count; i++) {
+//            NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
+//            NSArray *array = [drawView.tableDic objectForKey:str];
+//            if (!array||array.count<1) {
+//                [drawView.tableDic removeObjectForKey:str];
+//                [asr addObject:str];
+//            }
+//        }
+//        for (NSString *str in asr) {
+//            if ([drawView.tableArray containsObject:str]) {
+//                [drawView.tableArray removeObject:str];
+//            }
+//        }
+//        [drawView.tv reloadData];
+//    }
   
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
@@ -149,6 +151,43 @@
     [self initDynamicMsgCount];
 
 }
+
+-(void)initGameList:(NSMutableDictionary*)gameListDic{
+    drawView.tableDic=gameListDic;
+    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
+    drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
+    if (gameidss &&gameidss.count>0) {
+        for (int i =0; i<drawView.tableArray.count; i++) {
+            NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
+            for (int j =0; j<arr.count; j++) {
+                NSDictionary *dic = arr[j];
+                if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
+                    [arr removeObject:dic];
+                    [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
+                }
+            }
+        }
+        
+        NSMutableArray *asr = [NSMutableArray array];
+        for (int i = 0; i<drawView.tableArray.count; i++) {
+            NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
+            NSArray *array = [drawView.tableDic objectForKey:str];
+            if (!array||array.count<1) {
+                [drawView.tableDic removeObjectForKey:str];
+                [asr addObject:str];
+            }
+        }
+        for (NSString *str in asr) {
+            if ([drawView.tableArray containsObject:str]) {
+                [drawView.tableArray removeObject:str];
+            }
+        }
+        [drawView.tv reloadData];
+    }
+
+}
+
 -(UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
 }

@@ -33,15 +33,26 @@
     [self setTopViewWithTitle:@"查找角色" withBackButton:YES];
     
     m_gameArray = [[NSMutableArray alloc] init];
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-    
-    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    NSArray *allkeysArray = [dict allKeys];
-    for (int i = 0; i<allkeysArray.count; i++) {
-        NSArray *arr = [dict objectForKey:allkeysArray[i]];
-        [m_gameArray addObjectsFromArray:arr];
-    }
-    
+//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+//    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+//    NSArray *allkeysArray = [dict allKeys];
+//    for (int i = 0; i<allkeysArray.count; i++) {
+//        NSArray *arr = [dict objectForKey:allkeysArray[i]];
+//        [m_gameArray addObjectsFromArray:arr];
+//    }
+    [[GameListManager singleton] getGameListFromLocal:^(id responseObject) {
+        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+            [m_gameArray addObjectsFromArray:responseObject];
+        }
+    } reError:^(id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
     
     
     [self setMainView];

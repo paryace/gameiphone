@@ -40,6 +40,7 @@
     #import "DownloadImageService.h"
     #import "EGOImageButton.h"
     #import "MessageAckService.h"
+    #import "GameListManager.h"
    #endif
 
 #define appType @"91"//91、appStore

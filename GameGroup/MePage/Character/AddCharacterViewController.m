@@ -73,19 +73,29 @@
     }
     
     gameInfoArray = [NSMutableArray array];
+    [[GameListManager singleton] getGameListFromLocal:^(id responseObject) {
+        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+            [gameInfoArray addObjectsFromArray:responseObject];
+        }
+    } reError:^(id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
     
-    
-    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-    NSMutableDictionary* dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-    NSArray *allkeys = [dict allKeys];
-    for (int i = 0; i <allkeys.count; i++) {
-        NSArray *array = [dict objectForKey:allkeys[i]];
-        [gameInfoArray addObjectsFromArray:array];
-    }
-
+//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
+//    NSMutableDictionary* dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
+//    NSArray *allkeys = [dict allKeys];
+//    for (int i = 0; i <allkeys.count; i++) {
+//        NSArray *array = [dict objectForKey:allkeys[i]];
+//        [gameInfoArray addObjectsFromArray:array];
+//    }
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
     m_dataArray =[NSMutableArray array];
-    
     [m_dataArray addObject:dic];
     
     UIImageView *imageView =[[ UIImageView alloc]initWithFrame:CGRectMake(5, startX+5, 30, 30)];
