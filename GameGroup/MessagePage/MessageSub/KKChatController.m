@@ -1075,7 +1075,7 @@ UINavigationControllerDelegate>
     CGFloat height = theH;
     if (self.isTeam) {
         if (height<70) {
-            height+=20;
+            height+=10;
         }
     }
     return height;
