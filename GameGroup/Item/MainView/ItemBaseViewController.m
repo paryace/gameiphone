@@ -47,7 +47,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
@@ -56,10 +56,11 @@
     topImageView.image = KUIImage(@"nav_bg");
     [self.view addSubview:topImageView];
     
-    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"主页",@"我的组队", nil]];
-    seg.frame = CGRectMake(100, KISHighVersion_7 ? 25 : 5, 120, 34);
+    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"组队提醒",@"我的组队", nil]];
+    seg.frame = CGRectMake(90, KISHighVersion_7 ? 27 : 7, 140, 30);
     seg.selectedSegmentIndex = 0;
-
+    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
+    seg.tintColor = [UIColor whiteColor];
     [seg addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:seg];
 
@@ -216,17 +217,17 @@
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow
 {
     
-    if (isrow) {
-        [[Custom_tabbar showTabBar] hideTabBar:YES];
-
-        [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
-        PreferenceEditViewController *preferec = [[PreferenceEditViewController alloc]init];
-        preferec.mainDict = [firstView.firstDataArray objectAtIndex:row];
-        [self.navigationController pushViewController:preferec animated:YES];
-        
-        
-        
-    }else{
+//    if (isrow) {
+//        [[Custom_tabbar showTabBar] hideTabBar:YES];
+//
+//        [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
+//        PreferenceEditViewController *preferec = [[PreferenceEditViewController alloc]init];
+//        preferec.mainDict = [firstView.firstDataArray objectAtIndex:row];
+//        [self.navigationController pushViewController:preferec animated:YES];
+//        
+//        
+//        
+//    }else{
         [self showMessageWindowWithContent:@"查看队伍" imageType:0];
         [[Custom_tabbar showTabBar] hideTabBar:YES];
 
@@ -235,7 +236,7 @@
         findView.isInitialize = YES;
         [self.navigationController pushViewController:findView animated:YES];
         
-    }
+//    }
 }
 
 

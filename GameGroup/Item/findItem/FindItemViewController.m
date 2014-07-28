@@ -329,6 +329,7 @@
         }else{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
         }
+        [self.navigationController popViewControllerAnimated:YES];
         
     } reError:^(id error) {
         [self showErrorAlertView:error];

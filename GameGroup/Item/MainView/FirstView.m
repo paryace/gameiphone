@@ -7,6 +7,7 @@
 //
 
 #import "FirstView.h"
+#import "NewFirstCell.h"
 @implementation FirstView
 {
     BOOL isRun;
@@ -23,18 +24,53 @@
         self.myTableView.delegate = self;
         self.myTableView.dataSource = self;
         self.myTableView.bounces = NO;
-        self.myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//        self.myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         [self addSubview:self.myTableView];
+        [GameCommon setExtraCellLineHidden:self.myTableView];
         isRun = YES;
-
+        [self buildTableHeaderView];
     }
     return self;
 }
+
+-(void)buildTableHeaderView
+{
+    UIImageView *headImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 156)];
+    headImgView.userInteractionEnabled = YES;
+    headImgView.image = KUIImage(@"room_bg");
+    
+    UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 130, 40, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//    lb1.text = @"申请人数";
+    [headImgView addSubview:lb1];
+    
+    
+    self.personCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(55,130 , 80, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    [headImgView addSubview:self.personCountLb];
+    
+    
+    UILabel *lb2 = [GameCommon buildLabelinitWithFrame:CGRectMake(218, 130, 40, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//    lb2.text = @"组队数量";
+    [headImgView addSubview:lb2];
+    
+    self.teamCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(250, 130, 70, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    [headImgView addSubview:self.teamCountLb];
+    
+    
+    self.searchRoomBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.searchRoomBtn.center = CGPointMake(160, 90);
+    [self.searchRoomBtn addTarget:self action:@selector(enterSearchPage:) forControlEvents:UIControlEventTouchUpInside];
+    [self.searchRoomBtn setBackgroundImage:KUIImage(@"search_room") forState:UIControlStateNormal];
+    [headImgView addSubview:self.searchRoomBtn];
+    
+    self.myTableView.tableHeaderView = headImgView;
+}
+
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.firstDataArray.count;
 }
-
+/*
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *indifience = @"cell";
@@ -56,15 +92,16 @@
     if (isOpen) {
         cell.isrow = YES;
         [cell.headImgView.layer removeAllAnimations];
-        NSString *str =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
-        NSLog(@"%@",str);
-        cell.editLabel.text = str;
     }else{
-        cell.editLabel.text = @"编辑";
+//        cell.editLabel.text = @"编辑";
         cell.isrow = NO;
         [cell.headImgView.layer removeAllAnimations];
 
     }
+    NSString *str =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
+    NSLog(@"%@",str);
+    cell.editLabel.text = str;
+
     cell.machCountStr =[NSString stringWithFormat:@"%@支队伍",KISDictionaryHaveKey(dic, @"matchCount")];
     [cell didClickRow];
 
@@ -75,54 +112,81 @@
  
     return cell;
 }
+*/
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *indifience = @"cell";
+    NewFirstCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+    if (!cell) {
+        cell = [[NewFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+    }
+    NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+    cell.bgView.backgroundColor = [UIColor whiteColor];
+    cell.headImageV.placeholderImage = KUIImage(@"placeholder");
 
+    NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img");
+    cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
+    cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
+    cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm");
+    cell.distLabel.text = @"开启组队搜索";
+    return cell;
+    
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    [self.myDelegate enterEditPageWithRow:indexPath.row isRow:0];
+
+}
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 70;
 }
--(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc]init];
-    view.backgroundColor = [UIColor whiteColor];
-    
-    self.searchRoomBtn   = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 300, 40)];
-    [self.searchRoomBtn setTitle:@"搜索组队" forState:UIControlStateNormal];
-    self.searchRoomBtn.backgroundColor =[UIColor blueColor];
-    [self.searchRoomBtn addTarget:self action:@selector(enterSearchPage:) forControlEvents:UIControlEventTouchUpInside];
-    [view addSubview:self.searchRoomBtn];
-    return view;
-}
--(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return 50;
-}
--(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc]init];
-    
-   UIView *topView = [self buildViewWithFrame:CGRectMake(0, 0, 320, 40) leftImg:@"item_1" title:@"目前有77人在寻找组队"];
-        [view addSubview:topView];
-    
-    UILabel *lb = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 50, 30, 20) font:[UIFont boldSystemFontOfSize:14] textColor:[UIColor darkGrayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-    lb.text = @"点击";
-    [view addSubview:lb];
-    
-    UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(40, 50, 20, 20)];
-    img.image = KUIImage(@"clazz_0");
-    [view addSubview:img];
-    
-    UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 50, 120, 20) font:[UIFont boldSystemFontOfSize:14] textColor:[UIColor darkGrayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-    lb1.text = @"开始搜索组队";
-    [view addSubview:lb1];
-    
-    
-
-    return view;
-}
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 70;
-}
+//-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UIView *view = [[UIView alloc]init];
+//    view.backgroundColor = [UIColor whiteColor];
+//    
+//    self.searchRoomBtn   = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 300, 40)];
+//    [self.searchRoomBtn setTitle:@"搜索组队" forState:UIControlStateNormal];
+//    self.searchRoomBtn.backgroundColor =[UIColor blueColor];
+//    [self.searchRoomBtn addTarget:self action:@selector(enterSearchPage:) forControlEvents:UIControlEventTouchUpInside];
+//    [view addSubview:self.searchRoomBtn];
+//    return view;
+//}
+//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    return 50;
+//}
+//-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    UIView *view = [[UIView alloc]init];
+//    
+//   UIView *topView = [self buildViewWithFrame:CGRectMake(0, 0, 320, 40) leftImg:@"item_1" title:@"目前有77人在寻找组队"];
+//        [view addSubview:topView];
+//    
+//    UILabel *lb = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 50, 30, 20) font:[UIFont boldSystemFontOfSize:14] textColor:[UIColor darkGrayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//    lb.text = @"点击";
+//    [view addSubview:lb];
+//    
+//    UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(40, 50, 20, 20)];
+//    img.image = KUIImage(@"clazz_0");
+//    [view addSubview:img];
+//    
+//    UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 50, 120, 20) font:[UIFont boldSystemFontOfSize:14] textColor:[UIColor darkGrayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//    lb1.text = @"开始搜索组队";
+//    [view addSubview:lb1];
+//    
+//    
+//
+//    return view;
+//}
+//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    return 70;
+//}
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
