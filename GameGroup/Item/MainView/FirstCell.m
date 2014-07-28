@@ -80,11 +80,11 @@
     if (!self.isrow) {
         self.isrow = YES;
         customImgView.hidden = NO;
-        self.editLabel.text = @"编辑";
+//        self.editLabel.text = @"编辑";
     }else{
         self.isrow =NO;
         customImgView.hidden = YES;
-        self.editLabel.text = self.machCountStr;
+//        self.editLabel.text = self.machCountStr;
     }
     [self didRow];
 }

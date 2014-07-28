@@ -530,6 +530,7 @@
     [paramDict setObject:[GameCommon getNewStringWithId:self.gameid]  forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] forKey:@"roomId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] forKey:@"memberId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"268" forKey:@"method"];
@@ -538,6 +539,7 @@
         
         [m_dataArray removeObjectAtIndex:row];
         [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"删除成功" imageType:0];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

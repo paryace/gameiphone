@@ -15,6 +15,8 @@
 @property(nonatomic,strong)UIButton *searchRoomBtn;
 @property(nonatomic,strong)NSMutableArray *firstDataArray;
 @property(nonatomic,assign)id<firstViewDelegate>myDelegate;
+@property(nonatomic,strong)UILabel * personCountLb;
+@property(nonatomic,strong)UILabel * teamCountLb;
 @end
 
 @protocol firstViewDelegate <NSObject>
