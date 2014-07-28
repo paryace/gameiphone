@@ -30,7 +30,7 @@
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
-        [self.contentView addSubview:self.nameLabel];
+        [self.bgView addSubview:self.nameLabel];
         
         
 //        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 5, 20, 20)];

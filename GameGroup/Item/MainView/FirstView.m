@@ -37,7 +37,7 @@
 {
     UIImageView *headImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 156)];
     headImgView.userInteractionEnabled = YES;
-    headImgView.image = KUIImage(@"room_bg.jpg");
+    headImgView.image = KUIImage(@"room_bg");
     
     UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 130, 40, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
 //    lb1.text = @"申请人数";
@@ -121,6 +121,7 @@
         cell = [[NewFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
     NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+    cell.bgView.backgroundColor = [UIColor whiteColor];
     cell.headImageV.placeholderImage = KUIImage(@"placeholder");
 
     NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img");
@@ -134,6 +135,8 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     [self.myDelegate enterEditPageWithRow:indexPath.row isRow:0];
 
 }
