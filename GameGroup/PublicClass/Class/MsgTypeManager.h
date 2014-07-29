@@ -56,7 +56,8 @@ typedef enum: NSUInteger{
     PayloadTypeTeamAddType=6,
     PayloadTypeTeamKickType=7,
     PayloadTypeTeamQuitType=8,
-    PayloadTypeInTeamSystemMsg=9
+    PayloadTypeInTeamSystemMsg=9,
+    PayloadTypeOther=10
 } PayloadType;
 
 @interface MsgTypeManager : NSObject

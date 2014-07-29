@@ -121,47 +121,38 @@
     }
 }
 
-
-
-//-(PayloadType)msgType:(NSDictionary*) plainEntry
-//{
-//    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
-//    //普通文字消息
-//    if([GameCommon isEmtity:payLoadStr])
-//    {
-//        return KKChatMsgTypeText;
-//    }
-//    NSDictionary * payloadDic = [payLoadStr JSONValue];
-//    NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
-//    if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"])
-//    {
-//        return KKChatMsgTypeLink;
-//    }
-//    //图片
-//    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"img"])
-//    {
-//        return KKChatMsgTypeImage;
-//        
-//    }
-//    //系统消息
-//    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"])//解散组队
-//    {
-//        return KKChatMsgTypeSystem;
-//    }
-//    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])
-//    {
-//        return KKChatMsgHistory;
-//    }
-//    //文字
-//    else
-//    {
-//        return KKChatMsgTypeText;
-//    }
-//}
+-(PayloadType)getTPayloadType:(NSString*)payloadType
+{
+    if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"3"]){
+        return PayloadTypeDynamic;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"img"]){
+        return PayloadTypeImage;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"inGroupSystemMsg"]){
+        return PayloadTypeInGroupSystemMsg;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"selectTeamPosition"]){
+        return PayloadTypeSelectTeamPosition;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamAddType"]){
+        return PayloadTypeTeamAddType;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamKickType"]){
+        return PayloadTypeTeamKickType;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamQuitType"]){
+        return PayloadTypeTeamQuitType;
+    }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"inTeamSystemMsg"]){
+        return PayloadTypeInTeamSystemMsg;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"historyMsg"]){
+        return PayloadTypeHistoryMsg;
+    }
+    else{
+        return PayloadTypeOther;
+    }
+}
 
 @end
