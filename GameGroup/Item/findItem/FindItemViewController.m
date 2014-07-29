@@ -474,7 +474,7 @@
     
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
-        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"constId")reSuccess:^(id responseObject) {
+        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"constId") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") reSuccess:^(id responseObject) {
             [self updateTeamLable:responseObject];
         } reError:^(id error) {
             [self showErrorAlertView:error];

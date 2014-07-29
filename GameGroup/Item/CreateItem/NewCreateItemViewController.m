@@ -46,6 +46,10 @@
     NSMutableArray  *  m_countArray;
     
     NSMutableDictionary  *m_uploadDict;
+    NSDictionary *   selectCharacter;
+    NSDictionary *  selectType;
+    NSDictionary *  selectPeopleCount;
+    
     UISwitch *switchView;
     EGOImageView *gameIconImg;
 }
@@ -150,15 +154,15 @@
         m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")]] ;
         gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(roleDic, @"gameid")]];
         [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")]];
-        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")]];
+        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"id")]];
         [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")]];
     }
 }
 
 #pragma MARK ---联网获取标签
--(void)getcardFromNetWithGameid:(NSString*)gameid
+-(void)getcardFromNetWithGameid:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
 {
-    [[ItemManager singleton] getTeamLable:gameid reSuccess:^(id responseObject) {
+    [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
         [self updateTeamLable:responseObject];
     } reError:^(id error) {
         [self showErrorAlert:error];
@@ -273,34 +277,35 @@
 {
     if ([m_gameTf isFirstResponder]) {
         if ([m_RoleArray count] != 0) {
-         NSDictionary *   selectCharacter =[m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
+            selectCharacter =[m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
             m_gameTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
             [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
             [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];
             [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
-            [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+            
         }
     }
     else if ([m_tagTf isFirstResponder])
     {
         if ([m_tagsArray count] != 0) {
-            NSDictionary *  selectCharacter =[m_tagsArray objectAtIndex:[m_tagsPickView selectedRowInComponent:0]];
-            m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"value")];
-            m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"mask")]];
+            selectType =[m_tagsArray objectAtIndex:[m_tagsPickView selectedRowInComponent:0]];
+            m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
+            m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")]];
             [m_tagTf resignFirstResponder];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"constId")] forKey:@"typeId"];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"mask")] forKey:@"maxVol"];
-            [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"constId")]];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")] forKey:@"maxVol"];
+            [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
+            [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         }
     }
     else{
         if ([m_countArray count] != 0) {
-            NSDictionary *  selectCharacter =[m_countArray objectAtIndex:[m_countPickView selectedRowInComponent:0]];
-            m_countTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"value")];
+            selectPeopleCount =[m_countArray objectAtIndex:[m_countPickView selectedRowInComponent:0]];
+            m_countTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"value")];
             [m_countTf resignFirstResponder];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"mask")] forKey:@"maxVol"];
+            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
         }
     }
 }

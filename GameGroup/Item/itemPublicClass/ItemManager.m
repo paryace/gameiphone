@@ -79,10 +79,10 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark ----获取组队偏好标签 gameid，typeId
--(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+-(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
-    NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@",@"TeamLable",gameId,typeId]];
-    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@",@"TeamLable",gameId,typeId]]) {
+    NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@%@",@"TeamLable",gameId,typeId,characterId]];
+    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"TeamLable",gameId,typeId,characterId]]) {
         if (resuccess) {
             resuccess(arrayTag);
         }
@@ -90,6 +90,7 @@ static ItemManager *itemManager = NULL;
     }    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
+    [paramDict setObject:characterId forKey:@"characterId"];
     [paramDict setObject:typeId forKey:@"typeId"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
@@ -99,7 +100,7 @@ static ItemManager *itemManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"getTeamLable--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-           [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@%@",@"TeamLable",gameId,typeId]];
+           [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@%@%@",@"TeamLable",gameId,typeId,characterId]];
             if (resuccess) {
                 resuccess(responseObject);
             }
@@ -112,10 +113,10 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark ----获取组队房间偏好标签 gameid
--(void)getTeamLable:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+-(void)getTeamLableRoom:(NSString*)gameId TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
-    NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"RoomTeamLable",gameId]];
-    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"RoomTeamLable",gameId]]) {
+    NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]];
+    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]]) {
         if (resuccess) {
             resuccess(arrayTag);
         }
@@ -123,6 +124,8 @@ static ItemManager *itemManager = NULL;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
+    [paramDict setObject:characterId forKey:@"characterId"];
+    [paramDict setObject:typeId forKey:@"typeId"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -131,7 +134,7 @@ static ItemManager *itemManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"getTeamLable--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-            [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"RoomTeamLable",gameId]];
+            [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]];
             if (resuccess) {
                 resuccess(responseObject);
             }
