@@ -27,6 +27,7 @@
 #import "TeamChatListView.h"
 #import "ItemManager.h"
 #import "ItemInfoViewController.h"
+#import "KKTeamInviteCell.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -52,7 +53,8 @@ typedef enum : NSUInteger {
     KKChatMsgTypeLink,
     KKChatMsgTypeImage,
     KKChatMsgTypeSystem,
-    KKChatMsgHistory
+    KKChatMsgHistory,
+    KKChatMsgTeamInvite
 } KKChatMsgType;
 
 
@@ -506,6 +508,72 @@ UINavigationControllerDelegate>
         }
         return cell;
     }
+    //邀请加入组队
+    else if (kkChatMsgType == KKChatMsgTeamInvite) {
+        static NSString *identifier = @"teamInviteCell";
+        KKTeamInviteCell *cell =(KKTeamInviteCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell == nil) {
+            cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
+        }
+        cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
+        NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
+        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"description")]];
+        CGSize contentSize = CGSizeZero;
+        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"description");
+        contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]withThumb:YES];
+        NSString * dImageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"img")];
+        cell.thumbImgV.imageURL = [ImageService getImageStr:dImageId Width:70];
+        
+        if (indexPath.row==0) {
+            cell.senderAndTimeLabel.hidden=YES;
+        }else{
+            NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+            NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
+            [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
+        }
+        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        [cell.bgImageView setTag:(indexPath.row+1)];
+        UIImage *bgImage = nil;
+        if ([sender isEqualToString:@"you"]) {
+            //头像
+            [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
+            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
+            cell.senderNickName.hidden=YES;
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
+        }else
+        {
+            [cell.thumbImgV setFrame:CGRectMake(70,40 + titleSize.height,40,40)];
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
+            [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
+            
+            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+35,size.height + 20)];
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
+            [cell.titleLabel setFrame:CGRectMake(padding + 50,33+offHight,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,35 + titleSize.height + (titleSize.height > 0 ? 5+offHight : 0+offHight),contentSize.width,contentSize.height)];
+        }
+        return cell;
+    }
     
     //图片消息
     else if (kkChatMsgType == KKChatMsgTypeImage) {
@@ -726,6 +794,13 @@ UINavigationControllerDelegate>
         detailVC.messageid = KISDictionaryHaveKey(msgDic, @"messageid");
         detailVC.delegate = nil;
         [self.navigationController pushViewController:detailVC animated:YES];
+    }else if(kkChatMsgType == KKChatMsgTeamInvite){
+        NSDictionary* msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+        ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+        itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"roomId")];
+        itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")];
+        [self.navigationController pushViewController:itemInfo animated:YES];
+
     }
 }
 //Cell长按
@@ -1169,6 +1244,10 @@ UINavigationControllerDelegate>
             mas=[[NSMutableAttributedString alloc] init];
             break;
         }
+        case KKChatMsgTeamInvite:{//邀请加入组队
+            mas=KISDictionaryHaveKey(plainEntry, @"payload");
+            break;
+        }
         default://其他
             mas=[[NSMutableAttributedString alloc] init];
             break;
@@ -1193,8 +1272,6 @@ UINavigationControllerDelegate>
 //格式化时间
 -(NSString*)getMsgTime:(NSDictionary*)plainEntry
 {
-//    NSString *time = [KISDictionaryHaveKey(plainEntry, @"time") substringToIndex:10];
-//    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)[[NSDate date] timeIntervalSince1970]];
     NSString* strTime = [NSString stringWithFormat:@"%d",[[KISDictionaryHaveKey(plainEntry, @"time") substringToIndex:10] intValue]];
     return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
@@ -1273,6 +1350,18 @@ UINavigationControllerDelegate>
         {
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:25], nil];
         }
+        case KKChatMsgTeamInvite:
+        {
+            NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
+            CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")]];
+            CGSize contentSize = CGSizeZero;
+            float higF = 0;
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")] withThumb:YES];
+            higF = contentSize.height;
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)];
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
+            break;
+        }
         default:
             break;
     }
@@ -1309,9 +1398,13 @@ UINavigationControllerDelegate>
     {
         return KKChatMsgTypeSystem;
     }
-    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])
+    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])//以上是历史消息
     {
         return KKChatMsgHistory;
+    }
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamInvite"])//组队邀请
+    {
+        return KKChatMsgTeamInvite;
     }
     //文字
     else

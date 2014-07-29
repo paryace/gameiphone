@@ -311,7 +311,13 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 #pragma mark 邀请加入
 -(void)teamInviteTypeMessageReceived:(NSDictionary *)messageContent{
-    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [messageContent setValue:@"normalchat" forKeyPath:@"msgType"];
+    [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        [[MessageSetting singleton] setSoundOrVibrationopen];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+    }];
 }
 
 -(NSString*)getGroupIdFromPayload:(NSDictionary *)messageContent{
