@@ -105,18 +105,17 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     NSMutableDictionary * cellDic = m_dataArray[indexPath.row];
-
     [self inviationGroupWithRoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"groupId")]];
 }
 
--(void)inviationGroupWithRoomId:(NSString *)roomId
+-(void)inviationGroupWithRoomId:(NSString *)groupId
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.gameId forKey:@"gameid"];
-    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:self.roomId forKey:@"roomId"];
+    [paramDict setObject:groupId forKey:@"groupIds"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"287" forKey:@"method"];

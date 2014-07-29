@@ -1402,7 +1402,7 @@ UINavigationControllerDelegate>
     {
         return KKChatMsgHistory;
     }
-    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamInvite"])//组队邀请
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamInvite"]||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamInviteInGroup"])//组队邀请
     {
         return KKChatMsgTeamInvite;
     }

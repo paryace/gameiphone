@@ -319,6 +319,16 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
     }];
 }
+#pragma mark 群邀请加入
+-(void)teamInviteInGroupTypeMessageReceived:(NSDictionary*)messageContent{
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [messageContent setValue:@"normalchat" forKeyPath:@"msgType"];
+    [DataStoreManager storeNewNormalChatMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        [[MessageSetting singleton] setSoundOrVibrationopen];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+    }];
+}
 
 -(NSString*)getGroupIdFromPayload:(NSDictionary *)messageContent{
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];

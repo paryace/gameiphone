@@ -227,11 +227,17 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate teamTissolveTypeMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"teamInvite"]){//解散组织
+        else if ([msgtype isEqualToString:@"teamInvite"]){//邀请个人加入组队
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamInviteTypeMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamInviteInGroup"]){//群邀请加入组队
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamInviteInGroupTypeMessageReceived:dict];
         }
     }
     

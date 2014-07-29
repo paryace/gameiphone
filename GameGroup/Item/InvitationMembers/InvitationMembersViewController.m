@@ -426,9 +426,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        
         [self.navigationController popViewControllerAnimated:YES];
-        
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
