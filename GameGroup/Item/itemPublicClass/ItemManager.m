@@ -111,6 +111,38 @@ static ItemManager *itemManager = NULL;
     }];
 }
 
+#pragma mark ----获取组队房间偏好标签 gameid
+-(void)getTeamLable:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"RoomTeamLable",gameId]];
+    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"RoomTeamLable",gameId]]) {
+        if (resuccess) {
+            resuccess(arrayTag);
+        }
+        return;
+    }
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"279" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"getTeamLable--%@",responseObject);
+        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+            [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"RoomTeamLable",gameId]];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
 #pragma mark ----组队房间过滤 gameid
 -(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {

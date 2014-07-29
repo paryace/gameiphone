@@ -39,7 +39,13 @@
 
 - (void)setTags:(NSArray *)array
 {
+    [self setTags:array average:NO rowCount:3];
+}
+- (void)setTags:(NSArray *)array average:(BOOL)average rowCount:(NSInteger)rowcount
+{
     textArray = [[NSArray alloc] initWithArray:array];
+    self.isAverage = average;
+    self.rowNum = rowcount;
     sizeFit = CGSizeZero;
     [self display];
 }
@@ -62,15 +68,19 @@
         ;
         NSString * text = KISDictionaryHaveKey([textArray objectAtIndex:i], @"value");
         CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:FONT_SIZE] constrainedToSize:CGSizeMake(self.frame.size.width, 1500) lineBreakMode:NSLineBreakByCharWrapping];
-        textSize.width += HORIZONTAL_PADDING*2;
+        if (self.isAverage) {
+            textSize.width = (self.frame.size.width-(HORIZONTAL_PADDING*self.rowNum-1))/self.rowNum;
+        }else {
+            textSize.width += (HORIZONTAL_PADDING*2);
+        }
         textSize.height += VERTICAL_PADDING*2;
         UIButton *label = nil;
         if (!gotPreviousFrame) {
-            label = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textSize.width, textSize.height)];
+            label = [[UIButton alloc] initWithFrame:CGRectMake(0, 0,textSize.width, textSize.height)];
             totalHeight = textSize.height;
         } else {
             CGRect newRect = CGRectZero;
-            if (previousFrame.origin.x + previousFrame.size.width + textSize.width + LABEL_MARGIN > self.frame.size.width) {
+            if (previousFrame.origin.x+previousFrame.size.width + textSize.width + LABEL_MARGIN > self.frame.size.width) {
                 newRect.origin = CGPointMake(0, previousFrame.origin.y + textSize.height + BOTTOM_MARGIN);
                 totalHeight += textSize.height + BOTTOM_MARGIN;
             } else {
@@ -92,7 +102,7 @@
         label.tag = i;
         [label addTarget:self action:@selector(lableClick:) forControlEvents:UIControlEventTouchUpInside];
         
-        [label setTitleColor:TEXT_COLOR forState:UIControlStateNormal];
+        [label setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [label setTitle:text forState: UIControlStateNormal];
         label.titleLabel.textAlignment = NSTextAlignmentCenter;
         label.titleLabel.shadowColor = TEXT_SHADOW_COLOR;

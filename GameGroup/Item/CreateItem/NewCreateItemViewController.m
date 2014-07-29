@@ -46,7 +46,6 @@
     NSMutableArray  *  m_countArray;
     
     NSMutableDictionary  *m_uploadDict;
-    UIView *m_cardView;
     UISwitch *switchView;
     EGOImageView *gameIconImg;
 }
@@ -74,9 +73,6 @@
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
-
-    
-    
     
     m_maxZiShu = 30;
     m_tagsArray = [NSMutableArray array];
@@ -131,19 +127,17 @@
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     [self.view addSubview:m_ziNumLabel];
 
-    m_cardView = [[UIView alloc] initWithFrame:CGRectMake(10.0f, startX+250.0f,300.0f, 300.0f)];
-//    tagList.tagDelegate=self;
     [self buildSwitchView];
-
-    [self.view addSubview:m_cardView];
+    
+    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(10.0f, startX+250.0f,300.0f, 100.0f)];
+    tagList.tagDelegate=self;
+    [self.view addSubview:tagList];
+    
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
 
     [self isHaveInfo];
-    
-    
-    // Do any additional setup after loading the view.
 }
 
 -(void)isHaveInfo
@@ -161,65 +155,25 @@
     }
 }
 
--(void)buildCardBtnWithArray:(NSArray *)textArray
+#pragma MARK ---联网获取标签
+-(void)getcardFromNetWithGameid:(NSString*)gameid
 {
-    float totalHeight = 0;
-    CGRect previousFrame = CGRectZero;
-    BOOL gotPreviousFrame = NO;
-    for (UILabel *subview in [m_cardView subviews]) {
-        [subview removeFromSuperview];
+    [[ItemManager singleton] getTeamLable:gameid reSuccess:^(id responseObject) {
+        [self updateTeamLable:responseObject];
+    } reError:^(id error) {
+        [self showErrorAlert:error];
+    }];
+}
+#pragma mark -- 标签请求成功通知
+-(void)updateTeamLable:(id)responseObject
+{
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        m_flArray = responseObject;
+        [tagList setTags:responseObject average:YES rowCount:3];
+        tagList.frame = CGRectMake(10.0f, startX+250.0f, tagList.fittedSize.width-10, tagList.fittedSize.height);
     }
-
-    
-    
-    for (int i = 0; i<textArray.count; i++) {
-        NSString * text = KISDictionaryHaveKey([textArray objectAtIndex:i], @"value");
-        CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:14] constrainedToSize:CGSizeMake(m_cardView.frame.size.width, 1500) lineBreakMode:NSLineBreakByCharWrapping];
-        textSize.width += HORIZONTAL_PADDING*2;
-        textSize.height += VERTICAL_PADDING*2;
-
-        UIButton *label = nil;
-        if (!gotPreviousFrame) {
-            label = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 290/3, textSize.height)];
-            totalHeight = textSize.height;
-        }else{
-            CGRect newRect = CGRectZero;
-            if (previousFrame.origin.x + previousFrame.size.width + 290/3 + LABEL_MARGIN > m_cardView.frame.size.width) {
-                newRect.origin = CGPointMake(0, previousFrame.origin.y + textSize.height + BOTTOM_MARGIN);
-                totalHeight += textSize.height + BOTTOM_MARGIN;
-            } else {
-                newRect.origin = CGPointMake(previousFrame.origin.x + previousFrame.size.width + LABEL_MARGIN, previousFrame.origin.y);
-            }
-//            newRect.size = textSize;
-            newRect.size = CGSizeMake(290/3, textSize.height);
-            label = [[UIButton alloc] initWithFrame:newRect];
-        }
-        previousFrame = label.frame;
-        gotPreviousFrame = YES;
-        label.titleLabel.font = [UIFont systemFontOfSize: FONT_SIZE];
-        [label setBackgroundImage:KUIImage(@"card_click") forState:UIControlStateNormal];
-        [label setBackgroundImage:KUIImage(@"card_purple") forState:UIControlStateHighlighted];
-        label.tag = i;
-        [label addTarget:self action:@selector(lableClick:) forControlEvents:UIControlEventTouchUpInside];
-        
-        [label setTitleColor:TEXT_COLOR forState:UIControlStateNormal];
-        [label setTitle:text forState: UIControlStateNormal];
-        label.titleLabel.textAlignment = NSTextAlignmentCenter;
-        label.titleLabel.shadowColor = TEXT_SHADOW_COLOR;
-        label.titleLabel.shadowOffset = TEXT_SHADOW_OFFSET;
-        [label.layer setMasksToBounds:YES];
-        [label.layer setCornerRadius:CORNER_RADIUS];
-        [label.layer setBorderColor:BORDER_COLOR];
-        [label.layer setBorderWidth: BORDER_WIDTH];
-        [m_cardView addSubview:label];
-    }
-    m_cardView.frame =CGRectMake(m_cardView.frame.origin.x, m_cardView.frame.origin.y, m_cardView.frame.size.width, totalHeight+1.0f);
 }
 
-
-
-
-//-(void)buildSwitchViewWithDic:(NSDictionary *)dic
 -(void)buildSwitchView
 {
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(170, startX+110, 140, 40)];
@@ -239,7 +193,6 @@
     [view addSubview:lb];
     
     switchView = [[UISwitch alloc]initWithFrame:CGRectMake(60, 5, 80, 30)];
- 
     [switchView addTarget:self action:@selector(changeValue:) forControlEvents:UIControlEventValueChanged];
     [view addSubview:switchView];
 }
@@ -304,13 +257,15 @@
     
     return tf;
 }
--(void)lableClick:(UIButton*)sender
+
+-(void)tagClick:(UIButton*)sender
 {
     NSString *str = m_miaoshuTV.text;
-    
     m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
+
 }
+
 //点击toolbar 确定button
 
 #pragma mark ----toolbar 点击确定
@@ -325,7 +280,6 @@
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];
             [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
-            
             [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
         }
     }
@@ -460,27 +414,19 @@
             [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
             [m_countPickView reloadInputViews];
 //            [self buildSwitchViewWithDic:KISDictionaryHaveKey(responseObject, @"crossServer")];
-            
             BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
             switch (isOpen) {
                 case YES:
                     [switchView setOn:YES] ;
-                    
                     break;
                 case NO:
                     [switchView setOn:NO] ;
-                    
                     break;
-                    
                 default:
                     break;
             }
-            
             [m_uploadDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask") forKey:@"crossFire"];
-
         }
-        
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         //        [self showErrorAlert:error];
         [hud hide:YES];
@@ -536,43 +482,6 @@
 }
 
 
-#pragma MARK ---联网获取标签
--(void)getcardFromNetWithGameid:(NSString*)gameid
-{
-    [hud show:YES];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:gameid forKey:@"gameid"];
-    
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"279" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [m_flArray removeAllObjects];
-            [m_flArray addObjectsFromArray:responseObject];
-            [tagList setTags:responseObject];
-            [self buildCardBtnWithArray:responseObject];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        NSLog(@"faile");
-        [hud hide:YES];
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                alert.tag = 789;
-                [alert show];
-            }
-        }
-    }];
-    
-}
-
-
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
@@ -596,9 +505,7 @@
     
     NSDictionary *roleDic =[self.roleDict objectForKey:@"character"];
     NSDictionary *typeDic = [self.roleDict objectForKey:@"type"];
-
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    
     NSString * characterId ;
     NSString * gameid;
     NSString * typeId;
@@ -627,25 +534,17 @@
     }else{
         maxVol =[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
     }
-
-    
-    
     [paramDict setObject:characterId forKey:@"characterId"];
     [paramDict setObject:gameid forKey:@"gameid"];
     [paramDict setObject:typeId forKey:@"typeId"];
     [paramDict setObject:maxVol forKey:@"maxVol"];
     [paramDict setObject:@"去你妹" forKey:@"roomName"];
-
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
-
-
-    
     if ([[m_uploadDict allKeys]containsObject:@"crossServer"]) {
         [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossServer")] forKey:@"crossServer"];
     }else{
         [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossFire")] forKey:@"crossServer"];
     }
-    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -664,7 +563,6 @@
         [hud hide:YES];
     }];
 }
-
 -(void)showErrorAlert:(id)error
 {
     if ([error isKindOfClass:[NSDictionary class]]) {
@@ -683,7 +581,6 @@
         if ([GameCommon isEmtity:m_gameTf.text]) {
             [m_tagTf resignFirstResponder];
             [self showMessageWindowWithContent:@"请先选择角色" imageType:0];
-//            [self showMessageWithContent:@"请先选择角色" point:CGPointMake(160,startX+60)];
         }
     }
     else if (textField ==m_countTf)

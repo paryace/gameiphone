@@ -142,7 +142,7 @@
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [tagView addGestureRecognizer:tapGr];
     
-    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(20.0f, 20.0f, 280.0f, 300.0f)];
+    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(10.0f, 20.0f, 310.0f, 300.0f)];
     tagList.tagDelegate=self;
     [tagView addSubview:tagList];
     [self.view addSubview:tagView];

@@ -20,9 +20,12 @@
 
 @property (nonatomic, strong) UIView *view;
 @property (nonatomic, strong) NSArray *textArray;
+@property (assign, nonatomic)  NSInteger rowNum;
+@property (assign, nonatomic)  BOOL isAverage;
 
 - (void)setLabelBackgroundColor:(UIColor *)color;
 - (void)setTags:(NSArray *)array;
+- (void)setTags:(NSArray *)array average:(BOOL)average rowCount:(NSInteger)rowcount;
 - (void)display;
 - (CGSize)fittedSize;
 

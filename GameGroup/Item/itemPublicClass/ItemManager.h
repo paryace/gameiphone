@@ -17,6 +17,9 @@
 //获取标签列表
 -(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
+//获取房间偏好标签
+-(void)getTeamLable:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
 //组队房间过滤
 -(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 

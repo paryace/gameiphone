@@ -518,10 +518,10 @@ UINavigationControllerDelegate>
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
-        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"description")]];
+        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]];
         CGSize contentSize = CGSizeZero;
-        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"description");
-        contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]withThumb:YES];
+        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"description")]withThumb:YES];
         NSString * dImageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"img")];
         cell.thumbImgV.imageURL = [ImageService getImageStr:dImageId Width:70];
         
@@ -532,7 +532,7 @@ UINavigationControllerDelegate>
             NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
-        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"description");
         [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
         if ([sender isEqualToString:@"you"]) {
@@ -547,6 +547,7 @@ UINavigationControllerDelegate>
             [cell.failImage setTag:(indexPath.row+1)];
             [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            cell.lineImage.hidden = YES;
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
@@ -571,6 +572,8 @@ UINavigationControllerDelegate>
             cell.failImage.hidden=YES;
             [cell.titleLabel setFrame:CGRectMake(padding + 50,33+offHight,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
             [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,35 + titleSize.height + (titleSize.height > 0 ? 5+offHight : 0+offHight),contentSize.width,contentSize.height)];
+            [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
+            cell.lineImage.hidden=YES;
         }
         return cell;
     }
@@ -1353,10 +1356,10 @@ UINavigationControllerDelegate>
         case KKChatMsgTeamInvite:
         {
             NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
-            CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")]];
+            CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")]];
             CGSize contentSize = CGSizeZero;
             float higF = 0;
-            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")] withThumb:YES];
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")] withThumb:YES];
             higF = contentSize.height;
             NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];

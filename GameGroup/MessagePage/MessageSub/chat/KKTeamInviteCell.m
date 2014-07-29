@@ -23,6 +23,10 @@
         self.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
         [self.contentView addSubview:self.titleLabel];
         
+        self.lineImage = [[UIImageView alloc] initWithFrame:CGRectMake(56, 0, 50, 1)];
+        self.lineImage.backgroundColor = [UIColor lightGrayColor];
+        [self.contentView addSubview:self.lineImage];
+        
         self.thumbImgV = [[EGOImageView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
         self.thumbImgV.placeholderImage = KUIImage(@"dynamicIMG");
         self.thumbImgV.layer.cornerRadius = 5;
