@@ -39,7 +39,6 @@ teamMemberChange：同意添加,踢出组织,退出组织,占坑,填坑
 disbandTeam：解散组队
 teamInvite：组队邀请*/
 
-
 #import <Foundation/Foundation.h>
 typedef enum : NSUInteger {
     MsgTypeGroupchat=1,MsgTypeNormalchat=2,MsgTypeSayHello=3,MsgTypeDeletePerson=4,MsgTypeCharacter=5,MsgTypePveScore=6,MsgTypeTitle=7,MsgTypeRecommendfriend=8,MsgTypeFrienddynamicmsg=9,MsgTypeMydynamicmsg=10,
@@ -57,7 +56,11 @@ typedef enum: NSUInteger{
     PayloadTypeTeamKickType=7,
     PayloadTypeTeamQuitType=8,
     PayloadTypeInTeamSystemMsg=9,
-    PayloadTypeOther=10
+    PayloadTypeTeamInvite=10,
+    PayloadTypeTeamInviteInGroup=11,
+    PayloadTypeTeamClaimAddType=12,
+    PayloadTypeTeamOccupyType=13,
+    PayloadTypeOther=100
 } PayloadType;
 
 @interface MsgTypeManager : NSObject

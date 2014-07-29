@@ -150,9 +150,17 @@
     else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"historyMsg"]){
         return PayloadTypeHistoryMsg;
     }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamInvite"]){
+        return PayloadTypeTeamInvite;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamInviteInGroup"]){
+        return PayloadTypeTeamInviteInGroup;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamOccupyType"]){
+        return PayloadTypeTeamOccupyType;
+    }
     else{
         return PayloadTypeOther;
     }
 }
-
 @end
