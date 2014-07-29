@@ -174,18 +174,17 @@
 
 -(void)InitializeInfo
 {
-    if ([KISDictionaryHaveKey(self.mainDict, @"type") isKindOfClass:[NSDictionary class]]) {
-        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
-        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
-        m_currentPage = 0;
-        [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
-    } else{
-        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
-        [dropDownView setTitle:@"全部" inSection:1];
-        m_currentPage = 0;
-        [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:@"0" Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
+    NSString * filterId;
+    if ([KISDictionaryHaveKey(self.mainDict, @"filter") isKindOfClass:[NSDictionary class]]) {
+        filterId = KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId");
+    }else{
+        filterId=nil;
     }
- 
+    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
+    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
+    m_currentPage = 0;
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:filterId IsRefre:NO];
+
 }
 
 -(void)tagClick:(UIButton*)sender

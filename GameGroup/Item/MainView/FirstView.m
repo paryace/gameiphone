@@ -126,7 +126,7 @@
 
     NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img");
     cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
-    if ([GameCommon isEmtity:KISDictionaryHaveKey(dic, @"type")]) {
+    if (![KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
         cell.cardLabel.text = @"全部";
     }else{
         cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];

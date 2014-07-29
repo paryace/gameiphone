@@ -13,6 +13,7 @@
 #import "MyRoomViewController.h"
 #import "FindItemViewController.h"
 #import "PreferenceEditViewController.h"
+#import "ItemManager.h"
 @interface ItemBaseViewController ()
 {
     UIView *customView;
@@ -178,6 +179,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
+            [self setList:responseObject];
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
             firstView.firstDataArray =responseObject;
             [firstView.myTableView reloadData];
@@ -197,6 +199,15 @@
     }];
 }
 
+
+-(void)setList:(NSMutableArray*)array
+{
+    for (NSMutableDictionary * dic in array) {
+        if (![KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
+            [dic setObject:[[ItemManager singleton] createType] forKey:@"type"];
+        }
+    }
+}
 
 
 -(void)enterSearchRoomPageWithView:(FirstView *)view
