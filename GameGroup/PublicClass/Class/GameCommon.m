@@ -905,7 +905,6 @@ static GameCommon *my_gameCommon = NULL;
     }
     NSString *filePath  =[RootDocPath stringByAppendingString:@"/gameicon_wx"];
     [gameiconDic writeToFile:filePath atomically:YES];
-    NSLog(@"%@",gameiconDic);
 }
 #pragma mark ----更新游戏数据、、wow服务器等
 -(void)getGameInfoWithGameID:(NSString *)gameId withParams:(NSString *)params
@@ -919,14 +918,9 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"216" forKey:@"method"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        NSLog(@"res -----> %@",responseObject);
-        
         /*
          params 是需要输入的内容
          info是需要选择的内容
-         
-         
          gameName,//游戏名称
          searchParams,//查找这个游戏角色所需要的参数
          gameid,//
@@ -939,10 +933,7 @@ static GameCommon *my_gameCommon = NULL;
          searchParams//
          */
         //  [self openSuccessWithInfo:responseObject From:@"firstOpen"];
-        
         //把获取的数据根据游戏id保存本地
-        
-        
         NSString *filePath = [RootDocPath stringByAppendingString:@"/openInfo"];
         [responseObject writeToFile:[filePath stringByAppendingString:[NSString stringWithFormat:@"gameid_%@_%@",gameId,params]] atomically:YES];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

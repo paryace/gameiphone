@@ -2713,9 +2713,6 @@
         thumbMsgs.sayHiType = @"1";
         thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
 
-        
-        
-        
         DSOtherMsgs * otherMsgs = [DSOtherMsgs MR_createInContext:localContext];
         otherMsgs.messageuuid = messageuuid;
         otherMsgs.msgContent = msgContent;

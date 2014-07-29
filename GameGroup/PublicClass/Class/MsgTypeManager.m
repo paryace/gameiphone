@@ -1,0 +1,167 @@
+//
+//  MsgTypeManager.m
+//  GameGroup
+//
+//  Created by Apple on 14-7-29.
+//  Copyright (c) 2014年 Swallow. All rights reserved.
+//
+
+#import "MsgTypeManager.h"
+
+@implementation MsgTypeManager
+
++(MsgType)getTMsgType:(NSString*)msgtype{
+    
+    if([msgtype isEqualToString:@"groupchat"])//群组聊天消息
+    {
+        return MsgTypeGroupchat;
+    }
+    if ([msgtype isEqualToString:@"normalchat"]) {//正常聊天的消息
+      return MsgTypeNormalchat;
+    }
+    else if ([msgtype isEqualToString:@"sayHello"]){//打招呼的
+        return MsgTypeSayHello;
+    }
+    else if([msgtype isEqualToString:@"deletePerson"])//取消关注
+    {
+        return MsgTypeDeletePerson;
+    }
+    else if ([msgtype isEqualToString:@"character"])//角色信息变化
+    {
+        return MsgTypeCharacter;
+    }
+    else if ([msgtype isEqualToString:@"pveScore"])//战斗力变化
+    {
+        return MsgTypePveScore;
+    }
+    else if ([msgtype isEqualToString:@"title"])//头衔变化
+    {
+        return MsgTypeTitle;
+    }
+    else if ([msgtype isEqualToString:@"recommendfriend"])//好友推荐
+    {
+        return MsgTypeRecommendfriend;
+    }
+    else if([msgtype isEqualToString:@"frienddynamicmsg"])//好友动态
+    {
+       return MsgTypeFrienddynamicmsg;
+    }
+    else if([msgtype isEqualToString:@"mydynamicmsg"])//与我相关动态
+    {
+        return MsgTypeMydynamicmsg;
+    }
+    else if([msgtype isEqualToString:@"groupDynamicMsgChange"])//群动态
+    {
+       return MsgTypeGroupDynamicMsgChange;
+    }
+    else if([msgtype isEqualToString:@"dailynews"])//新闻
+    {
+        return MsgTypeDailynews;
+    }
+    else if([msgtype isEqualToString:@"inGroupSystemMsgJoinGroup"])//好友加入群
+    {
+        return MsgTypeInGroupSystemMsgJoinGroup;
+    }
+    else if([msgtype isEqualToString:@"inGroupSystemMsgQuitGroup"]){//好友退出群
+        return MsgTypeInGroupSystemMsgQuitGroup;
+    }
+    else if([msgtype isEqualToString:@"joinGroupApplication"]){//申请加入群
+        return MsgTypeJoinGroupApplication;
+    }
+    else if ([msgtype isEqualToString:@"joinGroupApplicationAccept"]){//入群申请通过
+        return MsgTypeJoinGroupApplicationAccept;
+    }
+    else if ([msgtype isEqualToString:@"joinGroupApplicationReject"]){//入群申请拒绝
+        return MsgTypeJoinGroupApplicationReject;
+    }
+    else if ([msgtype isEqualToString:@"groupApplicationUnderReview"]){//群审核已提交
+        return MsgTypeGroupApplicationUnderReview;
+    }
+    else if ([msgtype isEqualToString:@"groupApplicationAccept"]){//群审核通过
+        return MsgTypeGroupApplicationAccept;
+    }
+    else if ([msgtype isEqualToString:@"groupApplicationReject"]){//群审核被拒绝
+        return MsgTypeGroupApplicationReject;
+        
+    }else if ([msgtype isEqualToString:@"groupLevelUp"]){//群等级提升
+        return MsgTypeGroupLevelUp;
+        
+    }else if ([msgtype isEqualToString:@"disbandGroup"]){//解散群
+        return MsgTypeDisbandGroup;
+    }
+    else if ([msgtype isEqualToString:@"groupUsershipTypeChange"]){//群成员身份变化
+        return MsgTypeGroupUsershipTypeChange;
+    }
+    else if ([msgtype isEqualToString:@"kickOffGroup"]){//被踢出群的消息
+        return MsgTypeKickOffGroup;
+    }
+    else if ([msgtype isEqualToString:@"groupRecommend"]){//群推荐
+        return MsgTypeGroupRecommend;
+    }
+    else if ([msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
+        return MsgTypeFriendJoinGroup;
+    }
+    else if ([msgtype isEqualToString:@"groupBillboard"]){//群组公告消息
+        return MsgTypeGroupBillboard;
+    }
+    else if ([msgtype isEqualToString:@"reqeustJoinTeam"]){//申请加入组队
+        return MsgTypeReqeustJoinTeam;
+    }
+    else if ([msgtype isEqualToString:@"teamMemberChange"]){//同意添加,踢出组织,退出组织,占坑,填坑
+        return MsgTypeTeamMemberChange;
+    }
+    else if ([msgtype isEqualToString:@"disbandTeam"]){//解散组队
+       return MsgTypeDisbandTeam;
+    }
+    else if ([msgtype isEqualToString:@"teamInvite"]){//邀请加入组队
+       return MsgTypeTeamInvite;
+    }
+    else{
+        return MsgTypeOther;
+    }
+}
+
+
+
+//-(PayloadType)msgType:(NSDictionary*) plainEntry
+//{
+//    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
+//    //普通文字消息
+//    if([GameCommon isEmtity:payLoadStr])
+//    {
+//        return KKChatMsgTypeText;
+//    }
+//    NSDictionary * payloadDic = [payLoadStr JSONValue];
+//    NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
+//    if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"])
+//    {
+//        return KKChatMsgTypeLink;
+//    }
+//    //图片
+//    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"img"])
+//    {
+//        return KKChatMsgTypeImage;
+//        
+//    }
+//    //系统消息
+//    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"])//解散组队
+//    {
+//        return KKChatMsgTypeSystem;
+//    }
+//    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])
+//    {
+//        return KKChatMsgHistory;
+//    }
+//    //文字
+//    else
+//    {
+//        return KKChatMsgTypeText;
+//    }
+//}
+
+@end

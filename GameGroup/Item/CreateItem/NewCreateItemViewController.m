@@ -634,6 +634,7 @@
     [paramDict setObject:gameid forKey:@"gameid"];
     [paramDict setObject:typeId forKey:@"typeId"];
     [paramDict setObject:maxVol forKey:@"maxVol"];
+    [paramDict setObject:@"去你妹" forKey:@"roomName"];
 
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
 

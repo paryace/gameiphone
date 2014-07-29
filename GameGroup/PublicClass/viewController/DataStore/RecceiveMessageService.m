@@ -85,7 +85,6 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             [self.chatDelegate newGroupMessageReceived:dict];
             return;
         }
-        
         if ([msgtype isEqualToString:@"normalchat"]) {//正常聊天的消息
             if ([GameCommon isEmtity:msgId]) {
                 return;
