@@ -375,29 +375,17 @@
 
 -(void)getfenleiFromNetWithGameid:(NSString *)gameid
 {
-    [hud show:YES];
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:gameid forKey:@"gameid"];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"277" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
+    [[ItemManager singleton] getTeamType:gameid reSuccess:^(id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
+            [responseObject removeObjectAtIndex:0];
             [m_tagsArray removeAllObjects];
             [m_tagsArray addObjectsFromArray:responseObject];
             [m_tagsPickView reloadInputViews];
         }
-        
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//        [self showErrorAlert:error];
-        [hud hide:YES];
-    }];
 
-    
+    } reError:^(id error) {
+        
+    }];
 }
 
 -(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId
@@ -415,21 +403,24 @@
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [m_countArray removeAllObjects];
-            [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
-            [m_countPickView reloadInputViews];
-//            [self buildSwitchViewWithDic:KISDictionaryHaveKey(responseObject, @"crossServer")];
-            BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
-            switch (isOpen) {
-                case YES:
-                    [switchView setOn:YES] ;
-                    break;
-                case NO:
-                    [switchView setOn:NO] ;
-                    break;
-                default:
-                    break;
+            NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
+            if (menCount.count>0) {
+                [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
+                [m_countPickView reloadInputViews];
+                //            [self buildSwitchViewWithDic:KISDictionaryHaveKey(responseObject, @"crossServer")];
+                BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
+                switch (isOpen) {
+                    case YES:
+                        [switchView setOn:YES] ;
+                        break;
+                    case NO:
+                        [switchView setOn:NO] ;
+                        break;
+                    default:
+                        break;
+                }
+                [m_uploadDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask") forKey:@"crossFire"];
             }
-            [m_uploadDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask") forKey:@"crossFire"];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         //        [self showErrorAlert:error];

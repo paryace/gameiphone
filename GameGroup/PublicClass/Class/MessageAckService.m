@@ -48,6 +48,7 @@ static MessageAckService *messageAck = NULL;
     }
 }
 
+
 -(long long)getCurrentTime{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     nowTime = nowTime*1000;

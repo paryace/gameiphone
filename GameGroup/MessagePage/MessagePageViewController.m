@@ -209,6 +209,7 @@
     hud = [[MBProgressHUD alloc] initWithWindow:window];
     [window addSubview:hud];
     hud.labelText = @"获取好友信息中...";
+    //调用测试
 }
 
 #pragma mark ----获取XMPP服务器成功

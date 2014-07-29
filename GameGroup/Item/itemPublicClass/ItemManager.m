@@ -45,14 +45,28 @@ static ItemManager *itemManager = NULL;
     return NO;
 }
 
+-(NSMutableDictionary*)createType
+{
+    NSMutableDictionary * allType = [NSMutableDictionary dictionary];
+    [allType setObject:@"0" forKey:@"constId"];
+    [allType setObject:@"5" forKey:@"mask"];
+    [allType setObject:@"1" forKey:@"type"];
+    [allType setObject:@"全部" forKey:@"value"];
+    return allType;
+}
+
 
 #pragma mark ----获取组队分类
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
-    NSArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
+    NSMutableArray * tempArrayType = [NSMutableArray array];
+    [tempArrayType removeAllObjects];
+    NSMutableArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
     if (arrayType&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"TeamType",gameId]]) {
         if (resuccess) {
-            resuccess(arrayType);
+            [tempArrayType addObject:[self createType]];
+            [tempArrayType addObjectsFromArray:arrayType];
+            resuccess(tempArrayType);
         }
         return;
     }
@@ -68,7 +82,9 @@ static ItemManager *itemManager = NULL;
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
             if (resuccess) {
-                resuccess(responseObject);
+                [tempArrayType addObject:[self createType]];
+                [tempArrayType addObjectsFromArray:arrayType];
+                resuccess(tempArrayType);
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
