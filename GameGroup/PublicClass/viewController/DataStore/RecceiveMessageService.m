@@ -191,7 +191,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate groupBillBoardMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"reqeustJoinTeam"]){//申请加入组队
+        else if ([msgtype isEqualToString:@"requestJoinTeam"]){//申请加入组队
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }

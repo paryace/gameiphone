@@ -79,7 +79,7 @@ static TeamManager *teamManager = NULL;
 -(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
     [DataStoreManager addMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
-        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
     
@@ -87,7 +87,7 @@ static TeamManager *teamManager = NULL;
 -(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
     [DataStoreManager removeMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
-        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
 }
@@ -95,7 +95,7 @@ static TeamManager *teamManager = NULL;
 -(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount
 {
     [DataStoreManager updateMemBerCount:gameId RoomId:roomId MemberCount:memberCount Successcompletion:^(BOOL success, NSError *error) {
-        [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
+        [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
 }
