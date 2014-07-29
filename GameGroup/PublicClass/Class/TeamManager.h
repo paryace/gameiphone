@@ -22,4 +22,8 @@
 
 -(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount;
 
+-(void)saveTeamInfo:(id)responseObject GameId:(NSString*)gameId;
+
+-(void)saveTeamInfo:(id)responseObject GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 @end

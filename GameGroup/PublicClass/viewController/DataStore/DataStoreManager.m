@@ -4158,7 +4158,7 @@
 }
 
 #pragma mark  -----组队
-+(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId
++(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     NSString * createDate = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")];
     NSString * crossServer  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"crossServer")];
@@ -4206,7 +4206,9 @@
         commonMsg.gameId = [GameCommon getNewStringWithId:gameId];
     }
     completion:^(BOOL success, NSError *error) {
-                                                   
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
     }];
 }
 

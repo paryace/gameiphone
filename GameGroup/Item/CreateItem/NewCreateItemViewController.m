@@ -654,6 +654,8 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         //发送通知 刷新我的组队页面
+        [[TeamManager singleton] saveTeamInfo:responseObject GameId:gameid];
+        [[GroupManager singleton] getGroupInfoWithNet:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
         [self.navigationController popToRootViewControllerAnimated:YES];

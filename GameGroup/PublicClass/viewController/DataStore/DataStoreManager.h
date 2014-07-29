@@ -360,7 +360,7 @@
 +(void)saveTeamThumbMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
 //保存组队信息
-+(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId;
++(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //查询组队信息
 +(NSMutableDictionary*)queryDSTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;

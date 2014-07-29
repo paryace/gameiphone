@@ -30,7 +30,7 @@ static TeamManager *teamManager = NULL;
     return self;
 }
 
-
+//提取组队信息（本地或者后台）
 -(NSMutableDictionary*)getTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId{
     NSMutableDictionary * teamDic = [self.teamCache objectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     if (teamDic) {
@@ -45,7 +45,6 @@ static TeamManager *teamManager = NULL;
         [self GETInfoWithNet:gameId RoomId:roomId];
     }
     return dict;
-    
 }
 
 #pragma mark ---请求组队详情信息
@@ -66,24 +65,38 @@ static TeamManager *teamManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [DataStoreManager saveTeamInfoWithDict:responseObject GameId:gameId];
+        [self saveTeamInfo:responseObject GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
             [[NSNotificationCenter defaultCenter] postNotificationName:teamInfoUpload object:nil userInfo:responseObject];
-        }
+        }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     }];
 }
-
-
+//保存组队信息
+-(void)saveTeamInfo:(id)responseObject GameId:(NSString*)gameId{
+    [self saveTeamInfo:responseObject GameId:gameId Successcompletion:nil];
+}
+//保存组队信息
+-(void)saveTeamInfo:(id)responseObject GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    if (![responseObject isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+    [DataStoreManager saveTeamInfoWithDict:responseObject GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
+}
+//组队人数+1
 -(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
     [DataStoreManager addMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
         [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
-    
 }
+//组队人数-1
 -(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
     [DataStoreManager removeMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
@@ -91,7 +104,7 @@ static TeamManager *teamManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
 }
-
+//更新组队人数
 -(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount
 {
     [DataStoreManager updateMemBerCount:gameId RoomId:roomId MemberCount:memberCount Successcompletion:^(BOOL success, NSError *error) {

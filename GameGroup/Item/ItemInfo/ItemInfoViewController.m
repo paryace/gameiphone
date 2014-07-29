@@ -311,7 +311,7 @@
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
             [m_myTableView reloadData];
-            [DataStoreManager saveTeamInfoWithDict:responseObject GameId:[GameCommon getNewStringWithId:self.gameid]];
+            [[TeamManager singleton] saveTeamInfo:responseObject GameId:[GameCommon getNewStringWithId:self.gameid]];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

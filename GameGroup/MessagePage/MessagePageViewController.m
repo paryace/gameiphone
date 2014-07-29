@@ -451,10 +451,10 @@
                 cell.nameLabel.text =nickName;
                 cell.contentLabel.text = [self getMsg:message];
             }else if([self msgType:message]==1){//组队通知消息
-                cell.nameLabel.text =nickName;
+                cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
             }else if([self msgType:message]==2){//组队聊天消息
-                cell.nameLabel.text =nickName;
+                cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
                 cell.contentLabel.text = [self getMsg:message];
             }
         }else
