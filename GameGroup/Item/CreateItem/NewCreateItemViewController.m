@@ -79,7 +79,7 @@
     m_gameTf.inputView = m_rolePickerView;
 
 //    [self.view addSubview:m_gameTf];
-    gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 5, 30, 30)];
+    gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 7.5, 25, 25)];
     [m_gameTf addSubview:gameIconImg];
 
     m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+60, 300, 40) placeholder:@"请选择分类" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
@@ -141,6 +141,9 @@
 -(void)isHaveInfo
 {
     if (selectCharacter&&selectType) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] isEqualToString:@"0"]) {
+            return;
+        }
         selectPeopleCount = [[ItemManager singleton] createMaxVols];
         [self initText];
         [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
