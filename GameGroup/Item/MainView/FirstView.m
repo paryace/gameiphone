@@ -126,7 +126,11 @@
 
     NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img");
     cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
-    cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
+    if ([GameCommon isEmtity:KISDictionaryHaveKey(dic, @"type")]) {
+        cell.cardLabel.text = @"全部";
+    }else{
+        cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
+    }
     cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm");
     cell.distLabel.text = @"开启组队搜索";
     return cell;

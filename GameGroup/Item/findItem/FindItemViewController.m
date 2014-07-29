@@ -174,11 +174,18 @@
 
 -(void)InitializeInfo
 {
-    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
-    [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
-    
-    m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
+    if ([KISDictionaryHaveKey(self.mainDict, @"type") isKindOfClass:[NSDictionary class]]) {
+        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
+        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
+        m_currentPage = 0;
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
+    } else{
+        [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
+        [dropDownView setTitle:@"全部" inSection:1];
+        m_currentPage = 0;
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:@"0" Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"filter"), @"constId") IsRefre:NO];
+    }
+ 
 }
 
 -(void)tagClick:(UIButton*)sender
@@ -327,6 +334,9 @@
         if (self.isInitialize) {
             [[NSNotificationCenter defaultCenter]postNotificationName:@"replacePreference_wx" object:nil userInfo:self.mainDict];
         }else{
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(responseObject, @"type")]) {
+                [responseObject setObject:@"全部" forKey:@"type"];
+            }
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
         }
         [self.navigationController popViewControllerAnimated:YES];

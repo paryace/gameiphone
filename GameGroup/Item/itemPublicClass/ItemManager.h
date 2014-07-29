@@ -11,6 +11,8 @@
 @interface ItemManager : NSObject
 + (ItemManager*)singleton;
 
+-(NSMutableDictionary*)createType;
+
 //获取类型列表
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
