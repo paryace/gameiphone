@@ -40,13 +40,42 @@ disbandTeam：解散组队
 teamInvite：组队邀请*/
 
 #import <Foundation/Foundation.h>
-typedef enum : NSUInteger {
-    MsgTypeGroupchat=1,MsgTypeNormalchat=2,MsgTypeSayHello=3,MsgTypeDeletePerson=4,MsgTypeCharacter=5,MsgTypePveScore=6,MsgTypeTitle=7,MsgTypeRecommendfriend=8,MsgTypeFrienddynamicmsg=9,MsgTypeMydynamicmsg=10,
-    MsgTypeGroupDynamicMsgChange=11,MsgTypeDailynews=12,MsgTypeInGroupSystemMsgJoinGroup=13,MsgTypeInGroupSystemMsgQuitGroup=14,MsgTypeJoinGroupApplication=15,MsgTypeJoinGroupApplicationAccept=16,MsgTypeJoinGroupApplicationReject=17,MsgTypeGroupApplicationUnderReview=18,MsgTypeGroupApplicationAccept=19,
-    MsgTypeGroupApplicationReject=20,MsgTypeGroupLevelUp=21,MsgTypeDisbandGroup=22,MsgTypeGroupUsershipTypeChange=23,MsgTypeKickOffGroup=24,MsgTypeGroupRecommend=25,MsgTypeFriendJoinGroup=26,MsgTypeGroupBillboard=27,MsgTypeReqeustJoinTeam=28,MsgTypeTeamMemberChange=29,MsgTypeDisbandTeam=30,MsgTypeTeamInvite=31,MsgTypeOther=32
-} MsgType;
+typedef NS_ENUM(NSInteger,MsgType){
+    MsgTypeGroupchat=1,
+    MsgTypeNormalchat=2,
+    MsgTypeSayHello=3,
+    MsgTypeDeletePerson=4,
+    MsgTypeCharacter=5,
+    MsgTypePveScore=6,
+    MsgTypeTitle=7,
+    MsgTypeRecommendfriend=8,
+    MsgTypeFrienddynamicmsg=9,
+    MsgTypeMydynamicmsg=10,
+    MsgTypeGroupDynamicMsgChange=11,
+    MsgTypeDailynews=12,
+    MsgTypeInGroupSystemMsgJoinGroup=13,
+    MsgTypeInGroupSystemMsgQuitGroup=14,
+    MsgTypeJoinGroupApplication=15,
+    MsgTypeJoinGroupApplicationAccept=16,
+    MsgTypeJoinGroupApplicationReject=17,
+    MsgTypeGroupApplicationUnderReview=18,
+    MsgTypeGroupApplicationAccept=19,
+    MsgTypeGroupApplicationReject=20,
+    MsgTypeGroupLevelUp=21,
+    MsgTypeDisbandGroup=22,
+    MsgTypeGroupUsershipTypeChange=23,
+    MsgTypeKickOffGroup=24,
+    MsgTypeGroupRecommend=25,
+    MsgTypeFriendJoinGroup=26,
+    MsgTypeGroupBillboard=27,
+    MsgTypeReqeustJoinTeam=28,
+    MsgTypeTeamMemberChange=29,
+    MsgTypeDisbandTeam=30,
+    MsgTypeTeamInvite=31,
+    MsgTypeOther=32
+};
 
-typedef enum: NSUInteger{
+typedef NS_ENUM(NSInteger,PayloadType){
     PayloadTypeDynamic=1,
     PayloadTypeImage=2,
     PayloadTypeHistoryMsg=3,
@@ -61,8 +90,9 @@ typedef enum: NSUInteger{
     PayloadTypeTeamClaimAddType=12,
     PayloadTypeTeamOccupyType=13,
     PayloadTypeOther=100
-} PayloadType;
+};
 
 @interface MsgTypeManager : NSObject
 +(MsgType)getTMsgType:(NSString*)msgtype;
+-(PayloadType)getTPayloadType:(NSString*)payloadType;
 @end
