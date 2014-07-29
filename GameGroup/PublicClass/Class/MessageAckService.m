@@ -34,7 +34,6 @@ static MessageAckService *messageAck = NULL;
     }
     return self;
 }
-
 -(void)task
 {
     NSArray * keyArray = [self.cacheMessages allKeys];
