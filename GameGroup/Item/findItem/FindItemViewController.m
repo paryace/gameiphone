@@ -347,12 +347,9 @@
 //创建组队
 -(void)didClickCreateItem:(id)sender
 {
-//    CreateItemViewController *cretItm = [[CreateItemViewController alloc]init];
     NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-    cretItm.roleDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:selectCharacter,@"character",selectType,@"type", nil];
-    
-//    [cretItm.roleDict setObject:selectCharacter forKey:@"character"];
-//    [cretItm.roleDict setObject:selectType forKey:@"type"];
+    cretItm.selectRoleDict = selectCharacter;
+    cretItm.selectTypeDict = selectType;
     [self.navigationController pushViewController:cretItm animated:YES];
 }
 //筛选
@@ -427,7 +424,8 @@
     if (indexPath.section==0) {
         if (indexPath.row == 0) {
             NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-            cretItm.roleDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:selectCharacter,@"character",selectType,@"type", nil];
+            cretItm.selectRoleDict = selectCharacter;
+            cretItm.selectTypeDict = selectType;
             [self.navigationController pushViewController:cretItm animated:YES];
             return;
         }

@@ -13,6 +13,8 @@
 
 -(NSMutableDictionary*)createType;
 
+-(NSMutableDictionary*)createMaxVols;
+
 //获取类型列表
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
@@ -39,4 +41,6 @@
 
 //设置组队位置
 -(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTagId:(NSString*)positionTagId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+-(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 @end

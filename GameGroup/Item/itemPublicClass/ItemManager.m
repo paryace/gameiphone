@@ -54,6 +54,15 @@ static ItemManager *itemManager = NULL;
     [allType setObject:@"全部" forKey:@"value"];
     return allType;
 }
+-(NSMutableDictionary*)createMaxVols
+{
+    NSMutableDictionary * allType = [NSMutableDictionary dictionary];
+    [allType setObject:@"0" forKey:@"constId"];
+    [allType setObject:@"5" forKey:@"mask"];
+    [allType setObject:@"8" forKey:@"type"];
+    [allType setObject:@"5人" forKey:@"value"];
+    return allType;
+}
 
 
 #pragma mark ----获取组队分类
@@ -329,6 +338,27 @@ static ItemManager *itemManager = NULL;
     }];
 }
 
+#pragma mark --- 获取人数列表
+-(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:gameid forKey:@"gameid"];
+    [paramDict setObject:typeId forKey:@"typeId"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"298" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
 
 -(long long)getCurrentTime{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];

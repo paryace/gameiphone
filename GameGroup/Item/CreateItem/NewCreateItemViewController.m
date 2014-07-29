@@ -10,21 +10,6 @@
 #import "EGOImageView.h"
 #import "ItemManager.h"
 
-
-#define CORNER_RADIUS 3.0f
-#define LABEL_MARGIN 5.0f
-#define BOTTOM_MARGIN 5.0f
-#define FONT_SIZE 15.0f
-#define HORIZONTAL_PADDING 15.0f
-#define VERTICAL_PADDING 5.0f
-#define BACKGROUND_COLOR [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.00]
-#define TEXT_COLOR [UIColor blackColor]
-#define TEXT_SHADOW_COLOR [UIColor whiteColor]
-#define TEXT_SHADOW_OFFSET CGSizeMake(0.0f, 1.0f)
-#define BORDER_COLOR [UIColor lightGrayColor].CGColor
-#define BORDER_WIDTH 0.5f
-#define KUIImage(name) ([UIImage imageNamed:name])
-
 @interface NewCreateItemViewController ()
 {
     UITextField   *  m_gameTf;
@@ -45,10 +30,10 @@
     NSMutableArray  *  m_RoleArray;
     NSMutableArray  *  m_countArray;
     
-    NSMutableDictionary  *m_uploadDict;
     NSDictionary *   selectCharacter;
     NSDictionary *  selectType;
     NSDictionary *  selectPeopleCount;
+    NSString * selectCrossServer;
     
     UISwitch *switchView;
     EGOImageView *gameIconImg;
@@ -71,6 +56,9 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"创建队伍" withBackButton:YES];
     
+    selectCharacter = self.selectRoleDict;
+    selectType = self.selectTypeDict;
+    
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
@@ -83,7 +71,6 @@
     m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     m_flArray  = [NSMutableArray array];
     m_countArray  = [NSMutableArray array];
-    m_uploadDict = [NSMutableDictionary dictionary];
     [self buildPickView];
     
     m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择角色" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
@@ -140,22 +127,25 @@
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
-
     [self isHaveInfo];
+}
+
+-(void)initText
+{
+    m_gameTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
+    m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
+    m_countTf.text =[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"value")]] ;
+     gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
 }
 
 -(void)isHaveInfo
 {
-    if ([[self.roleDict allKeys]containsObject:@"character"]) {
-        NSDictionary *roleDic =[self.roleDict objectForKey:@"character"];
-        NSDictionary *typeDic = [self.roleDict objectForKey:@"type"];
-        m_gameTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(roleDic, @"simpleRealm"),KISDictionaryHaveKey(roleDic, @"name")];
-        m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
-        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")]] ;
-        gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(roleDic, @"gameid")]];
-        [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")]];
-        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"id")]];
-        [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")]];
+    if (selectCharacter&&selectType) {
+        selectPeopleCount = [[ItemManager singleton] createMaxVols];
+        [self initText];
+        [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
+        [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
     }
 }
 
@@ -206,9 +196,9 @@
 
     BOOL isButtonOn = [sender isOn];
     if (isButtonOn) {
-        [m_uploadDict setObject:@"1" forKey:@"crossServer"];
+        selectCrossServer = @"1";
     }else {
-        [m_uploadDict setObject:@"0" forKey:@"crossServer"];
+        selectCrossServer = @"0";
     }
 }
 -(void)buildPickView
@@ -261,7 +251,7 @@
     
     return tf;
 }
-
+//点击标签
 -(void)tagClick:(UIButton*)sender
 {
     NSString *str = m_miaoshuTV.text;
@@ -278,8 +268,6 @@
         if ([m_RoleArray count] != 0) {
             selectCharacter =[m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
             m_gameTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];
             [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
@@ -293,8 +281,6 @@
             m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
             m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")]];
             [m_tagTf resignFirstResponder];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")] forKey:@"maxVol"];
             [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
             [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         }
@@ -304,7 +290,6 @@
             selectPeopleCount =[m_countArray objectAtIndex:[m_countPickView selectedRowInComponent:0]];
             m_countTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"value")];
             [m_countTf resignFirstResponder];
-            [m_uploadDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
         }
     }
 }
@@ -391,51 +376,42 @@
 -(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId
 {
     [hud show:YES];
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    [paramDict setObject:gameid forKey:@"gameid"];
-    [paramDict setObject:typeId forKey:@"typeId"];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"298" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[ItemManager singleton] getPersonCountFromNetWithGameId:gameid typeId:typeId reSuccess:^(id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [m_countArray removeAllObjects];
-            NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
-            if (menCount.count>0) {
-                [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
-                [m_countPickView reloadInputViews];
-                //            [self buildSwitchViewWithDic:KISDictionaryHaveKey(responseObject, @"crossServer")];
-                BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
-                switch (isOpen) {
-                    case YES:
-                        [switchView setOn:YES] ;
-                        break;
-                    case NO:
-                        [switchView setOn:NO] ;
-                        break;
-                    default:
-                        break;
-                }
-                [m_uploadDict setObject:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask") forKey:@"crossFire"];
-            }
+            [self setPersonCount:responseObject];
         }
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        //        [self showErrorAlert:error];
+    } reError:^(id error) {
         [hud hide:YES];
     }];
-    
-    
 }
 
+-(void)setPersonCount:(NSDictionary*)responseObject
+{
+    [m_countArray removeAllObjects];
+    NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
+    if (menCount.count>0) {
+        [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
+        [m_countPickView reloadInputViews];
+        BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
+        switch (isOpen) {
+            case YES:
+                [switchView setOn:YES] ;
+                break;
+            case NO:
+                [switchView setOn:NO] ;
+                break;
+            default:
+                break;
+        }
+        selectCrossServer = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask");
+    }
+}
 
 - (void)textViewDidChange:(UITextView *)textView
 {
     [self refreshZiLabelText];
 }
-
 
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -456,7 +432,6 @@
         return YES;
     }
     else{
-//        [self showAlertViewWithTitle:@"提示" message:@"最多不能超过100个字" buttonTitle:@"确定"];
         m_ziNumLabel.textColor = [UIColor redColor];
         return NO;
     }
@@ -480,15 +455,15 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    if ([GameCommon isEmtity:m_gameTf.text]) {
+    if (!selectCharacter) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return;
     }
-    if ([GameCommon isEmtity:m_tagTf.text]) {
+    if (!selectType) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-    if ([GameCommon isEmtity:m_countTf.text]) {
+    if (!selectPeopleCount) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择人数" buttonTitle:@"OK"];
         return;
     }
@@ -497,49 +472,14 @@
         return;
     }
     [hud show:YES];
-    
-    NSDictionary *roleDic =[self.roleDict objectForKey:@"character"];
-    NSDictionary *typeDic = [self.roleDict objectForKey:@"type"];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    NSString * characterId ;
-    NSString * gameid;
-    NSString * typeId;
-    NSString * maxVol;
-    
-    if ([[m_uploadDict allKeys]containsObject:@"characterId"]) {
-        characterId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"characterId")];
-    }else{
-        characterId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"id")];
-    }
-    
-    if ([[m_uploadDict allKeys]containsObject:@"characterId"]) {
-        gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"gameid")];
-    }else{
-        gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(roleDic, @"gameid")];
-    }
-
-    if ([[m_uploadDict allKeys]containsObject:@"characterId"]) {
-        typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"typeId")];
-    }else{
-        typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")];
-    }
-
-    if ([[m_uploadDict allKeys]containsObject:@"characterId"]) {
-        maxVol =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"maxVol")];
-    }else{
-        maxVol =[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
-    }
-    [paramDict setObject:characterId forKey:@"characterId"];
-    [paramDict setObject:gameid forKey:@"gameid"];
-    [paramDict setObject:typeId forKey:@"typeId"];
-    [paramDict setObject:maxVol forKey:@"maxVol"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
     [paramDict setObject:@"去你妹" forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
-    if ([[m_uploadDict allKeys]containsObject:@"crossServer"]) {
-        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossServer")] forKey:@"crossServer"];
-    }else{
-        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_uploadDict, @"crossFire")] forKey:@"crossServer"];
-    }
+    [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -548,7 +488,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         //发送通知 刷新我的组队页面
-        [[TeamManager singleton] saveTeamInfo:responseObject GameId:gameid];
+        [[TeamManager singleton] saveTeamInfo:responseObject GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
         [[GroupManager singleton] getGroupInfoWithNet:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
@@ -594,18 +534,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
