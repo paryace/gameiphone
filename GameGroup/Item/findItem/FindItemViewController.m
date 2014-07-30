@@ -79,8 +79,9 @@
     
     //排序
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+//    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+//    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    [createBtn setTitle:@"排序" forState:UIControlStateNormal];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
@@ -101,14 +102,17 @@
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
     mSearchBar.backgroundColor = [UIColor clearColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
+    mSearchBar.barTintColor = [UIColor blackColor];
+    mSearchBar.searchBarStyle = UISearchBarStyleDefault;
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];
     [self.view addSubview:mSearchBar];
     mSearchBar.frame = CGRectMake(0, startX+40, 260, 44);
  
-    screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40, 60, 44)];
-    screenView.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
+    screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40.5f, 60, 43)];
+//    screenView.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
+    screenView.backgroundColor = [UIColor blackColor];
     [self.view addSubview:screenView];
     
     UIImageView * lineImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0, 60, 0.5)];
@@ -412,11 +416,16 @@
 
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
     cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+    
+    NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
+    
+//    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+    cell.titleLabel.text = title;
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
     NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-   cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+//    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
+//   cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+    cell.timeLabel.text = timeStr;
     return cell;
 }
 
