@@ -77,13 +77,13 @@
     arrayType = [NSArray array];
     arrayFilter = [NSArray array];
     
-    //创建
-//    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-//    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-//    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
-//    createBtn.backgroundColor = [UIColor clearColor];
-//    [createBtn addTarget:self action:@selector(didClickCreateItem:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:createBtn];
+    //排序
+    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+    createBtn.backgroundColor = [UIColor clearColor];
+    [createBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:createBtn];
     //菜单
     dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,startX, 320, 40) dataSource:self delegate:self];
     dropDownView.mSuperView = self.view;
@@ -116,8 +116,13 @@
     [screenView addSubview:lineImageV];
     
     screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
-    [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
-    [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
+//    [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
+//    [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
+    [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
+
+    [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+    
+
     [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
     [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
     screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
@@ -240,7 +245,7 @@
     KxMenuItem *first = [KxMenuItem menuItem:@"组队筛选" image:nil target:nil action:NULL];
     first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
     first.alignment = NSTextAlignmentCenter;
-    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX+40+10, 50, 25) menuItems:menuItems];
+    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX-40, 50, 25) menuItems:menuItems];
 }
 #pragma mark -- 筛选
 - (void) pushMenuItem:(KxMenuItem*)sender
