@@ -106,6 +106,7 @@
     NSMutableArray * tempArrayType = [datas mutableCopy];
    for (NSMutableDictionary * dic in tempArrayType) {
          NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
+       [dic setObject:[NSString stringWithFormat:@"%d",[[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")]] forKey:@"receiveState"];
        if (preDic) {
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
@@ -124,11 +125,11 @@
     NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"refreshPreference_wx"];
     if ([str isEqualToString:@"refreshPreference"]) {
         if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
-//            firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
            firstView.firstDataArray =  [self detailDataList:[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]];
             [firstView.myTableView reloadData];
+            [self displayTabbarNotification];
         }
-            [self getPreferencesWithNet];
+        [self getPreferencesWithNet];
     }
 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]) {
@@ -138,12 +139,24 @@
         [self getMyRoomFromNet];
     }
 }
+//
+-(void)displayTabbarNotification
+{
+    NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount:firstView.firstDataArray];
+    if (msgCount>0) {
+        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
+    }
+    else
+    {
+        [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
+    }
+}
 
 
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{
     NSDictionary * msg = notification.userInfo;
     [firstView receiveMsg:msg];
-    NSLog(@"收到组队偏好消息通知,...%@",msg);
+    [self displayTabbarNotification];
 }
 
 -(void)refreshMyList:(id)sender
@@ -202,9 +215,9 @@
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [self setList:responseObject];
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-//            firstView.firstDataArray =responseObject;
             firstView.firstDataArray =[self detailDataList:responseObject];
             [firstView.myTableView reloadData];
+            [self displayTabbarNotification];
             [[NSUserDefaults standardUserDefaults]setObject:@"stopRefreshPreference" forKey:@"refreshPreference_wx"];
             [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
             }];
@@ -236,7 +249,6 @@
 -(void)enterSearchRoomPageWithView:(FirstView *)view
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-
     FindItemViewController *find = [[FindItemViewController alloc]init];
     [self.navigationController pushViewController:find animated:YES];
 }
@@ -247,6 +259,9 @@
     [self.navigationController pushViewController:find animated:YES];
     [customImageView removeFromSuperview];
 
+}
+-(void)refreWithRow:(NSInteger)row{
+    [self displayTabbarNotification];
 }
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow
 {
@@ -277,8 +292,10 @@
     [DataStoreManager updatePreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
         [firstView readMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")]];
         [firstView.myTableView reloadData];
+        [self displayTabbarNotification];
     }];
 }
+
 
 
 #pragma mark --获取我的组队列表

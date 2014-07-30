@@ -42,6 +42,7 @@
     #import "MessageAckService.h"
     #import "GameListManager.h"
     #import "MsgTypeManager.h"
+    #import "PreferencesMsgManager.h"
    #endif
 
 #define appType @"91"//91、appStore
