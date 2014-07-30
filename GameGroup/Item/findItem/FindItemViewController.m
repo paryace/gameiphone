@@ -309,15 +309,23 @@
 }
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
 {
-    if (section==0) {
-         return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
-    }else if (section == 1){
+//    if (section==0) {
+//         return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
+//    }else if (section == 1){
         if (arrayType.count>0) {
             return KISDictionaryHaveKey([arrayType objectAtIndex:index], @"value");
         }
         return @"";
-    }
-    return @"";
+//    }
+//    return @"";
+}
+
+-(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger)index
+{
+    if (section ==0) {
+        return m_charaArray[index];
+    }else
+    return nil;
 }
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
