@@ -7,6 +7,7 @@
 //
 
 #import "DropDownListView.h"
+#import "FindRoleCell.h"
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
 
@@ -147,7 +148,8 @@
     }
     
     //修改tableview的frame
-    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
+//    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
+    int sectionWidth = (self.frame.size.width);
     CGRect rect = self.mTableView.frame;
     rect.origin.x = sectionWidth *section;
     rect.size.width = sectionWidth;
@@ -180,13 +182,22 @@
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (currentExtendSection ==0) {
+        return 60;
+    }else
     return 40;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
-        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        NSString *chooseCellTitle;
+        if (currentExtendSection==0) {
+            chooseCellTitle = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"name")]];
+        }else{
+            chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        }
+        
         
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
@@ -211,6 +222,26 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString * cellIdentifier = @"cellIdentifier";
+    
+    if (currentExtendSection ==0) {
+        FindRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (!cell) {
+            cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        }
+        cell.backgroundColor = kColorWithRGB(27, 29, 34, 1);
+        NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
+        cell.headImgView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:100];
+        cell.roleNameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
+
+        cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImageId];
+        cell.realmLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")];
+        cell.zdlLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value2")];
+        cell.zdlLabel.adjustsFontSizeToFitWidth = YES;
+        cell.zdlNumLabel.text= [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value3")];
+        return cell;
+    }else{
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
@@ -221,6 +252,7 @@
     cell.textLabel.font = [UIFont systemFontOfSize:12];
     cell.textLabel.textColor = [UIColor whiteColor];
     return cell;
+    }
 }
 
 @end

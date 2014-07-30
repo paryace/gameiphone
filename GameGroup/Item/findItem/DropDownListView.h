@@ -21,7 +21,7 @@
 @property (nonatomic, strong) UIView *mSuperView;
 @property (nonatomic, strong) UIView *mTableBaseView;
 @property (nonatomic, strong) UITableView *mTableView;
-
+@property (nonatomic, assign) BOOL isRoleTab;
 - (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate;
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section;
 

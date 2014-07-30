@@ -401,7 +401,14 @@
 
     cell.value1Lb.text = [NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"realm")]/*,[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"memberInfo")]*/];
     cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"memberInfo")];
-    cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"position")];
+    
+    NSDictionary *dict = KISDictionaryHaveKey(dic, @"position");
+    if ([dict isKindOfClass:[NSDictionary class]]&&[[dict allKeys]containsObject:@"value"]) {
+        cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"position"), @"value")];
+    }else{
+        cell.value3Lb.text = @"";
+    }
+    
 
 //    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
