@@ -331,8 +331,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 #pragma mark 组队偏好
 -(void)teamRecommendMessageReceived:(NSDictionary *)messageContent{
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     [DataStoreManager savePreferenceMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        [[MessageSetting singleton] setSoundOrVibrationopen];
+        NSInteger state = [[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(payloadDic, @"gameid") PreferenceId:KISDictionaryHaveKey(payloadDic, @"preferenceId")];
+        if (state == 1) {
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+        }
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamRecommend object:nil userInfo:msgDic];
     }];
@@ -356,8 +360,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 -(NSMutableDictionary*)getPayloadDic:(NSDictionary *)messageContent{
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
-    NSMutableDictionary *payloadDic = [payloadStr JSONValue];
-    return payloadDic;
+    return [payloadStr JSONValue];
 }
 
 

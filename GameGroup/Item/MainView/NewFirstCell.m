@@ -41,7 +41,7 @@
         
         
         self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 35, 240, 20)];
-        [self.distLabel setTextColor:[UIColor greenColor]];
+        [self.distLabel setTextColor:[UIColor grayColor]];
         [self.distLabel setFont:[UIFont systemFontOfSize:13]];
         [self.distLabel setBackgroundColor:[UIColor clearColor]];
         [self.bgView addSubview:self.distLabel];

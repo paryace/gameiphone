@@ -158,9 +158,8 @@
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
         }else{
-            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.text = @"组队提醒已开启";
         }
-        cell.distLabel.textColor = [UIColor greenColor];
         if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
             cell.notiBgV.hidden = NO;
             cell.unreadCountLabel.text = KISDictionaryHaveKey(dic, @"msgCount");
@@ -172,11 +171,18 @@
     {
         cell.stopImg.image = KUIImage(@"close_receive");
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
-            cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"[",KISDictionaryHaveKey(dic, @"msgCount"),@"] ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
+            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@") ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
+            }else{
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+            }
         }else{
-            cell.distLabel.text = @"已关闭组队搜索";
+            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"[",KISDictionaryHaveKey(dic, @"msgCount"),@"] ",@"已关闭组队搜索"];
+            }else{
+                cell.distLabel.text = @"组队提醒已关闭";
+            }
         }
-        cell.distLabel.textColor = [UIColor greenColor];
         cell.notiBgV.hidden = YES;
     }
     else if (state == 3)
@@ -185,9 +191,8 @@
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
         }else{
-            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.text = @"组队提醒已开启";
         }
-        cell.distLabel.textColor = [UIColor greenColor];
         if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
             cell.notiBgV.hidden = NO;
             cell.unreadCountLabel.text = KISDictionaryHaveKey(dic, @"msgCount");
