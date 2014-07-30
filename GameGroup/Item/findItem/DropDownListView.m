@@ -146,20 +146,18 @@
         self.mTableView.dataSource = self;
         
     }
-    
+    //[self.dropDownDataSource numberOfRowsInSection:currentExtendSection]
     //修改tableview的frame
 //    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
-    int sectionWidth = (self.frame.size.width);
     CGRect rect = self.mTableView.frame;
-    rect.origin.x = sectionWidth *section;
-    rect.size.width = sectionWidth;
-    rect.size.height = 0;
+    rect.origin.x = 0;
+    rect.size.width = 320;
+    rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
     self.mTableView.frame = rect;
     [self.mSuperView addSubview:self.mTableBaseView];
     [self.mSuperView addSubview:self.mTableView];
-    
     //动画设置位置
-    rect .size.height = 240;
+    
     [UIView animateWithDuration:0.3 animations:^{
         self.mTableBaseView.alpha = 0.2;
         self.mTableView.alpha = 0.2;
@@ -184,8 +182,9 @@
 {
     if (currentExtendSection ==0) {
         return 60;
-    }else
-    return 40;
+    }else{
+        return 40;
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -221,9 +220,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * cellIdentifier = @"cellIdentifier";
-    
     if (currentExtendSection ==0) {
+        static NSString * cellIdentifier = @"cellIdentifiercha";
         FindRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
@@ -241,17 +239,17 @@
         cell.zdlNumLabel.text= [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value3")];
         return cell;
     }else{
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
-    cell.backgroundColor = [UIColor blackColor];
-    cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-    cell.textLabel.font = [UIFont systemFontOfSize:12];
-    cell.textLabel.textColor = [UIColor whiteColor];
-    return cell;
+        static NSString * cellIdentifier = @"cellIdentifierText";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        cell.backgroundColor = [UIColor blackColor];
+        cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        cell.textLabel.font = [UIFont systemFontOfSize:12];
+        cell.textLabel.textColor = [UIColor whiteColor];
+        return cell;
     }
 }
 
