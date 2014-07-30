@@ -12,6 +12,8 @@
 {
     BOOL isRun;
     float dd ;
+    UIActionSheet *editActionSheet;
+    NSInteger      actionSheetCount;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -132,7 +134,35 @@
         cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
     }
     cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm");
-    cell.distLabel.text = @"开启组队搜索";
+    
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]])
+    {
+        
+        NSString *str = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]]];
+        
+        if ([str isEqualToString:@"1"]) {
+            cell.stopImg.image = KUIImage(@"have_soundSong");
+            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.textColor = [UIColor greenColor];
+        }
+        else if ([str isEqualToString:@"2"])
+        {
+            cell.stopImg.image = KUIImage(@"close_receive");
+            cell.distLabel.text = @"已关闭组队搜索";
+            cell.distLabel.textColor = [UIColor redColor];
+
+        }
+        else if ([str isEqualToString:@"3"])
+        {
+            cell.stopImg.image = KUIImage(@"nor_soundSong");
+            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.textColor = [UIColor greenColor];
+
+        }
+    }
+    
+    
     return cell;
     
 }
@@ -202,36 +232,92 @@
 {
 
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
-        NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
-        
-        NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
-        NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
-        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
-        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
-        [postDict setObject:paramDict forKey:@"params"];
-        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [postDict setObject:@"289" forKey:@"method"];
-        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [self.firstDataArray removeObjectAtIndex:indexPath.row];
-            NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-
-            [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-            [self.myTableView reloadData];
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }
-            }
-        }];
-
+        editActionSheet = [[UIActionSheet alloc]initWithTitle:@"编辑" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"正常模式" otherButtonTitles:@"无红点模式",@"静音模式", @"删除偏好",nil];
+        editActionSheet.tag = indexPath.row;
+        actionSheetCount = indexPath.row;
+        [editActionSheet showInView:self];
     }
 }
 
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSDictionary *dic = [self.firstDataArray objectAtIndex:actionSheetCount];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:actionSheetCount inSection:0];
+    NewFirstCell * cell = (NewFirstCell *)[self.myTableView cellForRowAtIndexPath:path];
+    NSLog(@"----------------%d",actionSheetCount);
+    switch (buttonIndex) {
+        case 0:
+            NSLog(@"正常模式");
+            
+            [[NSUserDefaults standardUserDefaults]setObject:@"1" forKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+            cell.stopImg.image = KUIImage(@"have_soundSong");
+            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.textColor = [UIColor greenColor];
 
+            break;
+        case 1:
+            NSLog(@"无红点模式");
+            [[NSUserDefaults standardUserDefaults]setObject:@"2" forKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+            cell.stopImg.image = KUIImage(@"close_receive");
+            cell.distLabel.text = @"已关闭组队搜索";
+            cell.distLabel.textColor = [UIColor redColor];
+
+            break;
+        case 2:
+            NSLog(@"静音模式");
+            [[NSUserDefaults standardUserDefaults]setObject:@"3" forKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+
+            cell.stopImg.image = KUIImage(@"nor_soundSong");
+            cell.distLabel.text = @"开启组队搜索";
+            cell.distLabel.textColor = [UIColor greenColor];
+
+            break;
+        case 3:
+            NSLog(@"删除偏好");
+            [self deleteCellWithIndexPathRow:actionSheetCount];
+
+            break;
+        default:
+            break;
+    }
+}
+
+-(void)deleteCellWithIndexPathRow:(NSInteger)row
+{
+    
+    NSDictionary *dic = [self.firstDataArray objectAtIndex:row];
+    
+    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"289" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.firstDataArray removeObjectAtIndex:row];
+        NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+        
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]) {
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+        }
+        
+        
+        [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+        [self.myTableView reloadData];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
+    
+
+}
 
 
 -(void)enterSearchPage:(id)sender

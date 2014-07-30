@@ -24,7 +24,8 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
+//        self.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
+        self.backgroundColor = [UIColor blackColor];
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
@@ -53,7 +54,7 @@
                 sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
             }
             [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
-            [sectionBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [sectionBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
             [self addSubview:sectionBtn];
             
@@ -215,9 +216,10 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-    
+    cell.backgroundColor = [UIColor blackColor];
     cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
     cell.textLabel.font = [UIFont systemFontOfSize:12];
+    cell.textLabel.textColor = [UIColor whiteColor];
     return cell;
 }
 

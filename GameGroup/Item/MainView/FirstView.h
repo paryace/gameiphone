@@ -10,7 +10,7 @@
 #import "FirstCell.h"
 
 @protocol firstViewDelegate;
-@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,firstCellDelegate>
+@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,firstCellDelegate,UIActionSheetDelegate>
 @property(nonatomic,strong)UITableView *myTableView;
 @property(nonatomic,strong)UIButton *searchRoomBtn;
 @property(nonatomic,strong)NSMutableArray *firstDataArray;
