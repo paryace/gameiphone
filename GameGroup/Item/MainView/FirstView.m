@@ -124,7 +124,7 @@
     cell.bgView.backgroundColor = [UIColor whiteColor];
     cell.headImageV.placeholderImage = KUIImage(@"placeholder");
 
-    NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img");
+    NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterImg");
     cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
     if (![KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
         cell.cardLabel.text = @"全部";
@@ -142,7 +142,6 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     [self.myDelegate enterEditPageWithRow:indexPath.row isRow:0];
-
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -194,6 +193,10 @@
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
+}
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"设置";
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
