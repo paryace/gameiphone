@@ -33,5 +33,6 @@
 @property (nonatomic, retain) NSString * groupId;
 @property (nonatomic, retain) NSString * userImg;
 @property (nonatomic, retain) NSString * receiveTime;
+@property (nonatomic, retain) NSString * unreadMsgCount;
 
 @end

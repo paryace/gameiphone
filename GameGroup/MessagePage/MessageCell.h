@@ -20,5 +20,5 @@
 @property (strong,nonatomic) UIImageView * notiBgV;
 @property (strong,nonatomic) UIImageView * settingState;
 
--(void)setNotReadMsgCount:(DSThumbMsgs*)message;
+-(void)setNotReadMsgCount:(NSMutableDictionary*)message;
 @end

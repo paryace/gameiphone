@@ -333,11 +333,14 @@ UINavigationControllerDelegate>
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
-        [[ItemManager singleton] getMyGameLocation:@"2" reSuccess:^(id responseObject) {
-            [self updateTeamType:responseObject];
-        } reError:^(id error) {
-        }];
-        return YES;
+        if ([self.gameId isEqualToString:@"1"]||[self.gameId isEqualToString:@"2"]) {
+            [[ItemManager singleton] getMyGameLocation:self.gameId reSuccess:^(id responseObject) {
+                [self updateTeamType:responseObject];
+            } reError:^(id error) {
+            }];
+            return YES;
+        }
+        return NO;
     }else if(section == 1){
         return YES;
     }

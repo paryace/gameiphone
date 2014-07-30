@@ -32,5 +32,6 @@
 @dynamic groupId;
 @dynamic userImg;
 @dynamic receiveTime;
+@dynamic unreadMsgCount;
 
 @end
