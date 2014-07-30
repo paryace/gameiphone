@@ -333,9 +333,6 @@
         if (self.isInitialize) {
             [[NSNotificationCenter defaultCenter]postNotificationName:@"replacePreference_wx" object:nil userInfo:self.mainDict];
         }else{
-            if ([GameCommon isEmtity:KISDictionaryHaveKey(responseObject, @"type")]) {
-                [responseObject setObject:@"全部" forKey:@"type"];
-            }
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
         }
         [self.navigationController popViewControllerAnimated:YES];

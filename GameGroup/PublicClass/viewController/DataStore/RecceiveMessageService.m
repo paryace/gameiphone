@@ -238,6 +238,8 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamInviteInGroupTypeMessageReceived:dict];
+        }else{
+            [self.chatDelegate otherAnyMessageReceived:dict];
         }
     }
     

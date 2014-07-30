@@ -329,6 +329,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
     }];
 }
+#pragma mark 其他不认识的消息
+-(void)otherAnyMessageReceived:(NSDictionary *)messageContent{
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
+}
 
 -(NSString*)getGroupIdFromPayload:(NSDictionary *)messageContent{
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];

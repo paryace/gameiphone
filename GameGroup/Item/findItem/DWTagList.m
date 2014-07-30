@@ -73,7 +73,7 @@
         }else {
             textSize.width += (HORIZONTAL_PADDING*2);
         }
-        textSize.height += VERTICAL_PADDING*2;
+        textSize.height += VERTICAL_PADDING*5;
         UIButton *label = nil;
         if (!gotPreviousFrame) {
             label = [[UIButton alloc] initWithFrame:CGRectMake(0, 0,textSize.width, textSize.height)];

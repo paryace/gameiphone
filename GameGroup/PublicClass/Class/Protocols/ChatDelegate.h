@@ -32,7 +32,6 @@
 
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent;//组队通知消息
 
-
 -(void)teamMemberMessageReceived:(NSDictionary *)messageContent;//加入组队
 
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent;//退出组队
@@ -49,4 +48,5 @@
 
 -(void)teamInviteInGroupTypeMessageReceived:(NSDictionary *)messageContent;//邀请加入组队
 
+-(void)otherAnyMessageReceived:(NSDictionary *)messageContent;//其他不知道的消息
 @end
