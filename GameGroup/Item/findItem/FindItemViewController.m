@@ -188,7 +188,7 @@
     [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterName") inSection:0];
     [dropDownView setTitle:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"value") inSection:1];
     m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:filterId IsRefre:NO];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"gameid") CharacterId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"createTeamUser"), @"characterId") TypeId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.mainDict, @"type"), @"constId") Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:filterId PreferenceId:KISDictionaryHaveKey(self.mainDict, @"preferenceId") IsRefre:NO];
 
 }
 
@@ -196,7 +196,7 @@
 {
     mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
     m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")  IsRefre:NO];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")  PreferenceId:@"" IsRefre:NO];
 
     if([mSearchBar isFirstResponder]){
         [mSearchBar resignFirstResponder];
@@ -252,7 +252,7 @@
 {
     selectFilter = [arrayFilter objectAtIndex:sender.tag];
     m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectFilter, @"constId")]  IsRefre:NO];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectFilter, @"constId")]  PreferenceId:@"" IsRefre:NO];
 }
 
 #pragma mark -- dropDownListDelegate
@@ -267,7 +267,7 @@
         selectType =[arrayType objectAtIndex:index];
 
         m_currentPage = 0;
-        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:nil  IsRefre:NO];
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:nil FilterId:nil PreferenceId:@""  IsRefre:NO];
     }
 }
 
@@ -466,7 +466,7 @@
 - (void)doSearch:(UISearchBar *)searchBar{
     NSLog(@"searchBar-Text-%@",searchBar.text);
     m_currentPage = 0;
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:searchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") IsRefre:NO];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:searchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") PreferenceId:@"" IsRefre:NO];
 }
 
 #pragma mark ----获得焦点
@@ -513,7 +513,7 @@
     [UIView commitAnimations];
 }
 #pragma mark ----NET
--(void)getInfoFromNetWithDic:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId IsRefre:(BOOL)isRefre
+-(void)getInfoFromNetWithDic:(NSString*)gameid CharacterId:(NSString*)characterId TypeId:(NSString*)typeId Description:(NSString*)description FilterId:(NSString*)filterId PreferenceId:(NSString*)preferenceId IsRefre:(BOOL)isRefre
 {
     if (!isRefre) {
         [hud show:YES];
@@ -527,6 +527,9 @@
     }
     if (![GameCommon isEmtity:[GameCommon getNewStringWithId:filterId]]) {
         [paramDict setObject:[GameCommon getNewStringWithId:filterId] forKey:@"filterId"];
+    }
+    if (![GameCommon isEmtity:[GameCommon getNewStringWithId:preferenceId]]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:preferenceId] forKey:@"preferenceId"];
     }
     [paramDict setObject:[NSString stringWithFormat:@"%ld", (long)m_currentPage] forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -591,7 +594,7 @@
                 return;
             }
             m_currentPage=m_dataArray.count;
-            [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") IsRefre:YES];
+            [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") PreferenceId:@"" IsRefre:YES];
         
     };
     m_footer = footer;
@@ -619,7 +622,7 @@
             return;
         }
         m_currentPage = 0;
-        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") IsRefre:YES];
+        [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId") PreferenceId:@"" IsRefre:YES];
     };
     m_header = header;
 }

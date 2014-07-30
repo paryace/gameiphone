@@ -20,6 +20,7 @@
 #define kKickOffGroupGroup    @"kickOffGroupGroup"//解散群组
 #define kMessageAck @"messageAck"
 #define kteamMessage    @"teamMessage"
+#define kteamRecommend    @"teamRecommend"
 
 @interface GetDataAfterManager : NSObject
 

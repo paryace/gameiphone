@@ -17,6 +17,9 @@
 @property(nonatomic,strong)UILabel *realmLabel;
 @property(nonatomic,strong)UILabel * editLabel;
 @property(nonatomic,copy)NSString *machCountStr;
+@property (strong,nonatomic) UILabel * unreadCountLabel;
+@property (strong,nonatomic) UIImageView * notiBgV;
+
 @property(nonatomic,assign)BOOL isrow;
 @property(nonatomic,assign)id<firstCellDelegate>myDelegate;
 -(void)didClickRow;

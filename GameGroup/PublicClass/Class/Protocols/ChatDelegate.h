@@ -48,5 +48,7 @@
 
 -(void)teamInviteInGroupTypeMessageReceived:(NSDictionary *)messageContent;//邀请加入组队
 
+-(void)teamRecommendMessageReceived:(NSDictionary *)messageContent;//组队偏好消息
+
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent;//其他不知道的消息
 @end

@@ -41,8 +41,6 @@
         customImgView.hidden = YES;
         [self.contentView addSubview:customImgView];
         
-        
-        
         UIButton *button  =[[UIButton alloc]initWithFrame:CGRectMake(15, 10, 50, 50)];
         button.backgroundColor = [UIColor clearColor];
         [button addTarget:self action:@selector(didClickSearch:) forControlEvents:UIControlEventTouchUpInside];
@@ -69,6 +67,19 @@
         editBtn.backgroundColor = [UIColor clearColor];
         [editBtn addTarget:self action:@selector(enterEditPage:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:editBtn];
+        
+        self.notiBgV = [[UIImageView alloc] initWithFrame:CGRectMake(65, 10, 18, 18)];
+        [self.notiBgV setImage:[UIImage imageNamed:@"redCB.png"]];
+        self.notiBgV.tag=999;
+        self.notiBgV.hidden = NO;
+        [self.contentView addSubview:self.notiBgV];
+        self.unreadCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+        [self.unreadCountLabel setBackgroundColor:[UIColor clearColor]];
+        [self.unreadCountLabel setTextAlignment:NSTextAlignmentCenter];
+        [self.unreadCountLabel setTextColor:[UIColor whiteColor]];
+        self.unreadCountLabel.font = [UIFont systemFontOfSize:12.0];
+        self.unreadCountLabel.text = @"98";
+        [self.notiBgV addSubview:self.unreadCountLabel];
     }
     return self;
 }

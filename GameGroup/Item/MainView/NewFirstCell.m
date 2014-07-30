@@ -51,8 +51,18 @@
         self.stopImg.image = KUIImage(@"palceholder");
         [self.bgView addSubview:self.stopImg];
         
-        
-
+        self.notiBgV = [[UIImageView alloc] initWithFrame:CGRectMake(45, 5, 18, 18)];
+        [self.notiBgV setImage:[UIImage imageNamed:@"redCB.png"]];
+        self.notiBgV.tag=999;
+        self.notiBgV.hidden = NO;
+        [self.contentView addSubview:self.notiBgV];
+        self.unreadCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+        [self.unreadCountLabel setBackgroundColor:[UIColor clearColor]];
+        [self.unreadCountLabel setTextAlignment:NSTextAlignmentCenter];
+        [self.unreadCountLabel setTextColor:[UIColor whiteColor]];
+        self.unreadCountLabel.font = [UIFont systemFontOfSize:12.0];
+        self.unreadCountLabel.text = @"98";
+        [self.notiBgV addSubview:self.unreadCountLabel];
     }
     return self;
 }

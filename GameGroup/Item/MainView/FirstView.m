@@ -61,10 +61,29 @@
     [self.searchRoomBtn addTarget:self action:@selector(enterSearchPage:) forControlEvents:UIControlEventTouchUpInside];
     [self.searchRoomBtn setBackgroundImage:KUIImage(@"search_room") forState:UIControlStateNormal];
     [headImgView addSubview:self.searchRoomBtn];
-    
     self.myTableView.tableHeaderView = headImgView;
 }
 
+-(void)receiveMsg:(NSDictionary *)msg{
+    NSMutableDictionary * msgPayloadDic = [KISDictionaryHaveKey(msg, @"payload") JSONValue];
+    for (NSMutableDictionary * dic in self.firstDataArray) {
+        if ([KISDictionaryHaveKey(msgPayloadDic, @"gameid") intValue] == [KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") intValue]&&[KISDictionaryHaveKey(msgPayloadDic, @"preferenceId") intValue] == [KISDictionaryHaveKey(dic, @"preferenceId") intValue]) {
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgPayloadDic, @"characterName")] forKey:@"characterName"];
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgPayloadDic, @"description")] forKey:@"description"];
+            [dic setObject:[GameCommon getNewStringWithId:[NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(dic, @"msgCount") intValue]+1]] forKey:@"msgCount"];
+        }
+    }
+    [self.myTableView reloadData];
+}
+
+-(void)readMsg:(NSString *)gameId PreferenceId:(NSString*)preferenceId{
+    for (NSMutableDictionary * dic in self.firstDataArray) {
+        if ([gameId intValue] == [KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") intValue]&&[preferenceId intValue] == [KISDictionaryHaveKey(dic, @"preferenceId") intValue]) {
+            [dic setObject:@"0" forKey:@"msgCount"];
+        }
+    }
+    [self.myTableView reloadData];
+}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -120,10 +139,15 @@
     if (!cell) {
         cell = [[NewFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
-    NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+    NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];    
+    if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
+        cell.notiBgV.hidden = NO;
+        cell.unreadCountLabel.text = KISDictionaryHaveKey(dic, @"msgCount");
+    }else{
+        cell.notiBgV.hidden = YES;
+    }
     cell.bgView.backgroundColor = [UIColor whiteColor];
     cell.headImageV.placeholderImage = KUIImage(@"placeholder");
-
     NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterImg");
     cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
     if (![KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
@@ -132,7 +156,11 @@
         cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
     }
     cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm");
-    cell.distLabel.text = @"开启组队搜索";
+    if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
+        cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+    }else{
+        cell.distLabel.text = @"开启组队搜索";
+    }
     return cell;
     
 }

@@ -17,4 +17,7 @@
 @property (nonatomic,strong) UILabel *cardLabel;
 @property (nonatomic,strong) UILabel *timeLabel;
 @property (nonatomic,strong) UIImageView *stopImg;
+
+@property (strong,nonatomic) UILabel * unreadCountLabel;
+@property (strong,nonatomic) UIImageView * notiBgV;
 @end

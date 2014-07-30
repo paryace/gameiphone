@@ -27,6 +27,7 @@
 #import "DSTeamUser.h"
 #import "DSPreferenceInfo.h"
 #import "DSCreateTeamUserInfo.h"
+#import "DSPreferenceMsg.h"
 
 
 @implementation DataStoreManager
@@ -4531,4 +4532,107 @@
         }
     }];
 }
+//
+//保存组队创建者的信息
++(void)savePreferenceMsg:(NSDictionary*)preferenceMsg SaveSuccess:(void (^)(NSDictionary *msgDic))block{
+    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgId")];
+    NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgType")];
+    NSString * fromId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"fromId")];
+    NSString * toId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"toId")];
+    NSDate * msgTime = [NSDate dateWithTimeIntervalSince1970:[[preferenceMsg objectForKey:@"time"] doubleValue]];
+    NSString * payload = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"payload")];
+    NSDictionary * payLoadDic = [payload JSONValue];
+    NSString * userCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"userCount")];
+    NSString * roomCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"roomCount")];
+    NSString * characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"characterName")];
+    NSString * descriptions = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"description")];
+    NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"preferenceId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"gameid")];
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+         NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameid,preferenceId];
+        DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        int unread;
+        if (!commonMsg){
+           commonMsg = [DSPreferenceMsg MR_createInContext:localContext];
+            unread =0;
+        }else{
+            unread = [commonMsg.msgCount intValue];
+        }
+        commonMsg.msgId = msgId;
+        commonMsg.msgType = msgType;
+        commonMsg.fromId = fromId;
+        commonMsg.toId = toId;
+        commonMsg.msgTime = msgTime;
+        commonMsg.payload = payload;
+        commonMsg.userCount = userCount;
+        commonMsg.roomCount = roomCount;
+        commonMsg.characterName = characterName;
+        commonMsg.descriptions = descriptions;
+        commonMsg.preferenceId = preferenceId;
+        commonMsg.gameid = gameid;
+        commonMsg.msgCount = [NSString stringWithFormat:@"%d",unread+1];
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (block) {
+            block(preferenceMsg);
+        }
+    }];
+}
+
++(NSMutableDictionary*)getPreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId{
+    NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameId,preferenceId];
+    DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser];
+    return [self getPreMsgDic:commonMsg];
+}
++(NSMutableDictionary*)getPreMsgDic:(DSPreferenceMsg*)commonMsg{
+    if (!commonMsg) {
+        return nil;
+    }
+    NSMutableDictionary * preDic = [NSMutableDictionary dictionary];
+    [preDic setObject:commonMsg.msgId forKey:@"msgId"];
+    [preDic setObject:commonMsg.msgType forKey:@"msgType"];
+    [preDic setObject:commonMsg.fromId forKey:@"fromId"];
+    [preDic setObject:commonMsg.toId forKey:@"toId"];
+    NSTimeInterval uu = [commonMsg.msgTime timeIntervalSince1970];
+    [preDic setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"msgTime"];
+    [preDic setObject:commonMsg.payload forKey:@"payload"];
+    [preDic setObject:commonMsg.userCount forKey:@"userCount"];
+    [preDic setObject:commonMsg.roomCount forKey:@"roomCount"];
+    [preDic setObject:commonMsg.characterName forKey:@"characterName"];
+    [preDic setObject:commonMsg.descriptions forKey:@"description"];
+    [preDic setObject:commonMsg.preferenceId forKey:@"preferenceId"];
+    [preDic setObject:commonMsg.gameid forKey:@"gameid"];
+    [preDic setObject:commonMsg.msgCount forKey:@"msgCount"];
+    return preDic;
+}
+
++(void)deletePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameId,preferenceId];
+        DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        [commonMsg deleteInContext:localContext];
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success ,error);
+         }
+
+     }];
+}
++(void)updatePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameId,preferenceId];
+        DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (commonMsg) {
+            commonMsg.msgCount = @"0";
+        }
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(true,nil);
+         }
+     }];
+}
+
+
 @end

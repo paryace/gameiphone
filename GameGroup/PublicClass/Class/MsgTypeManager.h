@@ -37,7 +37,9 @@ groupBillboard：群公告
 reqeustJoinTeam：申请加入组队
 teamMemberChange：同意添加,踢出组织,退出组织,占坑,填坑
 disbandTeam：解散组队
-teamInvite：组队邀请*/
+teamInvite：组队邀请
+teamRecommend:组队偏好消息*/
+
 
 #import <Foundation/Foundation.h>
 typedef NS_ENUM(NSInteger,MsgType){

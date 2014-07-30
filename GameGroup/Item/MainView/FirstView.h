@@ -17,6 +17,9 @@
 @property(nonatomic,assign)id<firstViewDelegate>myDelegate;
 @property(nonatomic,strong)UILabel * personCountLb;
 @property(nonatomic,strong)UILabel * teamCountLb;
+
+-(void)receiveMsg:(NSDictionary *)msg;
+-(void)readMsg:(NSString *)gameId PreferenceId:(NSString*)preferenceId;
 @end
 
 @protocol firstViewDelegate <NSObject>

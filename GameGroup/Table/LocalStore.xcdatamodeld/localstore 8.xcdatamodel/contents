@@ -321,6 +321,21 @@
         <attribute name="typeId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSPreferenceMsg" representedClassName="DSPreferenceMsg" syncable="YES">
+        <attribute name="characterName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="descriptions" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgCount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="preferenceId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomCount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userCount" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSReceivedHellos" representedClassName="DSReceivedHellos" syncable="YES">
         <attribute name="acceptStatus" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addtionMsg" optional="YES" attributeType="String" syncable="YES"/>
@@ -519,5 +534,6 @@
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
         <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>
         <element name="DSPreferenceInfo" positionX="-72" positionY="-36" width="128" height="178"/>
+        <element name="DSPreferenceMsg" positionX="-63" positionY="-27" width="128" height="240"/>
     </elements>
 </model>

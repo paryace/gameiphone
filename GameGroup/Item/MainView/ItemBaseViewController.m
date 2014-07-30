@@ -49,6 +49,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
 //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
@@ -101,6 +102,21 @@
     
 }
 
+-(NSMutableArray*)detailDataList:(NSMutableArray*)datas{
+    NSMutableArray * tempArrayType = [datas mutableCopy];
+   for (NSMutableDictionary * dic in tempArrayType) {
+         NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
+       if (preDic) {
+           [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
+           [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
+           [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgCount")] forKey:@"msgCount"];
+       }else{
+           [dic setObject:@"0" forKey:@"msgCount"];
+       }
+    }
+    return tempArrayType;
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
@@ -108,7 +124,8 @@
     NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"refreshPreference_wx"];
     if ([str isEqualToString:@"refreshPreference"]) {
         if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
-            firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+//            firstView.firstDataArray =[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+           firstView.firstDataArray =  [self detailDataList:[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]];
             [firstView.myTableView reloadData];
         }
             [self getPreferencesWithNet];
@@ -122,6 +139,12 @@
     }
 }
 
+
+-(void)receiceTeamRecommendMsg:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    [firstView receiveMsg:msg];
+    NSLog(@"收到组队偏好消息通知,...%@",msg);
+}
 
 -(void)refreshMyList:(id)sender
 {
@@ -179,7 +202,8 @@
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [self setList:responseObject];
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-            firstView.firstDataArray =responseObject;
+//            firstView.firstDataArray =responseObject;
+            firstView.firstDataArray =[self detailDataList:responseObject];
             [firstView.myTableView reloadData];
             [[NSUserDefaults standardUserDefaults]setObject:@"stopRefreshPreference" forKey:@"refreshPreference_wx"];
             [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
@@ -234,19 +258,26 @@
 //        PreferenceEditViewController *preferec = [[PreferenceEditViewController alloc]init];
 //        preferec.mainDict = [firstView.firstDataArray objectAtIndex:row];
 //        [self.navigationController pushViewController:preferec animated:YES];
-//        
-//        
-//        
 //    }else{
-        [self showMessageWindowWithContent:@"查看队伍" imageType:0];
+//        [self showMessageWindowWithContent:@"查看队伍" imageType:0];
+    
+        NSMutableDictionary * didDic = [firstView.firstDataArray objectAtIndex:row];
+        [self updateMsg:didDic];
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-
         FindItemViewController *findView = [[FindItemViewController alloc]init];
-        findView.mainDict = [NSDictionary dictionaryWithDictionary:[firstView.firstDataArray objectAtIndex:row]];
+        findView.mainDict = [NSDictionary dictionaryWithDictionary:didDic];
         findView.isInitialize = YES;
         [self.navigationController pushViewController:findView animated:YES];
         
 //    }
+}
+
+
+-(void)updateMsg:(NSMutableDictionary*)didDic{
+    [DataStoreManager updatePreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
+        [firstView readMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")]];
+        [firstView.myTableView reloadData];
+    }];
 }
 
 

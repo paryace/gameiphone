@@ -238,7 +238,14 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamInviteInGroupTypeMessageReceived:dict];
-        }else{
+        }
+        else if ([msgtype isEqualToString:@"teamRecommend"]){//组队偏好消息
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamRecommendMessageReceived:dict];
+        }
+        else{
             [self.chatDelegate otherAnyMessageReceived:dict];
         }
     }
