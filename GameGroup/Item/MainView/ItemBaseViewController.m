@@ -171,8 +171,6 @@
 -(void)getPreferencesWithNet
 {
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-
-    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"276" forKey:@"method"];
@@ -184,7 +182,8 @@
             firstView.firstDataArray =responseObject;
             [firstView.myTableView reloadData];
             [[NSUserDefaults standardUserDefaults]setObject:@"stopRefreshPreference" forKey:@"refreshPreference_wx"];
-                            
+            [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
+            }];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {

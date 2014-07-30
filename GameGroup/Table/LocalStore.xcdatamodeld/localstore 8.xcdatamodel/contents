@@ -89,6 +89,16 @@
         <attribute name="senTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSCreateTeamUserInfo" representedClassName="DSCreateTeamUserInfo" syncable="YES">
+        <attribute name="characterId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="characterImg" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="characterName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberInfo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="realm" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSFans" representedClassName="DSFans" syncable="YES">
         <attribute name="achievement" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="achievementLevel" optional="YES" attributeType="String" syncable="YES"/>
@@ -300,6 +310,17 @@
         <attribute name="sendTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="temp" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSPreferenceInfo" representedClassName="DSPreferenceInfo" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isOpen" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="keyword" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="matchCount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="preferenceId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="typeId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSReceivedHellos" representedClassName="DSReceivedHellos" syncable="YES">
         <attribute name="acceptStatus" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addtionMsg" optional="YES" attributeType="String" syncable="YES"/>
@@ -496,5 +517,7 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>
+        <element name="DSPreferenceInfo" positionX="-72" positionY="-36" width="128" height="178"/>
     </elements>
 </model>
