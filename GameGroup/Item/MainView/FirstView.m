@@ -230,7 +230,6 @@
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         editActionSheet = [[UIActionSheet alloc]initWithTitle:@"编辑" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"正常模式" otherButtonTitles:@"无红点模式",@"静音模式", @"删除偏好",nil];
         editActionSheet.tag = indexPath.row;
@@ -287,25 +286,52 @@
     
     NSDictionary *dic = [self.firstDataArray objectAtIndex:row];
     
+//    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+//    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+//    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
+//    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+//        NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+        [self deletePreference:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] reSuccess:^(id responseObject) {
+            
+            [DataStoreManager deletePreferenceInfo:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
+                
+                [self.firstDataArray removeObjectAtIndex:row];
+                
+                if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]) {
+                    [[NSUserDefaults standardUserDefaults]removeObjectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+                }
+
+                
+                [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]];
+                
+                [self.myTableView reloadData];
+            }];
+        }];
+}
+
+-(void)deletePreference:(NSString*)gameId PreferenceId:(NSString*)preferenceId reSuccess:(void (^)(id responseObject))resuccess{
     NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
     NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    [paramDict setObject:preferenceId forKey:@"preferenceId"];
+//>>>>>>> FETCH_HEAD
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"289" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.firstDataArray removeObjectAtIndex:row];
-        NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-        
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]) {
-            [[NSUserDefaults standardUserDefaults]removeObjectForKey:[NSString stringWithFormat:@"%@_%@",KISDictionaryHaveKey(dic, @"preferenceId"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+//<<<<<<< HEAD
+//        [self.firstDataArray removeObjectAtIndex:row];
+//        NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+//        
+//
+//        
+//        [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
+//        [self.myTableView reloadData];
+//=======
+        if (resuccess) {
+            resuccess(responseObject);
         }
-        
-        
-        [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-        [self.myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -315,7 +341,9 @@
             }
         }
     }];
-    
+
+//}
+
 
 }
 
