@@ -141,7 +141,7 @@
         [self.mTableBaseView addGestureRecognizer:bgTap];
         
         self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 240) style:UITableViewStylePlain];
-        self.mTableBaseView.backgroundColor = [UIColor blackColor];
+        self.mTableView.backgroundColor = [UIColor blackColor];
         self.mTableView.delegate = self;
         self.mTableView.dataSource = self;
         
@@ -226,7 +226,6 @@
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
-        [cell setBackgroundColor:[UIColor blackColor]];
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
         cell.headImgView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:100];
         cell.roleNameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
@@ -245,7 +244,6 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-        [cell setBackgroundColor:[UIColor blackColor]];
         cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:12];
         cell.textLabel.textColor = [UIColor whiteColor];
