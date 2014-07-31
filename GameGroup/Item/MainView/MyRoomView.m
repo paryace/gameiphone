@@ -8,6 +8,8 @@
 
 #import "MyRoomView.h"
 #import "BaseItemCell.h"
+#import "ICreatedCell.h"
+
 @implementation MyRoomView
 - (id)initWithFrame:(CGRect)frame
 {
@@ -18,9 +20,19 @@
         self.myListTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myListTableView.delegate = self;
         self.myListTableView.dataSource = self;
+        
+        
+        
         [self addSubview:self.myListTableView];
     }
     return self;
+}
+
+-(void)enterCreatePage:(id)sender
+{
+    if ([self.myDelegate respondsToSelector:@selector(didClickCreateTeamWithView:)]) {
+        [self.myDelegate didClickCreateTeamWithView:self];
+    }
 }
 #pragma mark ----tableview delegate  datasourse
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -46,33 +58,44 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *indifience = @"cell";
-    BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
-    if (!cell) {
-        cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
-    }
-    cell.backgroundColor =[ UIColor whiteColor];
-    NSDictionary *dic;
     if (indexPath.section ==0) {
-        dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:indexPath.row];
-    }else{
-        dic = [[self.listDict objectForKey:@"joinedRooms"] objectAtIndex:indexPath.row];
+        static NSString *indifience = @"cell1";
+        ICreatedCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+        if (!cell) {
+            cell = [[ICreatedCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+        }
+       NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:indexPath.row];
+        cell.titleLabel.text =[NSString stringWithFormat:@"[%@/%@]%@的队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
         
+        cell.gameIconImageView.imageURL = [ImageService getImageUrl4:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+        cell.realmLabel.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
+        cell.numLabel.text = nil;
+        return cell;
+        
+    }else{
+        static NSString *indifience = @"cell";
+        BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+        if (!cell) {
+            cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+        }
+
+       NSDictionary * dic = [[self.listDict objectForKey:@"joinedRooms"] objectAtIndex:indexPath.row];
+        cell.headImg.placeholderImage = KUIImage(@"placeholder");
+        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
+        cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+        
+        NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
+        cell.titleLabel.text = title;
+        //    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+        cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+        
+        NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+        NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
+        
+        cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+        return cell;
+
     }
-    cell.headImg.placeholderImage = KUIImage(@"placeholder");
-    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
-    
-    NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
-    cell.titleLabel.text = title;
-//    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
-    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-    
-    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-    NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-    
-    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
-    return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -94,6 +117,45 @@
     }
 }
 
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
+    view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
+    
+    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 200, 20)];
+    label.font = [UIFont systemFontOfSize:12];
+    if (section ==0) {
+        label.text =@"我创建的队伍";
+        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
+    }else{
+        label.text = @"我加入的队伍";
+    }
+    [view addSubview:label];
+    return view;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section ==0) {
+        NSArray * arr = [self.listDict objectForKey:@"OwnedRooms"];
+        if (arr||[arr isKindOfClass:[NSArray class]]) {
+            return 20;
+        }else
+        {
+            return 0;
+        }
+    }else{
+        NSArray * arr = [self.listDict objectForKey:@"joinedRooms"];
+        if (arr&&[arr isKindOfClass:[NSArray class]]&&arr.count>0) {
+            return 20;
+        }else
+        {
+            return 0;
+        }
+    }
+
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section ==0) {
@@ -112,33 +174,12 @@
         {
             return 0;
         }
-
-
     }
 
 }
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if (section ==0) {
-        NSArray * arr = [self.listDict objectForKey:@"OwnedRooms"];
-        if (arr||[arr isKindOfClass:[NSArray class]]) {
-            return @"我创建的队伍";
-        }else
-        {
-            return nil;
-        }
-        
-    }else{
-        NSArray * arr = [self.listDict objectForKey:@"joinedRooms"];
-        if (arr.count>0) {
-            return @"我加入的队伍";
-        }else
-        {
-            return nil;
-        }
-
-    }
-}
+//-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//}
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     if (section ==1) {

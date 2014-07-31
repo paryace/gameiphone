@@ -41,20 +41,20 @@
     headImgView.userInteractionEnabled = YES;
     headImgView.image = KUIImage(@"room_bg");
     
-    UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 130, 40, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-//    lb1.text = @"申请人数";
+    UILabel *lb1 = [GameCommon buildLabelinitWithFrame:CGRectMake(10, 130, 60, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    lb1.text = @"申请人数";
     [headImgView addSubview:lb1];
     
     
-    self.personCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(55,130 , 80, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    self.personCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(80,130 , 80, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
     [headImgView addSubview:self.personCountLb];
     
     
-    UILabel *lb2 = [GameCommon buildLabelinitWithFrame:CGRectMake(218, 130, 40, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-//    lb2.text = @"组队数量";
+    UILabel *lb2 = [GameCommon buildLabelinitWithFrame:CGRectMake(220, 130, 60, 20) font:[UIFont systemFontOfSize:11] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
+    lb2.text = @"组队数量";
     [headImgView addSubview:lb2];
     
-    self.teamCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(250, 130, 70, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    self.teamCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(280, 130, 50, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
     [headImgView addSubview:self.teamCountLb];
     
     

@@ -8,6 +8,7 @@
 
 #import "DropDownListView.h"
 #import "FindRoleCell.h"
+#import "DropTitleCell.h"
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
 
@@ -150,6 +151,11 @@
     //修改tableview的frame
 //    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
     CGRect rect = self.mTableView.frame;
+//    rect.origin.x = sectionWidth *section;
+//    rect.origin.x = 0;
+//
+//    rect.size.width = sectionWidth;
+//    rect.size.height = 0;
     rect.origin.x = 0;
     rect.size.width = 320;
     rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
@@ -228,7 +234,8 @@
         }
         cell.backgroundColor = [UIColor blackColor];
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
-        cell.headImgView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:100];
+        NSString *imgStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
+        cell.headImgView.imageURL = [ImageService getImageStr:imgStr Width:100];
         cell.roleNameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
 
@@ -238,6 +245,21 @@
         cell.zdlLabel.adjustsFontSizeToFitWidth = YES;
         cell.zdlNumLabel.text= [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value3")];
         return cell;
+//<<<<<<< HEAD
+//    }else if(currentExtendSection ==1){
+//        static NSString * indentifier = @"cell";
+//
+//    DropTitleCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
+//    if (!cell) {
+//        cell = [[DropTitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indentifier];
+//        cell.accessoryType = UITableViewCellAccessoryNone;
+//    }
+//    cell.backgroundColor = [UIColor blackColor];
+//    cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+//    cell.titleLabel.font = [UIFont systemFontOfSize:12];
+//    cell.titleLabel.textColor = [UIColor whiteColor];
+//    return cell;
+//=======
     }else{
         static NSString * cellIdentifier = @"cellIdentifierText";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -251,6 +273,7 @@
         cell.textLabel.textColor = [UIColor whiteColor];
         return cell;
     }
+    return nil;
 }
 
 @end

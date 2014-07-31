@@ -309,12 +309,13 @@
 //    if (section==0) {
 //         return  [NSString stringWithFormat:@"%@--%@",KISDictionaryHaveKey(m_charaArray[index], @"simpleRealm"),KISDictionaryHaveKey(m_charaArray[index], @"name")];
 //    }else if (section == 1){
+    if (section == 1){
         if (arrayType.count>0) {
             return KISDictionaryHaveKey([arrayType objectAtIndex:index], @"value");
         }
         return @"";
-//    }
-//    return @"";
+    }
+    return @"";
 }
 
 -(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger)index
@@ -383,33 +384,65 @@
 
 #pragma mark ----tableview delegate  datasourse
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return  2;
+    return  1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section==0) {
-        return 1;
-    }
+//    if (section==0) {
+//        return 1;
+//    }
     return m_dataArray.count;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section==0) {
-        return 0;
-    }else{
+//    if (section==0) {
+//        return 0    ;
+//    }else{
+    
+    if (m_dataArray&&[m_dataArray isKindOfClass:[NSArray class]]&&m_dataArray.count>0) {
         return 20;
+    }else{
+        return 0;
+ 
     }
+    
+//    }
 }
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
+    view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1  ];
+    UIImageView *imageV= [[UIImageView alloc] initWithFrame:CGRectMake(110, 0, 20, 20)];
+    imageV.layer.cornerRadius = 5;
+    imageV.layer.masksToBounds=YES;
+    imageV.backgroundColor = [UIColor clearColor];
+    [view addSubview:imageV];
+    
+    UILabel * lable = [[UILabel alloc] initWithFrame:CGRectMake(130, 0, 60, 20)];
+    [lable setTextAlignment:NSTextAlignmentLeft];
+    lable.text = @"创建组队";
+    [lable setFont:[UIFont boldSystemFontOfSize:13.0]];
+    [lable setBackgroundColor:[UIColor clearColor]];
+    [lable setTextColor:[UIColor grayColor ]];
+    [view addSubview:lable];
+    
+    [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(createTeam:)]];
+    
+    return view;
+
+}
+
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section==0) {
-        if (indexPath.row == 0) {
-            static NSString * stringCellTop = @"createTream";
-            CreateTeamCell * cellTop = [[CreateTeamCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
-            cellTop.imageV.image = KUIImage(@"state_icon");
-            return cellTop;
-        }
-    }
+//    if (indexPath.section==0) {
+//        if (indexPath.row == 0) {
+//            static NSString * stringCellTop = @"createTream";
+//            CreateTeamCell * cellTop = [[CreateTeamCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
+//            cellTop.imageV.image = KUIImage(@"state_icon");
+//            return cellTop;
+//        }
+//    }
     static NSString *indifience = @"cell";
     BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
     if (!cell) {
@@ -433,19 +466,27 @@
     cell.timeLabel.text = timeStr;
     return cell;
 }
+-(void)createTeam:(id)sender
+{
+    NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
+    cretItm.selectRoleDict = selectCharacter;
+    cretItm.selectTypeDict = selectType;
+    [self.navigationController pushViewController:cretItm animated:YES];
+
+}
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
      [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section==0) {
-        if (indexPath.row == 0) {
-            NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-            cretItm.selectRoleDict = selectCharacter;
-            cretItm.selectTypeDict = selectType;
-            [self.navigationController pushViewController:cretItm animated:YES];
-            return;
-        }
-    }
+//    if (indexPath.section==0) {
+//        if (indexPath.row == 0) {
+//            NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
+//            cretItm.selectRoleDict = selectCharacter;
+//            cretItm.selectTypeDict = selectType;
+//            [self.navigationController pushViewController:cretItm animated:YES];
+//            return;
+//        }
+//    }
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];

@@ -19,5 +19,5 @@
 @protocol MyroomDelegate <NSObject>
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic;
-
+-(void)didClickCreateTeamWithView:(MyRoomView *)view ;
 @end
