@@ -25,7 +25,7 @@
         self.myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myTableView.delegate = self;
         self.myTableView.dataSource = self;
-        self.myTableView.bounces = NO;
+//        self.myTableView.bounces = NO;
 //        self.myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         [self addSubview:self.myTableView];
         [GameCommon setExtraCellLineHidden:self.myTableView];
