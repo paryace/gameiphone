@@ -341,7 +341,7 @@ UINavigationControllerDelegate>
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
-        if ([self.gameId isEqualToString:@"1"]||[self.gameId isEqualToString:@"2"]) {
+        if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"1"]||[[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"2"]) {
             [[ItemManager singleton] getMyGameLocation:self.gameId reSuccess:^(id responseObject) {
                 [self updateTeamType:responseObject];
             } reError:^(id error) {
