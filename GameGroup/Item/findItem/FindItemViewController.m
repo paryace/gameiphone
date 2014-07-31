@@ -400,7 +400,7 @@
 //    }else{
     
     if (m_dataArray&&[m_dataArray isKindOfClass:[NSArray class]]&&m_dataArray.count>0) {
-        return 20;
+        return 30;
     }else{
         return 0;
  
@@ -410,16 +410,16 @@
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1  ];
-    UIImageView *imageV= [[UIImageView alloc] initWithFrame:CGRectMake(110, 0, 20, 20)];
+    UIImageView *imageV= [[UIImageView alloc] initWithFrame:CGRectMake(110, 5, 20, 20)];
     imageV.layer.cornerRadius = 5;
     imageV.layer.masksToBounds=YES;
     imageV.backgroundColor = [UIColor clearColor];
     [view addSubview:imageV];
     
-    UILabel * lable = [[UILabel alloc] initWithFrame:CGRectMake(130, 0, 60, 20)];
-    [lable setTextAlignment:NSTextAlignmentLeft];
+    UILabel * lable = [[UILabel alloc] initWithFrame:CGRectMake(130, 0, 60, 30)];
+    [lable setTextAlignment:NSTextAlignmentCenter];
     lable.text = @"创建组队";
     [lable setFont:[UIFont boldSystemFontOfSize:13.0]];
     [lable setBackgroundColor:[UIColor clearColor]];

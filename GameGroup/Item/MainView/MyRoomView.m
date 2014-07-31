@@ -119,11 +119,12 @@
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
     
-    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 200, 20)];
+    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     label.font = [UIFont systemFontOfSize:12];
+    label.textAlignment = NSTextAlignmentCenter;
     if (section ==0) {
         label.text =@"我创建的队伍";
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
@@ -139,7 +140,7 @@
     if (section ==0) {
         NSArray * arr = [self.listDict objectForKey:@"OwnedRooms"];
         if (arr||[arr isKindOfClass:[NSArray class]]) {
-            return 20;
+            return 30;
         }else
         {
             return 0;
@@ -147,7 +148,7 @@
     }else{
         NSArray * arr = [self.listDict objectForKey:@"joinedRooms"];
         if (arr&&[arr isKindOfClass:[NSArray class]]&&arr.count>0) {
-            return 20;
+            return 30;
         }else
         {
             return 0;
