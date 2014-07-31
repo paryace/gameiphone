@@ -884,6 +884,23 @@
      }];
 }
 
+
+//把群组聊天消息的未读消息设置为0
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (thumbMsgs) {
+            thumbMsgs.unRead = @"0";
+        }
+    }];
+}
+
+
+
+
+
 +(void)blankMsgUnreadCountFormsgType:(NSString *)msgType
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {

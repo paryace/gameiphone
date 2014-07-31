@@ -288,7 +288,7 @@ UINavigationControllerDelegate>
         [self.view addSubview:self.dotV];
         [self setNotifyMsgCount];
         
-        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectType"];
+        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
         }
@@ -318,7 +318,7 @@ UINavigationControllerDelegate>
         selectType =[self.typeData_list objectAtIndex:index];
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"constId") reSuccess:^(id responseObject) {
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
+            [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
             [self changPosition];
             [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         } reError:^(id error) {

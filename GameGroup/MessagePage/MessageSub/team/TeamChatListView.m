@@ -336,10 +336,14 @@
         if (self.teamUsershipType) {
             cell.detailLable.hidden=YES;
         }else {
+            [cell.agreeButton setUserInteractionEnabled:NO];
+            [cell.refuseButton setUserInteractionEnabled:NO];
             cell.detailLable.hidden=NO;
             cell.detailLable.text=@"审核中";
         }
     }else{
+        [cell.agreeButton setUserInteractionEnabled:NO];
+        [cell.refuseButton setUserInteractionEnabled:NO];
         cell.detailLable.hidden=NO;
         if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {
             cell.detailLable.text=@"已同意";
