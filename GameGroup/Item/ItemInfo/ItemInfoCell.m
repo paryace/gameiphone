@@ -36,9 +36,11 @@
         [self addSubview:self.gameIconImgView];
         
         self.value1Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(90, 22, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value1Lb];
 
         self.value2Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 39, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.value2Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value2Lb];
 
         

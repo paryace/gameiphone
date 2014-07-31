@@ -8,6 +8,7 @@
 
 #import "DropDownListView.h"
 #import "FindRoleCell.h"
+#import "DropTitleCell.h"
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
 
@@ -151,7 +152,9 @@
 //    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
     int sectionWidth = (self.frame.size.width);
     CGRect rect = self.mTableView.frame;
-    rect.origin.x = sectionWidth *section;
+//    rect.origin.x = sectionWidth *section;
+    rect.origin.x = 0;
+
     rect.size.width = sectionWidth;
     rect.size.height = 0;
     self.mTableView.frame = rect;
@@ -221,16 +224,18 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * cellIdentifier = @"cellIdentifier";
-    
+    NSLog(@"----%d",currentExtendSection);
     if (currentExtendSection ==0) {
+        static NSString * cellIdentifier = @"cellIdentifier";
+
         FindRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
         cell.backgroundColor = kColorWithRGB(27, 29, 34, 1);
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
-        cell.headImgView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:100];
+        NSString *imgStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
+        cell.headImgView.imageURL = [ImageService getImageStr:imgStr Width:100];
         cell.roleNameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
 
@@ -240,19 +245,21 @@
         cell.zdlLabel.adjustsFontSizeToFitWidth = YES;
         cell.zdlNumLabel.text= [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value3")];
         return cell;
-    }else{
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    }else if(currentExtendSection ==1){
+        static NSString * indentifier = @"cell";
+
+    DropTitleCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[DropTitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.backgroundColor = [UIColor blackColor];
-    cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-    cell.textLabel.font = [UIFont systemFontOfSize:12];
-    cell.textLabel.textColor = [UIColor whiteColor];
+    cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+    cell.titleLabel.font = [UIFont systemFontOfSize:12];
+    cell.titleLabel.textColor = [UIColor whiteColor];
     return cell;
     }
+    return nil;
 }
 
 @end

@@ -14,6 +14,7 @@
 #import "FindItemViewController.h"
 #import "PreferenceEditViewController.h"
 #import "ItemManager.h"
+#import "NewCreateItemViewController.h"
 @interface ItemBaseViewController ()
 {
     UIView *customView;
@@ -86,18 +87,18 @@
     [self getMyRoomFromNet];
     
     [self getPreferencesWithNet];
-    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
-        customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
-        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:@"firstItem"];
-        customImageView.image = KUIImage(@"item_test.jpg");
-        customImageView.userInteractionEnabled = YES;
-        [self.view addSubview:customImageView];
-        
-        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, customImageView.bounds.size.height-200, 160, 44)];
-        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
-        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
-        [customImageView addSubview:enterSearchBtn];
-    }
+//    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
+//        customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
+//        [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:@"firstItem"];
+//        customImageView.image = KUIImage(@"item_test.jpg");
+//        customImageView.userInteractionEnabled = YES;
+//        [self.view addSubview:customImageView];
+//        
+//        UIButton *enterSearchBtn = [[UIButton alloc]initWithFrame:CGRectMake(80, customImageView.bounds.size.height-200, 160, 44)];
+//        [enterSearchBtn setTitle:@"去搜索群组" forState:UIControlStateNormal];
+//        [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
+//        [customImageView addSubview:enterSearchBtn];
+//    }
     
     
 }
@@ -364,7 +365,13 @@
 
 }
 
-
+-(void)didClickCreateTeamWithView:(MyRoomView *)view
+{
+    NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
+//    cretItm.selectRoleDict = selectCharacter;
+//    cretItm.selectTypeDict = selectType;
+    [self.navigationController pushViewController:cretItm animated:YES];
+}
 
 
 
