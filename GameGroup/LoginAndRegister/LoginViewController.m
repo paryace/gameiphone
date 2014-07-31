@@ -209,7 +209,7 @@
         [[UserManager singleton] getGroupListFromNet];//获取群列表
         
         
-        [[NSUserDefaults standardUserDefaults]setObject:@"refreshPreference" forKey:@"refreshPreference_wx"];
+        [[NSUserDefaults standardUserDefaults]setObject:@"refreshPreference" forKey:@"LoignRefreshPreference_wx"];
         
         
        // [GameCommon cleanLastData];//因1.0是用username登陆xmpp 后面版本是userid 必须清掉聊天消息和关注表

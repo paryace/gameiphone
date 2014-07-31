@@ -99,7 +99,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         //发送通知 刷新我的组队页面
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshPreference_wx" object:nil];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"shuaxinRefreshPreference_wxx" object:nil];
         [self showMessageWindowWithContent:@"修改成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {

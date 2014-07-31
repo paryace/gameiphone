@@ -348,7 +348,7 @@
         if (self.isInitialize) {
             [[NSNotificationCenter defaultCenter]postNotificationName:@"replacePreference_wx" object:nil userInfo:self.mainDict];
         }else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPreference_wx" object:responseObject];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
         }
         [self.navigationController popViewControllerAnimated:YES];
         
