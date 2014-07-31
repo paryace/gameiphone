@@ -26,9 +26,10 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"服务器数据 %@", responseObject);
-        
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"address") forKey:@"host"];
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"name") forKey:@"domain"];
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"address") forKey:@"host"];
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(responseObject, @"name") forKey:@"domain"];
+        }
 
     } failure:^(AFHTTPRequestOperation *operation, id error) {
 

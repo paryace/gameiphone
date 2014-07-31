@@ -76,7 +76,8 @@
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
     [self buildRoleView];
-
+    hud  = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"获取中...";
     // Do any additional setup after loading the view.
 }
 
@@ -291,8 +292,23 @@
 #pragma mark ---NET
 -(void)GETInfoWithNet
 {
+//    [hud show: YES];
+//    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+//    
+//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+//    [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
+//    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
+//
+//    [postDict setObject:paramDict forKey:@"params"];
+//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+//    [postDict setObject:@"266" forKey:@"method"];
+//    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
     [[TeamManager singleton] GETInfoWithNet:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId] reSuccess:^(id responseObject) {
+        [hud hide:YES];
+
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             [self setGetOutBtn:teamUsershipType];
@@ -302,6 +318,9 @@
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
             [m_myTableView reloadData];
         }
+//<<<<<<< HEAD
+//    } failure:^(AFHTTPRequestOperation *operation, id error) {
+//=======
     } reError:^(id error) {
         [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {

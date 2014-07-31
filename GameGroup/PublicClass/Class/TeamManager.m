@@ -57,6 +57,7 @@ static TeamManager *teamManager = NULL;
 {
     [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     if ([self.cacheids containsObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]]) {
+        
         return;
     }
     [self.cacheids addObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];

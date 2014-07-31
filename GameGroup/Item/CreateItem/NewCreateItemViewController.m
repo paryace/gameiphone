@@ -89,7 +89,7 @@
 
 //    [self.view addSubview:m_tagTf];
 
-    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+110, 140, 40) placeholder:@"请选择人数" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentCenter];
+    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+110, 300, 40) placeholder:@"请选择人数" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_countTf.delegate = self;
     m_countTf.inputAccessoryView = toolbar;
     m_countTf.inputView = m_countPickView;
@@ -118,9 +118,9 @@
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     [self.view addSubview:m_ziNumLabel];
 
-    [self buildSwitchView];
+//    [self buildSwitchView];
     
-    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(10.0f, startX+250.0f,300.0f, 100.0f)];
+    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15.0f, startX+250.0f,310.0f, 100.0f)];
     tagList.tagDelegate=self;
     [self.view addSubview:tagList];
     
@@ -372,7 +372,9 @@
         }
 
     } reError:^(id error) {
-        
+    [self showErrorAlert:error];
+     m_gameTf.text = @"";
+        gameIconImg.imageURL = nil;
     }];
 }
 
@@ -386,6 +388,8 @@
         }
     } reError:^(id error) {
         [hud hide:YES];
+        [self showErrorAlert:error];
+
     }];
 }
 

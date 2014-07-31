@@ -122,9 +122,9 @@
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
     
-    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 30)];
     label.font = [UIFont systemFontOfSize:12];
-    label.textAlignment = NSTextAlignmentCenter;
+    label.textAlignment = NSTextAlignmentLeft;
     if (section ==0) {
         label.text =@"我创建的队伍";
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
