@@ -360,7 +360,7 @@
     [[PreferencesMsgManager singleton] deletePreferences:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") Completion:^(BOOL success, NSError *error) {
         [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]];
          [self.firstDataArray removeObjectAtIndex:row];
-        [self.myTableView reloadData];
+        [self.myTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
         [self.myDelegate refreWithRow:row];
     }];
 }
