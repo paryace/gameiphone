@@ -70,7 +70,7 @@ typedef enum : NSUInteger {
     msgHintLable = [[UILabel alloc]initWithFrame:CGRectMake(320-25-8-50, 15, 40, 20)];
     msgHintLable.backgroundColor = [UIColor clearColor];
     msgHintLable.textColor = kColorWithRGB(100,100,100, 0.7);
-    msgHintLable.text = @"禁音模式";
+    msgHintLable.text = @"静音模式";
     msgHintLable.font =[ UIFont systemFontOfSize:12];
     
     
@@ -404,7 +404,7 @@ typedef enum : NSUInteger {
 //群组消息设置
 -(void)hint
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"禁音模式",@"无红点模式", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"静音模式",@"无红点模式", nil];
     alertView.tag = 1002;
     [alertView show];
 }
@@ -543,7 +543,7 @@ typedef enum : NSUInteger {
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
         return @"无红点模式";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"禁音模式";
+        return @"静音模式";
     }
     return @"";
 }

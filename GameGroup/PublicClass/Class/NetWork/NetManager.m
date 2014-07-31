@@ -19,8 +19,6 @@
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
     [manager POST:urlStr parameters:parameters
     success:^(AFHTTPRequestOperation *operation, id dict) {
-//        NSString *receiveStr = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-//        NSDictionary * dict = [receiveStr JSONValue];
         if (!dict) {
             failure(operation, @"");
         }

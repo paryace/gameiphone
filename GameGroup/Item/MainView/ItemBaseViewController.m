@@ -112,10 +112,11 @@
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgCount")] forKey:@"msgCount"];
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgTime")] forKey:@"msgTime"];
-           
+           [dic setObject:@"1" forKey:@"haveMsg"];
        }else{
            [dic setObject:@"0" forKey:@"msgCount"];
            [dic setObject:@"1000" forKey:@"msgTime"];
+           [dic setObject:@"0" forKey:@"haveMsg"];
        }
     }
     [tempArrayType sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){

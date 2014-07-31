@@ -114,6 +114,30 @@
     }
 }
 
+//设置群信息
+-(void)setTime:(NSString*)msgTime
+{
+    self.timeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:msgTime]];
+    [self refreTimeLable];
+}
+
+//刷新时间控件
+-(void)refreTimeLable
+{
+    CGSize nameSize = [self.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    self.timeLable.frame=CGRectMake(300-nameSize.width-5, 12, nameSize.width, 20);
+}
+
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
+}
+
 - (void)awakeFromNib   
 {
     // Initialization code

@@ -14,6 +14,8 @@
 
 + (TeamManager*)singleton;
 
+-(void)GETInfoWithNet:(NSString*)gameId RoomId:(NSString*)roomId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
 -(NSMutableDictionary*)getTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;
 
 -(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;

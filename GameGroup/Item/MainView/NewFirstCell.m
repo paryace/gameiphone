@@ -47,7 +47,7 @@
         [self.bgView addSubview:self.distLabel];
         [self.contentView addSubview:self.bgView];
         
-        self.stopImg = [[UIImageView alloc]initWithFrame:CGRectMake(290, 20, 20, 20)];
+        self.stopImg = [[UIImageView alloc]initWithFrame:CGRectMake(290, 35, 20, 20)];
         self.stopImg.image = KUIImage(@"palceholder");
         [self.bgView addSubview:self.stopImg];
         
@@ -57,6 +57,32 @@
     }
     return self;
 }
+
+
+//设置群信息
+-(void)setTime:(NSString*)msgTime
+{
+    self.timeLabel.text = [NSString stringWithFormat:@"%@", [self getMsgTime:msgTime]];
+    [self refreTimeLable];
+}
+
+//刷新时间控件
+-(void)refreTimeLable
+{
+    CGSize nameSize = [self.timeLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    self.timeLabel.frame=CGRectMake(310-nameSize.width-5, 10, nameSize.width, 20);
+}
+
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
+}
+
 
 - (void)awakeFromNib
 {

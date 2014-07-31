@@ -171,9 +171,10 @@
         cell = [[NewFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
     NSDictionary *dic = [self.firstDataArray objectAtIndex:indexPath.row];
+    NSInteger state = [KISDictionaryHaveKey(dic, @"receiveState") intValue];
+    NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterImg");
     cell.bgView.backgroundColor = [UIColor whiteColor];
     cell.headImageV.placeholderImage = KUIImage(@"placeholder");
-    NSString *headImg = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterImg");
     cell.headImageV.imageURL = [ImageService getImageStr:headImg Width:100];
     if (![KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
         cell.cardLabel.text = @"全部";
@@ -181,58 +182,73 @@
         cell.cardLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
     }
     cell.nameLabel.text = KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm");
-    NSInteger state = [KISDictionaryHaveKey(dic, @"receiveState") intValue];
+    cell.distLabel.text = [self getDescription:dic State:state];
+    if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {
+        [cell setTime:KISDictionaryHaveKey(dic, @"msgTime")];
+    }
     if (state == 1) {
         cell.stopImg.image = KUIImage(@"have_soundSong");
-        if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
-            cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
-        }else{
-            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
-                 cell.distLabel.text = @"正在收听此类的组队";
-            }else{
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
-            }
-        }
         [cell.dotV setMsgCount:[KISDictionaryHaveKey(dic, @"msgCount") intValue]];
     }
-    else if (state == 2)
-    {
+    else if (state == 2){
         cell.stopImg.image = KUIImage(@"close_receive");
-        if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
-            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@") ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
-            }else{
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
-            }
-        }else{
-            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"[",KISDictionaryHaveKey(dic, @"msgCount"),@"] ",@"已关闭组队搜索"];
-            }else{
-                if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
-                    cell.distLabel.text = @"已经关闭收听此类的组队";
-                }else{
-                    cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"已关闭收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
-                }
-            }
-        }
         [cell.dotV hide];
     }
-    else if (state == 3)
-    {
+    else if (state == 3){
         cell.stopImg.image = KUIImage(@"nor_soundSong");
-        if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
-            cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
-        }else{
-            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
-                cell.distLabel.text = @"正在收听此类的组队";
-            }else{
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
-            }
-        }
         [cell.dotV setMsgCount:[KISDictionaryHaveKey(dic, @"msgCount") intValue]];
     }
     return cell;
 }
+
+
+-(NSString*)getDescription:(NSDictionary*)dic State:(NSInteger)state{
+    if (state == 1) {//正常
+        if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {
+            return [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+        }else{
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                return @"正在收听此类的组队";
+            }else{
+                return [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+            }
+        }
+    }
+    else if (state == 2){//无红点
+        if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {
+            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
+                return [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@"条消息) ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
+            }else{
+                return [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+            }
+        }else{
+            if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
+                return [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@"条消息) ",@"已关闭组队搜索"];
+            }else{
+                if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                    return  @"已经关闭收听此类的组队";
+                }else{
+                    return [NSString stringWithFormat:@"%@%@%@",@"已关闭收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+                }
+            }
+        }
+    }
+    else if (state == 3){//静音
+        if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {
+            return [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+        }else{
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                return  @"正在收听此类的组队";
+            }else{
+                return  [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+            }
+        }
+    }
+    return @"";
+}
+
+
+
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
