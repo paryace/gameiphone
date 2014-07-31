@@ -174,13 +174,13 @@
         cell.stopImg.image = KUIImage(@"close_receive");
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@") ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@"条消息) ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
             }else{
                 cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
             }
         }else{
             if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"[",KISDictionaryHaveKey(dic, @"msgCount"),@"] ",@"已关闭组队搜索"];
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@"条消息) ",@"已关闭组队搜索"];
             }else{
                 if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
                     cell.distLabel.text = @"已经关闭收听此类的组队";

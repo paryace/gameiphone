@@ -19,7 +19,7 @@
 
 
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId teamUsershipType:(BOOL)tUsershipType
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -28,6 +28,7 @@
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
         self.groipId = groupId;
+        self.teamUsershipType = tUsershipType;
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
             
@@ -332,7 +333,12 @@
     cell.realmLable.text = KISDictionaryHaveKey(msgDic, @"value1");
     cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
     if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]) {
-        cell.detailLable.hidden=YES;
+        if (self.teamUsershipType) {
+            cell.detailLable.hidden=YES;
+        }else {
+            cell.detailLable.hidden=NO;
+            cell.detailLable.text=@"审核中";
+        }
     }else{
         cell.detailLable.hidden=NO;
         if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {
@@ -416,16 +422,20 @@
 //改变消息状态
 -(void)changState:(NSMutableDictionary*)dict State:(NSString*)state
 {
-    
+    [self changState:KISDictionaryHaveKey(dict, @"userid") GroupId:self.groipId State:state];
+}
+
+-(void)changState:(NSString*)userId GroupId:(NSString*)groupId State:(NSString*)state
+{
     for (NSMutableDictionary * clickDic in self.teamNotifityMsg) {
-        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:KISDictionaryHaveKey(dict, @"userid")] && [KISDictionaryHaveKey(dict, @"state") isEqualToString:@"0"]&&
-            [KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:self.groipId]) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:userId]
+            && [KISDictionaryHaveKey(clickDic, @"state") isEqualToString:@"0"]
+            &&[KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:groupId]) {
             [clickDic setObject:state forKey:@"state"];
         }
     }
     [self.mTableView reloadData];
-    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(dict, @"userid") State:state GroupId:self.groipId];
-    
+    [DataStoreManager updateTeamNotifityMsgState:userId State:state GroupId:groupId];
 }
 
 @end

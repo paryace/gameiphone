@@ -6,6 +6,7 @@
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
+
 #import "TeamManager.h"
 static TeamManager *teamManager = NULL;
 @implementation TeamManager
@@ -42,13 +43,17 @@ static TeamManager *teamManager = NULL;
         return dict;
     }
     else{
-        [self GETInfoWithNet:gameId RoomId:roomId];
+        [self GETInfoWithNet:gameId RoomId:roomId reSuccess:^(id responseObject) {
+            
+        } reError:^(id error) {
+            
+        }];
     }
     return dict;
 }
 
 #pragma mark ---请求组队详情信息
--(void)GETInfoWithNet:(NSString*)gameId RoomId:(NSString*)roomId
+-(void)GETInfoWithNet:(NSString*)gameId RoomId:(NSString*)roomId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     if ([self.cacheids containsObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]]) {
@@ -64,11 +69,17 @@ static TeamManager *teamManager = NULL;
     [postDict setObject:@"266" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [self saveTeamInfo:responseObject GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
             [[NSNotificationCenter defaultCenter] postNotificationName:teamInfoUpload object:nil userInfo:responseObject];
         }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
         [self.cacheids removeObject:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
     }];
 }

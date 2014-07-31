@@ -44,6 +44,7 @@
     #import "MsgTypeManager.h"
     #import "PreferencesMsgManager.h"
     #import "MsgNotifityView.h"
+    #import "ItemManager.h"
    #endif
 
 #define appType @"91"//91、appStore

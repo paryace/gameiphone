@@ -27,10 +27,11 @@
 @property (nonatomic, strong) UICollectionView *customPhotoCollectionView;
 @property (nonatomic, strong) UITableView *mTableView;
 @property (nonatomic, strong) NSString *groipId;
+@property (nonatomic, nonatomic)  BOOL teamUsershipType;
 
 @property (strong, nonatomic)  NSMutableArray * teamNotifityMsg;
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId;
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId teamUsershipType:(BOOL)teamUsershipType;
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section;
 
 - (BOOL)isShow;
