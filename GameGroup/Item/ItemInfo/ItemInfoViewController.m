@@ -76,7 +76,8 @@
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
     [self buildRoleView];
-
+    hud  = [[MBProgressHUD alloc]initWithView:self.view];
+    hud.labelText = @"获取中...";
     // Do any additional setup after loading the view.
 }
 
@@ -291,6 +292,7 @@
 #pragma mark ---NET
 -(void)GETInfoWithNet
 {
+    [hud show: YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -302,6 +304,7 @@
     [postDict setObject:@"266" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
@@ -314,6 +317,7 @@
             [[TeamManager singleton] saveTeamInfo:responseObject GameId:[GameCommon getNewStringWithId:self.gameid]];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {

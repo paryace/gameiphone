@@ -31,9 +31,35 @@
         [GameCommon setExtraCellLineHidden:self.myTableView];
         isRun = YES;
         [self buildTableHeaderView];
+        [self getcontent];
     }
     return self;
 }
+-(void)getcontent
+{
+    
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"301" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            self.personCountLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomCount")];
+            self.teamCountLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"userCount")];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
+            }
+        }
+    }];
+    
+}
+
 
 -(void)buildTableHeaderView
 {
@@ -46,7 +72,7 @@
     [headImgView addSubview:lb1];
     
     
-    self.personCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(80,130 , 80, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    self.personCountLb = [GameCommon buildLabelinitWithFrame:CGRectMake(70,130 , 80, 20) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
     [headImgView addSubview:self.personCountLb];
     
     

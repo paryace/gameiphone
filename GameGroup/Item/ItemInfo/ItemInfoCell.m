@@ -52,14 +52,16 @@
     return self;
 }
 
+
+
+
 -(void)refreshViewFrameWithText:(NSString *)text
 {
     CGSize size = [text sizeWithFont:[UIFont systemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
     self.nickLabel.frame = CGRectMake(70, 5, size.width, 15);
-    self.genderImgView.frame = CGRectMake(70+size.width+5, 2, 15, 15);
+    self.genderImgView.frame = CGRectMake(70+size.width+5, 2, 20, 20);
     self.MemberImgView.frame = CGRectMake(70+size.width+25, 5, 30, 15);
 }
-
 
 
 - (void)awakeFromNib
