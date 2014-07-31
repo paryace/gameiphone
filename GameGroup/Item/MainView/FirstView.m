@@ -94,6 +94,8 @@
 
 -(void)receiveMsg:(NSDictionary *)msg{
     NSMutableDictionary * msgPayloadDic = [KISDictionaryHaveKey(msg, @"payload") JSONValue];
+    self.personCountLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgPayloadDic, @"roomCount")];
+    self.teamCountLb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgPayloadDic, @"userCount")];
     for (NSMutableDictionary * dic in self.firstDataArray) {
         if ([KISDictionaryHaveKey(msgPayloadDic, @"gameid") intValue] == [KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") intValue]&&[KISDictionaryHaveKey(msgPayloadDic, @"preferenceId") intValue] == [KISDictionaryHaveKey(dic, @"preferenceId") intValue]) {
             [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgPayloadDic, @"characterName")] forKey:@"characterName"];

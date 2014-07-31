@@ -29,10 +29,10 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userId]];
             if (resuccess) {
                 resuccess(responseObject);
             }
-            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userId]];
             [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
             }];
         }

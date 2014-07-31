@@ -85,9 +85,7 @@
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     [customView addSubview:firstView];
-
     [self getMyRoomFromNet];
-    
     [self getPreferencesWithNet];
 //    if (![[NSUserDefaults standardUserDefaults]objectForKey:@"firstItem"]) {
 //        customImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-50-(KISHighVersion_7?0:20))];
@@ -120,6 +118,7 @@
     for (int i=0; i<tempArrayType.count; i++) {
         NSMutableDictionary * dic = (NSMutableDictionary*)[tempArrayType objectAtIndex:i];
          NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
+        
        [dic setObject:[NSString stringWithFormat:@"%d",[[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")]] forKey:@"receiveState"];
        if (preDic) {
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
@@ -146,7 +145,7 @@
     NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"refreshPreference_wx"];
     if ([str isEqualToString:@"refreshPreference"]) {
         if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
-           firstView.firstDataArray =  [self detailDataList:[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]];
+//           firstView.firstDataArray =  [self detailDataList:[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]];
             [firstView.myTableView reloadData];
             [self displayTabbarNotification];
         }
@@ -173,10 +172,9 @@
     }
 }
 
-
+//
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{
     NSDictionary * msg = notification.userInfo;
-    
     [firstView receiveMsg:msg];
     [self displayTabbarNotification];
 }
