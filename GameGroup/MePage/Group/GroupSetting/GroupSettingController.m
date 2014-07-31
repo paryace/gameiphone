@@ -237,7 +237,7 @@
     }else  if ([groupMsgSettingState isEqualToString:@"1"]) {
         return @"无红点模式";
     }else  if ([groupMsgSettingState isEqualToString:@"2"]) {
-        return @"禁音模式";
+        return @"静音模式";
     }
     return @"";
 }
@@ -263,7 +263,7 @@
 //群组消息设置
 -(void)hint:(id)sender
 {
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"禁音模式",@"无红点模式", nil];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"正常模式",@"静音模式",@"无红点模式", nil];
     alertView.tag = 1002;
     [alertView show];
 }
