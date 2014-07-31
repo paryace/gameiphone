@@ -98,8 +98,6 @@
         [enterSearchBtn addTarget:self action:@selector(enterSearchTape:) forControlEvents:UIControlEventTouchUpInside];
         [customImageView addSubview:enterSearchBtn];
     }
-    
-    
 }
 
 -(NSMutableArray*)detailDataList:(NSMutableArray*)datas{
@@ -111,10 +109,16 @@
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgCount")] forKey:@"msgCount"];
+           [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgTime")] forKey:@"msgTime"];
+           
        }else{
            [dic setObject:@"0" forKey:@"msgCount"];
+           [dic setObject:@"1000" forKey:@"msgTime"];
        }
     }
+    [tempArrayType sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
+        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
+    }];
     return tempArrayType;
 }
 

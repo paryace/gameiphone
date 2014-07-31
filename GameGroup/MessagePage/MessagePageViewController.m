@@ -446,16 +446,17 @@
         NSString * content = KISDictionaryHaveKey(message,@"msgContent");
         NSString * senderNickname =[self getNickUserNameBySender:sender];
         cell.headImageV.placeholderImage = KUIImage(@"group_icon");
-        
         if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
             if ([MsgTypeManager payloadType:message]==0) {//群聊天消息
                 cell.nameLabel.text =nickName;
                 cell.contentLabel.text = @"该群不可用";
             }else if([MsgTypeManager payloadType:message]==1){//组队通知消息
-                cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
+                NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")]];
+                  cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
             }else if([MsgTypeManager payloadType:message]==2){//组队聊天消息
-                cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
+                NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")]];
+                cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = @"该组队不可用";
             }
         }else
@@ -465,7 +466,6 @@
                  cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
             }else if([MsgTypeManager payloadType:message]==1){//组队通知消息
                 NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")]];
-                
                 cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
             }else if([MsgTypeManager payloadType:message]==2){//组队聊天消息

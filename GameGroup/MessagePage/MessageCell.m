@@ -19,22 +19,8 @@
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImageV];
-        self.notiBgV = [[UIImageView alloc] initWithFrame:CGRectMake(42, 8, 18, 18)];
-        [self.notiBgV setImage:[UIImage imageNamed:@"redCB.png"]];
-        self.notiBgV.tag=999;
-        [self.contentView addSubview:self.notiBgV];
-
-        self.unreadCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
-        [self.unreadCountLabel setBackgroundColor:[UIColor clearColor]];
-        [self.unreadCountLabel setTextAlignment:NSTextAlignmentCenter];
-        [self.unreadCountLabel setTextColor:[UIColor whiteColor]];
-        self.unreadCountLabel.font = [UIFont systemFontOfSize:12.0];
         
-        [self.notiBgV addSubview:self.unreadCountLabel];
-        [self.notiBgV setHidden:YES];
-        self.unreadCountLabel.hidden = YES;
-        
-        self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(42, 8, 18, 18)];
+        self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(42, 8, 22, 18)];
         [self.contentView addSubview:self.dotV];
         
         

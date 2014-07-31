@@ -226,6 +226,7 @@
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
+        cell.backgroundColor = [UIColor blackColor];
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
         cell.headImgView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:100];
         cell.roleNameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
@@ -244,6 +245,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
+        cell.backgroundColor = [UIColor blackColor];
         cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:12];
         cell.textLabel.textColor = [UIColor whiteColor];

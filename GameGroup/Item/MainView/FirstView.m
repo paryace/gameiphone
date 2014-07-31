@@ -75,6 +75,9 @@
             [dic setObject:[GameCommon getNewStringWithId:[NSString stringWithFormat:@"%d",[KISDictionaryHaveKey(dic, @"msgCount") intValue]+1]] forKey:@"msgCount"];
         }
     }
+    [self.firstDataArray sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
+        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
+    }];
     [self.myTableView reloadData];
 }
 
@@ -158,14 +161,13 @@
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
         }else{
-            cell.distLabel.text = @"组队提醒已开启";
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                 cell.distLabel.text = @"正在收听此类的组队";
+            }else{
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+            }
         }
-        if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-            cell.notiBgV.hidden = NO;
-            cell.unreadCountLabel.text = KISDictionaryHaveKey(dic, @"msgCount");
-        }else{
-            cell.notiBgV.hidden = YES;
-        }
+        [cell.dotV setMsgCount:[KISDictionaryHaveKey(dic, @"msgCount") intValue]];
     }
     else if (state == 2)
     {
@@ -180,10 +182,14 @@
             if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
                 cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"[",KISDictionaryHaveKey(dic, @"msgCount"),@"] ",@"已关闭组队搜索"];
             }else{
-                cell.distLabel.text = @"组队提醒已关闭";
+                if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                    cell.distLabel.text = @"已经关闭收听此类的组队";
+                }else{
+                    cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"已关闭收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+                }
             }
         }
-        cell.notiBgV.hidden = YES;
+        [cell.dotV hide];
     }
     else if (state == 3)
     {
@@ -191,14 +197,13 @@
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
         }else{
-            cell.distLabel.text = @"组队提醒已开启";
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
+                cell.distLabel.text = @"正在收听此类的组队";
+            }else{
+                cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",@"正在收听", KISDictionaryHaveKey(dic,@"desc") ,@"的组队"];
+            }
         }
-        if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
-            cell.notiBgV.hidden = NO;
-            cell.unreadCountLabel.text = KISDictionaryHaveKey(dic, @"msgCount");
-        }else{
-            cell.notiBgV.hidden = YES;
-        }
+        [cell.dotV setMsgCount:[KISDictionaryHaveKey(dic, @"msgCount") intValue]];
     }
     return cell;
 }

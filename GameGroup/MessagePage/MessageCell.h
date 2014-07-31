@@ -16,8 +16,6 @@
 @property (strong,nonatomic) UILabel * nameLabel;
 @property (strong,nonatomic) UILabel * contentLabel;
 @property (strong,nonatomic) UILabel * timeLabel;
-@property (strong,nonatomic) UILabel * unreadCountLabel;
-@property (strong,nonatomic) UIImageView * notiBgV;
 @property (strong,nonatomic) UIImageView * settingState;
 @property (strong,nonatomic) MsgNotifityView * dotV;
 
