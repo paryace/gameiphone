@@ -426,7 +426,6 @@
     else if([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"normalchat"]||[KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"payloadchat"])
     {//正常聊天
         NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message,@"senderId")]];
-        
         NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
         NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
         NSString * content = KISDictionaryHaveKey(message,@"msgContent");
