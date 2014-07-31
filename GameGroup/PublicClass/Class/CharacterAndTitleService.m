@@ -98,4 +98,16 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTitleInfo object:titles userInfo:nil];
     }];
 }
+
+//删除角色信息
+-(void)deleteCharacher:(NSString*)characherId{
+    [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:characherId]];
+    [self deleteTitle:characherId];
+    [[PreferencesMsgManager singleton] deletePreferences:characherId];
+}
+//删除头衔信息
+-(void)deleteTitle:(NSString*)characherId{
+    [DataStoreManager deleteDSTitleByCharactersId:[GameCommon getNewStringWithId:characherId]];
+}
+
 @end

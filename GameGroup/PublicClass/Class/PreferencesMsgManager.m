@@ -21,6 +21,56 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
 	return preferencesMsgManager;
 }
 
+-(void)getPreferencesWithNet:(NSString*)userId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"276" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            if (resuccess) {
+                resuccess(responseObject);
+            }
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userId]];
+            [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
+            }];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
+//删除偏好
+-(void)deletePreferences:(NSString*)gameId PreferenceId:(NSString*)preferenceId Completion:(MRSaveCompletionHandler)completion{
+    [DataStoreManager deletePreferenceInfo:[GameCommon getNewStringWithId:gameId] PreferenceId:[GameCommon getNewStringWithId:preferenceId] Successcompletion:^(BOOL success, NSError *error) {
+        [self removePreferenceState:[GameCommon getNewStringWithId:gameId] PreferenceId:[GameCommon getNewStringWithId:preferenceId]];
+        if (completion) {
+            completion(success, error);
+        }
+    }];
+}
+//根据角色id删除偏好
+-(void)deletePreferences:(NSString*)characterId{
+    [self deletePreferences:characterId Completion:nil];
+}
+//根据角色id删除偏好
+-(void)deletePreferences:(NSString*)characterId Completion:(MRSaveCompletionHandler)completion{
+    [DataStoreManager deletePreferenceInfoByCharacterId:[GameCommon getNewStringWithId:characterId] Successcompletion:^(BOOL success, NSError *error) {
+        NSDictionary * dic = @{@"characterId":characterId};
+        [[NSNotificationCenter defaultCenter] postNotificationName:RoleRemoveNotify object:nil userInfo:dic];
+        if (completion) {
+            completion(success, error);
+        }
+    }];
+}
+
+
+
+
 -(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs
 {
     int allUnread = 0;

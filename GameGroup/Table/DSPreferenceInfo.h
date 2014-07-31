@@ -21,5 +21,6 @@
 @property (nonatomic, retain) NSString * typeId;
 @property (nonatomic, retain) NSString * userid;
 @property (nonatomic, retain) NSString * gameId;
+@property (nonatomic, retain) NSString * characterId;
 
 @end

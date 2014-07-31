@@ -52,6 +52,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"refreshPreference_wx" object:nil];
 //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
@@ -102,9 +103,22 @@
 //    }
 }
 
+-(void)didRoleRomeve:(NSString*)characterId{
+    for (NSMutableDictionary * dic in firstView.firstDataArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [firstView.firstDataArray removeObject:dic];
+        }
+    }
+    [firstView.myTableView reloadData];
+    [self displayTabbarNotification];
+}
+
+
+
 -(NSMutableArray*)detailDataList:(NSMutableArray*)datas{
     NSMutableArray * tempArrayType = [datas mutableCopy];
-   for (NSMutableDictionary * dic in tempArrayType) {
+    for (int i=0; i<tempArrayType.count; i++) {
+        NSMutableDictionary * dic = (NSMutableDictionary*)[tempArrayType objectAtIndex:i];
          NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
        [dic setObject:[NSString stringWithFormat:@"%d",[[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")]] forKey:@"receiveState"];
        if (preDic) {
@@ -162,8 +176,14 @@
 
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{
     NSDictionary * msg = notification.userInfo;
+    
     [firstView receiveMsg:msg];
     [self displayTabbarNotification];
+}
+
+-(void)roleRemove:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
 }
 
 -(void)refreshMyList:(id)sender
@@ -207,41 +227,32 @@
             }
         }
     }];
-
-    
 }
 
 -(void)getPreferencesWithNet
 {
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"276" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [self setList:responseObject];
-            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_preference_%@",userid]];
-            firstView.firstDataArray =[self detailDataList:responseObject];
-            [firstView.myTableView reloadData];
-            [self displayTabbarNotification];
-            [[NSUserDefaults standardUserDefaults]setObject:@"stopRefreshPreference" forKey:@"refreshPreference_wx"];
-            [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
-            }];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+    [[PreferencesMsgManager singleton] getPreferencesWithNet:userid reSuccess:^(id responseObject) {
+        [self setList:responseObject];
+        firstView.firstDataArray =[self detailDataList:responseObject];
+        [firstView.myTableView reloadData];
+        [self displayTabbarNotification];
+    } reError:^(id error) {
         [hud hide:YES];
+        [self showAlertDialog:error];
     }];
 }
 
+
+-(void)showAlertDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+}
 
 -(void)setList:(NSMutableArray*)array
 {

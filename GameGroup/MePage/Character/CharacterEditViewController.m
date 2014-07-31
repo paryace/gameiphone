@@ -275,9 +275,7 @@
             [hud hide:YES];
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];
             [m_myTabelView reloadData];
-            [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
-            [DataStoreManager deleteDSTitleByCharactersId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]];
-//            [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [[CharacterAndTitleService singleton]deleteCharacher:KISDictionaryHaveKey(dic, @"id")];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

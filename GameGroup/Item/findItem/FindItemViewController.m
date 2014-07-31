@@ -138,7 +138,7 @@
     [collectionBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
     [collectionBtn setTitle:@"收藏" forState:UIControlStateNormal];
     [collectionBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:collectionBtn];
+//    [self.view addSubview:collectionBtn];
 
     
     //标签布局

@@ -320,7 +320,7 @@ UINavigationControllerDelegate>
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:@"selectType"];
             [self changPosition];
-            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")]];
+            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         } reError:^(id error) {
             [self showErrorAlertView:error];
         }];
@@ -2296,13 +2296,13 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 发送其他消息（位置变更，...）
--(void)sendOtherMsg:(NSString *)message
+-(void)sendOtherMsg:(NSString *)message TeamPosition:(NSString*)teamPosition
 {
     NSString * uuid = [[GameCommon shareGameCommon] uuid];
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
     NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
-    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:message gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:teamPosition gameid:self.gameId roomId:self.roomId team:@"teamchat"];
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];

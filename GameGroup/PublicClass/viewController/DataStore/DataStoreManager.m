@@ -3048,16 +3048,13 @@
 //删除单个角色
 +(void)deleteDSCharactersByCharactersId:(NSString*)charactersId
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
         DSCharacters * dbCharacters = [DSCharacters MR_findFirstWithPredicate:predicate inContext:localContext];
         if (dbCharacters) {
             [dbCharacters MR_deleteInContext:localContext];
         }
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];
+    }];
 }
 
 //删除所有头衔
@@ -4422,6 +4419,7 @@
             NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"userid")];
             NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(preferenceInfo, @"createTeamUser");
             NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gameid")];
+            NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
             [self saveCreateTeamUserInfo:createTeamUserInfo Successcompletion:^(BOOL success, NSError *error) {
                 
             }];
@@ -4438,6 +4436,7 @@
             commonMsg.typeId = typeId;
             commonMsg.userid = userid;
             commonMsg.gameId = gameId;
+            commonMsg.characterId = characterId;
         }
     }
     completion:^(BOOL success, NSError *error) {
@@ -4503,6 +4502,7 @@
     [preDic setObject:commmonMsg.typeId forKey:@"typeId"];
     [preDic setObject:commmonMsg.userid forKey:@"userid"];
     [preDic setObject:commmonMsg.gameId forKey:@"gameId"];
+    [preDic setObject:commmonMsg.characterId forKey:@"characterId"];
     return preDic;
 }
 
@@ -4519,6 +4519,23 @@
              successcompletion(success ,error);
          }
      }];
+}
+//根据characterId删除偏好
++(void)deletePreferenceInfoByCharacterId:(NSString*)characterId Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"characterId==[c]%@",characterId];
+        NSArray * commonMsgs = [DSPreferenceInfo MR_findAllWithPredicate:predicates inContext:localContext];
+        for (DSPreferenceInfo * commonMsg in commonMsgs) {
+            if (!commonMsg){
+                [commonMsg deleteInContext:localContext];
+            }
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success ,error);
+        }
+    }];
 }
 //
 

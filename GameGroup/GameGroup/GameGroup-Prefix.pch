@@ -178,6 +178,8 @@
 #define UpdateFilterId @"updateFilterId"//组队房间过滤
 #define UpdateTeamMemberCount @"updateTeamMemberCount"//更新组队人数信息
 
+#define RoleRemoveNotify @"roleRemoveNotify"//角色移除消息
+
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])
 #define RootDocPath ([NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0])

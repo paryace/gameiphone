@@ -311,6 +311,7 @@
         <attribute name="temp" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSPreferenceInfo" representedClassName="DSPreferenceInfo" syncable="YES">
+        <attribute name="characterId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gameId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isOpen" optional="YES" attributeType="String" syncable="YES"/>
@@ -504,6 +505,7 @@
         <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="210"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
+        <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
         <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
         <element name="DSFriendCircle" positionX="-81" positionY="-45" width="128" height="45"/>
@@ -522,6 +524,8 @@
         <element name="DSOfflineComments" positionX="-288" positionY="423" width="128" height="120"/>
         <element name="DSOfflineZan" positionX="-81" positionY="-45" width="128" height="75"/>
         <element name="DSOtherMsgs" positionX="-18" positionY="-198" width="128" height="135"/>
+        <element name="DSPreferenceInfo" positionX="-72" positionY="-36" width="128" height="195"/>
+        <element name="DSPreferenceMsg" positionX="-63" positionY="-27" width="128" height="240"/>
         <element name="DSReceivedHellos" positionX="-153" positionY="-27" width="128" height="163"/>
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
         <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="283"/>
@@ -533,8 +537,5 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
-        <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>
-        <element name="DSPreferenceInfo" positionX="-72" positionY="-36" width="128" height="178"/>
-        <element name="DSPreferenceMsg" positionX="-63" positionY="-27" width="128" height="240"/>
     </elements>
 </model>

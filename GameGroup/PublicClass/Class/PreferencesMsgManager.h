@@ -11,6 +11,18 @@
 @interface PreferencesMsgManager : NSObject
 + (PreferencesMsgManager*)singleton;
 
+//请求偏好列表
+-(void)getPreferencesWithNet:(NSString*)userId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+//删除偏好
+-(void)deletePreferences:(NSString*)gameId PreferenceId:(NSString*)preferenceId Completion:(MRSaveCompletionHandler)completion;
+
+//根据游戏id删除偏好
+-(void)deletePreferences:(NSString*)characterId;
+
+//根据游戏id删除偏好
+-(void)deletePreferences:(NSString*)gameId Completion:(MRSaveCompletionHandler)completion;
+
 -(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs;
 
 -(NSInteger)getPreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId;

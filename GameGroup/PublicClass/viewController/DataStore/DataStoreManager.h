@@ -395,6 +395,9 @@
 //删除偏好
 +(void)deletePreferenceInfo:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//根据游戏id删除组队偏好
++(void)deletePreferenceInfoByCharacterId:(NSString*)characterId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 //查询创建组队者的信息
 +(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId;
 
@@ -409,6 +412,7 @@
 
 //删除组队偏好消息
 +(void)deletePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 //更新组队偏好消息
 +(void)updatePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 @end

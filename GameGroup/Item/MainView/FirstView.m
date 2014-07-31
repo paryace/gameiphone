@@ -329,14 +329,10 @@
 -(void)deleteCellWithIndexPathRow:(NSInteger)row
 {
     NSDictionary *dic = [self.firstDataArray objectAtIndex:row];
-    [self deletePreference:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] reSuccess:^(id responseObject) {
-        [DataStoreManager deletePreferenceInfo:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
-            [self.firstDataArray removeObjectAtIndex:row];
-            [[PreferencesMsgManager singleton] removePreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")];
-            [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]];
-            [self.myTableView reloadData];
-             [self.myDelegate refreWithRow:row];
-        }];
+    [[PreferencesMsgManager singleton] deletePreferences:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") Completion:^(BOOL success, NSError *error) {
+        [[NSUserDefaults standardUserDefaults]setObject:self.firstDataArray forKey:[NSString stringWithFormat:@"item_preference_%@",[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]];
+         [self.firstDataArray removeObjectAtIndex:row];
+        [self.myDelegate refreWithRow:row];
     }];
 }
 

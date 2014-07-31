@@ -20,5 +20,6 @@
 @dynamic typeId;
 @dynamic userid;
 @dynamic gameId;
+@dynamic characterId;
 
 @end

@@ -18,4 +18,8 @@
 -(void)getTitleInfo:(NSString*)userid Type:(NSString*)type;
 //保存头衔信息
 -(void)saveTitleInfo:(NSString*)userId Titles:(NSArray*)titles Type:(NSString*)type;
+
+-(void)deleteCharacher:(NSString*)characherId;
+
+-(void)deleteTitle:(NSString*)characherId;
 @end
