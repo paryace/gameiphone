@@ -448,33 +448,32 @@
         cell.headImageV.placeholderImage = KUIImage(@"group_icon");
         
         if([available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]){
-            if ([self msgType:message]==0) {//群聊天消息
+            if ([MsgTypeManager payloadType:message]==0) {//群聊天消息
                 cell.nameLabel.text =nickName;
-                cell.contentLabel.text = [self getMsg:message];
-            }else if([self msgType:message]==1){//组队通知消息
+                cell.contentLabel.text = @"该群不可用";
+            }else if([MsgTypeManager payloadType:message]==1){//组队通知消息
                 cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
-            }else if([self msgType:message]==2){//组队聊天消息
+            }else if([MsgTypeManager payloadType:message]==2){//组队聊天消息
                 cell.nameLabel.text =[NSString stringWithFormat:@"%@%@",@"[N/N]",nickName];
-                cell.contentLabel.text = [self getMsg:message];
+                cell.contentLabel.text = @"该组队不可用";
             }
         }else
         {
-            if ([self msgType:message]==0) {//群聊天消息
+            if ([MsgTypeManager payloadType:message]==0) {//群聊天消息
                 cell.nameLabel.text =nickName;
                  cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
-            }else if([self msgType:message]==1){//组队通知消息
+            }else if([MsgTypeManager payloadType:message]==1){//组队通知消息
                 NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")]];
                 
                 cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"组队信息:%@",content];
-            }else if([self msgType:message]==2){//组队聊天消息
+            }else if([MsgTypeManager payloadType:message]==2){//组队聊天消息
                  NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"gameid") RoomId:KISDictionaryHaveKey([KISDictionaryHaveKey(message, @"payload") JSONValue], @"roomId")];
                 cell.nameLabel.text =[NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),nickName];
                 cell.contentLabel.text = [NSString stringWithFormat:@"%@%@",senderNickname?senderNickname:@"",content];
             }
         }
-        
         if ([GameCommon isEmtity:backgroundImg]) {
             cell.headImageV.image = KUIImage(@"group_icon");
         }else{
@@ -486,6 +485,7 @@
         cell.contentLabel.text = KISDictionaryHaveKey(message,@"msgContent");
         cell.nameLabel.text =@"群通知";
     }
+    [cell setMsgState:message];
     [cell setNotReadMsgCount:message];
     //-- end
     
@@ -504,50 +504,6 @@
     }
     return cell;
 }
-
--(NSString*)getMsg:(NSDictionary*)message
-{
-    if ([self msgType:message]==0) {
-        if ([GameCommon isEmtity:KISDictionaryHaveKey([KISDictionaryHaveKey(message,@"payload") JSONValue], @"team")]) {
-            return @"该群不可用";
-        }else{
-            return @"该组队不可用";
-        }
-    }else{
-        return @"该组队不可用";
-    }
-
-}
-
-
-//0群聊天消息，1组队通知消息，2组队聊天消息
--(NSInteger)msgType:(NSDictionary*) plainEntry
-{
-    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
-    if([GameCommon isEmtity:payLoadStr])
-    {
-        return 0;
-    }
-    NSDictionary * payloadDic = [payLoadStr JSONValue];
-    NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
-   if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
-       ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
-       ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
-       ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
-       ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
-       ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"])//解散队伍
-    {
-        return 1;
-    }
-    else
-    {
-        if ([GameCommon isEmtity:KISDictionaryHaveKey(payloadDic, @"team")]) {
-            return 0;
-        }
-        return 2;
-    }
-}
-
 
 -(NSDate*) convertDateFromString:(NSString*)uiDate
 {
@@ -632,7 +588,7 @@
         kkchat.unreadMsgCount  = unreadMsgCount;
         kkchat.chatWithUser = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(message, @"groupId")];
         kkchat.type = @"group";
-        if ([self msgType:message]==1||[self msgType:message]==2) {
+        if ([MsgTypeManager payloadType:message]==1||[MsgTypeManager payloadType:message]==2) {
             kkchat.isTeam = YES;
             kkchat.roomId = KISDictionaryHaveKey(dict, @"roomId");
             kkchat.gameId = KISDictionaryHaveKey(dict, @"gameid");

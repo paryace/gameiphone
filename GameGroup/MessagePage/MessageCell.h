@@ -19,6 +19,11 @@
 @property (strong,nonatomic) UILabel * unreadCountLabel;
 @property (strong,nonatomic) UIImageView * notiBgV;
 @property (strong,nonatomic) UIImageView * settingState;
+@property (strong,nonatomic) MsgNotifityView * dotV;
+
+
+
 
 -(void)setNotReadMsgCount:(NSMutableDictionary*)message;
+-(void)setMsgState:(NSMutableDictionary*)message;
 @end

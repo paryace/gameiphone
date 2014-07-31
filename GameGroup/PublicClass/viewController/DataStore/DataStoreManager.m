@@ -4038,13 +4038,16 @@
         thumbMsgs.sayHiType = @"1";
         thumbMsgs.payLoad = [payloadDic JSONFragment];
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
-
-        
         
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
         DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate inContext:localContext];
-        if (!commonMsg)
+        int unreadC;
+        if (!commonMsg){
             commonMsg = [DSTeamNotificationMsg MR_createInContext:localContext];
+            unreadC =0;
+        }else{
+            unreadC = [commonMsg.unreadMsgCount intValue];
+        }
         commonMsg.state = @"0";
         commonMsg.fromId = fromid;
         commonMsg.toId = toid;
@@ -4065,6 +4068,7 @@
         commonMsg.value2 = value2;
         commonMsg.groupId = groupId;
         commonMsg.userImg = userimg;
+        commonMsg.unreadMsgCount = [NSString stringWithFormat:@"%d",unreadC+1];
         commonMsg.receiveTime=[GameCommon getCurrentTime];
     }
      completion:^(BOOL success, NSError *error) {
@@ -4072,6 +4076,25 @@
              block(msg);
          }
      }];
+}
+
++(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+    DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+    if (commonMsg) {
+        return [commonMsg.unreadMsgCount intValue];
+    }
+    return 0;
+}
+
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+        if (commonMsg) {
+            commonMsg.unreadMsgCount= @"0";
+        }
+    }];
 }
 
 

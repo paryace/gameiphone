@@ -102,8 +102,9 @@
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
     mSearchBar.backgroundColor = [UIColor clearColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
-    mSearchBar.barTintColor = [UIColor blackColor];
-    mSearchBar.searchBarStyle = UISearchBarStyleDefault;
+//    mSearchBar.barTintColor = [UIColor blackColor];
+//    [mSearchBar setBarTintColor:[UIColor blackColor]];
+//    mSearchBar.searchBarStyle = UISearchBarStyleDefault;
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];

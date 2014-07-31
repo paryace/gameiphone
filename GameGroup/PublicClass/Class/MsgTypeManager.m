@@ -121,7 +121,7 @@
     }
 }
 
--(PayloadType)getTPayloadType:(NSString*)payloadType
++(PayloadType)getTPayloadType:(NSString*)payloadType
 {
     if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"3"]){
         return PayloadTypeDynamic;
@@ -161,6 +161,34 @@
     }
     else{
         return PayloadTypeOther;
+    }
+}
+
+
+//0群聊天消息，1组队通知消息，2组队聊天消息
++(NSInteger)payloadType:(NSDictionary*)plainEntry
+{
+    NSString * payLoadStr = KISDictionaryHaveKey(plainEntry, @"payload");
+    if([GameCommon isEmtity:payLoadStr])
+    {
+        return 0;
+    }
+    NSDictionary * payloadDic = [payLoadStr JSONValue];
+    PayloadType payloadType = [self getTPayloadType:KISDictionaryHaveKey(payloadDic,@"type")];
+    if (payloadType == PayloadTypeInGroupSystemMsg
+        ||payloadType == PayloadTypeSelectTeamPosition
+        ||payloadType == PayloadTypeTeamAddType
+        ||payloadType == PayloadTypeTeamKickType
+        ||payloadType == PayloadTypeTeamQuitType
+        ||payloadType == PayloadTypeInTeamSystemMsg) {
+        return 1;
+    }
+    else
+    {
+        if ([GameCommon isEmtity:KISDictionaryHaveKey(payloadDic, @"team")]) {
+            return 0;
+        }
+        return 2;
     }
 }
 @end

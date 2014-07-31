@@ -96,5 +96,7 @@ typedef NS_ENUM(NSInteger,PayloadType){
 
 @interface MsgTypeManager : NSObject
 +(MsgType)getTMsgType:(NSString*)msgtype;
--(PayloadType)getTPayloadType:(NSString*)payloadType;
++(PayloadType)getTPayloadType:(NSString*)payloadType;
+
++(NSInteger)payloadType:(NSDictionary*)plainEntry;
 @end
