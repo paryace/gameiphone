@@ -382,7 +382,7 @@ UINavigationControllerDelegate>
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
     }
-    return @"";
+    return @"选择位置";
 
 }
 -(NSInteger)defaultShowSection:(NSInteger)section
