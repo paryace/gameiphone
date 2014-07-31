@@ -950,8 +950,13 @@ static GameCommon *my_gameCommon = NULL;
         if ([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
             if ([[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"0"]
                 ||[[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"2"]) {
-                
-                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+                NSInteger unreadCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
+                if ([MsgTypeManager payloadType:message]==1||[MsgTypeManager payloadType:message]==2) {
+                    if (unreadCount==0) {
+                        unreadCount = [DataStoreManager getDSTeamNotificationMsgCount:KISDictionaryHaveKey(message, @"groupId")];
+                    }
+                }
+                allUnread += unreadCount;
             }
         }else{
             allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];

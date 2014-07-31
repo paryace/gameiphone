@@ -345,6 +345,12 @@
 //保存组队通知消息
 +(void)saveTeamNotifityMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
+//请求组队申请消息数
++(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId;
+
+//更新组队申请消息数
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId;
+
 //查询组队通知列表
 +(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
 

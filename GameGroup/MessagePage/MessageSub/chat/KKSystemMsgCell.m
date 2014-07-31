@@ -32,13 +32,13 @@
         [self addSubview:self.timeLable];
         
         self.msgLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 22, 320, 20)];
-        self.msgLable.backgroundColor = kColorWithRGB(100,100,100, 0.7);
+        self.msgLable.backgroundColor = kColorWithRGB(100,100,100, 0.5);
         self.msgLable.textColor = [UIColor whiteColor];
         self.msgLable.text = @"克莱尔加入了本群";
         self.msgLable.font =[ UIFont systemFontOfSize:10];
         self.msgLable.textAlignment = NSTextAlignmentCenter;
         self.msgLable.layer.masksToBounds = YES;
-        self.msgLable.layer.cornerRadius = 5;
+        self.msgLable.layer.cornerRadius = 3;
         [self addSubview:self.msgLable];
     }
     return self;

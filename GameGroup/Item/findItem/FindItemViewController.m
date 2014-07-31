@@ -100,33 +100,30 @@
     
     //初始化搜索条
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
-    mSearchBar.backgroundColor = [UIColor clearColor];
+    mSearchBar.backgroundColor = [UIColor blackColor];
     [mSearchBar setPlaceholder:@"输入搜索条件"];
-    mSearchBar.barTintColor = [UIColor blackColor];
-    mSearchBar.searchBarStyle = UISearchBarStyleDefault;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
+        
+        [[[mSearchBar subviews] objectAtIndex:0] removeFromSuperview];
+    }
+    if ([mSearchBar respondsToSelector:@selector(barTintColor)]) {
+        [mSearchBar setBarTintColor:[UIColor clearColor]];
+    }
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];
     [self.view addSubview:mSearchBar];
     mSearchBar.frame = CGRectMake(0, startX+40, 260, 44);
  
-    screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40.5f, 60, 43)];
-//    screenView.backgroundColor = kColorWithRGB(188, 188, 194, 0.8);
+    screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40, 60, 44)];
     screenView.backgroundColor = [UIColor blackColor];
     [self.view addSubview:screenView];
-    
-    UIImageView * lineImageV = [[UIImageView alloc] initWithFrame:CGRectMake(0,0, 60, 0.5)];
-    lineImageV.backgroundColor = kColorWithRGB(169, 169, 171, 0.8);
-    [screenView addSubview:lineImageV];
-    
     screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
 //    [screenBtn setTitle:@"筛选" forState:UIControlStateNormal];
 //    [screenBtn addTarget:self action:@selector(didClickScreen:) forControlEvents:UIControlEventTouchUpInside];
     [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
-
     [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
     
-
     [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
     [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
     screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];

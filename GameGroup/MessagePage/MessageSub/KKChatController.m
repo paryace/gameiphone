@@ -279,6 +279,10 @@ UINavigationControllerDelegate>
         [self.dropDownView setTitle:@"选择位置" inSection:0];
         [self.dropDownView setTitle:@"申请加入" inSection:1];
         [self.view addSubview:self.dropDownView];
+        self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-50, startX+5, 22, 18)];
+        [self.view addSubview:self.dotV];
+        [self setNotifyMsgCount];
+        
         selectType = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectType"];
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
@@ -288,6 +292,10 @@ UINavigationControllerDelegate>
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
+}
+
+-(void)setNotifyMsgCount{
+    [self.dotV setMsgCount:[DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser]];
 }
 
 #pragma mark -- 分类请求成功通知
@@ -333,12 +341,17 @@ UINavigationControllerDelegate>
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
-        [[ItemManager singleton] getMyGameLocation:@"2" reSuccess:^(id responseObject) {
-            [self updateTeamType:responseObject];
-        } reError:^(id error) {
-        }];
-        return YES;
+        if ([self.gameId isEqualToString:@"1"]||[self.gameId isEqualToString:@"2"]) {
+            [[ItemManager singleton] getMyGameLocation:self.gameId reSuccess:^(id responseObject) {
+                [self updateTeamType:responseObject];
+            } reError:^(id error) {
+            }];
+            return YES;
+        }
+        return NO;
     }else if(section == 1){
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser];
+        [self setNotifyMsgCount];
         return YES;
     }
     return NO;
@@ -2156,7 +2169,7 @@ UINavigationControllerDelegate>
     NSString * payloadStr;
     
     if (self.isTeam) {
-         payloadStr=[MessageService createPayLoadStr:imageMsg title:srtBigImage shiptype:@"" messageid:@"" msg:@"" type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+         payloadStr=[MessageService createPayLoadStr:strThumb title:srtBigImage shiptype:@"" messageid:@"" msg:imageMsg type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
     }else{
        payloadStr=[MessageService createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
     }
@@ -2257,7 +2270,7 @@ UINavigationControllerDelegate>
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * payloadStr=[MessageService createPayLoadStr:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:self.isTeam?@"本组队已经解散":@"本群已经解散" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:self.isTeam?@"该组队已经解散":@"该群已经解散" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
     [self addNewOneMessageToTable:dictionary];
@@ -2602,6 +2615,7 @@ UINavigationControllerDelegate>
                 [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
+                [self setNotifyMsgCount];
             }
         }
     }else{

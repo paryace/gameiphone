@@ -108,9 +108,7 @@
         cell.headImageV.image = KUIImage(imageName);
     }
     cell.contentLabel.text = KISDictionaryHaveKey(dict, @"msg");
-    
-    cell.unreadCountLabel.hidden = YES;
-    cell.notiBgV.hidden = YES;
+    [cell.dotV hide];
     
     cell.nameLabel.text = [[m_tableData objectAtIndex:indexPath.row] objectForKey:@"myTitle"];
     NSLog(@"cell.nameLabel.text%@",cell.nameLabel.text);

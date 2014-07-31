@@ -25,6 +25,7 @@
 @protocol firstViewDelegate <NSObject>
 
 -(void)enterSearchRoomPageWithView:(FirstView *)view;
+-(void)refreWithRow:(NSInteger)row;
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
 -(void)didClickPreferenceToNetWithRow:(NSInteger)row;
 @end
