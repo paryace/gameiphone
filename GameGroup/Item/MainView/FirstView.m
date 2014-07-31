@@ -160,6 +160,9 @@
         cell.stopImg.image = KUIImage(@"have_soundSong");
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
+            
+            [cell setTime:KISDictionaryHaveKey(dic, @"msgTime")];
+            
         }else{
             if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {
                  cell.distLabel.text = @"正在收听此类的组队";
@@ -173,6 +176,7 @@
     {
         cell.stopImg.image = KUIImage(@"close_receive");
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
+            [cell setTime:KISDictionaryHaveKey(dic, @"msgTime")];
             if ([KISDictionaryHaveKey(dic, @"msgCount") intValue]>0) {
                 cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@%@",@"(",KISDictionaryHaveKey(dic, @"msgCount"),@"条消息) ",[NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")]];
             }else{
@@ -195,6 +199,7 @@
     {
         cell.stopImg.image = KUIImage(@"nor_soundSong");
         if (![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"characterName")]&&![GameCommon isEmtity:KISDictionaryHaveKey(dic, @"description")]) {
+            [cell setTime:KISDictionaryHaveKey(dic, @"msgTime")];
             cell.distLabel.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(dic, @"characterName"),@":",KISDictionaryHaveKey(dic, @"description")];
         }else{
             if ([GameCommon isEmtity:KISDictionaryHaveKey(dic,@"desc")]) {

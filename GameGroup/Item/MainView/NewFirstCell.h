@@ -17,8 +17,8 @@
 @property (nonatomic,strong) UILabel *cardLabel;
 @property (nonatomic,strong) UILabel *timeLabel;
 @property (nonatomic,strong) UIImageView *stopImg;
-
 @property (strong,nonatomic) MsgNotifityView * dotV;
+-(void)setTime:(NSString*)msgTime;
 
 
 @end
