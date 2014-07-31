@@ -350,6 +350,7 @@
         }
 
     }
+    [cell setTime:KISDictionaryHaveKey(msgDic, @"senTime")];
     return cell;
 }
 

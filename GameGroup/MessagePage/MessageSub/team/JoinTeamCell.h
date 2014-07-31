@@ -21,20 +21,18 @@
 @property(nonatomic,strong)UILabel * realmLable;//服务器
 @property(nonatomic,strong)UILabel * pveLable;//战斗力
 @property(nonatomic,strong)UILabel * timeLable;//时间
-
 @property(nonatomic,strong)UILabel * detailLable;//处理
-
-
 @property(nonatomic,assign)id<TeamDetailDelegate>delegate;
-
 //同意，拒绝button
 @property(nonatomic,strong)UIButton * agreeButton;  //同意
 @property(nonatomic,strong)UIButton * refuseButton;       //拒绝
+-(void)setTime:(NSString*)msgTime;
 @end
 
 @protocol TeamDetailDelegate <NSObject>
 
 -(void)onAgreeClick:(JoinTeamCell*)sender;
 -(void)onDisAgreeClick:(JoinTeamCell*)sender;
+
 
 @end
