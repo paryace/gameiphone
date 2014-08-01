@@ -359,6 +359,52 @@ static ItemManager *itemManager = NULL;
         }
     }];
 }
+#pragma mark ---解散队伍
+-(void)dissoTeam:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"270" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
+#pragma mark --- 退出队伍
+-(void)exitTeam:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    [paramDict setObject:memberId forKey:@"memberId"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"269" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+
+}
+
 
 -(long long)getCurrentTime{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];

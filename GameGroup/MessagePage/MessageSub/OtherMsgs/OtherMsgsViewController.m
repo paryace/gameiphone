@@ -198,7 +198,6 @@
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];
-            VC.isMe = @"1";
             VC.gameUrl = @"moshouRole.html?";
             VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];
@@ -206,7 +205,6 @@
             H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
             VC.characterId = dic[@"characterid"];
             VC.gameId = dic[@"gameid"];		
-            VC.isMe = @"1";
             VC.gameUrl = @"rolesinfo.html?";
             VC.characterName = charaName;
             [self.navigationController pushViewController:VC animated:YES];

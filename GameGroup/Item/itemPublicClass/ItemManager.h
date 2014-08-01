@@ -42,5 +42,12 @@
 //设置组队位置
 -(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTagId:(NSString*)positionTagId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
+//获取偏好数量
 -(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+//解散队伍
+-(void)dissoTeam:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+//退出队伍
+-(void)exitTeam:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 @end

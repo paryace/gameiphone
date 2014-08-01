@@ -9,8 +9,9 @@
 #import "BaseViewController.h"
 #import "RoleTabView.h"
 #import "EditInfoViewController.h"
+#import "ItemInfoCell.h"
 
-@interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate,UIAlertViewDelegate,editInfoDelegate>
+@interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate,UIAlertViewDelegate,editInfoDelegate,HeadClickDelegate>
 @property(nonatomic,strong)NSMutableDictionary *infoDict;
 @property(nonatomic,strong)NSString *itemId;
 @property(nonatomic,strong)NSString *gameid;

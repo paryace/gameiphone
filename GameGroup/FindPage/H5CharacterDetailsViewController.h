@@ -14,5 +14,4 @@
 @property(nonatomic,strong)NSString* gameId;
 @property(nonatomic,strong)NSString* characterName;
 @property(nonatomic,strong)NSString* characterId;
-@property(nonatomic,strong)NSString* isMe;
 @end
