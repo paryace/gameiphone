@@ -1984,6 +1984,10 @@ UINavigationControllerDelegate>
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     
     [self autoMovekeyBoard:keyboardRect.size.height];
+    if (self.isTeam) {
+        self.dropDownView.hidden = YES;
+        self.dotV.hidden = YES;
+    }
 }
 
 
@@ -2002,6 +2006,10 @@ UINavigationControllerDelegate>
     }else
     {
         [self autoMovekeyBoard:0];
+    }
+    if (self.isTeam) {
+        self.dropDownView.hidden = NO;
+        self.dotV.hidden = NO;
     }
     
     
