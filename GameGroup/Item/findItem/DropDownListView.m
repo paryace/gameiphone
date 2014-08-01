@@ -208,13 +208,10 @@
         }else{
             chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         }
-        
-        
+        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        
-        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
-        [self hideExtendedChooseView];
+        [self sectionBtnTouch:currentSectionBtn];
     }
 }
 
@@ -251,21 +248,6 @@
         cell.zdlLabel.adjustsFontSizeToFitWidth = YES;
         cell.zdlNumLabel.text= [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value3")];
         return cell;
-//<<<<<<< HEAD
-//    }else if(currentExtendSection ==1){
-//        static NSString * indentifier = @"cell";
-//
-//    DropTitleCell *cell = [tableView dequeueReusableCellWithIdentifier:indentifier];
-//    if (!cell) {
-//        cell = [[DropTitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indentifier];
-//        cell.accessoryType = UITableViewCellAccessoryNone;
-//    }
-//    cell.backgroundColor = [UIColor blackColor];
-//    cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-//    cell.titleLabel.font = [UIFont systemFontOfSize:12];
-//    cell.titleLabel.textColor = [UIColor whiteColor];
-//    return cell;
-//=======
     }else{
         static NSString * cellIdentifier = @"cellIdentifierText";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
