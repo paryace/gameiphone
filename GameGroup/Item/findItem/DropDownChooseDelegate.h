@@ -23,4 +23,6 @@
 -(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index;
 -(NSInteger)defaultShowSection:(NSInteger)section;
 -(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger) index;
+- (void)headImgClick:(NSMutableDictionary*)dic;
+- (void)itemOnClick:(NSMutableDictionary*)dic;
 @end

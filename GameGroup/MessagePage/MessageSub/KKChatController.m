@@ -28,6 +28,7 @@
 #import "ItemManager.h"
 #import "ItemInfoViewController.h"
 #import "KKTeamInviteCell.h"
+#import "H5CharacterDetailsViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -390,6 +391,25 @@ UINavigationControllerDelegate>
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
     return 0;
+}
+
+- (void)headImgClick:(NSMutableDictionary*)dic {
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userid;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
+
+- (void)itemOnClick:(NSMutableDictionary*)dic{
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
+        VC.gameUrl = @"moshouRole.html?";
+    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+        VC.gameUrl = @"rolesinfo.html?";
+    }
+    [self.navigationController pushViewController:VC animated:YES];
 }
 
 

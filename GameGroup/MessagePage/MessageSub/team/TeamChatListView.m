@@ -11,6 +11,7 @@
 #import "CardTitleView.h"
 #import "JoinTeamCell.h"
 #import "ItemManager.h"
+#import "TestViewController.h"
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
@@ -284,13 +285,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
-        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+//        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+//        UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
+//        [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
+//        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
+//        [self hideExtendedChooseView];
         
-        UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
-        [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
-        [self hideExtendedChooseView];
-
+        NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
+        [self.dropDownDataSource itemOnClick:dic];
     }
 
 }
@@ -358,6 +360,24 @@
     return cell;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+   return @"删除";
+}
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle ==UITableViewCellEditingStyleDelete) {
+        NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
+        [DataStoreManager deleteTeamNotifityMsgStateByMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msgId")] Successcompletion:^(BOOL success, NSError *error) {
+            [self.teamNotifityMsg removeObjectAtIndex:indexPath.row];
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        }];
+    }
+}
 //头像默认图片
 -(NSString*)headPlaceholderImage:(NSString*)gender
 {
@@ -380,6 +400,13 @@
         return @"gender_girl";
     }
 }
+
+-(void)headImgClick:(JoinTeamCell*)Sender{
+    NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:Sender.tag];
+    [self.dropDownDataSource headImgClick:dic];
+}
+
+
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
@@ -442,5 +469,11 @@
     [self.mTableView reloadData];
     [DataStoreManager updateTeamNotifityMsgState:userId State:state GroupId:groupId];
 }
-
+- (void)dealloc
+{
+    if (self.mTableView) {
+        self.mTableView.delegate=nil;
+        self.mTableView.dataSource=nil;
+    }
+}
 @end

@@ -4123,14 +4123,6 @@
 }
 
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
-//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-//    DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
-//    if (commonMsg) {
-//        return [commonMsg.unreadMsgCount intValue];
-//    }
-//    return 0;
-    
-    
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
     DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
     if (commonMsg) {
@@ -4140,14 +4132,6 @@
 }
 
 +(void)updateDSTeamNotificationMsgCount:(NSString*)groupId{
-//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-//        DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
-//        if (commonMsg) {
-//            commonMsg.unreadMsgCount= @"0";
-//        }
-//    }];
-    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
         DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
@@ -4250,6 +4234,24 @@
      completion:^(BOOL success, NSError *error) {
          
      }];
+}
+
+
+//根据msgId删除组队通知消息
++(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"msgId==[c]%@",msgId];
+        DSTeamNotificationMsg * commMsg = [DSTeamNotificationMsg findFirstWithPredicate:predicate inContext:localContext];
+        if (commMsg) {
+            [commMsg deleteInContext:localContext];
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
 }
 
 #pragma mark  -----组队

@@ -420,4 +420,7 @@
 
 //查询未处理的申请加入组队消息数量
 +(NSInteger)getTeamNotifityMsgCount:(NSString*)state GroupId:(NSString*)groupId;
+
+//根据msgId删除组队通知消息
++(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 @end

@@ -28,7 +28,7 @@
         [self.bgImageView setBackgroundImage:nil forState:UIControlStateNormal];
         
         
-        self.nickLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 5, 100, 15) font:[UIFont systemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.nickLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 5, 100, 15) font:[UIFont boldSystemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.nickLabel];
         
         self.genderImgView = [[UIImageView alloc]initWithFrame:CGRectMake(175, 2, 20, 20)];
@@ -74,10 +74,10 @@
 
 -(void)refreshViewFrameWithText:(NSString *)text
 {
-    CGSize size = [text sizeWithFont:[UIFont systemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
+    CGSize size = [text sizeWithFont:[UIFont boldSystemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
     self.nickLabel.frame = CGRectMake(70, 5, size.width, 15);
-    self.genderImgView.frame = CGRectMake(70+size.width+5, 2, 20, 20);
-    self.MemberLable.frame = CGRectMake(80+size.width+25, 5, 30, 15);
+    self.genderImgView.frame = CGRectMake(70+size.width, 2, 20, 20);
+    self.MemberLable.frame = CGRectMake(80+size.width+22, 5, 30, 15);
 }
 
 

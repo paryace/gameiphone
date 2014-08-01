@@ -258,8 +258,16 @@
 -(void)tagClick:(UIButton*)sender
 {
     NSString *str = m_miaoshuTV.text;
+    NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
+    NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]]];
+    
+    if (ziNumOld+ziNumNew>30) {
+        return;
+    }
+    
     m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
+    [self refreshZiLabelText];
 
 }
 //点击toolbar 确定button
@@ -419,7 +427,6 @@
 {
     [self refreshZiLabelText];
 }
-
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
@@ -439,7 +446,6 @@
         return YES;
     }
     else{
-        m_ziNumLabel.textColor = [UIColor redColor];
         return NO;
     }
 }
@@ -447,8 +453,9 @@
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-    if (ziNum<0) {
+    if (ziNum<=0) {
         ziNum=0;
+        m_ziNumLabel.textColor = [UIColor redColor];
     }else{
         m_ziNumLabel.textColor = [UIColor blackColor];
     }

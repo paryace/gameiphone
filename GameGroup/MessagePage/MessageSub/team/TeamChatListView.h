@@ -10,6 +10,7 @@
 #import "DropDownChooseDelegate.h"
 #import "JoinTeamCell.h"
 
+
 #define SECTION_BTN_TAG_BEGIN   1000
 #define SECTION_IV_TAG_BEGIN    3000
 @interface TeamChatListView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,TeamDetailDelegate>{
@@ -19,6 +20,7 @@
 
 @property (nonatomic, assign) id<DropDownChooseDelegate> dropDownDelegate;
 @property (nonatomic, assign) id<DropDownChooseDataSource> dropDownDataSource;
+
 
 @property (nonatomic, strong) UIView * mSuperView;
 @property (nonatomic, strong) UIView * mTableBaseView;
