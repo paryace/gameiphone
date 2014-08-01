@@ -1619,6 +1619,10 @@ UINavigationControllerDelegate>
         [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         self.textView.hidden = NO;
         [self showEmojiScrollView];
+        if (self.isTeam) {
+            self.dropDownView.hidden = YES;
+            self.dotV.hidden = YES;
+        }
         
     }
     else
@@ -1631,7 +1635,6 @@ UINavigationControllerDelegate>
         [emojiBGV removeFromSuperview];
         [m_Emojipc removeFromSuperview];
         [sender setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        
     }
 }
 
@@ -1647,6 +1650,10 @@ UINavigationControllerDelegate>
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
+        if (self.isTeam) {
+            self.dropDownView.hidden = YES;
+            self.dotV.hidden = YES;
+        }
         
     }else{//点击切回键盘
         [self.textView.internalTextView becomeFirstResponder];
@@ -1657,7 +1664,6 @@ UINavigationControllerDelegate>
         [emojiBGV removeFromSuperview];
         [m_Emojipc removeFromSuperview];
         [sender setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-        
     }
     return;
 }
@@ -1747,6 +1753,10 @@ UINavigationControllerDelegate>
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
             [self autoMovekeyBoard:0];
+            if (self.isTeam) {
+                self.dropDownView.hidden = NO;
+                self.dotV.hidden = NO;
+            }
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
