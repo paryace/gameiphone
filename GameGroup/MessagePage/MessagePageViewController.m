@@ -16,7 +16,6 @@
 #import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
 #import "NewFriendRecommendViewController.h"
-
 #import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
@@ -55,8 +54,7 @@
             
         }];
     }
-    else
-    {
+    else{
         
         [[Custom_tabbar showTabBar] hideTabBar:NO];
     }
@@ -73,8 +71,7 @@
             [self presentViewController:navi animated:NO completion:^{
         }];
     }
-    else
-    {
+    else{
         if([self.appDel.xmppHelper isConnected]){
             self.titleLabel.text = @"消息";
         }else if([self.appDel.xmppHelper isConnecting]){
@@ -221,9 +218,7 @@
 {
     self.titleLabel.text = @"连接中";
     [m_messageTable reloadData];
-    
 }
-
 #pragma mark ----获取XMPP服务器失败
 -(void)getConnectFail:(NSNotification*)notification
 {
