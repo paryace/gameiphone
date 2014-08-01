@@ -230,19 +230,21 @@
 }
 //缓存搜索条件
 -(void)cacheSearchConditions{
-    [[NSUserDefaults standardUserDefaults]setObject:selectCharacter forKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectFilter forKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectDescription forKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectPreferenceId forKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    [[NSUserDefaults standardUserDefaults]setObject:selectCharacter forKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectFilter forKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectDescription forKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectPreferenceId forKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
 }
 //初始化上次的搜索条件
 -(void)initSearchConditions{
-   selectCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    selectType =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    selectFilter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+   selectCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    selectType =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
+    selectFilter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
+    selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
+    selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
     if (!selectCharacter) {
         [dropDownView showHide:0];
         return;
@@ -460,7 +462,6 @@
     [view addSubview:lable];
     
     [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(createTeam:)]];
-    
     return view;
 
 }
@@ -575,6 +576,11 @@
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
+    if ([GameCommon isEmtity:searchBar.text]) {
+        selectDescription = searchBar.text;
+        [self reloInfo:NO];
+    }
+    
     [self reloadView:40 offWidth:0 offWidth2:60];
     return YES;
 }
