@@ -3141,7 +3141,7 @@
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
     //    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@ and userid==[c]%@",charactersId,userid];
         DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!dscharacters)
             dscharacters = [DSCharacters MR_createInContext:localContext];
@@ -3196,7 +3196,7 @@
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
 //    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@ and userid==[c]%@",charactersId,userid];
     DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate];
     if (!dscharacters)
         dscharacters = [DSCharacters MR_createInContext:localContext];
@@ -3233,7 +3233,7 @@
     NSDictionary * titleObjects = KISDictionaryHaveKey(titless, @"titleObj");
     [self saveDSTitleObject:titleObjects];
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@",ids];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@ and userid==[c]%@",ids,userid];
         DSTitle * titles = [DSTitle MR_findFirstWithPredicate:predicate];
         if (!titles)
             titles = [DSTitle MR_createInContext:localContext];
@@ -3287,7 +3287,7 @@
     NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(titless, @"userimg")];
     NSDictionary * titleObjects = KISDictionaryHaveKey(titless, @"titleObj");
     
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@",ids];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"ids==[c]%@ and userid==[c]%@",ids,userid];
     DSTitle * titles = [DSTitle MR_findFirstWithPredicate:predicate];
     if (!titles)
         titles = [DSTitle MR_createInContext:localContext];
