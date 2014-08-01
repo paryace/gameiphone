@@ -91,4 +91,6 @@
 //未读消息的数量
 +(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs;
 
++(NSString*)getShowTime:(NSDate*)d;
+
 @end

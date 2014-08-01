@@ -354,8 +354,11 @@
         }else {
             cell.detailLable.text=@"已处理";
         }
-
     }
+    
+    CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    cell.groupNameLable.frame = CGRectMake(75, 12, nameSize.width, 20);
+    cell.genderImageV.frame = CGRectMake(75+nameSize.width+5, 10, 20, 20);
     [cell setTime:KISDictionaryHaveKey(msgDic, @"senTime")];
     return cell;
 }

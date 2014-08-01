@@ -5,6 +5,9 @@
 //  Created by 魏星 on 14-7-14.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
+#define knewsTimeFormat @"yyyyMMddHHmmss" //你要传过来日期的格式
+#define kLocaleIdentifier @"en_US"
+
 
 #import "FindItemViewController.h"
 #import "BaseItemCell.h"
@@ -481,10 +484,17 @@
 
     cell.titleLabel.text = title;
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];    
+//    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+    
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
+    NSString *timeStr = [GameCommon getShowTime:sendTime];
     cell.timeLabel.text = timeStr;
     return cell;
 }
+
+
+
+
 
 -(void)createTeam:(id)sender
 {
