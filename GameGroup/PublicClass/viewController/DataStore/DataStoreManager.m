@@ -4057,6 +4057,32 @@
         thumbMsgs.payLoad = [payloadDic JSONFragment];
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         
+        
+        
+        NSPredicate * predicates2 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"3"];
+        DSThumbMsgs * thumbMsgs2 = [DSThumbMsgs MR_findFirstWithPredicate:predicates2 inContext:localContext];
+        int unread2;
+        if (!thumbMsgs2){
+            thumbMsgs2 = [DSThumbMsgs MR_createInContext:localContext];
+            unread2 =0;
+        }else{
+            unread2 = [thumbMsgs.unRead intValue];
+        }
+        thumbMsgs2.sender = userid;
+        thumbMsgs2.senderNickname = nickname;
+        thumbMsgs2.msgContent = body;
+        thumbMsgs2.groupId = groupId;
+        thumbMsgs2.sendTime = sendTime;
+        thumbMsgs2.senderType = GROUPMSG;
+        thumbMsgs2.unRead = [NSString stringWithFormat:@"%d",unread2+1];
+        thumbMsgs2.msgType = @"groupchat";
+        thumbMsgs2.messageuuid = msgId;
+        thumbMsgs2.status = @"1";
+        thumbMsgs2.sayHiType = @"3";
+        thumbMsgs2.payLoad = [payloadDic JSONFragment];
+        thumbMsgs2.receiveTime=[GameCommon getCurrentTime];
+        
+        
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
         DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate inContext:localContext];
         int unreadC;
@@ -4097,20 +4123,36 @@
 }
 
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-    DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+//    DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+//    if (commonMsg) {
+//        return [commonMsg.unreadMsgCount intValue];
+//    }
+//    return 0;
+    
+    
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
+    DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
     if (commonMsg) {
-        return [commonMsg.unreadMsgCount intValue];
+        return [commonMsg.unRead intValue];
     }
     return 0;
 }
 
 +(void)updateDSTeamNotificationMsgCount:(NSString*)groupId{
+//    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+//        DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+//        if (commonMsg) {
+//            commonMsg.unreadMsgCount= @"0";
+//        }
+//    }];
+    
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-        DSTeamNotificationMsg * commonMsg = [DSTeamNotificationMsg MR_findFirstWithPredicate:predicate];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
+        DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (commonMsg) {
-            commonMsg.unreadMsgCount= @"0";
+            commonMsg.unRead= @"0";
         }
     }];
 }

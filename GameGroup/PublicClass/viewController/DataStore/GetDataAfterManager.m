@@ -197,12 +197,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     }];
 }
 
-#pragma mark 组队通知消息
+#pragma mark 申请加入组队
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent
 {
     [DataStoreManager saveTeamNotifityMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
+       
     }];
     NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
     NSDictionary *payloadDic = [payloadStr JSONValue];
@@ -212,6 +211,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [messageContent setValue:[payloadDic JSONFragment] forKey:@"payload"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [[MessageSetting singleton] setSoundOrVibrationopen];
+         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];
         [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
     }];
