@@ -258,7 +258,7 @@
 -(void)tagClick:(UIButton*)sender
 {
     NSString *str = m_miaoshuTV.text;
-    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+    m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
 
 }

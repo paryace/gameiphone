@@ -4215,6 +4215,15 @@
          
      }];
 }
+
+//查询未处理的申请加入组队消息数量
++(NSInteger)getTeamNotifityMsgCount:(NSString*)state GroupId:(NSString*)groupId
+{
+    NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"state==[c]%@ and groupId==[c]%@",state,groupId];
+    NSArray * commMsgs = [DSTeamNotificationMsg findAllWithPredicate:predicate];
+    return commMsgs.count;
+}
+
 //删除组队通知消息
 +(void)deleteTeamNotifityMsgState
 {

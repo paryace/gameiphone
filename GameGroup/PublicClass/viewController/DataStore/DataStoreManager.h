@@ -417,4 +417,7 @@
 
 //更新组队偏好消息
 +(void)updatePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询未处理的申请加入组队消息数量
++(NSInteger)getTeamNotifityMsgCount:(NSString*)state GroupId:(NSString*)groupId;
 @end
