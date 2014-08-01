@@ -100,14 +100,14 @@
     
     //初始化搜索条
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
-    mSearchBar.backgroundColor = [UIColor blackColor];
+    mSearchBar.backgroundColor = kColorWithRGB(27, 29, 35, 1);
     [mSearchBar setPlaceholder:@"输入搜索条件"];
     if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
-        
         [[[mSearchBar subviews] objectAtIndex:0] removeFromSuperview];
     }
     if ([mSearchBar respondsToSelector:@selector(barTintColor)]) {
         [mSearchBar setBarTintColor:[UIColor clearColor]];
+        [mSearchBar setBarTintColor:kColorWithRGB(27, 29, 35, 1)];
     }
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
@@ -116,7 +116,7 @@
     mSearchBar.frame = CGRectMake(0, startX+40, 260, 44);
  
     screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, startX+40, 60, 44)];
-    screenView.backgroundColor = [UIColor blackColor];
+    screenView.backgroundColor = kColorWithRGB(27, 29, 35, 1);
     [self.view addSubview:screenView];
     screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
     [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];

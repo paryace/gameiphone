@@ -26,7 +26,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
@@ -148,7 +148,7 @@
         [self.mTableBaseView addGestureRecognizer:bgTap];
         
         self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 240) style:UITableViewStylePlain];
-        self.mTableView.backgroundColor = [UIColor blackColor];
+        self.mTableView.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         self.mTableView.delegate = self;
         self.mTableView.dataSource = self;
         
@@ -235,7 +235,7 @@
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
-        cell.backgroundColor = [UIColor blackColor];
+        cell.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
         NSString *imgStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
         cell.headImgView.imageURL = [ImageService getImageStr:imgStr Width:100];
@@ -255,7 +255,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-        cell.backgroundColor = [UIColor blackColor];
+        cell.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:12];
         cell.textLabel.textColor = [UIColor whiteColor];
