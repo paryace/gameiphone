@@ -7,14 +7,16 @@
 //
 
 #import "BaseViewController.h"
-
+#import "DWTagList.h"
 @protocol editInfoDelegate;
 
-@interface EditInfoViewController : BaseViewController
-@property(nonatomic,copy)NSString *firstStr;
-@property(nonatomic,copy)NSString *secondStr;
-@property(nonatomic,copy)NSString *itemId;
-@property(nonatomic,copy)NSString *gameid;
+@interface EditInfoViewController : BaseViewController<DWTagDelegate,UITextViewDelegate>
+@property(nonatomic,copy)NSString * firstStr;
+@property(nonatomic,copy)NSString * secondStr;
+@property(nonatomic,copy)NSString * itemId;
+@property(nonatomic,copy)NSString * gameid;
+@property(nonatomic,copy)NSString * typeId;
+@property(nonatomic,copy)NSString * characterId;
 @property(nonatomic,assign)BOOL isStyle;
 @property(nonatomic,assign)id<editInfoDelegate>delegate;
 @end
