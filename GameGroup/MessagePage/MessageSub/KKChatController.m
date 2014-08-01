@@ -137,11 +137,11 @@ UINavigationControllerDelegate>
     }
 
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             
         }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             
         }];
     }
@@ -398,12 +398,12 @@ UINavigationControllerDelegate>
         [self sendReadedMesg];//发送已读消息
     }
     if ([self.type isEqualToString:@"normal"]) {
-        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+        [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             [self readNoreadMsg];
             [self setNoreadMsgView];
         }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser SaveSuccess:^(NSDictionary *msgDic) {
+        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             [self readNoreadMsg];
             [self setNoreadMsgView];
         }];

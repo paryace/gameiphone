@@ -56,7 +56,7 @@
 
 + (NSString *)queryMsgRemarkNameForUser:(NSString *)userid;
 + (NSString *)queryMsgHeadImageForUser:(NSString *)userid;
-+(void)blankMsgUnreadCountForUser:(NSString *)userid  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
++(void)blankMsgUnreadCountForUser:(NSString *)userid  Successcompletion:(MRSaveCompletionHandler)successcompletion;
 + (NSArray *)queryUnreadCountForCommonMsg;
 + (void)deleteAllNewsMsgs;
 + (void)deleteMsgsWithSender:(NSString *)sender Type:(NSString *)senderType;    //删除指定发送者的所有消息
@@ -246,7 +246,7 @@
 
 +(void)storeMyGroupThumbMessage:(NSDictionary *)message;//保存我发送的群组消息
 
-+(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  SaveSuccess:(void (^)(NSDictionary *msgDic))block;//清除群组的未读消息
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  Successcompletion:(MRSaveCompletionHandler)successcompletion;//清除群组的未读消息
 
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId;
 

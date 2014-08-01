@@ -253,7 +253,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [DataStoreManager updateDSTeamNotificationMsgCount:groupId];//把该组队的所有未读消息设置为0
-    [DataStoreManager blankGroupMsgUnreadCountForUser:groupId];
+    [DataStoreManager blankGroupMsgUnreadCountForUser:groupId];//把所有未读消息标记为0
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         

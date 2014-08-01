@@ -855,7 +855,7 @@
     return @"";
 }
 //把正常聊天消息的未读消息设置为0
-+(void)blankMsgUnreadCountForUser:(NSString *)userid  SaveSuccess:(void (^)(NSDictionary *msgDic))block
++(void)blankMsgUnreadCountForUser:(NSString *)userid  Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",userid,@"normalchat"];
@@ -866,11 +866,13 @@
     }
      
      completion:^(BOOL success, NSError *error) {
-         
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
      }];
 }
 //把群组聊天消息的未读消息设置为0
-+(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  SaveSuccess:(void (^)(NSDictionary *msgDic))block
++(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
@@ -880,7 +882,9 @@
         }
     }
      completion:^(BOOL success, NSError *error) {
-         
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
      }];
 }
 
