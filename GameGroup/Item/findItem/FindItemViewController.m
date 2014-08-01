@@ -101,7 +101,7 @@
     //初始化搜索条
     mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX+40,260, 44)];
     mSearchBar.backgroundColor = kColorWithRGB(27, 29, 35, 1);
-    [mSearchBar setPlaceholder:@"输入搜索条件"];
+    [mSearchBar setPlaceholder:@"请输入你想找得队伍信息"];
     if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
         [[[mSearchBar subviews] objectAtIndex:0] removeFromSuperview];
     }
@@ -150,6 +150,8 @@
     [dropDownView.mTableView reloadData];
     if (self.isInitialize) {
         [self InitializeInfo];
+    }else{
+        [self initSearchConditions];
     }
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
@@ -173,13 +175,12 @@
         selectFilter=nil;
     }
     selectPreferenceId= KISDictionaryHaveKey(self.mainDict, @"preferenceId");
-    [self setTitleInfo];
     [self reloInfo];
 }
 //选择标签
 -(void)tagClick:(UIButton*)sender
 {
-    mSearchBar.text = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
+    selectDescription = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
     [self reloInfo];
     if([mSearchBar isFirstResponder]){
         [mSearchBar resignFirstResponder];
@@ -188,6 +189,7 @@
 
 
 -(void)setTitleInfo{
+    mSearchBar.text = selectDescription?selectDescription:@"";
     if (selectCharacter) {
         [dropDownView setTitle:KISDictionaryHaveKey(selectCharacter, @"name") inSection:0];
     }else{
@@ -220,7 +222,31 @@
     }else{
         selectFilterId = @"";
     }
+    [self setTitleInfo];
+    
+    
+    [self cacheSearchConditions];
     [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:selectTypeId Description:KISDictionaryHaveKey(self.mainDict, @"desc") FilterId:selectFilterId PreferenceId:selectPreferenceId IsRefre:NO];
+}
+//缓存搜索条件
+-(void)cacheSearchConditions{
+    [[NSUserDefaults standardUserDefaults]setObject:selectCharacter forKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectFilter forKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectDescription forKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    [[NSUserDefaults standardUserDefaults]setObject:selectPreferenceId forKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+}
+//初始化上次的搜索条件
+-(void)initSearchConditions{
+   selectCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    selectType =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    selectFilter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    if (!selectCharacter) {
+        return;
+    }
+    [self reloInfo];
 }
 
 
@@ -274,7 +300,6 @@
 {
     selectFilter = [arrayFilter objectAtIndex:sender.tag];
     [self reloInfo];
-    [self setTitleInfo];
 }
 
 #pragma mark -- dropDownListDelegate
@@ -283,7 +308,6 @@
     if (section==0) {//选择角色
         selectCharacter = [m_charaArray objectAtIndex:index];
         [self reloInfo];
-        [self setTitleInfo];
     }
     else if (section == 1){//选择分类
         selectType =[arrayType objectAtIndex:index];
