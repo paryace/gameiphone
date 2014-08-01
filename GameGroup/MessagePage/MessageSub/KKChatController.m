@@ -356,6 +356,8 @@ UINavigationControllerDelegate>
         return NO;
     }else if(section == 1){
         [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser];
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
         [self setNotifyMsgCount];
         return YES;
     }
@@ -2765,4 +2767,5 @@ UINavigationControllerDelegate>
         }
     }
 }
+
 @end

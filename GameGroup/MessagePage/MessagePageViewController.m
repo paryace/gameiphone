@@ -30,13 +30,10 @@
 @interface MessagePageViewController ()<NewRegisterViewControllerDelegate>
 {
     UITableView * m_messageTable;
-    
     SystemSoundID soundID;
-    
     NSMutableArray * allMsgArray;
     NSMutableDictionary * firstSayHiMsg;
     UIButton *deltButton;
-    
     NSTimeInterval markTime;
 }
 @end
@@ -149,7 +146,7 @@
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTeamUpdate:) name:teamInfoUpload object:nil];
-    
+    //更新组队人数
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
     //解散群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
@@ -725,27 +722,27 @@
 {
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
 }
-
 #pragma mark 接收到公告消息通知
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
 }
+#pragma mark 个人信息更新完毕通知
+-(void) onUserUpdate:(NSNotification*)notification{
+    [m_messageTable reloadData];
+}
+#pragma mark 组队信息更新完毕通知
+-(void) onTeamUpdate:(NSNotification*)notification{
+    [m_messageTable reloadData];
+}
+#pragma mark 更新组队人数消息通知
+-(void)teamMemberCountChang:(NSNotification*)notification{
+    [m_messageTable reloadData];
+}
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-}
-
--(void) onUserUpdate:(NSNotification*)notification{
-    [self displayMsgsForDefaultView];
-}
--(void) onTeamUpdate:(NSNotification*)notification{
-    [self displayMsgsForDefaultView];
-}
-
--(void)teamMemberCountChang:(NSNotification*)notification{
-    [self displayMsgsForDefaultView];
 }
 
 @end

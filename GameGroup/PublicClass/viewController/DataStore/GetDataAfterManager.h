@@ -21,6 +21,7 @@
 #define kMessageAck @"messageAck"
 #define kteamMessage    @"teamMessage"
 #define kteamRecommend    @"teamRecommend"
+#define kUpdateMsgCount    @"updateMsgCount"
 
 @interface GetDataAfterManager : NSObject
 
