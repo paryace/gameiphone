@@ -79,6 +79,11 @@
 -(void)sectionBtnTouch:(UIButton *)btn
 {
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
+    [self showHide:section];
+}
+
+
+-(void)showHide:(NSInteger)section{
     BOOL isOpen = [self.dropDownDelegate clickAtSection:section];
     if (isOpen) {
         UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
@@ -93,9 +98,10 @@
             [UIView animateWithDuration:0.3 animations:^{
                 currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
             }];
-            [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
+            [self showChooseListViewInSection:currentExtendSection];
         }
     }
+
 }
 
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section
@@ -132,7 +138,7 @@
     }
 }
 
--(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
+-(void)showChooseListViewInSection:(NSInteger)section
 {
     if (!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];

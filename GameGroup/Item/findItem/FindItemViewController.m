@@ -146,7 +146,8 @@
     
     [dropDownView setTitle:@"请选择角色" inSection:0];
     [dropDownView setTitle:@"请选择分类" inSection:1];
-    NSLog(@"mainDict%@",self.mainDict);
+    [dropDownView showHide:0];
+    [dropDownView.mTableView reloadData];
     if (self.isInitialize) {
         [self InitializeInfo];
     }
