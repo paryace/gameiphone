@@ -283,9 +283,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
     }];
-
-    
-    [self changGroupMessageReceived:messageContent];
 }
 #pragma mark 退出组队
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent{
