@@ -435,4 +435,7 @@
 
 //查询eamUserInfo
 +(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId;
+
+//更新位置
++(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition;
 @end

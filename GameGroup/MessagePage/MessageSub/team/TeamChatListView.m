@@ -20,8 +20,15 @@
 @implementation TeamChatListView
 
 
-
-- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId teamUsershipType:(BOOL)tUsershipType
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];
+    }
+    return self;
+}
+- (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -29,7 +36,10 @@
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
         self.groipId = groupId;
-        self.teamUsershipType = tUsershipType;
+        self.teamUsershipType = teamUsershipType;
+        self.roomId = roomId;
+        self.gameId = gameId;
+        
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
             sectionNum = [self.dropDownDataSource numberOfSections];
@@ -70,6 +80,8 @@
     }
     return self;
 }
+
+
 
 -(void)sectionBtnTouch:(UIButton *)btn
 {
@@ -241,8 +253,14 @@
     }
 }
 
+
 -(void)agreeButton:(UIButton*)sender{
-    NSLog(@"确定就位");
+    [[ItemManager singleton] sendTeamPreparedUserSelect:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
+        NSLog(@"successs");
+    } reError:^(id error) {
+        NSLog(@"error");
+        [self showErrorAlertView:error];
+    }];
 }
 -(void)refusedButton:(UIButton*)sender{
     NSLog(@"取消就位");
@@ -398,6 +416,7 @@
             cell = [[InplaceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
         cell.tag = indexPath.row;
+        cell.headCkickDelegate = self;
         NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
         cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
         cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
@@ -474,7 +493,12 @@
 
 -(void)headImgClick:(JoinTeamCell*)Sender{
     NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:Sender.tag];
-    [self.dropDownDataSource headImgClick:dic];
+    [self.dropDownDataSource headImgClick:KISDictionaryHaveKey(dic, @"userid")];
+}
+- (void)userHeadImgClick:(id)Sender{
+    InplaceCell * iCell = (InplaceCell*)Sender;
+     NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:iCell.tag];
+    [self.dropDownDataSource headImgClick:KISDictionaryHaveKey(dic, @"userid")];
 }
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
@@ -490,7 +514,6 @@
          [hud hide:YES];
         [self showErrorAlertView:error];
     }];
-    
 }
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
@@ -538,6 +561,12 @@
     [self.mTableView reloadData];
     [DataStoreManager updateTeamNotifityMsgState:userId State:state GroupId:groupId];
 }
+//改变位置
+-(void)changPosition:(NSNotification*)notification{
+    NSDictionary * positionDic = notification.userInfo;
+    NSLog(@"positipon-->>>>%@",positionDic);
+}
+
 - (void)dealloc
 {
     if (self.mTableView) {

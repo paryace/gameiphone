@@ -4492,7 +4492,20 @@
     return dic;
 }
 
-
+//更新位置
++(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@ and gameid==[c]%@ and userid==[c]%@",roomId,gameId,userId];
+        DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (commonMsg) {
+            commonMsg.positionValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition,@"value")];
+            commonMsg.positionType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"type")];
+            commonMsg.constId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"constId")];
+            commonMsg.mask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"mask")];
+        }
+    }];
+}
 
 
 //请求组队详情信息

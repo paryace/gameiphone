@@ -280,7 +280,7 @@ UINavigationControllerDelegate>
         if ([KISDictionaryHaveKey(teamInfo, @"teamUsershipType") intValue]==0) {
             teamUsershipType = YES;
         }
-        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser teamUsershipType:teamUsershipType];
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"位置" inSection:0];
         [self.dropDownView setTitle:@"申请" inSection:1];
@@ -316,7 +316,6 @@ UINavigationControllerDelegate>
 //改变数据库位置
 -(void)changPosition
 {
-    [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
     [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
     [self.tView reloadData];
 }
@@ -335,9 +334,8 @@ UINavigationControllerDelegate>
 {
     if (section == 0){
         selectType =[self.typeData_list objectAtIndex:index];
-        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"constId") reSuccess:^(id responseObject) {
+        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
             [self changPosition];
             [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         } reError:^(id error) {
@@ -396,8 +394,8 @@ UINavigationControllerDelegate>
     return 0;
 }
 //头像点击进入个人详情
-- (void)headImgClick:(NSMutableDictionary*)dic {
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+- (void)headImgClick:(NSString*)userId {
+    NSString *userid = [GameCommon getNewStringWithId:userId];
     TestViewController *itemInfo = [[TestViewController alloc]init];
     itemInfo.userId = userid;
     [self.navigationController pushViewController:itemInfo animated:YES];
@@ -2244,8 +2242,8 @@ UINavigationControllerDelegate>
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
     [[MessageAckService singleton] addMessage:messageDict];
-    [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
+    [self addNewMessageToTable:messageDict];
     [self refreWX];
 }
 
@@ -2433,6 +2431,7 @@ UINavigationControllerDelegate>
         [payload setStringValue:payloadStr];
         [mes addChild:payload];
     }
+    NSLog(@"发送出去的msg--->>>%@",mes);
     [self.appDel.xmppHelper sendMessage:mes];
 }
 

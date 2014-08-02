@@ -40,7 +40,7 @@
 -(void)disAgreeJoinTeam:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 //设置组队位置
--(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTagId:(NSString*)positionTagId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+-(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTag:(NSDictionary*)selectType GroupId:(NSString*)groupId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 //获取偏好数量
 -(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
@@ -50,4 +50,10 @@
 
 //退出队伍
 -(void)exitTeam:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+//发起就位确认
+-(void)sendTeamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+
+#pragma mark --- 组队就位确认
+-(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId ConfirmationId:(NSString*)confirmationId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 @end

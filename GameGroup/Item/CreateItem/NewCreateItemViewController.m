@@ -450,12 +450,14 @@
         return;
     }
     [hud show:YES];
+    NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",sender]];
+    NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
-    [paramDict setObject:@"去你妹" forKey:@"roomName"];
+    [paramDict setObject:nickName forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

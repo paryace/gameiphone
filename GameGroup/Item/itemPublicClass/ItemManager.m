@@ -314,13 +314,13 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark ---设置组队位置
--(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTagId:(NSString*)positionTagId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+-(void)setTeamPosition:(NSString*)gameid UserId:(NSString*)userid RoomId:(NSString*)roomId PositionTag:(NSDictionary*)selectType GroupId:(NSString*)groupId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:userid] forKey:@"userid"];
     [paramDict setObject:[GameCommon getNewStringWithId:roomId] forKey:@"roomId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:positionTagId] forKey:@"positionTagId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"positionTagId"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -328,6 +328,13 @@ static ItemManager *itemManager = NULL;
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"setTeamPosition--%@",responseObject);
+        [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
+        [DataStoreManager changGroupMsgLocation:groupId UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+        [DataStoreManager updatePosition:roomId GameId:gameid UserId:userid TeamPosition:selectType];
+        [selectType setValue:roomId forKey:@"roomId"];
+        [selectType setValue:gameid forKey:@"gameId"];
+        [selectType setValue:userid forKey:@"userId"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:selectType];
         if (resuccess) {
             resuccess(responseObject);
         }
@@ -402,7 +409,50 @@ static ItemManager *itemManager = NULL;
             refailure(error);
         }
     }];
+}
 
+#pragma mark --- 发起就位确认
+-(void)sendTeamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"304" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+}
+
+#pragma mark --- 组队就位确认
+-(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId ConfirmationId:(NSString*)confirmationId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:gameId forKey:@"gameid"];
+    [paramDict setObject:confirmationId forKey:@"confirmationId"];
+    [paramDict setObject:value forKey:@"value"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"305" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
 }
 
 

@@ -20,6 +20,8 @@
         
         
         self.headImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(15, 10, 60, 60)];
+        self.headImageV.layer.cornerRadius = 5;
+        self.headImageV.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImageV];
         
         self.bgImageView = [[UIButton alloc]initWithFrame:CGRectMake(15, 10, 60, 60)];
@@ -71,6 +73,12 @@
 
     }
     return self;
+}
+
+-(void)headOnClick:(UIButton*)sender{
+    if ([self.headCkickDelegate respondsToSelector:@selector(userHeadImgClick:)]) {
+        [self.headCkickDelegate userHeadImgClick:self];
+    }
 }
 
 - (void)awakeFromNib

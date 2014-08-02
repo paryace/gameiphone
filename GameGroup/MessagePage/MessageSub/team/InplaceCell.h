@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
+#import "JoinTeamCell.h"
+#import "HeadClickDelegate.h"
 
 @interface InplaceCell : UITableViewCell
+@property (nonatomic, assign) id<HeadClickDelegate> headCkickDelegate;
+
 @property(nonatomic,strong)EGOImageView * headImageV;//群头像
 @property(nonatomic,strong)UIButton *bgImageView;
 @property(nonatomic,strong)UILabel * groupNameLable;//群名
