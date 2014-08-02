@@ -4409,16 +4409,12 @@
 
 
 //删除某个组队的某个用户
-+(void)deleteMenberUserInfo:(NSString*)gameid TeamUserId:(NSString*)teamUserId Successcompletion:(MRSaveCompletionHandler)successcompletion{
++(void)deleteMenberUserInfo:(NSString*)groupId UserId:(NSString*)userId Successcompletion:(MRSaveCompletionHandler)successcompletion{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicatesMemberUserInfo = [NSPredicate predicateWithFormat:@"memberTeamUserId==[c]%@ and gameid==[c]%@",teamUserId,gameid];
+        NSPredicate * predicatesMemberUserInfo = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
         //删除memberUser
         DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicatesMemberUserInfo inContext:localContext];
         [commonMsg MR_deleteInContext:localContext];
-        
-        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"teamUserId==[c]%@ and gameid==[c]%@",teamUserId,gameid];
-        DSTeamUserInfo * commonMsgTeamUser = [DSTeamUserInfo MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
-        [commonMsgTeamUser MR_deleteInContext:localContext];
     }
      completion:^(BOOL success, NSError *error) {
          if (successcompletion) {

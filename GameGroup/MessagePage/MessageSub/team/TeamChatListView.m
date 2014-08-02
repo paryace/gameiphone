@@ -209,7 +209,7 @@
         }
         if (section == 2) {
             if (!self.agreeBtn) {
-                self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, tableHight+5, (320-35)/2, 40)];
+                self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, tableHight+5, (320-40)/2, 35)];
                 [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
                 [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
                 [self.agreeBtn setTitle:@"位置确认" forState:UIControlStateNormal];
@@ -221,7 +221,7 @@
                 [self.mBgView addSubview:self.agreeBtn];
                 
                 
-                self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+5+(320-35)/2, tableHight+5, (320-35)/2, 40)];
+                self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2, tableHight+5, (320-40)/2, 35)];
                 [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
                 [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
                 [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
@@ -497,7 +497,7 @@
 }
 - (void)userHeadImgClick:(id)Sender{
     InplaceCell * iCell = (InplaceCell*)Sender;
-     NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:iCell.tag];
+     NSMutableDictionary *dic = [self.memberList objectAtIndex:iCell.tag];
     [self.dropDownDataSource headImgClick:KISDictionaryHaveKey(dic, @"userid")];
 }
 //同意288

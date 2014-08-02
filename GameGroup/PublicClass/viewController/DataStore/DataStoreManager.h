@@ -425,7 +425,7 @@
 +(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //删除某个组队的某个用户
-+(void)deleteMenberUserInfo:(NSString*)gameid TeamUserId:(NSString*)teamUserId Successcompletion:(MRSaveCompletionHandler)successcompletion;
++(void)deleteMenberUserInfo:(NSString*)groupId UserId:(NSString*)userId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //查询MemberList
 +(NSMutableArray*)getMemberList:(NSString*)roomId GameId:(NSString*)gameId;

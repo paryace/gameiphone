@@ -179,6 +179,7 @@
 #define UpdateTeamMemberCount @"updateTeamMemberCount"//更新组队人数信息
 #define RoleRemoveNotify @"roleRemoveNotify"//角色移除消息
 #define kChangPosition @"changPosition"//位置信息改变
+#define kChangMemberList @"changMemberList"//组队人数
 
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])

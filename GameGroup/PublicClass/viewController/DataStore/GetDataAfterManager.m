@@ -223,6 +223,9 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
+    [DataStoreManager deleteMenberUserInfo:groupId UserId:userId Successcompletion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:payloadDic];
+    }];
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
         [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];//删除组队通知
@@ -231,6 +234,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
             [[TeamManager singleton] removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")]];
+            [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
     }else {
