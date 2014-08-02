@@ -24,5 +24,11 @@
 @property (nonatomic, retain) NSString * roomId;
 @property (nonatomic, retain) NSString * teamUsershipType;
 @property (nonatomic, retain) NSString * userid;
+@property (nonatomic, retain) NSString * groupId;
+
+@property (nonatomic, retain) NSString * constId;
+@property (nonatomic, retain) NSString * mask;
+@property (nonatomic, retain) NSString * positionType;
+@property (nonatomic, retain) NSString * positionValue;
 
 @end

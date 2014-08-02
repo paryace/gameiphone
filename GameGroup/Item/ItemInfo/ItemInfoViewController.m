@@ -78,7 +78,6 @@
     [self buildRoleView];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
-    // Do any additional setup after loading the view.
 }
 
 -(void)setRightBtn

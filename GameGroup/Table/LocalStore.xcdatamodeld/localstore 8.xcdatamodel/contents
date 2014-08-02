@@ -243,15 +243,20 @@
         <attribute name="zannum" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSMemberUserInfo" representedClassName="DSMemberUserInfo" syncable="YES">
+        <attribute name="constId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="joinDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="leaveDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mask" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="memberId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="memberTeamUserId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="positionType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="positionValue" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamUsershipType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
@@ -516,7 +521,7 @@
         <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="240"/>
         <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
         <element name="DSLatestDynamic" positionX="-90" positionY="-54" width="128" height="315"/>
-        <element name="DSMemberUserInfo" positionX="-81" positionY="-45" width="128" height="225"/>
+        <element name="DSMemberUserInfo" positionX="-81" positionY="-45" width="128" height="300"/>
         <element name="DSMyNewsList" positionX="117" positionY="-198" width="128" height="300"/>
         <element name="DSNameIndex" positionX="-18" positionY="-72" width="128" height="60"/>
         <element name="DSNewsGameList" positionX="-81" positionY="-45" width="128" height="88"/>

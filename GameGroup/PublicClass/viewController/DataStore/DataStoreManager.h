@@ -423,4 +423,16 @@
 
 //根据msgId删除组队通知消息
 +(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//删除某个组队的某个用户
++(void)deleteMenberUserInfo:(NSString*)gameid TeamUserId:(NSString*)teamUserId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询MemberList
++(NSMutableArray*)getMemberList:(NSString*)roomId GameId:(NSString*)gameId;
+
+//根据GroupId查询MemberList
++(NSMutableArray*)getMemberList:(NSString*)groupId;
+
+//查询eamUserInfo
++(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId;
 @end

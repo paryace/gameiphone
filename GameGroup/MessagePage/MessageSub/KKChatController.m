@@ -282,13 +282,13 @@ UINavigationControllerDelegate>
         }
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
-        [self.dropDownView setTitle:@"选择位置" inSection:0];
-        [self.dropDownView setTitle:@"申请加入" inSection:1];
+        [self.dropDownView setTitle:@"位置" inSection:0];
+        [self.dropDownView setTitle:@"申请" inSection:1];
+        [self.dropDownView setTitle:@"就位" inSection:2];
         [self.view addSubview:self.dropDownView];
         self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-50, startX+5, 22, 18)];
         [self.view addSubview:self.dotV];
         [self setNotifyMsgCount];
-        
         selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
@@ -300,6 +300,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:hud];
 }
 
+//设置组队未读消息数量
 -(void)setNotifyMsgCount{
     [self.dotV setMsgCount:[DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser]];
 }
@@ -312,6 +313,23 @@ UINavigationControllerDelegate>
         [self.dropDownView.customPhotoCollectionView reloadData];
     }
 }
+//改变数据库位置
+-(void)changPosition
+{
+    [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+    [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+    [self.tView reloadData];
+}
+//改变列表位置
+-(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
+{
+    for (NSDictionary * msgDic in messages) {
+        if ([KISDictionaryHaveKey(msgDic, @"sender") isEqualToString:userid]) {
+            [msgDic setValue:teamPosition forKey:@"teamPosition"];
+        }
+    }
+}
+//------------------------------------------------------------------------------------------------------------
 #pragma mark -- dropDownListDelegate
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
@@ -327,23 +345,6 @@ UINavigationControllerDelegate>
         }];
     }
 }
-//改变位置
--(void)changPosition
-{
-    [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-    [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-    [self.tView reloadData];
-}
-
--(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
-{
-    for (NSDictionary * msgDic in messages) {
-        if ([KISDictionaryHaveKey(msgDic, @"sender") isEqualToString:userid]) {
-            [msgDic setValue:teamPosition forKey:@"teamPosition"];
-        }
-    }
-}
-
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
@@ -361,20 +362,20 @@ UINavigationControllerDelegate>
         [self setNoreadMsgView];
         [self setNotifyMsgCount];
         return YES;
+    }else if(section==2){
+        return YES;
     }
     return NO;
 }
 #pragma mark -- dropdownList DataSource
 -(NSInteger)numberOfSections
 {
-    return 2;
+    return 3;
 }
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        if (self.typeData_list.count>0) {
-            return self.typeData_list.count;
-        }
+        return self.typeData_list.count;
     }
     return 0;
 }
@@ -384,22 +385,24 @@ UINavigationControllerDelegate>
         if (self.typeData_list.count>0) {
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
+    }else if (section==1){
+        return @"申请";
     }
-    return @"选择位置";
-
+    return @"就位";
 }
+
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
     return 0;
 }
-
+//头像点击进入个人详情
 - (void)headImgClick:(NSMutableDictionary*)dic {
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
     TestViewController *itemInfo = [[TestViewController alloc]init];
     itemInfo.userId = userid;
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
-
+//cell点击进入角色详情
 - (void)itemOnClick:(NSMutableDictionary*)dic{
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
@@ -411,7 +414,7 @@ UINavigationControllerDelegate>
     }
     [self.navigationController pushViewController:VC animated:YES];
 }
-
+//------------------------------------------------------------------------------------------------------------
 
 
 -(void)changMsgToRead
