@@ -285,7 +285,7 @@
 #pragma mark - 保存群组聊天记录
 +(void)saveDSGroupMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
         groupMsg.sender = [msg objectForKey:@"sender"];
         groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
@@ -297,152 +297,55 @@
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msg);
-         }
-     }];
-}
-#pragma mark - 存储消息相关
-+(void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype
-{
-    NSString * sender = [msg objectForKey:@"sender"];
-    NSString * msgContent = KISDictionaryHaveKey(msg, @"msg");
-    NSString * msgType = KISDictionaryHaveKey(msg, @"msgType");
-    NSString * msgId = KISDictionaryHaveKey(msg, @"msgId");
-    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-    NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msg);
+//         }
+//     }
+     ];
     
-    if([sendertype isEqualToString:OTHERMESSAGE])//头衔、角色、战斗力
-    {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-            if (!thumbMsgs)
-                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.sender = @"1";
-            thumbMsgs.senderNickname = [msg objectForKey:@"title"];
-            thumbMsgs.msgContent = msgContent;
-            thumbMsgs.sendTime = sendTime;
-            thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = msgType;
-            thumbMsgs.sendTimeStr = [msg objectForKey:@"time"];
-            int unread = [thumbMsgs.unRead intValue];
-            thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
-            thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = @"1";//已发送
-            thumbMsgs.sayHiType = sayhiType;
-            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];
-    }
-    else if([sendertype isEqualToString:RECOMMENDFRIEND])//推荐好友
-    {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-            if (!thumbMsgs)
-                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.sender = @"12345";
-            thumbMsgs.senderNickname = @"推荐好友";
-            thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"disStr");
-            thumbMsgs.sendTime = sendTime;
-            thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = msgType;
-            thumbMsgs.unRead = @"1";
-            thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = @"1";//已发送
-            thumbMsgs.sayHiType = @"1";
-            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];
-    }
-    else if([sendertype isEqualToString:DAILYNEWS])//新闻
-    {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-            if (!thumbMsgs)
-            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.sender = @"sys00000011";
-            thumbMsgs.senderNickname = @"每日一闻";
-            thumbMsgs.msgContent = msgContent;
-            thumbMsgs.sendTime = sendTime;
-            thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = msgType;
-            thumbMsgs.unRead = @"1";
-            thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = @"1";//已发送
-            thumbMsgs.sayHiType = @"1";
-            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];
-    }
-    else if([sendertype isEqualToString:JOINGROUPMSG])//加入群组消息
-    {
-        NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
-        NSDictionary *payloadDic = [payloadStr JSONValue];
-        NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
-        
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
-            DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-            if (!thumbMsgs)
-                thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            thumbMsgs.sender = sender;
-            thumbMsgs.senderNickname = KISDictionaryHaveKey(msg, @"msgTitle");
-            thumbMsgs.msgContent = msgContent;
-            thumbMsgs.sendTime = sendTime;
-            thumbMsgs.senderType = sendertype;
-            thumbMsgs.msgType = GROUPAPPLICATIONSTATE;
-            int unread = [thumbMsgs.unRead intValue];
-            thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
-            thumbMsgs.messageuuid = msgId;
-            thumbMsgs.status = @"1";
-            thumbMsgs.sayHiType = @"1";
-            thumbMsgs.groupId = groupId;
-            thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];
+    if (block) {
+        block(msg);
     }
 }
+
 //保存正常聊天的消息
 +(void)storeNewNormalChatMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
         }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msg);
-         }
-     }
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msg);
+//         }
+//     }
     ];
+    if (block) {
+        block(msg);
+    }
 }
 
 //保存正常聊天的消息
 +(void)saveNewNormalChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block{
-    [MagicalRecord 	saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord 	saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         for (NSDictionary * msg in msgs) {
             [self saveNewNormalChatMsgs:msg LoCon:localContext];
         }
     }
-     completion:^(BOOL success, NSError *error) {
-         for (NSDictionary * msg in msgs) {
-             if (block) {
-                 block(msg);
-             }
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         for (NSDictionary * msg in msgs) {
+//             if (block) {
+//                 block(msg);
+//             }
+//         }
+//     }
+     ];
+    for (NSDictionary * msg in msgs) {
+        if (block) {
+            block(msg);
+        }
+    }
 }
 
 //保存正常聊天的消息
@@ -510,14 +413,18 @@
 //保存接收到群组的消息
 +(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msg);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msg);
+//         }
+//     }
+     ];
+    if (block) {
+        block(msg);
+    }
 }
 //保存群组的消息
 +(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block{
@@ -1827,7 +1734,7 @@
 
     NSString *msgid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(info,customObject), @"id")];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgid==[c]%@",msgid];
         DSCircleWithMe * dCircle= [DSCircleWithMe MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!dCircle)
@@ -1860,11 +1767,16 @@
            dCircle.unRead = @"0";//设置未读属性 0 未读 、1 已读
 
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(info);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(info);
+//         }
+//     }
+     ];
+    
+    if (block) {
+        block(info);
+    }
 }
 
 +(NSArray *)queryallDynamicAboutMeWithUnRead:(NSString *)unRead
@@ -2718,7 +2630,7 @@
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"time")] doubleValue]];
     NSString* myTitle = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfoDict, @"title")];
 
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!thumbMsgs)
@@ -2744,11 +2656,15 @@
         otherMsgs.sendTime = sendTime;
         otherMsgs.myTitle = myTitle;
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(userInfoDict);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(userInfoDict);
+//         }
+//     }
+     ];
+    if (block) {
+        block(userInfoDict);
+    }
 }
 #pragma mark 保存每日一闻消息
 +(void)saveDSNewsMsgs:(NSDictionary*)msgDict SaveSuccess:(void (^)(NSDictionary *msgDic))block
@@ -2761,7 +2677,7 @@
     NSDictionary *dic =[title JSONValue];
     NSString *gameid =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         
         NSPredicate * predicateNews = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicateNews inContext:localContext];
@@ -2795,11 +2711,15 @@
         dnews.mytitle = title;
         dnews.time =[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msgDict);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msgDict);
+//         }
+//     }
+     ];
+    if (block) {
+        block(msgDict);
+    }
 }
 
 +(NSArray *)queryAllOtherMsg
@@ -3756,7 +3676,7 @@
     
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         if (![msgType isEqualToString:@"groupBillboard"]) {
             NSPredicate * predicateThumb = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicateThumb inContext:localContext];
@@ -3802,11 +3722,16 @@
         commonMsg.billboardId= billboardId;
         commonMsg.createDate= createDate;
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msg);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msg);
+//         }
+//     }
+     
+     ];
+    if (block) {
+        block(msg);
+    }
 }
 #pragma mark - 查询群通知消息
 +(NSMutableArray*)queryDSGroupApplyMsg
@@ -3972,7 +3897,7 @@
     NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
         int unread;
@@ -3996,11 +3921,17 @@
         thumbMsgs.payLoad = [payloadDic JSONFragment];
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
     }
-    completion:^(BOOL success, NSError *error) {
-        if (block) {
-            block(msg);
-        }
-    }];
+//    completion:^(BOOL success, NSError *error) {
+//        if (block) {
+//            block(msg);
+//        }
+//    }
+     
+     ];
+    
+    if (block) {
+        block(msg);
+    }
 }
 
 
@@ -4033,7 +3964,7 @@
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     NSString * userimg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"img")];
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
         int unread;
@@ -4115,11 +4046,16 @@
         commonMsg.unreadMsgCount = [NSString stringWithFormat:@"%d",unreadC+1];
         commonMsg.receiveTime=[GameCommon getCurrentTime];
     }
-     completion:^(BOOL success, NSError *error) {
-         if (block) {
-             block(msg);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if (block) {
+//             block(msg);
+//         }
+//     }
+     ];
+    
+    if (block) {
+        block(msg);
+    }
 }
 
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
@@ -4832,7 +4768,7 @@
     NSString * descriptions = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"description")];
     NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"preferenceId")];
     NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"gameid")];
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
          NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameid,preferenceId];
         DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
         int unread;
@@ -4856,11 +4792,15 @@
         commonMsg.gameid = gameid;
         commonMsg.msgCount = [NSString stringWithFormat:@"%d",unread+1];
     }
-    completion:^(BOOL success, NSError *error) {
-        if (block) {
-            block(preferenceMsg);
-        }
-    }];
+//    completion:^(BOOL success, NSError *error) {
+//        if (block) {
+//            block(preferenceMsg);
+//        }
+//    }
+     ];
+    if (block) {
+        block(preferenceMsg);
+    }
 }
 
 +(NSMutableDictionary*)getPreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId{

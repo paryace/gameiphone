@@ -45,8 +45,6 @@
 + (void)refreshThumbMsgsAfterDeleteCommonMsg:(NSDictionary *)message ForUser:(NSString *)userid ifDel:(BOOL)del;
 + (NSArray *)qureyAllThumbMessagesWithType:(NSString *)type;
 
-//聊天消息
-+ (void)storeNewMsgs:(NSDictionary *)msg senderType:(NSString *)sendertype;
 + (void)storeMyPayloadmsg:(NSDictionary *)message;//保存我的动态消息
 + (void)storeMyMessage:(NSDictionary *)message;//保存我的聊天消息
 + (void)deleteMsgInCommentWithUUid:(NSString *)uuid;   //删除指定uuid的消息
