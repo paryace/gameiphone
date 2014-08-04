@@ -34,7 +34,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -43,10 +42,13 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队成员变化
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];//组队人数字变化
+    
+    
     
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-//    [createBtn setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-//    [createBtn setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_getOutBtn];
@@ -475,7 +477,6 @@
         [alert show];
         return;
     }
-    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.gameid]  forKey:@"gameid"];
@@ -565,10 +566,9 @@
     itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
 
 }
-
+//申请加入房间
 -(void)JoinInThisItemWithNet
 {
-    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
@@ -593,9 +593,9 @@
     }];
     
 }
+//退出房间
 -(void)gooutRoomWithNet
 {
-    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
@@ -608,7 +608,6 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self showMessageWindowWithContent:@"退出成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -622,6 +621,20 @@
     
 }
 
+//改变位置(待处理)
+-(void)changPosition:(NSNotification*)notification{
+     NSLog(@"%@",notification.userInfo);
+}
+//组队成员变化
+-(void)changMemberList:(NSNotification*)notification{
+    m_dataArray = [DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.itemId] GameId:[GameCommon getNewStringWithId:self.gameid]];
+    [m_myTableView reloadData];
+}
+//组队人数变化(待处理)
+-(void)teamMemberCountChang:(NSNotification *)notification
+{
+    NSLog(@"%@",notification.userInfo);
+}
 
 - (void)dealloc
 {
@@ -633,18 +646,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

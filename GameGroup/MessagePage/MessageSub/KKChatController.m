@@ -2660,6 +2660,7 @@ UINavigationControllerDelegate>
         //改变组队位置
         if (self.isTeam) {
             if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:[KISDictionaryHaveKey(tempDic, @"payload") JSONValue]];
                 [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
