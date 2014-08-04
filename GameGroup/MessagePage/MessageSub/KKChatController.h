@@ -98,7 +98,8 @@ SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
 @property (nonatomic, strong) UILabel* noReadLable;  //
 @property (nonatomic, strong) UIButton * titleImageV;
 @property (nonatomic, strong) UIButton *titleButton;  //
-@property (strong,nonatomic) MsgNotifityView * dotV;
+@property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
+@property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
 
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像

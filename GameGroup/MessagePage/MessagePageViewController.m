@@ -24,6 +24,7 @@
 #import "ImageService.h"
 #import "JoinApplyViewController.h"
 #import "OpenImgViewController.h"
+#import "WQPlaySound.h"
 #define mTime 0.5
 
 @interface MessagePageViewController ()<NewRegisterViewControllerDelegate>

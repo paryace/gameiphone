@@ -342,6 +342,20 @@
         <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userCount" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSPrepared" representedClassName="DSPrepared" syncable="YES">
+        <attribute name="body" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="confirmationId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="gameid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payload" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="result" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSReceivedHellos" representedClassName="DSReceivedHellos" syncable="YES">
         <attribute name="acceptStatus" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addtionMsg" optional="YES" attributeType="String" syncable="YES"/>
@@ -542,5 +556,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSPrepared" positionX="-90" positionY="-54" width="128" height="223"/>
     </elements>
 </model>

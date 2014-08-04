@@ -38,7 +38,8 @@ reqeustJoinTeam：申请加入组队
 teamMemberChange：同意添加,踢出组织,退出组织,占坑,填坑
 disbandTeam：解散组队
 teamInvite：组队邀请
-teamRecommend:组队偏好消息*/
+teamRecommend:组队偏好消息
+startTeamPreparedConfirm发起就位确认*/
 
 
 #import <Foundation/Foundation.h>
@@ -74,7 +75,8 @@ typedef NS_ENUM(NSInteger,MsgType){
     MsgTypeTeamMemberChange=29,
     MsgTypeDisbandTeam=30,
     MsgTypeTeamInvite=31,
-    MsgTypeOther=32
+    MsgTypeOther=32,
+    MsgTypeStartTeamPreparedConfirm=33
 };
 
 typedef NS_ENUM(NSInteger,PayloadType){
@@ -91,6 +93,7 @@ typedef NS_ENUM(NSInteger,PayloadType){
     PayloadTypeTeamInviteInGroup=11,
     PayloadTypeTeamClaimAddType=12,
     PayloadTypeTeamOccupyType=13,
+    PayloadTypeStartTeamPreparedConfirm=14,
     PayloadTypeOther=100
 };
 

@@ -28,6 +28,7 @@
 #import "DSPreferenceInfo.h"
 #import "DSCreateTeamUserInfo.h"
 #import "DSPreferenceMsg.h"
+#import "DSPrepared.h"
 
 
 @implementation DataStoreManager
@@ -4059,7 +4060,7 @@
 }
 
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and (sayHiType=[c]%@ or sayHiType=[c]%@)",groupId,@"groupchat",@"3",@"4"];
     DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
     if (commonMsg) {
         return [commonMsg.unRead intValue];
@@ -4067,9 +4068,19 @@
     return 0;
 }
 
-+(void)updateDSTeamNotificationMsgCount:(NSString*)groupId{
+
++(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",sayHightType];
+    DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
+    if (commonMsg) {
+        return [commonMsg.unRead intValue];
+    }
+    return 0;
+}
+
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType{
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",@"3"];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",sayHightType];
         DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (commonMsg) {
             commonMsg.unRead= @"0";
@@ -4189,6 +4200,106 @@
         }
     }];
 }
+
+
+#pragma mark - 保存申请加入群的消息
++(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
+{
+    NSString * fromid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"sender")];
+    NSString * toid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"toId")];
+    NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgId")];
+    NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msgType")];
+    NSString * body = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"msg")];
+    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+    
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * confirmationId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"confirmationId")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")];
+    NSString * result = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"result")];
+    
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
+        int unread;
+        if (!thumbMsgs){
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            unread =0;
+        }else{
+            unread = [thumbMsgs.unRead intValue];
+        }
+        thumbMsgs.sender = @"";
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = body;
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = GROUPMSG;
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.msgType = @"groupchat";
+        thumbMsgs.messageuuid = msgId;
+        thumbMsgs.status = @"1";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.payLoad = [payloadDic JSONFragment];
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+        
+        
+        
+        NSPredicate * predicates2 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"4"];
+        DSThumbMsgs * thumbMsgs2 = [DSThumbMsgs MR_findFirstWithPredicate:predicates2 inContext:localContext];
+        int unread2;
+        if (!thumbMsgs2){
+            thumbMsgs2 = [DSThumbMsgs MR_createInContext:localContext];
+            unread2 =0;
+        }else{
+            unread2 = [thumbMsgs.unRead intValue];
+        }
+        thumbMsgs2.sender = @"";
+        thumbMsgs2.senderNickname = @"";
+        thumbMsgs2.msgContent = body;
+        thumbMsgs2.groupId = groupId;
+        thumbMsgs2.sendTime = sendTime;
+        thumbMsgs2.senderType = GROUPMSG;
+        thumbMsgs2.unRead = [NSString stringWithFormat:@"%d",unread2+1];
+        thumbMsgs2.msgType = @"groupchat";
+        thumbMsgs2.messageuuid = msgId;
+        thumbMsgs2.status = @"1";
+        thumbMsgs2.sayHiType = @"4";
+        thumbMsgs2.payLoad = [payloadDic JSONFragment];
+        thumbMsgs2.receiveTime=[GameCommon getCurrentTime];
+        
+        
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgId==[c]%@",msgId];
+        DSPrepared * commonMsg = [DSPrepared MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!commonMsg)
+            commonMsg = [DSPrepared MR_createInContext:localContext];
+        commonMsg.fromId = fromid;
+        commonMsg.toId = toid;
+        commonMsg.msgId = msgId;
+        commonMsg.msgType = msgType;
+        commonMsg.body = body;
+        commonMsg.msgTime = sendTime;
+        commonMsg.payload = payloadStr;
+        commonMsg.groupId = groupId;
+        commonMsg.gameid = gameid;
+        commonMsg.roomId = roomId;
+        commonMsg.confirmationId = confirmationId;
+        commonMsg.result = result;
+        
+    }
+     //     completion:^(BOOL success, NSError *error) {
+     //         if (block) {
+     //             block(msg);
+     //         }
+     //     }
+     ];
+    
+    if (block) {
+        block(msg);
+    }
+}
+
 
 #pragma mark  -----组队
 +(void)saveTeamInfoWithDict:(NSDictionary *)dic GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion

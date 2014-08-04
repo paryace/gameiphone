@@ -50,5 +50,11 @@
 
 -(void)teamRecommendMessageReceived:(NSDictionary *)messageContent;//组队偏好消息
 
+-(void)startTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//就位确认消息
+
+-(void)okTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//确定就位确认
+
+-(void)cancelTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//取消就位确认
+
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent;//其他不知道的消息
 @end

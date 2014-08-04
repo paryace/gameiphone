@@ -269,7 +269,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSString * groupId = [self getGroupIdFromPayload:messageContent];
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [DataStoreManager updateDSTeamNotificationMsgCount:groupId];//把该组队的所有未读消息设置为0
+    [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"3"];//把该组队的所有未读消息设置为0
+    [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"4"];//把该组队的所有未读消息设置为0
     [DataStoreManager blankGroupMsgUnreadCountForUser:groupId];//把所有未读消息标记为0
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -370,6 +371,37 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         });
     }];
 }
+#pragma mark 发起就位确认的消息
+-(void)startTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
+    NSLog(@"发起就位确认的消息%@",messageContent);
+    
+    [DataStoreManager saveTeamPreparedMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
+    NSDictionary *payloadDic = [payloadStr JSONValue];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        });
+    }];
+
+}
+
+#pragma mark 确定就位确认
+-(void)okTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
+     NSLog(@"确定就位确认的消息%@",messageContent);
+}
+
+#pragma mark取消就位确认
+-(void)cancelTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
+     NSLog(@"取消就位确认的消息%@",messageContent);
+}
+
 #pragma mark 其他不认识的消息
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent{
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息

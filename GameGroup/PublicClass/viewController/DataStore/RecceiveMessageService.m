@@ -245,6 +245,24 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate teamRecommendMessageReceived:dict];
         }
+        else if ([msgtype isEqualToString:@"startTeamPreparedConfirm"]){
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate startTeamPreparedConfirmMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"okTeamPreparedConfirm"]){
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate okTeamPreparedConfirmMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"cancelTeamPreparedConfirm"]){
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate cancelTeamPreparedConfirmMessageReceived:dict];
+        }
         else{
             [self.chatDelegate otherAnyMessageReceived:dict];
         }

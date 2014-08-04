@@ -348,8 +348,11 @@
 //请求组队申请消息数
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId;
 
+//请求组队申请或者别的sayhightType的消息消息数
++(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType;
+
 //更新组队申请消息数
-+(void)updateDSTeamNotificationMsgCount:(NSString*)groupId;
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType;
 
 //查询组队通知列表
 +(NSMutableArray*)queDSTeamNotificationMsgByMsgTypeAndGroupId:(NSString*)msgType GroupId:(NSString*)groupId;
@@ -445,5 +448,6 @@
 //保存组队成员列表信息
 +(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
-+(void)saveTeamUser:(NSMutableDictionary*)user RoomId:(NSString*)roomId;
+//保存就位确认消息
++(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 @end

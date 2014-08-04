@@ -116,6 +116,9 @@
     else if ([msgtype isEqualToString:@"teamInvite"]){//邀请加入组队
        return MsgTypeTeamInvite;
     }
+    else if ([msgtype isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
+        return MsgTypeStartTeamPreparedConfirm;
+    }
     else{
         return MsgTypeOther;
     }
@@ -159,6 +162,9 @@
     else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamOccupyType"]){
         return PayloadTypeTeamOccupyType;
     }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"startTeamPreparedConfirm"]){
+        return PayloadTypeStartTeamPreparedConfirm;
+    }
     else{
         return PayloadTypeOther;
     }
@@ -180,7 +186,8 @@
         ||payloadType == PayloadTypeTeamAddType
         ||payloadType == PayloadTypeTeamKickType
         ||payloadType == PayloadTypeTeamQuitType
-        ||payloadType == PayloadTypeInTeamSystemMsg) {
+        ||payloadType == PayloadTypeInTeamSystemMsg
+        ||payloadType == PayloadTypeStartTeamPreparedConfirm) {
         return 1;
     }
     else

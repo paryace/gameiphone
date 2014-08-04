@@ -150,9 +150,8 @@
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
     if (section == 0) {
-        if (self.agreeBtn) {
-            self.agreeBtn.hidden=YES;
-            self.refusedBtn.hidden=YES;
+        if (self.bottomView) {
+            self.bottomView.hidden=YES;
         }
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
@@ -189,8 +188,9 @@
         }];
         [self.customPhotoCollectionView reloadData];
     }else{
+         NSInteger msgCount = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
         float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
-        if (section == 2) {
+        if ((section == 2&&msgCount>0)||self.teamUsershipType) {
             tableHight -= 60;
         }
         if (!self.mTableView) {
@@ -203,38 +203,50 @@
             [self.mBgView addSubview:self.mTableView];
         }
         if (section == 2) {
-            if (!self.agreeBtn) {
-                self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, tableHight+5, (320-40)/2, 35)];
-                [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                [self.agreeBtn setTitle:@"位置确认" forState:UIControlStateNormal];
-                [self.agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                self.agreeBtn.backgroundColor = [UIColor clearColor];
-                self.agreeBtn.layer.cornerRadius = 3;
-                self.agreeBtn.layer.masksToBounds=YES;
-                [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
-                [self.mBgView addSubview:self.agreeBtn];
-                
-                
-                self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2, tableHight+5, (320-40)/2, 35)];
-                [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
-                [self.refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                self.refusedBtn.backgroundColor = [UIColor clearColor];
-                self.refusedBtn.layer.cornerRadius = 3;
-                self.refusedBtn.layer.masksToBounds=YES;
-                [self.refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
-                [self.mBgView addSubview:self.refusedBtn];
+            if ((!self.bottomView&&msgCount>0)||(!self.bottomView&&self.teamUsershipType)) {
+                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight+5, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-tableHight)];
+                 [self.mBgView addSubview:self.bottomView];
+                if (self.teamUsershipType) {
+                    UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
+                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+                    [sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    sendBtn.backgroundColor = [UIColor clearColor];
+                    sendBtn.layer.cornerRadius = 3;
+                    sendBtn.layer.masksToBounds=YES;
+                    [sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:sendBtn];
+                }else{
+                    UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, (320-40)/2, 35)];
+                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+                    [agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    agreeBtn.backgroundColor = [UIColor clearColor];
+                    agreeBtn.layer.cornerRadius = 3;
+                    agreeBtn.layer.masksToBounds=YES;
+                    [agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:agreeBtn];
+                    
+                    UIButton *refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,5, (320-40)/2, 35)];
+                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+                    [refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    refusedBtn.backgroundColor = [UIColor clearColor];
+                    refusedBtn.layer.cornerRadius = 3;
+                    refusedBtn.layer.masksToBounds=YES;
+                    [refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:refusedBtn];
+                }
             }
         }
         if (section==1) {
-            self.agreeBtn.hidden=YES;
-            self.refusedBtn.hidden= YES;
+            self.bottomView.hidden=YES;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }else{
-            self.agreeBtn.hidden=NO;
-            self.refusedBtn.hidden=NO;
+            self.bottomView.hidden=NO;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             [GameCommon setExtraCellLineHidden:self.mTableView];
         }
@@ -248,8 +260,18 @@
     }
 }
 
+-(void)hideButton{
+    self.bottomView.hidden=YES;
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
+}
 
--(void)agreeButton:(UIButton*)sender{
+-(void)showButton{
+    self.bottomView.hidden=NO;
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-60);
+}
+
+//发起就位确认
+-(void)sendButton:(UIButton*)sender{
     [[ItemManager singleton] sendTeamPreparedUserSelect:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
         NSLog(@"successs");
     } reError:^(id error) {
@@ -257,7 +279,20 @@
         [self showErrorAlertView:error];
     }];
 }
+//确定就位
+-(void)agreeButton:(UIButton*)sender{
+    if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
+        [self.dropDownDataSource buttonOnClick:sender];
+    }
+    [self hideButton];
+    NSLog(@"确定就位");
+}
+//取消就位
 -(void)refusedButton:(UIButton*)sender{
+    if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
+        [self.dropDownDataSource buttonOnClick:sender];
+    }
+    [self hideButton];
     NSLog(@"取消就位");
 }
 
