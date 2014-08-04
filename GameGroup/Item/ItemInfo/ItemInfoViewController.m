@@ -461,7 +461,7 @@
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
-        
+         tableView.editing = NO;
         [self removeItemerFromNetWithIndexPath:indexPath.row];
     }
 }
@@ -471,10 +471,8 @@
     NSDictionary *dic = m_dataArray[row];
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
-        hud.mode = MBProgressHUDModeText;
-        hud.detailsLabelText = @"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍";
-        [hud show:YES];
-        [hud hide:YES afterDelay:2];
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
         return;
     }
     
@@ -489,11 +487,11 @@
     [postDict setObject:@"268" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [m_dataArray removeObjectAtIndex:row];
-        [m_myTableView reloadData];
-        [self showMessageWindowWithContent:@"删除成功" imageType:0];
-        
+        [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] Successcompletion:^(BOOL success, NSError *error) {
+            [m_dataArray removeObjectAtIndex:row];
+            [m_myTableView reloadData];
+            [self showMessageWindowWithContent:@"删除成功" imageType:0];
+        }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

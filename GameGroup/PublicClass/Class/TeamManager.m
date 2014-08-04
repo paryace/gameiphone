@@ -100,6 +100,7 @@ static TeamManager *teamManager = NULL;
         }
     }];
 }
+
 //组队人数+1
 -(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
@@ -108,6 +109,7 @@ static TeamManager *teamManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
 }
+
 //组队人数-1
 -(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
 {
@@ -116,12 +118,28 @@ static TeamManager *teamManager = NULL;
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
     }];
 }
-//更新组队人数
+//更新组队人数(暂时没用到)
 -(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount
 {
     [DataStoreManager updateMemBerCount:gameId RoomId:roomId MemberCount:memberCount Successcompletion:^(BOOL success, NSError *error) {
         [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:nil];
+    }];
+}
+
+//组队添加成员
+-(void)saveMemberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
+    [DataStoreManager saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
+        [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
+    }];
+}
+
+//删除组队成员
+-(void)deleteMenberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
+    [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] Successcompletion:^(BOOL success, NSError *error) {
+        [self removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
 }
 

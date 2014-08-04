@@ -28,4 +28,10 @@
 
 -(void)saveTeamInfo:(id)responseObject GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//组队添加成员
+-(void)saveMemberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId;
+
+//删除组队成员
+-(void)deleteMenberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId;
+
 @end

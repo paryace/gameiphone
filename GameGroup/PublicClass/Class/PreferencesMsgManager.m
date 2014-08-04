@@ -20,7 +20,7 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
 	}
 	return preferencesMsgManager;
 }
-
+//请求偏好列表
 -(void)getPreferencesWithNet:(NSString*)userId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

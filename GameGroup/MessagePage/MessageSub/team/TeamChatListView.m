@@ -20,18 +20,13 @@
 @implementation TeamChatListView
 
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];
-    }
-    return self;
-}
 - (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType
 {
     self = [super initWithFrame:frame];
     if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
+        
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
@@ -566,7 +561,11 @@
     NSDictionary * positionDic = notification.userInfo;
     NSLog(@"positipon-->>>>%@",positionDic);
 }
-
+//人数变化
+-(void)changMemberList:(NSNotification*)notification{
+    self.memberList = [DataStoreManager getMemberList:self.groipId];
+    [self.mTableView reloadData];
+}
 - (void)dealloc
 {
     if (self.mTableView) {

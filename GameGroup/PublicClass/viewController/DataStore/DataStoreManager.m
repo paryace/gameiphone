@@ -4276,7 +4276,9 @@
     NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
         for (NSMutableDictionary * user in userList) {
-            [self saveMemberUserInfo:user GroupId:groupId];
+            [self saveMemberUserInfo:user GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
+                
+            }];
             [self saveTeamUser:user RoomId:roomId];
         }
     }
@@ -4314,7 +4316,7 @@
 
 
 //保存组队成员列表信息
-+(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId
++(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")];
     NSString * gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gender")];
@@ -4388,7 +4390,9 @@
         commonMsgTeamUser.userid = teamUseruserid;
     }
     completion:^(BOOL success, NSError *error) {
-                                                   
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
     }];
 }
 
@@ -4421,6 +4425,21 @@
              successcompletion(success,error);
          }
      }];
+}
+
+//删除某个组队的某个用户
++(void)deleteMenberUserInfo:(NSString*)memberTeamUserId GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesMemberUserInfo = [NSPredicate predicateWithFormat:@"memberTeamUserId==[c]%@ and gameid==[c]%@",memberTeamUserId,gameId];
+        //删除memberUser
+        DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicatesMemberUserInfo inContext:localContext];
+        [commonMsg MR_deleteInContext:localContext];
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
 }
 
 //查询MemberList
@@ -4553,6 +4572,8 @@
      }];
 }
 
+
+
 +(void)removeMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
@@ -4568,6 +4589,41 @@
              successcompletion(success,error);
          }
      }];
+}
+
+
++(void)addMemBerCount:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (commonMsg) {
+            int unread = [commonMsg.memberCount intValue];
+            commonMsg.memberCount = [NSString stringWithFormat:@"%d",unread+1];
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
+}
+
++(void)removeMemBerCount:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        DSTeamList * commonMsg = [DSTeamList MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (commonMsg) {
+            int unread = [commonMsg.memberCount intValue];
+            commonMsg.memberCount = [NSString stringWithFormat:@"%d",unread>0?(unread-1):0];
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
 }
 
 

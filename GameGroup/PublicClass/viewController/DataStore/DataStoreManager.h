@@ -375,9 +375,11 @@
 
 //组队人数+1
 +(void)addMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion;
++(void)addMemBerCount:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //组队人数-1
 +(void)removeMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId Successcompletion:(MRSaveCompletionHandler)successcompletion;
++(void)removeMemBerCount:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //更新组队人数
 +(void)updateMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount Successcompletion:(MRSaveCompletionHandler)successcompletion;
@@ -427,6 +429,9 @@
 //删除某个组队的某个用户
 +(void)deleteMenberUserInfo:(NSString*)groupId UserId:(NSString*)userId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//删除某个组队的某个用户
++(void)deleteMenberUserInfo:(NSString*)memberTeamUserId GameId:(NSString*)gameId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 //查询MemberList
 +(NSMutableArray*)getMemberList:(NSString*)roomId GameId:(NSString*)gameId;
 
@@ -438,4 +443,9 @@
 
 //更新位置
 +(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition;
+
+//保存组队成员列表信息
++(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
++(void)saveTeamUser:(NSMutableDictionary*)user RoomId:(NSString*)roomId;
 @end
