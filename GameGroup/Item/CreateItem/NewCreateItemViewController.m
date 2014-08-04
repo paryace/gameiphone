@@ -129,48 +129,6 @@
     [self.view addSubview:hud];
     [self isHaveInfo];
 }
-
--(void)initText
-{
-    m_gameTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
-    m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
-    m_countTf.text =[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"value")]] ;
-     gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
-}
-
--(void)isHaveInfo
-{
-    if (selectCharacter&&selectType) {
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] isEqualToString:@"0"]) {
-            return;
-        }
-        selectPeopleCount = [[ItemManager singleton] createMaxVols];
-        [self initText];
-        [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
-        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
-        [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
-    }
-}
-
-#pragma MARK ---联网获取标签
--(void)getcardFromNetWithGameid:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
-{
-    [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
-        [self updateTeamLable:responseObject];
-    } reError:^(id error) {
-        [self showErrorAlert:error];
-    }];
-}
-#pragma mark -- 标签请求成功通知
--(void)updateTeamLable:(id)responseObject
-{
-    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-        m_flArray = responseObject;
-        [tagList setTags:responseObject average:YES rowCount:3];
-        tagList.frame = CGRectMake(10.0f, startX+250.0f, tagList.fittedSize.width-10, tagList.fittedSize.height);
-    }
-}
-
 -(void)buildSwitchView
 {
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(170, startX+110, 140, 40)];
@@ -192,6 +150,38 @@
     switchView = [[UISwitch alloc]initWithFrame:CGRectMake(60, 5, 80, 30)];
     [switchView addTarget:self action:@selector(changeValue:) forControlEvents:UIControlEventValueChanged];
     [view addSubview:switchView];
+}
+
+-(void)initText
+{
+    m_gameTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
+    m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
+    m_countTf.text =[NSString stringWithFormat:@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"value")]] ;
+    gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+}
+
+-(void)isHaveInfo
+{
+    if (selectCharacter&&selectType) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] isEqualToString:@"0"]) {
+            return;
+        }
+        selectPeopleCount = [[ItemManager singleton] createMaxVols];
+        [self initText];
+        [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+        [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
+        [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
+    }
+}
+
+#pragma mark -- 标签请求成功通知
+-(void)updateTeamLable:(id)responseObject
+{
+    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+        m_flArray = responseObject;
+        [tagList setTags:responseObject average:YES rowCount:3];
+        tagList.frame = CGRectMake(10.0f, startX+250.0f, 310, tagList.fittedSize.height);
+    }
 }
 
 -(void)changeValue:(UISwitch*)sender
@@ -257,26 +247,40 @@
 //点击标签
 -(void)tagClick:(UIButton*)sender
 {
-//    NSString *str = m_miaoshuTV.text;
-//    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+//<<<<<<< HEAD
+////    NSString *str = m_miaoshuTV.text;
+////    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+////    placeholderL.text = @"";
+//    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    
+//    NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+//    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
+//    if (textlength+tagValueLength>30) {
+//        return;
+//    }
+//    if (m_miaoshuTV.text&&m_miaoshuTV.text.length>0) {
+//        m_miaoshuTV.text =[NSString stringWithFormat:@"%@ %@",m_miaoshuTV.text,[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+//    }else{
+//        m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+//        
+//    }
 //    placeholderL.text = @"";
-    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    
+//    [self refreshZiLabelText];
+//
+//=======
+    NSString *str = m_miaoshuTV.text;
+    NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
+    NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]]];
     
-    NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
-    if (textlength+tagValueLength>30) {
+    if (ziNumOld+ziNumNew>30) {
         return;
     }
-    if (m_miaoshuTV.text&&m_miaoshuTV.text.length>0) {
-        m_miaoshuTV.text =[NSString stringWithFormat:@"%@ %@",m_miaoshuTV.text,[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
-    }else{
-        m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-        
-    }
-    placeholderL.text = @"";
     
+    m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+    placeholderL.text = @"";
     [self refreshZiLabelText];
-
+//>>>>>>> FETCH_HEAD
 
 }
 //点击toolbar 确定button
@@ -377,42 +381,8 @@
     }
     return customView;
 }
-
--(void)getfenleiFromNetWithGameid:(NSString *)gameid
-{
-    [[ItemManager singleton] getTeamType:gameid reSuccess:^(id responseObject) {
-        if ([responseObject isKindOfClass:[NSArray class]]) {
-            [responseObject removeObjectAtIndex:0];
-            [m_tagsArray removeAllObjects];
-            [m_tagsArray addObjectsFromArray:responseObject];
-            [m_tagsPickView reloadInputViews];
-        }
-
-    } reError:^(id error) {
-    [self showErrorAlert:error];
-     m_gameTf.text = @"";
-        gameIconImg.imageURL = nil;
-    }];
-}
-
--(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId
-{
-    [hud show:YES];
-    [[ItemManager singleton] getPersonCountFromNetWithGameId:gameid typeId:typeId reSuccess:^(id responseObject) {
-        [hud hide:YES];
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [self setPersonCount:responseObject];
-        }
-    } reError:^(id error) {
-        [hud hide:YES];
-        [self showErrorAlert:error];
-
-    }];
-}
-
 -(void)setPersonCount:(NSDictionary*)responseObject
 {
-    [m_countArray removeAllObjects];
     NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
     if (menCount.count>0) {
         [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
@@ -431,6 +401,16 @@
                 break;
         }
         selectCrossServer = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask");
+        [self setPersonle:menCount];
+    }
+}
+//设置人数
+-(void)setPersonle:(NSArray*)personArray{
+    [m_countArray removeAllObjects];
+    [m_countArray addObjectsFromArray:personArray];
+    [m_countPickView reloadInputViews];
+    if (m_countArray.count>0) {
+        selectPeopleCount = [m_countArray objectAtIndex:0];
     }
 }
 
@@ -438,7 +418,6 @@
 {
     [self refreshZiLabelText];
 }
-
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
@@ -458,7 +437,6 @@
         return YES;
     }
     else{
-        m_ziNumLabel.textColor = [UIColor redColor];
         return NO;
     }
 }
@@ -466,8 +444,9 @@
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-    if (ziNum<0) {
+    if (ziNum<=0) {
         ziNum=0;
+        m_ziNumLabel.textColor = [UIColor redColor];
     }else{
         m_ziNumLabel.textColor = [UIColor blackColor];
     }
@@ -498,12 +477,14 @@
         return;
     }
     [hud show:YES];
+    NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",sender]];
+    NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
-    [paramDict setObject:@"去你妹" forKey:@"roomName"];
+    [paramDict setObject:nickName forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -533,7 +514,6 @@
             [alert show];
         }
     }
-    
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
@@ -556,7 +536,43 @@
         }
     }
 }
-
+#pragma MARK ---联网获取标签
+-(void)getcardFromNetWithGameid:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
+{
+    [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
+        [self updateTeamLable:responseObject];
+    } reError:^(id error) {
+        [self showErrorAlert:error];
+    }];
+}
+#pragma MARK --联网获取组队分类
+-(void)getfenleiFromNetWithGameid:(NSString *)gameid
+{
+    [[ItemManager singleton] getTeamType:gameid reSuccess:^(id responseObject) {
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            [responseObject removeObjectAtIndex:0];
+            [m_tagsArray removeAllObjects];
+            [m_tagsArray addObjectsFromArray:responseObject];
+            [m_tagsPickView reloadInputViews];
+        }
+    } reError:^(id error) {
+        [self showErrorAlert:error];
+        m_gameTf.text = @"";
+        gameIconImg.imageURL = nil;
+    }];
+}
+#pragma mark --- 联网获取人数列表
+-(void)getPersonCountFromNetWithGameId:(NSString *)gameid typeId:(NSString *)typeId
+{
+    [[ItemManager singleton] getPersonCountFromNetWithGameId:gameid typeId:typeId reSuccess:^(id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            [self setPersonCount:responseObject];
+        }
+    } reError:^(id error) {
+        [self showErrorAlert:error];
+        
+    }];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

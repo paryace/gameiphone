@@ -23,5 +23,10 @@
 @dynamic roomId;
 @dynamic teamUsershipType;
 @dynamic userid;
+@dynamic groupId;
+@dynamic constId;
+@dynamic mask;
+@dynamic positionType;
+@dynamic positionValue;
 
 @end

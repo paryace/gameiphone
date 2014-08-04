@@ -409,7 +409,23 @@
     [self.navigationController pushViewController:cretItm animated:YES];
 }
 
+#pragma mark --解散队伍
+-(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic{
+    [[ItemManager singleton] dissoTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] reSuccess:^(id responseObject) {
+        [self showMessageWindowWithContent:@"解散成功" imageType:1];
+    } reError:^(id error) {
+        [self showAlertDialog:error];
+    }];
 
+}
+#pragma mark --退出队伍
+-(void)exitTeam:(MyRoomView *)view dic:(NSDictionary *)dic{
+    [[ItemManager singleton] exitTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")] reSuccess:^(id responseObject) {
+        [self showMessageWindowWithContent:@"退出成功" imageType:1];
+    } reError:^(id error) {
+        [self showAlertDialog:error];
+    }];
+}
 
 - (void)didReceiveMemoryWarning
 {

@@ -46,7 +46,6 @@
         self.bgImageView = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
         [self.contentView addSubview:self.bgImageView];
-        
         [self.bgImageView  addTarget:self action:@selector(onClick:) forControlEvents:UIControlEventTouchUpInside];
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(onLongClick:)];
         [self.bgImageView addGestureRecognizer:longPress];

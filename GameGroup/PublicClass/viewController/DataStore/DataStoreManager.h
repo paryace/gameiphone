@@ -417,4 +417,25 @@
 
 //更新组队偏好消息
 +(void)updatePreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询未处理的申请加入组队消息数量
++(NSInteger)getTeamNotifityMsgCount:(NSString*)state GroupId:(NSString*)groupId;
+
+//根据msgId删除组队通知消息
++(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//删除某个组队的某个用户
++(void)deleteMenberUserInfo:(NSString*)groupId UserId:(NSString*)userId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询MemberList
++(NSMutableArray*)getMemberList:(NSString*)roomId GameId:(NSString*)gameId;
+
+//根据GroupId查询MemberList
++(NSMutableArray*)getMemberList:(NSString*)groupId;
+
+//查询eamUserInfo
++(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId;
+
+//更新位置
++(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition;
 @end

@@ -552,7 +552,6 @@
                     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
                     VC.characterId = chatId;
                     VC.gameId = gameId;
-                    VC.isMe = @"1";
                     VC.gameUrl = @"moshouRole.html?";
                     VC.characterName = KISDictionaryHaveKey(dic, @"name");
                     [self.navigationController pushViewController:VC animated:YES];
@@ -560,7 +559,6 @@
                     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
                     VC.characterId = chatId;
                     VC.gameId = gameId;
-                    VC.isMe = @"1";
                     VC.gameUrl = @"rolesinfo.html?";
                     VC.characterName = KISDictionaryHaveKey(dic, @"name");
                     [self.navigationController pushViewController:VC animated:YES];

@@ -14,22 +14,33 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         
         self.headImageView =[[EGOImageView alloc]initWithFrame:CGRectMake(10, 5, 50, 50)];
         self.headImageView.layer.cornerRadius = 5;
         self.headImageView.layer.masksToBounds=YES;
-
         [self addSubview:self.headImageView];
         
-        self.nickLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 5, 100, 15) font:[UIFont systemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.bgImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 5, 50, 50)];
+        self.bgImageView.layer.cornerRadius = 5;
+        self.bgImageView.layer.masksToBounds=YES;
+        [self.contentView addSubview:self.bgImageView];
+        [self.bgImageView  addTarget:self action:@selector(headOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bgImageView setBackgroundImage:nil forState:UIControlStateNormal];
+        
+        
+        self.nickLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 5, 100, 15) font:[UIFont boldSystemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.nickLabel];
         
         self.genderImgView = [[UIImageView alloc]initWithFrame:CGRectMake(175, 2, 20, 20)];
         [self addSubview:self.genderImgView];
         
-        self.MemberImgView = [[UIImageView alloc]initWithFrame:CGRectMake(195, 5, 30, 15)];
-        [self addSubview:self.MemberImgView];
+        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(195, 5, 30, 15)];
+        self.MemberLable.layer.cornerRadius = 3;
+        self.MemberLable.layer.masksToBounds=YES;
+        self.MemberLable.textAlignment = NSTextAlignmentCenter;
+        self.MemberLable.font = [UIFont systemFontOfSize:11];
+        self.MemberLable.textColor = [UIColor whiteColor];
+        [self addSubview:self.MemberLable];
         
         self.gameIconImgView =[[ EGOImageView alloc]initWithFrame:CGRectMake(70, 22, 15, 15)];
         self.gameIconImgView.placeholderImage = KUIImage(@"clazz_0");
@@ -52,15 +63,21 @@
     return self;
 }
 
+-(void)headOnClick:(UIButton*)sender
+{
+    if (self.delegate) {
+        [self.delegate headImgClick:self];
+    }
+}
 
 
 
 -(void)refreshViewFrameWithText:(NSString *)text
 {
-    CGSize size = [text sizeWithFont:[UIFont systemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
+    CGSize size = [text sizeWithFont:[UIFont boldSystemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
     self.nickLabel.frame = CGRectMake(70, 5, size.width, 15);
-    self.genderImgView.frame = CGRectMake(70+size.width+5, 2, 20, 20);
-    self.MemberImgView.frame = CGRectMake(70+size.width+25, 5, 30, 15);
+    self.genderImgView.frame = CGRectMake(70+size.width, 2, 20, 20);
+    self.MemberLable.frame = CGRectMake(80+size.width+22, 5, 30, 15);
 }
 
 

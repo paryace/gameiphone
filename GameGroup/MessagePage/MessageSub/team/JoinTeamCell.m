@@ -21,6 +21,15 @@
         
         self.headImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
         [self.bgV addSubview:self.headImageV];
+        
+        self.bgImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
+        self.bgImageView.layer.cornerRadius = 5;
+        self.bgImageView.layer.masksToBounds=YES;
+        [self.contentView addSubview:self.bgImageView];
+        [self.bgImageView  addTarget:self action:@selector(headOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bgImageView setBackgroundImage:nil forState:UIControlStateNormal];
+        [self.bgV addSubview:self.bgImageView];
+
     
         
         self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(75, 12, 100, 20)];
@@ -111,6 +120,13 @@
 {
     if (self.delegate) {
         [self.delegate onDisAgreeClick:self];
+    }
+}
+
+-(void)headOnClick:(UIButton*)sender
+{
+    if (self.delegate) {
+        [self.delegate headImgClick:self];
     }
 }
 

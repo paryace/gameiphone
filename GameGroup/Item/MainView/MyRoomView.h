@@ -19,5 +19,10 @@
 @protocol MyroomDelegate <NSObject>
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic;
+
 -(void)didClickCreateTeamWithView:(MyRoomView *)view ;
+
+-(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//解散队伍
+
+-(void)exitTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//退出队伍
 @end

@@ -78,7 +78,6 @@
     [self buildRoleView];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
-    // Do any additional setup after loading the view.
 }
 
 -(void)setRightBtn
@@ -129,74 +128,41 @@
         jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
         jiesanAlert.tag =10000002;
         [jiesanAlert show];
-
     }
-
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag ==10000001) {
         if (buttonIndex==1) {
-            
-            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-            
-            [paramDict setObject:self.itemId forKey:@"roomId"];
-            [paramDict setObject:self.gameid forKey:@"gameid"];
-            [postDict setObject:paramDict forKey:@"params"];
-            
-            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-            [postDict setObject:@"270" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-                
+            [[ItemManager singleton] dissoTeam:self.itemId GameId:self.gameid reSuccess:^(id responseObject) {
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"解散成功" imageType:1];
-                
-                
-            } failure:^(AFHTTPRequestOperation *operation, id error) {
-                if ([error isKindOfClass:[NSDictionary class]]) {
-                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                    {
-                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                        [alert show];
-                    }
-                }
+            } reError:^(id error) {
                 [hud hide:YES];
+                [self showAlertDialog:error];
             }];
-            
-            
         }
 
     }else{
         if (buttonIndex==1) {
-            NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-            [paramDict setObject:self.itemId forKey:@"roomId"];
-            [paramDict setObject:self.gameid forKey:@"gameid"];
-            [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] forKey:@"memberId"];
-            [postDict setObject:paramDict forKey:@"params"];
-            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-            [postDict setObject:@"269" forKey:@"method"];
-            [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+            [[ItemManager singleton] exitTeam:self.itemId GameId:self.gameid MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] reSuccess:^(id responseObject) {
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"退出成功" imageType:1];
-            } failure:^(AFHTTPRequestOperation *operation, id error) {
-                if ([error isKindOfClass:[NSDictionary class]]) {
-                    if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                    {
-                        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                        [alert show];
-                    }
-                }
+            } reError:^(id error) {
                 [hud hide:YES];
+                [self showAlertDialog:error];
             }];
+        }
+    }
+}
 
+-(void)showAlertDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
         }
     }
 }
@@ -292,23 +258,9 @@
 #pragma mark ---NET
 -(void)GETInfoWithNet
 {
-//    [hud show: YES];
-//    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-//    
-//    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-//    [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
-//    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
-//
-//    [postDict setObject:paramDict forKey:@"params"];
-//    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-//    [postDict setObject:@"266" forKey:@"method"];
-//    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-//    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
     [[TeamManager singleton] GETInfoWithNet:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId] reSuccess:^(id responseObject) {
         [hud hide:YES];
-
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             [self setGetOutBtn:teamUsershipType];
@@ -318,9 +270,6 @@
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
             [m_myTableView reloadData];
         }
-//<<<<<<< HEAD
-//    } failure:^(AFHTTPRequestOperation *operation, id error) {
-//=======
     } reError:^(id error) {
         [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -377,31 +326,30 @@
     if (!cell) {
         cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
+    cell.tag= indexPath.row;
+    cell.delegate = self;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
     cell.headImageView.placeholderImage = KUIImage(@"placeholder");
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
     cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
-    
     cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
     [cell refreshViewFrameWithText:cell.nickLabel.text];
-    
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gender")] isEqualToString:@"0"]) {//男♀♂
-        
         cell.genderImgView.image = KUIImage(@"gender_boy");
         cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
     }
-    else
-    {
+    else{
         cell.genderImgView.image = KUIImage(@"gender_girl");
         cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"userid")]]) {
-        cell.MemberImgView.backgroundColor = [UIColor redColor];
+    if ([KISDictionaryHaveKey(dic, @"teamUsershipType") integerValue]==0) {
+        cell.MemberLable.hidden = NO;
+        cell.MemberLable.backgroundColor = [UIColor blueColor];
+        cell.MemberLable.text = @"队长";
     }else{
-        cell.MemberImgView.backgroundColor = [UIColor greenColor];
+        cell.MemberLable.hidden = YES;
     }
     
     NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
@@ -416,9 +364,6 @@
     }else{
         cell.value3Lb.text = @"";
     }
-    
-
-//    cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
     return cell;
 }
 
@@ -426,40 +371,23 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
-//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-//    NSString *nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")];
-//    
-//    
-//    TestViewController *itemInfo = [[TestViewController alloc]init];
-//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-//        itemInfo.viewType = VIEW_TYPE_Self1;
-//    }
-//    itemInfo.userId = userid;
-//    itemInfo.nickName = nickName;
-//    [self.navigationController pushViewController:itemInfo animated:YES];
-    
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+    VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
     if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
-//        CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
-//        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-//        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
-        
-        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-        VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
-        VC.isMe = @"1";
         VC.gameUrl = @"moshouRole.html?";
-        VC.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
-        [self.navigationController pushViewController:VC animated:YES];
     }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
-        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-        VC.isMe = @"1";
         VC.gameUrl = @"rolesinfo.html?";
-        VC.gameId = KISDictionaryHaveKey(dic, @"gameid");
-        VC.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
-        [self.navigationController pushViewController:VC animated:YES];
     }
+    [self.navigationController pushViewController:VC animated:YES];
+}
+
+- (void)headImgClick:(ItemInfoCell*)Sender{
+    NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userid;
+    [self.navigationController pushViewController:itemInfo animated:YES];
 
 }
 
@@ -696,6 +624,12 @@
     
 }
 
+
+- (void)dealloc
+{
+    m_myTableView.delegate=nil;
+    m_myTableView.dataSource=nil;
+}
 
 
 - (void)didReceiveMemoryWarning

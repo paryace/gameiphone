@@ -10,7 +10,9 @@
 #import "BaseItemCell.h"
 #import "ICreatedCell.h"
 
-@implementation MyRoomView
+@implementation MyRoomView{
+    NSInteger actionIndex;
+}
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -67,9 +69,10 @@
        NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:indexPath.row];
         cell.titleLabel.text =[NSString stringWithFormat:@"[%@/%@]%@的队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
         
-        cell.gameIconImageView.imageURL = [ImageService getImageUrl4:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]];
+        cell.gameIconImageView.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]];
         cell.realmLabel.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
-        cell.numLabel.text = nil;
+        NSInteger msgCount = [DataStoreManager getTeamNotifityMsgCount:@"0" GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")]];
+        cell.numLabel.text = [NSString stringWithFormat:@"%d",msgCount];
         return cell;
         
     }else{
@@ -209,6 +212,55 @@
         return 60;
     }
 }
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section ==0) {
+        return @"解散";
+    }else{
+        return @"退出";
+    }
+}
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle ==UITableViewCellEditingStyleDelete) {
+        actionIndex = indexPath.row;
+        if (indexPath.section ==0) {
+            tableView.editing = NO;
+            UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+            jiesanAlert.tag = 10000001;
+            [jiesanAlert show];
+        }else{
+            tableView.editing = NO;
+            UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
+            jiesanAlert.tag =10000002;
+            [jiesanAlert show];
+        }
+    }
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag ==10000001) {//解散队伍
+        if (buttonIndex==1) {
+            NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:actionIndex];
+            if (self.myDelegate) {
+                [self.myDelegate dissTeam:self dic:dic];
+            }
+        }
+    }else{
+        if (buttonIndex==1) {//退出队伍
+            NSDictionary * dic = [[self.listDict objectForKey:@"joinedRooms"] objectAtIndex:actionIndex];
+            if (self.myDelegate) {
+                [self.myDelegate exitTeam:self dic:dic];
+            }
+        }
+    }
+}
+
 -(void)enterHistoryReamList:(id)sender
 {
     NSLog(@"查看历史组队");
@@ -220,14 +272,9 @@
     lineImg.backgroundColor = [UIColor clearColor];
     [view addSubview:lineImg];
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+- (void)dealloc
 {
-    // Drawing code
+    self.myListTableView.delegate=nil;
+    self.myListTableView.dataSource=nil;
 }
-*/
-
 @end

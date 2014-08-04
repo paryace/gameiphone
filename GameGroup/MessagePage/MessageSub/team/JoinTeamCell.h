@@ -14,6 +14,7 @@
 @interface JoinTeamCell : UITableViewCell
 @property(nonatomic,strong)UIImageView *bgV;//背景
 @property(nonatomic,strong)EGOImageView * headImageV;//群头像
+@property(nonatomic,strong)UIButton *bgImageView;
 @property(nonatomic,strong)UILabel * groupNameLable;//群名
 @property(nonatomic,strong)UIImageView *genderImageV;//性别
 @property(nonatomic,strong)UILabel * positionLable;//职位
@@ -33,6 +34,7 @@
 
 -(void)onAgreeClick:(JoinTeamCell*)sender;
 -(void)onDisAgreeClick:(JoinTeamCell*)sender;
+- (void)headImgClick:(JoinTeamCell*)Sender;
 
 
 @end

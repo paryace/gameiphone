@@ -28,6 +28,7 @@
 #import "ItemManager.h"
 #import "ItemInfoViewController.h"
 #import "KKTeamInviteCell.h"
+#import "H5CharacterDetailsViewController.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -279,15 +280,15 @@ UINavigationControllerDelegate>
         if ([KISDictionaryHaveKey(teamInfo, @"teamUsershipType") intValue]==0) {
             teamUsershipType = YES;
         }
-        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser teamUsershipType:teamUsershipType];
+        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
-        [self.dropDownView setTitle:@"选择位置" inSection:0];
-        [self.dropDownView setTitle:@"申请加入" inSection:1];
+        [self.dropDownView setTitle:@"位置" inSection:0];
+        [self.dropDownView setTitle:@"申请" inSection:1];
+        [self.dropDownView setTitle:@"就位" inSection:2];
         [self.view addSubview:self.dropDownView];
         self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-50, startX+5, 22, 18)];
         [self.view addSubview:self.dotV];
         [self setNotifyMsgCount];
-        
         selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
@@ -299,6 +300,7 @@ UINavigationControllerDelegate>
     [self.view addSubview:hud];
 }
 
+//设置组队未读消息数量
 -(void)setNotifyMsgCount{
     [self.dotV setMsgCount:[DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser]];
 }
@@ -311,29 +313,13 @@ UINavigationControllerDelegate>
         [self.dropDownView.customPhotoCollectionView reloadData];
     }
 }
-#pragma mark -- dropDownListDelegate
--(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
-{
-    if (section == 0){
-        selectType =[self.typeData_list objectAtIndex:index];
-        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTagId:KISDictionaryHaveKey(selectType, @"constId") reSuccess:^(id responseObject) {
-            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-            [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
-            [self changPosition];
-            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-        } reError:^(id error) {
-            [self showErrorAlertView:error];
-        }];
-    }
-}
-//改变位置
+//改变数据库位置
 -(void)changPosition
 {
-    [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
     [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
     [self.tView reloadData];
 }
-
+//改变列表位置
 -(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
 {
     for (NSDictionary * msgDic in messages) {
@@ -342,7 +328,21 @@ UINavigationControllerDelegate>
         }
     }
 }
-
+//------------------------------------------------------------------------------------------------------------
+#pragma mark -- dropDownListDelegate
+-(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
+{
+    if (section == 0){
+        selectType =[self.typeData_list objectAtIndex:index];
+        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [self changPosition];
+            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+        } reError:^(id error) {
+            [self showErrorAlertView:error];
+        }];
+    }
+}
 -(BOOL) clickAtSection:(NSInteger)section
 {
     if (section==0) {
@@ -360,20 +360,20 @@ UINavigationControllerDelegate>
         [self setNoreadMsgView];
         [self setNotifyMsgCount];
         return YES;
+    }else if(section==2){
+        return YES;
     }
     return NO;
 }
 #pragma mark -- dropdownList DataSource
 -(NSInteger)numberOfSections
 {
-    return 2;
+    return 3;
 }
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        if (self.typeData_list.count>0) {
-            return self.typeData_list.count;
-        }
+        return self.typeData_list.count;
     }
     return 0;
 }
@@ -383,15 +383,36 @@ UINavigationControllerDelegate>
         if (self.typeData_list.count>0) {
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
+    }else if (section==1){
+        return @"申请";
     }
-    return @"选择位置";
-
+    return @"就位";
 }
+
 -(NSInteger)defaultShowSection:(NSInteger)section
 {
     return 0;
 }
-
+//头像点击进入个人详情
+- (void)headImgClick:(NSString*)userId {
+    NSString *userid = [GameCommon getNewStringWithId:userId];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userid;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
+//cell点击进入角色详情
+- (void)itemOnClick:(NSMutableDictionary*)dic{
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
+        VC.gameUrl = @"moshouRole.html?";
+    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
+        VC.gameUrl = @"rolesinfo.html?";
+    }
+    [self.navigationController pushViewController:VC animated:YES];
+}
+//------------------------------------------------------------------------------------------------------------
 
 
 -(void)changMsgToRead
@@ -1619,6 +1640,10 @@ UINavigationControllerDelegate>
         [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         self.textView.hidden = NO;
         [self showEmojiScrollView];
+        if (self.isTeam) {
+            self.dropDownView.hidden = YES;
+            self.dotV.hidden = YES;
+        }
         
     }
     else
@@ -1631,7 +1656,6 @@ UINavigationControllerDelegate>
         [emojiBGV removeFromSuperview];
         [m_Emojipc removeFromSuperview];
         [sender setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        
     }
 }
 
@@ -1647,6 +1671,10 @@ UINavigationControllerDelegate>
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
+        if (self.isTeam) {
+            self.dropDownView.hidden = YES;
+            self.dotV.hidden = YES;
+        }
         
     }else{//点击切回键盘
         [self.textView.internalTextView becomeFirstResponder];
@@ -1657,7 +1685,6 @@ UINavigationControllerDelegate>
         [emojiBGV removeFromSuperview];
         [m_Emojipc removeFromSuperview];
         [sender setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-        
     }
     return;
 }
@@ -1747,6 +1774,10 @@ UINavigationControllerDelegate>
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
             [self autoMovekeyBoard:0];
+            if (self.isTeam) {
+                self.dropDownView.hidden = NO;
+                self.dotV.hidden = NO;
+            }
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
@@ -1984,6 +2015,10 @@ UINavigationControllerDelegate>
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     
     [self autoMovekeyBoard:keyboardRect.size.height];
+    if (self.isTeam) {
+        self.dropDownView.hidden = YES;
+        self.dotV.hidden = YES;
+    }
 }
 
 
@@ -2002,6 +2037,10 @@ UINavigationControllerDelegate>
     }else
     {
         [self autoMovekeyBoard:0];
+    }
+    if (self.isTeam) {
+        self.dropDownView.hidden = NO;
+        self.dotV.hidden = NO;
     }
     
     
@@ -2203,8 +2242,8 @@ UINavigationControllerDelegate>
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
     [[MessageAckService singleton] addMessage:messageDict];
-    [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
+    [self addNewMessageToTable:messageDict];
     [self refreWX];
 }
 
@@ -2392,6 +2431,7 @@ UINavigationControllerDelegate>
         [payload setStringValue:payloadStr];
         [mes addChild:payload];
     }
+    NSLog(@"发送出去的msg--->>>%@",mes);
     [self.appDel.xmppHelper sendMessage:mes];
 }
 
