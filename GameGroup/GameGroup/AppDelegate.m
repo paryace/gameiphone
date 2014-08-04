@@ -30,6 +30,7 @@
 #import "Custom_tabbar.h"
 #import "NewFriendPageController.h"
 #import "ItemBaseViewController.h"
+#import "NewItemMainViewController.h"
 #import "MessagePageViewController.h"
 #import "LocationManager.h"
 
@@ -82,7 +83,7 @@
     
     // 组队页面
     
-    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
+    NewItemMainViewController *itemBase = [[NewItemMainViewController alloc]init];
     itemBase.hidesBottomBarWhenPushed = YES;
     UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
     navigationController_center.navigationBarHidden  = YES;
