@@ -35,4 +35,8 @@
 -(void)refreWithRow:(NSInteger)row;
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
 -(void)didClickPreferenceToNetWithRow:(NSInteger)row;
+
+
+
+-(void)enterDetailPage:(NSDictionary*)dic;
 @end

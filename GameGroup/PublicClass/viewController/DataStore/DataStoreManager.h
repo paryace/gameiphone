@@ -460,6 +460,9 @@
 //更新状态
 +(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//更新状态
++(void)updateTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 //查询状态
 +(NSString*)getTeamUserState:(NSString*)userId groupId:(NSString*)groupId;
 @end

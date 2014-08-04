@@ -147,15 +147,24 @@ static TeamManager *teamManager = NULL;
 //更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo
 {
-    [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"result")] Successcompletion:^(BOOL success, NSError *error) {
+    [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:memberUserInfo];
     }];
 }
 
+
+//更新就位确认状态
+-(void)updateTeamUserState:(NSString*)groupId State:(NSString*)state
+{
+    [DataStoreManager updateTeamUser:groupId State:state Successcompletion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:nil];
+    }];
+}
+
 -(NSString*)getState:(NSString*)result{
-    if([[GameCommon getNewStringWithId:result]isEqualToString:@"OK"]){
+    if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"2";
-    }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"Cancel"]) {
+    }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectCancel"]) {
         return @"3";
     }
     return @"1";

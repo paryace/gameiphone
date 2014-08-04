@@ -454,7 +454,19 @@
     }];
 }
 
-
+-(void)enterDetailPage:(NSDictionary*)dic{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        itemInfo.isCaptain = YES;
+    }else{
+        itemInfo.isCaptain =NO;
+    }
+    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

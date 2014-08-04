@@ -204,8 +204,8 @@
             [self.mBgView addSubview:self.mTableView];
         }
         if (section == 2) {
-            if ((!self.bottomView&&msgCount>0)||(!self.bottomView&&self.teamUsershipType)) {
                 self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight+5, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-tableHight)];
+                self.bottomView.hidden = YES;
                  [self.mBgView addSubview:self.bottomView];
                 if (self.teamUsershipType) {
                     UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
@@ -241,6 +241,10 @@
                     [refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:refusedBtn];
                 }
+            if ((!self.bottomView&&msgCount>0)||(!self.bottomView&&self.teamUsershipType)) {
+                [self showButton];
+            }else{
+                [self hideButton];
             }
         }
         if (section==1) {
@@ -626,7 +630,33 @@
 }
 //更新就位确认状态
 -(void)changInplaceState:(NSNotification*)notification{
+    NSDictionary * msgDic = notification.userInfo;
+    [self changState:msgDic];
      NSLog(@"positipon-->>>>%@",notification.userInfo);
+}
+
+-(void)changState:(NSDictionary*)memberUserInfo
+{
+    if (memberUserInfo) {
+        for (NSMutableDictionary * clickDic in self.memberList) {
+            if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]]
+                &&[KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")]]) {
+                [clickDic setObject:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] forKey:@"state"];
+            }
+        }
+    }else{
+        [self showButton];
+        self.memberList = [DataStoreManager getMemberList:self.groipId];
+    }
+    [self.mTableView reloadData];
+}
+-(NSString*)getState:(NSString*)result{
+    if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
+        return @"2";
+    }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectCancel"]) {
+        return @"3";
+    }
+    return @"1";
 }
 - (void)dealloc
 {

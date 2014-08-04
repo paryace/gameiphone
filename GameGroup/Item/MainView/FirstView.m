@@ -463,16 +463,20 @@
 {
     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        itemInfo.isCaptain = YES;
-    }else{
-        itemInfo.isCaptain =NO;
+    
+    if (self.myDelegate) {
+        [self.myDelegate enterDetailPage:dic];
     }
-    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
-    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+//        itemInfo.isCaptain = YES;
+//    }else{
+//        itemInfo.isCaptain =NO;
+//    }
+//    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+//    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
 //    [self.navigationController pushViewController:itemInfo animated:YES];
 }
 

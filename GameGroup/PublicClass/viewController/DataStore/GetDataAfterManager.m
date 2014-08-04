@@ -379,7 +379,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
-    [[TeamManager singleton] updateTeamUserState:payloadDic];//更新就位确认的状态
+    [[TeamManager singleton] updateTeamUserState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] State:@"1"];//更新就位确认的状态
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
