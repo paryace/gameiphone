@@ -331,8 +331,17 @@
             [self.dropDownDataSource itemOnClick:dic];
         }else{
             [self.mTableView deselectRowAtIndexPath:indexPath animated:YES];
+            NSMutableDictionary *dic = [self.memberList objectAtIndex:indexPath.row];
+            [self.dropDownDataSource itemOnClick:[self createCharaDic:dic]];
         }
     }
+}
+
+-(NSDictionary*)createCharaDic:(NSMutableDictionary*)dic{
+    NSDictionary * charadic = @{@"characterId":[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")],
+                           @"characterName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")],
+                                @"gameid":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]};
+    return charadic;
 }
 
 #pragma mark -- UITableView DataSource
