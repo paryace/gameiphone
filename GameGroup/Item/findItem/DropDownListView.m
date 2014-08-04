@@ -26,7 +26,20 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = kColorWithRGB(27, 29, 35, 1);
+//        self.backgroundColor = UIColorFromRGBA(0x282c32, 1);
+        
+        UIImageView *lineImageView1 =[[UIImageView alloc]initWithImage:KUIImage(@"team_line_2")];
+        lineImageView1.frame = CGRectMake(0, 0, frame.size.width, 1);
+        [self addSubview:lineImageView1];
+        
+        UIImageView *lineImageView2 =[[UIImageView alloc]initWithImage:KUIImage(@"team_line_2")];
+        lineImageView2.frame = CGRectMake(0, frame.size.height-1, frame.size.width, 1);
+        [self addSubview:lineImageView2];
+        
+        UIImageView *lineView2 =[[ UIImageView alloc]initWithImage:KUIImage(@"team_line_1")];
+        lineView2.frame = CGRectMake(227, 0, 1, frame.size.height);
+        [self addSubview:lineView2];
+
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
         self.dropDownDelegate = delegate;
@@ -41,13 +54,14 @@
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
-            UIImageView * tabIcon = [[UIImageView alloc] initWithFrame:CGRectMake(i*sectionWidth+5, (self.frame.size.height-20)/2, 20, 20)];
-            [tabIcon setImage:[UIImage imageNamed:[NSString stringWithFormat:@"item_%d",i+1]]];
-            [tabIcon setContentMode:UIViewContentModeScaleToFill];
-            [self addSubview:tabIcon];
+//            UIImageView * tabIcon = [[UIImageView alloc] initWithFrame:CGRectMake(i*sectionWidth+5, (self.frame.size.height-20)/2, 20, 20)];
+//            [tabIcon setImage:[UIImage imageNamed:[NSString stringWithFormat:@"item_%d",i+1]]];
+//            [tabIcon setContentMode:UIViewContentModeScaleToFill];
+//            [self addSubview:tabIcon];
             
             
             UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(i*sectionWidth+5+2+20, 1, sectionWidth-7-12-20-3, frame.size.height-2)];
+            sectionBtn.backgroundColor = UIColorFromRGBA(0x282c32, 1);
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];
             NSString *sectionBtnTitle = @"-";
@@ -55,8 +69,8 @@
                 sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
             }
             [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
-            [sectionBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
+            [sectionBtn setTitleColor:UIColorFromRGBA(0xdaeefa, 1) forState:UIControlStateNormal];
+            sectionBtn.titleLabel.font = [UIFont systemFontOfSize:kFontSize(28)];
             [self addSubview:sectionBtn];
             
             UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
@@ -64,11 +78,32 @@
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
             [self addSubview: sectionBtnIv];
-            if (i<sectionNum && i != 0) {
-                UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
-                lineView.backgroundColor = [UIColor lightGrayColor];
-                [self addSubview:lineView];
+//            if (i<sectionNum && i != 0) {
+//                UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
+//                lineView.backgroundColor = [UIColor lightGrayColor];
+//                [self addSubview:lineView];
+//            }
+            
+            
+            
+            switch (i) {
+                case 0:
+//                    tabIcon.frame = CGRectMake(5,(self.frame.size.height-20)/2, 20, 20);
+                    sectionBtn.frame = CGRectMake(0,1, 227, frame.size.height-2);
+                    sectionBtnIv.frame = CGRectMake(227-16, (self.frame.size.height-12)/2, 12, 12);
+                    
+                    break;
+                case 1:
+//                    tabIcon.frame = CGRectMake(227+5,(self.frame.size.height-20)/2, 20, 20);
+                    sectionBtn.frame = CGRectMake(228, 1, 92, frame.size.height-2);
+                    sectionBtnIv.frame = CGRectMake(320-16, (self.frame.size.height-12)/2, 12, 12);
+
+                    break;
+                default:
+                    break;
             }
+            
+            
             
         }
         
@@ -149,6 +184,7 @@
         
         self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 240) style:UITableViewStylePlain];
         self.mTableView.backgroundColor = kColorWithRGB(27, 29, 35, 1);
+        self.mTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.mTableView.delegate = self;
         self.mTableView.dataSource = self;
         
@@ -193,7 +229,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection ==0) {
-        return 60;
+        return 70;
     }else{
         return 40;
     }

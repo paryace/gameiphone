@@ -197,6 +197,7 @@ alpha:alphaValue]
 #define kScreenHeigth ([UIScreen mainScreen].bounds.size.height)
 #define kScreenWidth  ([UIScreen mainScreen].bounds.size.width)
 
+#define kFontSize(px) px/2
 
 //判断方法
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)

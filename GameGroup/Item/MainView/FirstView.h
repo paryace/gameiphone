@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "FirstCell.h"
+#import "ChooseTab.h"
+#import "DropDownChooseDelegate.h"
+#import "DWTagList.h"
 
 @protocol firstViewDelegate;
-@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,firstCellDelegate,UIActionSheetDelegate>
+@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource,DWTagDelegate>
+{
+    DWTagList *tagList;
+}
+
 @property(nonatomic,strong)UITableView *myTableView;
 @property(nonatomic,strong)UIButton *searchRoomBtn;
 @property(nonatomic,strong)NSMutableArray *firstDataArray;
