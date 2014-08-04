@@ -14,7 +14,6 @@
     UITextView *secondTextView;
     DWTagList     *  tagList;
     NSMutableArray  *  m_flArray;
-    UILabel       *  placeholderL;
     UILabel       *  m_ziNumLabel;
     NSInteger        m_maxZiShu;
 
@@ -128,7 +127,6 @@
     }
     
     
-    placeholderL.text = @"";
     [self refreshZiLabelText];
 }
 
