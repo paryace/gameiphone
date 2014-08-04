@@ -55,7 +55,7 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"创建队伍" withBackButton:YES];
-    
+    m_maxZiShu = 30;
     selectCharacter = self.selectRoleDict;
     selectType = self.selectTypeDict;
     
@@ -247,6 +247,28 @@
 //点击标签
 -(void)tagClick:(UIButton*)sender
 {
+//<<<<<<< HEAD
+////    NSString *str = m_miaoshuTV.text;
+////    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+////    placeholderL.text = @"";
+//    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    
+//    NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+//    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
+//    if (textlength+tagValueLength>30) {
+//        return;
+//    }
+//    if (m_miaoshuTV.text&&m_miaoshuTV.text.length>0) {
+//        m_miaoshuTV.text =[NSString stringWithFormat:@"%@ %@",m_miaoshuTV.text,[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
+//    }else{
+//        m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
+//        
+//    }
+//    placeholderL.text = @"";
+//    
+//    [self refreshZiLabelText];
+//
+//=======
     NSString *str = m_miaoshuTV.text;
     NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
     NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]]];
@@ -258,6 +280,7 @@
     m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
     [self refreshZiLabelText];
+//>>>>>>> FETCH_HEAD
 
 }
 //点击toolbar 确定button
@@ -362,6 +385,10 @@
 {
     NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
     if (menCount.count>0) {
+        [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
+        [m_countPickView reloadInputViews];
+        selectPeopleCount = [m_countArray objectAtIndex:0];
+
         BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
         switch (isOpen) {
             case YES:
