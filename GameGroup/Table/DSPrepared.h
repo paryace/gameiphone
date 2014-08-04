@@ -18,7 +18,7 @@
 @property (nonatomic, retain) NSString * msgType;
 @property (nonatomic, retain) NSString * body;
 @property (nonatomic, retain) NSDate * msgTime;
-@property (nonatomic, retain) NSString * confirmationId;
+@property (nonatomic, retain) NSString * userId;
 @property (nonatomic, retain) NSString * gameid;
 @property (nonatomic, retain) NSString * roomId;
 @property (nonatomic, retain) NSString * groupId;

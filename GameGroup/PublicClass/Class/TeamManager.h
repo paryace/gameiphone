@@ -34,4 +34,7 @@
 //删除组队成员
 -(void)deleteMenberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId;
 
+//更新就位确认状态
+-(void)updateTeamUserState:(NSDictionary*)memberUserInfo;
+
 @end

@@ -130,6 +130,7 @@ static TeamManager *teamManager = NULL;
 //组队添加成员
 -(void)saveMemberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
     [DataStoreManager saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
+        [DataStoreManager saveTeamUser:[GameCommon getNewStringWithId:@"userid"] groupId:[GameCommon getNewStringWithId:@"groupId"]];
         [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
@@ -138,9 +139,26 @@ static TeamManager *teamManager = NULL;
 //删除组队成员
 -(void)deleteMenberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
     [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] Successcompletion:^(BOOL success, NSError *error) {
+        [DataStoreManager deleteTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")]];
         [self removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
+}
+//更新就位确认状态
+-(void)updateTeamUserState:(NSDictionary*)memberUserInfo
+{
+    [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"result")] Successcompletion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:memberUserInfo];
+    }];
+}
+
+-(NSString*)getState:(NSString*)result{
+    if([[GameCommon getNewStringWithId:result]isEqualToString:@"OK"]){
+        return @"2";
+    }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"Cancel"]) {
+        return @"3";
+    }
+    return @"1";
 }
 
 @end

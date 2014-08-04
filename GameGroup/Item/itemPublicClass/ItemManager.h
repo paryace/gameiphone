@@ -55,5 +55,5 @@
 -(void)sendTeamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 
 #pragma mark --- 组队就位确认
--(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId ConfirmationId:(NSString*)confirmationId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+-(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 @end

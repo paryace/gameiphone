@@ -251,17 +251,11 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate startTeamPreparedConfirmMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"okTeamPreparedConfirm"]){
+        else if ([msgtype isEqualToString:@"teamPreparedUserSelect"]){//确认或者取消就位确认
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
-            [self.chatDelegate okTeamPreparedConfirmMessageReceived:dict];
-        }
-        else if ([msgtype isEqualToString:@"cancelTeamPreparedConfirm"]){
-            if (payload.length>0) {
-                [dict setObject:payload forKey:@"payload"];
-            }
-            [self.chatDelegate cancelTeamPreparedConfirmMessageReceived:dict];
+            [self.chatDelegate teamPreparedUserSelectMessageReceived:dict];
         }
         else{
             [self.chatDelegate otherAnyMessageReceived:dict];

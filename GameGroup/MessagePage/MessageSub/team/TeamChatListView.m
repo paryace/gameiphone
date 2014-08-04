@@ -26,6 +26,7 @@
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
+         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//组队人数变化
         
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
@@ -273,9 +274,8 @@
 //发起就位确认
 -(void)sendButton:(UIButton*)sender{
     [[ItemManager singleton] sendTeamPreparedUserSelect:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
-        NSLog(@"successs");
+        
     } reError:^(id error) {
-        NSLog(@"error");
         [self showErrorAlertView:error];
     }];
 }
@@ -284,16 +284,22 @@
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
         [self.dropDownDataSource buttonOnClick:sender];
     }
-    [self hideButton];
-    NSLog(@"确定就位");
+    [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
+        [self hideButton];
+    } reError:^(id error) {
+        [self showErrorAlertView:error];
+    }];
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
         [self.dropDownDataSource buttonOnClick:sender];
     }
-    [self hideButton];
-    NSLog(@"取消就位");
+    [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject) {
+        [self hideButton];
+    } reError:^(id error) {
+        [self showErrorAlertView:error];
+    }];
 }
 
 -(void)getZU
@@ -471,11 +477,19 @@
         cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm")];
         cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
-        if (indexPath.row%2==0) {
-            cell.stateView.backgroundColor = [UIColor greenColor];
+        if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
+            cell.stateView.hidden = YES;
         }else{
-            cell.stateView.backgroundColor = [UIColor redColor];
+            cell.stateView.hidden = NO;
+            if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
+                cell.stateView.backgroundColor = [UIColor grayColor];
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
+                cell.stateView.backgroundColor = [UIColor greenColor];
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
+                cell.stateView.backgroundColor = [UIColor redColor];
+            }
         }
+        
         CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.groupNameLable.frame = CGRectMake(80, 8, nameSize.width, 20);
         cell.genderImageV.frame = CGRectMake(80+nameSize.width+3, 8, 20, 20);
@@ -609,6 +623,10 @@
 -(void)changMemberList:(NSNotification*)notification{
     self.memberList = [DataStoreManager getMemberList:self.groipId];
     [self.mTableView reloadData];
+}
+//更新就位确认状态
+-(void)changInplaceState:(NSNotification*)notification{
+     NSLog(@"positipon-->>>>%@",notification.userInfo);
 }
 - (void)dealloc
 {

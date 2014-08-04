@@ -12,7 +12,8 @@
 
 @interface DSTeamUser : NSManagedObject
 
-@property (nonatomic, retain) NSString * roomId;
+@property (nonatomic, retain) NSString * groupId;
 @property (nonatomic, retain) NSString * userid;
+@property (nonatomic, retain) NSString * state;
 
 @end

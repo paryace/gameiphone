@@ -450,4 +450,16 @@
 
 //保存就位确认消息
 +(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
+//保存状态
++(void)saveTeamUser:(NSString*)userId groupId:(NSString*)groupId;
+
+//删除状态
++(void)deleteTeamUser:(NSString*)userId groupId:(NSString*)groupId;
+
+//更新状态
++(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询状态
++(NSString*)getTeamUserState:(NSString*)userId groupId:(NSString*)groupId;
 @end

@@ -17,7 +17,7 @@
 @dynamic msgType;
 @dynamic body;
 @dynamic msgTime;
-@dynamic confirmationId;
+@dynamic userId;
 @dynamic gameid;
 @dynamic roomId;
 @dynamic groupId;

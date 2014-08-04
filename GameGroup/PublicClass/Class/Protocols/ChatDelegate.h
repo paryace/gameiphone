@@ -52,9 +52,7 @@
 
 -(void)startTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//就位确认消息
 
--(void)okTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//确定就位确认
-
--(void)cancelTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent;//取消就位确认
+-(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent;//确定或者取消就位确认
 
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent;//其他不知道的消息
 @end
