@@ -200,7 +200,12 @@
 //    rect.size.height = 0;
     rect.origin.x = 0;
     rect.size.width = 320;
-    rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
+    if (currentExtendSection==0) {
+        rect.size.height = self.mSuperView.frame.size.height;
+    }else{
+        rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
+    }
+   
     self.mTableView.frame = rect;
     [self.mSuperView addSubview:self.mTableBaseView];
     [self.mSuperView addSubview:self.mTableView];
@@ -293,8 +298,12 @@
         }
         cell.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         cell.textLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
-        cell.textLabel.font = [UIFont systemFontOfSize:12];
-        cell.textLabel.textColor = [UIColor whiteColor];
+        cell.textLabel.font = [UIFont boldSystemFontOfSize:kFontSize(28)];
+        cell.textLabel.textColor = UIColorFromRGBA(0xdbedfa, 1);
+        UIImageView * lineView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, 39, self.frame.size.width, 1)];
+        lineView.image  = KUIImage(@"team_line_2");
+        [cell.contentView addSubview:lineView];
+
         return cell;
     }
     return nil;

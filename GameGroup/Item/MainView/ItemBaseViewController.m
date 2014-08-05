@@ -16,6 +16,7 @@
 #import "ItemManager.h"
 #import "NewCreateItemViewController.h"
 #import "PreferencesMsgManager.h"
+
 @interface ItemBaseViewController ()
 {
     UIView *customView;

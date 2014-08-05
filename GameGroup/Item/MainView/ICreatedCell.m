@@ -19,7 +19,6 @@
         [self.contentView addSubview:self.titleLabel];
         
         self.gameIconImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 32, 20, 20)];
-        self.gameIconImageView.placeholderImage = KUIImage(@"clazz_0");
         [self.contentView addSubview:self.gameIconImageView];
         
         self.realmLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(33, 34, 180, 15) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
@@ -31,6 +30,10 @@
         self.sqLb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 40, 60) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         self.sqLb.text = @"申请";
         [self.contentView addSubview:self.sqLb];
+        
+        self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
+        self.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
+        [self.contentView addSubview:self.bgImageView];
     }
     return self;
 }

@@ -9,8 +9,9 @@
 #import "BaseViewController.h"
 #import "MyRoomView.h"
 #import "FirstView.h"
+#import "PreferenceViewController.h"
 
-@interface NewItemMainViewController : BaseViewController<MyroomDelegate,firstViewDelegate>
+@interface NewItemMainViewController : BaseViewController<MyroomDelegate,firstViewDelegate,PreferenceDelegate>
 
 @end
 
