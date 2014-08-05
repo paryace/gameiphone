@@ -3903,7 +3903,7 @@
     NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
         int unread;
         if (!thumbMsgs){
@@ -4187,6 +4187,21 @@
      }];
 }
 
+//根据groupId删除就位确认消息
++(void)deleteDSPreparedByGroupId:(NSString*)groupId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * commMsgs = [DSPrepared findAllWithPredicate:predicate inContext:localContext];
+        for (DSPrepared * commonMsg in commMsgs) {
+            [commonMsg deleteInContext:localContext];
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+}
+
 
 //根据msgId删除组队通知消息
 +(void)deleteTeamNotifityMsgStateByMsgId:(NSString*)msgId Successcompletion:(MRSaveCompletionHandler)successcompletion
@@ -4225,7 +4240,7 @@
     NSString * result = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"result")];
     
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId, @"groupchat"];
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
         int unread;
         if (!thumbMsgs){
@@ -4292,11 +4307,11 @@
         commonMsg.result = result;
         
     }
-     //     completion:^(BOOL success, NSError *error) {
-     //         if (block) {
-     //             block(msg);
-     //         }
-     //     }
+//        completion:^(BOOL success, NSError *error) {
+//              if (block) {
+//                  block(msg);
+//              }
+//          }
      ];
     
     if (block) {
@@ -4330,7 +4345,7 @@
             [self saveMemberUserInfo:user GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
                 
             }];
-            [self saveTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(user, @"userid")] groupId:groupId];
+            [self saveTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(user, @"userid")] groupId:groupId TeamUsershipType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(user, @"teamUsershipType")] DefaultState:@"0"];
         }
     }
     [self saveCreateTeamUserInfo:createTeamUserInfo Successcompletion:^(BOOL success, NSError *error) {
@@ -4448,7 +4463,7 @@
 }
 
 //保存状态
-+(void)saveTeamUser:(NSString*)userId groupId:(NSString*)groupId{
++(void)saveTeamUser:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType DefaultState:(NSString*)defaultState{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
         DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
@@ -4456,13 +4471,54 @@
             teamUserInfo = [DSTeamUser MR_createInContext:localContext];
             teamUserInfo.groupId = groupId;
             teamUserInfo.userid = userId;
-            teamUserInfo.state = @"0";
+            teamUserInfo.teamUsershipType = teamUsershipType?teamUsershipType:@"1";
+            teamUserInfo.state = defaultState;
+        }else{
+            teamUserInfo.groupId = groupId;
+            teamUserInfo.userid = userId;
+            teamUserInfo.teamUsershipType = teamUsershipType?teamUsershipType:@"1";
         }
     }
     completion:^(BOOL success, NSError *error) {
                                                    
     }];
 }
+
+//保存状态
++(void)saveTeamUser2:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType State:(NSString*)state{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
+        DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!teamUserInfo)
+            teamUserInfo = [DSTeamUser MR_createInContext:localContext];
+        teamUserInfo.groupId = groupId;
+        teamUserInfo.userid = userId;
+        teamUserInfo.teamUsershipType = teamUsershipType?teamUsershipType:@"1";
+        teamUserInfo.state = state;
+
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+}
+
+
+
++(NSMutableDictionary*)getTeamUser:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType{
+    NSMutableDictionary * dic = [NSMutableDictionary dictionary];
+    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and teamUsershipType==[c]%@",groupId,teamUsershipType];
+    DSTeamUser * teamUserInfo2 = [DSTeamUser MR_findFirstWithPredicate:predicate2];
+    if (teamUserInfo2){
+        [dic setObject:teamUserInfo2.groupId forKey:@"groupId"];
+        [dic setObject:teamUserInfo2.userid forKey:@"userid"];
+        [dic setObject:teamUserInfo2.teamUsershipType forKey:@"teamUsershipType"];
+        [dic setObject:teamUserInfo2.state forKey:@"state"];
+        return dic;
+    }
+    return nil;
+}
+
+
 
 //更新状态
 +(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
@@ -4482,6 +4538,29 @@
 
 //更新状态
 +(void)updateTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
+        NSArray * teamUserInfos = [DSTeamUser MR_findAllWithPredicate:predicate inContext:localContext];
+        for (DSTeamUser * teamUserInfo in teamUserInfos) {
+            if (teamUserInfo){
+                if ([teamUserInfo.teamUsershipType intValue]==0) {
+                    teamUserInfo.state = @"2";
+                }else{
+                    teamUserInfo.state = state;
+                }
+            }
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
+}
+
+
+//更新状态
++(void)resetTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         NSArray * teamUserInfos = [DSTeamUser MR_findAllWithPredicate:predicate inContext:localContext];

@@ -26,7 +26,10 @@
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//组队人数变化
+         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
+        
         
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
@@ -204,9 +207,10 @@
             [self.mBgView addSubview:self.mTableView];
         }
         if (section == 2) {
+            if (!self.bottomView){
                 self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight+5, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-tableHight)];
                 self.bottomView.hidden = YES;
-                 [self.mBgView addSubview:self.bottomView];
+                [self.mBgView addSubview:self.bottomView];
                 if (self.teamUsershipType) {
                     UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
                     [sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
@@ -241,7 +245,9 @@
                     [refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:refusedBtn];
                 }
-            if ((!self.bottomView&&msgCount>0)||(!self.bottomView&&self.teamUsershipType)) {
+            }
+            
+            if (msgCount>0||self.teamUsershipType) {
                 [self showButton];
             }else{
                 [self hideButton];
@@ -277,9 +283,11 @@
 
 //发起就位确认
 -(void)sendButton:(UIButton*)sender{
+    [hud show:YES];
     [[ItemManager singleton] sendTeamPreparedUserSelect:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
-        
+        [hud hide:YES];
     } reError:^(id error) {
+        [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
@@ -288,9 +296,11 @@
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
         [self.dropDownDataSource buttonOnClick:sender];
     }
+    [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
-        [self hideButton];
+        [hud hide:YES];
     } reError:^(id error) {
+        [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
@@ -299,9 +309,11 @@
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
         [self.dropDownDataSource buttonOnClick:sender];
     }
-    [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject) {
-        [self hideButton];
+    [hud show:YES];
+    [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
+        [hud hide:YES];
     } reError:^(id error) {
+        [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
@@ -618,38 +630,63 @@
     [self.mTableView reloadData];
     [DataStoreManager updateTeamNotifityMsgState:userId State:state GroupId:groupId];
 }
-//改变位置
+#pragma mark 改变位置
 -(void)changPosition:(NSNotification*)notification{
     NSDictionary * positionDic = notification.userInfo;
     NSLog(@"positipon-->>>>%@",positionDic);
 }
-//人数变化
+#pragma mark 人数变化
 -(void)changMemberList:(NSNotification*)notification{
-    self.memberList = [DataStoreManager getMemberList:self.groipId];
+    [self getmemberList];
     [self.mTableView reloadData];
-}
-//更新就位确认状态
--(void)changInplaceState:(NSNotification*)notification{
-    NSDictionary * msgDic = notification.userInfo;
-    [self changState:msgDic];
-     NSLog(@"positipon-->>>>%@",notification.userInfo);
 }
 
--(void)changState:(NSDictionary*)memberUserInfo
-{
-    if (memberUserInfo) {
-        for (NSMutableDictionary * clickDic in self.memberList) {
-            if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]]
-                &&[KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")]]) {
-                [clickDic setObject:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] forKey:@"state"];
-            }
-        }
-    }else{
-        [self showButton];
-        self.memberList = [DataStoreManager getMemberList:self.groipId];
+#pragma mark 接收到确认或者取消消息通知,改变就位确认状态
+-(void)changInplaceState:(NSNotification*)notification{
+    NSDictionary * memberUserInfo = notification.userInfo;
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
+        [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
+        [self.mTableView reloadData];
+        [self hideButton];
     }
+}
+#pragma mark 接收到发起就位确认消息通知,改变就位确认状态
+-(void)sendChangInplaceState:(NSNotification*)notification{
+    [self showButton];
+    [self changPState:@"1"];
     [self.mTableView reloadData];
 }
+#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
+-(void)resetChangInplaceState:(NSNotification*)notification{
+    [self resetPState];
+}
+
+//改变列表就位确认状态
+-(void)changPState:(NSString*)userId GroupId:(NSString*)groupId State:(NSString *)state{
+    for (NSMutableDictionary * clickDic in self.memberList) {
+        if ([KISDictionaryHaveKey(clickDic, @"userid") isEqualToString:userId]
+            &&[KISDictionaryHaveKey(clickDic, @"groupId") isEqualToString:groupId]) {
+            [clickDic setObject:state forKey:@"state"];
+        }
+    }
+}
+//改变列表就位确认状态
+-(void)changPState:(NSString*)state{
+    for (NSMutableDictionary * clickDic in self.memberList) {
+        if ([KISDictionaryHaveKey(clickDic, @"teamUsershipType") intValue]==0) {
+            [clickDic setObject:@"2" forKey:@"state"];
+        }else{
+            [clickDic setObject:state forKey:@"state"];
+        }
+    }
+}
+//重置列表就位确认状态
+-(void)resetPState{
+    for (NSMutableDictionary * clickDic in self.memberList) {
+        [clickDic setObject:@"0" forKey:@"state"];
+    }
+}
+
 -(NSString*)getState:(NSString*)result{
     if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"2";

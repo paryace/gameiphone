@@ -14,5 +14,6 @@
 @dynamic groupId;
 @dynamic userid;
 @dynamic state;
+@dynamic teamUsershipType;
 
 @end

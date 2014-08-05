@@ -20,6 +20,14 @@
         self.headImageView.layer.masksToBounds=YES;
         [self addSubview:self.headImageView];
         
+        self.bgImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 12.5, 45, 45)];
+        self.bgImageView.layer.cornerRadius = 5;
+        self.bgImageView.layer.masksToBounds=YES;
+        [self.contentView addSubview:self.bgImageView];
+        [self.bgImageView  addTarget:self action:@selector(headOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bgImageView setBackgroundImage:nil forState:UIControlStateNormal];
+        [self.contentView addSubview:self.bgImageView];
+        
         self.nameLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 90, 60)];
         [self.nameLable setTextAlignment:NSTextAlignmentLeft];
         [self.nameLable setFont:[UIFont boldSystemFontOfSize:14.0]];
@@ -39,5 +47,11 @@
         
     }
     return self;
+}
+
+-(void)headOnClick:(UIButton*)sender{
+    if ([self.headCkickDelegate respondsToSelector:@selector(userHeadImgClick:)]) {
+        [self.headCkickDelegate userHeadImgClick:self];
+    }
 }
 @end

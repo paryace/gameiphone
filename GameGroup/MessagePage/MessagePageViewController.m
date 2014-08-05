@@ -685,6 +685,7 @@
             [DataStoreManager deleteThumbMsgWithGroupId:groupId];
             [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
             [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
+            [DataStoreManager deleteDSPreparedByGroupId:groupId];
             
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {

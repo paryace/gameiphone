@@ -37,7 +37,10 @@
 //更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo;
 
-//更新就位确认状态
--(void)updateTeamUserState:(NSString*)groupId State:(NSString*)state;
+//收到发起就位确认消息，更新就位确认状态
+-(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId State:(NSString*)state;
+
+//收到发起就位确认消息，更新就位确认状态
+-(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId MemberList:(NSArray*)memberList State:(NSString*)state;
 
 @end
