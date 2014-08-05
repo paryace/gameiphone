@@ -15,5 +15,6 @@
 @dynamic userid;
 @dynamic state;
 @dynamic teamUsershipType;
+@dynamic onClickState;
 
 @end

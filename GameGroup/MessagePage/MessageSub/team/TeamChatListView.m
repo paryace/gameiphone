@@ -205,42 +205,55 @@
         }
         if (section == 2) {
             if (!self.bottomView){
-                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-60+5, 320, 60)];
+                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90+5, 320, 90)];
                 self.bottomView.backgroundColor = [UIColor whiteColor];
                 [self.mBgView addSubview:self.bottomView];
+                
+                
+                self.msgLable= [[UILabel alloc] initWithFrame:CGRectMake(15, 10, 290, 20)];
+                self.msgLable.backgroundColor = [UIColor clearColor];
+                [self.msgLable setTextAlignment:NSTextAlignmentCenter];
+                [self.msgLable setFont:[UIFont systemFontOfSize:14]];
+                [self.msgLable setTextColor:[UIColor redColor]];
+                self.msgLable.text = @"请确认就位确认";
+                [self.bottomView addSubview:self.msgLable];
+                
                 if (self.teamUsershipType) {
-                    UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
-                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
-                    [sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    sendBtn.backgroundColor = [UIColor clearColor];
-                    sendBtn.layer.cornerRadius = 3;
-                    sendBtn.layer.masksToBounds=YES;
-                    [sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:sendBtn];
+                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 40, 290, 35)];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+                    [self.sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.sendBtn.backgroundColor = [UIColor clearColor];
+                    self.sendBtn.layer.cornerRadius = 3;
+                    self.sendBtn.layer.masksToBounds=YES;
+                    [self.sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.sendBtn];
                 }else{
-                    UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, (320-40)/2, 35)];
-                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
-                    [agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    agreeBtn.backgroundColor = [UIColor clearColor];
-                    agreeBtn.layer.cornerRadius = 3;
-                    agreeBtn.layer.masksToBounds=YES;
-                    [agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:agreeBtn];
+                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 40, (320-40)/2, 35)];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+                    [self.agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.agreeBtn.backgroundColor = [UIColor clearColor];
+                    self.agreeBtn.layer.cornerRadius = 3;
+                    self.agreeBtn.layer.masksToBounds=YES;
+                    [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.agreeBtn];
                     
-                    UIButton *refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,5, (320-40)/2, 35)];
-                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
-                    [refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    refusedBtn.backgroundColor = [UIColor clearColor];
-                    refusedBtn.layer.cornerRadius = 3;
-                    refusedBtn.layer.masksToBounds=YES;
-                    [refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:refusedBtn];
+                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,40, (320-40)/2, 35)];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+                    [self.refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.refusedBtn.backgroundColor = [UIColor clearColor];
+                    self.refusedBtn.layer.cornerRadius = 3;
+                    self.refusedBtn.layer.masksToBounds=YES;
+                    [self.refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.refusedBtn];
                 }
             }
         }
@@ -255,10 +268,84 @@
         CGRect rect = self.mBgView.frame;
         rect.size.height = tableHight;
         self.mBgView.frame =  rect;
-        [self showButton];
+        [self setBtnState];
         [self.mTableView reloadData];
     }
 }
+
+-(void)setBtnState{
+    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    if(onClickState == 0){
+        [self reset];
+    }else if(onClickState == 1){
+        [self showButton];
+        [self send];
+    }else if(onClickState == 2){
+        [self showButton];
+        [self ok];
+    }else if(onClickState == 3){
+        [self showButton];
+        [self cancel];
+    }
+}
+
+
+//已经发送
+-(void)send{
+    if (self.teamUsershipType) {
+        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
+
+    }else{
+        self.agreeBtn.selected = NO;
+        self.agreeBtn.enabled = YES;
+        self.refusedBtn.selected = NO;
+        self.refusedBtn.enabled = YES;
+    }
+}
+
+//没有就位确认消息的时候
+-(void)reset{
+    if (self.teamUsershipType) {
+        [self showButton];
+        [self ok];
+    }else{
+        [self hideButton];
+    }
+}
+
+
+//已经确定
+-(void)ok{
+    if (self.teamUsershipType) {
+        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+    }else{
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+        self.refusedBtn.selected = YES;
+        self.refusedBtn.enabled = NO;
+    }
+}
+
+
+//已经取消
+-(void)cancel{
+    if (self.teamUsershipType) {
+        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+    }else{
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+        self.refusedBtn.selected = YES;
+        self.refusedBtn.enabled = NO;
+    }
+}
+
+
 
 -(void)hideButton{
     self.bottomView.hidden=YES;
@@ -267,7 +354,7 @@
 
 -(void)showButton{
     self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-60);
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-90);
 }
 
 //发起就位确认
@@ -636,6 +723,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
+        [self setBtnState];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
@@ -643,11 +731,13 @@
     [self showButton];
     [self changPState:@"1"];
     [self.mTableView reloadData];
+    [self setBtnState];
 }
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
     [self resetPState];
     [self.mTableView reloadData];
+    [self setBtnState];
 }
 
 //改变列表就位确认状态

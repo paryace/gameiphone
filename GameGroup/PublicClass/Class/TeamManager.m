@@ -147,15 +147,15 @@ static TeamManager *teamManager = NULL;
 //收到确认或者取消消息，更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo
 {
-    [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] Successcompletion:^(BOOL success, NSError *error) {
+    [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] OnClickState:[self getOnClickState:KISDictionaryHaveKey(memberUserInfo, @"type")] Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:memberUserInfo];
     }];
 }
-//收到发起就位确认消息，更新就位确认状态
+//收到发起就位确认消息，更新就位确认状态(暂时没用了)
 -(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId State:(NSString*)state
 {
    [DataStoreManager saveTeamUser:userId groupId:groupId TeamUsershipType:@"0" DefaultState:state];
-    [DataStoreManager updateTeamUser:groupId State:state Successcompletion:^(BOOL success, NSError *error) {
+    [DataStoreManager updateTeamUser:groupId State:state OnClickState:@"1" Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kSendChangInplaceState object:nil userInfo:nil];
     }];
 }
@@ -163,11 +163,11 @@ static TeamManager *teamManager = NULL;
 //收到发起就位确认消息，更新就位确认状态
 -(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId MemberList:(NSArray*)memberList State:(NSString*)state
 {
-    [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userId] groupId:groupId TeamUsershipType:@"0" State:state];
+    [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userId] groupId:groupId TeamUsershipType:@"0" State:state OnClickState:@"1"];
     for (NSString * userid in memberList) {
-        [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userid] groupId:groupId TeamUsershipType:@"1" State:state];
+        [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userid] groupId:groupId TeamUsershipType:@"1" State:state OnClickState:@"1"];
     }
-    [DataStoreManager updateTeamUser:groupId State:state Successcompletion:^(BOOL success, NSError *error) {
+    [DataStoreManager updateTeamUser:groupId State:state OnClickState:@"1" Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kSendChangInplaceState object:nil userInfo:nil];
     }];
 }
@@ -175,12 +175,21 @@ static TeamManager *teamManager = NULL;
 //收到就位确认结果消息，初始化就位确认状态
 -(void)resetTeamUserState:(NSString*)groupId
 {
-    [DataStoreManager resetTeamUser:groupId State:@"0" Successcompletion:^(BOOL success, NSError *error) {
+    [DataStoreManager resetTeamUser:groupId State:@"0" OnClickState:@"0" Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kResetChangInplaceState object:nil userInfo:nil];
     }];
 }
 
 -(NSString*)getState:(NSString*)result{
+    if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
+        return @"2";
+    }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectCancel"]) {
+        return @"3";
+    }
+    return @"1";
+}
+
+-(NSString*)getOnClickState:(NSString*)result{
     if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"2";
     }else if ([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectCancel"]) {

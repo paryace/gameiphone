@@ -4474,6 +4474,7 @@
             teamUserInfo.userid = userId;
             teamUserInfo.teamUsershipType = teamUsershipType?teamUsershipType:@"1";
             teamUserInfo.state = defaultState;
+            teamUserInfo.onClickState = @"0";
         }else{
             teamUserInfo.groupId = groupId;
             teamUserInfo.userid = userId;
@@ -4486,7 +4487,7 @@
 }
 
 //保存状态
-+(void)saveTeamUser2:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType State:(NSString*)state{
++(void)saveTeamUser2:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType State:(NSString*)state OnClickState:(NSString*)onClickState{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
         DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
@@ -4496,6 +4497,7 @@
         teamUserInfo.userid = userId;
         teamUserInfo.teamUsershipType = teamUsershipType?teamUsershipType:@"1";
         teamUserInfo.state = state;
+        teamUserInfo.onClickState = onClickState;
 
     }
     completion:^(BOOL success, NSError *error) {
@@ -4520,13 +4522,24 @@
 }
 
 
++(NSInteger)getTeamUser:(NSString*)groupId UserId:(NSString*)userId{
+    NSPredicate * predicate2 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
+    DSTeamUser * teamUserInfo2 = [DSTeamUser MR_findFirstWithPredicate:predicate2];
+    if (teamUserInfo2){
+        return [teamUserInfo2.onClickState intValue];
+    }
+    return 0;
+}
+
+
 
 //更新状态
-+(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
++(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state OnClickState:(NSString*)onClickState Successcompletion:(MRSaveCompletionHandler)successcompletion{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
         DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
         if (teamUserInfo){
+            teamUserInfo.state = onClickState;
             teamUserInfo.state = state;
         }
     }
@@ -4538,12 +4551,13 @@
 }
 
 //更新状态
-+(void)updateTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
++(void)updateTeamUser:(NSString*)groupId State:(NSString*)state OnClickState:(NSString*)onClickState Successcompletion:(MRSaveCompletionHandler)successcompletion{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         NSArray * teamUserInfos = [DSTeamUser MR_findAllWithPredicate:predicate inContext:localContext];
         for (DSTeamUser * teamUserInfo in teamUserInfos) {
             if (teamUserInfo){
+                teamUserInfo.onClickState = onClickState;
                 if ([teamUserInfo.teamUsershipType intValue]==0) {
                     teamUserInfo.state = @"2";
                 }else{
@@ -4561,13 +4575,14 @@
 
 
 //更新状态
-+(void)resetTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion{
++(void)resetTeamUser:(NSString*)groupId State:(NSString*)state OnClickState:(NSString*)onClickState Successcompletion:(MRSaveCompletionHandler)successcompletion{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
         NSArray * teamUserInfos = [DSTeamUser MR_findAllWithPredicate:predicate inContext:localContext];
         for (DSTeamUser * teamUserInfo in teamUserInfos) {
             if (teamUserInfo){
                 teamUserInfo.state = state;
+                teamUserInfo.onClickState = onClickState;
             }
         }
     }
