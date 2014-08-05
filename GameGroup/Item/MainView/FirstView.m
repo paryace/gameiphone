@@ -660,11 +660,10 @@
             [m_dataArray addObjectsFromArray:responseObject];
             [m_myTabelView reloadData];
             
-            NSArray *arr = responseObject;
-            if (arr.count>0) {
+            if (m_dataArray.count>0) {
                 _customLabel.hidden = YES;
             }else
-             _customLabel.hidden = NO;
+                _customLabel.hidden = NO;
             
         }
            

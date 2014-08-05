@@ -152,6 +152,7 @@
         }];
   
     }else{
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
         NewCreateItemViewController *create =[[NewCreateItemViewController alloc]init];
         [self.navigationController pushViewController: create animated:YES];
     }
@@ -161,8 +162,8 @@
 
 -(void)tishiing:(id)sender
 {
-    [self showMessageWindowWithContent:@"提示" imageType:0];
-    
+//    [self showMessageWindowWithContent:@"提示" imageType:0];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
     PreferenceViewController *perf = [[PreferenceViewController alloc]init];
     perf.mydelegate =self;
     [self.navigationController pushViewController: perf animated:YES];
@@ -486,6 +487,7 @@
 
 -(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc
 {
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
