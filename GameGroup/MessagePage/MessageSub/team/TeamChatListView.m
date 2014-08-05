@@ -215,7 +215,7 @@
                 [self.msgLable setTextAlignment:NSTextAlignmentCenter];
                 [self.msgLable setFont:[UIFont systemFontOfSize:14]];
                 [self.msgLable setTextColor:[UIColor redColor]];
-                self.msgLable.text = @"请确认就位确认";
+//                self.msgLable.text = @"请确认就位确认";
                 [self.bottomView addSubview:self.msgLable];
                 
                 if (self.teamUsershipType) {
@@ -293,7 +293,7 @@
 //已经发送
 -(void)send{
     if (self.teamUsershipType) {
-        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
         self.sendBtn.selected = YES;
         self.sendBtn.enabled = NO;
 
@@ -309,19 +309,17 @@
 -(void)reset{
     if (self.teamUsershipType) {
         [self showButton];
-        [self ok];
     }else{
         [self hideButton];
     }
 }
 
-
 //已经确定
 -(void)ok{
     if (self.teamUsershipType) {
-        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
-        self.agreeBtn.selected = YES;
-        self.agreeBtn.enabled = NO;
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
     }else{
         self.agreeBtn.selected = YES;
         self.agreeBtn.enabled = NO;
@@ -334,9 +332,9 @@
 //已经取消
 -(void)cancel{
     if (self.teamUsershipType) {
-        [self.agreeBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
-        self.agreeBtn.selected = YES;
-        self.agreeBtn.enabled = NO;
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
     }else{
         self.agreeBtn.selected = YES;
         self.agreeBtn.enabled = NO;
