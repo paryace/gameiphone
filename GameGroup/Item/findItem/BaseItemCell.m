@@ -28,6 +28,9 @@
         self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(220, 5, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
         [self addSubview:self.timeLabel];
         
+        self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
+        self.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
+        [self addSubview:self.bgImageView];
     }
     return self;
 }

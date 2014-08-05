@@ -17,7 +17,6 @@
 #import "ItemManager.h"
 #import "KxMenu.h"
 #import "MJRefresh.h"
-
 @implementation FirstView
 {
     UITableView *m_myTabelView;
@@ -40,12 +39,14 @@
     NSMutableDictionary *roleDict;
     NSMutableArray *m_charaArray;
     
-    NSMutableDictionary * selectCharacter ;//角色
-    NSMutableDictionary * selectType;//分类
-    NSMutableDictionary * selectFilter;//筛选
-    NSString * selectPreferenceId;
+    
     NSString * selectDescription;
     MBProgressHUD * hud;
+    SortingView *sortView;
+    
+    UILabel *_customLabel;
+    
+    
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -64,16 +65,29 @@
         dropDownView.mSuperView = self;
         [self addSubview:dropDownView];
         
-        m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40, frame.size.width, frame.size.height) style:UITableViewStylePlain];
+        m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40, frame.size.width, frame.size.height-40) style:UITableViewStylePlain];
         m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
         m_myTabelView.delegate = self;
         m_myTabelView.dataSource  = self;
         [GameCommon setExtraCellLineHidden:m_myTabelView];
         [self addSubview:m_myTabelView];
         
-        
+        _customLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(0, 0, 200, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
+        _customLabel.hidden = YES;
+        _customLabel.numberOfLines = 2;
+        _customLabel.center = self.center;
+        _customLabel.text = @"哎呀，没有您想找的队伍！赶紧换个模式寻找伙伴吧！";
+        [self addSubview:_customLabel];
+        //排序
+        sortView = [[SortingView alloc]initWithFrame:frame];
+        sortView.mydelegate = self;
+        [self addSubview:sortView];
         //初始化搜索条
-        mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 40,320, 44)];
+        
+        
+        UIView *tableheadView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+        tableheadView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
+        mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0,320, 44)];
         mSearchBar.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         [mSearchBar setPlaceholder:@"请输入你想找得队伍信息"];
         if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
@@ -86,26 +100,31 @@
         mSearchBar.showsCancelButton=NO;
         mSearchBar.delegate = self;
         [mSearchBar sizeToFit];
-//        [self addSubview:mSearchBar];
-        m_myTabelView.tableHeaderView = mSearchBar;
+        [tableheadView addSubview:mSearchBar];
+        
+        //        screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, 40, 60, 44)];
+        //        screenView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
+        //        [self addSubview:screenView];
+        //        screenView.hidden = YES;
+        screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25)];
+        [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
+        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+        //        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
+        [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
+        screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
+        screenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+        [screenBtn.layer setMasksToBounds:YES];
+        [screenBtn.layer setCornerRadius:3];
+        [tableheadView addSubview:screenBtn];
+
+        
+        
+        
+        m_myTabelView.tableHeaderView = tableheadView;
 //        mSearchBar.frame = CGRectMake(0, 40, 260, 44);
         
-//        screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, 40, 60, 44)];
-//        screenView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
-//        [self addSubview:screenView];
-//        screenView.hidden = YES;
-//        screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(5,(44-25)/2, 50, 25)];
-//        [screenBtn setTitle:@"取消" forState:UIControlStateNormal];
-//        [screenBtn addTarget:self action:@selector(registerSearchbar:) forControlEvents:UIControlEventTouchUpInside];
-////        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-//
-//        [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
-//        [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
-//        screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
-//        screenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-//        [screenBtn.layer setMasksToBounds:YES];
-//        [screenBtn.layer setCornerRadius:3];
-//        [screenView addSubview:screenBtn];
         
         //标签布局
         tagView = [[UIView alloc] initWithFrame:CGRectMake(0, 40+44, 320, kScreenHeigth-40)];
@@ -122,7 +141,7 @@
         [self addHeader];
         
         [dropDownView setTitle:@"请选择角色" inSection:0];
-        [dropDownView setTitle:@"请选择分类" inSection:1];
+        [dropDownView setTitle:@"选择分类" inSection:1];
         [dropDownView.mTableView reloadData];
         
        hud = [[MBProgressHUD alloc] initWithView:self];
@@ -146,17 +165,19 @@
 //设置按钮文字
 -(void)setTitleInfo{
     mSearchBar.text = selectDescription?selectDescription:@"";
-    if (selectCharacter) {
-        [dropDownView setTitle:KISDictionaryHaveKey(selectCharacter, @"name") inSection:0];
+    if (self.selectCharacter) {
+        [dropDownView setTitle:KISDictionaryHaveKey(self.selectCharacter, @"name") inSection:0];
     }else{
         [dropDownView setTitle:@"请选择角色" inSection:0];
     }
-    if (selectType) {
-        [dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:1];
+    if (self.selectType) {
+        [dropDownView setTitle:KISDictionaryHaveKey(self.selectType, @"value") inSection:1];
     }else{
-        [dropDownView setTitle:@"请选择分类" inSection:1];
+        [dropDownView setTitle:@"选择分类" inSection:1];
     }
 }
+
+
 
 -(void)reloInfo:(BOOL)isRefre{
     m_currentPage = 0;
@@ -167,42 +188,42 @@
 -(void)startToSearch:(BOOL)isRefre{
     NSString * selectTypeId;
     NSString * selectFilterId;
-        mSearchBar.frame = CGRectMake(0, 40, 320, 44);
+//        mSearchBar.frame = CGRectMake(0, 0, 320, 44);
         screenView.hidden = YES;
 
-    if (selectType) {
-        selectTypeId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType,@"constId")];
+    if (self.selectType) {
+        selectTypeId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectType,@"constId")];
     }else{
         selectTypeId = @"0";
-        selectType = [[ItemManager singleton] createType];
+        self.selectType = [[ItemManager singleton] createType];
     }
-    if (selectFilter) {
-        selectFilterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectFilter, @"constId")];
+    if (self.selectFilter) {
+        selectFilterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectFilter, @"constId")];
     }else{
         selectFilterId = @"";
     }
     [self setTitleInfo];
     [self cacheSearchConditions];
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:selectTypeId Description:nil FilterId:selectFilterId PreferenceId:selectPreferenceId IsRefre:isRefre];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") TypeId:selectTypeId Description:nil FilterId:selectFilterId PreferenceId:self.selectPreferenceId IsRefre:isRefre];
 }
 //缓存搜索条件
 -(void)cacheSearchConditions{
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    [[NSUserDefaults standardUserDefaults]setObject:selectCharacter forKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectFilter forKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:self.selectCharacter forKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:self.selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:self.selectFilter forKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
     [[NSUserDefaults standardUserDefaults]setObject:selectDescription forKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
-    [[NSUserDefaults standardUserDefaults]setObject:selectPreferenceId forKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
+    [[NSUserDefaults standardUserDefaults]setObject:self.selectPreferenceId forKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
 }
 //初始化上次的搜索条件
 -(void)initSearchConditions{
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    selectCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
-    selectType =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
-    selectFilter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
+    self.selectCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    self.selectType =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",userId]];
+    self.selectFilter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectFilter_",userId]];
     selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
-    selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
-    if (!selectCharacter) {
+    self.selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
+    if (!self.selectCharacter) {
         [dropDownView showHide:0];
         return;
     }
@@ -241,36 +262,49 @@
         [self showFilterMenu];
     }
 }
+
 //显示房间过滤菜单
 -(void)showFilterMenu
 {
     NSMutableArray *menuItems = [NSMutableArray array];
+    NSMutableArray * sortArr = [NSMutableArray array];
     for (int i = 0; i<arrayFilter.count; i++) {
         KxMenuItem *menuItem = [KxMenuItem menuItem:KISDictionaryHaveKey([arrayFilter objectAtIndex:i], @"value") image:nil target:self action:@selector(pushMenuItem:)];
         menuItem.tag =i;
+    
         [menuItems addObject:menuItem];
+        
+        NSString *str = [GameCommon getNewStringWithId:KISDictionaryHaveKey([arrayFilter objectAtIndex:i], @"value")];
+        [sortArr addObject:str];
+        
     }
-    KxMenuItem *first = [KxMenuItem menuItem:@"组队筛选" image:nil target:nil action:NULL];
-    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
-    first.alignment = NSTextAlignmentCenter;
-    [KxMenu showMenuInView:self fromRect:CGRectMake(320-5-50, 40, 50, 25) menuItems:menuItems];
+    
+//    KxMenuItem *first = [KxMenuItem menuItem:@"组队筛选" image:nil target:nil action:NULL];
+//    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+//    first.alignment = NSTextAlignmentCenter;
+//    [KxMenu showMenuInView:self fromRect:CGRectMake(0, -20, 50, 25) menuItems:menuItems];
+    [sortView showSortingViewInViewForRect:CGRectMake(0, 0, 0, 0) arr:sortArr];
 }
 #pragma mark -- 筛选
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
-    selectFilter = [arrayFilter objectAtIndex:sender.tag];
+    self.selectFilter = [arrayFilter objectAtIndex:sender.tag];
     [self reloInfo:YES];
 }
-
+-(void)comeBackInfoWithTag:(NSInteger)row
+{
+    self.selectFilter = [arrayFilter objectAtIndex:row];
+    [self reloInfo:YES];
+}
 #pragma mark -- dropDownListDelegate
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section==0) {//选择角色
-        selectCharacter = [m_charaArray objectAtIndex:index];
+        self.selectCharacter = [m_charaArray objectAtIndex:index];
         [self reloInfo:YES];
     }
     else if (section == 1){//选择分类
-        selectType =[arrayType objectAtIndex:index];
+        self.selectType =[arrayType objectAtIndex:index];
         [self reloInfo:YES];
     }
 }
@@ -281,11 +315,11 @@
     if (section==0) {
         return YES;
     }else if(section == 1){
-        if(!selectCharacter){//还未选择游戏的状态
+        if(!self.selectCharacter){//还未选择游戏的状态
 //            [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏角色" buttonTitle:@"OK"];
             return NO;
         }
-        [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
+        [[ItemManager singleton] getTeamType:KISDictionaryHaveKey(self.selectCharacter, @"gameid")reSuccess:^(id responseObject) {
             [self updateTeamType:responseObject];
         } reError:^(id error) {
             [self showErrorAlertView:error];
@@ -330,22 +364,28 @@
 {
     return 0;
 }
-//收藏
+#pragma mark---收藏方法
 -(void)collectionBtn:(id)sender
 {
     
-    if (!selectCharacter) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+    if (!self.selectCharacter) {
+        
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
+        
         return;
     }
-    if (!selectType) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+    if (!self.selectType) {
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择分类" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
         return;
     }
-    [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") TypeId:KISDictionaryHaveKey(selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(selectFilter, @"constId")
+    [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(self.selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") TypeId:KISDictionaryHaveKey(self.selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(self.selectFilter, @"constId")
                                   reSuccess:^(id responseObject) {
 //                                      [self showMessageWindowWithContent:@"收藏成功" imageType:0];
-                                      
+                                      if ([self.myDelegate respondsToSelector:@selector(didClickSuccessWithText:tag:)]) {
+                                          [self.myDelegate didClickSuccessWithText:@"收藏成功" tag:0];
+                                      }
                                           [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
 //                                      [self.navigationController popViewControllerAnimated:YES];
                                       
@@ -357,22 +397,26 @@
 -(void)didClickCreateItem:(id)sender
 {
     NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-    cretItm.selectRoleDict = selectCharacter;
-    cretItm.selectTypeDict = selectType;
+    cretItm.selectRoleDict = self.selectCharacter;
+    cretItm.selectTypeDict = self.selectType;
+    [self.myDelegate didClickTableViewCellEnterNextPageWithController:cretItm];
 //    [self.navigationController pushViewController:cretItm animated:YES];
+    
 }
 //筛选
 -(void)didClickScreen:(UIButton *)sender
 {
-    if (!selectCharacter) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+    if (!self.selectCharacter) {
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
         return;
     }
-    if (!selectType) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+    if (!self.selectType) {
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择分类" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
         return;
     }
-    [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(selectCharacter, @"gameid")reSuccess:^(id responseObject) {
+    [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(self.selectCharacter, @"gameid")reSuccess:^(id responseObject) {
         [self updateFilterId:responseObject];
     } reError:^(id error) {
         [self showErrorAlertView:error];
@@ -389,13 +433,9 @@
 }
 //-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 //{
-//    if (m_dataArray&&[m_dataArray isKindOfClass:[NSArray class]]&&m_dataArray.count>0) {
-//        return 30;
-//    }else{
-//        return 0;
+//    if (tableView --mSearchBar.) {
 //        
-//    }
-//}
+//    }}
 //-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 //{
 //    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
@@ -427,6 +467,7 @@
     if (!cell) {
         cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
+    cell.bgImageView.hidden = YES;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
     cell.headImg.image = KUIImage(@"wow");
@@ -462,22 +503,25 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
+    
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     
-    if (self.myDelegate) {
-        [self.myDelegate enterDetailPage:dic];
-    }
-//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-//        itemInfo.isCaptain = YES;
-//    }else{
-//        itemInfo.isCaptain =NO;
+//    if (self.myDelegate) {
+//        [self.myDelegate enterDetailPage:dic];
 //    }
-//    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
-//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-//    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        itemInfo.isCaptain = YES;
+    }else{
+        itemInfo.isCaptain =NO;
+    }
+    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
 //    [self.navigationController pushViewController:itemInfo animated:YES];
+    
+    [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -520,19 +564,21 @@
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
 
-    if (!selectCharacter) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+    if (!self.selectCharacter) {
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
         return NO;
     }
-    if (!selectType) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+    if (!self.selectType) {
+        UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择分类" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alr show];
         return NO;
     }
     [mSearchBar setShowsCancelButton:YES animated:YES];
 
     if (tagView.hidden==YES) {
         tagView.hidden=NO;
-        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(selectType, @"constId") CharacterId:KISDictionaryHaveKey(selectCharacter, @"id") reSuccess:^(id responseObject) {
+        [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(self.selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(self.selectType, @"constId") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") reSuccess:^(id responseObject) {
             [self updateTeamLable:responseObject];
         } reError:^(id error) {
             [self showErrorAlertView:error];
@@ -540,23 +586,27 @@
         
     }
     screenView.hidden = NO;
-    [self reloadView:0 offWidth:0 offWidth2:60];
+    [self reloadView:0 offWidth:0 offWidth2:0];
     return YES;
 }
 #pragma mark ----失去焦点
 - (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
 {
-    [mSearchBar setShowsCancelButton:NO animated:YES];
+    [mSearchBar setShowsCancelButton:NO animated:NO];
 
     if (tagView.hidden==NO) {
         tagView.hidden=YES;
     }
     if ([GameCommon isEmtity:searchBar.text]) {
         selectDescription = searchBar.text;
+        [self reloadView:40 offWidth:0 offWidth2:40];
         [self reloInfo:NO];
+    }else{
+        [self reloadView:40 offWidth:60 offWidth2:40];
     }
-    screenView.hidden = YES;
-    [self reloadView:40 offWidth:0 offWidth2:60];
+    
+
+    
     return YES;
 }
 
@@ -564,9 +614,12 @@
 {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
-    mSearchBar.frame = CGRectMake(0, offHight, 320+offWidth, 44);
+    m_myTabelView.frame = CGRectMake(0, offHight, 320, self.frame.size.height-offWidth2);
+    
     tagView.frame = CGRectMake(0, offHight+44, 320, kScreenHeigth-offHight);
-    screenView.frame =CGRectMake(320-offWidth2, offHight, 60, 44);
+    mSearchBar.frame = CGRectMake(0, 0, 320-offWidth, 44);
+    screenBtn.frame = CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25);
+//    screenView.frame =CGRectMake(320-offWidth2, offHight, 60, 44);
     NSLog(@"%f,%f",screenView.frame.origin.x,screenView.frame.origin.y);
     [UIView commitAnimations];
 }
@@ -606,7 +659,15 @@
             }
             [m_dataArray addObjectsFromArray:responseObject];
             [m_myTabelView reloadData];
+            
+            NSArray *arr = responseObject;
+            if (arr.count>0) {
+                _customLabel.hidden = YES;
+            }else
+             _customLabel.hidden = NO;
+            
         }
+           
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_footer endRefreshing];
         [m_header endRefreshing];
@@ -639,14 +700,16 @@
     footer.activityView.center = footer.arrowImage.center;
     footer.scrollView = m_myTabelView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        if (!selectCharacter) {
-//            [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+        if (!self.selectCharacter) {
+            UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alr show];
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;
         }
-        if (!selectType) {
-//            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        if (!self.selectType) {
+            UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择分类" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alr show];
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;
@@ -666,14 +729,16 @@
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_myTabelView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
-        if (!selectCharacter) {
-//            [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+        if (!self.selectCharacter) {
+            UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alr show];
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;
         }
-        if (!selectType) {
-//            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        if (!self.selectType) {
+            UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择分类" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alr show];
             [m_footer endRefreshing];
             [m_header endRefreshing];
             return;

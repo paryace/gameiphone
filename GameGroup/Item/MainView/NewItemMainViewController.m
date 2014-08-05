@@ -16,6 +16,7 @@
 #import "ItemManager.h"
 #import "NewCreateItemViewController.h"
 #import "PreferencesMsgManager.h"
+#import "NewCreateItemViewController.h"
 @interface NewItemMainViewController ()
 {
     UIView *customView;
@@ -42,9 +43,9 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     if (seg.selectedSegmentIndex==1) {
-        sortingBtn.hidden = YES;
+        [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
     }else{
-        sortingBtn.hidden = NO;
+        [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
     }
 }
 
@@ -82,15 +83,16 @@
     [self.view addSubview:seg];
     
     
-    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
+    
 //    [sortingBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
     sortingBtn.backgroundColor = [UIColor clearColor];
     [sortingBtn addTarget:self action:@selector(sortingList:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sortingBtn];
 
     
-    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"team_notifation") forState:UIControlStateNormal];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
@@ -132,12 +134,40 @@
 
 -(void)sortingList:(id)sender
 {
-    [self showMessageWindowWithContent:@"排序" imageType:0];
+    
+    if (seg.selectedSegmentIndex ==0) {
+        [self showMessageWindowWithContent:@"排序" imageType:0];
+        if (!firstView. selectCharacter) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+            return;
+        }
+        if (!firstView.selectType) {
+            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+            return;
+        }
+        [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(firstView.selectCharacter, @"gameid")reSuccess:^(id responseObject) {
+            [firstView updateFilterId:responseObject];
+        } reError:^(id error) {
+            [firstView showErrorAlertView:error];
+        }];
+  
+    }else{
+        NewCreateItemViewController *create =[[NewCreateItemViewController alloc]init];
+        [self.navigationController pushViewController: create animated:YES];
+    }
+    
+
 }
 
 -(void)tishiing:(id)sender
 {
     [self showMessageWindowWithContent:@"提示" imageType:0];
+    
+    PreferenceViewController *perf = [[PreferenceViewController alloc]init];
+    perf.mydelegate =self;
+    [self.navigationController pushViewController: perf animated:YES];
+    
+    
 }
 
 -(NSMutableArray*)detailDataList:(NSMutableArray*)datas{
@@ -383,7 +413,7 @@
         case 0:
             [UIView beginAnimations:@"animation" context:nil];
             [UIView setAnimationDuration:1.0f];
-            sortingBtn.hidden =NO;
+            [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
             [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
             [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:customView cache:YES];
             [customView exchangeSubviewAtIndex:1 withSubviewAtIndex:0];
@@ -394,7 +424,7 @@
         case 1:
             [UIView beginAnimations:@"animation1" context:nil];
             [UIView setAnimationDuration:1.0f];
-            sortingBtn.hidden  =YES;
+            [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
             [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
             [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
             [UIView commitAnimations];
@@ -454,6 +484,12 @@
     }];
 }
 
+-(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc
+{
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+
 -(void)enterDetailPage:(NSDictionary*)dic{
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
@@ -467,11 +503,37 @@
     itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)searchTeamBackViewWithDic:(NSDictionary *)dic
+{
+    NSMutableDictionary * dict = KISDictionaryHaveKey(dic, @"createTeamUser");
+    firstView.selectCharacter =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"characterId"),@"id",KISDictionaryHaveKey(dict, @"characterName"),@"name",KISDictionaryHaveKey(dict, @"gameid"),@"gameid",KISDictionaryHaveKey(dict, @"realm"),@"simpleRealm", nil];
+    
+    if ([[dic allKeys]containsObject:@"type"]&&[KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
+        firstView.selectType  = KISDictionaryHaveKey(dic, @"type");
+    }else{
+        firstView.selectType = [[ItemManager singleton] createType];
+    }
+    if ([KISDictionaryHaveKey(dic, @"filter") isKindOfClass:[NSDictionary class]]) {
+        firstView.selectFilter = KISDictionaryHaveKey(dic, @"filter");
+    }else{
+        firstView.selectFilter=nil;
+    }
+    firstView.selectPreferenceId= KISDictionaryHaveKey(dic, @"preferenceId");
+    [firstView reloInfo:YES];
+}
+
+-(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag
+{
+    [self showMessageWindowWithContent:text imageType:tag];
+}
+
 
 /*
 #pragma mark - Navigation

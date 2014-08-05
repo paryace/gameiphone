@@ -3622,7 +3622,7 @@
     [groupInfo setObject:group.infoImg forKey:@"infoImg"];
     [groupInfo setObject:group.location forKey:@"location"];
     [groupInfo setObject:group.available forKey:@"available"];
-    [groupInfo setObject:group.groupType forKey:@"type"];
+    [groupInfo setObject:group.groupType?group.groupType:@"" forKey:@"type"];
     return groupInfo;
 }
 

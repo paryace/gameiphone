@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
 @interface BaseItemCell : UITableViewCell
+@property(nonatomic,strong)UIImageView *bgImageView;
 @property(nonatomic,strong)EGOImageView *headImg;
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *contentLabel;
