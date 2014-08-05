@@ -54,5 +54,7 @@
 
 -(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent;//确定或者取消就位确认
 
+-(void)teamPreparedConfirmResultMessageReceived:(NSDictionary *)messageContent;//就位确认结果
+
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent;//其他不知道的消息
 @end

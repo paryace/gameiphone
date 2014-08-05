@@ -39,7 +39,9 @@ teamMemberChange：同意添加,踢出组织,退出组织,占坑,填坑
 disbandTeam：解散组队
 teamInvite：组队邀请
 teamRecommend:组队偏好消息
-startTeamPreparedConfirm发起就位确认*/
+startTeamPreparedConfirm发起就位确认
+teamPreparedUserSelect选择就位确认状态
+teamPreparedConfirmResult就位确认结果*/
 
 
 #import <Foundation/Foundation.h>
@@ -76,7 +78,9 @@ typedef NS_ENUM(NSInteger,MsgType){
     MsgTypeDisbandTeam=30,
     MsgTypeTeamInvite=31,
     MsgTypeOther=32,
-    MsgTypeStartTeamPreparedConfirm=33
+    MsgTypeStartTeamPreparedConfirm=33,
+    MsgTypeTeamPreparedUserSelect=34,
+    MsgTypeTeamPreparedConfirmResult=35
 };
 
 typedef NS_ENUM(NSInteger,PayloadType){
@@ -94,6 +98,9 @@ typedef NS_ENUM(NSInteger,PayloadType){
     PayloadTypeTeamClaimAddType=12,
     PayloadTypeTeamOccupyType=13,
     PayloadTypeStartTeamPreparedConfirm=14,
+    PayloadTypeTeamPreparedUserSelectOk = 15,
+    PayloadTypeTeamPreparedUserSelectCancel = 16,
+    PayloadTypeTeamPreparedConfirmResultSuccess = 17,
     PayloadTypeOther=100
 };
 

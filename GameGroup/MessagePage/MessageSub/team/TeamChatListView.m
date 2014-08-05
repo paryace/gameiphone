@@ -246,12 +246,12 @@
                     [self.bottomView addSubview:refusedBtn];
                 }
             }
-            
-            if (msgCount>0||self.teamUsershipType) {
-                [self showButton];
-            }else{
-                [self hideButton];
-            }
+            [self showButton];
+//            if (msgCount>0||self.teamUsershipType) {
+//                [self showButton];
+//            }else{
+//                [self hideButton];
+//            }
         }
         if (section==1) {
             self.bottomView.hidden=YES;

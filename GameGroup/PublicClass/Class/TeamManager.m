@@ -172,6 +172,14 @@ static TeamManager *teamManager = NULL;
     }];
 }
 
+//收到就位确认结果消息，初始化就位确认状态
+-(void)resetTeamUserState:(NSString*)groupId
+{
+    [DataStoreManager resetTeamUser:groupId State:@"0" Successcompletion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:kResetChangInplaceState object:nil userInfo:nil];
+    }];
+}
+
 -(NSString*)getState:(NSString*)result{
     if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"2";
