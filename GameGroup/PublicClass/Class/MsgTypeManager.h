@@ -101,6 +101,7 @@ typedef NS_ENUM(NSInteger,PayloadType){
     PayloadTypeTeamPreparedUserSelectOk = 15,
     PayloadTypeTeamPreparedUserSelectCancel = 16,
     PayloadTypeTeamPreparedConfirmResultSuccess = 17,
+    payloadTypeTeamPreparedConfirmResultFail = 18,
     PayloadTypeOther=100
 };
 

@@ -155,8 +155,9 @@
     }
     if (section == 0) {
         if (self.bottomView) {
-            self.bottomView.hidden=YES;
+            [self hideButton];
         }
+        
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
@@ -192,13 +193,13 @@
         }];
         [self.customPhotoCollectionView reloadData];
     }else{
-         NSInteger msgCount = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
+//         NSInteger msgCount = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
         float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
-        if ((section == 2&&msgCount>0)||self.teamUsershipType) {
-            tableHight -= 60;
-        }
+//        if ((section == 2&&msgCount>0)||self.teamUsershipType) {
+//            tableHight -= 60;
+//        }
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -208,8 +209,8 @@
         }
         if (section == 2) {
             if (!self.bottomView){
-                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight+5, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-tableHight)];
-                self.bottomView.hidden = YES;
+                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-60+5, 320, 60)];
+                self.bottomView.backgroundColor = [UIColor whiteColor];
                 [self.mBgView addSubview:self.bottomView];
                 if (self.teamUsershipType) {
                     UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
@@ -246,18 +247,10 @@
                     [self.bottomView addSubview:refusedBtn];
                 }
             }
-            [self showButton];
-//            if (msgCount>0||self.teamUsershipType) {
-//                [self showButton];
-//            }else{
-//                [self hideButton];
-//            }
         }
         if (section==1) {
-            self.bottomView.hidden=YES;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }else{
-            self.bottomView.hidden=NO;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             [GameCommon setExtraCellLineHidden:self.mTableView];
         }
@@ -266,7 +259,8 @@
         CGRect rect = self.mBgView.frame;
         rect.size.height = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
         self.mBgView.frame =  rect;
-        self.mTableView.frame = CGRectMake(0, 0, 320,tableHight);
+//        self.mTableView.frame = CGRectMake(0, 0, 320,tableHight);
+        [self showButton];
         [self.mTableView reloadData];
     }
 }
@@ -647,7 +641,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        [self hideButton];
+//        [self hideButton];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态

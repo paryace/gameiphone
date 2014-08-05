@@ -1460,7 +1460,8 @@ UINavigationControllerDelegate>
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"])
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"])
     {
         return KKChatMsgTypeSystem;
     }
@@ -2680,7 +2681,9 @@ UINavigationControllerDelegate>
        ||[msgType isEqualToString:@"requestJoinTeam"]//申请加入组队
        ||[msgType isEqualToString:@"teamMemberChange"]//加入,退出,踢出
        ||[msgType isEqualToString:@"disbandTeam"]//解散组队
-       ||[msgType isEqualToString:@"startTeamPreparedConfirm"])//发起就位确认
+       ||[msgType isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
+       ||[msgType isEqualToString:@"teamPreparedUserSelect"]//选择就位确认
+        ||[msgType isEqualToString:@"teamPreparedConfirmResult"])//就位确认结果
         {
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];

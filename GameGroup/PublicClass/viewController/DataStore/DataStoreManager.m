@@ -4245,10 +4245,11 @@
         int unread;
         if (!thumbMsgs){
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-            unread =0;
+//            unread =0;
         }else{
-            unread = [thumbMsgs.unRead intValue];
+//            unread = [thumbMsgs.unRead intValue];
         }
+        unread =0;
         thumbMsgs.sender = @"";
         thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = body;

@@ -180,6 +180,9 @@
     else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedConfirmResultSuccess"]){
         return PayloadTypeTeamPreparedConfirmResultSuccess;
     }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedConfirmResultFail"]){
+        return payloadTypeTeamPreparedConfirmResultFail;
+    }
     else{
         return PayloadTypeOther;
     }
@@ -205,7 +208,8 @@
         ||payloadType == PayloadTypeStartTeamPreparedConfirm
         ||payloadType == PayloadTypeTeamPreparedUserSelectOk
         ||payloadType == PayloadTypeTeamPreparedUserSelectCancel
-        ||payloadType == PayloadTypeTeamPreparedConfirmResultSuccess) {
+        ||payloadType == PayloadTypeTeamPreparedConfirmResultSuccess
+        ||payloadType == payloadTypeTeamPreparedConfirmResultFail) {
         return 1;
     }
     else
