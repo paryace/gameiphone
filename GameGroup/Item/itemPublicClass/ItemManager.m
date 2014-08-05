@@ -433,12 +433,11 @@ static ItemManager *itemManager = NULL;
 }
 
 #pragma mark --- 组队就位确认
--(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId ConfirmationId:(NSString*)confirmationId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
+-(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:roomId forKey:@"roomId"];
     [paramDict setObject:gameId forKey:@"gameid"];
-    [paramDict setObject:confirmationId forKey:@"confirmationId"];
     [paramDict setObject:value forKey:@"value"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];

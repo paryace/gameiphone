@@ -450,4 +450,30 @@
 
 //保存就位确认消息
 +(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
+//保存状态
++(void)saveTeamUser:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType DefaultState:(NSString*)defaultState;
+
+//保存状态
++(void)saveTeamUser2:(NSString*)userId groupId:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType State:(NSString*)state;
+
+//删除状态
++(void)deleteTeamUser:(NSString*)userId groupId:(NSString*)groupId;
+
+//更新状态
++(void)updateTeamUser:(NSString*)userId groupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//更新状态
++(void)updateTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//查询状态
++(NSString*)getTeamUserState:(NSString*)userId groupId:(NSString*)groupId;
+
+//更新状态
++(void)resetTeamUser:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//根据groupId删除就位确认消息
++(void)deleteDSPreparedByGroupId:(NSString*)groupId;
+
++(NSMutableDictionary*)getTeamUser:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType;
 @end

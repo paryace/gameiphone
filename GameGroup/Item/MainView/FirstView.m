@@ -505,6 +505,10 @@
     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+    
+//    if (self.myDelegate) {
+//        [self.myDelegate enterDetailPage:dic];
+//    }
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {

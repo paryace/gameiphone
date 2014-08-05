@@ -11,7 +11,9 @@
 
 @implementation DSTeamUser
 
-@dynamic roomId;
+@dynamic groupId;
 @dynamic userid;
+@dynamic state;
+@dynamic teamUsershipType;
 
 @end

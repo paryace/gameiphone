@@ -484,7 +484,7 @@
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
-    [paramDict setObject:nickName forKey:@"roomName"];
+    [paramDict setObject:[NSString stringWithFormat:@"%@%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"simpleRealm")],@"-",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"name")]] forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];

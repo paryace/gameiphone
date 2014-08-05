@@ -9,6 +9,7 @@
 #import "MemberEditViewController.h"
 #import "MemberEditCell.h"
 #import "GroupInformationViewController.h"
+#import "TestViewController.h"
 @interface MemberEditViewController ()
 {
     UITableView *m_myTableView;
@@ -18,6 +19,7 @@
     UIAlertView *ascensionGlyAlertView;
     UIAlertView *cancelAlertView;
     UIAlertView *removeAlertView;
+    NSInteger clickSection;
     
 }
 @end
@@ -100,7 +102,9 @@
     if (cell == nil) {
         cell = [[MemberEditCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    cell.headCkickDelegate = self;
     NSDictionary* tempDict = [[[m_dataArray objectAtIndex:indexPath.section]objectForKey:@"list"]objectAtIndex:indexPath.row];
+    cell.tag= indexPath.row;
     cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
@@ -117,7 +121,13 @@
     cell.sfLb.frame = CGRectMake(320-timeSize.width-10, 25, timeSize.width, 20);
     return cell;
 }
-
+- (void)userHeadImgClick:(id)Sender{
+//    MemberEditCell * iCell = (MemberEditCell*)Sender;
+//    NSMutableDictionary *dic = [m_dataArray objectAtIndex:iCell.tag];
+//    TestViewController *itemInfo = [[TestViewController alloc]init];
+//    itemInfo.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+//    [self.navigationController pushViewController:itemInfo animated:YES];
+}
 
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime

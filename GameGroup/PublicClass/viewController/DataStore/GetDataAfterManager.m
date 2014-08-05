@@ -373,17 +373,17 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 #pragma mark 发起就位确认的消息
 -(void)startTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
-    NSLog(@"发起就位确认的消息%@",messageContent);
-    
     [DataStoreManager saveTeamPreparedMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         
     }];
-    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
-    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
+    [[TeamManager singleton] updateTeamUserState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")] MemberList:KISDictionaryHaveKey(payloadDic, @"memberList") State:@"1"];
+    
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             [[MessageSetting singleton] setSoundOrVibrationopen];
             [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
@@ -393,13 +393,10 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 }
 
 #pragma mark 确定就位确认
--(void)okTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
-     NSLog(@"确定就位确认的消息%@",messageContent);
-}
-
-#pragma mark取消就位确认
--(void)cancelTeamPreparedConfirmMessageReceived:(NSDictionary *)messageContent{
-     NSLog(@"取消就位确认的消息%@",messageContent);
+-(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent{
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    [[TeamManager singleton] updateTeamUserState:payloadDic];//更新就位确认的状态
+    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 
 #pragma mark 其他不认识的消息
