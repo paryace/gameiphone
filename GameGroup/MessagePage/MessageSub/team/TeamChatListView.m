@@ -193,13 +193,9 @@
         }];
         [self.customPhotoCollectionView reloadData];
     }else{
-//         NSInteger msgCount = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
         float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
-//        if ((section == 2&&msgCount>0)||self.teamUsershipType) {
-//            tableHight -= 60;
-//        }
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40) style:UITableViewStylePlain];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -257,9 +253,8 @@
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         CGRect rect = self.mBgView.frame;
-        rect.size.height = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
+        rect.size.height = tableHight;
         self.mBgView.frame =  rect;
-//        self.mTableView.frame = CGRectMake(0, 0, 320,tableHight);
         [self showButton];
         [self.mTableView reloadData];
     }
@@ -641,7 +636,6 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-//        [self hideButton];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
@@ -653,6 +647,7 @@
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
     [self resetPState];
+    [self.mTableView reloadData];
 }
 
 //改变列表就位确认状态

@@ -413,13 +413,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
      NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
-    [[TeamManager singleton] resetTeamUserState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")]];
-    
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         
     }];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         dispatch_async(dispatch_get_main_queue(), ^{
+             [[TeamManager singleton] resetTeamUserState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")]];
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             [[MessageSetting singleton] setSoundOrVibrationopen];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
