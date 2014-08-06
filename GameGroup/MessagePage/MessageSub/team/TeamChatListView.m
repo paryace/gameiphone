@@ -318,8 +318,16 @@
         self.sendBtn.enabled = YES;
         
     }else{
+        self.agreeBtn.hidden = NO;
+        self.agreeBtn.frame = CGRectMake(15, 25, (320-40)/2, 35);
+        [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+        
         self.agreeBtn.selected = NO;
         self.agreeBtn.enabled = YES;
+        
+        self.refusedBtn.hidden = NO;
+        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35);
+        [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
         self.refusedBtn.selected = NO;
         self.refusedBtn.enabled = YES;
     }
@@ -333,8 +341,21 @@
         self.sendBtn.enabled = NO;
 
     }else{
+        self.agreeBtn.hidden = NO;
+        self.agreeBtn.frame = CGRectMake(15, 25, (320-40)/2, 35);
+        [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
         self.agreeBtn.selected = NO;
         self.agreeBtn.enabled = YES;
+        
+        self.refusedBtn.hidden = NO;
+        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35);
+        [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
         self.refusedBtn.selected = NO;
         self.refusedBtn.enabled = YES;
     }
@@ -356,10 +377,18 @@
         self.sendBtn.selected = YES;
         self.sendBtn.enabled = NO;
     }else{
+        self.agreeBtn.hidden = NO;
+        self.agreeBtn.frame = CGRectMake(15, 25, 290, 35);
+        [self.agreeBtn setTitle:@"已确认" forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
         self.agreeBtn.selected = YES;
         self.agreeBtn.enabled = NO;
+        
         self.refusedBtn.selected = YES;
         self.refusedBtn.enabled = NO;
+        self.refusedBtn.hidden = YES;
     }
 }
 
@@ -371,8 +400,16 @@
         self.sendBtn.selected = YES;
         self.sendBtn.enabled = NO;
     }else{
+        self.agreeBtn.hidden = YES;
         self.agreeBtn.selected = YES;
         self.agreeBtn.enabled = NO;
+        
+        self.refusedBtn.hidden = NO;
+        self.refusedBtn.frame = CGRectMake(15, 25, 290, 35);
+        [self.refusedBtn setTitle:@"已拒绝" forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
         self.refusedBtn.selected = YES;
         self.refusedBtn.enabled = NO;
     }

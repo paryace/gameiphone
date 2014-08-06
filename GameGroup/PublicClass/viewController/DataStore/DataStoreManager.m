@@ -783,7 +783,7 @@
 +(void)blankGroupMsgUnreadCountForUser:(NSString *)groupId  Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",groupId,@"groupchat"];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId,@"groupchat",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (thumbMsgs) {
             thumbMsgs.unRead = @"0";
