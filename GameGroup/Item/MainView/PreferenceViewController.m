@@ -57,7 +57,7 @@
         [self setList:responseObject];
         _dataArr =[self detailDataList:responseObject];
         [_prefTb reloadData];
-//        [self displayTabbarNotification];
+        [self.mydelegate reloadMsgCount];
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"LoignRefreshPreference_wx"];
     } reError:^(id error) {
         [hud hide:YES];
@@ -164,6 +164,17 @@
         [_prefTb reloadData];
     }
 }
+
+-(void)didRoleRomeve:(NSString*)characterId{
+    for (NSMutableDictionary * dic in _dataArr) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [_dataArr removeObject:dic];
+        }
+    }
+    [_prefTb reloadData];
+    [self.mydelegate reloadMsgCount];
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self enterEditPageWithRow:indexPath.row];
@@ -322,15 +333,6 @@
             [alert show];
         }
     }
-}
--(void)didRoleRomeve:(NSString*)characterId{
-    for (NSMutableDictionary * dic in _dataArr) {
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
-            [_dataArr removeObject:dic];
-        }
-    }
-    [_prefTb reloadData];
-    [self.mydelegate reloadMsgCount];
 }
 
 #pragma mark --新的偏好消息
