@@ -7,7 +7,7 @@
 //
 
 #import "TeamChatListView.h"
-#import "CardCell.h"
+#import "TagCell.h"
 #import "CardTitleView.h"
 #import "JoinTeamCell.h"
 #import "ItemManager.h"
@@ -207,7 +207,7 @@
             self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
             self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
             self.customPhotoCollectionView.dataSource = self;
-            [self.customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
+            [self.customPhotoCollectionView registerClass:[TagCell class] forCellWithReuseIdentifier:@"ImageCell"];
             self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
             [self.mTableView removeFromSuperview];
             self.mTableView = nil;
@@ -505,9 +505,9 @@
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"tagBtn_normal");
-    cell.tag = indexPath.section*1000+indexPath.row;
+    TagCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
+    cell.tag = indexPath.row;
+    cell.delegate = self;
     cell.titleLabel.textAlignment = NSTextAlignmentCenter;
     cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
     cell.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -516,13 +516,16 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+}
+-(void)tagOnClick:(TagCell*)sender{
     if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
-        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:sender.tag];
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
+        [self.dropDownDelegate chooseAtSection:currentExtendSection index:sender.tag];
         [self showOrHideView:currentExtendSection];
     }
+
 }
 
 //-------
