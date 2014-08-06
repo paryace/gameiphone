@@ -422,7 +422,7 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-20);
 }
 //显示按钮
 -(void)showButton{
