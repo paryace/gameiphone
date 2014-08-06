@@ -148,22 +148,22 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
     
     NSDictionary *dic;
     if (indexPath.section ==0) {
         
         NSArray *arr =[self.listDict objectForKey:@"OwnedRooms"];
         if (arr&&arr.count>0) {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
             dic = [arr objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
-
         }
     }else{
         NSArray *arr =[self.listDict objectForKey:@"joinedRooms"];
         if (arr&&arr.count>0) {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
 
         dic = [arr objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
