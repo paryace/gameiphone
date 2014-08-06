@@ -125,7 +125,7 @@
 {
     
     if (seg.selectedSegmentIndex ==0) {
-        [self showMessageWindowWithContent:@"排序" imageType:0];
+//        [self showMessageWindowWithContent:@"排序" imageType:0];
         if (!firstView. selectCharacter) {
             [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
             return;
