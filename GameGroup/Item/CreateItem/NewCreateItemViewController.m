@@ -73,7 +73,7 @@
     m_countArray  = [NSMutableArray array];
     [self buildPickView];
     
-    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择角色" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_gameTf.delegate = self;
     m_gameTf.inputAccessoryView = toolbar;
     m_gameTf.inputView = m_rolePickerView;
@@ -82,14 +82,14 @@
     gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 7.5, 25, 25)];
     [m_gameTf addSubview:gameIconImg];
 
-    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+60, 300, 40) placeholder:@"请选择分类" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_tagTf.delegate = self;
     m_tagTf.inputAccessoryView = toolbar;
     m_tagTf.inputView = m_tagsPickView;
 
 //    [self.view addSubview:m_tagTf];
 
-    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+110, 300, 40) placeholder:@"请选择人数" rightImg:@"xiala" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_countTf.delegate = self;
     m_countTf.inputAccessoryView = toolbar;
     m_countTf.inputView = m_countPickView;

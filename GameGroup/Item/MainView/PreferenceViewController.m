@@ -180,6 +180,10 @@
         [editActionSheet showInView:self.view];
     }
 }
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"设置";
+}
 -(NSString*)getDescription:(NSDictionary*)dic State:(NSInteger)state{
     if (state == 1) {//正常
         if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {

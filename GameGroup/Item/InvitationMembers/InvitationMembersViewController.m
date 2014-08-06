@@ -300,9 +300,10 @@
     view.backgroundColor = [UIColor whiteColor];
     
     NSArray *array   =[NSArray arrayWithObjects:@"qq",@"微信",@"群组", nil];
+    NSArray *imgArr = [NSArray arrayWithObjects:@"team_qq",@"team_wx",@"team_group", nil];
     for (int i =0; i<3; i++) {
         UIButton *Butotn = [[ UIButton alloc]initWithFrame:CGRectMake(20+60*i, 10, 50, 50)];
-        [Butotn setBackgroundImage:KUIImage(@"placeholder") forState:UIControlStateNormal];
+        [Butotn setBackgroundImage:KUIImage(imgArr[i]) forState:UIControlStateNormal];
         Butotn.tag = 100+i;
         [Butotn addTarget:self action:@selector(enterOtherInvitationPage:) forControlEvents:UIControlEventTouchUpInside];
         [view addSubview:Butotn];

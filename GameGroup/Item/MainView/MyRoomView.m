@@ -179,13 +179,18 @@
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
     view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     
-    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 29)];
+    UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(10, 8.0f, 13, 13)];
+    [view addSubview:img];
+    
+    UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(24, 0, 300, 29)];
     label.font = [UIFont systemFontOfSize:12];
     label.textAlignment = NSTextAlignmentLeft;
     if (section ==0) {
         label.text =@"我创建的队伍";
+        img.image = KUIImage(@"team_mine");
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
     }else{
+        img.image = KUIImage(@"team_join");
         label.text = @"我加入的队伍";
     }
     [view addSubview:label];

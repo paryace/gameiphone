@@ -73,12 +73,14 @@
     seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
     seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
     seg.selectedSegmentIndex = 0;
-    seg.backgroundColor = [UIColor clearColor];
-//    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
-    seg.tintColor = [UIColor whiteColor];
-    
-    [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
+    if (KISHighVersion_7) {
+        seg.backgroundColor = [UIColor clearColor];
+        //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
+        seg.tintColor = [UIColor whiteColor];
+        
+        [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+        [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
+    }
     [seg addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:seg];
     
