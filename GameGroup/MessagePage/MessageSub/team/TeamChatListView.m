@@ -310,7 +310,7 @@
     }
 }
 
-
+//正常
 -(void)normal{
     if (self.teamUsershipType) {
         [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
@@ -321,13 +321,18 @@
         self.agreeBtn.hidden = NO;
         self.agreeBtn.frame = CGRectMake(15, 25, (320-40)/2, 35);
         [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
-        
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
         self.agreeBtn.selected = NO;
         self.agreeBtn.enabled = YES;
         
         self.refusedBtn.hidden = NO;
         self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35);
         [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
         self.refusedBtn.selected = NO;
         self.refusedBtn.enabled = YES;
     }
