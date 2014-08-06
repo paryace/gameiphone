@@ -46,6 +46,11 @@
         if (sectionNum == 0) {
             self = nil;
         }
+        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 320, frame.size.height)];
+        UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
+        bgImageView.image = bgImage;
+        bgImageView.userInteractionEnabled = YES;
+        [self addSubview:bgImageView];
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
@@ -56,20 +61,21 @@
             if ([self.dropDownDataSource respondsToSelector:@selector(titleInSection:index:)]) {
                 sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
             }
+            sectionBtn.backgroundColor = [UIColor clearColor];
             [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
             [sectionBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
-            [self addSubview:sectionBtn];
+            [bgImageView addSubview:sectionBtn];
             
-            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
-            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark.png"]];
+            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 15, 15)];
+            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
-            [self addSubview: sectionBtnIv];
+            [bgImageView addSubview: sectionBtnIv];
             if (i<sectionNum && i != 0) {
-                UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
-                lineView.backgroundColor = [UIColor lightGrayColor];
-                [self addSubview:lineView];
+                UIImageView *lineView = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
+                lineView.image = KUIImage(@"chat_ vertical_line");
+                [bgImageView addSubview:lineView];
             }
         }
         hud = [[MBProgressHUD alloc] initWithView:supView];
@@ -85,33 +91,77 @@
 -(void)sectionBtnTouch:(UIButton *)btn
 {
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
-    [self showOrHide:section];
+    [self showOrHideControl:section];
 }
 
-
--(void)showOrHide:(NSInteger)section{
+//显示或者隐藏控制
+-(void)showOrHideControl:(NSInteger)section{
     BOOL isOpen = [self.dropDownDelegate clickAtSection:section];
     if (!isOpen) {
         return;
     }
+    if (section == 1) {//申请
+        [self getZU];
+        if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
+            [self showErrorAlertView];
+            return;
+        }
+    }else if(section == 2){//就位确认
+        [self getmemberList];
+    }
+    [self showOrHideView:section];
+}
+
+//显示或者隐藏布局
+-(void)showOrHideView:(NSInteger)section{
+//    [self hideView];
+    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
+    }];
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];
     if (currentExtendSection == section) {
         [self hideExtendedChooseView];
     }else{
-        if (section==1) {
-            [self getZU];
-            if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
-                [self showErrorAlertView];
-                return;
-            }
-        }else{
-            [self getmemberList];
-        }
         currentExtendSection = section;
+//        [self showView];
+        currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+        [UIView animateWithDuration:0.3 animations:^{
+            currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+            [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
+        }];
+        btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+        [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
         [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
     }
+}
+
+
+-(void)hideView{
+    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
+    }];
+    
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];
+}
+-(void)showView{
+    UIImageView *currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
+    }];
+    
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
 
 }
 
+//设置title
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section
 {
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +section];
@@ -129,41 +179,44 @@
 {
     if (currentExtendSection != -1) {
         currentExtendSection = -1;
-        CGRect rect = self.mBgView.frame;
-        rect.size.height = 0;
-        self.mBgView.frame = rect;
-        self.mBgView.alpha = 1.0f;
         [self.mBgView removeFromSuperview];
-        [UIView animateWithDuration:0.3 animations:^{
-            self.mTableBaseView.alpha = 1.0f;
-            self.mTableBaseView.alpha = 0.2f;
-        }completion:^(BOOL finished) {
-            [self.mTableBaseView removeFromSuperview];
-        }];
+        [self.mTableBaseView removeFromSuperview];
     }
 }
 
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
+    float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
         UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
         [self.mTableBaseView addGestureRecognizer:bgTap];
-        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 120 )];
+        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight )];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
+    
+    if (!self.bottomMenuView){
+        self.bottomMenuView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-15, 320, 15)];
+        self.bottomMenuView.image = KUIImage(@"bottom_memu.png");
+        self.bottomMenuView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *menuTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(menuOnCLick:)];
+        [self.bottomMenuView addGestureRecognizer:menuTap];
+        [self.mBgView addSubview:self.bottomMenuView];
+    }
+    
     if (section == 0) {
         if (self.bottomView) {
-            self.bottomView.hidden=YES;
+            [self hideButton];
         }
+        
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
             self.layout.minimumLineSpacing =10;
             self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
             self.layout.itemSize = CGSizeMake(88, 30);
-            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,100) collectionViewLayout:self.layout];
+            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,tableHight-20) collectionViewLayout:self.layout];
             self.customPhotoCollectionView.delegate = self;
             self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
             self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
@@ -174,29 +227,10 @@
             self.mTableView = nil;
             [self.mBgView addSubview:self.customPhotoCollectionView];
         }
-        //修改tableview的frame
-        CGRect rect = self.mBgView.frame;
-        rect.origin.x =0;
-        rect.size.width = 320;
-        NSInteger num = ( [self.dropDownDataSource numberOfRowsInSection:currentExtendSection]-1)/3+1;//标签行数
-        rect.size.height = (num*(30+10)+10)>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):(num*(30+10)+10);
-        self.mBgView.frame = rect;
-        self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
-        self.mBgView.alpha = 1.0;
-        //动画设置位置
-        [UIView animateWithDuration:0.3 animations:^{
-            self.mTableBaseView.alpha = 0.2;
-            self.mTableBaseView.alpha = 1.0;
-        }];
         [self.customPhotoCollectionView reloadData];
     }else{
-         NSInteger msgCount = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
-        float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
-        if ((section == 2&&msgCount>0)||self.teamUsershipType) {
-            tableHight -= 60;
-        }
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -208,77 +242,164 @@
         }
         if (section == 2) {
             if (!self.bottomView){
-                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight+5, 320, self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-tableHight)];
-                self.bottomView.hidden = YES;
+                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90, 320, 90-15)];
+                self.bottomView.backgroundColor = [UIColor whiteColor];
                 [self.mBgView addSubview:self.bottomView];
+                
+                
+                self.msgLable= [[UILabel alloc] initWithFrame:CGRectMake(15, 10, 290, 20)];
+                self.msgLable.backgroundColor = [UIColor clearColor];
+                [self.msgLable setTextAlignment:NSTextAlignmentCenter];
+                [self.msgLable setFont:[UIFont systemFontOfSize:14]];
+                [self.msgLable setTextColor:[UIColor redColor]];
+                self.msgLable.text = @"请确认就位确认";
+//                [self.bottomView addSubview:self.msgLable];
+                
                 if (self.teamUsershipType) {
-                    UIButton *sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, 290, 35)];
-                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [sendBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
-                    [sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    sendBtn.backgroundColor = [UIColor clearColor];
-                    sendBtn.layer.cornerRadius = 3;
-                    sendBtn.layer.masksToBounds=YES;
-                    [sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:sendBtn];
+                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, 290, 35)];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
+                    [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+                    [self.sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.sendBtn.backgroundColor = [UIColor clearColor];
+                    self.sendBtn.layer.cornerRadius = 3;
+                    self.sendBtn.layer.masksToBounds=YES;
+                    [self.sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.sendBtn];
                 }else{
-                    UIButton *agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 5, (320-40)/2, 35)];
-                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
-                    [agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    agreeBtn.backgroundColor = [UIColor clearColor];
-                    agreeBtn.layer.cornerRadius = 3;
-                    agreeBtn.layer.masksToBounds=YES;
-                    [agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:agreeBtn];
+                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, (320-40)/2, 35)];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
+                    [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+                    [self.agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.agreeBtn.backgroundColor = [UIColor clearColor];
+                    self.agreeBtn.layer.cornerRadius = 3;
+                    self.agreeBtn.layer.masksToBounds=YES;
+                    [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.agreeBtn];
                     
-                    UIButton *refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,5, (320-40)/2, 35)];
-                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
-                    [refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                    refusedBtn.backgroundColor = [UIColor clearColor];
-                    refusedBtn.layer.cornerRadius = 3;
-                    refusedBtn.layer.masksToBounds=YES;
-                    [refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
-                    [self.bottomView addSubview:refusedBtn];
+                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35)];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
+                    [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+                    [self.refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    self.refusedBtn.backgroundColor = [UIColor clearColor];
+                    self.refusedBtn.layer.cornerRadius = 3;
+                    self.refusedBtn.layer.masksToBounds=YES;
+                    [self.refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
+                    [self.bottomView addSubview:self.refusedBtn];
                 }
-            }
-            
-            if (msgCount>0||self.teamUsershipType) {
-                [self showButton];
-            }else{
-                [self hideButton];
             }
         }
         if (section==1) {
-            self.bottomView.hidden=YES;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }else{
-            self.bottomView.hidden=NO;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             [GameCommon setExtraCellLineHidden:self.mTableView];
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
-        CGRect rect = self.mBgView.frame;
-        rect.size.height = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
-        self.mBgView.frame =  rect;
-        self.mTableView.frame = CGRectMake(0, 0, 320,tableHight);
+        [self setBtnState];
         [self.mTableView reloadData];
     }
 }
+//设置按钮状态
+-(void)setBtnState{
+    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    if(onClickState == 0){
+        [self reset];
+        [self normal];
+    }else if(onClickState == 1){
+        [self showButton];
+        [self send];
+    }else if(onClickState == 2){
+        [self showButton];
+        [self ok];
+    }else if(onClickState == 3){
+        [self showButton];
+        [self cancel];
+    }
+}
 
+
+-(void)normal{
+    if (self.teamUsershipType) {
+        [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = NO;
+        self.sendBtn.enabled = YES;
+        
+    }else{
+        self.agreeBtn.selected = NO;
+        self.agreeBtn.enabled = YES;
+        self.refusedBtn.selected = NO;
+        self.refusedBtn.enabled = YES;
+    }
+}
+
+//已经发送
+-(void)send{
+    if (self.teamUsershipType) {
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
+
+    }else{
+        self.agreeBtn.selected = NO;
+        self.agreeBtn.enabled = YES;
+        self.refusedBtn.selected = NO;
+        self.refusedBtn.enabled = YES;
+    }
+}
+
+//没有就位确认消息的时候
+-(void)reset{
+    if (self.teamUsershipType) {
+        [self showButton];
+    }else{
+        [self hideButton];
+    }
+}
+
+//已经确定
+-(void)ok{
+    if (self.teamUsershipType) {
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
+    }else{
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+        self.refusedBtn.selected = YES;
+        self.refusedBtn.enabled = NO;
+    }
+}
+
+
+//已经取消
+-(void)cancel{
+    if (self.teamUsershipType) {
+        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = YES;
+        self.sendBtn.enabled = NO;
+    }else{
+        self.agreeBtn.selected = YES;
+        self.agreeBtn.enabled = NO;
+        self.refusedBtn.selected = YES;
+        self.refusedBtn.enabled = NO;
+    }
+}
+//隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
     self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
 }
-
+//显示按钮
 -(void)showButton{
     self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-60);
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-90);
 }
 
 //发起就位确认
@@ -317,11 +438,12 @@
         [self showErrorAlertView:error];
     }];
 }
-
+ //申请通知数控
 -(void)getZU
 {
     self.teamNotifityMsg = [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:self.groipId];
 }
+//就位确认数据
 -(void)getmemberList{
     self.memberList = [DataStoreManager getMemberList:self.groipId];
 }
@@ -334,8 +456,14 @@
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
-    [self hideExtendedChooseView];
+    [self showOrHideView:currentExtendSection];
 }
+
+-(void)menuOnCLick:(UITapGestureRecognizer *)tap
+{
+    [self showOrHideView:currentExtendSection];
+}
+
 //----------
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -350,7 +478,7 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"card_show");
+    cell.bgImgView.image = KUIImage(@"tagBtn_normal");
     cell.tag = indexPath.section*1000+indexPath.row;
     cell.titleLabel.textAlignment = NSTextAlignmentCenter;
     cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
@@ -365,7 +493,7 @@
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
-        [self hideExtendedChooseView];
+        [self showOrHideView:currentExtendSection];
     }
 }
 
@@ -479,6 +607,10 @@
         cell.tag = indexPath.row;
         cell.headCkickDelegate = self;
         NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
+        NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
+        
+        
+        
         cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
         cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
         cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
@@ -488,10 +620,15 @@
         }else{
             cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
         }
-        
         cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
-        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm")];
-        cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+        if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
+            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
+            cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+
+        }else{
+            cell.realmLable.text = @"";
+            cell.pveLable.text = @"";
+        }
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
         if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
             cell.stateView.hidden = YES;
@@ -647,7 +784,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        [self hideButton];
+        [self setBtnState];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
@@ -655,10 +792,13 @@
     [self showButton];
     [self changPState:@"1"];
     [self.mTableView reloadData];
+    [self setBtnState];
 }
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
     [self resetPState];
+    [self.mTableView reloadData];
+    [self setBtnState];
 }
 
 //改变列表就位确认状态

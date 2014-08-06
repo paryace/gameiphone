@@ -415,11 +415,6 @@ UINavigationControllerDelegate>
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
     VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
-    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
-        VC.gameUrl = @"moshouRole.html?";
-    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
-        VC.gameUrl = @"rolesinfo.html?";
-    }
     [self.navigationController pushViewController:VC animated:YES];
 }
 
@@ -1457,7 +1452,11 @@ UINavigationControllerDelegate>
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"]//解散组队
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"])//发起就位确认
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"])
     {
         return KKChatMsgTypeSystem;
     }
@@ -2677,18 +2676,26 @@ UINavigationControllerDelegate>
        ||[msgType isEqualToString:@"requestJoinTeam"]//申请加入组队
        ||[msgType isEqualToString:@"teamMemberChange"]//加入,退出,踢出
        ||[msgType isEqualToString:@"disbandTeam"]//解散组队
-       ||[msgType isEqualToString:@"startTeamPreparedConfirm"])//发起就位确认
+       ||[msgType isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
+       ||[msgType isEqualToString:@"teamPreparedUserSelect"]//选择就位确认
+        ||[msgType isEqualToString:@"teamPreparedConfirmResult"])//就位确认结果
         {
         NSString * groupID = KISDictionaryHaveKey(tempDic, @"groupId");
         [self setNewMsg:tempDic Sender:groupID];
         //改变组队位置
         if (self.isTeam) {
-            if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {
+            if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {//位置选择
                 [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:[KISDictionaryHaveKey(tempDic, @"payload") JSONValue]];
                 [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
+                [self readNoreadMsg];
+                [self setNoreadMsgView];
                 [self setNotifyMsgCount];
+            }
+            else if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
+                [self readNoreadMsg];
+                [self setNoreadMsgView];
                 [self setInplaceMsgCount];
             }
         }

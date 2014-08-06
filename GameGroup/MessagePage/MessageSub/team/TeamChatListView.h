@@ -29,7 +29,12 @@
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) UICollectionView *customPhotoCollectionView;
 @property (nonatomic, strong) UITableView *mTableView;
-@property (nonatomic, strong) UIView *bottomView;
+@property (nonatomic, strong) UIButton *bottomView;
+@property (nonatomic, strong) UIImageView *bottomMenuView;
+@property (nonatomic, strong) UIButton *sendBtn ;
+@property (nonatomic, strong) UIButton *agreeBtn ;
+@property (nonatomic, strong) UIButton *refusedBtn ;
+@property (nonatomic, strong) UILabel *msgLable ;
 
 @property (nonatomic, strong) NSString *groipId;
 @property (nonatomic, strong) NSString *roomId;

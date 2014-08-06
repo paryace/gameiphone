@@ -119,6 +119,12 @@
     else if ([msgtype isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
         return MsgTypeStartTeamPreparedConfirm;
     }
+    else if ([msgtype isEqualToString:@"teamPreparedUserSelect"]){//选择就位确认状态
+        return MsgTypeTeamPreparedUserSelect;
+    }
+    else if ([msgtype isEqualToString:@"teamPreparedConfirmResult"]){//就位确认结果
+        return MsgTypeTeamPreparedConfirmResult;
+    }
     else{
         return MsgTypeOther;
     }
@@ -165,6 +171,18 @@
     else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"startTeamPreparedConfirm"]){
         return PayloadTypeStartTeamPreparedConfirm;
     }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedUserSelectOk"]){
+        return PayloadTypeTeamPreparedUserSelectOk;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedUserSelectCancel"]){
+        return PayloadTypeTeamPreparedUserSelectCancel;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedConfirmResultSuccess"]){
+        return PayloadTypeTeamPreparedConfirmResultSuccess;
+    }
+    else if([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamPreparedConfirmResultFail"]){
+        return payloadTypeTeamPreparedConfirmResultFail;
+    }
     else{
         return PayloadTypeOther;
     }
@@ -187,7 +205,11 @@
         ||payloadType == PayloadTypeTeamKickType
         ||payloadType == PayloadTypeTeamQuitType
         ||payloadType == PayloadTypeInTeamSystemMsg
-        ||payloadType == PayloadTypeStartTeamPreparedConfirm) {
+        ||payloadType == PayloadTypeStartTeamPreparedConfirm
+        ||payloadType == PayloadTypeTeamPreparedUserSelectOk
+        ||payloadType == PayloadTypeTeamPreparedUserSelectCancel
+        ||payloadType == PayloadTypeTeamPreparedConfirmResultSuccess
+        ||payloadType == payloadTypeTeamPreparedConfirmResultFail) {
         return 1;
     }
     else

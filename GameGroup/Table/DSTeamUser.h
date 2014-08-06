@@ -16,5 +16,6 @@
 @property (nonatomic, retain) NSString * userid;
 @property (nonatomic, retain) NSString * state;
 @property (nonatomic, retain) NSString * teamUsershipType;
+@property (nonatomic, retain) NSString * onClickState;
 
 @end

@@ -421,6 +421,7 @@
     </entity>
     <entity name="DSTeamUser" representedClassName="DSTeamUser" syncable="YES">
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="onClickState" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamUsershipType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
@@ -552,7 +553,7 @@
         <element name="DSRecommendList" positionX="-153" positionY="-198" width="128" height="180"/>
         <element name="DSTeamList" positionX="-63" positionY="-27" width="128" height="283"/>
         <element name="DSTeamNotificationMsg" positionX="-54" positionY="-18" width="128" height="375"/>
-        <element name="DSTeamUser" positionX="-63" positionY="-27" width="128" height="103"/>
+        <element name="DSTeamUser" positionX="-63" positionY="-27" width="128" height="118"/>
         <element name="DSTeamUserInfo" positionX="-72" positionY="-36" width="128" height="150"/>
         <element name="DSThumbMsgs" positionX="117" positionY="207" width="128" height="283"/>
         <element name="DSTitle" positionX="-72" positionY="-36" width="128" height="225"/>

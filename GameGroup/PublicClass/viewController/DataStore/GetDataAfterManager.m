@@ -385,7 +385,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             [[MessageSetting singleton] setSoundOrVibrationopen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
     }];
@@ -395,8 +394,36 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 确定就位确认
 -(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    [messageContent setValue:groupId forKey:@"groupId"];
     [[TeamManager singleton] updateTeamUserState:payloadDic];//更新就位确认的状态
-    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+      
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        });
+    }];
+}
+#pragma mark 就位确认结果
+-(void)teamPreparedConfirmResultMessageReceived:(NSDictionary *)messageContent{
+     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    [messageContent setValue:groupId forKey:@"groupId"];
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+             [[TeamManager singleton] resetTeamUserState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")]];
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        });
+    }];
 }
 
 #pragma mark 其他不认识的消息

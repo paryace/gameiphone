@@ -376,11 +376,6 @@
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
     VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
-    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
-        VC.gameUrl = @"moshouRole.html?";
-    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
-        VC.gameUrl = @"rolesinfo.html?";
-    }
     [self.navigationController pushViewController:VC animated:YES];
 }
 

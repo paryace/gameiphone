@@ -245,7 +245,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate teamRecommendMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"startTeamPreparedConfirm"]){
+        else if ([msgtype isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }
@@ -256,6 +256,12 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate teamPreparedUserSelectMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"teamPreparedConfirmResult"]){//就位确认结果
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate teamPreparedConfirmResultMessageReceived:dict];
         }
         else{
             [self.chatDelegate otherAnyMessageReceived:dict];
