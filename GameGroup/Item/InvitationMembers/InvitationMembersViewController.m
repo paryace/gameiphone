@@ -354,7 +354,6 @@
     //    [hud showAnimated:YES whileExecutingBlock:^{
     NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
     
-    
     NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
     NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
     NSMutableArray *customArr = [NSMutableArray array];
