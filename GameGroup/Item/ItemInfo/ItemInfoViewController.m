@@ -288,7 +288,7 @@
 {
     NSArray *arr = [NSArray array] ;
     if ([teamUsershipType intValue]==0) {
-        arr = @[@"sendMsg_normal.jpg",@"groupEdit"];
+        arr = @[@"sendMsg_normal.jpg",@"yaoqing.jpg"];
         m_getOutBtn.hidden = NO;
     }
     else if([teamUsershipType intValue]==1)

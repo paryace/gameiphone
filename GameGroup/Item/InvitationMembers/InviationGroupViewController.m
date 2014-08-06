@@ -7,7 +7,7 @@
 //
 
 #import "InviationGroupViewController.h"
-#import "GroupCell.h"
+#import "InviationTeamCell.h"
 @interface InviationGroupViewController ()
 {
     NSMutableArray * m_dataArray;
@@ -81,24 +81,24 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"cell";
-    GroupCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    InviationTeamCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell = [[GroupCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[InviationTeamCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
         NSMutableDictionary * cellDic = m_dataArray[indexPath.row];
         cell.headImageV.placeholderImage = KUIImage(@"group_icon");
         cell.headImageV.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:100];
         cell.nameLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
-        NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
-        NSString * level = KISDictionaryHaveKey(cellDic, @"level");
-        NSString * maxMemberNum = KISDictionaryHaveKey(cellDic, @"maxMemberNum");
-        NSString * currentMemberNum = KISDictionaryHaveKey(cellDic, @"currentMemberNum");
-        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:gameId];
-        cell.gameImageV.image = KUIImage(@"clazz_icon.png");
-        cell.gameImageV.imageURL = [ImageService getImageStr:gameImageId Width:100];
-        cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
-        cell.levelLable.text = [NSString stringWithFormat:@"%@",level];
-        cell.cricleLable.text = KISDictionaryHaveKey(cellDic, @"info");
+//        NSString * gameId = KISDictionaryHaveKey(cellDic, @"gameid");
+//        NSString * level = KISDictionaryHaveKey(cellDic, @"level");
+//        NSString * maxMemberNum = KISDictionaryHaveKey(cellDic, @"maxMemberNum");
+//        NSString * currentMemberNum = KISDictionaryHaveKey(cellDic, @"currentMemberNum");
+//        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:gameId];
+//        cell.gameImageV.image = KUIImage(@"clazz_icon.png");
+//        cell.gameImageV.imageURL = [ImageService getImageStr:gameImageId Width:100];
+//        cell.numberLable.text = [NSString stringWithFormat:@"%@%@%@",currentMemberNum,@"/",maxMemberNum];
+//        cell.levelLable.text = [NSString stringWithFormat:@"%@",level];
+//        cell.cricleLable.text = KISDictionaryHaveKey(cellDic, @"info");
 
     return cell;
 }
@@ -134,7 +134,7 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70.0f;
+    return 55.0f;
 }
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {

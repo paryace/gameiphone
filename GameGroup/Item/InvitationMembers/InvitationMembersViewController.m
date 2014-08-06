@@ -40,6 +40,9 @@
     
     UIView                             *  m_shareView;
     UIButton                           *  m_shareBtn;
+    
+    NSMutableArray                     *  keysArr;
+    NSMutableDictionary                *  dataDict;
 
 }
 @end
@@ -68,7 +71,8 @@
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
     
-    
+    dataDict  = [NSMutableDictionary dictionary];
+    keysArr = [NSMutableArray array];
     m_rArray = [NSMutableArray array];
     m_tabTag = 1;
     addMemArray = [NSMutableArray array];
@@ -122,6 +126,78 @@
     [m_listView addSubview:m_button];
 }
 
+#pragma mark ==获取数据
+-(void)getInfo
+{
+    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
+    dispatch_async(queueselect, ^{
+        NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+        NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
+        NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+//        [keysArr removeAllObjects];
+        [dataDict removeAllObjects];
+        dataDict = result;
+        [keysArr addObjectsFromArray:keys];
+        
+        for (int i =0; i<keysArr.count; i++) {
+            NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
+            for (int j=0;j<arr.count;j++) {
+                NSMutableDictionary *dic =[arr objectAtIndex:j];
+                [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"section"];
+                [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
+                [dic setValue:@"1" forKey:@"choose"];
+                [dic setValue:@"friends" forKeyPath:@"tabType"];
+
+            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [m_rTableView reloadData];
+        });
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    //
+    //    hud.labelText = @"获取中...";
+    //    //    [hud showAnimated:YES whileExecutingBlock:^{
+    //    NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+    //
+    //    NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
+    //    NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+    //
+    //    keysArr = [userinfo objectForKey:@"nameKey"];
+    //    keysArr  =[keysArr sortedArrayUsingSelector:@selector(compare:)];
+    //
+    //
+    //    NSMutableArray *customArr = [NSMutableArray array];
+    //    for (int i =0; i<keys.count; i++) {
+    //        NSArray *array = [result objectForKey:keys[i]];
+    //        for (NSMutableDictionary *dic in array) {
+    //            [dic setValue:@"1" forKey:@"choose"];
+    //            [dic setValue:@"friends" forKeyPath:@"tabType"];
+    //            [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
+    //        }
+    //        [customArr addObjectsFromArray:array];
+    //    }
+    ////    NSArray *sortedResources = [[NSArray arrayWithArray:customArr] sortedArrayUsingSelector:@selector(compare:)];
+    //
+    //    for (int i =0;i<customArr.count;i++) {
+    //        NSMutableDictionary *dic = customArr[i];
+    //        [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
+    //        NSLog(@"---------%@",KISDictionaryHaveKey(dic, @"row"));
+    //
+    //        [m_rArray addObject:dic];
+    //    }
+    //    
+    //    [m_rTableView reloadData];
+}
+
 
 #pragma mark ---分享界面
 -(void)buildShareViewWithWhere:(BOOL)isQQ
@@ -143,12 +219,12 @@
         
         
         
-        EGOImageView *headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(5, 5, 80, 80)];
+        EGOImageView *headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 70, 70)];
         headImageView.placeholderImage = KUIImage(@"placeholder");
         headImageView.imageURL = [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"];
         [m_shareView addSubview:headImageView];
         
-        titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 5, 160, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 10, 150, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         
         CGSize size = [SHAREMESSAGE sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(160, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
         
@@ -165,7 +241,7 @@
         [m_shareView addSubview:titleLabel];
         CGSize size1 = [SHAREMESSAGE sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(160, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
 
-        messageLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, height+5, 160, size1.height) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        messageLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, height+5, 150, size1.height) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         messageLabel.text = SHAREMESSAGE;
         messageLabel.numberOfLines = 0;
         [m_shareView addSubview:messageLabel];
@@ -239,48 +315,56 @@
 {
     NSDictionary *customDic = [NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil];
     
-            if (sender.selected) {
-                sender.selected = NO;
-                for (NSMutableDictionary *dic in m_rArray) {
-                    [dic setObject:@"1" forKey:@"choose"];
-                    if ([addMemArray containsObject:dic]) {
-                        [addMemArray removeObject:dic];
-                    }
-                    
+    if (sender.selected) {
+        sender.selected = NO;
+        
+        for (int i =0; i<keysArr.count; i++) {
+            NSArray *arr = [dataDict objectForKey:keysArr[i]];
+            for (NSMutableDictionary *dic in arr) {
+                [dic setObject:@"1" forKey:@"choose"];
+                if ([addMemArray containsObject:dic]) {
+                    [addMemArray removeObject:dic];
                 }
-                
-                if (addMemArray.count==1) {
-                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
-                }else{
-                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];
-                }
-                
-                
-            }else{
-                sender.selected = YES;
-                for (NSMutableDictionary *dic in m_rArray) {
-                    [dic setObject:@"2" forKey:@"choose"];
-                    
-                    if ([addMemArray containsObject:dic]) {
-                        [addMemArray removeObject:dic];
-                    }
-                }
-                
-                if ([addMemArray containsObject:customDic]) {
-                    [addMemArray removeObject:customDic];
-                }
-                [addMemArray addObjectsFromArray:m_rArray];
-                [addMemArray addObject:customDic];
-                if (addMemArray.count==1) {
-                    [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
-                }else{
-                    [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
-                
                 
             }
+        }
+        
+        
+        if (addMemArray.count==1) {
+            [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+        }else{
+            [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];
+        }
+        
+        
+    }else{
+        sender.selected = YES;
+        for (int i =0; i<keysArr.count; i++) {
+            NSArray *arr = [dataDict objectForKey:keysArr[i]];
             
-            [m_rTableView reloadData];
-            
+            for (NSMutableDictionary *dic in arr) {
+                [dic setObject:@"2" forKey:@"choose"];
+                
+                if ([addMemArray containsObject:dic]) {
+                    [addMemArray removeObject:dic];
+                }
+            }
+            [addMemArray addObjectsFromArray:arr];
+        }
+        if ([addMemArray containsObject:customDic]) {
+            [addMemArray removeObject:customDic];
+        }
+        
+        [addMemArray addObject:customDic];
+        if (addMemArray.count==1) {
+            [m_button setTitle:[NSString stringWithFormat:@"确定"] forState:UIControlStateNormal];
+        }else{
+            [m_button setTitle:[NSString stringWithFormat:@"确定(%d)",addMemArray.count-1] forState:UIControlStateNormal];            }
+        
+    }
+    
+    [m_rTableView reloadData];
+    
     
     [m_customCollView reloadData];
     
@@ -294,9 +378,10 @@
     m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_rTableView.delegate = self;
     m_rTableView.dataSource =self;
+    [GameCommon setExtraCellLineHidden:m_rTableView];
     [self.view addSubview:m_rTableView];
     
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 71)];
     view.backgroundColor = [UIColor whiteColor];
     
     NSArray *array   =[NSArray arrayWithObjects:@"qq",@"微信",@"群组", nil];
@@ -313,8 +398,11 @@
         label.shadowColor = [UIColor colorWithWhite:0.1f alpha:0.8f];
         [view addSubview:label];
         
-        m_rTableView.tableHeaderView = view;
+        UIImageView *lineImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 70, 320, 1)];
+        lineImg.image = KUIImage(@"team_line_2");
+        [view addSubview:lineImg];
         
+        m_rTableView.tableHeaderView = view;
     }
     
 }
@@ -347,37 +435,6 @@
 //    [self showMessageWithContent:str point:self.view.center];
 }
 
-
--(void)getInfo
-{
-    hud.labelText = @"获取中...";
-    //    [hud showAnimated:YES whileExecutingBlock:^{
-    NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-    
-    NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
-    NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-    NSMutableArray *customArr = [NSMutableArray array];
-    for (int i =0; i<keys.count; i++) {
-        NSArray *array = [result objectForKey:keys[i]];
-        for (NSMutableDictionary *dic in array) {
-            [dic setValue:@"1" forKey:@"choose"];
-            [dic setValue:@"friends" forKeyPath:@"tabType"];
-            [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
-        }
-        [customArr addObjectsFromArray:array];
-    }
-//    NSArray *sortedResources = [[NSArray arrayWithArray:customArr] sortedArrayUsingSelector:@selector(compare:)];
-
-    for (int i =0;i<customArr.count;i++) {
-        NSMutableDictionary *dic = customArr[i];
-        [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
-        NSLog(@"---------%@",KISDictionaryHaveKey(dic, @"row"));
-
-        [m_rArray addObject:dic];
-    }
-    
-    [m_rTableView reloadData];
-}
 
 
 
@@ -441,16 +498,15 @@
     }];
     
 }
-
--(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return keysArr.count;
 }
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-        return m_rArray.count;
+    return [[dataDict objectForKey:[keysArr objectAtIndex:section]] count];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -470,8 +526,11 @@
     cell.myDelegate = self;
     
     NSDictionary * tempDict ;
-        tempDict = m_rArray[indexPath.row];
+//        tempDict = m_rArray[indexPath.row];
         cell.disLabel.hidden = YES;
+    
+    NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
+    tempDict = arr[indexPath.row];
     
     
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
@@ -491,15 +550,23 @@
     cell.nameLabel.text = nickName;
     return cell;
 }
-
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+        NSString *name= [NSString stringWithFormat:@"%@",[keysArr objectAtIndex:section]];
+    return name;
+}
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return keysArr;
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     AddGroupMemberCell*cell;
     NSMutableDictionary * tempDict;
     
         cell =(AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:indexPath];
-        tempDict = m_rArray[indexPath.row];
-
+    NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
+    tempDict = arr[indexPath.row];
     
     if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
         cell.chooseImg.image = KUIImage(@"choose");
@@ -576,16 +643,17 @@
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
     
     
-    int row = [KISDictionaryHaveKey(tempDict, @"row")intValue];
+//    int row = [KISDictionaryHaveKey(tempDict, @"row")intValue];
     
     
-    NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:0];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
     
     
     NSMutableDictionary *dic;
     
-        dic = [m_rArray objectAtIndex:row];
-        cell1 = (AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:path];
+    NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
+    tempDict = arr[indexPath.row];
+    cell1 = (AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:path];
     
     [dic setObject:@"1" forKey:@"choose"];
     cell1.chooseImg.image = KUIImage(@"unchoose");

@@ -201,7 +201,7 @@
     rect.origin.x = 0;
     rect.size.width = 320;
     if (currentExtendSection==0) {
-        rect.size.height = self.mSuperView.frame.size.height;
+        rect.size.height = kScreenHeigth-(KISHighVersion_7?64:44)-50-40;
     }else{
         rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
     }
