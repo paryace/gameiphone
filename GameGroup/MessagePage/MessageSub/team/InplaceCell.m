@@ -47,7 +47,7 @@
         self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 20, 20)];
         [self.contentView addSubview:self.gameImageV];
         
-        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(110, 35, 200, 20)];
+        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 35, 320-110-60, 20)];
         self.realmLable.backgroundColor = [UIColor clearColor];
         self.realmLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.realmLable.text = @"猫小莹-德玛西亚";

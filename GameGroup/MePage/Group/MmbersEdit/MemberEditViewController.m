@@ -104,7 +104,7 @@
     }
     cell.headCkickDelegate = self;
     NSDictionary* tempDict = [[[m_dataArray objectAtIndex:indexPath.section]objectForKey:@"list"]objectAtIndex:indexPath.row];
-    cell.tag= indexPath.row;
+    cell.indexPath= indexPath;
     cell.nameLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageView.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")]);
@@ -122,11 +122,11 @@
     return cell;
 }
 - (void)userHeadImgClick:(id)Sender{
-//    MemberEditCell * iCell = (MemberEditCell*)Sender;
-//    NSMutableDictionary *dic = [m_dataArray objectAtIndex:iCell.tag];
-//    TestViewController *itemInfo = [[TestViewController alloc]init];
-//    itemInfo.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-//    [self.navigationController pushViewController:itemInfo animated:YES];
+    MemberEditCell * iCell = (MemberEditCell*)Sender;
+    NSDictionary* dic = [[[m_dataArray objectAtIndex:iCell.indexPath.section]objectForKey:@"list"]objectAtIndex:iCell.indexPath.row];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+    [self.navigationController pushViewController:itemInfo animated:YES];
 }
 
 //格式化时间

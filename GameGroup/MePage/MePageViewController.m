@@ -543,26 +543,11 @@
             if(![fileMsg isEqualToString:@"notSupport"])
             {
                 [[Custom_tabbar showTabBar] hideTabBar:YES];
-                if ([gameId intValue]==1) {
-//                    CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
-//                    VC.characterId = chatId;
-//                    VC.gameId = gameId;
-//                    VC.myViewType = CHARA_INFO_MYSELF;
-                    
-                    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-                    VC.characterId = chatId;
-                    VC.gameId = gameId;
-                    VC.gameUrl = @"moshouRole.html?";
-                    VC.characterName = KISDictionaryHaveKey(dic, @"name");
-                    [self.navigationController pushViewController:VC animated:YES];
-                }else if([gameId intValue]==2){
-                    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-                    VC.characterId = chatId;
-                    VC.gameId = gameId;
-                    VC.gameUrl = @"rolesinfo.html?";
-                    VC.characterName = KISDictionaryHaveKey(dic, @"name");
-                    [self.navigationController pushViewController:VC animated:YES];
-                }
+                H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+                VC.characterId = chatId;
+                VC.gameId = gameId;
+                VC.characterName = KISDictionaryHaveKey(dic, @"name");
+                [self.navigationController pushViewController:VC animated:YES];
             }else{
                 [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             }

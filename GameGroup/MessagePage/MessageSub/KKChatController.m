@@ -415,11 +415,6 @@ UINavigationControllerDelegate>
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
     VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
-    if ([KISDictionaryHaveKey(dic, @"gameid") intValue]==1) {
-        VC.gameUrl = @"moshouRole.html?";
-    }else if([KISDictionaryHaveKey(dic, @"gameid") intValue]==2){
-        VC.gameUrl = @"rolesinfo.html?";
-    }
     [self.navigationController pushViewController:VC animated:YES];
 }
 

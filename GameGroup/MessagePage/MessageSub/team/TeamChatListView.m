@@ -46,6 +46,11 @@
         if (sectionNum == 0) {
             self = nil;
         }
+         UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 320, frame.size.height)];
+        UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
+        bgImageView.image = bgImage;
+        bgImageView.userInteractionEnabled = YES;
+        [self addSubview:bgImageView];
         //初始化默认显示view
         CGFloat sectionWidth = (1.0*(frame.size.width)/sectionNum);
         for (int i = 0; i <sectionNum; i++) {
@@ -56,20 +61,21 @@
             if ([self.dropDownDataSource respondsToSelector:@selector(titleInSection:index:)]) {
                 sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
             }
+            sectionBtn.backgroundColor = [UIColor clearColor];
             [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
             [sectionBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
-            [self addSubview:sectionBtn];
+            [bgImageView addSubview:sectionBtn];
             
             UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
             [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
-            [self addSubview: sectionBtnIv];
+            [bgImageView addSubview: sectionBtnIv];
             if (i<sectionNum && i != 0) {
-                UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
-                lineView.backgroundColor = [UIColor lightGrayColor];
-                [self addSubview:lineView];
+                UIImageView *lineView = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
+                lineView.image = KUIImage(@"chat_ vertical_line");
+                [bgImageView addSubview:lineView];
             }
         }
         hud = [[MBProgressHUD alloc] initWithView:supView];
@@ -150,7 +156,7 @@
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
         UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
         [self.mTableBaseView addGestureRecognizer:bgTap];
-        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 120 )];
+        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, 120 )];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
     if (section == 0) {
@@ -175,14 +181,6 @@
             self.mTableView = nil;
             [self.mBgView addSubview:self.customPhotoCollectionView];
         }
-        //修改tableview的frame
-        CGRect rect = self.mBgView.frame;
-        rect.origin.x =0;
-        rect.size.width = 320;
-        NSInteger num = ( [self.dropDownDataSource numberOfRowsInSection:currentExtendSection]-1)/3+1;//标签行数
-        rect.size.height = (num*(30+10)+10)>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):(num*(30+10)+10);
-        self.mBgView.frame = rect;
-        self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         self.mBgView.alpha = 1.0;
@@ -215,8 +213,8 @@
                 [self.msgLable setTextAlignment:NSTextAlignmentCenter];
                 [self.msgLable setFont:[UIFont systemFontOfSize:14]];
                 [self.msgLable setTextColor:[UIColor redColor]];
-//                self.msgLable.text = @"请确认就位确认";
-                [self.bottomView addSubview:self.msgLable];
+                self.msgLable.text = @"请确认就位确认";
+//                [self.bottomView addSubview:self.msgLable];
                 
                 if (self.teamUsershipType) {
                     self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 40, 290, 35)];
@@ -271,6 +269,14 @@
         [self setBtnState];
         [self.mTableView reloadData];
     }
+}
+//重新设置customPhotoCollectionView的frame
+-(void)resetFram{
+    CGRect rect = self.mBgView.frame;
+    NSInteger num = ( [self.dropDownDataSource numberOfRowsInSection:currentExtendSection]-1)/3+1;//标签行数
+    rect.size.height = (num*(30+10)+10)>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):(num*(30+10)+10);
+    self.mBgView.frame = rect;
+    self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
 }
 
 -(void)setBtnState{
@@ -418,6 +424,7 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    [self resetFram];
     return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
 }
 
@@ -564,7 +571,10 @@
         }
         
         cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
-        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm")];
+//        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm")];
+       
+          cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
+        
         cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
         if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起

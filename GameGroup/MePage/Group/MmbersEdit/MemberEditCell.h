@@ -17,4 +17,6 @@
 @property(nonatomic,strong)UILabel *nameLable;
 @property(nonatomic,strong)UILabel *sfLb;
 @property (nonatomic,strong) UIImageView* sexImg;//性别
+
+@property(nonatomic)      NSIndexPath * indexPath;
 @end

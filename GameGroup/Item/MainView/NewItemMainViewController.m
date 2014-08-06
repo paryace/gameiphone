@@ -76,6 +76,7 @@
     seg.backgroundColor = [UIColor clearColor];
 //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
     seg.tintColor = [UIColor whiteColor];
+
     
     [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
