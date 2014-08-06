@@ -782,8 +782,8 @@
 }
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
-    [self resetPState];
-    [self.mTableView reloadData];
+//    [self resetPState];
+//    [self.mTableView reloadData];
     [self setBtnState];
 }
 

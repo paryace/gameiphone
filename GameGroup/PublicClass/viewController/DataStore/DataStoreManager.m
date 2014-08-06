@@ -4581,7 +4581,7 @@
         NSArray * teamUserInfos = [DSTeamUser MR_findAllWithPredicate:predicate inContext:localContext];
         for (DSTeamUser * teamUserInfo in teamUserInfos) {
             if (teamUserInfo){
-                teamUserInfo.state = state;
+//                teamUserInfo.state = state;
                 teamUserInfo.onClickState = onClickState;
             }
         }
