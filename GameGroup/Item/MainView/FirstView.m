@@ -386,7 +386,7 @@
                                       if ([self.myDelegate respondsToSelector:@selector(didClickSuccessWithText:tag:)]) {
                                           [self.myDelegate didClickSuccessWithText:@"收藏成功" tag:0];
                                       }
-                                          [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
+//                                          [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
 //                                      [self.navigationController popViewControllerAnimated:YES];
                                       
                                   } reError:^(id error) {
