@@ -4331,7 +4331,7 @@
     NSString * myMemberId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")];
     NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     NSString * teamInfo  =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamInfo")];
-    NSString * teamName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamName")];
+    NSString * teamName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
     NSString * teamUsershipType =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
     NSString * typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
     NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(dic, @"createTeamUser");
@@ -4751,7 +4751,7 @@
     [msgDic setObject:commonMsg.myMemberId forKey:@"myMemberId"];
     [msgDic setObject:commonMsg.roomId forKey:@"roomId"];
     [msgDic setObject:commonMsg.teamInfo forKey:@"teamInfo"];
-    [msgDic setObject:commonMsg.teamName forKey:@"teamName"];
+    [msgDic setObject:commonMsg.teamName forKey:@"roomName"];
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];

@@ -68,6 +68,8 @@
         
         self.positionLable = [[UILabel alloc]initWithFrame:CGRectMake(320-10-50, 25, 50, 30)];
         self.positionLable.text = @"职位";
+        self.positionLable.backgroundColor = [UIColor clearColor];
+        self.positionLable.textAlignment = NSTextAlignmentCenter;
         self.positionLable.font =[ UIFont systemFontOfSize:14];
         [self.contentView addSubview:self.positionLable];
 

@@ -97,13 +97,6 @@
             cell.realmLabel.text = nil;
             cell.numLabel.text = nil;
         }
-//=======
-//       NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:indexPath.row];
-////        cell.titleLabel.text =[NSString stringWithFormat:@"[%@/%@]%@的队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
-//        
-//        cell.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
-//>>>>>>> FETCH_HEAD
-        
         return cell;
         
     }else{

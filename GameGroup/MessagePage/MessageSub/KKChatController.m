@@ -306,12 +306,26 @@ UINavigationControllerDelegate>
 
 //设置组队未读消息数量
 -(void)setNotifyMsgCount{
-    [self.dotVApp setMsgCount:[DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"]];
+    NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
+    if (msgC>0) {
+        self.dotVApp.hidden = NO;
+        [self.dotVApp setMsgCount:msgC];
+    }else{
+        self.dotVApp.hidden = YES;
+    }
+    
 }
 
 //设置就位确认未读消息数量
 -(void)setInplaceMsgCount{
-    [self.dotVInplace setMsgCount:[DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"]];
+   NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
+    if (msgC>0) {
+        self.dotVInplace.hidden = NO;
+        [self.dotVInplace setMsgCount:msgC];
+    }else{
+        self.dotVInplace.hidden = YES;
+    }
+    
 }
 
 #pragma mark -- 分类请求成功通知
