@@ -151,14 +151,6 @@ static TeamManager *teamManager = NULL;
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:memberUserInfo];
     }];
 }
-//收到发起就位确认消息，更新就位确认状态(暂时没用了)
--(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId State:(NSString*)state
-{
-   [DataStoreManager saveTeamUser:userId groupId:groupId TeamUsershipType:@"0" DefaultState:state];
-    [DataStoreManager updateTeamUser:groupId State:state OnClickState:@"1" Successcompletion:^(BOOL success, NSError *error) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:kSendChangInplaceState object:nil userInfo:nil];
-    }];
-}
 
 //收到发起就位确认消息，更新就位确认状态
 -(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId MemberList:(NSArray*)memberList State:(NSString*)state

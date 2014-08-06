@@ -2684,12 +2684,18 @@ UINavigationControllerDelegate>
         [self setNewMsg:tempDic Sender:groupID];
         //改变组队位置
         if (self.isTeam) {
-            if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {
+            if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {//位置选择
                 [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:[KISDictionaryHaveKey(tempDic, @"payload") JSONValue]];
                 [DataStoreManager changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
+                [self readNoreadMsg];
+                [self setNoreadMsgView];
                 [self setNotifyMsgCount];
+            }
+            else if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
+                [self readNoreadMsg];
+                [self setNoreadMsgView];
                 [self setInplaceMsgCount];
             }
         }

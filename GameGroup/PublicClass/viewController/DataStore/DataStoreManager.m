@@ -4245,11 +4245,10 @@
         int unread;
         if (!thumbMsgs){
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
-//            unread =0;
+            unread =0;
         }else{
-//            unread = [thumbMsgs.unRead intValue];
+            unread = [thumbMsgs.unRead intValue];
         }
-        unread =0;
         thumbMsgs.sender = @"";
         thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = body;
@@ -4271,10 +4270,11 @@
         int unread2;
         if (!thumbMsgs2){
             thumbMsgs2 = [DSThumbMsgs MR_createInContext:localContext];
-            unread2 =0;
+//            unread2 =0;
         }else{
-            unread2 = [thumbMsgs.unRead intValue];
+//            unread2 = [thumbMsgs.unRead intValue];
         }
+        unread2 =0;
         thumbMsgs2.sender = @"";
         thumbMsgs2.senderNickname = @"";
         thumbMsgs2.msgContent = body;
@@ -4539,7 +4539,7 @@
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
         DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate inContext:localContext];
         if (teamUserInfo){
-            teamUserInfo.state = onClickState;
+            teamUserInfo.onClickState = onClickState;
             teamUserInfo.state = state;
         }
     }

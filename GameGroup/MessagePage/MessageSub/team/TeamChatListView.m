@@ -67,8 +67,8 @@
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
             [bgImageView addSubview:sectionBtn];
             
-            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
-            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark.png"]];
+            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 15, 15)];
+            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
             [bgImageView addSubview: sectionBtnIv];
@@ -114,12 +114,26 @@
 
 //显示或者隐藏布局
 -(void)showOrHideView:(NSInteger)section{
-    [self hideView];
+//    [self hideView];
+    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
+    }];
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];
     if (currentExtendSection == section) {
         [self hideExtendedChooseView];
     }else{
         currentExtendSection = section;
-        [self showView];
+//        [self showView];
+        currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+        [UIView animateWithDuration:0.3 animations:^{
+            currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+            [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
+        }];
+        btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+        [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
         [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
     }
 }
@@ -129,13 +143,21 @@
     UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
     [UIView animateWithDuration:0.3 animations:^{
         currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
     }];
+    
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];
 }
 -(void)showView{
     UIImageView *currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
     [UIView animateWithDuration:0.3 animations:^{
         currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
     }];
+    
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
 
 }
 
@@ -173,6 +195,16 @@
         self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight )];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
+    
+    if (!self.bottomMenuView){
+        self.bottomMenuView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-15, 320, 15)];
+        self.bottomMenuView.image = KUIImage(@"bottom_memu.png");
+        self.bottomMenuView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *menuTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(menuOnCLick:)];
+        [self.bottomMenuView addGestureRecognizer:menuTap];
+        [self.mBgView addSubview:self.bottomMenuView];
+    }
+    
     if (section == 0) {
         if (self.bottomView) {
             [self hideButton];
@@ -210,7 +242,7 @@
         }
         if (section == 2) {
             if (!self.bottomView){
-                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90+5, 320, 90)];
+                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90, 320, 90-15)];
                 self.bottomView.backgroundColor = [UIColor whiteColor];
                 [self.mBgView addSubview:self.bottomView];
                 
@@ -224,10 +256,10 @@
 //                [self.bottomView addSubview:self.msgLable];
                 
                 if (self.teamUsershipType) {
-                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 40, 290, 35)];
-                    [self.sendBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [self.sendBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [self.sendBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, 290, 35)];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
+                    [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
                     [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
                     [self.sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                     self.sendBtn.backgroundColor = [UIColor clearColor];
@@ -236,10 +268,10 @@
                     [self.sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:self.sendBtn];
                 }else{
-                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 40, (320-40)/2, 35)];
-                    [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [self.agreeBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [self.agreeBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, (320-40)/2, 35)];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+                    [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
                     [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
                     [self.agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                     self.agreeBtn.backgroundColor = [UIColor clearColor];
@@ -248,10 +280,10 @@
                     [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:self.agreeBtn];
                     
-                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,40, (320-40)/2, 35)];
-                    [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-                    [self.refusedBtn setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
-                    [self.refusedBtn setBackgroundImage:KUIImage(@"white_onclick") forState:UIControlStateSelected];
+                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35)];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
+                    [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
                     [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
                     [self.refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                     self.refusedBtn.backgroundColor = [UIColor clearColor];
@@ -279,6 +311,7 @@
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if(onClickState == 0){
         [self reset];
+        [self normal];
     }else if(onClickState == 1){
         [self showButton];
         [self send];
@@ -288,6 +321,21 @@
     }else if(onClickState == 3){
         [self showButton];
         [self cancel];
+    }
+}
+
+
+-(void)normal{
+    if (self.teamUsershipType) {
+        [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+        self.sendBtn.selected = NO;
+        self.sendBtn.enabled = YES;
+        
+    }else{
+        self.agreeBtn.selected = NO;
+        self.agreeBtn.enabled = YES;
+        self.refusedBtn.selected = NO;
+        self.refusedBtn.enabled = YES;
     }
 }
 
@@ -408,8 +456,14 @@
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
-    [self hideExtendedChooseView];
+    [self showOrHideView:currentExtendSection];
 }
+
+-(void)menuOnCLick:(UITapGestureRecognizer *)tap
+{
+    [self showOrHideView:currentExtendSection];
+}
+
 //----------
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -424,7 +478,7 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"card_show");
+    cell.bgImgView.image = KUIImage(@"tagBtn_normal");
     cell.tag = indexPath.section*1000+indexPath.row;
     cell.titleLabel.textAlignment = NSTextAlignmentCenter;
     cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
