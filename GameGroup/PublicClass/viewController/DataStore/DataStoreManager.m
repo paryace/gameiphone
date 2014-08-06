@@ -4686,7 +4686,10 @@
     [dic setObject:commonMsg.positionType forKey:@"type"];
     [dic setObject:commonMsg.positionValue forKey:@"value"];
     [dic setObject:[self getTeamUserState:[GameCommon getNewStringWithId:commonMsg.userid]  groupId:[GameCommon getNewStringWithId:commonMsg.groupId]]?[self getTeamUserState:[GameCommon getNewStringWithId:commonMsg.userid]  groupId:[GameCommon getNewStringWithId:commonMsg.groupId]]:@"0" forKey:@"state"];
-    [dic setObject:[self getTeamUserInfo:commonMsg.memberTeamUserId GameId:commonMsg.gameid] forKey:@"teamUser"];
+   NSMutableDictionary * dicC = [self getTeamUserInfo:commonMsg.memberTeamUserId GameId:commonMsg.gameid];
+    if (dicC) {
+        [dic setObject:dicC forKey:@"teamUser"];
+    }
     return dic;
 }
 
@@ -4698,15 +4701,18 @@
 }
 
 +(NSMutableDictionary*)getTeamUserInfo:(DSTeamUserInfo*)commonMsg{
-    NSMutableDictionary * dic = [NSMutableDictionary dictionary];
-    [dic setObject:commonMsg.characterId forKey:@"characterId"];
-    [dic setObject:commonMsg.characterName forKey:@"characterName"];
-    [dic setObject:commonMsg.gameid forKey:@"gameid"];
-    [dic setObject:commonMsg.memberInfo forKey:@"memberInfo"];
-    [dic setObject:commonMsg.realm forKey:@"realm"];
-    [dic setObject:commonMsg.teamUserId forKey:@"teamUserId"];
-    [dic setObject:commonMsg.userid forKey:@"userid"];
-    return dic;
+    if (commonMsg) {
+        NSMutableDictionary * dic = [NSMutableDictionary dictionary];
+        [dic setObject:commonMsg.characterId forKey:@"characterId"];
+        [dic setObject:commonMsg.characterName forKey:@"characterName"];
+        [dic setObject:commonMsg.gameid forKey:@"gameid"];
+        [dic setObject:commonMsg.memberInfo forKey:@"memberInfo"];
+        [dic setObject:commonMsg.realm forKey:@"realm"];
+        [dic setObject:commonMsg.teamUserId forKey:@"teamUserId"];
+        [dic setObject:commonMsg.userid forKey:@"userid"];
+        return dic;
+    }
+    return nil;
 }
 
 //更新位置

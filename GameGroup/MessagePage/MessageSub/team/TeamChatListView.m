@@ -46,7 +46,7 @@
         if (sectionNum == 0) {
             self = nil;
         }
-         UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 320, frame.size.height)];
+        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, 320, frame.size.height)];
         UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
         bgImageView.image = bgImage;
         bgImageView.userInteractionEnabled = YES;
@@ -91,33 +91,55 @@
 -(void)sectionBtnTouch:(UIButton *)btn
 {
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
-    [self showOrHide:section];
+    [self showOrHideControl:section];
 }
 
-
--(void)showOrHide:(NSInteger)section{
+//显示或者隐藏控制
+-(void)showOrHideControl:(NSInteger)section{
     BOOL isOpen = [self.dropDownDelegate clickAtSection:section];
     if (!isOpen) {
         return;
     }
+    if (section == 1) {//申请
+        [self getZU];
+        if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
+            [self showErrorAlertView];
+            return;
+        }
+    }else if(section == 2){//就位确认
+        [self getmemberList];
+    }
+    [self showOrHideView:section];
+}
+
+//显示或者隐藏布局
+-(void)showOrHideView:(NSInteger)section{
+    [self hideView];
     if (currentExtendSection == section) {
         [self hideExtendedChooseView];
     }else{
-        if (section==1) {
-            [self getZU];
-            if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
-                [self showErrorAlertView];
-                return;
-            }
-        }else{
-            [self getmemberList];
-        }
         currentExtendSection = section;
+        [self showView];
         [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
     }
+}
+
+
+-(void)hideView{
+    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+    }];
+}
+-(void)showView{
+    UIImageView *currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+    }];
 
 }
 
+//设置title
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section
 {
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +section];
@@ -135,28 +157,20 @@
 {
     if (currentExtendSection != -1) {
         currentExtendSection = -1;
-        CGRect rect = self.mBgView.frame;
-        rect.size.height = 0;
-        self.mBgView.frame = rect;
-        self.mBgView.alpha = 1.0f;
         [self.mBgView removeFromSuperview];
-        [UIView animateWithDuration:0.3 animations:^{
-            self.mTableBaseView.alpha = 1.0f;
-            self.mTableBaseView.alpha = 0.2f;
-        }completion:^(BOOL finished) {
-            [self.mTableBaseView removeFromSuperview];
-        }];
+        [self.mTableBaseView removeFromSuperview];
     }
 }
 
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
+    float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
         UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
         [self.mTableBaseView addGestureRecognizer:bgTap];
-        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, 120 )];
+        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight )];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
     if (section == 0) {
@@ -170,7 +184,7 @@
             self.layout.minimumLineSpacing =10;
             self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
             self.layout.itemSize = CGSizeMake(88, 30);
-            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,100) collectionViewLayout:self.layout];
+            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,tableHight-20) collectionViewLayout:self.layout];
             self.customPhotoCollectionView.delegate = self;
             self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
             self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
@@ -183,15 +197,8 @@
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
-        self.mBgView.alpha = 1.0;
-        //动画设置位置
-        [UIView animateWithDuration:0.3 animations:^{
-            self.mTableBaseView.alpha = 0.2;
-            self.mTableBaseView.alpha = 1.0;
-        }];
         [self.customPhotoCollectionView reloadData];
     }else{
-        float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -263,22 +270,11 @@
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
-        CGRect rect = self.mBgView.frame;
-        rect.size.height = tableHight;
-        self.mBgView.frame =  rect;
         [self setBtnState];
         [self.mTableView reloadData];
     }
 }
-//重新设置customPhotoCollectionView的frame
--(void)resetFram{
-    CGRect rect = self.mBgView.frame;
-    NSInteger num = ( [self.dropDownDataSource numberOfRowsInSection:currentExtendSection]-1)/3+1;//标签行数
-    rect.size.height = (num*(30+10)+10)>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):(num*(30+10)+10);
-    self.mBgView.frame = rect;
-    self.customPhotoCollectionView.frame = CGRectMake(10,10,300,rect.size.height-20);
-}
-
+//设置按钮状态
 -(void)setBtnState{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if(onClickState == 0){
@@ -294,7 +290,6 @@
         [self cancel];
     }
 }
-
 
 //已经发送
 -(void)send{
@@ -348,14 +343,12 @@
         self.refusedBtn.enabled = NO;
     }
 }
-
-
-
+//隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
     self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
 }
-
+//显示按钮
 -(void)showButton{
     self.bottomView.hidden=NO;
     self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-90);
@@ -397,11 +390,12 @@
         [self showErrorAlertView:error];
     }];
 }
-
+ //申请通知数控
 -(void)getZU
 {
     self.teamNotifityMsg = [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:self.groipId];
 }
+//就位确认数据
 -(void)getmemberList{
     self.memberList = [DataStoreManager getMemberList:self.groipId];
 }
@@ -424,7 +418,6 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    [self resetFram];
     return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
 }
 
@@ -446,7 +439,7 @@
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
-        [self hideExtendedChooseView];
+        [self showOrHideView:currentExtendSection];
     }
 }
 
@@ -560,6 +553,10 @@
         cell.tag = indexPath.row;
         cell.headCkickDelegate = self;
         NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
+        NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
+        
+        
+        
         cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
         cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
         cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
@@ -569,13 +566,15 @@
         }else{
             cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
         }
-        
         cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
-//        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm")];
-       
-          cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
-        
-        cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+        if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
+            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
+            cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+
+        }else{
+            cell.realmLable.text = @"";
+            cell.pveLable.text = @"";
+        }
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
         if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
             cell.stateView.hidden = YES;
