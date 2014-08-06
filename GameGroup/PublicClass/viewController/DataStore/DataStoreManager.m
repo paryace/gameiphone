@@ -4064,12 +4064,7 @@
 }
 
 +(NSInteger)getDSTeamNotificationMsgCount:(NSString*)groupId{
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and (sayHiType=[c]%@ or sayHiType=[c]%@)",groupId,@"groupchat",@"3",@"4"];
-    DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate];
-    if (commonMsg) {
-        return [commonMsg.unRead intValue];
-    }
-    return 0;
+    return [self getDSTeamNotificationMsgCount:groupId SayHightType:@"3"]+[self getDSTeamNotificationMsgCount:groupId SayHightType:@"4"];
 }
 
 
@@ -4255,7 +4250,7 @@
         thumbMsgs.groupId = groupId;
         thumbMsgs.sendTime = sendTime;
         thumbMsgs.senderType = GROUPMSG;
-        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]?0:1)];
         thumbMsgs.msgType = @"groupchat";
         thumbMsgs.messageuuid = msgId;
         thumbMsgs.status = @"1";
@@ -4281,7 +4276,7 @@
         thumbMsgs2.groupId = groupId;
         thumbMsgs2.sendTime = sendTime;
         thumbMsgs2.senderType = GROUPMSG;
-        thumbMsgs2.unRead = [NSString stringWithFormat:@"%d",unread2+1];
+        thumbMsgs2.unRead = [NSString stringWithFormat:@"%d",unread2+([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]?0:1)];
         thumbMsgs2.msgType = @"groupchat";
         thumbMsgs2.messageuuid = msgId;
         thumbMsgs2.status = @"1";
