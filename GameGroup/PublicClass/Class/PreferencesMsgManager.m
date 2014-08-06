@@ -84,6 +84,22 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
     return allUnread;
 }
 
+
+-(NSInteger)getNoreadMsgCount2
+{
+    NSMutableArray * msgs = [DataStoreManager getPrefernceMsgs];
+    int allUnread = 0;
+    for (int i = 0; i<msgs.count; i++) {
+        NSMutableDictionary * message = [msgs objectAtIndex:i];
+        NSInteger state = [self getPreferenceState:KISDictionaryHaveKey(message, @"gameid") PreferenceId:KISDictionaryHaveKey(message, @"preferenceId")];
+        if (state==1||state==3) {
+            allUnread = allUnread+[KISDictionaryHaveKey(message, @"msgCount") intValue];
+        }
+    }
+    return allUnread;
+}
+
+
 -(NSInteger)getPreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId{
     NSString *str = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@_%@",[GameCommon getNewStringWithId:preferenceId],[GameCommon getNewStringWithId:gameId]]]];
     if ([GameCommon isEmtity:str]) {

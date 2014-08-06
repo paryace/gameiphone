@@ -167,7 +167,6 @@
     self.view.backgroundColor=UIColorFromRGBA(0xf7f7f7, 1);
     
     allMsgArray = [NSMutableArray array];
-    
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
@@ -198,7 +197,7 @@
     {
         window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
-    
+    [self initTeamRecommendMsg];
     hud = [[MBProgressHUD alloc] initWithWindow:window];
     [window addSubview:hud];
     hud.labelText = @"获取好友信息中...";
@@ -723,6 +722,24 @@
 {
     [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
 }
+#pragma mark --接收到新的偏好消息刷新消息数量
+-(void)receiceTeamRecommendMsg:(NSNotification*)notification{
+    [self initTeamRecommendMsg];
+}
+
+-(void)initTeamRecommendMsg{
+    NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount2];
+    if (msgCount>0) {
+        [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
+    }
+    else
+    {
+        [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
+    }
+}
+
+
+
 #pragma mark 个人信息更新完毕通知
 -(void) onUserUpdate:(NSNotification*)notification{
     [m_messageTable reloadData];

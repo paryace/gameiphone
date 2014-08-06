@@ -5070,6 +5070,16 @@
     }
 }
 
+
++(NSMutableArray*)getPrefernceMsgs{
+    NSMutableArray * array = [NSMutableArray array];
+    NSArray * arrays = [DSPreferenceMsg MR_findAll];
+    for (DSPreferenceMsg * commonMsg in arrays) {
+        [array addObject:[self getPreMsgDic:commonMsg]];
+    }
+    return  array;
+}
+
 +(NSMutableDictionary*)getPreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId{
     NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameId,preferenceId];
     DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser];

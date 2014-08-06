@@ -53,12 +53,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"shuaxinRefreshPreference_wxx" object:nil];
-    //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
-//
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
@@ -118,6 +114,7 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
     [self getMyRoomFromNet];
+    [self reloadMsgCount];
 
 }
 
@@ -125,7 +122,6 @@
 {
     
     if (seg.selectedSegmentIndex ==0) {
-//        [self showMessageWindowWithContent:@"排序" imageType:0];
         if (!firstView. selectCharacter) {
             [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
             return;
@@ -168,7 +164,7 @@
 }
 -(void)displayTabbarNotification
 {
-    NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount:firstView.firstDataArray];
+    NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount2];
     [dotV setMsgCount:msgCount];
     if (msgCount>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
@@ -373,16 +369,10 @@
     firstView.selectPreferenceId= KISDictionaryHaveKey(dic, @"preferenceId");
     [firstView reloInfo:YES];
 }
-
-#pragma mark --接收到新的偏好消息刷新消息数量
--(void)receiceTeamRecommendMsg:(NSNotification*)notification{
-    [self reloadMsgCount];
-}
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
     [self displayTabbarNotification];
 }
-
 
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag
 {

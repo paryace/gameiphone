@@ -478,4 +478,7 @@
 +(NSMutableDictionary*)getTeamUser:(NSString*)groupId TeamUsershipType:(NSString*)teamUsershipType;
 
 +(NSInteger)getTeamUser:(NSString*)groupId UserId:(NSString*)userId;
+
+//组队偏好消息列表
++(NSMutableArray*)getPrefernceMsgs;
 @end

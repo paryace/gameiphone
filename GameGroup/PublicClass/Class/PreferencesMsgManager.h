@@ -25,6 +25,8 @@
 
 -(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs;
 
+-(NSInteger)getNoreadMsgCount2;
+
 -(NSInteger)getPreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId;
 
 -(void)setPreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId State:(NSInteger)state;
