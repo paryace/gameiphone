@@ -33,6 +33,9 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"我的偏好" withBackButton:YES];
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
     
     _prefTb = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX) style:UITableViewStylePlain];
     _prefTb.delegate = self;
@@ -163,9 +166,27 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.mydelegate searchTeamBackViewWithDic:_dataArr[indexPath.row]];
+    [self enterEditPageWithRow:indexPath.row];
+}
+
+-(void)enterEditPageWithRow:(NSInteger)row
+{
+    NSMutableDictionary * didDic = [_dataArr objectAtIndex:row];
+    [self updateMsg:didDic];
+    [self.mydelegate searchTeamBackViewWithDic:didDic];
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+-(void)updateMsg:(NSMutableDictionary*)didDic{
+    [DataStoreManager updatePreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
+        [self readMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")]];
+        [_prefTb reloadData];
+        [self.mydelegate reloadMsgCount];
+    }];
+}
+
+
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 70;
@@ -257,7 +278,7 @@
             break;
     }
     [_prefTb reloadData];
-//    [self.myDelegate refreWithRow:actionSheetCount];
+    [self.mydelegate reloadMsgCount];
 }
 
 -(void)deleteCellWithIndexPathRow:(NSInteger)row
@@ -267,7 +288,6 @@
         [[NSUserDefaults standardUserDefaults]setObject:_dataArr forKey:[NSString stringWithFormat:@"item_preference_%@",[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]];
         [_dataArr removeObjectAtIndex:row];
         [_prefTb deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
-//        [self.myDelegate refreWithRow:row];
     }];
 }
 
@@ -303,22 +323,30 @@
         }
     }
 }
+-(void)didRoleRomeve:(NSString*)characterId{
+    for (NSMutableDictionary * dic in _dataArr) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [_dataArr removeObject:dic];
+        }
+    }
+    [_prefTb reloadData];
+    [self.mydelegate reloadMsgCount];
+}
+
+#pragma mark --新的偏好消息
+-(void)receiceTeamRecommendMsg:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    [self receiveMsg:msg];
+}
+#pragma mark -- 删除角色
+-(void)roleRemove:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
+}
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

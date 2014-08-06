@@ -26,6 +26,7 @@
     UIImageView *customImageView;
     UISegmentedControl *seg ;
     UIButton* sortingBtn;
+    MsgNotifityView * dotV;
 }
 @end
 
@@ -57,8 +58,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"shuaxinRefreshPreference_wxx" object:nil];
     //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(replacepreference:) name:@"replacePreference_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
-    
+//
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
@@ -73,16 +73,6 @@
     seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
     seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
     seg.selectedSegmentIndex = 0;
-//<<<<<<< HEAD
-//    if (KISHighVersion_7) {
-//        seg.backgroundColor = [UIColor clearColor];
-//        //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
-//        seg.tintColor = [UIColor whiteColor];
-//        
-//        [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-//        [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
-//    }
-//=======
     seg.backgroundColor = [UIColor clearColor];
 //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
     seg.tintColor = [UIColor whiteColor];
@@ -108,12 +98,10 @@
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
+    
+    dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(40, KISHighVersion_7 ? 25 : 5, 22, 18)];
+    [self.view addSubview:dotV];
 
-    
-    
-    
-    
-    
     customView = [[UIView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX-50)];
     customView.backgroundColor = [UIColor grayColor];
     [self.view addSubview:customView];
@@ -130,17 +118,7 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
     [self getMyRoomFromNet];
-    [self getPreferencesWithNet];
 
-}
--(void)didRoleRomeve:(NSString*)characterId{
-    for (NSMutableDictionary * dic in firstView.firstDataArray) {
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
-            [firstView.firstDataArray removeObject:dic];
-        }
-    }
-    [firstView.myTableView reloadData];
-    [self displayTabbarNotification];
 }
 
 -(void)sortingList:(id)sender
@@ -173,7 +151,6 @@
 
 -(void)tishiing:(id)sender
 {
-//    [self showMessageWindowWithContent:@"提示" imageType:0];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     PreferenceViewController *perf = [[PreferenceViewController alloc]init];
     perf.mydelegate =self;
@@ -182,59 +159,17 @@
     
 }
 
--(NSMutableArray*)detailDataList:(NSMutableArray*)datas{
-    NSMutableArray * tempArrayType = [datas mutableCopy];
-    for (int i=0; i<tempArrayType.count; i++) {
-        NSMutableDictionary * dic = (NSMutableDictionary*)[tempArrayType objectAtIndex:i];
-        
-        NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
-        NSString *str =[NSString stringWithFormat:@"%d",[[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")]];
-        
-        [dic setObject:str forKey:@"receiveState"];
-        if (preDic) {
-            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
-            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
-            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgCount")] forKey:@"msgCount"];
-            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgTime")] forKey:@"msgTime"];
-            [dic setObject:@"1" forKey:@"haveMsg"];
-        }else{
-            [dic setObject:@"0" forKey:@"msgCount"];
-            [dic setObject:@"1000" forKey:@"msgTime"];
-            [dic setObject:@"0" forKey:@"haveMsg"];
-        }
-    }
-    [tempArrayType sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
-        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
-    }];
-    return tempArrayType;
-}
-
 -(void)viewDidAppear:(BOOL)animated
 {
-    //    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
     NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"LoignRefreshPreference_wx"];
     if ([str isEqualToString:@"refreshPreference"]) {
-        //        if ([[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]) {
-        //           firstView.firstDataArray =  [self detailDataList:[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"item_preference_%@",userid]]];
-        //            [firstView.myTableView reloadData];
-        //            [self displayTabbarNotification];
-        //        }
-        [self getPreferencesWithNet];
         [self getMyRoomFromNet];
     }
-    
-    //    if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]) {
-    //        room.listDict =[NSMutableDictionary dictionaryWithDictionary:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]]];
-    //        [room.myListTableView reloadData];
-    //    }else{
-    //        [self getMyRoomFromNet];
-    //    }
 }
-//
 -(void)displayTabbarNotification
 {
     NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount:firstView.firstDataArray];
+    [dotV setMsgCount:msgCount];
     if (msgCount>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
     }
@@ -242,18 +177,6 @@
     {
         [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
     }
-}
-
-//
--(void)receiceTeamRecommendMsg:(NSNotification*)notification{
-    NSDictionary * msg = notification.userInfo;
-    [firstView receiveMsg:msg];
-    [self displayTabbarNotification];
-}
-
--(void)roleRemove:(NSNotification*)notification{
-    NSDictionary * msg = notification.userInfo;
-    [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
 }
 
 -(void)refreshMyList:(id)sender
@@ -265,55 +188,6 @@
     }
     [self getMyRoomFromNet];
 }
--(void)refreshPreference:(id)sender
-{
-    if (seg.selectedSegmentIndex ==0) {
-        
-    }else{
-        seg.selectedSegmentIndex = 0;
-        [self changeView:nil];
-    }
-    [self getPreferencesWithNet];
-}
--(void)replacepreference:(NSNotification*)sender
-{
-    NSDictionary *dic =sender.userInfo;
-    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
-    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")] forKey:@"preferenceId"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"289" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self getPreferencesWithNet];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-    }];
-}
-
--(void)getPreferencesWithNet
-{
-    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    [[PreferencesMsgManager singleton] getPreferencesWithNet:userid reSuccess:^(id responseObject) {
-        [self setList:responseObject];
-        firstView.firstDataArray =[self detailDataList:responseObject];
-        [firstView.myTableView reloadData];
-        [self displayTabbarNotification];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"LoignRefreshPreference_wx"];
-    } reError:^(id error) {
-        [hud hide:YES];
-        [self showAlertDialog:error];
-    }];
-}
-
 
 -(void)showAlertDialog:(id)error{
     if ([error isKindOfClass:[NSDictionary class]]) {
@@ -349,43 +223,6 @@
     [customImageView removeFromSuperview];
     
 }
--(void)refreWithRow:(NSInteger)row{
-    [self displayTabbarNotification];
-}
--(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow
-{
-    
-    //    if (isrow) {
-    //        [[Custom_tabbar showTabBar] hideTabBar:YES];
-    //
-    //        [self showMessageWindowWithContent:@"更改搜索条件" imageType:0];
-    //        PreferenceEditViewController *preferec = [[PreferenceEditViewController alloc]init];
-    //        preferec.mainDict = [firstView.firstDataArray objectAtIndex:row];
-    //        [self.navigationController pushViewController:preferec animated:YES];
-    //    }else{
-    //        [self showMessageWindowWithContent:@"查看队伍" imageType:0];
-    
-    NSMutableDictionary * didDic = [firstView.firstDataArray objectAtIndex:row];
-    [self updateMsg:didDic];
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    FindItemViewController *findView = [[FindItemViewController alloc]init];
-    findView.mainDict = [NSDictionary dictionaryWithDictionary:didDic];
-    findView.isInitialize = YES;
-    [self.navigationController pushViewController:findView animated:YES];
-    
-    //    }
-}
-
-
--(void)updateMsg:(NSMutableDictionary*)didDic{
-    [DataStoreManager updatePreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")] Successcompletion:^(BOOL success, NSError *error) {
-        [firstView readMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(didDic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(didDic, @"preferenceId")]];
-        [firstView.myTableView reloadData];
-        [self displayTabbarNotification];
-    }];
-}
-
-
 
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
@@ -416,11 +253,8 @@
     
 }
 
-
 -(void)changeView:(UISegmentedControl*)segment
 {
-    //    NSLog(@"%@",self.view.subviews)
-    
     switch (segment.selectedSegmentIndex) {
         case 0:
             [UIView beginAnimations:@"animation" context:nil];
@@ -502,7 +336,6 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-
 -(void)enterDetailPage:(NSDictionary*)dic{
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
@@ -520,7 +353,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(void)searchTeamBackViewWithDic:(NSDictionary *)dic
@@ -541,6 +373,16 @@
     firstView.selectPreferenceId= KISDictionaryHaveKey(dic, @"preferenceId");
     [firstView reloInfo:YES];
 }
+
+#pragma mark --接收到新的偏好消息刷新消息数量
+-(void)receiceTeamRecommendMsg:(NSNotification*)notification{
+    [self reloadMsgCount];
+}
+#pragma mark --刷新消息数量
+-(void)reloadMsgCount{
+    [self displayTabbarNotification];
+}
+
 
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag
 {

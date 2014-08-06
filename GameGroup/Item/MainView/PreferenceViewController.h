@@ -16,5 +16,6 @@
 @protocol PreferenceDelegate <NSObject>
 
 -(void)searchTeamBackViewWithDic:(NSDictionary *)dic;
+-(void)reloadMsgCount;//刷新主页面的消息数量
 
 @end
