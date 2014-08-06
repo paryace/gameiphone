@@ -55,6 +55,9 @@
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshMyList:) name:@"refreshTeamList_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"shuaxinRefreshPreference_wxx" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newPreferMsgReceive:) name:kNewPreferMsg object:nil];
+    
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
@@ -165,6 +168,12 @@
 -(void)displayTabbarNotification
 {
     NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount2];
+    [self setMsgCount:msgCount];
+}
+
+
+-(void)setMsgCount:(NSInteger)msgCount{
+    
     [dotV setMsgCount:msgCount];
     if (msgCount>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
@@ -173,7 +182,9 @@
     {
         [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
     }
+
 }
+
 
 -(void)refreshMyList:(id)sender
 {
@@ -369,6 +380,13 @@
     firstView.selectPreferenceId= KISDictionaryHaveKey(dic, @"preferenceId");
     [firstView reloInfo:YES];
 }
+
+#pragma mark --刷新消息数量
+-(void)newPreferMsgReceive:(NSNotification*)notification{
+    NSInteger  msgCount =[notification.object intValue];
+    [self setMsgCount:msgCount];
+}
+
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
     [self displayTabbarNotification];

@@ -148,6 +148,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:) name:kDisbandGroup object:nil];
     //组队消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMsgUploaded:) name:kteamMessage object:nil];
+    //偏好消息
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
@@ -729,6 +731,7 @@
 
 -(void)initTeamRecommendMsg{
     NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount2];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewPreferMsg object:[NSString stringWithFormat:@"%d",msgCount] userInfo:nil];
     if (msgCount>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
     }
