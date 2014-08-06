@@ -26,7 +26,6 @@
 #import "OpenImgViewController.h"
 #import "WQPlaySound.h"
 #define mTime 0.5
-
 @interface MessagePageViewController ()<NewRegisterViewControllerDelegate>
 {
     UITableView * m_messageTable;
@@ -39,7 +38,6 @@
 @end
 
 @implementation MessagePageViewController
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -286,6 +284,7 @@
     alert.tag = 345;
     [alert show];
 }
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 345) {

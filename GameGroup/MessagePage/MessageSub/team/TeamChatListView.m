@@ -114,26 +114,12 @@
 
 //显示或者隐藏布局
 -(void)showOrHideView:(NSInteger)section{
-//    [self hideView];
-    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
-    [UIView animateWithDuration:0.3 animations:^{
-        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
-    }];
-    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
-    [btn setTitleColor:[UIColor blackColor]forState:UIControlStateNormal];
+    [self hideView];
     if (currentExtendSection == section) {
         [self hideExtendedChooseView];
     }else{
         currentExtendSection = section;
-//        [self showView];
-        currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
-        [UIView animateWithDuration:0.3 animations:^{
-            currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-            [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
-        }];
-        btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
-        [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
+        [self showView];
         [self showChooseListViewInSection:currentExtendSection choosedIndex:[self.dropDownDataSource defaultShowSection:currentExtendSection]];
     }
 }

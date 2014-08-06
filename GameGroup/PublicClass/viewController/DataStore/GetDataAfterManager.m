@@ -14,6 +14,7 @@
 #import "VibrationSong.h"
 #import "CharacterAndTitleService.h"
 #import "MessageSetting.h"
+#import <AVFoundation/AVFoundation.h>
 #define mTime 0.5
 static GetDataAfterManager *my_getDataAfterManager = NULL;
 
@@ -29,7 +30,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     int dyMeMsgCount;
     int dyGroupMsgCount;
 }
-
+static SystemSoundID shake_sound_male_id = 0;
 + (GetDataAfterManager*)shareManageCommon
 {
     @synchronized(self)
@@ -384,7 +385,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
-            [[MessageSetting singleton] setSoundOrVibrationopen];
+//            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [self initSound];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
     }];
@@ -760,6 +762,15 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         NSLog(@"deviceToken fail");
     }];
     
+}
+
+-(void)initSound{
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inplace_sound" ofType:@"mp3"];
+    if (path) {
+        AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:path],&shake_sound_male_id);
+        AudioServicesPlaySystemSound(shake_sound_male_id);
+    }
+    AudioServicesPlaySystemSound(shake_sound_male_id);
 }
 
 @end
