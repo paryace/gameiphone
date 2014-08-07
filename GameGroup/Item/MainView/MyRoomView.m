@@ -22,6 +22,8 @@
         self.myListTableView.delegate = self;
         self.myListTableView.dataSource = self;
         [self addSubview:self.myListTableView];
+        [GameCommon setExtraCellLineHidden:self.myListTableView];
+
     }
     return self;
 }
@@ -100,7 +102,7 @@
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
         }else{
-            cell.bgImageView.image = KUIImage(@"team_placeholder1.jpg");
+            cell.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
 
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
@@ -275,7 +277,7 @@
     if (section==0) {
         return 0;
     }else{
-        return 60;
+        return 0;
     }
 }
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath

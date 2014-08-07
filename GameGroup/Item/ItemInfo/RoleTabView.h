@@ -10,7 +10,7 @@
 #import "EGOImageView.h"
 @protocol roleTabDelegate;
 
-@interface RoleTabView : UIView<UITableViewDelegate,UITableViewDataSource>
+@interface RoleTabView : UIView<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
 @property(nonatomic,strong)NSMutableArray *coreArray;
 @property(nonatomic,strong)UITableView *roleTableView;
 @property(nonatomic,assign)id<roleTabDelegate>mydelegate;
