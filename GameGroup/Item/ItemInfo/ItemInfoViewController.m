@@ -63,8 +63,6 @@
     [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
     
-    [self GETInfoWithNet];
-
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
@@ -77,6 +75,7 @@
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
+    [self GETInfoWithNet];
 }
 
 -(void)setRightBtn
