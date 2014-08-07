@@ -263,16 +263,19 @@
                 }
             }
         }
+        [self.mSuperView addSubview:self.mTableBaseView];
+        [self.mSuperView addSubview:self.mBgView];
+        [self.mTableView reloadData];
         if (section==1) {
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             [GameCommon setExtraCellLineHidden:self.mTableView];
+            [self setBtnState];
         }else{
+            if (self.bottomView) {
+                [self hideButton];
+            }
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }
-        [self.mSuperView addSubview:self.mTableBaseView];
-        [self.mSuperView addSubview:self.mBgView];
-        [self setBtnState];
-        [self.mTableView reloadData];
         hud = [[MBProgressHUD alloc] initWithView:self.mSuperView];
         hud.labelText = @"加载中...";
         [self.mSuperView addSubview:hud];
