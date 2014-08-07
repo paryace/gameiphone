@@ -283,13 +283,13 @@ UINavigationControllerDelegate>
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"位置" inSection:0];
-        [self.dropDownView setTitle:@"申请" inSection:1];
-        [self.dropDownView setTitle:@"就位" inSection:2];
+        [self.dropDownView setTitle:@"队员列表" inSection:1];
+        [self.dropDownView setTitle:@"申请" inSection:2];
         [self.view addSubview:self.dropDownView];
-        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/2+20, startX+5, 22, 18)];
+        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
         [self.view addSubview:self.dotVApp];
         [self setNotifyMsgCount];
-        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
+        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(20/2+20, startX+5, 22, 18)];
         [self.view addSubview:self.dotVInplace];
         [self setInplaceMsgCount];
         
@@ -378,12 +378,12 @@ UINavigationControllerDelegate>
         }
         return NO;
     }else if(section == 1){
+        return YES;
+    }else if(section==2){
         [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
         [self readNoreadMsg];
         [self setNoreadMsgView];
         [self setNotifyMsgCount];
-        return YES;
-    }else if(section==2){
         return YES;
     }
     return NO;
@@ -407,9 +407,9 @@ UINavigationControllerDelegate>
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
     }else if (section==1){
-        return @"申请";
+        return @"队员列表";
     }
-    return @"就位";
+    return @"申请";
 }
 
 -(NSInteger)defaultShowSection:(NSInteger)section

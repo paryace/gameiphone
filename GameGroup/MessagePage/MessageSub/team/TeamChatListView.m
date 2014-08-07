@@ -57,12 +57,7 @@
             UIButton *sectionBtn = [[UIButton alloc] initWithFrame:CGRectMake(sectionWidth*i, 1, sectionWidth, frame.size.height)];
             sectionBtn.tag = SECTION_BTN_TAG_BEGIN + i;
             [sectionBtn addTarget:self action:@selector(sectionBtnTouch:) forControlEvents:UIControlEventTouchUpInside];
-            NSString *sectionBtnTitle = @"--";
-            if ([self.dropDownDataSource respondsToSelector:@selector(titleInSection:index:)]) {
-                sectionBtnTitle = [self.dropDownDataSource titleInSection:i index:[self.dropDownDataSource defaultShowSection:i]];
-            }
             sectionBtn.backgroundColor = [UIColor clearColor];
-            [sectionBtn  setTitle:sectionBtnTitle forState:UIControlStateNormal];
             [sectionBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
             [bgImageView addSubview:sectionBtn];
@@ -96,14 +91,14 @@
     if (!isOpen) {
         return;
     }
-    if (section == 1) {//申请
+    if (section == 1) {//就位确认
+        [self getmemberList];
+    }else if(section == 2){//申请
         [self getZU];
         if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
             [self showErrorAlertView];
             return;
         }
-    }else if(section == 2){//就位确认
-        [self getmemberList];
     }
     [self showOrHideView:section];
 }
@@ -191,7 +186,6 @@
         if (self.bottomView) {
             [self hideButton];
         }
-        
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
@@ -225,21 +219,11 @@
             self.customPhotoCollectionView = nil;
             [self.mBgView addSubview:self.mTableView];
         }
-        if (section == 2) {
+        if (section == 1) {
             if (!self.bottomView){
                 self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90, 320, 90-15)];
                 self.bottomView.backgroundColor = [UIColor whiteColor];
                 [self.mBgView addSubview:self.bottomView];
-                
-                
-                self.msgLable= [[UILabel alloc] initWithFrame:CGRectMake(15, 10, 290, 20)];
-                self.msgLable.backgroundColor = [UIColor clearColor];
-                [self.msgLable setTextAlignment:NSTextAlignmentCenter];
-                [self.msgLable setFont:[UIFont systemFontOfSize:14]];
-                [self.msgLable setTextColor:[UIColor redColor]];
-                self.msgLable.text = @"请确认就位确认";
-//                [self.bottomView addSubview:self.msgLable];
-                
                 if (self.teamUsershipType) {
                     self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, 290, 35)];
                     [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
@@ -280,10 +264,10 @@
             }
         }
         if (section==1) {
-            self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
-        }else{
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             [GameCommon setExtraCellLineHidden:self.mTableView];
+        }else{
+            self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
@@ -298,15 +282,19 @@
 -(void)setBtnState{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if(onClickState == 0){
+        [self setTitle:@"队员列表" inSection:1];
         [self reset];
         [self normal];
     }else if(onClickState == 1){
+        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self send];
     }else if(onClickState == 2){
+        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self ok];
     }else if(onClickState == 3){
+        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self cancel];
     }
@@ -536,21 +524,21 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection==1) {
-        return 140;
+        return 80;
     }
-    return 80;
+    return 140;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
         if (currentExtendSection==1) {
-            NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
-            [self.dropDownDataSource itemOnClick:dic];
-        }else{
             [self.mTableView deselectRowAtIndexPath:indexPath animated:YES];
             NSMutableDictionary *dic = [self.memberList objectAtIndex:indexPath.row];
             [self.dropDownDataSource itemOnClick:[self createCharaDic:dic]];
+        }else{
+            NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
+            [self.dropDownDataSource itemOnClick:dic];
         }
     }
 }
@@ -571,9 +559,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (currentExtendSection==1) {
-        return self.teamNotifityMsg.count;
-    }else{
         return self.memberList.count;
+    }else{
+        return self.teamNotifityMsg.count;
     }
 }
 
@@ -581,6 +569,56 @@
 {
     
     if (currentExtendSection==1) {
+        static NSString *identifier = @"simpleInplaceCell";
+        InplaceCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[InplaceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        cell.tag = indexPath.row;
+        cell.headCkickDelegate = self;
+        NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
+        NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
+        
+        
+        
+        cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+        cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
+        cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+        NSString * gameImageId=[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(msgDic, @"gameid")];
+        if ([GameCommon isEmtity:gameImageId]) {
+            cell.gameImageV.image=KUIImage(@"clazz_0");
+        }else{
+            cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
+        }
+        cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
+        if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
+            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
+            cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+            
+        }else{
+            cell.realmLable.text = @"";
+            cell.pveLable.text = @"";
+        }
+        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+        if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
+            cell.stateView.hidden = YES;
+        }else{
+            cell.stateView.hidden = NO;
+            if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
+                cell.stateView.backgroundColor = [UIColor grayColor];
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
+                cell.stateView.backgroundColor = [UIColor greenColor];
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
+                cell.stateView.backgroundColor = [UIColor redColor];
+            }
+        }
+        
+        CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        cell.groupNameLable.frame = CGRectMake(80, 8, nameSize.width, 20);
+        cell.genderImageV.frame = CGRectMake(80+nameSize.width+3, 8, 20, 20);
+        return cell;
+
+    }else{
         static NSString *identifier = @"simpleApplicationCell";
         JoinTeamCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -631,71 +669,23 @@
         cell.genderImageV.frame = CGRectMake(75+nameSize.width+5, 10, 20, 20);
         [cell setTime:KISDictionaryHaveKey(msgDic, @"senTime")];
         return cell;
-    }else{
-        static NSString *identifier = @"simpleInplaceCell";
-        InplaceCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
-        if (!cell) {
-            cell = [[InplaceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
-        cell.tag = indexPath.row;
-        cell.headCkickDelegate = self;
-        NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
-        NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
-        
-        
-        
-        cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
-        cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
-        cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
-        NSString * gameImageId=[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(msgDic, @"gameid")];
-        if ([GameCommon isEmtity:gameImageId]) {
-            cell.gameImageV.image=KUIImage(@"clazz_0");
-        }else{
-            cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
-        }
-        cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
-        if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
-            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
-            cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
-
-        }else{
-            cell.realmLable.text = @"";
-            cell.pveLable.text = @"";
-        }
-        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
-        if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
-            cell.stateView.hidden = YES;
-        }else{
-            cell.stateView.hidden = NO;
-            if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
-                cell.stateView.backgroundColor = [UIColor grayColor];
-            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
-                cell.stateView.backgroundColor = [UIColor greenColor];
-            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
-                cell.stateView.backgroundColor = [UIColor redColor];
-            }
-        }
-        
-        CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        cell.groupNameLable.frame = CGRectMake(80, 8, nameSize.width, 20);
-        cell.genderImageV.frame = CGRectMake(80+nameSize.width+3, 8, 20, 20);
-        return cell;
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection==1) {
-        return @"删除";
+        return @"";
     }
-   return @"";
+    return @"删除";
+   
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection==1) {
-        return YES;
+        return NO;
     }
-    return NO;
+    return YES;
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
