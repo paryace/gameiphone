@@ -26,8 +26,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-//        self.backgroundColor = UIColorFromRGBA(0x282c32, 1);
-        
         UIImageView *lineImageView1 =[[UIImageView alloc]initWithImage:KUIImage(@"team_line_2")];
         lineImageView1.frame = CGRectMake(0, 0, frame.size.width, 1);
         [self addSubview:lineImageView1];
@@ -178,10 +176,8 @@
     if (!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
-        
         UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
         [self.mTableBaseView addGestureRecognizer:bgTap];
-        
         self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height, self.frame.size.width, 240) style:UITableViewStylePlain];
         self.mTableView.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         self.mTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -189,15 +185,22 @@
         self.mTableView.dataSource = self;
         
     }
-    //[self.dropDownDataSource numberOfRowsInSection:currentExtendSection]
-    //修改tableview的frame
-//    int sectionWidth = (self.frame.size.width)/[self.dropDownDataSource numberOfSections];
+    [self resetFrame];
+    [self.mSuperView addSubview:self.mTableBaseView];
+    [self.mSuperView addSubview:self.mTableView];
+    //动画设置位置
+    [UIView animateWithDuration:0.3 animations:^{
+        self.mTableBaseView.alpha = 0.2;
+        self.mTableView.alpha = 0.2;
+        self.mTableBaseView.alpha = 1.0;
+        self.mTableView.alpha = 1.0;
+    }];
+    [self.mTableView reloadData];
+}
+
+
+-(void)resetFrame{
     CGRect rect = self.mTableView.frame;
-//    rect.origin.x = sectionWidth *section;
-//    rect.origin.x = 0;
-//
-//    rect.size.width = sectionWidth;
-//    rect.size.height = 0;
     rect.origin.x = 0;
     rect.size.width = 320;
     if (currentExtendSection==0) {
@@ -205,21 +208,7 @@
     }else{
         rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
     }
-   
     self.mTableView.frame = rect;
-    [self.mSuperView addSubview:self.mTableBaseView];
-    [self.mSuperView addSubview:self.mTableView];
-    //动画设置位置
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        self.mTableBaseView.alpha = 0.2;
-        self.mTableView.alpha = 0.2;
-        
-        self.mTableBaseView.alpha = 1.0;
-        self.mTableView.alpha = 1.0;
-        self.mTableView.frame =  rect;
-    }];
-    [self.mTableView reloadData];
 }
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap

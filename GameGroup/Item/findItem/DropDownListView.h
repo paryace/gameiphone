@@ -29,6 +29,7 @@
 - (void)hideExtendedChooseView;
 -(void)showChooseListViewInSection:(NSInteger)section;
 -(void)showHide:(NSInteger)section;
+-(void)resetFrame;
 
 @end
 

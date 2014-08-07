@@ -26,4 +26,7 @@
 - (void)headImgClick:(NSString*)userId;
 - (void)itemOnClick:(NSMutableDictionary*)dic;
 - (void)buttonOnClick:(UIButton*)sender;
+
+-(void)showDialog;
+-(void)hideDialog;
 @end

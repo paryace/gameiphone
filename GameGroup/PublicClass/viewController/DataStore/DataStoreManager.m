@@ -5073,10 +5073,13 @@
 
 +(NSMutableArray*)getPrefernceMsgs{
     NSMutableArray * array = [NSMutableArray array];
-    NSArray * arrays = [DSPreferenceMsg MR_findAll];
-    for (DSPreferenceMsg * commonMsg in arrays) {
-        [array addObject:[self getPreMsgDic:commonMsg]];
-    }
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSArray * arrays = [DSPreferenceMsg MR_findAllInContext:localContext];
+        for (DSPreferenceMsg * commonMsg in arrays) {
+            [array addObject:[self getPreMsgDic:commonMsg]];
+        }
+    }];
+   
     return  array;
 }
 

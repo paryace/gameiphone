@@ -81,6 +81,7 @@
         [self.view bringSubviewToFront:hud];
         [self setFirstSayHiMsg];
         [self refreMsgAndTable];
+        [self initTeamRecommendMsg];
         if (![[TempData sharedInstance]isBindingRoles]) {
             [self enterBangdingView];
         }
@@ -199,7 +200,6 @@
     {
         window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
-    [self initTeamRecommendMsg];
     hud = [[MBProgressHUD alloc] initWithWindow:window];
     [window addSubview:hud];
     hud.labelText = @"获取好友信息中...";

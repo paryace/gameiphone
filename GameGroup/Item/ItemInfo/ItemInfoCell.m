@@ -75,9 +75,10 @@
 -(void)refreshViewFrameWithText:(NSString *)text
 {
     CGSize size = [text sizeWithFont:[UIFont boldSystemFontOfSize:15] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
-    self.nickLabel.frame = CGRectMake(70, 5, size.width, 15);
-    self.genderImgView.frame = CGRectMake(70+size.width, 2, 20, 20);
-    self.MemberLable.frame = CGRectMake(80+size.width+22, 5, 30, 15);
+    float w = size.width>185?185:size.width;
+    self.nickLabel.frame = CGRectMake(70, 5, w, 15);
+    self.genderImgView.frame = CGRectMake(70+w, 2, 20, 20);
+    self.MemberLable.frame = CGRectMake(70+w+20+5, 5, 30, 15);
 }
 
 

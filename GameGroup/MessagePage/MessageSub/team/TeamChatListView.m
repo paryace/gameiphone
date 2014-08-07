@@ -7,7 +7,7 @@
 //
 
 #import "TeamChatListView.h"
-#import "CardCell.h"
+#import "TagCell.h"
 #import "CardTitleView.h"
 #import "JoinTeamCell.h"
 #import "ItemManager.h"
@@ -78,10 +78,6 @@
                 [bgImageView addSubview:lineView];
             }
         }
-        hud = [[MBProgressHUD alloc] initWithView:supView];
-        hud.frame = CGRectMake((320-80)/2, (960-80)/2, 80, 80);
-        hud.labelText = @"加载中...";
-        [supView addSubview:hud];
     }
     return self;
 }
@@ -207,7 +203,7 @@
             self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
             self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
             self.customPhotoCollectionView.dataSource = self;
-            [self.customPhotoCollectionView registerClass:[CardCell class] forCellWithReuseIdentifier:@"ImageCell"];
+            [self.customPhotoCollectionView registerClass:[TagCell class] forCellWithReuseIdentifier:@"ImageCell"];
             self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
             [self.mTableView removeFromSuperview];
             self.mTableView = nil;
@@ -216,6 +212,9 @@
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         [self.customPhotoCollectionView reloadData];
+        hud = [[MBProgressHUD alloc] initWithView:self.mSuperView];
+        hud.labelText = @"加载中...";
+        [self.mSuperView addSubview:hud];
     }else{
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
@@ -290,6 +289,9 @@
         [self.mSuperView addSubview:self.mBgView];
         [self setBtnState];
         [self.mTableView reloadData];
+        hud = [[MBProgressHUD alloc] initWithView:self.mSuperView];
+        hud.labelText = @"加载中...";
+        [self.mSuperView addSubview:hud];
     }
 }
 //设置按钮状态
@@ -505,9 +507,9 @@
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CardCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
-    cell.bgImgView.image = KUIImage(@"tagBtn_normal");
-    cell.tag = indexPath.section*1000+indexPath.row;
+    TagCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
+    cell.tag = indexPath.row;
+    cell.delegate = self;
     cell.titleLabel.textAlignment = NSTextAlignmentCenter;
     cell.titleLabel.text = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
     cell.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -516,13 +518,16 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+}
+-(void)tagOnClick:(TagCell*)sender{
     if ([self.dropDownDelegate respondsToSelector:@selector(chooseAtSection:index:)]) {
-        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+        NSString *chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:sender.tag];
         UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
         [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
+        [self.dropDownDelegate chooseAtSection:currentExtendSection index:sender.tag];
         [self showOrHideView:currentExtendSection];
     }
+
 }
 
 //-------

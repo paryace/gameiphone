@@ -30,13 +30,13 @@ static ItemManager *itemManager = NULL;
     }
     return self;
 }
-
+//12个小时更新一次
 -(BOOL)getUpdate:(NSString*)fileName
 {
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:fileName];
     long long nowTime = [self getCurrentTime];
     long long oldTime = [time longLongValue];
-    if ((nowTime-oldTime)>24*60*60*1000) {
+    if ((nowTime-oldTime)>12*60*60*1000) {
         NSString *alltimeString=[NSString stringWithFormat:@"%lld",nowTime];
         [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:fileName];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -92,7 +92,7 @@ static ItemManager *itemManager = NULL;
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
             if (resuccess) {
                 [tempArrayType addObject:[self createType]];
-                [tempArrayType addObjectsFromArray:arrayType];
+                [tempArrayType addObjectsFromArray:responseObject];
                 resuccess(tempArrayType);
             }
         }

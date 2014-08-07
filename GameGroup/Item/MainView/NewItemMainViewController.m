@@ -111,39 +111,23 @@
     [self.view addSubview:customView];
     
     room = [[MyRoomView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
-    //    room.backgroundColor = [UIColor redColor];
     room.myDelegate = self;
     [customView addSubview:room];
-    
-    
-    
+
     firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     [customView addSubview:firstView];
     [self getMyRoomFromNet];
     [self reloadMsgCount];
+    [firstView initSearchConditions];//使用上次的搜索条件
 
 }
 
 -(void)sortingList:(id)sender
 {
-    
     if (seg.selectedSegmentIndex ==0) {
-        if (!firstView. selectCharacter) {
-            [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
-            return;
-        }
-        if (!firstView.selectType) {
-            [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
-            return;
-        }
-        [[ItemManager singleton] getFilterId:KISDictionaryHaveKey(firstView.selectCharacter, @"gameid")reSuccess:^(id responseObject) {
-            [firstView updateFilterId:responseObject];
-        } reError:^(id error) {
-            [firstView showErrorAlertView:error];
-        }];
-  
+        [firstView didClickScreen];//排序
     }else{
         NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
         if (arr.count==2) {
@@ -154,8 +138,6 @@
         NewCreateItemViewController *create =[[NewCreateItemViewController alloc]init];
         [self.navigationController pushViewController: create animated:YES];
     }
-    
-
 }
 
 -(void)tishiing:(id)sender
@@ -164,8 +146,6 @@
     PreferenceViewController *perf = [[PreferenceViewController alloc]init];
     perf.mydelegate =self;
     [self.navigationController pushViewController: perf animated:YES];
-    
-    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -175,15 +155,14 @@
         [self getMyRoomFromNet];
     }
 }
+//获取未读消息数量，刷新消息数量
 -(void)displayTabbarNotification
 {
     NSInteger msgCount  = [[PreferencesMsgManager singleton]getNoreadMsgCount2];
     [self setMsgCount:msgCount];
 }
-
-
+//设置消息数量
 -(void)setMsgCount:(NSInteger)msgCount{
-    
     [dotV setMsgCount:msgCount];
     if (msgCount>0) {
         [[Custom_tabbar showTabBar] notificationWithNumber:YES AndTheNumber:msgCount OrDot:NO WithButtonIndex:2];
@@ -192,10 +171,7 @@
     {
         [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
     }
-
 }
-
-
 -(void)refreshMyList:(id)sender
 {
     if (seg.selectedSegmentIndex ==1) {
@@ -225,47 +201,21 @@
     }
 }
 
-
--(void)enterSearchRoomPageWithView:(FirstView *)view
-{
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    FindItemViewController *find = [[FindItemViewController alloc]init];
-    [self.navigationController pushViewController:find animated:YES];
-}
--(void)enterSearchTape:(id)sender
-{
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    FindItemViewController *find = [[FindItemViewController alloc]init];
-    [self.navigationController pushViewController:find animated:YES];
-    [customImageView removeFromSuperview];
-    
-}
-
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]];
-            room.listDict = [NSMutableDictionary dictionaryWithDictionary:responseObject];
-            [room.myListTableView reloadData];
+            [room initMyRoomListData:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
+        [self showAlertDialog:error];
     }];
     
 }
@@ -374,21 +324,7 @@
 
 -(void)searchTeamBackViewWithDic:(NSDictionary *)dic
 {
-    NSMutableDictionary * dict = KISDictionaryHaveKey(dic, @"createTeamUser");
-    firstView.selectCharacter =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dict, @"characterId"),@"id",KISDictionaryHaveKey(dict, @"characterName"),@"name",KISDictionaryHaveKey(dict, @"gameid"),@"gameid",KISDictionaryHaveKey(dict, @"realm"),@"simpleRealm", nil];
-    
-    if ([[dic allKeys]containsObject:@"type"]&&[KISDictionaryHaveKey(dic, @"type") isKindOfClass:[NSDictionary class]]) {
-        firstView.selectType  = KISDictionaryHaveKey(dic, @"type");
-    }else{
-        firstView.selectType = [[ItemManager singleton] createType];
-    }
-    if ([KISDictionaryHaveKey(dic, @"filter") isKindOfClass:[NSDictionary class]]) {
-        firstView.selectFilter = KISDictionaryHaveKey(dic, @"filter");
-    }else{
-        firstView.selectFilter=nil;
-    }
-    firstView.selectPreferenceId= KISDictionaryHaveKey(dic, @"preferenceId");
-    [firstView reloInfo:YES];
+    [firstView InitializeInfo:dic];
 }
 
 #pragma mark --刷新消息数量
@@ -406,17 +342,5 @@
 {
     [self showMessageWindowWithContent:text imageType:tag];
 }
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

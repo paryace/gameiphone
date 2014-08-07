@@ -437,7 +437,13 @@ UINavigationControllerDelegate>
     [self readNoreadMsg];
     [self setNoreadMsgView];
     [self setInplaceMsgCount];
+}
 
+-(void)showDialog{
+    [hud show:YES];
+}
+-(void)hideDialog{
+    [hud hide:YES];
 }
 //------------------------------------------------------------------------------------------------------------
 
