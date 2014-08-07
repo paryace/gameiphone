@@ -199,19 +199,17 @@
     cell.headImageV.imageURL = [ImageService getImageStr:imageIds Width:80];
     
     
+    NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"titleName")];
     
     
-    NSDictionary* titleDic = KISDictionaryHaveKey(tempDict, @"title");
-    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-        cell.distLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"title")] isEqualToString:@""] ? @"暂无头衔" : KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"title");
-        cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(KISDictionaryHaveKey(titleDic, @"titleObj"), @"rarenum") integerValue]];
-    }
-    else
-    {
+    if ([GameCommon isEmtity:title]) {
         cell.distLabel.text = @"暂无头衔";
-        cell.distLabel.textColor = [UIColor blackColor];
+        cell.distLabel.textColor = [UIColor grayColor];
+    }else{
+        cell.distLabel.text = title;
+        cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"rarenum")] integerValue]];
     }
-    
+
     cell.timeLabel.text = [GameCommon getTimeAndDistWithTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"updateUserLocationDate")] Dis:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")]];
     
     [cell refreshCell];
