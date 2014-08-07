@@ -92,7 +92,7 @@ static ItemManager *itemManager = NULL;
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
             if (resuccess) {
                 [tempArrayType addObject:[self createType]];
-                [tempArrayType addObjectsFromArray:arrayType];
+                [tempArrayType addObjectsFromArray:responseObject];
                 resuccess(tempArrayType);
             }
         }

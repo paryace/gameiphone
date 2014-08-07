@@ -152,6 +152,25 @@
     return self;
 }
 
+//拿偏好页的条件搜索
+-(void)InitializeInfo:(NSDictionary*)mainDict
+{
+    NSMutableDictionary * dic = KISDictionaryHaveKey(mainDict, @"createTeamUser");
+    self.selectCharacter =[NSMutableDictionary dictionaryWithObjectsAndKeys:KISDictionaryHaveKey(dic, @"characterId"),@"id",KISDictionaryHaveKey(dic, @"characterName"),@"name",KISDictionaryHaveKey(dic, @"gameid"),@"gameid",KISDictionaryHaveKey(dic, @"realm"),@"simpleRealm", nil];
+    if ([[mainDict allKeys]containsObject:@"type"]&&[KISDictionaryHaveKey(mainDict, @"type") isKindOfClass:[NSDictionary class]]) {
+        self.selectType  = KISDictionaryHaveKey(mainDict, @"type");
+    }else{
+        self.selectType = [[ItemManager singleton] createType];
+    }
+    if ([KISDictionaryHaveKey(mainDict, @"filter") isKindOfClass:[NSDictionary class]]) {
+        self.selectFilter = KISDictionaryHaveKey(mainDict, @"filter");
+    }else{
+        self.selectFilter=nil;
+    }
+    self.selectPreferenceId= KISDictionaryHaveKey(mainDict, @"preferenceId");
+    [self reloInfo:YES];
+}
+
 //选择标签
 -(void)tagClick:(UIButton*)sender
 {
@@ -244,6 +263,7 @@
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
         [dropDownView.mTableView reloadData];
+        [dropDownView resetFrame];
     }
 }
 #pragma mark -- 标签请求成功通知
@@ -407,6 +427,11 @@
 //筛选
 -(void)didClickScreen:(UIButton *)sender
 {
+    [self didClickScreen];
+}
+
+
+-(void)didClickScreen{
     if (!self.selectCharacter) {
         UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alr show];
@@ -423,6 +448,7 @@
         [self showErrorAlertView:error];
     }];
 }
+
 
 #pragma mark ----tableview delegate  datasourse
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

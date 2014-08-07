@@ -26,8 +26,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-//        self.backgroundColor = UIColorFromRGBA(0x282c32, 1);
-        
         UIImageView *lineImageView1 =[[UIImageView alloc]initWithImage:KUIImage(@"team_line_2")];
         lineImageView1.frame = CGRectMake(0, 0, frame.size.width, 1);
         [self addSubview:lineImageView1];
@@ -256,7 +254,6 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    [self resetFrame];
     return [self.dropDownDataSource numberOfRowsInSection:currentExtendSection];
 }
 
