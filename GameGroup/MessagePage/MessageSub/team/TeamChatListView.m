@@ -78,10 +78,6 @@
                 [bgImageView addSubview:lineView];
             }
         }
-        hud = [[MBProgressHUD alloc] initWithView:supView];
-        hud.frame = CGRectMake((320-80)/2, (960-80)/2, 80, 80);
-        hud.labelText = @"加载中...";
-        [supView addSubview:hud];
     }
     return self;
 }
@@ -216,6 +212,9 @@
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         [self.customPhotoCollectionView reloadData];
+        hud = [[MBProgressHUD alloc] initWithView:self.mSuperView];
+        hud.labelText = @"加载中...";
+        [self.mSuperView addSubview:hud];
     }else{
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,tableHight) style:UITableViewStylePlain];
@@ -290,6 +289,9 @@
         [self.mSuperView addSubview:self.mBgView];
         [self setBtnState];
         [self.mTableView reloadData];
+        hud = [[MBProgressHUD alloc] initWithView:self.mSuperView];
+        hud.labelText = @"加载中...";
+        [self.mSuperView addSubview:hud];
     }
 }
 //设置按钮状态
