@@ -15,6 +15,8 @@
 #import "KKChatController.h"
 #import "H5CharacterDetailsViewController.h"
 #import "CharacterDetailsViewController.h"
+
+#import "BottomView.h"
 @interface ItemInfoViewController ()
 {
     UITableView *m_myTableView;
@@ -25,6 +27,7 @@
     RoleTabView *roleTabView;
     UIAlertView *jiesanAlert;
     UIButton *m_getOutBtn;
+    BottomView *bView;
 }
 @end
 
@@ -69,7 +72,7 @@
     
     [self GETInfoWithNet];
 
-    roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
+    roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX-50)];
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
@@ -77,7 +80,7 @@
     roleTabView.hidden = YES;
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
-    [self buildRoleView];
+//    [self buildRoleView];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
 }
@@ -172,6 +175,10 @@
 #pragma mark ---创建底部button
 -(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
 {
+    
+//    BottomView *bView =[[BottomView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50) array:array shipType:shiptype];
+    
+    
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
     view.backgroundColor = [UIColor redColor];
     [self.view addSubview:view];
@@ -188,10 +195,21 @@
             [button addTarget:self action:@selector(members:) forControlEvents:UIControlEventTouchUpInside];
         }
         else if(shiptype ==2){
+            button.frame = CGRectMake(160, 0, 160, 50);
             [button addTarget:self action:@selector(joinInItem:) forControlEvents:UIControlEventTouchUpInside];
         }
         [view addSubview:button];
     }
+    
+    
+    if (shiptype ==2) {
+        bView =[[BottomView alloc]initWithFrame:CGRectMake(0,0, 160, 50)];
+        [bView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseRoles:)]];
+        [view addSubview:bView];
+
+    }
+    
+    
     [self.view addSubview:view];
 }
 
@@ -239,21 +257,24 @@
 //        [self gooutRoomWithNet];
     }
 }
-
+-(void)chooseRoles:(id)sender
+{
+    [self showRoleTableView:nil];
+}
 
 -(void)joinInItem:(UIButton *)sender
 {
     sender = (UIButton *)[self.view viewWithTag:120];
-    if (isJoinIn==YES) {
-        itemRoleBtn.hidden =NO;
-        [self.view bringSubviewToFront:itemRoleBtn];
-        [sender setBackgroundImage:KUIImage(@"realy_item") forState:UIControlStateNormal];
-        isJoinIn =NO;
-
-    }else{
+//    if (isJoinIn==YES) {
+//        itemRoleBtn.hidden =NO;
+//        [self.view bringSubviewToFront:itemRoleBtn];
+//        [sender setBackgroundImage:KUIImage(@"realy_item") forState:UIControlStateNormal];
+//        isJoinIn =NO;
+//
+//    }else{
         [self JoinInThisItemWithNet];
 //        [self showMessageWindowWithContent:@"现在申请不了" imageType:0];
-    }
+//    }
 }
 
 /*typeName  teamInfo options type1-->创建者  Value1 第一行 value2 第二行  */
@@ -553,17 +574,24 @@
 }
 -(void)didClickChooseWithView:(RoleTabView*)view info:(NSDictionary *)info
 {
-    itemRoleBtn.hidden = NO;
+//    itemRoleBtn.hidden = NO;
     roleTabView.hidden = YES;
     self.infoDict = [NSMutableDictionary dictionaryWithDictionary:info];
-    itemRoleBtn.headImageV.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
-    itemRoleBtn.nameLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
-    itemRoleBtn.distLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
-
+    bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
+    bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
+    bView.gameIcon.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(self.infoDict, @"gameid")]];
+    
+    bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
+    bView.topLabel.hidden = YES;
 }
 //申请加入房间
 -(void)JoinInThisItemWithNet
 {
+    if (!self.infoDict||[self.infoDict allKeys].count<=0) {
+        [self showAlertViewWithTitle:@"提示" message:@"您还没有选择角色,请点击左侧摁键选择角色再申请加入" buttonTitle:@"确定"];
+        return;
+    }
+    
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];

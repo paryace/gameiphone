@@ -279,7 +279,28 @@
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return YES;
+    
+    if (indexPath.section==0) {
+        NSArray *arr=[self.listDict objectForKey:@"OwnedRooms"];
+        
+        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
+            return YES;
+        }
+        else{
+            return NO;
+        }
+    }else{
+        NSArray *arr=[self.listDict objectForKey:@"joinedRooms"];
+        
+        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
+            return YES;
+        }
+        else{
+            return NO;
+        }
+  
+    }
+    
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
