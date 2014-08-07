@@ -23,10 +23,24 @@
 
         [self addSubview:self.roleTableView];
         
-        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenMe:)];
+        tap.delegate = self;
+        [self addGestureRecognizer:tap];
         // Initialization code
     }
     return self;
+}
+-(void)hiddenMe:(id)sender
+{
+    self.hidden=  YES;
+}
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
+    NSLog(@"%@",touch.view);
+    if ([touch.view isKindOfClass:[UITableView class]]||[NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"])
+    {
+        return NO;
+    }
+    return YES;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
