@@ -154,9 +154,13 @@ static TeamManager *teamManager = NULL;
 //收到发起就位确认消息，更新就位确认状态
 -(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId MemberList:(NSArray*)memberList State:(NSString*)state
 {
-    [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userId] groupId:groupId TeamUsershipType:@"0" State:state OnClickState:@"1"];
-    for (NSString * userid in memberList) {
-        [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userid] groupId:groupId TeamUsershipType:@"1" State:state OnClickState:@"1"];
+    if (![GameCommon isEmtity:userId]) {
+        [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userId] groupId:groupId TeamUsershipType:@"0" State:state OnClickState:@"1"];
+    }
+    if ([memberList isKindOfClass:[NSArray class]]) {
+        for (NSString * userid in memberList) {
+            [DataStoreManager saveTeamUser2:[GameCommon getNewStringWithId:userid] groupId:groupId TeamUsershipType:@"1" State:state OnClickState:@"1"];
+        }
     }
     [DataStoreManager updateTeamUser:groupId State:state OnClickState:@"1" Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kSendChangInplaceState object:nil userInfo:nil];

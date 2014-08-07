@@ -184,7 +184,7 @@ static Custom_tabbar *s_tabbar = NULL;
             [view removeFromSuperview];
     }
     if (ifNumber) {
-        UIImageView * notiBgV = [[UIImageView alloc] initWithFrame:CGRectMake(46, 4, 18, 18)];
+        UIImageView * notiBgV = [[UIImageView alloc] initWithFrame:CGRectMake(40, 4, 18, 18)];
         
         notiBgV.tag=999;
         [btn addSubview:notiBgV];
@@ -194,12 +194,12 @@ static Custom_tabbar *s_tabbar = NULL;
         [numberLabel setFont:[UIFont systemFontOfSize:12]];
         if (number>99) {
             [notiBgV setImage:[UIImage imageNamed:@"redCB_big.png"]];
-            notiBgV.frame  = CGRectMake(46, 4, 22, 18);
+            notiBgV.frame  = CGRectMake(40, 4, 22, 18);
             numberLabel.frame = CGRectMake(0, 0, 22, 18);
             [numberLabel setText:@"99+"];
         }else{
             [notiBgV setImage:[UIImage imageNamed:@"redCB.png"]];
-            notiBgV.frame  = CGRectMake(46, 4, 18, 18);
+            notiBgV.frame  = CGRectMake(40, 4, 18, 18);
             numberLabel.frame = CGRectMake(0, 0, 18, 18);
     [numberLabel setText:[NSString stringWithFormat:@"%d",number]];
             
@@ -209,7 +209,7 @@ static Custom_tabbar *s_tabbar = NULL;
         
     }
     else if (dot){
-        UIImageView * dotLabel = [[UIImageView alloc] initWithFrame:CGRectMake(52, 8, 7, 7)];
+        UIImageView * dotLabel = [[UIImageView alloc] initWithFrame:CGRectMake(45, 8, 7, 7)];
         dotLabel.tag = 999;
         [dotLabel setImage:[UIImage imageNamed:@"redCB.png"]];
         [btn addSubview:dotLabel];
