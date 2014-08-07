@@ -11,6 +11,7 @@
 @interface BaseItemCell : UITableViewCell
 @property(nonatomic,strong)UIImageView *bgImageView;
 @property(nonatomic,strong)EGOImageView *headImg;
+@property(nonatomic,strong)EGOImageView *gameIconImg;
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *contentLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
