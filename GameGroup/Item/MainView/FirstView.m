@@ -52,6 +52,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        
         m_dataArray = [NSMutableArray array];
         m_charaArray = [NSMutableArray array];
         roleDict = [NSMutableDictionary dictionary];
@@ -773,15 +774,5 @@
     };
     m_header = header;
 }
-
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

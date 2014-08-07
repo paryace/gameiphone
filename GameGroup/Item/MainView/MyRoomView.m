@@ -17,17 +17,20 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
-        
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
         self.myListTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myListTableView.delegate = self;
         self.myListTableView.dataSource = self;
-        
-        
-        
         [self addSubview:self.myListTableView];
     }
     return self;
+}
+
+-(void)initMyRoomListData:(NSMutableDictionary*)dic{
+    self.listDict = [NSMutableDictionary dictionaryWithDictionary:dic];
+    self.myCreateRoomList = [dic objectForKey:@"OwnedRooms"];
+    self.myJoinRoomList = [dic objectForKey:@"joinedRooms"];
+    [self.myListTableView reloadData];
 }
 
 -(void)enterCreatePage:(id)sender
@@ -41,23 +44,21 @@
 {
     return [[self.listDict allKeys] count];
 }
-
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSArray *arrs;
     switch (section) {
         case 0:
-            arrs =[self.listDict objectForKey:@"OwnedRooms"];
-            if ([arrs isKindOfClass:[NSArray class]]&&arrs.count>0) {
-                return [[self.listDict objectForKey:@"OwnedRooms"] count];
+            if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&arrs.count>0) {
+                return [self.myCreateRoomList count];
             }else{
                 return 1;
             }
             
             break;
         case 1:
-            if ([[self.listDict objectForKey:@"OwnjoinedRoomsedRooms"]isKindOfClass:[NSArray class]]) {
-                return [[self.listDict objectForKey:@"joinedRooms"] count];
+            if ([self.myJoinRoomList isKindOfClass:[NSArray class]]) {
+                return [self.myJoinRoomList count];
             }else{
                 return 1;
             }
@@ -78,13 +79,12 @@
         if (!cell) {
             cell = [[ICreatedCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
-        NSArray *arr=[self.listDict objectForKey:@"OwnedRooms"];
         
-        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
-                  NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:indexPath.row];
+        if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
+            NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.titleLabel.text =[NSString stringWithFormat:@"[%@/%@]%@的队伍",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
             cell.gameIconImageView.placeholderImage = KUIImage(@"clazz_0");
-
+            
             cell.gameIconImageView.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")]]];
             cell.realmLabel.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm"),KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
             NSInteger msgCount = [DataStoreManager getTeamNotifityMsgCount:@"0" GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")]];
@@ -105,20 +105,16 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
-
-        NSArray *arr=[self.listDict objectForKey:@"joinedRooms"];
-
-        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
-                 NSDictionary * dic = [[self.listDict objectForKey:@"joinedRooms"] objectAtIndex:indexPath.row];
+        
+        if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
+            NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
             cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
             
             NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
             cell.titleLabel.text = title;
-            //    cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
             cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-            
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
             NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
             
@@ -134,7 +130,7 @@
         
         
         return cell;
-
+        
     }
 }
 
@@ -144,25 +140,21 @@
     
     NSDictionary *dic;
     if (indexPath.section ==0) {
-        
-        NSArray *arr =[self.listDict objectForKey:@"OwnedRooms"];
-        if (arr&&arr.count>0) {
+        if (self.myCreateRoomList&&self.myCreateRoomList.count>0) {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
-            dic = [arr objectAtIndex:indexPath.row];
+            dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
         }
     }else{
-        NSArray *arr =[self.listDict objectForKey:@"joinedRooms"];
-        if (arr&&arr.count>0) {
+        if (self.myJoinRoomList&&self.myJoinRoomList.count>0) {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
-
-        dic = [arr objectAtIndex:indexPath.row];
+            dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
-    
+            
         }
     }
 }
@@ -298,19 +290,18 @@
         }
     }
 }
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag ==10000001) {//解散队伍
         if (buttonIndex==1) {
-            NSDictionary * dic = [[self.listDict objectForKey:@"OwnedRooms"] objectAtIndex:actionIndex];
+            NSDictionary * dic = [self.myCreateRoomList objectAtIndex:actionIndex];
             if (self.myDelegate) {
                 [self.myDelegate dissTeam:self dic:dic];
             }
         }
     }else{
         if (buttonIndex==1) {//退出队伍
-            NSDictionary * dic = [[self.listDict objectForKey:@"joinedRooms"] objectAtIndex:actionIndex];
+            NSDictionary * dic = [self.myJoinRoomList objectAtIndex:actionIndex];
             if (self.myDelegate) {
                 [self.myDelegate exitTeam:self dic:dic];
             }
@@ -329,6 +320,27 @@
     lineImg.backgroundColor = [UIColor clearColor];
     [view addSubview:lineImg];
 }
+
+-(void)didRoleRomeve:(NSString*)characterId{
+    for (NSMutableDictionary * dic in self.myCreateRoomList) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [self.myCreateRoomList removeObject:dic];
+        }
+    }
+    for (NSMutableDictionary * dic in self.myJoinRoomList) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [self.myJoinRoomList removeObject:dic];
+        }
+    }
+    [self.myListTableView reloadData];
+}
+
+#pragma mark -- 删除角色
+-(void)roleRemove:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
+}
+
 - (void)dealloc
 {
     self.myListTableView.delegate=nil;

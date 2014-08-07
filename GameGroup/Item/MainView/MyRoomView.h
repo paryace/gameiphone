@@ -13,7 +13,12 @@
 @interface MyRoomView : UIView<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView *myListTableView;
 @property(nonatomic,strong)NSMutableDictionary *listDict;
+@property(nonatomic,strong)NSMutableArray *myCreateRoomList;
+@property(nonatomic,strong)NSMutableArray *myJoinRoomList;
+
 @property(nonatomic,assign)id<MyroomDelegate>myDelegate;
+
+-(void)initMyRoomListData:(NSMutableDictionary*)dic;
 @end
 
 @protocol MyroomDelegate <NSObject>
