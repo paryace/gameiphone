@@ -63,10 +63,6 @@
     [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
     
-    hud = [[MBProgressHUD alloc]initWithView:self.view];
-    [self.view addSubview:hud];
-    
-    
     [self GETInfoWithNet];
 
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
@@ -80,6 +76,7 @@
     [self buildRoleView];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
+    [self.view addSubview:hud];
 }
 
 -(void)setRightBtn
@@ -252,7 +249,6 @@
 
     }else{
         [self JoinInThisItemWithNet];
-//        [self showMessageWindowWithContent:@"现在申请不了" imageType:0];
     }
 }
 
@@ -260,6 +256,8 @@
 #pragma mark ---NET
 -(void)GETInfoWithNet
 {
+    hud.labelText = @"请求中...";
+    [hud show:YES];
     [[TeamManager singleton] GETInfoWithNet:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId] reSuccess:^(id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -274,13 +272,7 @@
         }
     } reError:^(id error) {
         [hud hide:YES];
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+        [self showAlertDialog:error];
     }];
 }
 
@@ -465,13 +457,14 @@
 #pragma mark ---删除成员
 -(void)removeItemerFromNetWithIndexPath:(NSInteger)row
 {
-    NSDictionary *dic = m_dataArray[row];
     
+    NSDictionary *dic = m_dataArray[row];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
         return;
     }
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.gameid]  forKey:@"gameid"];
@@ -484,18 +477,13 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] Successcompletion:^(BOOL success, NSError *error) {
+            [hud hide:YES];
             [m_dataArray removeObjectAtIndex:row];
             [m_myTableView reloadData];
             [self showMessageWindowWithContent:@"删除成功" imageType:0];
         }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
+        [self showAlertDialog:error];
         [hud hide:YES];
     }];
 
@@ -564,6 +552,8 @@
 //申请加入房间
 -(void)JoinInThisItemWithNet
 {
+    hud.labelText = @"操作中...";
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
@@ -574,23 +564,19 @@
     [postDict setObject:@"267" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self showMessageWindowWithContent:@"申请成功" imageType:0];
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
         [hud hide:YES];
+        [self showMessageWindowWithContent:@"申请成功" imageType:0];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [self showErrorDialog:error];
     }];
     
 }
 //退出房间
 -(void)gooutRoomWithNet
 {
+    hud.labelText = @"操作中...";
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
@@ -601,19 +587,24 @@
     [postDict setObject:@"269" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         [self showMessageWindowWithContent:@"退出成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
         [hud hide:YES];
+        [self showErrorDialog:error];
     }];
-    
+}
+
+-(void)showErrorDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+
 }
 
 //改变位置(待处理)
