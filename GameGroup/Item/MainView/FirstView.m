@@ -60,7 +60,6 @@
         arrayTag = [NSArray array];
         arrayType = [NSArray array];
         arrayFilter = [NSArray array];
-        
         //菜单
         dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,0, 320, 40) dataSource:self delegate:self];
         dropDownView.mSuperView = self;
@@ -84,8 +83,6 @@
         sortView.mydelegate = self;
         [self addSubview:sortView];
         //初始化搜索条
-        
-        
         UIView *tableheadView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
         tableheadView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
         mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0,320, 44)];
@@ -102,16 +99,9 @@
         mSearchBar.delegate = self;
         [mSearchBar sizeToFit];
         [tableheadView addSubview:mSearchBar];
-        
-        //        screenView = [[UIView alloc] initWithFrame:CGRectMake(320-60, 40, 60, 44)];
-        //        screenView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
-        //        [self addSubview:screenView];
-        //        screenView.hidden = YES;
         screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25)];
         [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
         [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-        //        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-        
         [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
         [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
         screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
@@ -119,14 +109,7 @@
         [screenBtn.layer setMasksToBounds:YES];
         [screenBtn.layer setCornerRadius:3];
         [tableheadView addSubview:screenBtn];
-
-        
-        
-        
         m_myTabelView.tableHeaderView = tableheadView;
-//        mSearchBar.frame = CGRectMake(0, 40, 260, 44);
-        
-        
         //标签布局
         tagView = [[UIView alloc] initWithFrame:CGRectMake(0, 40+44, 320, kScreenHeigth-40)];
         tagView.hidden = YES;
@@ -197,8 +180,6 @@
     }
 }
 
-
-
 -(void)reloInfo:(BOOL)isRefre{
     m_currentPage = 0;
     [self startToSearch:isRefre];
@@ -208,8 +189,7 @@
 -(void)startToSearch:(BOOL)isRefre{
     NSString * selectTypeId;
     NSString * selectFilterId;
-//        mSearchBar.frame = CGRectMake(0, 0, 320, 44);
-        screenView.hidden = YES;
+    screenView.hidden = YES;
 
     if (self.selectType) {
         selectTypeId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectType,@"constId")];
@@ -224,7 +204,7 @@
     }
     [self setTitleInfo];
     [self cacheSearchConditions];
-    [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") TypeId:selectTypeId Description:nil FilterId:selectFilterId PreferenceId:self.selectPreferenceId IsRefre:isRefre];
+    [self getInfoFromNetWithDic:KISDictionaryHaveKey(self.selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") TypeId:selectTypeId Description:selectDescription FilterId:selectFilterId PreferenceId:self.selectPreferenceId IsRefre:isRefre];
 }
 //缓存搜索条件
 -(void)cacheSearchConditions{
@@ -299,11 +279,6 @@
         [sortArr addObject:str];
         
     }
-    
-//    KxMenuItem *first = [KxMenuItem menuItem:@"组队筛选" image:nil target:nil action:NULL];
-//    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
-//    first.alignment = NSTextAlignmentCenter;
-//    [KxMenu showMenuInView:self fromRect:CGRectMake(0, -20, 50, 25) menuItems:menuItems];
     [sortView showSortingViewInViewForRect:CGRectMake(0, 0, 0, 0) arr:sortArr];
 }
 #pragma mark -- 筛选
@@ -403,16 +378,14 @@
         return;
     }
     [[ItemManager singleton] collectionItem:KISDictionaryHaveKey(self.selectCharacter, @"gameid") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") TypeId:KISDictionaryHaveKey(self.selectType, @"constId") Description:mSearchBar.text FilterId:KISDictionaryHaveKey(self.selectFilter, @"constId")
-                                  reSuccess:^(id responseObject) {
-                                      if ([self.myDelegate respondsToSelector:@selector(didClickSuccessWithText:tag:)]) {
-                                          [self.myDelegate didClickSuccessWithText:@"收藏成功" tag:0];
-                                      }
-//                                          [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
-//                                      
-                                      
-                                  } reError:^(id error) {
-                                      [self showErrorAlertView:error];
-                                  }];
+        reSuccess:^(id responseObject) {
+                if ([self.myDelegate respondsToSelector:@selector(didClickSuccessWithText:tag:)]) {
+                    [self.myDelegate didClickSuccessWithText:@"收藏成功" tag:0];
+                }
+//              [[NSNotificationCenter defaultCenter] postNotificationName:@"shuaxinRefreshPreference_wxx" object:responseObject];
+        } reError:^(id error) {
+            [self showErrorAlertView:error];
+        }];
 }
 //创建组队
 -(void)didClickCreateItem:(id)sender
@@ -429,8 +402,6 @@
 {
     [self didClickScreen];
 }
-
-
 -(void)didClickScreen{
     if (!self.selectCharacter) {
         UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -502,11 +473,14 @@
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
     cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
     
+    NSString * gameImage = [GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]];
+    cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImage];
+    
     NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")]];
     
     cell.titleLabel.text = title;
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-    //    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+    //NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
     
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
     NSString *timeStr = [GameCommon getShowTime:sendTime];
@@ -646,7 +620,6 @@
     tagView.frame = CGRectMake(0, offHight+44, 320, kScreenHeigth-offHight);
     mSearchBar.frame = CGRectMake(0, 0, 320-offWidth, 44);
     screenBtn.frame = CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25);
-//    screenView.frame =CGRectMake(320-offWidth2, offHight, 60, 44);
     NSLog(@"%f,%f",screenView.frame.origin.x,screenView.frame.origin.y);
     [UIView commitAnimations];
 }

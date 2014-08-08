@@ -2542,12 +2542,12 @@
 #pragma mark 好友推荐
 +(void)saveRecommendWithData:(NSArray*)recommendArr MsgInfo:(NSDictionary *)info SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         
         NSString * msgType = KISDictionaryHaveKey(info, @"msgType");
         NSString * msgId = KISDictionaryHaveKey(info, @"msgId");
         NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[info objectForKey:@"time"] doubleValue]];
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and sayHiType==[c]%@",@"12345",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!thumbMsgs)
             thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
@@ -2590,11 +2590,15 @@
 
         }
     }
-     completion:^(BOOL success, NSError *error) {
-         if(block){
-             block(info);
-         }
-     }];
+//     completion:^(BOOL success, NSError *error) {
+//         if(block){
+//             block(info);
+//         }
+//     }
+     ];
+    if(block){
+        block(info);
+    }
 
 }
 

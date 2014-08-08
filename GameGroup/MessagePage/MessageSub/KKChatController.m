@@ -289,7 +289,7 @@ UINavigationControllerDelegate>
         self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
         [self.view addSubview:self.dotVApp];
         [self setNotifyMsgCount];
-        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(20/2+20, startX+5, 22, 18)];
+        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/2+20, startX+5, 22, 18)];
         [self.view addSubview:self.dotVInplace];
         [self setInplaceMsgCount];
         
