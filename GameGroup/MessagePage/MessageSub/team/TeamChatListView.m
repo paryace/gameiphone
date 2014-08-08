@@ -492,9 +492,17 @@
 -(void)getmemberList{
 //    self.memberList = [DataStoreManager getMemberList:self.groipId];
     self.memberList = [DataStoreManager getMemberList:self.roomId GameId:self.gameId];
-//    [self.memberList sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
-//        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
-//    }];
+    [self.memberList sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] < 0)
+        {
+            return (NSComparisonResult)NSOrderedDescending;
+        }
+        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] > 0)
+        {
+            return (NSComparisonResult)NSOrderedAscending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+    }];
 }
 
 -(void)showToastAlertView:(NSString*)msgText
