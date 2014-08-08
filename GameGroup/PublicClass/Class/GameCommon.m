@@ -939,7 +939,6 @@ static GameCommon *my_gameCommon = NULL;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
-    
 }
 //未读消息的数量
 +(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs
@@ -959,7 +958,11 @@ static GameCommon *my_gameCommon = NULL;
                 allUnread += unreadCount;
             }
         }else{
-            allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+            if (![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"recommendfriend"] &&
+                ![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHello"]&&
+                ![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"deletePerson"]){
+                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+            }
         }
     }
     return allUnread;

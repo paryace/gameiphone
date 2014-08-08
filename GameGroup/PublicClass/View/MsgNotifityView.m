@@ -32,19 +32,26 @@
 }
 
 -(void)setMsgCount:(NSInteger)msgCount{
+    [self setMsgCount:msgCount IsSimple:NO];
+}
+
+-(void)setMsgCount:(NSInteger)msgCount IsSimple:(BOOL)isSimple{
     if (msgCount>0) {
         [self show];
-        if (msgCount>99) {
-            self.notiBgV.image = KUIImage(@"redCB_big");
-            [self.unreadCountLabel setText:@"99+"];
-            self.notiBgV.frame=CGRectMake(0, 0, 22, 18);
-            self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
-        }
-        else{
-            self.notiBgV.image = KUIImage(@"redCB.png");
-            [self.unreadCountLabel setText:[NSString stringWithFormat:@"%d",msgCount]];
-            self.notiBgV.frame=CGRectMake(0, 0, 18, 18);
-            self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+        if (isSimple) {
+            [self simpleDot];
+        }else{
+            if (msgCount>99) {
+                self.notiBgV.image = KUIImage(@"redCB_big");
+                [self.unreadCountLabel setText:@"99+"];
+                self.notiBgV.frame=CGRectMake(0, 0, 22, 18);
+                self.unreadCountLabel.frame =CGRectMake(0, 0, 22, 18);
+            }else{
+                self.notiBgV.image = KUIImage(@"redCB.png");
+                [self.unreadCountLabel setText:[NSString stringWithFormat:@"%d",msgCount]];
+                self.notiBgV.frame=CGRectMake(0, 0, 18, 18);
+                self.unreadCountLabel.frame =CGRectMake(0, 0, 18, 18);
+            }
         }
     }else{
         [self hide];
@@ -52,6 +59,7 @@
 }
 
 -(void)simpleDot{
+    self.notiBgV.frame=CGRectMake(0, 0, 18, 18);
     self.notiBgV.image = KUIImage(@"redpot");
     self.unreadCountLabel.hidden = YES;
 }
