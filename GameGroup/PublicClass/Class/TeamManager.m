@@ -128,6 +128,10 @@ static TeamManager *teamManager = NULL;
 
 //组队添加成员
 -(void)saveMemberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
+    //我加入组队成功
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil userInfo:memberUserInfo];
+    }
     [DataStoreManager saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
         [DataStoreManager saveTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] TeamUsershipType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"teamUsershipType")] DefaultState:@"0"];
         [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];

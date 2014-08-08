@@ -726,7 +726,7 @@
 }
 #pragma mark --接收到新的偏好消息刷新消息数量
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{
-    [self initTeamRecommendMsg];
+//    [self initTeamRecommendMsg];
 }
 
 -(void)initTeamRecommendMsg{

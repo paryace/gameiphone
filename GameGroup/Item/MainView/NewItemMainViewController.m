@@ -331,7 +331,7 @@
 
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
-    [self displayTabbarNotification];
+//    [self displayTabbarNotification];
 }
 
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag

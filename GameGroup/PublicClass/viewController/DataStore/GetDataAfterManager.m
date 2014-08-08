@@ -293,6 +293,7 @@ static SystemSoundID shake_sound_male_id = 0;
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
+    
     [[TeamManager singleton] saveMemberUserInfo:payloadDic GroupId:groupId];//组队添加新成员
     [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, @"teamUser"), @"userid") State:@"1" GroupId:groupId];
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
