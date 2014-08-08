@@ -156,8 +156,11 @@
             return;
         }
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        NewCreateItemViewController *create =[[NewCreateItemViewController alloc]init];
-        [self.navigationController pushViewController: create animated:YES];
+        NewCreateItemViewController *cretItm =[[NewCreateItemViewController alloc]init];
+        cretItm.selectRoleDict = firstView. selectCharacter;
+        cretItm.selectTypeDict = firstView.selectType;
+
+        [self.navigationController pushViewController: cretItm animated:YES];
     }
 }
 //进入偏好
