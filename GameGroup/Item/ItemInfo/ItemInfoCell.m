@@ -55,7 +55,7 @@
         [self addSubview:self.value2Lb];
 
         
-        self.value3Lb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 50, 60) font:[UIFont boldSystemFontOfSize:20] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
+        self.value3Lb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 50, 60) font:[UIFont boldSystemFontOfSize:16] textColor:[UIColor blueColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
         self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value3Lb];
         

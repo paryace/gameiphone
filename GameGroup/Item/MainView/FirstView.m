@@ -36,7 +36,7 @@
     NSArray *arrayFilter;
     NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
-    NSMutableArray *m_charaArray;
+//    NSMutableArray *m_charaArray;
     
     
     NSString * selectDescription;
@@ -53,9 +53,8 @@
     if (self) {
         
         m_dataArray = [NSMutableArray array];
-        m_charaArray = [NSMutableArray array];
+//        m_charaArray = [NSMutableArray array];
         roleDict = [NSMutableDictionary dictionary];
-        m_charaArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
         arrayTag = [NSArray array];
         arrayType = [NSArray array];
         arrayFilter = [NSArray array];
@@ -296,7 +295,7 @@
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section==0) {//选择角色
-        self.selectCharacter = [m_charaArray objectAtIndex:index];
+        self.selectCharacter = [self.firstDataArray objectAtIndex:index];
         [self reloInfo:YES];
     }
     else if (section == 1){//选择分类
@@ -334,7 +333,7 @@
 -(NSInteger)numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        return [m_charaArray count];
+        return [self.firstDataArray count];
     }
     return arrayType.count;
 }
@@ -352,7 +351,7 @@
 -(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger)index
 {
     if (section ==0) {
-        return m_charaArray[index];
+        return self.firstDataArray[index];
     }else{
         return nil;
     }
@@ -519,7 +518,7 @@
     }else{
         itemInfo.isCaptain =NO;
     }
-    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:self.selectCharacter];
     itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
