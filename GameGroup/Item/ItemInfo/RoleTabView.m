@@ -85,7 +85,7 @@
         }else{
             cell.headerImageView.imageURL = [ImageService getImageUrl4:imageId];
         }
-        cell.serverLabel.text = [NSString stringWithFormat:@"%@ %@",KISDictionaryHaveKey(tempDic, @"simpleRealm"),realm];//realm
+        cell.serverLabel.text = realm;//realm
     }
     cell.titleLabel.text = KISDictionaryHaveKey(tempDic, @"name");
     NSString * gameImageId =[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:gameid]];
