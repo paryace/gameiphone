@@ -364,7 +364,6 @@
 #pragma mark---收藏方法
 -(void)collectionBtn:(id)sender
 {
-    
     if (!self.selectCharacter) {
         
         UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -394,8 +393,6 @@
     cretItm.selectRoleDict = self.selectCharacter;
     cretItm.selectTypeDict = self.selectType;
     [self.myDelegate didClickTableViewCellEnterNextPageWithController:cretItm];
-//    [self.navigationController pushViewController:cretItm animated:YES];
-    
 }
 //筛选
 -(void)didClickScreen:(UIButton *)sender
@@ -506,10 +503,6 @@
     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    
-//    if (self.myDelegate) {
-//        [self.myDelegate enterDetailPage:dic];
-//    }
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
     if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
@@ -520,8 +513,6 @@
     itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
     itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-//    [self.navigationController pushViewController:itemInfo animated:YES];
-    
     [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
 }
 

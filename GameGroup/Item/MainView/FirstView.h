@@ -49,13 +49,7 @@
 -(void)refreWithRow:(NSInteger)row;
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
 -(void)didClickPreferenceToNetWithRow:(NSInteger)row;
-
-
 -(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc;
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag;
-
-
-
--(void)enterDetailPage:(NSDictionary*)dic;
 
 @end
