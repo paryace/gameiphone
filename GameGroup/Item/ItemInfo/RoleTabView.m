@@ -15,21 +15,54 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.roleTableView = [[UITableView alloc]initWithFrame:CGRectMake(45, 50, 230, 250) style:UITableViewStylePlain];
-        self.roleTableView.delegate =self;
-        self.roleTableView.dataSource = self;
-        self.roleTableView.rowHeight = 70;
-        [GameCommon setExtraCellLineHidden:self.roleTableView];
-
-        [self addSubview:self.roleTableView];
+        self.titleLable = [[UILabel alloc]init];
+        self.titleLable.frame = CGRectMake(45, 40, 230, 30);
+        self.titleLable.backgroundColor = kColorWithRGB(27, 29, 34, 1);;
+        self.titleLable.text = @"请选择一个角色";
+        self.titleLable.layer.masksToBounds = YES;
+        self.titleLable.layer.cornerRadius = 6.0;
+        self.titleLable.textAlignment =NSTextAlignmentCenter;
+        self.titleLable.textColor = [UIColor whiteColor];
+        [self addSubview:self.titleLable];
         
+        self.roleTableView = [[UITableView alloc]initWithFrame:CGRectMake(45, 80, 230, 250) style:UITableViewStylePlain];
+        self.roleTableView.layer.masksToBounds = YES;
+        self.roleTableView.layer.cornerRadius = 6.0;
+        self.roleTableView.layer.borderWidth = 0;
+        self.roleTableView.layer.borderColor = [[UIColor whiteColor] CGColor];
+        self.roleTableView.rowHeight = 70;
+        self.roleTableView.backgroundColor =kColorWithRGB(27, 29, 34, 1);
+        self.roleTableView.delegate = self;
+        self.roleTableView.dataSource = self;
+        self.roleTableView.showsVerticalScrollIndicator = NO;
+        self.roleTableView.showsHorizontalScrollIndicator = NO;
+         self.roleTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.roleTableView.hidden = YES;
+        [GameCommon setExtraCellLineHidden:self.roleTableView];
+        [self addSubview:self.roleTableView];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hiddenMe:)];
         tap.delegate = self;
         [self addGestureRecognizer:tap];
-        // Initialization code
     }
     return self;
 }
+
+
+-(void)setDate:(NSMutableArray*)roleArray{
+    self.coreArray=roleArray;
+    [self resetTableFrame];
+}
+
+-(void)resetTableFrame{
+    self.roleTableView.hidden =NO;
+    if (self.coreArray.count>1&&self.coreArray.count<4) {
+        self.roleTableView.frame = CGRectMake(45, 80, 230, self.coreArray.count*70-3);
+    }else{
+        self.roleTableView.frame = CGRectMake(45, 80, 230, 280);
+    }
+    [self.roleTableView reloadData];
+}
+
 -(void)hiddenMe:(id)sender
 {
     self.hidden=  YES;
@@ -66,7 +99,9 @@
         cell = [[EnteroCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
+    cell.backgroundColor = [UIColor clearColor];
+    
+//    cell.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
     
     NSDictionary* tempDic = [self.coreArray objectAtIndex:indexPath.row];
     
@@ -100,14 +135,4 @@
     
     [self.mydelegate didClickChooseWithView:self info:dic];
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
-
 @end

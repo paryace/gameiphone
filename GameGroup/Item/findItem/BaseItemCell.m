@@ -18,7 +18,7 @@
         self.headImg =[[ EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
         [self addSubview:self.headImg];
         
-        self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 5, 170, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 7, 170, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.titleLabel];
         
         self.gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(60, 33, 15, 15)];

@@ -25,7 +25,7 @@
 -(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger) index;
 - (void)headImgClick:(NSString*)userId;
 - (void)itemOnClick:(NSMutableDictionary*)dic;
-- (void)buttonOnClick:(UIButton*)sender;
+- (void)buttonOnClick;
 
 -(void)showDialog;
 -(void)hideDialog;

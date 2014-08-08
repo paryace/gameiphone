@@ -432,7 +432,7 @@ UINavigationControllerDelegate>
     [self.navigationController pushViewController:VC animated:YES];
 }
 
-- (void)buttonOnClick:(UIButton*)sender{
+- (void)buttonOnClick{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
     [self readNoreadMsg];
     [self setNoreadMsgView];

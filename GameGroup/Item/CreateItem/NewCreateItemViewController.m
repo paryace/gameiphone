@@ -117,7 +117,7 @@
     m_miaoshuTV.delegate = self;
     [mainScroll addSubview:m_miaoshuTV];
     
-    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15,165, 200, 20)];
+    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(18,170, 200, 20)];
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
     placeholderL.text = @"填写组队描述……";

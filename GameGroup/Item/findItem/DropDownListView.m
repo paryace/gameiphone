@@ -224,6 +224,9 @@
         NSString *chooseCellTitle;
         if (currentExtendSection==0) {
             chooseCellTitle = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"name")]];
+//            if (chooseCellTitle.length>6) {
+//                [NSString stringWithFormat:@"%@%@",[chooseCellTitle substringToIndex:6],@"..."];
+//            }
         }else{
             chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         }
