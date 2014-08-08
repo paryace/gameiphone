@@ -12,6 +12,11 @@
 
 @interface SortingView : UIView<UITableViewDataSource,UITableViewDelegate,UIGestureRecognizerDelegate>
 -(void)showSortingViewInViewForRect:(CGRect)rect arr:(NSArray *)arr;
+
+-(void)showSortingView;
+-(void)hideSortingView;
+-(BOOL)isShow;
+
 @property (nonatomic,assign)id<sortingDelegate>mydelegate;
 @end
 

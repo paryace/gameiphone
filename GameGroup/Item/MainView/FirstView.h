@@ -35,6 +35,7 @@
 
 
 -(void)showFilterMenu;
+-(void)hideFilterMenu;
 -(void)updateFilterId:(id)responseObject;
 -(void)showErrorAlertView:(id)error;
 -(void)reloInfo:(BOOL)isRefre;

@@ -266,20 +266,19 @@
 //显示房间过滤菜单
 -(void)showFilterMenu
 {
-    NSMutableArray *menuItems = [NSMutableArray array];
     NSMutableArray * sortArr = [NSMutableArray array];
     for (int i = 0; i<arrayFilter.count; i++) {
-        KxMenuItem *menuItem = [KxMenuItem menuItem:KISDictionaryHaveKey([arrayFilter objectAtIndex:i], @"value") image:nil target:self action:@selector(pushMenuItem:)];
-        menuItem.tag =i;
-    
-        [menuItems addObject:menuItem];
-        
         NSString *str = [GameCommon getNewStringWithId:KISDictionaryHaveKey([arrayFilter objectAtIndex:i], @"value")];
         [sortArr addObject:str];
         
     }
     [sortView showSortingViewInViewForRect:CGRectMake(0, 0, 0, 0) arr:sortArr];
 }
+-(void)hideFilterMenu{
+    [sortView hideSortingView];
+}
+
+
 #pragma mark -- 筛选
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
@@ -408,6 +407,10 @@
     [self didClickScreen];
 }
 -(void)didClickScreen{
+    if ([sortView isShow]) {
+        [self hideFilterMenu];
+        return;
+    }
     if (!self.selectCharacter) {
         UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alr show];
