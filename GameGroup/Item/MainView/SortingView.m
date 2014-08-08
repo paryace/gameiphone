@@ -82,21 +82,21 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 1;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section ==0) {
+//    if (section ==0) {
         return _contentArr.count;
-    }else{
-        return 1;
-    }
+//    }else{
+//        return 1;
+//    }
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section ==0) {
+//    if (indexPath.section ==0) {
         static NSString *identifier = @"cell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
@@ -104,20 +104,20 @@
         }
         cell.textLabel.text = _contentArr[indexPath.row];
         return cell;
-    }else{
-        static NSString *identifier = @"cell2";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-        if (!cell) {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
-        NSArray *arr = [NSArray arrayWithObjects:@"全部",@"朋友",@"只看女", nil];
-        UISegmentedControl *seg= [[UISegmentedControl alloc ]initWithItems:arr];
-        seg.frame = CGRectMake(10, 5, 300, 40);
-        
-        [seg addTarget:self action:@selector(didClickSegMent:) forControlEvents:UIControlEventValueChanged];
-        [cell addSubview:seg];
-        return cell;
-    }
+//    }else{
+//        static NSString *identifier = @"cell2";
+//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+//        if (!cell) {
+//            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+//        }
+//        NSArray *arr = [NSArray arrayWithObjects:@"全部",@"朋友",@"只看女", nil];
+//        UISegmentedControl *seg= [[UISegmentedControl alloc ]initWithItems:arr];
+//        seg.frame = CGRectMake(10, 5, 300, 40);
+//        
+//        [seg addTarget:self action:@selector(didClickSegMent:) forControlEvents:UIControlEventValueChanged];
+//        [cell addSubview:seg];
+//        return cell;
+//    }
 }
 -(void)didClickSegMent:(UISegmentedControl*)sender
 {

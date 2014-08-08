@@ -134,7 +134,6 @@
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-//        [keysArr removeAllObjects];
         [dataDict removeAllObjects];
         dataDict = result;
         [keysArr addObjectsFromArray:keys];
@@ -150,52 +149,10 @@
 
             }
         }
-        
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_rTableView reloadData];
         });
     });
-    
-    
-    
-    
-    
-    
-    
-    
-    //
-    //    hud.labelText = @"获取中...";
-    //    //    [hud showAnimated:YES whileExecutingBlock:^{
-    //    NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-    //
-    //    NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
-    //    NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-    //
-    //    keysArr = [userinfo objectForKey:@"nameKey"];
-    //    keysArr  =[keysArr sortedArrayUsingSelector:@selector(compare:)];
-    //
-    //
-    //    NSMutableArray *customArr = [NSMutableArray array];
-    //    for (int i =0; i<keys.count; i++) {
-    //        NSArray *array = [result objectForKey:keys[i]];
-    //        for (NSMutableDictionary *dic in array) {
-    //            [dic setValue:@"1" forKey:@"choose"];
-    //            [dic setValue:@"friends" forKeyPath:@"tabType"];
-    //            [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
-    //        }
-    //        [customArr addObjectsFromArray:array];
-    //    }
-    ////    NSArray *sortedResources = [[NSArray arrayWithArray:customArr] sortedArrayUsingSelector:@selector(compare:)];
-    //
-    //    for (int i =0;i<customArr.count;i++) {
-    //        NSMutableDictionary *dic = customArr[i];
-    //        [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"row"];
-    //        NSLog(@"---------%@",KISDictionaryHaveKey(dic, @"row"));
-    //
-    //        [m_rArray addObject:dic];
-    //    }
-    //    
-    //    [m_rTableView reloadData];
 }
 
 
@@ -224,7 +181,7 @@
         headImageView.imageURL = [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"];
         [m_shareView addSubview:headImageView];
         
-        titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 10, 150, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 10, 145, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         
         CGSize size = [SHAREMESSAGE sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:CGSizeMake(160, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
         
@@ -274,12 +231,13 @@
 }
 
 #pragma mark ---分享方法
--(void)shareToqq:(UIButton *)sender
+//-(void)shareToqq:(UIButton *)sender
+-(void)shareToQQ:(NSInteger)sender
 {
     NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
     
-    if (m_shareBtn.tag ==10001) {
-        
+//    if (m_shareBtn.tag ==10001) {
+    if (sender ==10001) {
         [[ShareToOther singleton] onTShareImage:img Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL(self.roomId,self.gameId)];
     }else{
         
@@ -416,11 +374,13 @@
     switch (sender.tag) {
         case 100:
 //            str=@"qq";
-            [self buildShareViewWithWhere:YES];
+            [self shareToQQ:10001];
+//            [self buildShareViewWithWhere:YES];
             break;
         case 101:
 //            str=@"微信";
-            [self buildShareViewWithWhere:NO];
+            [self shareToQQ:10002];
+//            [self buildShareViewWithWhere:NO];
             break;
         case 102:
             str=@"群组";
