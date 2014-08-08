@@ -107,18 +107,23 @@
 
 //    [self.view addSubview:m_countTf];
     
+    
+    UIImageView *imgVc = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
+    imgVc.image = KUIImage(@"group_info");
+    [mainScroll addSubview:imgVc];
+    
     m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
-    m_miaoshuTV.backgroundColor = [UIColor whiteColor];
-    m_miaoshuTV.layer.borderWidth = 1;
-    m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
-    m_miaoshuTV.layer.cornerRadius = 5;
-    m_miaoshuTV.layer.masksToBounds=YES;
+    m_miaoshuTV.backgroundColor = [UIColor clearColor];
+//    m_miaoshuTV.layer.borderWidth = 1;
+//    m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
+//    m_miaoshuTV.layer.cornerRadius = 5;
+//    m_miaoshuTV.layer.masksToBounds=YES;
     m_miaoshuTV.delegate = self;
     [mainScroll addSubview:m_miaoshuTV];
     
     placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15,165, 200, 20)];
     placeholderL.backgroundColor = [UIColor clearColor];
-    placeholderL.textColor = [UIColor grayColor];
+    placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
     placeholderL.text = @"填写组队描述……";
     placeholderL.font = [UIFont systemFontOfSize:13.0];
     [mainScroll addSubview:placeholderL];
@@ -232,16 +237,18 @@
 
 -(UITextField *)buildTextFieldWithFrame:(CGRect)frame placeholder:(NSString *)placeholder rightImg:(NSString *)rightImg textColor:(UIColor *)textColor backgroundColor:(UIColor *)bgColor font:(CGFloat)font textAlignment:(NSTextAlignment)textAlignment
 {
-    UIView *customView = [[UIView alloc]initWithFrame:frame];
-    customView.backgroundColor = [UIColor whiteColor];
-    customView.layer.borderWidth = 1;
-    customView.layer.borderColor = [[UIColor whiteColor]CGColor];
-    customView.layer.cornerRadius = 5;
-    customView.layer.masksToBounds=YES;
+    UIImageView *customView = [[UIImageView alloc]initWithFrame:frame];
+    customView.image = KUIImage(@"group_cardtf");
+    customView.userInteractionEnabled = YES;
+//    customView.backgroundColor = [UIColor whiteColor];
+//    customView.layer.borderWidth = 1;
+//    customView.layer.borderColor = [[UIColor whiteColor]CGColor];
+//    customView.layer.cornerRadius = 5;
+//    customView.layer.masksToBounds=YES;
 
     
     UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-25, frame.size.height)];
-    tf.backgroundColor = bgColor;
+    tf.backgroundColor = [UIColor clearColor];
     tf.textColor =textColor;
     tf.textAlignment = textAlignment;
     tf.font = [UIFont systemFontOfSize:font];
@@ -458,7 +465,7 @@
     }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 215+startX, nameSize.width, 20);
+    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 215, nameSize.width, 20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
 }
 

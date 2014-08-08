@@ -51,13 +51,13 @@
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     
     if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
         firstView.selectCharacter = nil;
         firstView.selectType = nil;
         [firstView setTitleInfo];
         [firstView initSearchConditions];
     }
-    
+    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
 
     if (seg.selectedSegmentIndex==1) {
         [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
@@ -311,7 +311,7 @@
 #pragma mark --解散队伍
 -(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic{
     [[ItemManager singleton] dissoTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] reSuccess:^(id responseObject) {
-        [self showMessageWindowWithContent:@"解散成功" imageType:1];
+        [self showMessageWindowWithContent:@"解散成功" imageType:0];
     } reError:^(id error) {
         [self showAlertDialog:error];
     }];
