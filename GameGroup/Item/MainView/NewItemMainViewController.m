@@ -28,6 +28,9 @@
     UISegmentedControl *seg ;
     UIButton* sortingBtn;
     MsgNotifityView * dotV;
+    
+    NSString *userid;
+    
 }
 @end
 
@@ -38,12 +41,24 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+
     }
     return self;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    
+    if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+        firstView.selectCharacter = nil;
+        firstView.selectType = nil;
+        [firstView setTitleInfo];
+        [firstView initSearchConditions];
+    }
+    
+
     if (seg.selectedSegmentIndex==1) {
         [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
     }else{
@@ -65,6 +80,7 @@
     topImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
     topImageView.image = KUIImage(@"nav_bg");
     [self.view addSubview:topImageView];
+    
     
     
     UIImageView *segBgImg = [[UIImageView alloc]initWithImage:KUIImage(@"team_seg_black")];
@@ -119,6 +135,8 @@
     firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
+    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
     [customView addSubview:firstView];
     [self getMyRoomFromNet];
     [self reloadMsgCount];

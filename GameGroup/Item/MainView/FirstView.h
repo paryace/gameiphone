@@ -42,7 +42,7 @@
 -(void)initSearchConditions;//使用上次的搜索条件搜索
 -(void)InitializeInfo:(NSDictionary*)mainDict;//拿偏好页面的条件搜索
 -(void)hideDrowList;//隐藏弹出菜单
-
+-(void)setTitleInfo;
 @end
 
 @protocol firstViewDelegate <NSObject>
