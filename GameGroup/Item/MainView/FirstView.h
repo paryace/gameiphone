@@ -12,13 +12,14 @@
 #import "DropDownChooseDelegate.h"
 #import "DWTagList.h"
 #import "SortingView.h"
+#import "DropDownListView.h"
 
 @protocol firstViewDelegate;
 @interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource,DWTagDelegate,sortingDelegate>
 {
     DWTagList *tagList;
 }
-
+@property(nonatomic,strong)DropDownListView *dropDownView;
 @property(nonatomic,strong)UITableView *myTableView;
 @property(nonatomic,strong)UIButton *searchRoomBtn;
 @property(nonatomic,strong)NSMutableArray *firstDataArray;

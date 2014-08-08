@@ -12,7 +12,6 @@
 #import "NewCreateItemViewController.h"
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"
-#import "DropDownListView.h"
 #import "CreateTeamCell.h"
 #import "ItemManager.h"
 #import "KxMenu.h"
@@ -20,7 +19,7 @@
 @implementation FirstView
 {
     UITableView *m_myTabelView;
-    DropDownListView * dropDownView;
+//    DropDownListView * dropDownView;
     UITextField *roleTextf;
     UISearchBar * mSearchBar;
     UIView *tagView;
@@ -61,9 +60,9 @@
         arrayType = [NSArray array];
         arrayFilter = [NSArray array];
         //菜单
-        dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,0, 320, 40) dataSource:self delegate:self];
-        dropDownView.mSuperView = self;
-        [self addSubview:dropDownView];
+        self.dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,0, 320, 40) dataSource:self delegate:self];
+        self.dropDownView.mSuperView = self;
+        [self addSubview:self.dropDownView];
         
         m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40, frame.size.width, frame.size.height-40) style:UITableViewStylePlain];
         m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -99,16 +98,16 @@
         mSearchBar.delegate = self;
         [mSearchBar sizeToFit];
         [tableheadView addSubview:mSearchBar];
-        screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25)];
-        [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
-        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
-        [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
-        [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
-        screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
-        screenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-        [screenBtn.layer setMasksToBounds:YES];
-        [screenBtn.layer setCornerRadius:3];
-        [tableheadView addSubview:screenBtn];
+//        screenBtn = [[UIButton alloc]initWithFrame:CGRectMake(mSearchBar.bounds.size.width,(44-25)/2, 50, 25)];
+//        [screenBtn setTitle:@"收藏" forState:UIControlStateNormal];
+//        [screenBtn addTarget:self action:@selector(collectionBtn:) forControlEvents:UIControlEventTouchUpInside];
+//        [screenBtn setBackgroundImage:KUIImage(@"blue_small_normal") forState:UIControlStateNormal];
+//        [screenBtn setBackgroundImage:KUIImage(@"blue_small_click") forState:UIControlStateHighlighted];
+//        screenBtn.titleLabel.font = [UIFont boldSystemFontOfSize:12.0f];
+//        screenBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+//        [screenBtn.layer setMasksToBounds:YES];
+//        [screenBtn.layer setCornerRadius:3];
+//        [tableheadView addSubview:screenBtn];
         m_myTabelView.tableHeaderView = tableheadView;
         //标签布局
         tagView = [[UIView alloc] initWithFrame:CGRectMake(0, 40+44, 320, kScreenHeigth-40)];
@@ -124,9 +123,9 @@
         [self addFooter];
         [self addHeader];
         
-        [dropDownView setTitle:@"请选择角色" inSection:0];
-        [dropDownView setTitle:@"选择分类" inSection:1];
-        [dropDownView.mTableView reloadData];
+        [self.dropDownView setTitle:@"请选择角色" inSection:0];
+        [self.dropDownView setTitle:@"选择分类" inSection:1];
+        [self.dropDownView.mTableView reloadData];
         
        hud = [[MBProgressHUD alloc] initWithView:self];
         hud.labelText = @"搜索中...";
@@ -169,14 +168,14 @@
 -(void)setTitleInfo{
     mSearchBar.text = selectDescription?selectDescription:@"";
     if (self.selectCharacter) {
-        [dropDownView setTitle:[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(self.selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(self.selectCharacter, @"name")] inSection:0];
+        [self.dropDownView setTitle:[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(self.selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(self.selectCharacter, @"name")] inSection:0];
     }else{
-        [dropDownView setTitle:@"请选择角色" inSection:0];
+        [self.dropDownView setTitle:@"请选择角色" inSection:0];
     }
     if (self.selectType) {
-        [dropDownView setTitle:KISDictionaryHaveKey(self.selectType, @"value") inSection:1];
+        [self.dropDownView setTitle:KISDictionaryHaveKey(self.selectType, @"value") inSection:1];
     }else{
-        [dropDownView setTitle:@"选择分类" inSection:1];
+        [self.dropDownView setTitle:@"选择分类" inSection:1];
     }
 }
 
@@ -224,7 +223,7 @@
     selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
     self.selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
     if (!self.selectCharacter) {
-        [dropDownView showHide:0];
+        [self.dropDownView showHide:0];
         return;
     }
     [self reloInfo:YES];
@@ -243,8 +242,8 @@
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayType = responseObject;
-        [dropDownView.mTableView reloadData];
-        [dropDownView resetFrame];
+        [self.dropDownView.mTableView reloadData];
+        [self.dropDownView resetFrame];
     }
 }
 #pragma mark -- 标签请求成功通知
@@ -594,7 +593,7 @@
         [self reloadView:40 offWidth:0 offWidth2:40];
         [self reloInfo:NO];
     }else{
-        [self reloadView:40 offWidth:60 offWidth2:40];
+        [self reloadView:40 offWidth:0 offWidth2:40];
     }
     
 

@@ -594,6 +594,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [self showMessageWindowWithContent:@"申请成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [self showErrorDialog:error];

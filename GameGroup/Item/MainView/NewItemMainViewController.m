@@ -17,6 +17,7 @@
 #import "NewCreateItemViewController.h"
 #import "PreferencesMsgManager.h"
 #import "NewCreateItemViewController.h"
+#import "KKChatController.h"
 @interface NewItemMainViewController ()
 {
     UIView *customView;
@@ -100,6 +101,7 @@
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"team_notifation") forState:UIControlStateNormal];
     createBtn.backgroundColor = [UIColor clearColor];
+    createBtn.hidden = YES;
     [createBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:createBtn];
     //数字红点
@@ -126,6 +128,13 @@
 
 -(void)sortingList:(id)sender
 {
+    if (firstView.dropDownView.isShow) {
+        [firstView.dropDownView showHide:0];
+        [firstView.dropDownView showHide:1];
+    }
+    
+    
+    
     if (seg.selectedSegmentIndex ==0) {
         [firstView didClickScreen];//排序
     }else{
@@ -258,17 +267,25 @@
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     
-    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        itemInfo.isCaptain = YES;
-    }else{
-        itemInfo.isCaptain =NO;
-    }
-    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-    [self.navigationController pushViewController:itemInfo animated:YES];
-    
+//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+//        itemInfo.isCaptain = YES;
+//    }else{
+//        itemInfo.isCaptain =NO;
+//    }
+//    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+//    [self.navigationController pushViewController:itemInfo animated:YES];
+   
+    KKChatController *kkchat = [[KKChatController alloc]init];
+    kkchat.unreadMsgCount  = 0;
+    kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
+    kkchat.type = @"group";
+    kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")];
+    kkchat.isTeam = YES;
+    [self.navigationController pushViewController:kkchat animated:YES];
 }
 
 -(void)didClickCreateTeamWithView:(MyRoomView *)view
