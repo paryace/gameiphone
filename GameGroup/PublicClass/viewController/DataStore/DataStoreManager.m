@@ -4906,8 +4906,8 @@
     NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"realm")];
     NSString * teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"teamUserId")];
     NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
-    NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and teamUserId==[c]%@",gameid,teamUserId];
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and teamUserId==[c]%@",gameid,teamUserId];
         DSCreateTeamUserInfo * commonMsgTeamUser = [DSCreateTeamUserInfo MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
         if (!commonMsgTeamUser)
             commonMsgTeamUser = [DSCreateTeamUserInfo MR_createInContext:localContext];
