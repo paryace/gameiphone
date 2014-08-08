@@ -39,6 +39,7 @@
         self.msgLable.textAlignment = NSTextAlignmentCenter;
         self.msgLable.layer.masksToBounds = YES;
         self.msgLable.layer.cornerRadius = 3;
+        self.msgLable.numberOfLines = 0;
         [self addSubview:self.msgLable];
     }
     return self;

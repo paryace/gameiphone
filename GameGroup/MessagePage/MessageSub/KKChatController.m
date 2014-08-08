@@ -761,11 +761,12 @@ UINavigationControllerDelegate>
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
         cell.msgLable.text = msg;
+//        cell.msgLable.text = @"很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长";
         CGSize textSize = [cell.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
         cell.lineImage1.frame=CGRectMake(5, 10, (320-textSize.width)/2-10, 1);
         cell.lineImage2.frame=CGRectMake(cell.timeLable.frame.origin.x+cell.timeLable.frame.size.width+5, 10, (320-textSize.width)/2-10, 1);
-        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(320, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
@@ -1225,6 +1226,15 @@ UINavigationControllerDelegate>
     }
     if (kkChatMsgType == KKChatMsgTypeSystem)
     {
+//        CGFloat theH = hight;
+//        theH += padding*2 + 10;
+//        CGFloat height = theH;
+//        if (self.isTeam) {
+//            if (height<47) {
+//                height+=47;
+//            }
+//        }
+//        return height;
         return 47;
     }
     NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
@@ -1238,7 +1248,7 @@ UINavigationControllerDelegate>
     CGFloat height = theH;
     if (self.isTeam) {
         if (height<70) {
-            height+=10;
+            height+=13;
         }
     }
     return height;
@@ -1421,6 +1431,8 @@ UINavigationControllerDelegate>
         }
         case KKChatMsgTypeSystem:
         {
+//            CGSize msgLabletextSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(200, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+//            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:msgLabletextSize.width],[NSNumber numberWithFloat:msgLabletextSize.height], nil];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
         }
         case KKChatMsgHistory:

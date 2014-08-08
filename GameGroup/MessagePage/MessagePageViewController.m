@@ -614,14 +614,11 @@
     }
     else if (3 == type)//关注
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     else if (4 == type)//新闻
     {
@@ -675,7 +672,6 @@
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {
             [DataStoreManager clearJoinGroupApplicationMsg:^(BOOL success) {
-                
             }];
             [DataStoreManager deleteJoinGroupApplication];
         }
@@ -688,7 +684,6 @@
                 [DataStoreManager deleteSayHiMsgWithSenderAndSayType:COMMONUSER SayHiType:@"2"];//删除打所有打招呼的消息
             }
             [DataStoreManager deleteMsgsWithSender:[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"senderId")] Type:COMMONUSER];
-            
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];

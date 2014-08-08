@@ -448,7 +448,7 @@
     NSPredicate * predicateMsg = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
     DSGroupMsgs * hasedmsg = [DSGroupMsgs MR_findFirstWithPredicate:predicateMsg inContext:localContext];
     if (!hasedmsg) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@",KISDictionaryHaveKey(msg, @"groupId"), KISDictionaryHaveKey(msg, @"msgType")];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",KISDictionaryHaveKey(msg, @"groupId"), KISDictionaryHaveKey(msg, @"msgType"),@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         int unread;
         if (!thumbMsgs){
@@ -467,7 +467,7 @@
         thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
         thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
         thumbMsgs.status = @"1";
-        thumbMsgs.sayHiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
+        thumbMsgs.sayHiType = @"1";
         thumbMsgs.payLoad = KISDictionaryHaveKey(msg, @"payload");
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
         

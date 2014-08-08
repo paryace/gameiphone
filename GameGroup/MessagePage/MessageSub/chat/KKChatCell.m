@@ -73,7 +73,7 @@
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [self.contentView addSubview:self.activityView];
         
-        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 30, 15)];
+        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 30, 19)];
         [self.levelLable setTextAlignment:NSTextAlignmentCenter];
         self.levelLable.backgroundColor = [UIColor blueColor];
         self.levelLable.layer.cornerRadius = 3;

@@ -70,7 +70,7 @@
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
             [bgImageView addSubview: sectionBtnIv];
             if (i<sectionNum && i != 0) {
-                UIImageView *lineView = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
+                UIImageView *lineView = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/8, 1, frame.size.height-(frame.size.height/4))];
                 lineView.image = KUIImage(@"chat_ vertical_line");
                 [bgImageView addSubview:lineView];
             }
