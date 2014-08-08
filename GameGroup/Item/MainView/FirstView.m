@@ -169,7 +169,7 @@
 -(void)setTitleInfo{
     mSearchBar.text = selectDescription?selectDescription:@"";
     if (self.selectCharacter) {
-        [dropDownView setTitle:KISDictionaryHaveKey(self.selectCharacter, @"name") inSection:0];
+        [dropDownView setTitle:[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(self.selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(self.selectCharacter, @"name")] inSection:0];
     }else{
         [dropDownView setTitle:@"请选择角色" inSection:0];
     }
