@@ -203,6 +203,14 @@
     if (shiptype ==2) {
         bView =[[BottomView alloc]initWithFrame:CGRectMake(0,0, 160, 50)];
         [bView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseRoles:)]];
+        if (self.infoDict) {
+            bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
+            bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
+            bView.gameIcon.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(self.infoDict, @"gameid")]];
+            
+            bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
+            bView.topLabel.hidden = YES;
+        }
         [view addSubview:bView];
 
     }

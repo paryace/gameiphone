@@ -519,7 +519,7 @@
     }else{
         itemInfo.isCaptain =NO;
     }
-    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:roleDict];
+    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:self.selectCharacter];
     itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
