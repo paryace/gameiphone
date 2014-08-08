@@ -331,10 +331,12 @@ static ItemManager *itemManager = NULL;
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
         [DataStoreManager changGroupMsgLocation:groupId UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         [DataStoreManager updatePosition:roomId GameId:gameid UserId:userid TeamPosition:selectType];
-        [selectType setValue:roomId forKey:@"roomId"];
-        [selectType setValue:gameid forKey:@"gameId"];
-        [selectType setValue:userid forKey:@"userId"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:selectType];
+        
+        NSMutableDictionary * tDic = [selectType mutableCopy];
+        [tDic setValue:roomId forKey:@"roomId"];
+        [tDic setValue:gameid forKey:@"gameId"];
+        [tDic setValue:userid forKey:@"userId"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:tDic];
         if (resuccess) {
             resuccess(responseObject);
         }

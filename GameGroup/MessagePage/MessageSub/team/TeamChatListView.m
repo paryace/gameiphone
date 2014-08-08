@@ -700,6 +700,7 @@
 {
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         if (currentExtendSection==1) {
+            tableView.editing = NO;
             NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
                  [self showToastAlertView:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍"];
