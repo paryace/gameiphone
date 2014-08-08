@@ -39,6 +39,7 @@
 
 #define padding 20
 #define spaceEnd 100
+#define maxWight 200
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
 
@@ -283,7 +284,6 @@ UINavigationControllerDelegate>
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"位置" inSection:0];
-//        [self.dropDownView setTitle:@"队员列表" inSection:1];
         [self.dropDownView setTitle:@"申请" inSection:2];
         [self.view addSubview:self.dropDownView];
         self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
@@ -761,12 +761,11 @@ UINavigationControllerDelegate>
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
         cell.msgLable.text = msg;
-//        cell.msgLable.text = @"很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长";
         CGSize textSize = [cell.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:12] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
         cell.timeLable.frame=CGRectMake((320-textSize.width)/2, 2, textSize.width, textSize.height);
         cell.lineImage1.frame=CGRectMake(5, 10, (320-textSize.width)/2-10, 1);
         cell.lineImage2.frame=CGRectMake(cell.timeLable.frame.origin.x+cell.timeLable.frame.size.width+5, 10, (320-textSize.width)/2-10, 1);
-        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        CGSize msgLabletextSize = [cell.msgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(maxWight, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
@@ -1226,16 +1225,16 @@ UINavigationControllerDelegate>
     }
     if (kkChatMsgType == KKChatMsgTypeSystem)
     {
-//        CGFloat theH = hight;
-//        theH += padding*2 + 10;
-//        CGFloat height = theH;
-//        if (self.isTeam) {
-//            if (height<47) {
-//                height+=47;
-//            }
-//        }
-//        return height;
-        return 47;
+        CGFloat theH = hight;
+        theH += padding*2 ;
+        CGFloat height = theH;
+        if (self.isTeam) {
+            if (height<40) {
+                height+=40;
+            }
+        }
+        return height;
+//        return 47;
     }
     NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
     CGFloat theH = hight;
@@ -1431,13 +1430,15 @@ UINavigationControllerDelegate>
         }
         case KKChatMsgTypeSystem:
         {
-//            CGSize msgLabletextSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(200, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
-//            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:msgLabletextSize.width],[NSNumber numberWithFloat:msgLabletextSize.height], nil];
-            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
+            CGSize msgLabletextSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(maxWight, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:msgLabletextSize.width],[NSNumber numberWithFloat:msgLabletextSize.height], nil];
+//            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
+            break;
         }
         case KKChatMsgHistory:
         {
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:25], nil];
+            break;
         }
         case KKChatMsgTeamInvite:
         {
