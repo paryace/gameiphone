@@ -128,14 +128,8 @@
 
 -(void)sortingList:(id)sender
 {
-    if (firstView.dropDownView.isShow) {
-        [firstView.dropDownView showHide:0];
-        [firstView.dropDownView showHide:1];
-    }
-    
-    
-    
     if (seg.selectedSegmentIndex ==0) {
+        [firstView hideDrowList];
         [firstView didClickScreen];//排序
     }else{
         NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];

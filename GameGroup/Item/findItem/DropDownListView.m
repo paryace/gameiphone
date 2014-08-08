@@ -71,40 +71,24 @@
             sectionBtn.titleLabel.font = [UIFont systemFontOfSize:kFontSize(28)];
             [self addSubview:sectionBtn];
             
-            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
-            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark.png"]];
+            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 15, 15)];
+            [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
             [self addSubview: sectionBtnIv];
-//            if (i<sectionNum && i != 0) {
-//                UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(sectionWidth*i, frame.size.height/4, 1, frame.size.height/2)];
-//                lineView.backgroundColor = [UIColor lightGrayColor];
-//                [self addSubview:lineView];
-//            }
-            
-            
-            
             switch (i) {
                 case 0:
-//                    tabIcon.frame = CGRectMake(5,(self.frame.size.height-20)/2, 20, 20);
                     sectionBtn.frame = CGRectMake(0,1, 227, frame.size.height-2);
                     sectionBtnIv.frame = CGRectMake(227-16, (self.frame.size.height-12)/2, 12, 12);
-                    
                     break;
                 case 1:
-//                    tabIcon.frame = CGRectMake(227+5,(self.frame.size.height-20)/2, 20, 20);
                     sectionBtn.frame = CGRectMake(228, 1, 92, frame.size.height-2);
                     sectionBtnIv.frame = CGRectMake(320-16, (self.frame.size.height-12)/2, 12, 12);
-
                     break;
                 default:
                     break;
             }
-            
-            
-            
         }
-        
     }
     return self;
 }
@@ -114,27 +98,36 @@
     NSInteger section = btn.tag - SECTION_BTN_TAG_BEGIN;
     [self showHide:section];
 }
-
-
 -(void)showHide:(NSInteger)section{
     BOOL isOpen = [self.dropDownDelegate clickAtSection:section];
     if (isOpen) {
-        UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
-        [UIView animateWithDuration:0.3 animations:^{
-            currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-        }];
+        [self hideView];
         if (currentExtendSection == section) {
             [self hideExtendedChooseView];
         }else{
             currentExtendSection = section;
-            currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
-            [UIView animateWithDuration:0.3 animations:^{
-                currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-            }];
+            [self showView];
             [self showChooseListViewInSection:currentExtendSection];
         }
     }
-
+}
+-(void)hideView{
+    UIImageView *currentIV= (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN +currentExtendSection)];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
+    }];
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:UIColorFromRGBA(0xdaeefa, 1) forState:UIControlStateNormal];
+}
+-(void)showView{
+    UIImageView *currentIV = (UIImageView *)[self viewWithTag:SECTION_IV_TAG_BEGIN + currentExtendSection];
+    [UIView animateWithDuration:0.3 animations:^{
+        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
+        [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
+    }];
+    UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
+    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
 }
 
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section
@@ -213,11 +206,7 @@
 
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
-    UIImageView *currentIV = (UIImageView *)[self viewWithTag:(SECTION_IV_TAG_BEGIN + currentExtendSection)];
-    [UIView animateWithDuration:0.3 animations:^{
-        currentIV.transform = CGAffineTransformRotate(currentIV.transform, DEGREES_TO_RADIANS(180));
-    }];
-    [self hideExtendedChooseView];
+    [self showHide:currentExtendSection];
 }
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -239,9 +228,7 @@
             chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
         }
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
-        UIButton *currentSectionBtn = (UIButton *)[self viewWithTag:SECTION_BTN_TAG_BEGIN + currentExtendSection];
-        [currentSectionBtn setTitle:chooseCellTitle forState:UIControlStateNormal];
-        [self sectionBtnTouch:currentSectionBtn];
+        [self showHide:currentExtendSection];
     }
 }
 

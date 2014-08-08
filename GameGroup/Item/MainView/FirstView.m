@@ -135,6 +135,7 @@
     return self;
 }
 
+
 //拿偏好页的条件搜索
 -(void)InitializeInfo:(NSDictionary*)mainDict
 {
@@ -360,6 +361,15 @@
 {
     return 0;
 }
+
+
+-(void)hideDrowList{
+    if (self.dropDownView.isShow) {
+        [self.dropDownView hideView];
+        [self.dropDownView hideExtendedChooseView];
+    }
+}
+
 #pragma mark---收藏方法
 -(void)collectionBtn:(id)sender
 {
