@@ -184,7 +184,7 @@
     if (section ==0) {
         label.text =@"我创建的队伍";
         img.image = KUIImage(@"team_mine");
-        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
+//        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
     }else{
         img.image = KUIImage(@"team_join");
         label.text = @"我加入的队伍";
