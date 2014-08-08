@@ -134,7 +134,7 @@
     }];
     
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
-    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
+    [btn setTitleColor:UIColorFromRGBA(0x339adf, 1)forState:UIControlStateNormal];
 
 }
 
