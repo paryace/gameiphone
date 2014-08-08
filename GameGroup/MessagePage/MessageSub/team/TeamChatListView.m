@@ -467,6 +467,10 @@
 //就位确认数据
 -(void)getmemberList{
     self.memberList = [DataStoreManager getMemberList:self.groipId];
+    
+//    [self.memberList sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
+//        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
+//    }];
 }
 
 -(void)showToastAlertView:(NSString*)msgText
