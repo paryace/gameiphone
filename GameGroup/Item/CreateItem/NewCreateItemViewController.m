@@ -184,6 +184,7 @@
         }
         selectPeopleCount = [[ItemManager singleton] createMaxVols];
         [self initText];
+        
         [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
         [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
@@ -297,6 +298,8 @@
             selectType =[m_tagsArray objectAtIndex:[m_tagsPickView selectedRowInComponent:0]];
             m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
             [m_tagTf resignFirstResponder];
+            
+            m_countTf.text = [NSString stringWithFormat:@"%@人",KISDictionaryHaveKey(selectType,@"mask")];
             [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
             [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         }
@@ -379,7 +382,7 @@
     if (menCount.count>0) {
         [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
         [m_countPickView reloadInputViews];
-        selectPeopleCount = [m_countArray objectAtIndex:0];
+//        selectPeopleCount = [m_countArray objectAtIndex:0];
 
         BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
         switch (isOpen) {
@@ -401,10 +404,10 @@
     [m_countArray removeAllObjects];
     [m_countArray addObjectsFromArray:personArray];
     [m_countPickView reloadInputViews];
-    if (m_countArray.count>0) {
-        selectPeopleCount = [m_countArray objectAtIndex:0];
-        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")]];
-    }
+//    if (m_countArray.count>0) {
+//        selectPeopleCount = [m_countArray objectAtIndex:0];
+//        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")]];
+//    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -481,10 +484,10 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-    if (!selectPeopleCount) {
-        [self showAlertViewWithTitle:@"提示" message:@"请选择人数" buttonTitle:@"OK"];
-        return;
-    }
+//    if (!selectPeopleCount) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请选择人数" buttonTitle:@"OK"];
+//        return;
+//    }
     if ([GameCommon isEmtity:m_miaoshuTV.text]) {
         [self showAlertViewWithTitle:@"提示" message:@"组队描述内容不能为空" buttonTitle:@"OK"];
         return;
@@ -494,7 +497,12 @@
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] forKey:@"typeId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
+    if (selectPeopleCount) {
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")] forKey:@"maxVol"];
+    }else{
+        [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")] forKey:@"maxVol"];
+    }
+    
     [paramDict setObject:[NSString stringWithFormat:@"%@%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"simpleRealm")],@"-",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"name")]] forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
     [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
