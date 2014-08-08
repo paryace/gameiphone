@@ -244,10 +244,11 @@
 //    customView.layer.masksToBounds=YES;
 
     
-    UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(50, 0, frame.size.width-25, frame.size.height)];
+    UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(45, 0, frame.size.width-25, frame.size.height)];
     tf.backgroundColor = [UIColor clearColor];
     tf.textColor =textColor;
     tf.textAlignment = textAlignment;
+    tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     tf.font = [UIFont systemFontOfSize:font];
     tf.placeholder = placeholder;
     [customView addSubview:tf];
