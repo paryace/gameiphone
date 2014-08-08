@@ -598,25 +598,19 @@
 - (void)cleanUnReadCountWithType:(NSInteger)type Content:(NSString*)pre typeStr:(NSString*)typeStr
 {
     if (1 == type) {//头衔、角色、战斗力
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     else if (2 == type)//推荐的人
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"12345"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     else if (3 == type)//关注
     {
@@ -631,36 +625,27 @@
     }
     else if (4 == type)//新闻
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"sys00000011"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     else if (5 == type)//打招呼
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",@"1234567wxxxxxxxxx"];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     else if (6 == type)//申请加入群
     {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"msgType==[c]%@",GROUPAPPLICATIONSTATE];
             DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
             thumbMsgs.unRead = @"0";
-        }
-         completion:^(BOOL success, NSError *error) {
-             
-         }];//清数字
+        }];//清数字
     }
     
 }
@@ -707,6 +692,7 @@
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        [self displayTabbarNotification];
     }
 }
 #pragma mark 接收到于我相关消息通知
@@ -726,7 +712,7 @@
 }
 #pragma mark --接收到新的偏好消息刷新消息数量
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{
-    [self initTeamRecommendMsg];
+//    [self initTeamRecommendMsg];
 }
 
 -(void)initTeamRecommendMsg{

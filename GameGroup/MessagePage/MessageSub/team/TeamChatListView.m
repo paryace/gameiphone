@@ -96,7 +96,7 @@
     }else if(section == 2){//申请
         [self getZU];
         if (!self.teamNotifityMsg||self.teamNotifityMsg.count==0) {
-            [self showErrorAlertView];
+            [self showToastAlertView:@"暂无队友申请"];
             return;
         }
     }
@@ -134,7 +134,7 @@
     }];
     
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
-    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
+    [btn setTitleColor:UIColorFromRGBA(0x339adf, 1)forState:UIControlStateNormal];
 
 }
 
@@ -469,9 +469,9 @@
     self.memberList = [DataStoreManager getMemberList:self.groipId];
 }
 
--(void)showErrorAlertView
+-(void)showToastAlertView:(NSString*)msgText
 {
-    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"暂无队友申请" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:msgText delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
     [alert show];
 }
 
@@ -678,6 +678,9 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection==1) {
+        if (self.teamUsershipType) {
+            return @"删除";
+        }
         return @"";
     }
     return @"删除";
@@ -686,6 +689,9 @@
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (currentExtendSection==1) {
+        if (self.teamUsershipType) {
+            return YES;
+        }
         return NO;
     }
     return YES;
@@ -693,11 +699,32 @@
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
-        NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
-        [DataStoreManager deleteTeamNotifityMsgStateByMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msgId")] Successcompletion:^(BOOL success, NSError *error) {
-            [self.teamNotifityMsg removeObjectAtIndex:indexPath.row];
-            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
-        }];
+        if (currentExtendSection==1) {
+            tableView.editing = NO;
+            NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+                 [self showToastAlertView:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍"];
+                return;
+            }
+            [hud show:YES];
+            [[ItemManager singleton] removeFromTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] MemberTeamUserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] reSuccess:^(id responseObject) {
+                [hud hide:YES];
+                [self resetMemberList];
+                [self showToastAlertView:@"删除成功"];
+            } reError:^(id error) {
+                [hud hide:YES];
+                [self showErrorAlertView:error];
+            }];
+        }else if (currentExtendSection==2){
+            NSMutableDictionary * msgDic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
+            [DataStoreManager deleteTeamNotifityMsgStateByMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msgId")] Successcompletion:^(BOOL success, NSError *error) {
+                [self.teamNotifityMsg removeObjectAtIndex:indexPath.row];
+                [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+                if (self.teamNotifityMsg.count==0) {
+                    [self showOrHideView:currentExtendSection];
+                }
+            }];
+        }
     }
 }
 //头像默认图片
@@ -800,6 +827,10 @@
 }
 #pragma mark 人数变化
 -(void)changMemberList:(NSNotification*)notification{
+    [self resetMemberList];
+}
+
+-(void)resetMemberList{
     [self getmemberList];
     [self.mTableView reloadData];
 }

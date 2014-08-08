@@ -331,10 +331,12 @@ static ItemManager *itemManager = NULL;
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
         [DataStoreManager changGroupMsgLocation:groupId UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         [DataStoreManager updatePosition:roomId GameId:gameid UserId:userid TeamPosition:selectType];
-        [selectType setValue:roomId forKey:@"roomId"];
-        [selectType setValue:gameid forKey:@"gameId"];
-        [selectType setValue:userid forKey:@"userId"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:selectType];
+        
+        NSMutableDictionary * tDic = [selectType mutableCopy];
+        [tDic setValue:roomId forKey:@"roomId"];
+        [tDic setValue:gameid forKey:@"gameId"];
+        [tDic setValue:userid forKey:@"userId"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:tDic];
         if (resuccess) {
             resuccess(responseObject);
         }
@@ -410,6 +412,38 @@ static ItemManager *itemManager = NULL;
         }
     }];
 }
+
+
+
+#pragma mark ---删除成员
+-(void)removeFromTeam:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId MemberTeamUserId:(NSString*)memberTeamUserId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
+{
+    NSMutableDictionary * paramDict  = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:gameId  forKey:@"gameid"];
+    [paramDict setObject:roomId forKey:@"roomId"];
+    [paramDict setObject:memberId forKey:@"memberId"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"268" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [DataStoreManager deleteMenberUserInfo:memberTeamUserId GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
+            if (resuccess) {
+                resuccess(responseObject);
+            }
+        }];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailure) {
+            refailure(error);
+        }
+    }];
+    
+}
+
+
+
+
 
 #pragma mark --- 发起就位确认
 -(void)sendTeamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure{

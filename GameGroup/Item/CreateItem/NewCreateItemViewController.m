@@ -259,28 +259,6 @@
 //点击标签
 -(void)tagClick:(UIButton*)sender
 {
-//<<<<<<< HEAD
-////    NSString *str = m_miaoshuTV.text;
-////    m_miaoshuTV.text =[str stringByAppendingString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
-////    placeholderL.text = @"";
-//    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-//    
-//    NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-//    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
-//    if (textlength+tagValueLength>30) {
-//        return;
-//    }
-//    if (m_miaoshuTV.text&&m_miaoshuTV.text.length>0) {
-//        m_miaoshuTV.text =[NSString stringWithFormat:@"%@ %@",m_miaoshuTV.text,[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
-//    }else{
-//        m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-//        
-//    }
-//    placeholderL.text = @"";
-//    
-//    [self refreshZiLabelText];
-//
-//=======
     NSString *str = m_miaoshuTV.text;
     NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
     NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]]];
@@ -292,8 +270,6 @@
     m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     placeholderL.text = @"";
     [self refreshZiLabelText];
-//>>>>>>> FETCH_HEAD
-
 }
 //点击toolbar 确定button
 
@@ -307,7 +283,6 @@
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];
             [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
-            
         }
     }
     else if ([m_tagTf isFirstResponder])
@@ -315,7 +290,6 @@
         if ([m_tagsArray count] != 0) {
             selectType =[m_tagsArray objectAtIndex:[m_tagsPickView selectedRowInComponent:0]];
             m_tagTf.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")];
-            m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"mask")]];
             [m_tagTf resignFirstResponder];
             [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
             [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
@@ -423,6 +397,7 @@
     [m_countPickView reloadInputViews];
     if (m_countArray.count>0) {
         selectPeopleCount = [m_countArray objectAtIndex:0];
+        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")]];
     }
 }
 
@@ -509,8 +484,6 @@
         return;
     }
     [hud show:YES];
-    NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[NSString stringWithFormat:@"%@",sender]];
-    NSString * nickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")] forKey:@"characterId"];
     [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] forKey:@"gameid"];

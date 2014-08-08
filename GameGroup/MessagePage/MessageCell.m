@@ -97,10 +97,11 @@
             [self.dotV setMsgCount:msgCount];
         }
     }else{
-        if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"recommendfriend"] |
-            [KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHello"] ||
+        if ([KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"recommendfriend"] ||
+            [KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHello"]||
             [KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"deletePerson"]) {
-            [self.dotV simpleDot];
+            [self.dotV setMsgCount:[KISDictionaryHaveKey(message,@"unRead") intValue] IsSimple:YES];
+            
         }else{
             [self.dotV setMsgCount:[KISDictionaryHaveKey(message,@"unRead") intValue]];
         }

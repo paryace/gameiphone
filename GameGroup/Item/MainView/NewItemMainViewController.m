@@ -152,7 +152,7 @@
     }else{
         NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
         if (arr.count==2) {
-            [self showAlertViewWithTitle:@"提示" message:@"您的队伍已达到创建上线" buttonTitle:@"确定"];
+            [self showAlertViewWithTitle:@"提示" message:@"您的队伍已达到创建上限" buttonTitle:@"确定"];
             return;
         }
         [[Custom_tabbar showTabBar] hideTabBar:YES];
@@ -349,7 +349,7 @@
 
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
-    [self displayTabbarNotification];
+//    [self displayTabbarNotification];
 }
 
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag

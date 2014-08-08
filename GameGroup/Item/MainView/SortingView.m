@@ -45,23 +45,39 @@
 -(void)showSortingViewInViewForRect:(CGRect)rect arr:(NSArray *)arr
 {
     _contentArr = [NSMutableArray arrayWithArray:arr];
-    self.hidden = NO;
-
-    [UIView animateWithDuration:0.3 animations:^{
-
-    float height = 50*_contentArr.count+50;
-    _sortTb.frame = CGRectMake(0, self.frame.size.height-height, 320, height);
-    [_sortTb reloadData];
-    }];
+    [self showSortingView];
 }
+
 -(void)didClickHiddenView:(id)sender
 {
-    [UIView animateWithDuration:0.3 animations:^{
-        
-        _sortTb.frame = CGRectMake(0, self.frame.size.height, self.frame.size.width, 0);
-        self.hidden = YES;
-    }];
+    [self hideSortingView];
+}
 
+
+-(BOOL)isShow{
+    if (self.hidden ==NO) {
+        return YES;
+    }
+    return NO;
+}
+
+-(void)showSortingView{
+    if (self.hidden ==YES) {
+        [UIView animateWithDuration:0.3 animations:^{
+            float height = 50*_contentArr.count+50;
+            _sortTb.frame = CGRectMake(0, self.frame.size.height-height, 320, height);
+            [_sortTb reloadData];
+        }];
+    }
+    self.hidden = NO;
+}
+-(void)hideSortingView{
+    if (self.hidden == NO) {
+        [UIView animateWithDuration:0.3 animations:^{
+            _sortTb.frame = CGRectMake(0, self.frame.size.height, self.frame.size.width, 0);
+            self.hidden = YES;
+        }];
+    }
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -14,6 +14,8 @@
 
 -(void)setMsgCount:(NSInteger)msgCount;
 
+-(void)setMsgCount:(NSInteger)msgCount IsSimple:(BOOL)isSimple;
+
 -(void)hide;
 
 -(void)show;
