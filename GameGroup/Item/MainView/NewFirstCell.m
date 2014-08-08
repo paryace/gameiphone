@@ -50,9 +50,9 @@
         self.stopImg = [[UIImageView alloc]initWithFrame:CGRectMake(290, 35, 20, 20)];
         self.stopImg.image = KUIImage(@"palceholder");
         [self.bgView addSubview:self.stopImg];
-        
+        //消息数字红点(暂时不上，隐藏)
         self.dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(45, 5, 22, 18)];
-        [self.contentView addSubview:self.dotV];
+//        [self.contentView addSubview:self.dotV];
         
     }
     return self;

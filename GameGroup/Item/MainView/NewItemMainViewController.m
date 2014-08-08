@@ -96,15 +96,15 @@
     [sortingBtn addTarget:self action:@selector(sortingList:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sortingBtn];
 
-    
+    //收藏提示
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"team_notifation") forState:UIControlStateNormal];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:createBtn];
-    
+//    [self.view addSubview:createBtn];
+    //数字红点
     dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(40, KISHighVersion_7 ? 25 : 5, 22, 18)];
-    [self.view addSubview:dotV];
+//    [self.view addSubview:dotV];
 
     customView = [[UIView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX-50)];
     customView.backgroundColor = [UIColor grayColor];
@@ -139,7 +139,7 @@
         [self.navigationController pushViewController: create animated:YES];
     }
 }
-
+//进入偏好
 -(void)tishiing:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
