@@ -140,7 +140,7 @@
         if (buttonIndex==1) {
             [[ItemManager singleton] dissoTeam:self.itemId GameId:self.gameid reSuccess:^(id responseObject) {
                 [self.navigationController popToRootViewControllerAnimated:YES];
-                [self showMessageWindowWithContent:@"解散成功" imageType:1];
+                [self showMessageWindowWithContent:@"解散成功" imageType:0];
             } reError:^(id error) {
                 [hud hide:YES];
                 [self showAlertDialog:error];
@@ -369,7 +369,7 @@
     
     if ([KISDictionaryHaveKey(dict, @"teamUsershipType") integerValue]==0) {
         cell.MemberLable.hidden = NO;
-        cell.MemberLable.backgroundColor = [UIColor blueColor];
+        cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
         cell.MemberLable.text = @"队长";
     }else{
         cell.MemberLable.hidden = YES;
@@ -411,10 +411,10 @@
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 77)];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
     view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
     
-    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 26, 320, 50)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
+    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
     [view addSubview:view1];
     
     
@@ -525,7 +525,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 77;
+    return 87;
 }
 //-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 //{
@@ -542,7 +542,7 @@
     UIView *customView = [[UIView alloc]initWithFrame:frame];
     customView.backgroundColor =backgroundColor;
     
-    UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+    UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
     imageView.image = KUIImage(leftImg);
     [customView addSubview:imageView];
     
@@ -550,7 +550,7 @@
 //    titleLabel.text = title;
 //    [customView addSubview:titleLabel];
     
-    UILabel *titleLabel1 = [GameCommon buildLabelinitWithFrame:CGRectMake(50, 0, 260, 50) font:[UIFont systemFontOfSize:14] textColor:[UIColor whiteColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    UILabel *titleLabel1 = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 250, 62) font:[UIFont systemFontOfSize:14] textColor:[UIColor whiteColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
     titleLabel1.text = title;
     titleLabel1.numberOfLines = 0;
     titleLabel1.adjustsFontSizeToFitWidth = YES;

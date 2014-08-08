@@ -16,6 +16,7 @@
 #import "ItemManager.h"
 #import "KxMenu.h"
 #import "MJRefresh.h"
+#import "KKChatController.h"
 @implementation FirstView
 {
     UITableView *m_myTabelView;
@@ -516,17 +517,31 @@
     [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        itemInfo.isCaptain = YES;
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]) {
+        ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+        NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+        if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+            itemInfo.isCaptain = YES;
+        }else{
+            itemInfo.isCaptain =NO;
+        }
+        itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:self.selectCharacter];
+        itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+        itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+        [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
     }else{
-        itemInfo.isCaptain =NO;
+        KKChatController *kkchat = [[KKChatController alloc]init];
+        kkchat.unreadMsgCount  = 0;
+        kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
+        kkchat.type = @"group";
+        kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+        kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")];
+        kkchat.isTeam = YES;
+        [self.myDelegate didClickTableViewCellEnterNextPageWithController:kkchat];
     }
-    itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:self.selectCharacter];
-    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-    [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
+    
+    
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

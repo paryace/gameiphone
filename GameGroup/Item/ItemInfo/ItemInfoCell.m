@@ -34,28 +34,28 @@
         self.genderImgView = [[UIImageView alloc]initWithFrame:CGRectMake(175, 2, 20, 20)];
         [self addSubview:self.genderImgView];
         
-        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(195, 5, 30, 15)];
+        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(195, 6, 26, 11)];
         self.MemberLable.layer.cornerRadius = 3;
         self.MemberLable.layer.masksToBounds=YES;
         self.MemberLable.textAlignment = NSTextAlignmentCenter;
-        self.MemberLable.font = [UIFont systemFontOfSize:11];
+        self.MemberLable.font = [UIFont systemFontOfSize:10];
         self.MemberLable.textColor = [UIColor whiteColor];
         [self addSubview:self.MemberLable];
         
-        self.gameIconImgView =[[ EGOImageView alloc]initWithFrame:CGRectMake(70, 22, 15, 15)];
+        self.gameIconImgView =[[ EGOImageView alloc]initWithFrame:CGRectMake(70, 24, 15, 15)];
         self.gameIconImgView.placeholderImage = KUIImage(@"clazz_0");
         [self addSubview:self.gameIconImgView];
         
-        self.value1Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(90, 22, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.value1Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(90, 24, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value1Lb];
 
-        self.value2Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 39, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.value2Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 41, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         self.value2Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value2Lb];
 
         
-        self.value3Lb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 50, 60) font:[UIFont boldSystemFontOfSize:16] textColor:UIColorFromRGBA(0x3eacf5, 1) backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
+        self.value3Lb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 50, 60) font:[UIFont boldSystemFontOfSize:12] textColor:UIColorFromRGBA(0x3eacf5, 1) backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
         self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value3Lb];
         
@@ -78,7 +78,7 @@
     float w = size.width>185?185:size.width;
     self.nickLabel.frame = CGRectMake(70, 5, w, 15);
     self.genderImgView.frame = CGRectMake(70+w, 2, 20, 20);
-    self.MemberLable.frame = CGRectMake(70+w+20+5, 5, 30, 15);
+    self.MemberLable.frame = CGRectMake(70+w+20+5, 6, 26, 13);
 }
 
 
