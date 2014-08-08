@@ -707,6 +707,7 @@
         }
         [allMsgArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+        [self displayTabbarNotification];
     }
 }
 #pragma mark 接收到于我相关消息通知

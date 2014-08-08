@@ -494,28 +494,15 @@
         return;
     }
     [hud show:YES];
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid]  forKey:@"gameid"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] forKey:@"roomId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] forKey:@"memberId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"gameid")] forKey:@"gameid"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"268" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] Successcompletion:^(BOOL success, NSError *error) {
-            [hud hide:YES];
-            [m_dataArray removeObjectAtIndex:row];
-            [m_myTableView reloadData];
-            [self showMessageWindowWithContent:@"删除成功" imageType:0];
-        }];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        [self showAlertDialog:error];
+    [[ItemManager singleton] removeFromTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:self.gameid] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] MemberTeamUserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] reSuccess:^(id responseObject) {
         [hud hide:YES];
+        [m_dataArray removeObjectAtIndex:row];
+        [m_myTableView reloadData];
+        [self showMessageWindowWithContent:@"删除成功" imageType:0];
+    } reError:^(id error) {
+        [hud hide:YES];
+        [self showAlertDialog:error];
     }];
-
 }
 
 //-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -614,20 +601,11 @@
 {
     hud.labelText = @"操作中...";
     [hud show:YES];
-    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:self.itemId] forKey:@"roomId"];
-    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
-    [paramDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] forKey:@"memberId"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"269" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[ItemManager singleton] exitTeam:[GameCommon getNewStringWithId:self.itemId] GameId:[GameCommon getNewStringWithId:self.gameid] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] reSuccess:^(id responseObject) {
         [hud hide:YES];
         [self showMessageWindowWithContent:@"退出成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    } reError:^(id error) {
         [hud hide:YES];
         [self showErrorDialog:error];
     }];
@@ -641,7 +619,6 @@
             [alert show];
         }
     }
-
 }
 
 //改变位置(待处理)

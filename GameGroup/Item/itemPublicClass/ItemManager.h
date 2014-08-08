@@ -56,4 +56,6 @@
 
 #pragma mark --- 组队就位确认
 -(void)teamPreparedUserSelect:(NSString*)roomId GameId:(NSString*)gameId Value:(NSString*)value reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
+//删除成员
+-(void)removeFromTeam:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId MemberTeamUserId:(NSString*)memberTeamUserId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 @end
