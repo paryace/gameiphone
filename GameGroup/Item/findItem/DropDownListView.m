@@ -127,7 +127,7 @@
         [currentIV setImage:[UIImage imageNamed:@"down_dark_click.png"]];
     }];
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +currentExtendSection];
-    [btn setTitleColor:[UIColor blueColor]forState:UIControlStateNormal];
+    [btn setTitleColor:UIColorFromRGBA(0x3eacf5, 1)forState:UIControlStateNormal];
 }
 
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section

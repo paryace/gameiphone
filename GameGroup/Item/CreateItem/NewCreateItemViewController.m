@@ -12,6 +12,9 @@
 
 @interface NewCreateItemViewController ()
 {
+    
+    UIScrollView *mainScroll;
+    
     UITextField   *  m_gameTf;
     UITextField   *  m_tagTf;
     UITextField   *  m_countTf;
@@ -59,6 +62,8 @@
     selectCharacter = self.selectRoleDict;
     selectType = self.selectTypeDict;
     
+    
+    
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
@@ -73,7 +78,14 @@
     m_countArray  = [NSMutableArray array];
     [self buildPickView];
     
-    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    
+    mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    mainScroll.contentSize = CGSizeMake(0, self.view.bounds.size.height+50);
+    [self.view addSubview:mainScroll];
+    
+
+    
+    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, 10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_gameTf.delegate = self;
     m_gameTf.inputAccessoryView = toolbar;
     m_gameTf.inputView = m_rolePickerView;
@@ -82,47 +94,47 @@
     gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 7.5, 25, 25)];
     [m_gameTf addSubview:gameIconImg];
 
-    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, 60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_tagTf.delegate = self;
     m_tagTf.inputAccessoryView = toolbar;
     m_tagTf.inputView = m_tagsPickView;
 
 //    [self.view addSubview:m_tagTf];
 
-    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, startX+110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, 110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
     m_countTf.delegate = self;
     m_countTf.inputAccessoryView = toolbar;
     m_countTf.inputView = m_countPickView;
 
 //    [self.view addSubview:m_countTf];
     
-    m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, startX+160, 300, 80)];
+    m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
     m_miaoshuTV.backgroundColor = [UIColor whiteColor];
     m_miaoshuTV.layer.borderWidth = 1;
     m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
     m_miaoshuTV.layer.cornerRadius = 5;
     m_miaoshuTV.layer.masksToBounds=YES;
     m_miaoshuTV.delegate = self;
-    [self.view addSubview:m_miaoshuTV];
+    [mainScroll addSubview:m_miaoshuTV];
     
-    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15, startX+165, 200, 20)];
+    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15,165, 200, 20)];
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = [UIColor grayColor];
     placeholderL.text = @"填写组队描述……";
     placeholderL.font = [UIFont systemFontOfSize:13.0];
-    [self.view addSubview:placeholderL];
+    [mainScroll addSubview:placeholderL];
 
-    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, startX+245, 100, 20)];
+    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 245, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
-    [self.view addSubview:m_ziNumLabel];
+    [mainScroll addSubview:m_ziNumLabel];
 
 //    [self buildSwitchView];
     
-    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15.0f, startX+250.0f,310.0f, 100.0f)];
+    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15.0f, 250.0f,310.0f, 100.0f)];
     tagList.tagDelegate=self;
-    [self.view addSubview:tagList];
+    [mainScroll addSubview:tagList];
     
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
@@ -240,7 +252,7 @@
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width-20, 15, 15, 10)];
     imageView.image = KUIImage(rightImg);
     [customView addSubview:imageView];
-    [self.view addSubview:customView];
+    [mainScroll addSubview:customView];
     
     return tf;
 }
@@ -418,9 +430,29 @@
 {
     [self refreshZiLabelText];
 }
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
+{
+    [UIView animateWithDuration:0.3 animations:^{
+
+    mainScroll.contentOffset = CGPointMake(0, 100);
+    }];
+    return YES;
+}
+-(BOOL)textViewShouldEndEditing:(UITextView *)textView
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        
+        mainScroll.contentOffset = CGPointMake(0, 0);
+    }];
+    return YES;
+
+}
+
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+    
+
     if ([text isEqualToString:@"\n"]) {
         [textView resignFirstResponder];
         return NO;

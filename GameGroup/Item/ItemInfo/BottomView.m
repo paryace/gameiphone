@@ -17,16 +17,21 @@
         // Initialization code
         self.backgroundColor =UIColorFromRGBA(0x282c32, 1);
         
+        UIImageView *imageView = [[UIImageView alloc]initWithFrame:frame];
+        imageView.image = KUIImage(@"team_join_low");
+        imageView.userInteractionEnabled = YES;
+        [self addSubview:imageView];
+        
         self.lowImg = [[EGOImageView alloc]initWithFrame:CGRectMake( 10, 10, 30, 30)];
         [self addSubview:self.lowImg];
         
         self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(50, 10, 80, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.titleLabel];
         
-        self.gameIcon = [[EGOImageView alloc]initWithFrame:CGRectMake(50, 25, 15, 15)];
+        self.gameIcon = [[EGOImageView alloc]initWithFrame:CGRectMake(50, 27, 12, 12)];
         [self addSubview:self.gameIcon];
         
-        self.realmLb =[GameCommon buildLabelinitWithFrame:CGRectMake(65, 25, 70, 15) font:[UIFont systemFontOfSize:10] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.realmLb =[GameCommon buildLabelinitWithFrame:CGRectMake(68, 25, 70, 15) font:[UIFont systemFontOfSize:10] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.realmLb];
         
         

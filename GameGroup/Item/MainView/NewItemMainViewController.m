@@ -124,15 +124,15 @@
     dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(40, KISHighVersion_7 ? 25 : 5, 22, 18)];
 //    [self.view addSubview:dotV];
 
-    customView = [[UIView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX-50)];
+    customView = [[UIView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     customView.backgroundColor = [UIColor grayColor];
     [self.view addSubview:customView];
     
-    room = [[MyRoomView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
+    room = [[MyRoomView alloc]initWithFrame:CGRectMake(0, 0, 320, customView.frame.size.height)];
     room.myDelegate = self;
     [customView addSubview:room];
 
-    firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth-startX-50)];
+    firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, customView.frame.size.height)];
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
