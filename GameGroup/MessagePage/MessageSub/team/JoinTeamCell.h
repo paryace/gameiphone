@@ -27,7 +27,7 @@
 //同意，拒绝button
 @property(nonatomic,strong)UIButton * agreeButton;  //同意
 @property(nonatomic,strong)UIButton * refuseButton;       //拒绝
--(void)setTime:(NSString*)msgTime;
+-(void)refreTitleFrame;
 @end
 
 @protocol TeamDetailDelegate <NSObject>

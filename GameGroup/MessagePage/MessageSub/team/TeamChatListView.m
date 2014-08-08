@@ -16,6 +16,8 @@
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
+#define bottomHight 55
+#define bottomPadding 10
 
 @implementation TeamChatListView
 
@@ -62,7 +64,7 @@
             sectionBtn.titleLabel.font = [UIFont boldSystemFontOfSize:14.0f];
             [bgImageView addSubview:sectionBtn];
             
-            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 15, 15)];
+            UIImageView *sectionBtnIv = [[UIImageView alloc] initWithFrame:CGRectMake(sectionWidth*i +(sectionWidth - 16), (self.frame.size.height-12)/2, 12, 12)];
             [sectionBtnIv setImage:[UIImage imageNamed:@"down_dark_normal.png"]];
             [sectionBtnIv setContentMode:UIViewContentModeScaleToFill];
             sectionBtnIv.tag = SECTION_IV_TAG_BEGIN + i;
@@ -73,9 +75,11 @@
                 [bgImageView addSubview:lineView];
             }
         }
+        [self initButtonTitle];
     }
     return self;
 }
+
 
 
 
@@ -169,18 +173,18 @@
         self.mTableBaseView.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.5];
         UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
         [self.mTableBaseView addGestureRecognizer:bgTap];
-        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight )];
+        self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight)];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
     
-    if (!self.bottomMenuView){
-        self.bottomMenuView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-15, 320, 15)];
-        self.bottomMenuView.image = KUIImage(@"bottom_memu.png");
-        self.bottomMenuView.userInteractionEnabled = YES;
-        UITapGestureRecognizer *menuTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(menuOnCLick:)];
-        [self.bottomMenuView addGestureRecognizer:menuTap];
-        [self.mBgView addSubview:self.bottomMenuView];
-    }
+//    if (!self.bottomMenuView){
+//        self.bottomMenuView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-15, 320, 15)];
+//        self.bottomMenuView.image = KUIImage(@"bottom_memu.png");
+//        self.bottomMenuView.userInteractionEnabled = YES;
+//        UITapGestureRecognizer *menuTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(menuOnCLick:)];
+//        [self.bottomMenuView addGestureRecognizer:menuTap];
+//        [self.mBgView addSubview:self.bottomMenuView];
+//    }
     
     if (section == 0) {
         if (self.bottomView) {
@@ -192,7 +196,7 @@
             self.layout.minimumLineSpacing =10;
             self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
             self.layout.itemSize = CGSizeMake(88, 30);
-            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,tableHight-20) collectionViewLayout:self.layout];
+            self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10,10,300,tableHight) collectionViewLayout:self.layout];
             self.customPhotoCollectionView.delegate = self;
             self.customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
             self.customPhotoCollectionView.showsVerticalScrollIndicator = NO;
@@ -221,11 +225,13 @@
         }
         if (section == 1) {
             if (!self.bottomView){
-                self.bottomView = [[UIButton alloc] initWithFrame:CGRectMake(0, tableHight-90, 320, 90-15)];
+                self.bottomView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-bottomHight, 320, bottomHight)];
                 self.bottomView.backgroundColor = [UIColor whiteColor];
+                self.bottomView.image =KUIImage(@"bottom_bg");
+                self.bottomView.userInteractionEnabled = YES;
                 [self.mBgView addSubview:self.bottomView];
                 if (self.teamUsershipType) {
-                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, 290, 35)];
+                    self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, bottomPadding, 290, 35)];
                     [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
                     [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
                     [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
@@ -237,7 +243,7 @@
                     [self.sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:self.sendBtn];
                 }else{
-                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 25, (320-40)/2, 35)];
+                    self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, bottomPadding, (320-40)/2, 35)];
                     [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
                     [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
                     [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
@@ -249,7 +255,7 @@
                     [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
                     [self.bottomView addSubview:self.agreeBtn];
                     
-                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35)];
+                    self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35)];
                     [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
                     [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
                     [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
@@ -281,23 +287,41 @@
         [self.mSuperView addSubview:hud];
     }
 }
+
+
+
+-(void)initButtonTitle{
+    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [self setButtonTitle:onClickState];
+}
+
+-(void)setButtonTitle:(NSInteger)onClickState{
+    if (self.teamUsershipType) {
+        [self setTitle:@"就位确认" inSection:1];
+    }else{
+        if(onClickState == 0){
+            [self setTitle:@"队员列表" inSection:1];
+        }else{
+            [self setTitle:@"就位确认" inSection:1];
+        }
+
+    }
+}
+
 //设置按钮状态
 -(void)setBtnState{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [self setButtonTitle:onClickState];
     if(onClickState == 0){
-        [self setTitle:@"队员列表" inSection:1];
         [self reset];
         [self normal];
     }else if(onClickState == 1){
-        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self send];
     }else if(onClickState == 2){
-        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self ok];
     }else if(onClickState == 3){
-        [self setTitle:@"就位确认" inSection:1];
         [self showButton];
         [self cancel];
     }
@@ -312,7 +336,7 @@
         
     }else{
         self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, 25, (320-40)/2, 35);
+        self.agreeBtn.frame = CGRectMake(15, bottomPadding, (320-40)/2, 35);
         [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
@@ -321,7 +345,7 @@
         self.agreeBtn.enabled = YES;
         
         self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35);
+        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35);
         [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
@@ -340,7 +364,7 @@
 
     }else{
         self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, 25, (320-40)/2, 35);
+        self.agreeBtn.frame = CGRectMake(15, bottomPadding, (320-40)/2, 35);
         [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
@@ -349,7 +373,7 @@
         self.agreeBtn.enabled = YES;
         
         self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,25, (320-40)/2, 35);
+        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35);
         [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
@@ -376,7 +400,7 @@
         self.sendBtn.enabled = NO;
     }else{
         self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, 25, 290, 35);
+        self.agreeBtn.frame = CGRectMake(15, bottomPadding, 290, 35);
         [self.agreeBtn setTitle:@"已确认" forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
         [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
@@ -403,7 +427,7 @@
         self.agreeBtn.enabled = NO;
         
         self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15, 25, 290, 35);
+        self.refusedBtn.frame = CGRectMake(15, bottomPadding, 290, 35);
         [self.refusedBtn setTitle:@"已拒绝" forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
         [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
@@ -415,12 +439,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-20);
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-90);
+    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-bottomHight);
 }
 
 //发起就位确认
@@ -599,7 +623,7 @@
         }
         cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
         if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
-            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"nickname")];
+            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
             cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
             
         }else{
@@ -619,10 +643,10 @@
                 cell.stateView.backgroundColor = [UIColor redColor];
             }
         }
-        
         CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        cell.groupNameLable.frame = CGRectMake(80, 8, nameSize.width, 20);
-        cell.genderImageV.frame = CGRectMake(80+nameSize.width+3, 8, 20, 20);
+        float w = nameSize.width>145?145:nameSize.width;
+        cell.groupNameLable.frame = CGRectMake(80, 7, w, 20);
+        cell.genderImageV.frame = CGRectMake(80+w+3, 7, 20, 20);
         return cell;
 
     }else{
@@ -647,7 +671,7 @@
         }
         cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
         cell.positionLable.hidden=YES;
-        cell.realmLable.text = KISDictionaryHaveKey(msgDic, @"value1");
+        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(msgDic, @"realm"),@"-",KISDictionaryHaveKey(msgDic, @"characterName")];
         cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
         if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]) {
             if (self.teamUsershipType) {
@@ -670,13 +694,19 @@
                 cell.detailLable.text=@"已处理";
             }
         }
-        
-        CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        cell.groupNameLable.frame = CGRectMake(75, 12, nameSize.width, 20);
-        cell.genderImageV.frame = CGRectMake(75+nameSize.width+5, 10, 20, 20);
-        [cell setTime:KISDictionaryHaveKey(msgDic, @"senTime")];
+        cell.timeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:KISDictionaryHaveKey(msgDic, @"senTime")]];
+        [cell refreTitleFrame];
         return cell;
     }
+}
+//格式化时间
+-(NSString*)getMsgTime:(NSString*)senderTime
+{
+    NSString *time = [senderTime substringToIndex:10];
+    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
+    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
+    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
+    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath

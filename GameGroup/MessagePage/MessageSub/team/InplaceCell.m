@@ -44,17 +44,17 @@
         self.genderImageV = [[UIImageView alloc]initWithFrame:CGRectMake(155, 8, 20, 20)];
         [self.contentView addSubview:self.genderImageV];
         
-        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 20, 20)];
+        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 30, 20, 20)];
         [self.contentView addSubview:self.gameImageV];
         
-        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 35, 320-110-60, 20)];
+        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 30, 320-110-60, 20)];
         self.realmLable.backgroundColor = [UIColor clearColor];
         self.realmLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.realmLable.text = @"猫小莹-德玛西亚";
         self.realmLable.font =[ UIFont systemFontOfSize:13];
         [self.contentView addSubview:self.realmLable];
         
-        self.pveLable = [[UILabel alloc]initWithFrame:CGRectMake(80, 55, 300, 20)];
+        self.pveLable = [[UILabel alloc]initWithFrame:CGRectMake(80, 53, 300, 20)];
         self.pveLable.backgroundColor = [UIColor clearColor];
         self.pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.pveLable.text = @"战斗力：6600   荣誉黄金";
@@ -62,7 +62,7 @@
         [self.contentView addSubview:self.pveLable];
         
         self.lineView = [[UIView alloc]initWithFrame:CGRectMake(320-70, 5, 1, 70)];
-        self.lineView.backgroundColor = [UIColor lightGrayColor];
+        self.lineView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
         [self.contentView addSubview:self.lineView];
         
         

@@ -283,7 +283,7 @@ UINavigationControllerDelegate>
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"位置" inSection:0];
-        [self.dropDownView setTitle:@"队员列表" inSection:1];
+//        [self.dropDownView setTitle:@"队员列表" inSection:1];
         [self.dropDownView setTitle:@"申请" inSection:2];
         [self.view addSubview:self.dropDownView];
         self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
@@ -407,7 +407,7 @@ UINavigationControllerDelegate>
             return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
         }
     }else if (section==1){
-        return @"队员列表";
+        return @"";
     }
     return @"申请";
 }
@@ -1681,7 +1681,7 @@ UINavigationControllerDelegate>
         if (self.isTeam) {
             self.dropDownView.hidden = YES;
             self.dotVApp.hidden = YES;
-            self.dotVApp.hidden = YES;
+            self.dotVInplace.hidden = YES;
         }
         
     }
@@ -1713,7 +1713,7 @@ UINavigationControllerDelegate>
         if (self.isTeam) {
             self.dropDownView.hidden = YES;
             self.dotVApp.hidden = YES;
-            self.dotVApp.hidden = YES;
+            self.dotVInplace.hidden = YES;
         }
         
     }else{//点击切回键盘
@@ -2059,7 +2059,7 @@ UINavigationControllerDelegate>
     if (self.isTeam) {
         self.dropDownView.hidden = YES;
         self.dotVApp.hidden = YES;
-        self.dotVApp.hidden = YES;
+        self.dotVInplace.hidden = YES;
     }
 }
 
@@ -2083,7 +2083,7 @@ UINavigationControllerDelegate>
     if (self.isTeam) {
         self.dropDownView.hidden = NO;
         self.dotVApp.hidden = NO;
-        self.dotVApp.hidden = NO;
+        self.dotVInplace.hidden = NO;
     }
     
     

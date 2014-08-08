@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) UICollectionView *customPhotoCollectionView;
 @property (nonatomic, strong) UITableView *mTableView;
-@property (nonatomic, strong) UIButton *bottomView;
+@property (nonatomic, strong) UIImageView *bottomView;
 @property (nonatomic, strong) UIImageView *bottomMenuView;
 @property (nonatomic, strong) UIButton *sendBtn ;
 @property (nonatomic, strong) UIButton *agreeBtn ;

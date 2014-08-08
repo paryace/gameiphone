@@ -20,6 +20,8 @@
         self.bgV.userInteractionEnabled =YES;
         
         self.headImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
+        self.headImageV.layer.cornerRadius = 5;
+        self.headImageV.layer.masksToBounds=YES;
         [self.bgV addSubview:self.headImageV];
         
         self.bgImageView = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
@@ -36,7 +38,7 @@
         self.groupNameLable.backgroundColor = [UIColor clearColor];
         self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.groupNameLable.text = @"萌萌哒~";
-        self.groupNameLable.font =[ UIFont systemFontOfSize:17];
+        self.groupNameLable.font =[ UIFont boldSystemFontOfSize:16];
         [self.bgV addSubview:self.groupNameLable];
         
         self.genderImageV = [[UIImageView alloc]initWithFrame:CGRectMake(180, 10, 20, 20)];
@@ -52,17 +54,17 @@
         self.positionLable.font =[ UIFont systemFontOfSize:12];
         [self.bgV addSubview:self.positionLable];
         
-        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(75, 35, 25, 25)];
+        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(75, 30, 20, 20)];
         [self.bgV addSubview:self.gameImageV];
         
-        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 37, 200, 20)];
+        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 30, 200, 20)];
         self.realmLable.backgroundColor = [UIColor clearColor];
         self.realmLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.realmLable.text = @"猫小莹-德玛西亚";
         self.realmLable.font =[ UIFont systemFontOfSize:13];
         [self.bgV addSubview:self.realmLable];
         
-        self.pveLable = [[UILabel alloc]initWithFrame:CGRectMake(75, 62, 300, 20)];
+        self.pveLable = [[UILabel alloc]initWithFrame:CGRectMake(75, 55, 300, 20)];
         self.pveLable.backgroundColor = [UIColor clearColor];
         self.pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.pveLable.text = @"战斗力：6600   荣誉黄金";
@@ -130,28 +132,14 @@
     }
 }
 
-//设置群信息
--(void)setTime:(NSString*)msgTime
-{
-    self.timeLable.text = [NSString stringWithFormat:@"%@", [self getMsgTime:msgTime]];
-    [self refreTimeLable];
-}
 
-//刷新时间控件
--(void)refreTimeLable
-{
-    CGSize nameSize = [self.timeLable.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    self.timeLable.frame=CGRectMake(300-nameSize.width-5, 12, nameSize.width, 20);
-}
-
-//格式化时间
--(NSString*)getMsgTime:(NSString*)senderTime
-{
-    NSString *time = [senderTime substringToIndex:10];
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    NSString* strNowTime = [NSString stringWithFormat:@"%d",(int)nowTime];
-    NSString* strTime = [NSString stringWithFormat:@"%d",[time intValue]];
-    return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
+-(void)refreTitleFrame{
+    CGSize nameSize = [self.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize timeSize = [self.timeLable.text sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
+    float w = nameSize.width>200-timeSize.width?(200-timeSize.width):nameSize.width;
+    self.groupNameLable.frame = CGRectMake(75, 8, w, 20);
+    self.genderImageV.frame = CGRectMake(75+w, 8, 20, 20);
+    self.timeLable.frame=CGRectMake(300-timeSize.width-5, 8, timeSize.width, 20);
 }
 
 - (void)awakeFromNib   
