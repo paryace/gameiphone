@@ -87,28 +87,24 @@
     
 
     
-    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, 10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, 10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_gameTf.delegate = self;
     m_gameTf.inputAccessoryView = toolbar;
     m_gameTf.inputView = m_rolePickerView;
 
-//    [self.view addSubview:m_gameTf];
-    gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 7.5, 25, 25)];
-    [m_gameTf addSubview:gameIconImg];
+    gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 15, 25, 25)];
+    [mainScroll addSubview:gameIconImg];
 
-    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, 60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, 60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_tagTf.delegate = self;
     m_tagTf.inputAccessoryView = toolbar;
     m_tagTf.inputView = m_tagsPickView;
 
-//    [self.view addSubview:m_tagTf];
 
-    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, 110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentRight];
+    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, 110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_countTf.delegate = self;
     m_countTf.inputAccessoryView = toolbar;
     m_countTf.inputView = m_countPickView;
-
-//    [self.view addSubview:m_countTf];
     
     
     UIImageView *imgVc = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
@@ -124,12 +120,16 @@
     m_miaoshuTV.delegate = self;
     [mainScroll addSubview:m_miaoshuTV];
     
+//<<<<<<< HEAD
     placeholderL = [[UILabel alloc]init];
     if (KISHighVersion_7) {
         placeholderL.frame = CGRectMake(15,165, 200, 20);
     }else{
         placeholderL.frame = CGRectMake(12,160, 200, 20);
     }
+//=======
+//    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(18,170, 200, 20)];
+//>>>>>>> FETCH_HEAD
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
     placeholderL.text = @"填写组队描述……";
@@ -256,11 +256,12 @@
 //    customView.layer.masksToBounds=YES;
 
     
-    UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-25, frame.size.height)];
+    UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(45, 0, frame.size.width-25, frame.size.height)];
     tf.backgroundColor = [UIColor clearColor];
     tf.textColor =textColor;
     tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     tf.textAlignment = textAlignment;
+    tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     tf.font = [UIFont systemFontOfSize:font];
     tf.placeholder = placeholder;
     [customView addSubview:tf];

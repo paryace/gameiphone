@@ -34,20 +34,20 @@
         
         
         
-        self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(80, 8, 100, 20)];
+        self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(80, 10, 100, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
         self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.groupNameLable.text = @"萌萌哒~";
         self.groupNameLable.font =[ UIFont boldSystemFontOfSize:16];
         [self.contentView addSubview:self.groupNameLable];
         
-        self.genderImageV = [[UIImageView alloc]initWithFrame:CGRectMake(155, 8, 20, 20)];
+        self.genderImageV = [[UIImageView alloc]initWithFrame:CGRectMake(155, 10, 20, 20)];
         [self.contentView addSubview:self.genderImageV];
         
-        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 30, 20, 20)];
+        self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 15, 15)];
         [self.contentView addSubview:self.gameImageV];
         
-        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(105, 30, 320-110-60, 20)];
+        self.realmLable = [[UILabel alloc]initWithFrame:CGRectMake(100, 34, 320-110-60, 20)];
         self.realmLable.backgroundColor = [UIColor clearColor];
         self.realmLable.textColor = kColorWithRGB(5,5,5, 0.7);
         self.realmLable.text = @"猫小莹-德玛西亚";

@@ -87,9 +87,14 @@
     
     
     
+    
+    
+    
+    
     UIImageView *segBgImg = [[UIImageView alloc]initWithImage:KUIImage(@"team_seg_black")];
     segBgImg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
     [self.view addSubview:segBgImg];
+//<<<<<<< HEAD
 //    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
 //    seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
 //    seg.selectedSegmentIndex = 0;

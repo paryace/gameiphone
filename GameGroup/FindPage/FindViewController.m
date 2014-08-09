@@ -926,7 +926,7 @@
     friendDunamicmsgCount = 0;
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
-    [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
+    [[Custom_tabbar showTabBar]removeNotificatonOfIndex:3];
 }
 
 -(void)enterGroupList:(id)sender
@@ -934,7 +934,7 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
     [self.navigationController pushViewController:gruupV animated:YES];
-    [[Custom_tabbar showTabBar] removeNotificatonOfIndex:2];
+    [[Custom_tabbar showTabBar] removeNotificatonOfIndex:3];
 }
 
 -(void)enterLeaderImage:(id)sender

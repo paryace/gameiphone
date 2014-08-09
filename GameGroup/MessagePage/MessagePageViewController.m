@@ -693,17 +693,17 @@
 #pragma mark 接收到于我相关消息通知
 -(void)receivedMyDynamicMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
 }
 #pragma mark 接收到好友动态消息通知
 -(void)receivedFriendDynamicMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
 }
 #pragma mark 接收到公告消息通知
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
-    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:2];
+    [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:0 OrDot:YES WithButtonIndex:3];
 }
 #pragma mark --接收到新的偏好消息刷新消息数量
 -(void)receiceTeamRecommendMsg:(NSNotification*)notification{

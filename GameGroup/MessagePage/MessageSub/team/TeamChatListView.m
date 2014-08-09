@@ -457,11 +457,16 @@
         [self showErrorAlertView:error];
     }];
 }
+
+-(void)clearNorReadMsg{
+    if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick)] ) {
+        [self.dropDownDataSource buttonOnClick];
+    }
+}
+
 //确定就位
 -(void)agreeButton:(UIButton*)sender{
-    if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
-        [self.dropDownDataSource buttonOnClick:sender];
-    }
+    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
@@ -472,9 +477,7 @@
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
-    if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick:)] ) {
-        [self.dropDownDataSource buttonOnClick:sender];
-    }
+    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
@@ -492,9 +495,17 @@
 -(void)getmemberList{
 //    self.memberList = [DataStoreManager getMemberList:self.groipId];
     self.memberList = [DataStoreManager getMemberList:self.roomId GameId:self.gameId];
-//    [self.memberList sortUsingComparator:^NSComparisonResult(__strong id obj1,__strong id obj2){
-//        return [KISDictionaryHaveKey(obj1, @"msgTime") intValue] < [KISDictionaryHaveKey(obj2, @"msgTime") intValue];
-//    }];
+    [self.memberList sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] < 0)
+        {
+            return (NSComparisonResult)NSOrderedDescending;
+        }
+        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] > 0)
+        {
+            return (NSComparisonResult)NSOrderedAscending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+    }];
 }
 
 -(void)showToastAlertView:(NSString*)msgText
@@ -645,8 +656,8 @@
         }
         CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
         float w = nameSize.width>145?145:nameSize.width;
-        cell.groupNameLable.frame = CGRectMake(80, 7, w, 20);
-        cell.genderImageV.frame = CGRectMake(80+w+3, 7, 20, 20);
+        cell.groupNameLable.frame = CGRectMake(80, 9, w, 20);
+        cell.genderImageV.frame = CGRectMake(80+w+3, 9, 20, 20);
         return cell;
 
     }else{
@@ -889,6 +900,7 @@
 -(void)resetChangInplaceState:(NSNotification*)notification{
 //    [self resetPState];
 //    [self.mTableView reloadData];
+     [self clearNorReadMsg];
     [self setBtnState];
 }
 

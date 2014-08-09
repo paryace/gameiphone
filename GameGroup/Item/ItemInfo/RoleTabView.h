@@ -13,7 +13,9 @@
 @interface RoleTabView : UIView<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
 @property(nonatomic,strong)NSMutableArray *coreArray;
 @property(nonatomic,strong)UITableView *roleTableView;
+@property(nonatomic,strong)UILabel *titleLable;
 @property(nonatomic,assign)id<roleTabDelegate>mydelegate;
+-(void)setDate:(NSMutableArray*)roleArray;
 @end
 @protocol roleTabDelegate <NSObject>
 -(void)didClickChooseWithView:(RoleTabView*)view info:(NSDictionary *)info;

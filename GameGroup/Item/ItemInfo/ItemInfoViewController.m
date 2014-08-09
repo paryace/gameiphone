@@ -61,6 +61,11 @@
     isJoinIn = YES;
     m_mainDict = [NSMutableDictionary dictionary];
     m_dataArray = [NSMutableArray array];
+    
+//    UIImageView * lineView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 0.5)];
+//    lineView.backgroundColor = UIColorFromRGBA(0x2d313a, 1);
+//    [self.view addSubview:lineView];
+    
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
@@ -70,13 +75,16 @@
     
 
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
+
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
+
     roleTabView.hidden = YES;
+    roleTabView.mydelegate  =self;
+    NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [self.view addSubview:roleTabView];
-    [roleTabView.roleTableView reloadData];
-//    [self buildRoleView];
+    [roleTabView setDate:coreArray];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
@@ -178,19 +186,17 @@
 }
 
 #pragma mark ---创建底部button
--(void)buildbelowbutotnWithArray:(NSArray *)array  shiptype:(NSInteger)shiptype
+-(void)buildbelowbutotnWithArray:(NSArray *)array TitleTexts:(NSArray*)titles shiptype:(NSInteger)shiptype
 {
-    
-//    BottomView *bView =[[BottomView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50) array:array shipType:shiptype];
-    
-    
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
-//    view.backgroundColor = [UIColor redColor];
     [self.view addSubview:view];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
-        [button setImage:KUIImage(array[i]) forState:UIControlStateNormal];
+        [button setBackgroundImage:KUIImage(array[i]) forState:UIControlStateNormal];
+        [button setTitleColor:UIColorFromRGBA(0x339adf, 1)forState:UIControlStateNormal];
+        [button setTitle:[titles objectAtIndex:i] forState:UIControlStateNormal];
+        button.titleLabel.font = [UIFont boldSystemFontOfSize:16.0f];
         button.tag = i+100+shiptype*10;
         if (shiptype ==0) {
             [button addTarget:self action:@selector(EditItem:) forControlEvents:UIControlEventTouchUpInside];
@@ -205,8 +211,7 @@
         }
         [view addSubview:button];
     }
-    
-    
+
     if (shiptype ==2) {
         bView =[[BottomView alloc]initWithFrame:CGRectMake(0,0, 160, 50)];
         [bView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseRoles:)]];
@@ -214,15 +219,11 @@
             bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
             bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
             bView.gameIcon.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(self.infoDict, @"gameid")]];
-            
             bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
             bView.topLabel.hidden = YES;
         }
         [view addSubview:bView];
-
     }
-    
-    
     [self.view addSubview:view];
 }
 
@@ -318,21 +319,25 @@
 -(void)setGetOutBtn:(NSString*)teamUsershipType
 {
     NSArray *arr = [NSArray array] ;
+    NSArray *titlearr = [NSArray array] ;
     if ([teamUsershipType intValue]==0) {
         arr = @[@"sendMsg_normal.jpg",@"yaoqing.jpg"];
+        titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
     else if([teamUsershipType intValue]==1)
     {
         arr = @[@"sendMsg_normal.jpg",@"goout_item"];
+        titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
     else
     {
         m_getOutBtn.hidden = YES;
-        arr = @[@"joinInBtn_Item"];
+        titlearr = @[@"",@"申请加入"];
+        arr = @[@"",@"joinInBtn_Item"];
     }
-    [self buildbelowbutotnWithArray:arr shiptype:[teamUsershipType intValue]];
+    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
 
 -(void)setCaptain:(NSString*)shipType
@@ -430,8 +435,12 @@
     
     [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
     
-    UIView *view3 = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
-    view3.backgroundColor =UIColorFromRGBA(0x24272e, 1);
+    UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
+//    view3.backgroundColor =UIColorFromRGBA(0x24272e, 1);
+    view3.image = KUIImage(@"team_detail_topImage");
+
+    
+    
     UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
     lb1.backgroundColor =[ UIColor clearColor];
     lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
