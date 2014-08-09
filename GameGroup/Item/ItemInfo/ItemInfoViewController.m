@@ -28,6 +28,7 @@
     UIAlertView *jiesanAlert;
     UIButton *m_getOutBtn;
     BottomView *bView;
+    UIAlertView * backAlert;
 }
 @end
 
@@ -72,7 +73,6 @@
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
-    roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     roleTabView.hidden = YES;
     [self.view addSubview:roleTabView];
     [roleTabView.roleTableView reloadData];
@@ -147,7 +147,7 @@
             }];
         }
 
-    }else{
+    }else if(alertView.tag ==10000002){
         if (buttonIndex==1) {
             [[ItemManager singleton] exitTeam:self.itemId GameId:self.gameid MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] reSuccess:^(id responseObject) {
                 [self.navigationController popToRootViewControllerAnimated:YES];
@@ -157,7 +157,14 @@
                 [self showAlertDialog:error];
             }];
         }
+    }else if(alertView.tag ==10212)
+    {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+
     }
+    
 }
 
 -(void)showAlertDialog:(id)error{
@@ -178,7 +185,7 @@
     
     
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
-    view.backgroundColor = [UIColor redColor];
+//    view.backgroundColor = [UIColor redColor];
     [self.view addSubview:view];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
@@ -292,12 +299,15 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
+            roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
+
             [self setGetOutBtn:teamUsershipType];
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
             [m_myTableView reloadData];
+            [roleTabView.roleTableView reloadData];
         }
     } reError:^(id error) {
         [hud hide:YES];
@@ -618,8 +628,15 @@
     if ([error isKindOfClass:[NSDictionary class]]) {
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
         {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000124"]) {
+                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                backAlert.tag = 10212;
+                [backAlert show];
+            }else{
+
             UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
             [alert show];
+            }
         }
     }
 }
@@ -643,7 +660,10 @@
 {
     m_myTableView.delegate=nil;
     m_myTableView.dataSource=nil;
+    backAlert.delegate = nil;
+
 }
+
 
 
 - (void)didReceiveMemoryWarning

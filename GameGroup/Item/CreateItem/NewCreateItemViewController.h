@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 #import "DWTagList.h"
-@interface NewCreateItemViewController : BaseViewController<UITextFieldDelegate,UITextViewDelegate,DWTagDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
+@interface NewCreateItemViewController : BaseViewController<UITextFieldDelegate,UITextViewDelegate,DWTagDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UIAlertViewDelegate>
 @property(nonatomic,strong)NSMutableDictionary *selectRoleDict;
 @property(nonatomic,strong)NSMutableDictionary *selectTypeDict;
 

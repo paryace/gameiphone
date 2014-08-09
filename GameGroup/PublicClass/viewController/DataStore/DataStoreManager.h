@@ -206,6 +206,8 @@
 
 +(NSMutableDictionary*)queryCharacter:(NSString*)characterId;//查询单个角色信息
 
++(NSMutableArray *)queryCharacters:(NSString*)userId gameid:(NSString*)gameid;//查找某个游戏角色列表
+
 +(NSMutableArray *)queryTitle:(NSString*)userId Hide:(NSString*)hide;//查找头衔列表
 
 +(NSMutableDictionary *)getUserInfoFromDbByUserid:(NSString*)userid;//查询用户信息

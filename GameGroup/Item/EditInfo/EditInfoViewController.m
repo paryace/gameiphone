@@ -132,6 +132,15 @@
 
 -(void)saveChanged:(id)sender
 {
+    
+    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+    
+    if (ziNum<0) {
+        [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
+        return;
+    }
+
+    
     [hud show:YES];
     [firstTextView resignFirstResponder];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
@@ -221,7 +230,7 @@
     }
     else{
         m_ziNumLabel.textColor = [UIColor redColor];
-        return NO;
+        return YES;
     }
 }
 - (void)textViewDidChange:(UITextView *)textView
@@ -232,7 +241,7 @@
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
     if (ziNum<0) {
-        ziNum=0;
+//        ziNum=0;
     }else{
         m_ziNumLabel.textColor = [UIColor blackColor];
     }

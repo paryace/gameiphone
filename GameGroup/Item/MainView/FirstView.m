@@ -518,7 +518,7 @@
     
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]) {
+//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]) {
         ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
         NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
         if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
@@ -530,16 +530,16 @@
         itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
         itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
         [self.myDelegate didClickTableViewCellEnterNextPageWithController:itemInfo];
-    }else{
-        KKChatController *kkchat = [[KKChatController alloc]init];
-        kkchat.unreadMsgCount  = 0;
-        kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
-        kkchat.type = @"group";
-        kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-        kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")];
-        kkchat.isTeam = YES;
-        [self.myDelegate didClickTableViewCellEnterNextPageWithController:kkchat];
-    }
+//    }else{
+//        KKChatController *kkchat = [[KKChatController alloc]init];
+//        kkchat.unreadMsgCount  = 0;
+//        kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
+//        kkchat.type = @"group";
+//        kkchat.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+//        kkchat.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")];
+//        kkchat.isTeam = YES;
+//        [self.myDelegate didClickTableViewCellEnterNextPageWithController:kkchat];
+//    }
     
     
 }

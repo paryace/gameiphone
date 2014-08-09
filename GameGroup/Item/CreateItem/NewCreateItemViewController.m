@@ -40,6 +40,9 @@
     
     UISwitch *switchView;
     EGOImageView *gameIconImg;
+    
+    UIAlertView *backAlert;
+    
 }
 @end
 
@@ -121,7 +124,12 @@
     m_miaoshuTV.delegate = self;
     [mainScroll addSubview:m_miaoshuTV];
     
-    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(15,165, 200, 20)];
+    placeholderL = [[UILabel alloc]init];
+    if (KISHighVersion_7) {
+        placeholderL.frame = CGRectMake(15,165, 200, 20);
+    }else{
+        placeholderL.frame = CGRectMake(12,160, 200, 20);
+    }
     placeholderL.backgroundColor = [UIColor clearColor];
     placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
     placeholderL.text = @"填写组队描述……";
@@ -197,7 +205,7 @@
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         m_flArray = responseObject;
         [tagList setTags:responseObject average:YES rowCount:3];
-        tagList.frame = CGRectMake(10.0f, startX+250.0f, 310, tagList.fittedSize.height);
+        tagList.frame = CGRectMake(10.0f, 250.0f, 310, tagList.fittedSize.height);
     }
 }
 
@@ -251,6 +259,7 @@
     UITextField *tf =[[UITextField alloc]initWithFrame:CGRectMake(0, 0, frame.size.width-25, frame.size.height)];
     tf.backgroundColor = [UIColor clearColor];
     tf.textColor =textColor;
+    tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     tf.textAlignment = textAlignment;
     tf.font = [UIFont systemFontOfSize:font];
     tf.placeholder = placeholder;
@@ -447,21 +456,21 @@
     }else{
         placeholderL.text = @"填写组队描述……";
     }
-    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
-    if(res >= 0){
+//    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
+//    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+//    if(res >= 0){
         return YES;
-    }
-    else{
-        return NO;
-    }
+//    }
+//    else{
+//        return NO;
+//    }
 }
 
 - (void)refreshZiLabelText
 {
     NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
     if (ziNum<=0) {
-        ziNum=0;
+//        ziNum=0;
         m_ziNumLabel.textColor = [UIColor redColor];
     }else{
         m_ziNumLabel.textColor = [UIColor blackColor];
@@ -476,6 +485,12 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
+    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+
+    if (ziNum<0) {
+        [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
+        return;
+    }
     if (!selectCharacter) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
         return;
@@ -528,9 +543,16 @@
 {
     if ([error isKindOfClass:[NSDictionary class]]) {
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-        {
+        {/*1000124*/
+            
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000124"]) {
+                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [backAlert show];
+            }else{
+            
             UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
             [alert show];
+            }
         }
     }
 }
@@ -591,6 +613,18 @@
         [self showErrorAlert:error];
         
     }];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)dealloc
+{
+    backAlert.delegate = nil;
 }
 - (void)didReceiveMemoryWarning
 {

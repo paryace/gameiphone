@@ -25,11 +25,15 @@
     MyRoomView  *room;
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
-    UISegmentedControl *seg ;
+//    UISegmentedControl *seg ;
     UIButton* sortingBtn;
     MsgNotifityView * dotV;
     
     NSString *userid;
+    
+    UIButton *m_button1;
+    UIButton *m_button2;
+    
     
 }
 @end
@@ -59,7 +63,7 @@
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
 
-    if (seg.selectedSegmentIndex==1) {
+    if (m_button1.selected ==NO) {
         [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
     }else{
         [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
@@ -86,24 +90,41 @@
     UIImageView *segBgImg = [[UIImageView alloc]initWithImage:KUIImage(@"team_seg_black")];
     segBgImg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
     [self.view addSubview:segBgImg];
-    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
-    seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
-    seg.selectedSegmentIndex = 0;
+//    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
+//    seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
+//    seg.selectedSegmentIndex = 0;
+//    
+//    if (KISHighVersion_7) {
+//        seg.backgroundColor = [UIColor clearColor];
+//        //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
+//        seg.tintColor = [UIColor whiteColor];
+//        
+//        
+//        [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+//        [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
+//    }
+//
+//
+//    [seg addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
+//    [self.view addSubview:seg];
     
-    if (KISHighVersion_7) {
-        seg.backgroundColor = [UIColor clearColor];
-        //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
-        seg.tintColor = [UIColor whiteColor];
-        
-        
-        [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-        [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
-    }
-
-
-    [seg addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
-    [self.view addSubview:seg];
+//    UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(74, KISHighVersion_7 ? 26 : 6, 162, 32)];
+//    imgView.image = KUIImage(@"team_seg_bg");
+//    [self.view addSubview:imgView];
     
+    m_button1 = [[UIButton alloc]initWithFrame:CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 85.5f, 30)];
+    [m_button1 setBackgroundImage:KUIImage(@"team_seg_search_click") forState:UIControlStateNormal];
+    [m_button1 setBackgroundImage:KUIImage(@"team_seg_search_normal") forState:UIControlStateSelected];
+    m_button1.selected = YES;
+    [m_button1 addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_button1];
+    
+    m_button2 = [[UIButton alloc]initWithFrame:CGRectMake(160.0f, KISHighVersion_7 ? 27 : 7, 85.5f, 30)];
+    [m_button2 setBackgroundImage:KUIImage(@"team_seg_team_click") forState:UIControlStateNormal];
+    [m_button2 setBackgroundImage:KUIImage(@"team_seg_team_normal") forState:UIControlStateSelected];
+    [m_button2 addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:m_button2];
+
     
     sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
@@ -146,7 +167,7 @@
 
 -(void)sortingList:(id)sender
 {
-    if (seg.selectedSegmentIndex ==0) {
+    if (m_button1.selected == YES) {
         [firstView hideDrowList];
         [firstView didClickScreen];//排序
     }else{
@@ -198,11 +219,11 @@
 }
 -(void)refreshMyList:(id)sender
 {
-    if (seg.selectedSegmentIndex ==1) {
-    }else{
-        seg.selectedSegmentIndex = 1;
-        [self changeView:nil];
-    }
+//    if (m_button1.selected ==YES) {
+//    }else{
+    
+        [self changeView:m_button2];
+//    }
     [self getMyRoomFromNet];
 }
 
@@ -243,11 +264,12 @@
     }];
     
 }
-
--(void)changeView:(UISegmentedControl*)segment
+-(void)changeView:(UIButton *)sender
 {
-    switch (segment.selectedSegmentIndex) {
-        case 0:
+    if (sender ==m_button1) {
+        if (!m_button1.selected) {
+            m_button1.selected = YES;
+            m_button2.selected = NO;
             [UIView beginAnimations:@"animation" context:nil];
             [UIView setAnimationDuration:1.0f];
             [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
@@ -255,27 +277,59 @@
             [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:customView cache:YES];
             [customView exchangeSubviewAtIndex:1 withSubviewAtIndex:0];
             [UIView commitAnimations];
-            
-            //            [customView bringSubviewToFront:firstView];
-            break;
-        case 1:
-            [UIView beginAnimations:@"animation1" context:nil];
-            [UIView setAnimationDuration:1.0f];
-            [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
-            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
-            [UIView commitAnimations];
-            [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
-            [customView bringSubviewToFront:room];
-            
-            break;
-            
-        default:
-            break;
+
+        }
+    }else if (sender ==m_button2){
+        if (!m_button2.selected) {
+            m_button2.selected = YES;
+            m_button1.selected = NO;
+
+        [UIView beginAnimations:@"animation1" context:nil];
+        [UIView setAnimationDuration:1.0f];
+        [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
+        [UIView commitAnimations];
+        [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
+        [customView bringSubviewToFront:room];
+        }
     }
-    //  交换本视图控制器中2个view位置
-    
 }
+
+
+
+//-(void)changeView:(UISegmentedControl*)segment
+//{
+//    switch (segment.selectedSegmentIndex) {
+//        case 0:
+//            [UIView beginAnimations:@"animation" context:nil];
+//            [UIView setAnimationDuration:1.0f];
+//            [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
+//            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:customView cache:YES];
+//            [customView exchangeSubviewAtIndex:1 withSubviewAtIndex:0];
+//            [UIView commitAnimations];
+//            
+//            //            [customView bringSubviewToFront:firstView];
+//            break;
+//        case 1:
+//            [UIView beginAnimations:@"animation1" context:nil];
+//            [UIView setAnimationDuration:1.0f];
+//            [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
+//            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
+//            [UIView commitAnimations];
+//            [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
+//            [customView bringSubviewToFront:room];
+//
+//            break;
+//            
+//        default:
+//            break;
+//    }
+//    //  交换本视图控制器中2个view位置
+//    
+//}
 
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic

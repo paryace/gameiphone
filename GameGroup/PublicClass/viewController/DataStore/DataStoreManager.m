@@ -3346,6 +3346,19 @@
     return charactersArray;
 }
 
++(NSMutableArray *)queryCharacters:(NSString*)userId gameid:(NSString*)gameid
+{
+    NSMutableArray *charactersArray = [NSMutableArray array];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and gameid ==[c]%@",userId,gameid];
+    NSArray *array = [DSCharacters MR_findAllWithPredicate:predicate];
+    for (DSCharacters *character in array) {
+        [charactersArray addObject:[self getCharacter:character]];
+    }
+    return charactersArray;
+}
+
+
+
 //查询单个角色信息
 +(NSMutableDictionary*)queryCharacter:(NSString*)characterId
 {

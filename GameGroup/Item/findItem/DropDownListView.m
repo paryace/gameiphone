@@ -133,6 +133,10 @@
 - (void)setTitle:(NSString *)title inSection:(NSInteger) section
 {
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +section];
+    if (title.length>14) {
+        title = [NSString stringWithFormat:@"%@...",[title substringToIndex:14]];
+    }
+
     [btn setTitle:title forState:UIControlStateNormal];
 }
 
@@ -196,11 +200,12 @@
     CGRect rect = self.mTableView.frame;
     rect.origin.x = 0;
     rect.size.width = 320;
-    if (currentExtendSection==0) {
-        rect.size.height = kScreenHeigth-(KISHighVersion_7?64:44)-50-40;
-    }else{
-        rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?60:40));
-    }
+//    if (currentExtendSection==0) {
+////        rect.size.height = kScreenHeigth-(KISHighVersion_7?64:44)-50-40;
+//        
+//    }else{
+        rect .size.height = ([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?70:40))>(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40)?(self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40):([self.dropDownDataSource numberOfRowsInSection:currentExtendSection]*(currentExtendSection==0?70:40));
+//    }
     self.mTableView.frame = rect;
 }
 
@@ -226,6 +231,9 @@
             chooseCellTitle = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row], @"name")]];
         }else{
             chooseCellTitle = [self.dropDownDataSource titleInSection:currentExtendSection index:indexPath.row];
+            if (chooseCellTitle.length>14) {
+                chooseCellTitle = [NSString stringWithFormat:@"%@...",[chooseCellTitle substringToIndex:14]];
+            }
         }
         [self.dropDownDelegate chooseAtSection:currentExtendSection index:indexPath.row];
         [self showHide:currentExtendSection];
@@ -252,6 +260,8 @@
         if (!cell) {
             cell = [[FindRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
+        cell.selectedBackgroundView = [[UIView alloc ]initWithFrame:cell.frame];
+        cell.selectedBackgroundView.backgroundColor = UIColorFromRGBA(0x282b32, 1);
         cell.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         NSDictionary *dic = [self.dropDownDataSource contentInsection:currentExtendSection index:indexPath.row];
         NSString *imgStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
