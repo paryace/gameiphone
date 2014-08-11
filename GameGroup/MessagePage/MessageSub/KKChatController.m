@@ -813,12 +813,12 @@ UINavigationControllerDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             cell.senderNickName.hidden =YES;
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:15 topCapHeight:20];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.iconImageV.image = KUIImage([self getIcon:types]);
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30-14,padding*2-10,size.width+25+20,size.height+20)];
-            [cell.iconImageV setFrame:CGRectMake(320-size.width - padding-15-10-25-16, padding*2+4,14,14)];
-            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2,size.width,size.height)];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30-14,padding*2-10,size.width+25+20,size.height+10)];
+            [cell.iconImageV setFrame:CGRectMake(320-size.width - padding-15-10-25-16, padding*2+4-6,13.5,13.5)];
+            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2-5,size.width,size.height)];
             cell.messageContentView.textColor = [UIColor whiteColor];
             [cell hideStateView];
             
@@ -828,16 +828,16 @@ UINavigationControllerDelegate>
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
             [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:15 topCapHeight:20];
             cell.senderNickName.hidden=NO;
             cell.senderNickName.text = userNickName;
             cell.messageContentView.textColor = [UIColor whiteColor];
             cell.iconImageV.image = KUIImage([self getIcon:types]);
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25+20,size.height+20)];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25+20,size.height+10)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            [cell.iconImageV setFrame:CGRectMake(padding+7+50,padding*2-2+offHight,14,14)];
+            [cell.iconImageV setFrame:CGRectMake(padding+7+50,padding*2-2+offHight-5,13.5,13.5)];
             [cell hideStateView];
-            [cell.messageContentView setFrame:CGRectMake(padding+7+45+14+10,padding*2-4+offHight,size.width,size.height)];
+            [cell.messageContentView setFrame:CGRectMake(padding+7+45+14+10,padding*2-4+offHight-5,size.width,size.height)];
         }
         return cell;
     }
