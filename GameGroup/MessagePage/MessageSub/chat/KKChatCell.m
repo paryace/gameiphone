@@ -178,6 +178,12 @@
     
 }
 
+-(void)hideStateView{
+    self.failImage.hidden = YES;
+    self.statusLabel.hidden = YES;
+    [self.activityView stopAnimating];
+}
+
 
 #pragma mark 头像 - Headimg
 //设置自己头像

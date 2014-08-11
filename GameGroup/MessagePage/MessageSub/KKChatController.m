@@ -800,50 +800,43 @@ UINavigationControllerDelegate>
         [cell.messageContentView setEmojiText:msg];
         [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
-        
-        
-        
+
         NSString * payLoadStr = KISDictionaryHaveKey(dict, @"payload");
         NSDictionary * payloadDic = [payLoadStr JSONValue];
         NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
+        NSString * senderId = KISDictionaryHaveKey(payloadDic,@"userid");
+        if([types isEqualToString:@"selectTeamPosition"]){
+            senderId = sender;
+        }
         //你自己发送的消息
-        if ([sender isEqualToString:@"you"]) {
+        if ([[GameCommon getNewStringWithId:senderId] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]||[sender isEqualToString:@"you"]) {
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             cell.senderNickName.hidden =YES;
-            cell.messageContentView.hidden = NO;
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:30 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:30 topCapHeight:30];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.iconImageV.image = KUIImage([self getIcon:types]);
-            [cell.failImage setTag:(indexPath.row+1)];
-            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30-14,padding*2-10,size.width+25+20,size.height+20)];
             [cell.iconImageV setFrame:CGRectMake(320-size.width - padding-15-10-25-16, padding*2+4,14,14)];
             [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2,size.width,size.height)];
             cell.messageContentView.textColor = [UIColor whiteColor];
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
+            [cell hideStateView];
             
         }else { //不是你，是对方
-            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:senderId];
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
-            cell.messageContentView.hidden = NO;
-            cell.statusLabel.hidden = YES;
-            cell.failImage.hidden=YES;
             [cell setHeadImgByChatUser:userImage];
             [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:30 topCapHeight:22];
-            if([self.type isEqualToString:@"normal"]){
-                cell.senderNickName.hidden=YES;
-            }else if([self.type isEqualToString:@"group"]){
-                cell.senderNickName.hidden=NO;
-                cell.senderNickName.text = userNickName;
-            }
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:30 topCapHeight:30];
+            cell.senderNickName.hidden=NO;
+            cell.senderNickName.text = userNickName;
             cell.messageContentView.textColor = [UIColor whiteColor];
             cell.iconImageV.image = KUIImage([self getIcon:types]);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25+20,size.height+20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             [cell.iconImageV setFrame:CGRectMake(padding+7+50,padding*2-2+offHight,14,14)];
+            [cell hideStateView];
             [cell.messageContentView setFrame:CGRectMake(padding+7+45+14+10,padding*2-4+offHight,size.width,size.height)];
         }
         return cell;
@@ -918,11 +911,6 @@ UINavigationControllerDelegate>
         return cell;
     }
 }
-
-//[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]
-//||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
-//||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]//拒绝就位确认
-
 -(NSString*)getBgImage:(NSString*)payloadType IsMe:(BOOL)isMe{
     if ([payloadType isEqualToString:@"selectTeamPosition"]) {
         if (isMe) {
@@ -935,7 +923,7 @@ UINavigationControllerDelegate>
         }
         return @"select_ok_bg_other.png";
     }
-    else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+    else if ([payloadType isEqualToString:@"teamPreparedUserSelectCancel"]){
         if (isMe) {
             return @"select_cancel_bg_me.png";
         }
@@ -954,7 +942,7 @@ UINavigationControllerDelegate>
     }else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"select_ok_icon.png";
     }
-    else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+    else if ([payloadType isEqualToString:@"teamPreparedUserSelectCancel"]){
         return @"select_cancel_icon.png";
     }
     return @"";

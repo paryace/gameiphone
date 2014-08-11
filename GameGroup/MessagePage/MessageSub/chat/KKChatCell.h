@@ -45,7 +45,7 @@
 - (void)setHeadImgByChatUser:(NSString*) chatUserImg; //把头像设置为聊天对像
 -(void)setMePosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition;
 -(void)setUserPosition:(BOOL)isTeam TeanPosition:(NSString*)teamPosition;
-
+-(void)hideStateView;
 -(void)setViewState:(NSString*)status;
 @end
 
