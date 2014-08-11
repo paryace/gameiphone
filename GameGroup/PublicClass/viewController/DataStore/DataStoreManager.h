@@ -220,7 +220,7 @@
 
 +(void)storeMyNormalMessage:(NSDictionary *)message;//保存我发送的正常消息
 
-+(void)storeMyGroupMessage:(NSDictionary *)message;//保存我发送的群消息
++(void)storeMyGroupMessage:(NSDictionary *)message Successcompletion:(MRSaveCompletionHandler)successcompletion;//保存我发送的群消息
 
 +(void)refreshGroupMessageStatusWithId:(NSString*)messageuuid status:(NSString*)status;//刷新群组消息
 

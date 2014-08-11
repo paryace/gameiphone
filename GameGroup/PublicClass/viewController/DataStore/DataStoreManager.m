@@ -666,7 +666,7 @@
      }];
 }
 
-+(void)storeMyGroupMessage:(NSDictionary *)message
++(void)storeMyGroupMessage:(NSDictionary *)message Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");
     NSString * sender = KISDictionaryHaveKey(message, @"sender");
@@ -693,7 +693,9 @@
         commonMsg.groupId = groupId;
     }
      completion:^(BOOL success, NSError *error) {
-         
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
      }];
 }
 

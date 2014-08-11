@@ -119,6 +119,7 @@ static SystemSoundID shake_sound_male_id = 0;
 {
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
+    //位置改变消息
     if (payloadDic && [KISDictionaryHaveKey(payloadDic, @"team") isEqualToString:@"teamchat"]) {
         [messageContent setValue:KISDictionaryHaveKey(payloadDic, @"teamPosition") forKey:@"teamPosition"];
         if ([KISDictionaryHaveKey(payloadDic, @"type") isEqualToString:@"selectTeamPosition"]) {

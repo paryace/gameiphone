@@ -74,7 +74,7 @@
         [self.contentView addSubview:self.activityView];
         
         self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 30, 19)];
-        [self.levelLable setTextAlignment:NSTextAlignmentLeft];
+        [self.levelLable setTextAlignment:NSTextAlignmentCenter];
         self.levelLable.backgroundColor = [UIColor blueColor];
         self.levelLable.layer.cornerRadius = 3;
         self.levelLable.lineBreakMode = NSLineBreakByWordWrapping;

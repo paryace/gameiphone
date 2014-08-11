@@ -29,6 +29,7 @@
 #import "ItemInfoViewController.h"
 #import "KKTeamInviteCell.h"
 #import "H5CharacterDetailsViewController.h"
+#import "KKSimpleMsgCell.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -56,7 +57,8 @@ typedef enum : NSUInteger {
     KKChatMsgTypeImage,
     KKChatMsgTypeSystem,
     KKChatMsgHistory,
-    KKChatMsgTeamInvite
+    KKChatMsgTeamInvite,
+    KKChatMsgSimple
 } KKChatMsgType;
 
 
@@ -170,7 +172,7 @@ UINavigationControllerDelegate>
             groupUsershipType = KISDictionaryHaveKey(groupInfo, @"groupUsershipType");
             if (self.isTeam) {
                 NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
-                self.nickName = [NSString stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol"),KISDictionaryHaveKey(groupInfo, @"groupName")];
+                self.nickName = [NSString stringWithFormat:@"%@%@",[self getMemberCount:teamInfo],KISDictionaryHaveKey(groupInfo, @"groupName")];
             }else{
                 self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
             }
@@ -178,6 +180,13 @@ UINavigationControllerDelegate>
     }
     self.titleLabel.text = self.nickName;
 }
+
+
+-(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
+    
+    return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
+}
+
 
 //初始化会话界面UI
 - (void)viewDidLoad
@@ -198,6 +207,8 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
     //组队人数变化
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
+    //发送系统消息
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
     [self initMyInfo];
     
     postDict = [NSMutableDictionary dictionary];
@@ -769,6 +780,75 @@ UINavigationControllerDelegate>
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
+    else if (kkChatMsgType == KKChatMsgSimple)
+    {
+        static NSString *identifier = @"simpleMsgCell";
+        KKSimpleMsgCell *cell = (KKSimpleMsgCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell == nil) {
+            cell = [[KKSimpleMsgCell alloc] initWithMessage:dict reuseIdentifier:identifier];
+        }
+        cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
+        if (indexPath.row==0) {
+            cell.senderAndTimeLabel.hidden=YES;
+        }else{
+            NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+            NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
+            [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
+        }
+        NSString* msg = KISDictionaryHaveKey(dict, @"msg");
+        [cell.messageContentView setEmojiText:msg];
+        [cell.bgImageView setTag:(indexPath.row+1)];
+        UIImage *bgImage = nil;
+        
+        
+        
+        NSString * payLoadStr = KISDictionaryHaveKey(dict, @"payload");
+        NSDictionary * payloadDic = [payLoadStr JSONValue];
+        NSString * types = KISDictionaryHaveKey(payloadDic,@"type");
+        //你自己发送的消息
+        if ([sender isEqualToString:@"you"]) {
+            [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            cell.senderNickName.hidden =YES;
+            cell.messageContentView.hidden = NO;
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:30 topCapHeight:22];
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            cell.iconImageV.image = KUIImage([self getIcon:types]);
+            [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30-14,padding*2-10,size.width+25+20,size.height+20)];
+            [cell.iconImageV setFrame:CGRectMake(320-size.width - padding-15-10-25-16, padding*2+4,14,14)];
+            [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2,size.width,size.height)];
+            cell.messageContentView.textColor = [UIColor whiteColor];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
+            
+        }else { //不是你，是对方
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
+            cell.messageContentView.hidden = NO;
+            cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
+            [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:30 topCapHeight:22];
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
+            cell.messageContentView.textColor = [UIColor whiteColor];
+            cell.iconImageV.image = KUIImage([self getIcon:types]);
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25+20,size.height+20)];
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            [cell.iconImageV setFrame:CGRectMake(padding+7+50,padding*2-2+offHight,14,14)];
+            [cell.messageContentView setFrame:CGRectMake(padding+7+45+14+10,padding*2-4+offHight,size.width,size.height)];
+        }
+        return cell;
+    }
+    
     //以上是历史消息
     else if (kkChatMsgType == KKChatMsgHistory){
         static NSString *identifier = @"historyMsgCell";
@@ -837,6 +917,47 @@ UINavigationControllerDelegate>
         }
         return cell;
     }
+}
+
+//[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]
+//||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
+//||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]//拒绝就位确认
+
+-(NSString*)getBgImage:(NSString*)payloadType IsMe:(BOOL)isMe{
+    if ([payloadType isEqualToString:@"selectTeamPosition"]) {
+        if (isMe) {
+            return @"select_position_bg_me.png";
+        }
+        return @"select_position_bg_other.png";
+    }else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+        if (isMe) {
+            return @"select_ok_bg_me.png";
+        }
+        return @"select_ok_bg_other.png";
+    }
+    else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+        if (isMe) {
+            return @"select_cancel_bg_me.png";
+        }
+        return @"select_cancel_bg_other.png";
+    }
+    if (isMe) {
+        return @"bubble_norla_you.png";
+    }
+    return @"bubble_01.png";
+}
+
+
+-(NSString*)getIcon:(NSString*)payloadType{
+    if ([payloadType isEqualToString:@"selectTeamPosition"]) {
+        return @"select_position_icon.png";
+    }else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+        return @"select_ok_icon.png";
+    }
+    else if ([payloadType isEqualToString:@"teamPreparedUserSelectOk"]){
+        return @"select_cancel_icon.png";
+    }
+    return @"";
 }
 
 //每一行的高度
@@ -1435,6 +1556,15 @@ UINavigationControllerDelegate>
 //            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
             break;
         }
+        case KKChatMsgSimple:
+        {
+            NSString *emojiStr = [UILabel getStr:message];
+            CGSize size = [emojiStr sizeWithFont:[UIFont systemFontOfSize:16] constrainedToSize:CGSizeMake(200, MAXFLOAT)];
+            NSNumber * width = [NSNumber numberWithFloat:size.width];
+            NSNumber * height = [NSNumber numberWithFloat:size.height];
+            array= [NSArray arrayWithObjects:width,height, nil];
+            break;
+        }
         case KKChatMsgHistory:
         {
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:25], nil];
@@ -1480,18 +1610,24 @@ UINavigationControllerDelegate>
     }
     //系统消息
     else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"]//解散组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"])
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
+//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]//拒绝就位确认
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]//就位确认成功
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"])//就位确认失败
     {
         return KKChatMsgTypeSystem;
+    }
+    else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]
+            ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
+            ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]//拒绝就位确认
+            ){
+        return KKChatMsgSimple;
     }
     else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"historyMsg"])//以上是历史消息
     {
@@ -2349,7 +2485,9 @@ UINavigationControllerDelegate>
         [self addNewOneMessageToTable:dictionary];
         [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
         if (![self isGroupAvaitable]) {//本群不可用
-            [self groupNotAvailable];
+//            [self groupNotAvailable:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg" Message:self.isTeam?@"该组队已经解散":@"该群已经解散"];
+            
+            [MessageService groupNotAvailable:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg" Message:self.isTeam?@"该组队已经解散":@"该群已经解散" GroupId:self.chatWithUser];
         }
     }
     if ([self.type isEqualToString:@"normal"]) {
@@ -2367,16 +2505,18 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 添加本群不可用消息
--(void)groupNotAvailable
+-(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message
 {
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg"];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:self.isTeam?@"该组队已经解散":@"该群已经解散" NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    NSString * payloadStr=[MessageService createPayLoadStr:payloadType];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:self.chatWithUser forKey:@"groupId"];
     [self addNewOneMessageToTable:dictionary];
-    [DataStoreManager storeMyGroupMessage:dictionary];
+    [DataStoreManager storeMyGroupMessage:dictionary Successcompletion:^(BOOL success, NSError *error) {
+        
+    }];
 }
 #pragma mark 添加以上是历史消息
 -(void)addGroupHistoryMsg
@@ -2649,8 +2789,19 @@ UINavigationControllerDelegate>
     [self.tView reloadData];
 }
 
+#pragma mark 发送系统消息
+-(void)sendSystemMessage:(NSNotification *)notification{
+    
+    NSDictionary * dictionary = notification.userInfo;
+    [self addNewOneMessageToTable:dictionary];
+}
+#pragma mark 组队人数添加
 -(void)teamMemberCountChang:(NSNotification *)notification
 {
+    NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
+    if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {
+        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"该房间已组满队员" GroupId:self.chatWithUser];
+    }
     [self refreTitleText];
 }
 

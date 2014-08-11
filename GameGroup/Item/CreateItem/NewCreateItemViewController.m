@@ -533,6 +533,7 @@
         [[TeamManager singleton] saveTeamInfo:responseObject GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
         [[GroupManager singleton] getGroupInfoWithNet:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"组队创建成功，可以发起就位确认" GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
         [self.navigationController popToRootViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
