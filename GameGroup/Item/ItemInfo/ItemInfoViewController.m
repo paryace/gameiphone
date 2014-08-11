@@ -78,7 +78,7 @@
 
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
-    roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
+    roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.7];
 
     roleTabView.hidden = YES;
     roleTabView.mydelegate  =self;
@@ -167,10 +167,12 @@
         }
     }else if(alertView.tag ==10212)
     {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-        
-        [self.navigationController popViewControllerAnimated:YES];
-
+        if (buttonIndex==1) {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+            
+            [self.navigationController popViewControllerAnimated:YES];
+            
+        }
     }
     
 }
@@ -269,6 +271,13 @@
     {
 //        [self showMessageWindowWithContent:@"退出群" imageType:0];
 //        [self gooutRoomWithNet];
+        InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
+        editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
+        //        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
+        //        editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
+        [self.navigationController pushViewController:editInfo animated:YES];
+
     }
 }
 -(void)chooseRoles:(id)sender
@@ -327,7 +336,7 @@
     }
     else if([teamUsershipType intValue]==1)
     {
-        arr = @[@"sendMsg_normal.jpg",@"goout_item"];
+        arr = @[@"sendMsg_normal.jpg",@"yaoqing.jpg"];
         titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
@@ -638,7 +647,7 @@
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
         {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000124"]) {
-                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
                 backAlert.tag = 10212;
                 [backAlert show];
             }else{

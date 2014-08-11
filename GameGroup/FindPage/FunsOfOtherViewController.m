@@ -50,7 +50,7 @@
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
     [self.view addSubview:m_myFansTableView];
-    
+    [GameCommon setExtraCellLineHidden:m_myFansTableView];
     [self addFooter];
     [self addHeader];
 }

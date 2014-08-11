@@ -548,7 +548,7 @@
         {/*1000124*/
             
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000124"]) {
-                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                backAlert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
                 [backAlert show];
             }else{
             
@@ -619,9 +619,12 @@
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+    if (buttonIndex==1) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
+        
+        [self.navigationController popViewControllerAnimated:YES];
 
-    [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)dealloc

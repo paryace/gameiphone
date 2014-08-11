@@ -67,7 +67,7 @@ static TeamManager *teamManager = NULL;
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"266" forKey:@"method"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]:@"" forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (resuccess) {
             resuccess(responseObject);

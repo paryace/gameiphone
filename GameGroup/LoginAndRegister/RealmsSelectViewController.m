@@ -51,6 +51,7 @@
     m_realmsTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     m_realmsTableView.delegate = self;
     m_realmsTableView.dataSource = self;
+    m_realmsTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     [self.view addSubview:m_realmsTableView];
     [self initContentForSearchText];
     
@@ -89,7 +90,13 @@
 {
     return 40;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (tableView == searchController.searchResultsTableView) {
+        return 0;
+    }else
+        return 30;
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"myRealm";

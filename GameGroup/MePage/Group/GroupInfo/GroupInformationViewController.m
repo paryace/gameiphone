@@ -222,45 +222,63 @@
 
 -(void)buildmemberisAudit:(NSString *)isAudit title:(NSString *)title num:(NSString *)numStr  imgArray:(NSArray *)array
 {
-    boView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-    boView.backgroundColor =[ UIColor clearColor];
-    [aoView addSubview:boView];
+    if (!boView) {
+        boView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+        boView.backgroundColor =[ UIColor clearColor];
+        [aoView addSubview:boView];
+    }
     if ([isAudit intValue]==0||[isAudit intValue]==3) {
         
         aoView.backgroundColor = [UIColor clearColor];
-        UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-        imageView.image = KUIImage(@"shenhezhong");
-        imageView.backgroundColor = [UIColor clearColor];
-        [boView addSubview:imageView];
+        UIImageView *imageView;
+        if (!imageView) {
+            imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+            imageView.image = KUIImage(@"shenhezhong");
+            imageView.backgroundColor = [UIColor clearColor];
+            [boView addSubview:imageView];
+        }
         
-        UILabel *label =[[ UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-        label.backgroundColor = [UIColor clearColor];
-        label.textColor = [UIColor whiteColor];
+        UILabel *label;
+        if (!label) {
+            label=[[ UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+            label.backgroundColor = [UIColor clearColor];
+            label.textColor = [UIColor whiteColor];
+            label.font = [UIFont boldSystemFontOfSize:18];
+            label.textAlignment = NSTextAlignmentCenter;
+            [boView addSubview:label];
+
+        }
+      
         if ([isAudit intValue]==0) {
             label.text = [NSString stringWithFormat:@"审核队列中,您排在第%@位",numStr];
         }else{
             label.text = @"审核中...";
         }
-        label.font = [UIFont boldSystemFontOfSize:18];
-        label.textAlignment = NSTextAlignmentCenter;
-        [boView addSubview:label];
         
     }else{
-    UILabel *m_cy_label = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 85, 20)];
-    m_cy_label.backgroundColor = [UIColor clearColor];
-    m_cy_label.font = [UIFont boldSystemFontOfSize:13];
-    m_cy_label.textColor = [UIColor whiteColor];
-    m_cy_label.text = @"群组成员";
-    m_cy_label.textAlignment = NSTextAlignmentCenter;
-    [boView addSubview:m_cy_label];
-    
-    Memb = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 85, 15)];
-    Memb.backgroundColor = [UIColor clearColor];
-    Memb.font = [UIFont boldSystemFontOfSize:13];
-    Memb.textColor = [UIColor whiteColor];
+        
+        
+        UILabel *m_cy_label;
+        if (!m_cy_label) {
+            m_cy_label= [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 85, 20)];
+            m_cy_label.backgroundColor = [UIColor clearColor];
+            m_cy_label.font = [UIFont boldSystemFontOfSize:13];
+            m_cy_label.textColor = [UIColor whiteColor];
+            m_cy_label.text = @"群组成员";
+            m_cy_label.textAlignment = NSTextAlignmentCenter;
+            [boView addSubview:m_cy_label];
+
+        }
+        if (!Memb) {
+            Memb = [[UILabel alloc]initWithFrame:CGRectMake(0, 30, 85, 15)];
+            Memb.backgroundColor = [UIColor clearColor];
+            Memb.font = [UIFont boldSystemFontOfSize:13];
+            Memb.textColor = [UIColor whiteColor];
+            Memb.textAlignment = NSTextAlignmentCenter;
+            [boView addSubview:Memb];
+
+        }
     Memb.text = title;
-    Memb.textAlignment = NSTextAlignmentCenter;
-    [boView addSubview:Memb];
         
         for (int i =0; i<array.count; i++) {
             EGOImageButton *headimgView = [[EGOImageButton alloc]initWithFrame:CGRectMake(100+45*i, 5, 40, 40)];
@@ -360,7 +378,7 @@
             NSMutableArray *arr = KISDictionaryHaveKey(responseObject, @"memberList");
             [arr insertObject:[NSDictionary dictionaryWithObjectsAndKeys:@"wxxxx",@"img", nil] atIndex:0];
             
-            [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:arr];
+                [self buildmemberisAudit:authStr title:[NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(responseObject, @"currentMemberNum"),KISDictionaryHaveKey(responseObject, @"maxMemberNum")] num:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"rank")] imgArray:arr];
             
             
             

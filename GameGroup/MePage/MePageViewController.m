@@ -97,9 +97,9 @@
 -(void)refreUserInfo
 {
     NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    if (!userDic) {
+    if (!userDic) {//联网
         [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    }else{
+    }else{//本地
         [self iniUserInfo];
     }
 }
