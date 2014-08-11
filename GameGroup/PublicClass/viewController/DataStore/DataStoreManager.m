@@ -1484,7 +1484,9 @@
             }
         }
         completion:^(BOOL success, NSError *error) {
-            
+            if (success&&[userId isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshMyInfomation" object:nil];
+            }
         }];
     }
 }
