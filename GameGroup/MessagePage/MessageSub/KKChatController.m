@@ -813,7 +813,7 @@ UINavigationControllerDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             cell.senderNickName.hidden =YES;
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:30 topCapHeight:30];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:YES]]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.iconImageV.image = KUIImage([self getIcon:types]);
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30-14,padding*2-10,size.width+25+20,size.height+20)];
@@ -828,7 +828,7 @@ UINavigationControllerDelegate>
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
             [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
-            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:30 topCapHeight:30];
+            bgImage = [[UIImage imageNamed:[self getBgImage:types IsMe:NO]]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             cell.senderNickName.hidden=NO;
             cell.senderNickName.text = userNickName;
             cell.messageContentView.textColor = [UIColor whiteColor];

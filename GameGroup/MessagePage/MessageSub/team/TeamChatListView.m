@@ -495,6 +495,7 @@
 -(void)getmemberList{
 //    self.memberList = [DataStoreManager getMemberList:self.groipId];
     self.memberList = [DataStoreManager getMemberList:self.roomId GameId:self.gameId];
+    
     [self.memberList sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] < 0)
         {
