@@ -16,16 +16,26 @@
 #import "PuthMessageViewController.h"
 #import "TestViewController.h"
 
-@interface MessageAddressViewController ()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,DodeAddressCellDelegate,MFMessageComposeViewControllerDelegate,testViewDelegate>
+@interface MessageAddressViewController ()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,DodeAddressCellDelegate,MFMessageComposeViewControllerDelegate,testViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
 {
     BOOL systemAllowGetAddress;
     BOOL appAllowGetAddress;
     UITableView * _tableView;
+    
+    
+    UISearchBar * mSearchBar;
+    UISearchDisplayController *searchController;
 }
-@property (nonatomic,retain)UISwitch* swith;
+//@property (nonatomic,retain)UISwitch* swith;
 @property (nonatomic,retain)NSMutableArray * addressArray;
 @property (nonatomic,retain)NSMutableArray * outAddressArray;
 @property (nonatomic,retain)UIView * unAllowView;
+
+@property (nonatomic,retain)NSMutableArray * searchAddressArray;
+@property (nonatomic,retain)NSMutableArray * searchOutAddressArray;
+
+@property (nonatomic,retain)NSMutableArray * keysAddressArray;
+@property (nonatomic,retain)NSMutableArray * keysOutAddressArray;
 @end
 
 @implementation MessageAddressViewController
@@ -60,6 +70,11 @@
             }
         }
         self.addressArray = [NSMutableArray array];
+        
+        self.searchAddressArray = [NSMutableArray array];
+        self.searchOutAddressArray = [NSMutableArray array];
+        self.keysAddressArray = [NSMutableArray array];
+        self.keysOutAddressArray = [NSMutableArray array];
     }
     return self;
 }
@@ -76,50 +91,65 @@
     _tableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_tableView];
 
-    UIView * headV = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
-    UIImageView *imageV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 27.5, 40, 45)];
-    imageV.image = [UIImage imageNamed:@"addressBookIcon"];
-    [headV addSubview:imageV];
-    UILabel * label1 = [[UILabel alloc]initWithFrame:CGRectMake(60, 30, 200, 20)];
-    label1.text = @"启动手机通讯录";
-    label1.backgroundColor = [UIColor clearColor];
-    label1.textColor = [UIColor blackColor];
-    [headV addSubview:label1];
-    UILabel * label2 = [[UILabel alloc]initWithFrame:CGRectMake(60, 50, 200, 20)];
-    label2.text = @"与通讯录中好友建立联系";
-    label2.backgroundColor = [UIColor clearColor];
-    label2.textColor = [UIColor grayColor];
-    label2.font = [UIFont systemFontOfSize:14];
-    [headV addSubview:label2];
-    self.swith = [[UISwitch alloc]initWithFrame:CGRectMake(250, 30, 40, 60)];
-    [headV addSubview:_swith];
+//    UIView * headV = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];
+//    UIImageView *imageV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 27.5, 40, 45)];
+//    imageV.image = [UIImage imageNamed:@"addressBookIcon"];
+//    [headV addSubview:imageV];
+//    UILabel * label1 = [[UILabel alloc]initWithFrame:CGRectMake(60, 30, 200, 20)];
+//    label1.text = @"启动手机通讯录";
+//    label1.backgroundColor = [UIColor clearColor];
+//    label1.textColor = [UIColor blackColor];
+//    [headV addSubview:label1];
+//    UILabel * label2 = [[UILabel alloc]initWithFrame:CGRectMake(60, 50, 200, 20)];
+//    label2.text = @"与通讯录中好友建立联系";
+//    label2.backgroundColor = [UIColor clearColor];
+//    label2.textColor = [UIColor grayColor];
+//    label2.font = [UIFont systemFontOfSize:14];
+//    [headV addSubview:label2];
+//    self.swith = [[UISwitch alloc]initWithFrame:CGRectMake(250, 30, 40, 60)];
+//    [headV addSubview:_swith];
     
-    [_swith addTarget:self action:@selector(SwithCellChangeSwith:) forControlEvents:UIControlEventValueChanged];
-    _tableView.tableHeaderView = headV;
-    _tableView.backgroundColor = [UIColor clearColor];
-    _swith.on = appAllowGetAddress;
+//    [_swith addTarget:self action:@selector(SwithCellChangeSwith:) forControlEvents:UIControlEventValueChanged];
+//    _tableView.tableHeaderView = headV;
+//    _tableView.backgroundColor = [UIColor clearColor];
+//    _swith.on = appAllowGetAddress;
     
-    self.unAllowView = [[UIView alloc]initWithFrame:CGRectMake(0, 100, 320, _tableView.frame.size.height-100)];
-    _unAllowView.backgroundColor = [UIColor clearColor];
-    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(136, 40, 48, 62)];
-    imageView.image = [UIImage imageNamed:@"addressBook3"];
-    [_unAllowView addSubview:imageView];
-    UILabel * label3 = [[UILabel alloc]initWithFrame:CGRectMake(0, 130, 320, 80)];
-    label3.backgroundColor = [UIColor clearColor];
-    label3.textColor = [UIColor grayColor];
-    label3.textAlignment = NSTextAlignmentCenter;
-    label3.numberOfLines = 0;
-    label3.text = @"启动通讯录后,你可以立即联系到您游戏中\n的好友,也能够邀请到通讯录中的好友.\n\n陌游尊重用户隐私,不会泄露你的个人信息.";
-    label3.font = [UIFont systemFontOfSize:14];
-    [_unAllowView addSubview:label3];
-    [_tableView addSubview:_unAllowView];
-    _unAllowView.hidden = appAllowGetAddress;
+//    self.unAllowView = [[UIView alloc]initWithFrame:CGRectMake(0, 100, 320, _tableView.frame.size.height-100)];
+//    _unAllowView.backgroundColor = [UIColor clearColor];
+//    UIImageView * imageView = [[UIImageView alloc]initWithFrame:CGRectMake(136, 40, 48, 62)];
+//    imageView.image = [UIImage imageNamed:@"addressBook3"];
+//    [_unAllowView addSubview:imageView];
+//    UILabel * label3 = [[UILabel alloc]initWithFrame:CGRectMake(0, 130, 320, 80)];
+//    label3.backgroundColor = [UIColor clearColor];
+//    label3.textColor = [UIColor grayColor];
+//    label3.textAlignment = NSTextAlignmentCenter;
+//    label3.numberOfLines = 0;
+//    label3.text = @"启动通讯录后,你可以立即联系到您游戏中\n的好友,也能够邀请到通讯录中的好友.\n\n陌游尊重用户隐私,不会泄露你的个人信息.";
+//    label3.font = [UIFont systemFontOfSize:14];
+//    [_unAllowView addSubview:label3];
+//    [_tableView addSubview:_unAllowView];
+//    _unAllowView.hidden = appAllowGetAddress;
+    
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"激活中...";
-    if (appAllowGetAddress) {
+//    if (appAllowGetAddress) {
         [self setLocalAddressBook];
-    }
+//    }
+    
+    //初始化搜索条
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    [mSearchBar setPlaceholder:@"关键字搜索"];
+    mSearchBar.delegate = self;
+    [mSearchBar sizeToFit];
+    //初始化UISearchDisplayController
+    searchController = [[UISearchDisplayController alloc] initWithSearchBar:mSearchBar contentsController:self];
+    [searchController setDelegate:self];
+    [searchController setSearchResultsDataSource:self];
+    [searchController setSearchResultsDelegate:self];
+    searchController.searchResultsTableView.tableHeaderView = mSearchBar;
+    _tableView.tableHeaderView = mSearchBar;
 }
 
 - (void)didReceiveMemoryWarning
@@ -155,75 +185,151 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (appAllowGetAddress) {
-        if (section == 0) {
-            return self.addressArray.count;
-        }else
-        {
-            return self.outAddressArray.count;
+        if (tableView == searchController.searchResultsTableView) {
+            if (section == 0) {
+                return self.searchAddressArray.count;
+            }else
+            {
+                return self.searchOutAddressArray.count;
+            }
+        }else{
+            if (section == 0) {
+                return self.addressArray.count;
+            }else
+            {
+                return self.outAddressArray.count;
+            }
         }
     }else
     {
         return 0;
     }
 }
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 60;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0) {
-        static NSString *identifier = @"inDoduCell";
-        InDoduAddressTableViewCell *cell = (InDoduAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell == nil) {
-            cell = [[InDoduAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        }
-        cell.indexPath = indexPath;
-        cell.delegate = self;
-        cell.nameL.text = [self.addressArray[indexPath.row] objectForKey:@"nickname"];
-        cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[self.addressArray[indexPath.row] objectForKey:@"addressName"]];
-        
-        NSString* imageIds = [self.addressArray[indexPath.row] objectForKey:@"img"];
-        cell.headerImage.imageURL = [ImageService getImageStr:imageIds Width:80];
-        if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
-            [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
-            cell.addFriendB.userInteractionEnabled = NO;
-            [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateNormal];
-            [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateHighlighted];
-        }
-        if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2) {
-            [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
-            cell.addFriendB.userInteractionEnabled = NO;
-            [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-            [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
-            [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
-        }
-        if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
-            if ([[self.addressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
-                [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
-                cell.addFriendB.userInteractionEnabled = YES;
+    
+    
+    if (tableView == searchController.searchResultsTableView) {
+        if (indexPath.section == 0) {
+            static NSString *identifier = @"inDoduCell";
+            InDoduAddressTableViewCell *cell = (InDoduAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+            if (cell == nil) {
+                cell = [[InDoduAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            }
+            cell.indexPath = indexPath;
+            cell.delegate = self;
+            cell.nameL.text = [self.searchAddressArray[indexPath.row] objectForKey:@"nickname"];
+            cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[self.searchAddressArray[indexPath.row] objectForKey:@"addressName"]];
+            
+            NSString* imageIds = [self.searchAddressArray[indexPath.row] objectForKey:@"img"];
+            cell.headerImage.imageURL = [ImageService getImageStr:imageIds Width:80];
+            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
+                [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
+                cell.addFriendB.userInteractionEnabled = NO;
                 [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend2"] forState:UIControlStateNormal];
-                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend1"] forState:UIControlStateHighlighted];
-            }else
-            {
+                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateNormal];
+                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateHighlighted];
+            }
+            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2) {
                 [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
                 cell.addFriendB.userInteractionEnabled = NO;
                 [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
             }
+            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
+                if ([[self.searchAddressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
+                    [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
+                    cell.addFriendB.userInteractionEnabled = YES;
+                    [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend2"] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend1"] forState:UIControlStateHighlighted];
+                }else
+                {
+                    [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
+                    cell.addFriendB.userInteractionEnabled = NO;
+                    [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
+                }
+            }
+            return cell;
+        }else
+        {
+            static NSString *identifier = @"outDoduCell";
+            OutDodeAddressTableViewCell *cell = (OutDodeAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+            if (cell == nil) {
+                cell = [[OutDodeAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            }
+            cell.indexPath = indexPath;
+            cell.delegate = self;
+            cell.nameL.text = [self.searchOutAddressArray[indexPath.row] objectForKey:@"name"];
+            cell.photoNoL.text = [self.searchOutAddressArray[indexPath.row] objectForKey:@"mobileid"];
+            return cell;
         }
-        return cell;
-    }else
-    {
-        static NSString *identifier = @"outDoduCell";
-        OutDodeAddressTableViewCell *cell = (OutDodeAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
-        if (cell == nil) {
-            cell = [[OutDodeAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    }
+    else{
+        if (indexPath.section == 0) {
+            static NSString *identifier = @"inDoduCell";
+            InDoduAddressTableViewCell *cell = (InDoduAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+            if (cell == nil) {
+                cell = [[InDoduAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            }
+            cell.indexPath = indexPath;
+            cell.delegate = self;
+            cell.nameL.text = [self.addressArray[indexPath.row] objectForKey:@"nickname"];
+            cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[self.addressArray[indexPath.row] objectForKey:@"addressName"]];
+            
+            NSString* imageIds = [self.addressArray[indexPath.row] objectForKey:@"img"];
+            cell.headerImage.imageURL = [ImageService getImageStr:imageIds Width:80];
+            if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 1) {
+                [cell.addFriendB setTitle:@"" forState:UIControlStateNormal];
+                cell.addFriendB.userInteractionEnabled = NO;
+                [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateNormal];
+                [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"added"] forState:UIControlStateHighlighted];
+            }
+            if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] intValue] == 2) {
+                [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
+                cell.addFriendB.userInteractionEnabled = NO;
+                [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
+                [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
+            }
+            if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
+                if ([[self.addressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
+                    [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
+                    cell.addFriendB.userInteractionEnabled = YES;
+                    [cell.addFriendB setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend2"] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:[UIImage imageNamed:@"addfriend1"] forState:UIControlStateHighlighted];
+                }else
+                {
+                    [cell.addFriendB setTitle:@"等待验证" forState:UIControlStateNormal];
+                    cell.addFriendB.userInteractionEnabled = NO;
+                    [cell.addFriendB setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
+                    [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
+                }
+            }
+            return cell;
+        }else
+        {
+            static NSString *identifier = @"outDoduCell";
+            OutDodeAddressTableViewCell *cell = (OutDodeAddressTableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
+            if (cell == nil) {
+                cell = [[OutDodeAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+            }
+            cell.indexPath = indexPath;
+            cell.delegate = self;
+            cell.nameL.text = [self.outAddressArray[indexPath.row] objectForKey:@"name"];
+            cell.photoNoL.text = [self.outAddressArray[indexPath.row] objectForKey:@"mobileid"];
+            return cell;
         }
-        cell.indexPath = indexPath;
-        cell.delegate = self;
-        cell.nameL.text = [self.outAddressArray[indexPath.row] objectForKey:@"name"];
-        cell.photoNoL.text = [self.outAddressArray[indexPath.row] objectForKey:@"mobileid"];
-        return cell;
     }
     
 }
@@ -231,31 +337,99 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == 0) {
-        TestViewController *testVC = [[TestViewController alloc]init];
-        testVC.myDelegate = self;
-        testVC.testRow = indexPath.row;
-        testVC.userId = [self.addressArray[indexPath.row] objectForKey:@"userid"];
-        testVC.titleImage = [self.addressArray[indexPath.row] objectForKey:@"userid"];
-        testVC.nickName = [self.addressArray[indexPath.row] objectForKey:@"nickname"];
-        if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
-            testVC.viewType = VIEW_TYPE_FriendPage1;
-        }else if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2)
-        {
-            testVC.viewType = VIEW_TYPE_AttentionPage1;
-        }else if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 3){
-            testVC.viewType = VIEW_TYPE_FansPage1;
+    
+    
+    if (tableView == searchController.searchResultsTableView) {
+        if (indexPath.section == 0) {
+            TestViewController *testVC = [[TestViewController alloc]init];
+            testVC.myDelegate = self;
+            testVC.testRow = indexPath.row;
+            testVC.userId = [self.searchAddressArray[indexPath.row] objectForKey:@"userid"];
+            testVC.titleImage = [self.searchAddressArray[indexPath.row] objectForKey:@"userid"];
+            testVC.nickName = [self.searchAddressArray[indexPath.row] objectForKey:@"nickname"];
+            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
+                testVC.viewType = VIEW_TYPE_FriendPage1;
+            }else if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2)
+            {
+                testVC.viewType = VIEW_TYPE_AttentionPage1;
+            }else if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 3){
+                testVC.viewType = VIEW_TYPE_FansPage1;
+            }else{
+                testVC.viewType = VIEW_TYPE_STRANGER1;
+            }
+            
+            [self.navigationController pushViewController:testVC animated:YES];
         }else{
-            testVC.viewType = VIEW_TYPE_STRANGER1;
+            PuthMessageViewController * puthmsgVC = [[PuthMessageViewController alloc]init];
+            puthmsgVC.addressDic = self.searchOutAddressArray[indexPath.row];
+            [self.navigationController pushViewController:puthmsgVC animated:YES];
         }
-        
-        [self.navigationController pushViewController:testVC animated:YES];
-    }else{
-        PuthMessageViewController * puthmsgVC = [[PuthMessageViewController alloc]init];
-        puthmsgVC.addressDic = self.outAddressArray[indexPath.row];
-        [self.navigationController pushViewController:puthmsgVC animated:YES];
+    }
+    else{
+        if (indexPath.section == 0) {
+            TestViewController *testVC = [[TestViewController alloc]init];
+            testVC.myDelegate = self;
+            testVC.testRow = indexPath.row;
+            testVC.userId = [self.addressArray[indexPath.row] objectForKey:@"userid"];
+            testVC.titleImage = [self.addressArray[indexPath.row] objectForKey:@"userid"];
+            testVC.nickName = [self.addressArray[indexPath.row] objectForKey:@"nickname"];
+            if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 1) {
+                testVC.viewType = VIEW_TYPE_FriendPage1;
+            }else if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 2)
+            {
+                testVC.viewType = VIEW_TYPE_AttentionPage1;
+            }else if ([[self.addressArray[indexPath.row] objectForKey:@"friendshiptype"] intValue] == 3){
+                testVC.viewType = VIEW_TYPE_FansPage1;
+            }else{
+                testVC.viewType = VIEW_TYPE_STRANGER1;
+            }
+            
+            [self.navigationController pushViewController:testVC animated:YES];
+        }else{
+            PuthMessageViewController * puthmsgVC = [[PuthMessageViewController alloc]init];
+            puthmsgVC.addressDic = self.outAddressArray[indexPath.row];
+            [self.navigationController pushViewController:puthmsgVC animated:YES];
+        }
     }
 }
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+{
+    [self filterContentForSearchText:searchString];
+    [self setTopViewWithTitle:@"手机通讯录" withBackButton:YES];;
+    return YES;
+}
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
+{
+    [self filterContentForSearchText:mSearchBar.text];
+    return YES;
+}
+
+-(void)filterContentForSearchText:(NSString*)searchText{
+    [self.searchAddressArray removeAllObjects];
+    [self.searchOutAddressArray removeAllObjects];
+    NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@",searchText];
+    NSMutableArray * resultKeys = (NSMutableArray*)[self.keysAddressArray filteredArrayUsingPredicate:resultPredicate];
+    for (NSString * key in resultKeys) {
+        for (NSMutableDictionary * ddic in self.addressArray) {
+            if ([KISDictionaryHaveKey(ddic, @"nickname") isEqualToString:key]) {
+                [self.searchAddressArray addObject:ddic];
+            }
+        }
+    }
+    
+    NSMutableArray * resultKeys2 = (NSMutableArray*)[self.keysOutAddressArray filteredArrayUsingPredicate:resultPredicate];
+    for (NSString * key in resultKeys2) {
+        for (NSMutableDictionary * ddic in self.outAddressArray) {
+            if ([KISDictionaryHaveKey(ddic, @"name") isEqualToString:key]) {
+                [self.searchOutAddressArray addObject:ddic];
+            }
+        }
+    }
+    [_tableView reloadData];
+}
+
 -(void)isAttention:(TestViewController *)view attentionSuccess:(NSInteger)i backValue:(NSString *)valueStr
 {
     if ([valueStr isEqualToString:@"off"]) {
@@ -365,6 +539,7 @@
     dispatch_queue_t queue = dispatch_queue_create("com.living.game.MessageAddressViewController", NULL);
     dispatch_async(queue, ^{
         self.outAddressArray = [self getAddressBook];
+        [self getKeys];
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
             [_tableView reloadData];
@@ -373,7 +548,11 @@
     });
 }
 
-
+-(void)getKeys{
+    for (NSMutableDictionary* dic in self.outAddressArray) {
+        [self.keysOutAddressArray addObject:KISDictionaryHaveKey(dic, @"name")];
+    }
+}
 - (NSMutableArray*)getAddressBook
 {
     NSMutableArray * addressArray = [NSMutableArray array];
@@ -407,6 +586,7 @@
                 [dic setObject:[NSString stringWithFormat:@"%@%@",tmpLastName,tmpFirstName] forKey:@"name"];
                 [dic setObject:tmpPhoneIndex forKey:@"mobileid"];
                 [addressArray addObject:dic];
+                
             }else if (tmpLastName)
             {
                 [dic setObject:[NSString stringWithFormat:@"%@",tmpLastName] forKey:@"name"];
@@ -449,8 +629,11 @@
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithDictionary:dic];
             [dict setObject:@"0" forKey:@"iCare"];
             [self.addressArray addObject:dict];
+            [self.keysAddressArray addObject:[dic objectForKey:@"nickname"]];
         }
       self.outAddressArray =  [self detail:arr JoinedMoyou:self.addressArray];
+        [self.keysOutAddressArray removeAllObjects];
+        [self getKeys];
         [_tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

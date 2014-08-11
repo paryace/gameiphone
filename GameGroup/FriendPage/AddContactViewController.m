@@ -38,6 +38,7 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
+    
 }
 
 #pragma mark TableView
