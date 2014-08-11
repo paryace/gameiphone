@@ -18,7 +18,6 @@
         self.stateView.backgroundColor = [UIColor greenColor];
         [self.contentView addSubview:self.stateView];
         
-        
         self.headImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(15, 10, 60, 60)];
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
@@ -32,8 +31,6 @@
         [self.bgImageView setBackgroundImage:nil forState:UIControlStateNormal];
         [self.contentView addSubview:self.bgImageView];
         
-        
-        
         self.groupNameLable = [[UILabel alloc]initWithFrame:CGRectMake(80, 10, 100, 20)];
         self.groupNameLable.backgroundColor = [UIColor clearColor];
         self.groupNameLable.textColor = kColorWithRGB(5,5,5, 0.7);
@@ -43,6 +40,15 @@
         
         self.genderImageV = [[UIImageView alloc]initWithFrame:CGRectMake(155, 10, 20, 20)];
         [self.contentView addSubview:self.genderImageV];
+        
+        
+        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(195, 6, 26, 11)];
+        self.MemberLable.layer.cornerRadius = 3;
+        self.MemberLable.layer.masksToBounds=YES;
+        self.MemberLable.textAlignment = NSTextAlignmentCenter;
+        self.MemberLable.font = [UIFont systemFontOfSize:10];
+        self.MemberLable.textColor = [UIColor whiteColor];
+        [self addSubview:self.MemberLable];
         
         self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 15, 15)];
         [self.contentView addSubview:self.gameImageV];
@@ -72,6 +78,8 @@
         self.positionLable.textAlignment = NSTextAlignmentCenter;
         self.positionLable.font =[ UIFont systemFontOfSize:14];
         [self.contentView addSubview:self.positionLable];
+        
+        
 
     }
     return self;

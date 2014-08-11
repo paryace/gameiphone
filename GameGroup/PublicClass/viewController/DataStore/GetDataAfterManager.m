@@ -118,6 +118,18 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)newGroupMessageReceived:(NSDictionary *)messageContent
 {
     [messageContent setValue:@"1" forKey:@"sayHiType"];
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
+    if (payloadDic && [KISDictionaryHaveKey(payloadDic, @"team") isEqualToString:@"teamchat"]) {
+        [messageContent setValue:KISDictionaryHaveKey(payloadDic, @"teamPosition") forKey:@"teamPosition"];
+        if ([KISDictionaryHaveKey(payloadDic, @"type") isEqualToString:@"selectTeamPosition"]) {
+            [DataStoreManager updatePosition:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"gameid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"sender")] TeamPosition:[[ItemManager singleton]createPosition:KISDictionaryHaveKey(payloadDic, @"teamPosition")] Successcompletion:^(BOOL success, NSError *error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:messageContent];
+                });
+            }];
+        }
+    }
+    
     [DataStoreManager storeNewGroupMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"groupId") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"group"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{

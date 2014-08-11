@@ -64,6 +64,16 @@ static ItemManager *itemManager = NULL;
     return allType;
 }
 
+-(NSMutableDictionary*)createPosition:(NSString*)positionValue
+{
+    NSMutableDictionary * allType = [NSMutableDictionary dictionary];
+    [allType setObject:@"" forKey:@"constId"];
+    [allType setObject:@"" forKey:@"mask"];
+    [allType setObject:@"" forKey:@"type"];
+    [allType setObject:positionValue forKey:@"value"];
+    return allType;
+}
+
 
 #pragma mark ----获取组队分类
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
@@ -329,8 +339,12 @@ static ItemManager *itemManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"setTeamPosition--%@",responseObject);
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
-        [DataStoreManager changGroupMsgLocation:groupId UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-        [DataStoreManager updatePosition:roomId GameId:gameid UserId:userid TeamPosition:selectType];
+//        [DataStoreManager changGroupMsgLocation:groupId UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value") Successcompletion:^(BOOL success, NSError *error) {
+//            
+//        }];
+        [DataStoreManager updatePosition:roomId GameId:gameid GroupId:groupId UserId:userid TeamPosition:selectType Successcompletion:^(BOOL success, NSError *error) {
+            
+        }];
         
         NSMutableDictionary * tDic = [selectType mutableCopy];
         [tDic setValue:roomId forKey:@"roomId"];

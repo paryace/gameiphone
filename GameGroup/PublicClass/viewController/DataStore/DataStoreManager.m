@@ -970,7 +970,8 @@
      }];
 }
 
-+(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
++(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition  Successcompletion:(MRSaveCompletionHandler)successcompletion
+
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userid];
@@ -981,7 +982,9 @@
         }
     }
      completion:^(BOOL success, NSError *error) {
-         
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
      }];
 }
 
@@ -4728,18 +4731,36 @@
 }
 
 //更新位置
-+(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition
++(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId GroupId:(NSString*)groupId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userId];
+        NSArray * commonMsgs = [DSGroupMsgs MR_findAllWithPredicate:predicate1 inContext:localContext];
+        for (int i = 0; i<commonMsgs.count; i++) {
+            DSGroupMsgs * common = [commonMsgs objectAtIndex:i];
+            common.teamPosition = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition,@"value")];
+        }
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"roomId==[c]%@ and gameid==[c]%@ and userid==[c]%@",roomId,gameId,userId];
         DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicate inContext:localContext];
         if (commonMsg) {
             commonMsg.positionValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition,@"value")];
-            commonMsg.positionType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"type")];
-            commonMsg.constId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"constId")];
-            commonMsg.mask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"mask")];
+            
+            if (![GameCommon isEmtity:[GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"type")]]) {
+                commonMsg.positionType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"type")];
+            }
+            if (![GameCommon isEmtity:[GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"constId")]]) {
+                commonMsg.constId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"constId")];
+            }
+            if (![GameCommon isEmtity:[GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"mask")]]) {
+                commonMsg.mask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamPosition, @"mask")];
+            }
         }
-    }];
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
+     }];
 }
 
 

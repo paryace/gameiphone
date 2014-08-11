@@ -342,7 +342,7 @@
 
 
 //更改位置
-+(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition;
++(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition  Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //保存组队通知消息
 +(void)saveTeamNotifityMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block;
@@ -445,7 +445,7 @@
 +(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId;
 
 //更新位置
-+(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition;
++(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId GroupId:(NSString*)groupId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //保存组队成员列表信息
 +(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;

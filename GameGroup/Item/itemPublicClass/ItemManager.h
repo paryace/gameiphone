@@ -15,6 +15,8 @@
 
 -(NSMutableDictionary*)createMaxVols;
 
+-(NSMutableDictionary*)createPosition:(NSString*)positionValue;
+
 //获取类型列表
 -(void)getTeamType:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure;
 

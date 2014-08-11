@@ -654,10 +654,20 @@
                 cell.stateView.backgroundColor = [UIColor redColor];
             }
         }
-        CGSize nameSize = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(300, 20) lineBreakMode:NSLineBreakByWordWrapping];
-        float w = nameSize.width>145?145:nameSize.width;
+        NSInteger shipType = [KISDictionaryHaveKey(msgDic, @"teamUsershipType") integerValue];
+        if (shipType==0) {
+            cell.MemberLable.hidden = NO;
+            cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
+            cell.MemberLable.text = @"队长";
+        }else{
+            cell.MemberLable.hidden = YES;
+        }
+        CGSize size = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
+        float w = size.width>((shipType==0)?119:145)?((shipType==0)?119:145):size.width;
         cell.groupNameLable.frame = CGRectMake(80, 9, w, 20);
-        cell.genderImageV.frame = CGRectMake(80+w+3, 9, 20, 20);
+        cell.genderImageV.frame = CGRectMake(80+w, 9, 20, 20);
+        cell.MemberLable.frame = CGRectMake(80+w+20+2, 13, 26, 13);
+        
         return cell;
 
     }else{
@@ -869,6 +879,7 @@
 -(void)changPosition:(NSNotification*)notification{
     NSDictionary * positionDic = notification.userInfo;
     NSLog(@"positipon-->>>>%@",positionDic);
+    [self resetMemberList];
 }
 #pragma mark 人数变化
 -(void)changMemberList:(NSNotification*)notification{
