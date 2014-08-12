@@ -369,9 +369,9 @@ UINavigationControllerDelegate>
     if (section == 0){
         selectType =[self.typeData_list objectAtIndex:index];
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+//            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [self changPosition];
-            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(simpleUserDic, @"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+            [self sendOtherMsg:[NSString stringWithFormat:@"选择%@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         } reError:^(id error) {
             [self showErrorAlertView:error];
         }];

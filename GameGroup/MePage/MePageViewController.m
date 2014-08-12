@@ -59,6 +59,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateTitleInfo object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateCharacterInfo object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreUserInfo) name:@"refreshMyInfomation" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateLastDynicmicInfo:) name:UpdateLastDynicmicInfo object:nil];
     [self refreUserInfo];
 }
@@ -86,7 +87,6 @@
 -(void)updateLastDynicmicInfo:(NSNotification*)notifition{
     m_hostInfo.state = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     [m_myTableView reloadData];
-
 }
 
 -(void)updateUserInfo:(NSNotification*)notifition{

@@ -174,11 +174,11 @@
         [self.view addSubview:m_shareView];
         [self.view bringSubviewToFront:m_shareView];
         
-        
+        NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
         
         EGOImageView *headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 70, 70)];
         headImageView.placeholderImage = KUIImage(@"placeholder");
-        headImageView.imageURL = [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"];
+        headImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
         [m_shareView addSubview:headImageView];
         
         titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 10, 145, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
@@ -232,17 +232,43 @@
 
 #pragma mark ---分享方法
 //-(void)shareToqq:(UIButton *)sender
+
+-(void)shareToView:(UIGestureRecognizer*)sender
+{
+    if (sender.view.tag==100) {
+        [self shareToQQ:10001];
+    }else if (sender.view.tag ==101)
+    {
+        [self shareToQQ:10002];
+    }else{
+        
+        InviationGroupViewController *invgro = [[InviationGroupViewController alloc]init];  invgro.gameId = self.gameId;
+        invgro.roomId = self.roomId;
+        [self.navigationController pushViewController:invgro animated:YES];
+
+    }
+}
+
 -(void)shareToQQ:(NSInteger)sender
 {
-    NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
+    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+
+    NSString *imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
+    NSString *roleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
+    NSString *simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"realm")];
+    
+    NSString *description = [NSString stringWithFormat:@"%@-%@邀请你加入在陌游的队伍",simpleRealm,roleName];
+    
+    
+//    NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
     
 //    if (m_shareBtn.tag ==10001) {
     if (sender ==10001) {
-        [[ShareToOther singleton] onTShareImage:img Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL(self.roomId,self.gameId)];
+        [[ShareToOther singleton] onTShareImage:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId)];
     }else{
         
         NSLog(@"%@",SHAREURL(self.roomId,self.gameId));
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:img] Title:SHARETITLE Description:SHAREMESSAGE Url:SHAREURL(self.roomId,self.gameId)];
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr]] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId)];
     }
     [self clanceToShare:nil];
 
@@ -336,34 +362,71 @@
     m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_rTableView.delegate = self;
     m_rTableView.dataSource =self;
+    m_rTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     [GameCommon setExtraCellLineHidden:m_rTableView];
     [self.view addSubview:m_rTableView];
     
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 71)];
-    view.backgroundColor = [UIColor whiteColor];
-    
-    NSArray *array   =[NSArray arrayWithObjects:@"qq",@"微信",@"群组", nil];
-    NSArray *imgArr = [NSArray arrayWithObjects:@"team_qq",@"team_wx",@"team_group", nil];
-    for (int i =0; i<3; i++) {
-        UIButton *Butotn = [[ UIButton alloc]initWithFrame:CGRectMake(20+60*i, 10, 50, 50)];
-        [Butotn setBackgroundImage:KUIImage(imgArr[i]) forState:UIControlStateNormal];
-        Butotn.tag = 100+i;
-        [Butotn addTarget:self action:@selector(enterOtherInvitationPage:) forControlEvents:UIControlEventTouchUpInside];
-        [view addSubview:Butotn];
-        
-        UILabel *label = [GameCommon buildLabelinitWithFrame:CGRectMake(20+60*i, 70, 50, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] textAlignment:NSTextAlignmentCenter];
-        label.text = array[i];
-        label.shadowColor = [UIColor colorWithWhite:0.1f alpha:0.8f];
-        [view addSubview:label];
-        
-        UIImageView *lineImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 70, 320, 1)];
-        lineImg.image = KUIImage(@"team_line_2");
-        [view addSubview:lineImg];
-        
-        m_rTableView.tableHeaderView = view;
-    }
-    
+//    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 71)];
+//    view.backgroundColor = [UIColor whiteColor];
+//    
+//    NSArray *array   =[NSArray arrayWithObjects:@"qq",@"微信",@"群组", nil];
+//    NSArray *imgArr = [NSArray arrayWithObjects:@"team_qq",@"team_wx",@"team_group", nil];
+//    for (int i =0; i<3; i++) {
+//        UIButton *Butotn = [[ UIButton alloc]initWithFrame:CGRectMake(20+60*i, 10, 50, 50)];
+//        [Butotn setBackgroundImage:KUIImage(imgArr[i]) forState:UIControlStateNormal];
+//        Butotn.tag = 100+i;
+//        [Butotn addTarget:self action:@selector(enterOtherInvitationPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [view addSubview:Butotn];
+//        
+//        UILabel *label = [GameCommon buildLabelinitWithFrame:CGRectMake(20+60*i, 70, 50, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] textAlignment:NSTextAlignmentCenter];
+//        label.text = array[i];
+//        label.shadowColor = [UIColor colorWithWhite:0.1f alpha:0.8f];
+//        [view addSubview:label];
+//        
+//        UIImageView *lineImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 70, 320, 1)];
+//        lineImg.image = KUIImage(@"team_line_2");
+//        [view addSubview:lineImg];
+//        
+//        m_rTableView.tableHeaderView = view;
+//    }
+    [self buildShareView];
 }
+
+-(void)buildShareView
+{
+    NSArray *array   =[NSArray arrayWithObjects:@"邀请qq好友",@"邀请微信好友",@"邀请群组好友", nil];
+    NSArray *imgArr = [NSArray arrayWithObjects:@"team_qq",@"team_wx",@"team_group", nil];
+    UIView *headView  = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 151)];
+    headView.backgroundColor =UIColorFromRGBA(0xc8c7cc, 1);
+    
+    for (int i =0; i<3; i++) {
+        UIView *view =[[ UIView alloc]initWithFrame:CGRectMake(0,50*i+i*.5f , 320, 50)
+                       ];
+        view.backgroundColor  = [UIColor whiteColor];
+        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 40, 40)];
+        headImg.image =KUIImage(imgArr[i]);
+        [view addSubview:headImg];
+        
+        UILabel *titleLb = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 5, 200, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        titleLb.text = array[i];
+        [view addSubview:titleLb];
+        view.tag = 100+i;
+            UITapGestureRecognizer *tap  = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(shareToView:)];
+            [view addGestureRecognizer:tap];
+
+        
+        
+        UIImageView *right = [[UIImageView alloc]initWithFrame:CGRectMake(280, 20, 10, 10)];
+        right.image = KUIImage(@"right");
+        [view addSubview:right];
+        
+        [headView addSubview:view];
+        
+    }
+    m_rTableView.tableHeaderView = headView;
+}
+
+
 -(void)enterOtherInvitationPage:(UIButton *)sender
 {
     NSString *str;

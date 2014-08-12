@@ -29,6 +29,7 @@
     UIButton *m_getOutBtn;
     BottomView *bView;
     UIAlertView * backAlert;
+    NSString *descriptionStr;
 }
 @end
 
@@ -248,6 +249,7 @@
         InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
+        editInfo.descriptionStr = descriptionStr;
 //        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
 //        editInfo.secondStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamInfo")];
         [self.navigationController pushViewController:editInfo animated:YES];
@@ -311,6 +313,8 @@
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
 
+            [self queryMyRoleWithArr:KISDictionaryHaveKey(responseObject, @"memberList")];
+            descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
             [self setGetOutBtn:teamUsershipType];
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
@@ -323,6 +327,15 @@
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+
+-(void)queryMyRoleWithArr:(NSArray *)arr
+{
+    for (NSDictionary *dic in arr) {
+        if ([KISDictionaryHaveKey(dic, @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+            [[NSUserDefaults standardUserDefaults]setObject:dic forKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+        }
+    }
 }
 
 -(void)setGetOutBtn:(NSString*)teamUsershipType
