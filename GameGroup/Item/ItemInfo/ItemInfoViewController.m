@@ -20,6 +20,7 @@
 @interface ItemInfoViewController ()
 {
     UITableView *m_myTableView;
+    UILabel *titleLable;
     NSMutableDictionary *m_mainDict;
     NSMutableArray *m_dataArray;
     BOOL isJoinIn;
@@ -46,13 +47,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"队伍详情" withBackButton:YES];
+    [self setTopViewWithTitle:@"" withBackButton:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队成员变化
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];//组队人数字变化
     
     
-    
+    titleLable=[[UILabel alloc] initWithFrame:CGRectMake(60, startX - 44, 320-120, 44)];
+    titleLable.backgroundColor=[UIColor clearColor];
+    [titleLable setFont:[UIFont boldSystemFontOfSize:20]];
+    titleLable.textAlignment = NSTextAlignmentCenter;
+    titleLable.textColor=[UIColor whiteColor];
+    titleLable.text = @"队伍详情";
+    [self.view addSubview:titleLable];
     
     
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -318,6 +325,7 @@
             [self setGetOutBtn:teamUsershipType];
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
+            [self setTitleMsg:responseObject];
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             [m_myTableView reloadData];
@@ -327,6 +335,11 @@
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+
+-(void)setTitleMsg:(NSDictionary*)teamInfo{
+    NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"roomName")];
+    titleLable.text = [NSString  stringWithFormat:@"[%@/%@]%@",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(m_mainDict, @"maxVol"),roomName];
 }
 
 -(void)queryMyRoleWithArr:(NSArray *)arr
@@ -684,9 +697,15 @@
 #pragma mark 组队人数变化(待处理)
 -(void)teamMemberCountChang:(NSNotification *)notification
 {
+    NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId]];
+    [self setTitleMsg:teamInfo];
+    
     NSLog(@"%@",notification.userInfo);
 }
-
+-(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
+    
+    return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
+}
 
 - (void)dealloc
 {
