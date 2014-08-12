@@ -191,6 +191,14 @@ static TeamManager *teamManager = NULL;
     }];
 }
 
+
+-(void)clearTeamMessage:(NSString*)groupId{
+    [DataStoreManager deleteThumbMsgWithGroupId:groupId];
+    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+    [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
+    [DataStoreManager deleteDSPreparedByGroupId:groupId];
+}
+
 -(NSString*)getState:(NSString*)result{
     if([[GameCommon getNewStringWithId:result]isEqualToString:@"teamPreparedUserSelectOk"]){
         return @"2";

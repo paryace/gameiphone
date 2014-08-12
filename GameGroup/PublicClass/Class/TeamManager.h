@@ -44,4 +44,6 @@
 //收到就位确认结果消息，初始化就位确认状态
 -(void)resetTeamUserState:(NSString*)groupId;
 
+-(void)clearTeamMessage:(NSString*)groupId;//删除该组队所有的消息
+
 @end

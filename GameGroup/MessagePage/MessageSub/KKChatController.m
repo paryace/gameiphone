@@ -180,6 +180,28 @@ UINavigationControllerDelegate>
     }
     self.titleLabel.text = self.nickName;
 }
+-(void)showErrorDialog{
+    if (![self isGroupAvaitable]) {
+        [self showInVisableDialog];
+    }else {
+        if ([self isOut]) {
+            [self showOutDialog];
+        }
+    }
+}
+-(void)showInVisableDialog{
+    UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:self.isTeam?@"对不起，该队伍已经解散":@"对不起，该群组已经解散" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
+    errorDialog.tag = 10001;
+    [errorDialog show];
+}
+
+-(void)showOutDialog{
+    UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:self.isTeam?@"对不起，您已经不在该组队里":@"对不起，您已经不在该群组里" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
+    errorDialog.tag = 10001;
+    [errorDialog show];
+
+}
+
 
 
 -(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
@@ -210,7 +232,7 @@ UINavigationControllerDelegate>
     //发送系统消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
     [self initMyInfo];
-    
+    [self showErrorDialog];
     postDict = [NSMutableDictionary dictionary];
     self.typeData_list = [NSArray array];
     canAdd = YES;
@@ -1671,7 +1693,7 @@ UINavigationControllerDelegate>
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
     
     if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
-        [self showAlertViewWithTitle:@"提示" message:self.isTeam?@"你已经被踢出该组队":@"你已被踢出该群" buttonTitle:@"确定"];
+        [self showOutDialog];
         return ;
     }
     UIImagePickerController *imagePicker = nil;
@@ -2286,9 +2308,16 @@ UINavigationControllerDelegate>
 //跳转激活页面
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1) {
-        ActivateViewController * actVC = [[ActivateViewController alloc]init];
-        [self.navigationController pushViewController:actVC animated:YES];
+    if (alertView.tag == 10001) {
+        if (buttonIndex == 0) {
+            [[TeamManager singleton] clearTeamMessage:self.chatWithUser];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }else {
+        if (buttonIndex == 1) {
+            ActivateViewController * actVC = [[ActivateViewController alloc]init];
+            [self.navigationController pushViewController:actVC animated:YES];
+        }
     }
 }
 //响应按键
@@ -2343,7 +2372,7 @@ UINavigationControllerDelegate>
         return ;
     }
     if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
-        [self showAlertViewWithTitle:@"提示" message:self.isTeam?@"你已经被踢出该组队":@"你已被踢出该群" buttonTitle:@"确定"];
+        [self showOutDialog];
         return ;
     }
     if (message.length>255) {
@@ -2496,6 +2525,13 @@ UINavigationControllerDelegate>
         return NO;
     }
     return YES;
+}
+//是否在群里面
+-(BOOL)isOut{
+    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark 添加本群不可用消息
@@ -2820,6 +2856,11 @@ UINavigationControllerDelegate>
 #pragma mark 该群组解散通知
 - (void)onDisbandGroup:(NSNotification*)notification
 {
+    NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
+    if (![[GameCommon getNewStringWithId:groupId] isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]])
+    {
+        return;
+    }
     available = @"1";
     groupUsershipType = @"3";
 }
@@ -2832,7 +2873,7 @@ UINavigationControllerDelegate>
     }
     NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
     NSString * state = KISDictionaryHaveKey(notification.userInfo, @"state");
-    if (![groupId isEqualToString:self.chatWithUser])
+    if (![[GameCommon getNewStringWithId:groupId] isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]])
     {
         return;
     }

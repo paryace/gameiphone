@@ -664,10 +664,12 @@
         }
         else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:@"groupchat"]){
             NSString * groupId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"groupId")];
-            [DataStoreManager deleteThumbMsgWithGroupId:groupId];
-            [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
-            [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
-            [DataStoreManager deleteDSPreparedByGroupId:groupId];
+            [[TeamManager singleton] clearTeamMessage:groupId];
+            
+//            [DataStoreManager deleteThumbMsgWithGroupId:groupId];
+//            [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
+//            [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
+//            [DataStoreManager deleteDSPreparedByGroupId:groupId];
             
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {
