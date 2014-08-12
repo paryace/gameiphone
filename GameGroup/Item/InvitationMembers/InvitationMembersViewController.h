@@ -22,4 +22,5 @@ UISearchDisplayDelegate
 @property(nonatomic,copy)NSString     *     gameId;
 @property(nonatomic,copy)NSString     *     imgStr;
 @property(nonatomic,copy)NSString     *     descriptionStr;
+@property(nonatomic,copy)NSString     *     groupId;
 @end

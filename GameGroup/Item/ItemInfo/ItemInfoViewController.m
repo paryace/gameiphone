@@ -249,6 +249,7 @@
     {
         InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
+        editInfo.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
         editInfo.descriptionStr = descriptionStr;
 //        editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
@@ -358,7 +359,7 @@
     {
         m_getOutBtn.hidden = YES;
         titlearr = @[@"",@"申请加入"];
-        arr = @[@"",@"joinInBtn_Item"];
+        arr = @[@"",@"team_join_low"];
     }
     [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
