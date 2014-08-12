@@ -343,13 +343,13 @@
     NSArray *arr = [NSArray array] ;
     NSArray *titlearr = [NSArray array] ;
     if ([teamUsershipType intValue]==0) {
-        arr = @[@"sendMsg_normal.jpg",@"yaoqing.jpg"];
+        arr = @[@"sendMsg_normal",@"groupEdit"];
         titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
     else if([teamUsershipType intValue]==1)
     {
-        arr = @[@"sendMsg_normal.jpg",@"yaoqing.jpg"];
+        arr = @[@"sendMsg_normal",@"groupEdit"];
         titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
