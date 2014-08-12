@@ -500,6 +500,7 @@
     [paramDict setObject:self.roomId forKey:@"roomId"];
     [paramDict setObject:str forKey:@"userids"];
     [paramDict setObject:self.gameId forKey:@"gameid"];
+    [paramDict setObject:self.groupId forKey:@"groupId"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"287" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
