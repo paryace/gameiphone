@@ -54,6 +54,7 @@
     
     
     
+    
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
@@ -421,7 +422,7 @@
     if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
         cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
     }else{
-        cell.value3Lb.text = @"";
+        cell.value3Lb.text = @"未知";
     }
     return cell;
 }
@@ -685,6 +686,7 @@
 {
     NSLog(@"%@",notification.userInfo);
 }
+
 
 - (void)dealloc
 {

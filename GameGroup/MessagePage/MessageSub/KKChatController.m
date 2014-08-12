@@ -332,7 +332,7 @@ UINavigationControllerDelegate>
    NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
     if (msgC>0) {
         self.dotVInplace.hidden = NO;
-        [self.dotVInplace setMsgCount:msgC];
+        [self.dotVInplace setMsgCount:msgC IsSimple:YES];
     }else{
         self.dotVInplace.hidden = YES;
     }
@@ -2776,7 +2776,7 @@ UINavigationControllerDelegate>
         return;
     }
     NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
-    if (![groupId isEqualToString:self.chatWithUser])
+    if (![[GameCommon getNewStringWithId:groupId] isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]])
     {
         return;
     }
@@ -2788,7 +2788,7 @@ UINavigationControllerDelegate>
 -(void)sendSystemMessage:(NSNotification *)notification{
     
     NSDictionary * dictionary = notification.userInfo;
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dictionary, @"groupId")] isEqualToString:self.chatWithUser]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dictionary, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
         [self addNewOneMessageToTable:dictionary];
     }
 }
@@ -2796,8 +2796,8 @@ UINavigationControllerDelegate>
 -(void)teamMemberCountChang:(NSNotification *)notification
 {
     NSDictionary * dic = notification.userInfo;
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameId")] isEqualToString:self.gameId]
-        &&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:self.roomId]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameId")] isEqualToString:[GameCommon getNewStringWithId:self.gameId]]
+        &&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:[GameCommon getNewStringWithId:self.roomId]]) {
         [self refreTitleText];
     }
 }

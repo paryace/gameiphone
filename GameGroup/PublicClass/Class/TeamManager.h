@@ -20,7 +20,7 @@
 
 -(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId;
 
--(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;
+-(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId;
 
 -(void)upDateTeamMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount;
 

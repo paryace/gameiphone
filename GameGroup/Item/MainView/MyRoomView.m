@@ -17,7 +17,11 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        //删除角色
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
+        //解散该群
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
+        
         self.myListTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myListTableView.delegate = self;
         self.myListTableView.dataSource = self;
@@ -371,6 +375,28 @@
 -(void)roleRemove:(NSNotification*)notification{
     NSDictionary * msg = notification.userInfo;
     [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
+}
+
+#pragma mark 该群组解散通知
+- (void)onDisbandGroup:(NSNotification*)notification
+{
+    NSLog(@"%@",notification.userInfo);
+    NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
+    [self DisbandTeam:groupId];
+}
+
+-(void)DisbandTeam:(NSString*)groupId{
+    for (NSMutableDictionary * dic in self.myCreateRoomList) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
+            [self.myCreateRoomList removeObject:dic];
+        }
+    }
+    for (NSMutableDictionary * dic in self.myJoinRoomList) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
+            [self.myJoinRoomList removeObject:dic];
+        }
+    }
+    [self.myListTableView reloadData];
 }
 
 - (void)dealloc
