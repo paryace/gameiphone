@@ -2474,9 +2474,7 @@ UINavigationControllerDelegate>
         [self addNewOneMessageToTable:dictionary];
         [DataStoreManager storeMyGroupThumbMessage:dictionary];//群组聊天消息添加到数据库
         if (![self isGroupAvaitable]) {//本群不可用
-//            [self groupNotAvailable:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg" Message:self.isTeam?@"该组队已经解散":@"该群已经解散"];
-            
-            [MessageService groupNotAvailable:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg" Message:self.isTeam?@"该组队已经解散":@"该群已经解散" GroupId:self.chatWithUser];
+            [self groupNotAvailable:self.isTeam?@"inTeamSystemMsg":@"inGroupSystemMsg" Message:self.isTeam?@"该组队已经解散":@"该群已经解散" GroupId:self.chatWithUser];
         }
     }
     if ([self.type isEqualToString:@"normal"]) {
@@ -2494,17 +2492,17 @@ UINavigationControllerDelegate>
 }
 
 #pragma mark 添加本群不可用消息
--(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message
+-(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message GroupId:(NSString*)groupId
 {
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * payloadStr=[MessageService createPayLoadStr:payloadType];
-    NSMutableDictionary *dictionary =  [self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:@"groupchat"];
+    NSMutableDictionary *dictionary =  [self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:groupId MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
-    [dictionary setObject:self.chatWithUser forKey:@"groupId"];
+    [dictionary setObject:groupId forKey:@"groupId"];
     [self addNewOneMessageToTable:dictionary];
     [DataStoreManager storeMyGroupMessage:dictionary Successcompletion:^(BOOL success, NSError *error) {
-        
+         [[NSNotificationCenter defaultCenter] postNotificationName:kSendSystemMessage object:nil userInfo:dictionary];
     }];
 }
 #pragma mark 添加以上是历史消息
@@ -2791,7 +2789,7 @@ UINavigationControllerDelegate>
 {
     NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
     if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {
-        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"该房间已组满队员" GroupId:self.chatWithUser];
+        [self groupNotAvailable:@"inTeamSystemMsg" Message:@"该房间已组满队员" GroupId:self.chatWithUser];
     }
     [self refreTitleText];
 }
