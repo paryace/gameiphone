@@ -219,6 +219,7 @@
         bView =[[BottomView alloc]initWithFrame:CGRectMake(0,0, 160, 50)];
         [bView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseRoles:)]];
         if (self.infoDict) {
+            bView.lowImg.placeholderImage = KUIImage(@"clazz_icon");
             bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
             bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
             bView.gameIcon.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(self.infoDict, @"gameid")]];

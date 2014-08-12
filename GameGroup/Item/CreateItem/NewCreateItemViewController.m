@@ -428,7 +428,7 @@
 {
     [UIView animateWithDuration:0.3 animations:^{
 
-    mainScroll.contentOffset = CGPointMake(0, 100);
+    mainScroll.contentOffset = CGPointMake(0, 150);
     }];
     return YES;
 }
@@ -603,9 +603,22 @@
             [m_tagsPickView reloadInputViews];
         }
     } reError:^(id error) {
-        [self showErrorAlert:error];
-        m_gameTf.text = @"";
-        gameIconImg.imageURL = nil;
+        
+        [[ItemManager singleton]getTeamType:gameid reSuccess:^(id responseObject) {
+            if ([responseObject isKindOfClass:[NSArray class]]) {
+                [responseObject removeObjectAtIndex:0];
+                [m_tagsArray removeAllObjects];
+                [m_tagsArray addObjectsFromArray:responseObject];
+                [m_tagsPickView reloadInputViews];
+            }
+
+        } reError:^(id error) {
+            [self showErrorAlert:error];
+            m_gameTf.text = @"";
+            gameIconImg.imageURL = nil;
+
+        }];
+        
     }];
 }
 #pragma mark --- 联网获取人数列表

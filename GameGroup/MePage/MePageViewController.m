@@ -540,9 +540,15 @@
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
             
             NSString *fileMsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")];
+
             if(![fileMsg isEqualToString:@"notSupport"])
             {
+                if ([fileMsg intValue] ==404) {
+                    [self showMessageWithContent:@"暂无此角色信息" point:CGPointMake(self.view.center.x,self.view.center.y)];
+                    return;
+                }
                 [[Custom_tabbar showTabBar] hideTabBar:YES];
+                
                 H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
                 VC.characterId = chatId;
                 VC.gameId = gameId;
