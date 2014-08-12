@@ -62,7 +62,16 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self setTopViewWithTitle:@"添加成员" withBackButton:YES];
+    [self setTopViewWithTitle:@"添加成员" withBackButton:NO];
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+
+    
+    
     
     chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
@@ -90,6 +99,56 @@
     
     [self getInfo];
 
+}
+-(void)backButtonClick:(id)sender
+{
+    if (self.isRegister) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+- (void)getFriendListFromNet
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"212" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
+                          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+//                                  [self dealResponse:responseObject];
+//                                  [m_header endRefreshing];
+                                  NSMutableDictionary* result = [responseObject objectForKey:@"userList"];
+                                  NSMutableArray* keys = [responseObject objectForKey:@"nameKey"];
+                                  [dataDict removeAllObjects];
+                                  dataDict = result;
+                                  [keysArr addObjectsFromArray:keys];
+                                  
+                                  for (int i =0; i<keysArr.count; i++) {
+                                      NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
+                                      for (int j=0;j<arr.count;j++) {
+                                          NSMutableDictionary *dic =[arr objectAtIndex:j];
+                                          [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"section"];
+                                          [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
+                                          [dic setValue:@"1" forKey:@"choose"];
+                                          [dic setValue:@"friends" forKeyPath:@"tabType"];
+                                          
+                                      }
+                                  }
+
+                              }
+                          }
+                          failure:^(AFHTTPRequestOperation *operation, id error) {
+                              if ([error isKindOfClass:[NSDictionary class]]) {
+                                  if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                                  {
+                                      UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                                      [alert show];
+                                  }
+                              }
+//                              [m_header endRefreshing];
+                          }];
 }
 
 -(UIButton *)buildButtonWithFrame:(CGRect)frame img1:(NSString *)img1 img2:(NSString*)img2
@@ -132,22 +191,27 @@
     dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
     dispatch_async(queueselect, ^{
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-        NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
-        NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-        [dataDict removeAllObjects];
-        dataDict = result;
-        [keysArr addObjectsFromArray:keys];
-        
-        for (int i =0; i<keysArr.count; i++) {
-            NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
-            for (int j=0;j<arr.count;j++) {
-                NSMutableDictionary *dic =[arr objectAtIndex:j];
-                [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"section"];
-                [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
-                [dic setValue:@"1" forKey:@"choose"];
-                [dic setValue:@"friends" forKeyPath:@"tabType"];
-
+        if (userinfo&&[userinfo allKeys].count>0) {
+            NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
+            NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+            [dataDict removeAllObjects];
+            dataDict = result;
+            [keysArr addObjectsFromArray:keys];
+            
+            for (int i =0; i<keysArr.count; i++) {
+                NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
+                for (int j=0;j<arr.count;j++) {
+                    NSMutableDictionary *dic =[arr objectAtIndex:j];
+                    [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"section"];
+                    [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
+                    [dic setValue:@"1" forKey:@"choose"];
+                    [dic setValue:@"friends" forKeyPath:@"tabType"];
+                    
+                }
             }
+
+        }else{
+            [self getFriendListFromNet];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [m_rTableView reloadData];
@@ -507,7 +571,11 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        [self.navigationController popViewControllerAnimated:YES];
+        if (self.isRegister) {
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }else{
+            [self.navigationController popViewControllerAnimated:YES];
+        }
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");

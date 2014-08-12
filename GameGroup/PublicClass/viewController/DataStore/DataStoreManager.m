@@ -5219,5 +5219,52 @@
      }];
 }
 
++(void)saveCricleCountWithType:(NSInteger)type img:(NSString*)img userid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (!circleCo)
+            circleCo = [DSCircleCount MR_createInContext:localContext];
+        if (type==1) {
+            circleCo.mineCount +=1;
+        }else{
+            circleCo.friendsCount+=1;
+        }
+        circleCo.img = [GameCommon getHeardImgId:img];
+        circleCo.userid = userid;
+        NSLog(@"--%@",circleCo);
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (success) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
+        }else{
+            
+        }
+    }];
+}
++(DSCircleCount*)querymessageWithUserid:(NSString *)userid
+{
+    NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+    DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser];
+    if (circleCo) {
+        return circleCo;
+    }else
+        return NULL;
+}
++(void)clearCircleCountWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (circleCo) {
+            circleCo.mineCount =0;
+            circleCo.friendsCount = 0;
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+    }];
+
+}
 
 @end

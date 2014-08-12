@@ -9,7 +9,7 @@
 #import "NewCreateItemViewController.h"
 #import "EGOImageView.h"
 #import "ItemManager.h"
-
+#import "InvitationMembersViewController.h"
 @interface NewCreateItemViewController ()
 {
     
@@ -87,7 +87,7 @@
     
 
     
-    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, 10 , 300, 40) placeholder:@"请选择角色" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
+    m_gameTf = [self buildTextFieldWithFrame:CGRectMake(10, 10 , 300, 40) placeholder:@"请选择角色" rightImg:@"arrow_bottom" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_gameTf.delegate = self;
     m_gameTf.inputAccessoryView = toolbar;
     m_gameTf.inputView = m_rolePickerView;
@@ -95,46 +95,86 @@
     gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 15, 25, 25)];
     [mainScroll addSubview:gameIconImg];
 
-    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, 60, 300, 40) placeholder:@"请选择分类" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
+    m_tagTf = [self buildTextFieldWithFrame:CGRectMake(10, 60, 300, 40) placeholder:@"请选择分类" rightImg:@"arrow_bottom" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_tagTf.delegate = self;
     m_tagTf.inputAccessoryView = toolbar;
     m_tagTf.inputView = m_tagsPickView;
 
 
-    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, 110, 300, 40) placeholder:@"请选择人数" rightImg:@"bollow" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
+    m_countTf = [self buildTextFieldWithFrame:CGRectMake(10, 110, 300, 40) placeholder:@"请选择人数" rightImg:@"arrow_bottom" textColor:[UIColor grayColor] backgroundColor:[UIColor whiteColor] font:14 textAlignment:NSTextAlignmentLeft];
     m_countTf.delegate = self;
     m_countTf.inputAccessoryView = toolbar;
     m_countTf.inputView = m_countPickView;
     
     
-    UIImageView *imgVc = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
-    imgVc.image = KUIImage(@"group_info");
-    [mainScroll addSubview:imgVc];
     
-    m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
-    m_miaoshuTV.backgroundColor = [UIColor clearColor];
-//    m_miaoshuTV.layer.borderWidth = 1;
-//    m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
-//    m_miaoshuTV.layer.cornerRadius = 5;
-//    m_miaoshuTV.layer.masksToBounds=YES;
+    
+    UIImageView *editIV = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
+    editIV.backgroundColor=[UIColor whiteColor];
+    editIV.image = KUIImage(@"group_info");
+    [mainScroll addSubview:editIV];
+    
+    
+    m_miaoshuTV =[[ UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
     m_miaoshuTV.delegate = self;
+    m_miaoshuTV.layer.borderColor = UIColorFromRGBA(0xaaa9a9, 1).CGColor;
+    m_miaoshuTV.layer.borderWidth =0.5;
+    m_miaoshuTV.layer.cornerRadius =5.0;
+    m_miaoshuTV.font = [UIFont boldSystemFontOfSize:13];
+    m_miaoshuTV.textColor = [UIColor blackColor];
+    m_miaoshuTV.backgroundColor = [UIColor whiteColor];
+    m_miaoshuTV.layer.cornerRadius = 5;
+    m_miaoshuTV.layer.masksToBounds = YES;
     [mainScroll addSubview:m_miaoshuTV];
     
-//<<<<<<< HEAD
     placeholderL = [[UILabel alloc]init];
+    
     if (KISHighVersion_7) {
         placeholderL.frame = CGRectMake(15,165, 200, 20);
     }else{
         placeholderL.frame = CGRectMake(12,160, 200, 20);
     }
+    placeholderL.text = @"请输入组队描述(30字以内)";
+    placeholderL.enabled = NO;//lable必须设置为不可用
+    placeholderL.font = [UIFont systemFontOfSize:14];
+    placeholderL.textColor=kColorWithRGB(240,240, 240, 1);
+    placeholderL.backgroundColor = [UIColor clearColor];
+    [mainScroll addSubview:placeholderL];
+
+    
+    
+    
+    
+    
+    
+//    UIImageView *imgVc = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
+//    imgVc.image = KUIImage(@"group_info");
+//    [mainScroll addSubview:imgVc];
+//    
+//    m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
+//    m_miaoshuTV.backgroundColor = [UIColor clearColor];
+//    m_miaoshuTV.layer.borderWidth = 1;
+//    m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
+//    m_miaoshuTV.layer.cornerRadius = 5;
+//    m_miaoshuTV.layer.masksToBounds=YES;
+//    m_miaoshuTV.delegate = self;
+//    [mainScroll addSubview:m_miaoshuTV];
+    
+//<<<<<<< HEAD
+//    placeholderL = [[UILabel alloc]init];
+//    if (KISHighVersion_7) {
+//        placeholderL.frame = CGRectMake(15,165, 200, 20);
+//    }else{
+//        placeholderL.frame = CGRectMake(12,160, 200, 20);
+//    }
 //=======
 //    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(18,170, 200, 20)];
 //>>>>>>> FETCH_HEAD
-    placeholderL.backgroundColor = [UIColor clearColor];
-    placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
-    placeholderL.text = @"填写组队描述……";
-    placeholderL.font = [UIFont systemFontOfSize:13.0];
-    [mainScroll addSubview:placeholderL];
+//    placeholderL.backgroundColor = [UIColor clearColor];
+//    placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
+//    placeholderL.text = @"填写组队描述……";
+//    placeholderL.font = [UIFont systemFontOfSize:13.0];
+//    [mainScroll addSubview:placeholderL];
 
     m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 245, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
@@ -262,14 +302,15 @@
     tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     tf.textAlignment = textAlignment;
     tf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    tf.font = [UIFont systemFontOfSize:font];
+    tf.font = [UIFont boldSystemFontOfSize:font];
     tf.placeholder = placeholder;
     [customView addSubview:tf];
 
-    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width-20, 15, 15, 10)];
+    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(frame.size.width-20, 15, 12, 8)];
     imageView.image = KUIImage(rightImg);
     [customView addSubview:imageView];
     [mainScroll addSubview:customView];
+    
     
     return tf;
 }
@@ -538,8 +579,18 @@
         
         
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
+            invc.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")];
+            invc.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")];
+            invc.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")];
+            invc.imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"img")];
+            invc.descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
+            invc.isRegister = YES;
+            [self.navigationController pushViewController:invc animated:YES];
+        }
         
-        [self.navigationController popToRootViewControllerAnimated:YES];
+//        [self.navigationController popToRootViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlert:error];
         [hud hide:YES];

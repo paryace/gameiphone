@@ -23,4 +23,5 @@ UISearchDisplayDelegate
 @property(nonatomic,copy)NSString     *     imgStr;
 @property(nonatomic,copy)NSString     *     descriptionStr;
 @property(nonatomic,copy)NSString     *     groupId;
+@property(nonatomic,assign) BOOL isRegister;
 @end

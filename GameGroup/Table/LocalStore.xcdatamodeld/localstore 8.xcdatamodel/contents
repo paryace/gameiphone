@@ -59,6 +59,12 @@
         <attribute name="value2" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value3" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="DSCircleCount" representedClassName="DSCircleCount" syncable="YES">
+        <attribute name="friendsCount" optional="YES" attributeType="Integer 32" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mineCount" optional="YES" attributeType="Integer 32" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
         <attribute name="alias" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
@@ -560,5 +566,6 @@
         <element name="DSTitleObject" positionX="-63" positionY="-27" width="128" height="315"/>
         <element name="DSUnreadCount" positionX="117" positionY="108" width="128" height="90"/>
         <element name="DSuser" positionX="135" positionY="441" width="128" height="420"/>
+        <element name="DSCircleCount" positionX="-81" positionY="-45" width="128" height="105"/>
     </elements>
 </model>
