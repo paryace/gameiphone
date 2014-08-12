@@ -2751,7 +2751,7 @@ UINavigationControllerDelegate>
 {
     NSMutableDictionary * postDict1 = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:chatWithUser forKey:@"touserid"];
+    [paramDict setObject:self.chatWithUser forKey:@"touserid"];
     [postDict1 addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
@@ -2760,7 +2760,7 @@ UINavigationControllerDelegate>
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict1
                 success:^(AFHTTPRequestOperation *operation, id responseObject) {
                               [wxSDArray addObject:self.chatWithUser];
-                              [DataStoreManager storeThumbMsgUser:chatWithUser type:@"1"];
+                              [DataStoreManager storeThumbMsgUser:self.chatWithUser type:@"1"];
                               [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
                               [[NSUserDefaults standardUserDefaults] setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
                               

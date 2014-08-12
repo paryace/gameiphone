@@ -120,14 +120,12 @@
 //-----
 +(void)deleteThumbMsgWithSender:(NSString *)sender Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",sender];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (thumbMsgs) {
             [thumbMsgs MR_deleteInContext:localContext];
         }
-    } completion:^(BOOL success, NSError *error) {
-        
     }];
 }
 
