@@ -671,20 +671,16 @@
     }
 }
 
-//改变位置(待处理)
+#pragma mark 改变位置(待处理)
 -(void)changPosition:(NSNotification*)notification{
-    NSDictionary * dic = [KISDictionaryHaveKey(notification.userInfo, @"payload") JSONValue];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]isEqualToString:[GameCommon getNewStringWithId:self.gameid]]
-        && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:[GameCommon getNewStringWithId:self.itemId]]) {
-        [self GETInfoWithNet:YES];
-    }
+    NSDictionary * userDic = notification.userInfo;
+    [self updatePosition:userDic];
 }
-//组队成员变化
+#pragma mark 组队成员变化
 -(void)changMemberList:(NSNotification*)notification{
-    m_dataArray = [DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.itemId] GameId:[GameCommon getNewStringWithId:self.gameid]];
-    [m_myTableView reloadData];
+    [self updateMemberList];
 }
-//组队人数变化(待处理)
+#pragma mark 组队人数变化(待处理)
 -(void)teamMemberCountChang:(NSNotification *)notification
 {
     NSLog(@"%@",notification.userInfo);
@@ -697,6 +693,26 @@
     backAlert.delegate = nil;
 }
 
+
+-(void)updateMemberList{
+    m_dataArray = [DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.itemId] GameId:[GameCommon getNewStringWithId:self.gameid]];
+    [m_myTableView reloadData];
+}
+
+
+-(void)updatePosition:(NSDictionary*)userDic{
+    for (NSMutableDictionary * dic in m_dataArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"sender")]]) {
+            NSDictionary * pisitionDic = KISDictionaryHaveKey(dic, @"position");
+            if ([pisitionDic isKindOfClass:[NSDictionary class]]) {
+                [pisitionDic setValue:KISDictionaryHaveKey(userDic, @"teamPosition") forKey:@"value"];
+            }else {
+                [dic setValue:[[ItemManager singleton] createPosition:KISDictionaryHaveKey(userDic, @"teamPosition")] forKey:@"position"];
+            }
+        }
+    }
+    [m_myTableView reloadData];
+}
 
 
 - (void)didReceiveMemoryWarning
