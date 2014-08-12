@@ -29,13 +29,57 @@
     return mes;
 }
 
-
-#pragma mark 创建payload
-+(NSString*)createPayLoadStr:(NSString*)uuid ImageId:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
+#pragma mark 创建发送正常图片消息的payload
++(NSString*)createPayLoadStr:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath
 {
-    return [self createPayLoadStr:thumbImage title:bigImagePath shiptype:@"" messageid:@"" msg:imageId type:@"img"];
+    NSDictionary * dic = @{@"thumb":thumbImage,
+                           @"title":bigImagePath,
+                           @"msg":imageId,
+                           @"type":@"img"};
+    return [dic JSONFragment];
 }
 
+
+#pragma mark 创建发送组队图片消息的payload
++(NSString*)createPayLoadStr:(NSString*)imageId ThumbImage:(NSString*)thumbImage BigImagePath:(NSString*)bigImagePath TeamPosition:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team{
+    NSDictionary * payloadDic = @{
+                                  @"thumb":thumbImage,
+                                  @"title":bigImagePath,
+                                  @"msg":imageId,
+                                  @"type":@"img",
+                                  @"teamPosition":teamPosition,
+                                  @"gameid":gameid,
+                                  @"roomId":roomId,
+                                  @"team":team};
+    return  [payloadDic JSONFragment];
+}
+
+#pragma mark 创建发送组队文字消息的payload
++(NSString*)createPayLoadStr:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team{
+    NSDictionary * dic = @{@"teamPosition":teamPosition,
+                           @"gameid":gameid,
+                           @"roomId": roomId,
+                           @"team":team};
+    return [dic JSONFragment];
+}
+#pragma mark 创建发送系统消息的payload
++(NSString*)createPayLoadStr:(NSString*)msgType{
+    NSDictionary * dic = @{@"type":msgType};
+    return [dic JSONFragment];
+}
+
+#pragma mark 创建发送位置变更消息的payload
++(NSString*)createPayLoadStr:(NSString*)type TeamPosition:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team
+{
+    NSDictionary * dic = @{@"type":type,
+                           @"teamPosition":teamPosition,
+                           @"gameid":gameid,
+                           @"roomId": roomId,
+                           @"team":team};
+    return [dic JSONFragment];
+}
+
+#pragma mark 创建分享动态消息的payload
 +(NSString*)createPayLoadStr:(NSString*)thumb title:(NSString*)title shiptype:(NSString*)shiptype messageid:(NSString*)messageid msg:(NSString*)msg type:(NSString*)type
 {
     NSDictionary * dic = @{@"thumb":thumb,
@@ -47,39 +91,28 @@
     return [dic JSONFragment];
 }
 
-+(NSString*)createPayLoadStr:(NSString*)thumb title:(NSString*)title shiptype:(NSString*)shiptype messageid:(NSString*)messageid msg:(NSString*)msg type:(NSString*)type TeamPosition:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team
+
+#pragma mark 创建其他消息的payload
++(NSString*)createPayLoadStr:(NSString*)type gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team GroupId:(NSString*)groupId UserId:(NSString*)userid
 {
-    NSDictionary * dic = @{@"thumb":thumb,
-                           @"title":title,
-                           @"shiptype": shiptype,
-                           @"messageid":messageid,
-                           @"msg":msg,
-                           @"type":type,
-                           @"teamPosition":teamPosition,
+    NSDictionary * dic = @{@"type":type,
                            @"gameid":gameid,
                            @"roomId": roomId,
-                           @"team":team};
+                           @"team":team,
+                           @"groupId":groupId,
+                           @"userid":userid};
     return [dic JSONFragment];
 }
-
-+(NSString*)createPayLoadStr:(NSString*)msgType{
-    return [self createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:msgType TeamPosition:@"" gameid:@"" roomId:@"" team:@""];
-}
-
-+(NSString*)createPayLoadStr:(NSString*)teamPosition gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team{
-    return [self createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"" TeamPosition:teamPosition gameid:gameid roomId:roomId team:team];
-}
-
-
 
 
 
 #pragma mark OtherMessage
-+(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message GroupId:(NSString*)groupId
++(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message GroupId:(NSString*)groupId gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team UserId:(NSString*)userid
 {
     NSString* nowTime = [GameCommon getCurrentTime];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    NSString * payloadStr=[MessageService createPayLoadStr:payloadType];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];    
+    NSString * payloadStr = [MessageService createPayLoadStr:payloadType gameid:gameid roomId:roomId team:team GroupId:groupId UserId:userid];
+    
     NSMutableDictionary *dictionary =  [self createMsgDictionarys:message NowTime:nowTime UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:groupId MsgType:@"groupchat"];
     [dictionary setObject:payloadStr forKey:@"payload"];
     [dictionary setObject:groupId forKey:@"groupId"];
@@ -89,8 +122,7 @@
 }
 
 #pragma mark 创建消息对象
-+(NSMutableDictionary*)createMsgDictionarys:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid MsgStatus:(NSString *)status
-                                   SenderId:(NSString*)senderId ReceiveId:(NSString*)receiveId MsgType:(NSString*)msgType
++(NSMutableDictionary*)createMsgDictionarys:(NSString *)message NowTime:(NSString *)nowTime UUid:(NSString *)uuid MsgStatus:(NSString *)status SenderId:(NSString*)senderId ReceiveId:(NSString*)receiveId MsgType:(NSString*)msgType
 {
     NSMutableDictionary * dictionary = [NSMutableDictionary dictionary];
     [dictionary setObject:message forKey:@"msg"];

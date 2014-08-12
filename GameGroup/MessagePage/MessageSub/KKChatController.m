@@ -2361,10 +2361,9 @@ UINavigationControllerDelegate>
     NSString* nowTime = [GameCommon getCurrentTime];
     NSString* payloadStr;
     if (self.isTeam) {
-         payloadStr=[MessageService createPayLoadStr:imageMsg title:bigimagePath shiptype:@"" messageid:@"" msg:@"" type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
-        
+         payloadStr = [MessageService createPayLoadStr:@"" ThumbImage:imageMsg BigImagePath:bigimagePath TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
     }else{
-       payloadStr=[MessageService createPayLoadStr:uuid ImageId:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
+       payloadStr=[MessageService createPayLoadStr:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
     }
      NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     if (self.isTeam) {
@@ -2395,9 +2394,11 @@ UINavigationControllerDelegate>
     NSString * payloadStr;
     
     if (self.isTeam) {
-         payloadStr=[MessageService createPayLoadStr:strThumb title:srtBigImage shiptype:@"" messageid:@"" msg:imageMsg type:@"img" TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        payloadStr = [MessageService createPayLoadStr:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        
+        
     }else{
-       payloadStr=[MessageService createPayLoadStr:uuid ImageId:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
+       payloadStr=[MessageService createPayLoadStr:imageMsg ThumbImage:strThumb BigImagePath:srtBigImage];
     }
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     if (self.isTeam) {
@@ -2527,7 +2528,9 @@ UINavigationControllerDelegate>
     NSString *from=[[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:[[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN]]];
     NSMutableDictionary * messageDict = [self createMsgDictionarys:message NowTime:[GameCommon getCurrentTime] UUid:uuid MsgStatus:@"1" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
-    NSString *  payloadStr=[MessageService createPayLoadStr:@"" title:@"" shiptype:@"" messageid:@"" msg:@"" type:@"selectTeamPosition" TeamPosition:teamPosition gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    
+    NSString *  payloadStr=[MessageService createPayLoadStr:@"selectTeamPosition" TeamPosition:teamPosition gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+    
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];

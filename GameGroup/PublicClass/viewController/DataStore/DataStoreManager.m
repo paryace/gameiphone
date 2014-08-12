@@ -679,6 +679,30 @@
      NSString * msgState = KISDictionaryHaveKey(message, @"status");
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"1"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicates inContext:localContext];
+        int unread;
+        if (!thumbMsgs){
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+            unread =0;
+        }else{
+            unread = [thumbMsgs.unRead intValue];
+        }
+        thumbMsgs.sender = sender;
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = msgContent;
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.sendTime = sendTime;
+        thumbMsgs.senderType = GROUPMSG;
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",unread+1];
+        thumbMsgs.msgType = @"groupchat";
+        thumbMsgs.messageuuid = messageuuid;
+        thumbMsgs.status = @"1";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.payLoad = payloadStr;
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+        
+        
         DSGroupMsgs * commonMsg = [DSGroupMsgs MR_createInContext:localContext];
         commonMsg.sender = sender;
         commonMsg.senderNickname = @"";
