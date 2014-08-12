@@ -141,12 +141,13 @@ static TeamManager *teamManager = NULL;
 //组队添加成员
 -(void)saveMemberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
     //我加入组队成功
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil userInfo:memberUserInfo];
-    }
     [DataStoreManager saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
         [DataStoreManager saveTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] TeamUsershipType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"teamUsershipType")] DefaultState:@"0"];
         [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+            [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"3"];//改变本地群的状态为可用
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil userInfo:memberUserInfo];
+        }
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
 }

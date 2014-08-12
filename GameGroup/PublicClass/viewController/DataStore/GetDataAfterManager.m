@@ -253,12 +253,7 @@ static SystemSoundID shake_sound_male_id = 0;
     [messageContent setValue:groupId forKey:@"groupId"];
     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
-    if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        
-        
-//        [[TeamManager singleton] clearTeamMessage:groupId];//清除消息
-//        [[GroupManager singleton] deleteGrpuoInfo:groupId];//删除群消息
-        
+    if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
@@ -308,9 +303,6 @@ static SystemSoundID shake_sound_male_id = 0;
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, @"teamUser"), @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"3"];//改变本地群的状态
-    }
     [[TeamManager singleton] saveMemberUserInfo:payloadDic GroupId:groupId];//组队添加新成员
     [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, @"teamUser"), @"userid") State:@"1" GroupId:groupId];
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -329,20 +321,30 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)teamQuitTypeMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
-    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        
-    }];
-    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+    if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//如果是自己退出
+        [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
+        [[TeamManager singleton] clearTeamMessage:groupId];//清除消息
+        NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[MessageSetting singleton] setSoundOrVibrationopen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
-    }];
+    }else {
+        [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            
+        }];
+        [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[MessageSetting singleton] setSoundOrVibrationopen];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            });
+        }];
+    }
 }
 #pragma mark 占坑
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent{

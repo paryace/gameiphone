@@ -125,6 +125,7 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
     [self refreTitleText];
+    [self showErrorDialog];
     if ([self.type isEqualToString:@"group"]) {
         [self initGroupCricleMsgCount];//初始化群动态的未读消息数
     }
@@ -232,7 +233,6 @@ UINavigationControllerDelegate>
     //发送系统消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
     [self initMyInfo];
-    [self showErrorDialog];
     postDict = [NSMutableDictionary dictionary];
     self.typeData_list = [NSArray array];
     canAdd = YES;
