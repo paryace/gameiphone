@@ -483,4 +483,6 @@
 
 //组队偏好消息列表
 +(NSMutableArray*)getPrefernceMsgs;
+
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType  Successcompletion:(MRSaveCompletionHandler)successcompletion;
 @end

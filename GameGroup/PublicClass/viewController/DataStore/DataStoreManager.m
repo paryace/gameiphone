@@ -4050,7 +4050,7 @@
             thumbMsgs2 = [DSThumbMsgs MR_createInContext:localContext];
             unread2 =0;
         }else{
-            unread2 = [thumbMsgs.unRead intValue];
+            unread2 = [thumbMsgs2.unRead intValue];
         }
         thumbMsgs2.sender = userid;
         thumbMsgs2.senderNickname = nickname;
@@ -4133,6 +4133,21 @@
             commonMsg.unRead= @"0";
         }
     }];
+}
+
++(void)updateDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType  Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType=[c]%@",groupId,@"groupchat",sayHightType];
+        DSThumbMsgs * commonMsg = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (commonMsg) {
+            commonMsg.unRead= @"0";
+        }
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successcompletion) {
+             successcompletion(success,error);
+         }
+     }];
 }
 
 

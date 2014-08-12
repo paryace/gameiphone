@@ -399,7 +399,6 @@ static SystemSoundID shake_sound_male_id = 0;
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
-//            [[MessageSetting singleton] setSoundOrVibrationopen];
             [self initSound];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });

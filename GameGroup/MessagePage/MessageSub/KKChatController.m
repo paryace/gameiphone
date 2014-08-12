@@ -369,7 +369,6 @@ UINavigationControllerDelegate>
     if (section == 0){
         selectType =[self.typeData_list objectAtIndex:index];
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-//            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             [self changPosition];
             [self sendOtherMsg:[NSString stringWithFormat:@"选择%@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         } reError:^(id error) {
@@ -391,10 +390,12 @@ UINavigationControllerDelegate>
     }else if(section == 1){
         return YES;
     }else if(section==2){
-        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
-        [self readNoreadMsg];
-        [self setNoreadMsgView];
-        [self setNotifyMsgCount];
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
+            [self readNoreadMsg];
+            [self setNoreadMsgView];
+            [self setNotifyMsgCount];
+        }];
         return YES;
     }
     return NO;
@@ -444,10 +445,12 @@ UINavigationControllerDelegate>
 }
 
 - (void)buttonOnClick{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
-    [self readNoreadMsg];
-    [self setNoreadMsgView];
-    [self setInplaceMsgCount];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
+        [self setInplaceMsgCount];
+    }];
 }
 
 -(void)showDialog{
@@ -2861,11 +2864,11 @@ UINavigationControllerDelegate>
             if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {//位置选择
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
+            }else if ([msgType isEqualToString:@"requestJoinTeam"]) {//申请加入组队
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
                 [self setNotifyMsgCount];
-            }
-            else if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"startTeamPreparedConfirm"]){//发起就位确认
+            }else if ([msgType isEqualToString:@"startTeamPreparedConfirm"]) {//发起就位确认
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
                 [self setInplaceMsgCount];
