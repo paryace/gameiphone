@@ -19,7 +19,7 @@
         self.headImageV.backgroundColor = [UIColor clearColor];
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
-        self.headImageV.placeholderImage = KUIImage(@"placeholder");
+        self.headImageV.placeholderImage = KUIImage(@"clazz_0");
 
         [self addSubview:self.headImageV];
         

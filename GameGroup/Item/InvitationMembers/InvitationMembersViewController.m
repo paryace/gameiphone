@@ -253,7 +253,7 @@
 {
     NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
 
-    NSString *imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")];
+    NSString *imgStr = [GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
     NSString *roleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
     NSString *simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"realm")];
     
@@ -274,9 +274,9 @@
 
 }
 -(UIImage *) getImageFromURL:(NSString *)fileURL {
-    UIImage * result;
+    
     NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
-    result = [UIImage imageWithData:data];
+    UIImage *result = [UIImage imageWithData:data];
     return result;
 }
 

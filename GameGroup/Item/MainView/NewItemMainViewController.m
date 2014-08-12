@@ -55,6 +55,7 @@
     [[Custom_tabbar showTabBar] hideTabBar:NO];
     
     if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+        userid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
         firstView.selectCharacter = nil;
         firstView.selectType = nil;
         [firstView setTitleInfo];
@@ -254,14 +255,17 @@
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
-    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+//    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_myRoom_%@",userid]];
+            [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_myRoom_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+            
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"LoignRefreshPreference_wx"];
+            
             [room initMyRoomListData:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
