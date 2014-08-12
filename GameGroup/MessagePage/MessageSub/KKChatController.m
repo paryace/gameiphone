@@ -2502,7 +2502,6 @@ UINavigationControllerDelegate>
     [dictionary setObject:groupId forKey:@"groupId"];
     [self addNewOneMessageToTable:dictionary];
     [DataStoreManager storeMyGroupMessage:dictionary Successcompletion:^(BOOL success, NSError *error) {
-         [[NSNotificationCenter defaultCenter] postNotificationName:kSendSystemMessage object:nil userInfo:dictionary];
     }];
 }
 #pragma mark 添加以上是历史消息
@@ -2782,16 +2781,18 @@ UINavigationControllerDelegate>
 -(void)sendSystemMessage:(NSNotification *)notification{
     
     NSDictionary * dictionary = notification.userInfo;
-    [self addNewOneMessageToTable:dictionary];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dictionary, @"groupId")] isEqualToString:self.chatWithUser]) {
+        [self addNewOneMessageToTable:dictionary];
+    }
 }
 #pragma mark 组队人数添加
 -(void)teamMemberCountChang:(NSNotification *)notification
 {
-    NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
-    if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {
-        [self groupNotAvailable:@"inTeamSystemMsg" Message:@"该房间已组满队员" GroupId:self.chatWithUser];
+    NSDictionary * dic = notification.userInfo;
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameId")] isEqualToString:self.gameId]
+        &&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:self.roomId]) {
+        [self refreTitleText];
     }
-    [self refreTitleText];
 }
 
 #pragma mark 用户信息更新完成
