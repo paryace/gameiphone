@@ -111,7 +111,7 @@ static TeamManager *teamManager = NULL;
     }];
 }
 
-
+//房间已满消息
 -(void)roomFull:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId{
     NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:gameId] RoomId:[GameCommon getNewStringWithId:roomId]];
     if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {

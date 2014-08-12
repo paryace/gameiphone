@@ -13,6 +13,8 @@
 #import "ItemManager.h"
 #import "InplaceCell.h"
 #import "TestViewController.h"
+#import "ChineseString.h"
+#import "pinyin.h"
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
@@ -493,21 +495,50 @@
 }
 //就位确认数据
 -(void)getmemberList{
-//    self.memberList = [DataStoreManager getMemberList:self.groipId];
-    self.memberList = [DataStoreManager getMemberList:self.roomId GameId:self.gameId];
-    
-    [self.memberList sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] < 0)
-        {
-            return (NSComparisonResult)NSOrderedDescending;
-        }
-        if([KISDictionaryHaveKey(obj1, @"value") compare:KISDictionaryHaveKey(obj2, @"value") options:NSNumericSearch] > 0)
-        {
-            return (NSComparisonResult)NSOrderedAscending;
-        }
-        return (NSComparisonResult)NSOrderedSame;
-    }];
+    self.memberList = [self comm:[DataStoreManager getMemberList:self.roomId GameId:self.gameId]];
 }
+
+//排序
+-(NSMutableArray*)comm:(NSMutableArray*)array{
+    NSMutableArray *chineseStringsArray=[NSMutableArray array];
+    for(int i=0;i<[array count];i++){
+        ChineseString *chineseString=[[ChineseString alloc]init];
+        NSDictionary * memberDic = [array objectAtIndex:i];
+        NSString * str = KISDictionaryHaveKey(memberDic, @"value");
+        if ([GameCommon isEmtity:str]) {
+            str = @"Z";
+        }
+
+        chineseString.string=[NSString stringWithString:str];
+        chineseString.memberInfo = memberDic;
+        if(chineseString.string==nil){
+            chineseString.string=@"";
+        }
+        if(![chineseString.string isEqualToString:@""]){
+            NSString *pinYinResult=[NSString string];
+            for(int j=0;j<chineseString.string.length;j++){
+                NSString *singlePinyinLetter=[[NSString stringWithFormat:@"%c",pinyinFirstLetter([chineseString.string characterAtIndex:j])]uppercaseString];
+                
+                pinYinResult=[pinYinResult stringByAppendingString:singlePinyinLetter];
+            }
+            chineseString.pinYin=pinYinResult;
+        }else{
+            chineseString.pinYin=@"";
+        }
+        [chineseStringsArray addObject:chineseString];
+    }
+    
+    NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"pinYin" ascending:YES]];
+    [chineseStringsArray sortUsingDescriptors:sortDescriptors];
+    
+    
+    NSMutableArray *result=[NSMutableArray array];
+    for(int i=0;i<[chineseStringsArray count];i++){
+        [result addObject:((ChineseString*)[chineseStringsArray objectAtIndex:i]).memberInfo];
+    }
+    return result;
+}
+
 
 -(void)showToastAlertView:(NSString*)msgText
 {

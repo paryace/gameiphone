@@ -367,6 +367,10 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
+        NSMutableDictionary * clickType = [self.typeData_list objectAtIndex:index];
+        if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
+            return;
+        }
         selectType =[self.typeData_list objectAtIndex:index];
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
             [self sendOtherMsg:[NSString stringWithFormat:@"选择%@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
