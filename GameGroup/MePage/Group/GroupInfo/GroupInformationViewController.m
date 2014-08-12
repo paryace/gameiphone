@@ -392,15 +392,15 @@
   
             }else{
                 if ([identity intValue]==0) {//群主
-                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    NSArray *array = @[@"sendMsg_normal",@"team_edit"];
                     [self buildbelowbutotnWithArray:array shiptype:1];
                 }
                 else if ([identity intValue]==1) {//管理员
-                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    NSArray *array = @[@"sendMsg_normal",@"team_edit"];
                     [self buildbelowbutotnWithArray:array shiptype:1];
                 }
                 else if ([identity intValue]==2) {//普通成员
-                    NSArray *array = @[@"sendMsg_normal.jpg",@"groupEdit"];
+                    NSArray *array = @[@"sendMsg_normal",@"team_edit"];
                     [self buildbelowbutotnWithArray:array shiptype:1];
                     
                 }else{//陌生人

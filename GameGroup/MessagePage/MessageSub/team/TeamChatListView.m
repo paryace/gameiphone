@@ -43,6 +43,9 @@
         self.roomId = roomId;
         self.gameId = gameId;
         
+        MBProgressHUD *hud =[[ MBProgressHUD alloc]initWithView:self];
+        [self addSubview:hud];
+        
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
             sectionNum = [self.dropDownDataSource numberOfSections];
@@ -78,6 +81,7 @@
             }
         }
         [self initButtonTitle];
+        
     }
     return self;
 }
@@ -609,7 +613,14 @@
         if (currentExtendSection==1) {
             [self.mTableView deselectRowAtIndexPath:indexPath animated:YES];
             NSMutableDictionary *dic = [self.memberList objectAtIndex:indexPath.row];
-            [self.dropDownDataSource itemOnClick:[self createCharaDic:dic]];
+            if ([[dic allKeys]containsObject:@"teamUser"]) {
+                [self.dropDownDataSource itemOnClick:[self createCharaDic:dic]];
+            }else{
+                hud.labelText = @"注意，这是坑位，请等小伙伴一下";
+                hud.mode = MBProgressHUDModeText;
+                [hud show:YES];
+                [hud hide:YES afterDelay:2];
+            }
         }else{
             NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:indexPath.row];
             [self.dropDownDataSource itemOnClick:dic];
