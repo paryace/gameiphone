@@ -36,7 +36,7 @@ static ItemManager *itemManager = NULL;
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:fileName];
     long long nowTime = [self getCurrentTime];
     long long oldTime = [time longLongValue];
-    if ((nowTime-oldTime)>12*60*60*1000) {
+    if ((nowTime-oldTime)>6*60*60*1000) {
         NSString *alltimeString=[NSString stringWithFormat:@"%lld",nowTime];
         [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:fileName];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -81,13 +81,20 @@ static ItemManager *itemManager = NULL;
     NSMutableArray * tempArrayType = [NSMutableArray array];
     [tempArrayType removeAllObjects];
     NSMutableArray * arrayType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
-    if (arrayType&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"TeamType",gameId]]) {
+    if (arrayType) {
+        if (![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"TeamType",gameId]]) {
+            if (resuccess) {
+                [tempArrayType addObject:[self createType]];
+                [tempArrayType addObjectsFromArray:arrayType];
+                resuccess(tempArrayType);
+            }
+            return;
+        }
         if (resuccess) {
             [tempArrayType addObject:[self createType]];
             [tempArrayType addObjectsFromArray:arrayType];
             resuccess(tempArrayType);
         }
-        return;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
@@ -117,12 +124,17 @@ static ItemManager *itemManager = NULL;
 -(void)getTeamLable:(NSString*)gameId TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@%@",@"TeamLable",gameId,typeId,characterId]];
-    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"TeamLable",gameId,typeId,characterId]]) {
+    if (arrayTag) {
+        if (![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"TeamLable",gameId,typeId,characterId]]) {
+            if (resuccess) {
+                resuccess(arrayTag);
+            }
+            return;
+        }
         if (resuccess) {
             resuccess(arrayTag);
         }
-        return;
-    }    
+    }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
     [paramDict setObject:characterId forKey:@"characterId"];
@@ -151,11 +163,16 @@ static ItemManager *itemManager = NULL;
 -(void)getTeamLableRoom:(NSString*)gameId TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayTag = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]];
-    if (arrayTag&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]]) {
+    if (arrayTag) {
+        if (![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]]) {
+            if (resuccess) {
+                resuccess(arrayTag);
+            }
+            return;
+        }
         if (resuccess) {
             resuccess(arrayTag);
         }
-        return;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
@@ -185,11 +202,16 @@ static ItemManager *itemManager = NULL;
 -(void)getFilterId:(NSString*)gameId reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailure
 {
     NSArray * arrayFilterId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@_%@",@"FilterId",gameId]];
-    if (arrayFilterId&&![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"FilterId",gameId]]) {
+    if (arrayFilterId) {
+        if (![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"FilterId",gameId]]) {
+            if (resuccess) {
+                resuccess(arrayFilterId);
+            }
+            return;
+        }
         if (resuccess) {
             resuccess(arrayFilterId);
         }
-        return;
     }
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:gameId forKey:@"gameid"];
