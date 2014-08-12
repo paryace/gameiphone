@@ -73,14 +73,14 @@
         self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [self.contentView addSubview:self.activityView];
         
-        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 30, 19)];
+        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(0, 2.5, 34, 20)];
         [self.levelLable setTextAlignment:NSTextAlignmentCenter];
-        self.levelLable.backgroundColor = [UIColor blueColor];
+        self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
         self.levelLable.layer.cornerRadius = 3;
         self.levelLable.lineBreakMode = NSLineBreakByWordWrapping;
         self.levelLable.layer.masksToBounds=YES;
         self.levelLable.textColor = [UIColor whiteColor];
-        [self.levelLable setFont:[UIFont boldSystemFontOfSize:10.0]];
+        [self.levelLable setFont:[UIFont systemFontOfSize:10.0]];
         [self.contentView addSubview:self.levelLable];
     }
     return self;
@@ -191,7 +191,7 @@
 {
     [self.headImgV setFrame:CGRectMake(320-10-40,padding*2-15,40,40)];
     
-    [self.levelLable setFrame:CGRectMake(320-10-40+7.5, padding*2-15+40+3, 25, 12)];
+    [self.levelLable setFrame:CGRectMake(320-10-40+5, padding*2-15+40+3, 30, 14)];
     
     if ([GameCommon isEmtity:myHeadImg]) {
         self.headImgV.imageURL = nil;
@@ -207,7 +207,7 @@
 {
     //头像居左
     [self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
-    [self.levelLable setFrame:CGRectMake(17.5, padding*2-15+40+3, 25, 12)];
+    [self.levelLable setFrame:CGRectMake(15, padding*2-15+40+3, 30, 14)];
     //头像设置为对方的
     self.headImgV.imageURL=[ImageService getImageStr:chatUserImg Width:80];
     //点击事件
@@ -222,8 +222,12 @@
         
         if (![GameCommon isEmtity:teamPosition]) {
             self.levelLable.text = teamPosition;
+            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+            self.levelLable.textColor = [UIColor whiteColor];
         }else{
             self.levelLable.text = @"未选";
+            self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
+            self.levelLable.textColor = kColorWithRGB(155, 155, 155, 1.0);
         }
     }else{
         self.levelLable.hidden=YES;
@@ -236,8 +240,12 @@
         self.levelLable.hidden=NO;
         if (![GameCommon isEmtity:teamPosition]) {
             self.levelLable.text = teamPosition;
+            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+            self.levelLable.textColor = [UIColor whiteColor];
         }else{
             self.levelLable.text = @"未选";
+            self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
+            self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
         }
     }else{
         self.levelLable.hidden=YES

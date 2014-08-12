@@ -53,6 +53,7 @@
     
     
     
+    
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
@@ -62,10 +63,6 @@
     isJoinIn = YES;
     m_mainDict = [NSMutableDictionary dictionary];
     m_dataArray = [NSMutableArray array];
-    
-//    UIImageView * lineView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 0.5)];
-//    lineView.backgroundColor = UIColorFromRGBA(0x2d313a, 1);
-//    [self.view addSubview:lineView];
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_myTableView.delegate = self;
@@ -89,7 +86,7 @@
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"获取中...";
     [self.view addSubview:hud];
-    [self GETInfoWithNet];
+    [self GETInfoWithNet:NO];
 }
 
 -(void)setRightBtn
@@ -124,13 +121,11 @@
 #pragma mark ----delegate
 -(void)refreshMyTeamInfoWithViewController:(UIViewController *)vc
 {
-    [self GETInfoWithNet];
+    [self GETInfoWithNet:YES];
 }
 #pragma mark --分享组队
 -(void)didClickShareItem:(id)sender
 {
-//    ReviewapplicationViewController *review = [[ReviewapplicationViewController alloc]init];
-//    [self.navigationController pushViewController:review animated:YES];
     if (self.isCaptain) {
         jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
         jiesanAlert.tag = 10000001;
@@ -303,10 +298,12 @@
 
 /*typeName  teamInfo options type1-->创建者  Value1 第一行 value2 第二行  */
 #pragma mark ---NET
--(void)GETInfoWithNet
+-(void)GETInfoWithNet:(BOOL)isRefre
 {
-    hud.labelText = @"请求中...";
-    [hud show:YES];
+    if (!isRefre) {
+        hud.labelText = @"请求中...";
+        [hud show:YES];
+    }
     [[TeamManager singleton] GETInfoWithNet:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId] reSuccess:^(id responseObject) {
         [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -320,7 +317,7 @@
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
             [m_dataArray removeAllObjects];
-            [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(m_mainDict, @"memberList")];
+            [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             [m_myTableView reloadData];
             [roleTabView.roleTableView reloadData];
         }
@@ -358,7 +355,7 @@
     {
         m_getOutBtn.hidden = YES;
         titlearr = @[@"",@"申请加入"];
-        arr = @[@"",@"joinInBtn_Item"];
+        arr = @[@"",@"team_join_low"];
     }
     [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
@@ -675,7 +672,11 @@
 
 //改变位置(待处理)
 -(void)changPosition:(NSNotification*)notification{
-     NSLog(@"%@",notification.userInfo);
+    NSDictionary * dic = [KISDictionaryHaveKey(notification.userInfo, @"payload") JSONValue];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]isEqualToString:[GameCommon getNewStringWithId:self.gameid]]
+        && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:[GameCommon getNewStringWithId:self.itemId]]) {
+        [self GETInfoWithNet:YES];
+    }
 }
 //组队成员变化
 -(void)changMemberList:(NSNotification*)notification{
@@ -693,7 +694,6 @@
     m_myTableView.delegate=nil;
     m_myTableView.dataSource=nil;
     backAlert.delegate = nil;
-
 }
 
 
