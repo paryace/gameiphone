@@ -55,16 +55,18 @@
     m_titleLabel.textAlignment = NSTextAlignmentCenter;
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [self.view addSubview:m_titleLabel];
-    m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    
+    
+    m_myFansTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX)];
     m_myFansTableView.dataSource = self;
     m_myFansTableView.delegate = self;
     [self.view addSubview:m_myFansTableView];
     [GameCommon setExtraCellLineHidden:m_myFansTableView];
+    [self addHeader];
 
     [self addFooter];
-    [self addHeader];
     [m_fansheader beginRefreshing];
-    [m_fansfooter endRefreshing];
+//    [m_fansfooter endRefreshing];
 }
 
 - (void)reloadFansList:(NSNotification*)notification

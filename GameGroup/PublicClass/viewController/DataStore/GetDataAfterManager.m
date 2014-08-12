@@ -573,16 +573,20 @@ static SystemSoundID shake_sound_male_id = 0;
         self.cellTimerDy = nil;
     }
     [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-        int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
-        i+=dyMsgCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
-    }else{
-        int i = 0;
-        i+=dyMsgCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
-    }
-    dyMsgCount = 0;
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
+//        int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
+//        i+=dyMsgCount;
+//        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
+//    }else{
+//        int i = 0;
+//        i+=dyMsgCount;
+//        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
+//    }
+//    dyMsgCount = 0;
+    NSLog(@"-----%@",[[NSString stringWithFormat:@"%@",payload] JSONValue]);
+    NSDictionary *dic = [NSDictionary dictionaryWithDictionary:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    [DataStoreManager saveCricleCountWithType:2 img:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
        [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
     });

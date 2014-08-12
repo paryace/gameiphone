@@ -15,7 +15,7 @@
 #import "DSUnreadCount.h"
 #import "DSNameIndex.h"
 #import "DSBlackList.h"
-
+#import "DSCircleCount.h"
 #import "DSAttentionNameIndex.h"
 #import "DSFansNameIndex.h"
 
@@ -485,4 +485,11 @@
 +(NSMutableArray*)getPrefernceMsgs;
 
 +(void)updateDSTeamNotificationMsgCount:(NSString*)groupId SayHightType:(NSString*)sayHightType  Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
++(void)saveCricleCountWithType:(NSInteger)type img:(NSString*)img userid:(NSString *)userid;
+
++(DSCircleCount*)querymessageWithUserid:(NSString *)userid;
+
++(void)clearCircleCountWithUserid:(NSString *)userid;
+
 @end

@@ -118,14 +118,14 @@
 //    imgView.image = KUIImage(@"team_seg_bg");
 //    [self.view addSubview:imgView];
     
-    m_button1 = [[UIButton alloc]initWithFrame:CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 85.5f, 30)];
+    m_button1 = [[UIButton alloc]initWithFrame:CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 85.5f, 25)];
     [m_button1 setBackgroundImage:KUIImage(@"team_seg_search_click") forState:UIControlStateNormal];
     [m_button1 setBackgroundImage:KUIImage(@"team_seg_search_normal") forState:UIControlStateSelected];
     m_button1.selected = YES;
     [m_button1 addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_button1];
     
-    m_button2 = [[UIButton alloc]initWithFrame:CGRectMake(160.0f, KISHighVersion_7 ? 27 : 7, 85.5f, 30)];
+    m_button2 = [[UIButton alloc]initWithFrame:CGRectMake(160.0f, KISHighVersion_7 ? 27 : 7, 85.5f, 25)];
     [m_button2 setBackgroundImage:KUIImage(@"team_seg_team_click") forState:UIControlStateNormal];
     [m_button2 setBackgroundImage:KUIImage(@"team_seg_team_normal") forState:UIControlStateSelected];
     [m_button2 addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventTouchUpInside];
