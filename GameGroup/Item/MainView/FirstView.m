@@ -351,7 +351,10 @@
 -(NSDictionary *)contentInsection:(NSInteger)section index:(NSInteger)index
 {
     if (section ==0) {
-        return self.firstDataArray[index];
+        if (index<self.firstDataArray.count) {
+            return self.firstDataArray[index];
+        }
+        return nil;
     }else{
         return nil;
     }

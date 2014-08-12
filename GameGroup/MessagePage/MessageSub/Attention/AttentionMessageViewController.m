@@ -146,18 +146,14 @@
     KKChatController *kkchat = [[KKChatController alloc]init];
     kkchat.chatWithUser = [NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
     kkchat.type = @"normal";
-
     [self.navigationController pushViewController:kkchat animated:YES];
     
     
-    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@",[[self.dataArray objectAtIndex:indexPath.row]sender]];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         thumbMsgs.unRead = @"0";
-    }
-     completion:^(BOOL success, NSError *error) {
-         
-     }];//清数字
+    }];//清数字
 
     
 }

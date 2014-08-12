@@ -277,25 +277,40 @@ static SystemSoundID shake_sound_male_id = 0;
 
 #pragma mark 解散组队
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    NSString * teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"teamUsershipType")];
+    if ([GameCommon isEmtity:teamUsershipType]) {
+        teamUsershipType = @"1";
+    }
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
+    
     [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"3"];//把该组队的所有未读消息设置为0
     [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"4"];//把该组队的所有未读消息设置为0
     [DataStoreManager blankGroupMsgUnreadCountForUser:groupId];//把所有未读消息标记为0
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
-    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        
-    }];
-    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+    if ([teamUsershipType intValue]==0) {
+        [[TeamManager singleton] clearTeamMessage:groupId];
+        [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         NSDictionary * dic = @{@"groupId":groupId};
-         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[MessageSetting singleton] setSoundOrVibrationopen];
             [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
-    }];
+    }else{
+        [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            
+        }];
+        [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+            NSDictionary * dic = @{@"groupId":groupId};
+            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[MessageSetting singleton] setSoundOrVibrationopen];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            });
+        }];
+    }
 }
 #pragma mark 加入组队
 -(void)teamMemberMessageReceived:(NSDictionary *)messageContent{
@@ -328,6 +343,7 @@ static SystemSoundID shake_sound_male_id = 0;
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//如果是自己退出
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[TeamManager singleton] clearTeamMessage:groupId];//清除消息
+        [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];

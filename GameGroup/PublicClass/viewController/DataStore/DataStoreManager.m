@@ -79,7 +79,7 @@
 +(void)storeThumbMsgUser:(NSString*)userid type:(NSString*)type
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType=[c]%@",userid,@"normalchat"];
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",userid,@"normalchat"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (thumbMsgs)
         {
