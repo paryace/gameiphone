@@ -101,11 +101,12 @@ static TeamManager *teamManager = NULL;
 }
 
 //组队人数+1
--(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId
+-(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId
 {
     [DataStoreManager addMemBerCount:gameId RoomId:roomId Successcompletion:^(BOOL success, NSError *error) {
         [self.teamCache removeObjectForKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         NSDictionary * dic = @{@"gameId":gameId,@"roomId":roomId};
+        [self roomFull:gameId RoomId:roomId GroupId:groupId UserId:userId];
         [[NSNotificationCenter defaultCenter] postNotificationName:UpdateTeamMemberCount object:nil userInfo:dic];
     }];
 }
@@ -114,7 +115,7 @@ static TeamManager *teamManager = NULL;
 -(void)roomFull:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId{
     NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:gameId] RoomId:[GameCommon getNewStringWithId:roomId]];
     if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {
-        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"该房间已组满队员" GroupId:groupId gameid:gameId roomId:roomId team:@"teamchat" UserId:userId];
+        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"房间已满" GroupId:groupId gameid:gameId roomId:roomId team:@"teamchat" UserId:userId];
     }
 }
 
@@ -145,8 +146,7 @@ static TeamManager *teamManager = NULL;
     }
     [DataStoreManager saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
         [DataStoreManager saveTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] TeamUsershipType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"teamUsershipType")] DefaultState:@"0"];
-        [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")]];
-        [self roomFull:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]];
+        [self addMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
 }

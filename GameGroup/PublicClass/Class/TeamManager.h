@@ -18,7 +18,7 @@
 
 -(NSMutableDictionary*)getTeamInfo:(NSString*)gameId RoomId:(NSString*)roomId;
 
--(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;
+-(void)addMemberCount:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId;
 
 -(void)removeMemberCount:(NSString*)gameId RoomId:(NSString*)roomId;
 
