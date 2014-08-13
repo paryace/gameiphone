@@ -483,7 +483,7 @@
     cell.headImg.image = KUIImage(@"wow");
     
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-    cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+    cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
     
     NSString * gameImage = [GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]];
     cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImage];

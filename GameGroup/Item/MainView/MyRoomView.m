@@ -90,7 +90,7 @@
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-            cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
             NSString *title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
             cell.titleLabel.text = title;
@@ -123,7 +123,7 @@
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-            cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
             
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
 

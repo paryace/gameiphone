@@ -317,7 +317,7 @@ UINavigationControllerDelegate>
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
         [self.dropDownView setTitle:@"位置" inSection:0];
-        [self.dropDownView setTitle:@"申请" inSection:2];
+        
         [self.view addSubview:self.dropDownView];
         self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
         [self.view addSubview:self.dotVApp];
@@ -326,10 +326,17 @@ UINavigationControllerDelegate>
         [self.view addSubview:self.dotVInplace];
         [self setInplaceMsgCount];
         
+        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/3-30, startX+2, 22, 18)];
+        [self.view addSubview:self.dotVPosition];
+        
         selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
+        
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
+        }else{
+            [self.dropDownView setTitle:@"申请" inSection:2];
         }
+        [self setPositionMsgCount];
         [self changPosition];
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
@@ -357,6 +364,22 @@ UINavigationControllerDelegate>
         [self.dotVInplace setMsgCount:msgC IsSimple:YES];
     }else{
         self.dotVInplace.hidden = YES;
+    }
+    
+}
+//设置就位确认未读消息数量
+-(void)setPositionMsgCount{
+    NSInteger positionCount;
+    if (selectType) {
+        positionCount = 0;
+    }else {
+        positionCount = 1;
+    }
+    if (positionCount>0) {
+        self.dotVPosition.hidden = NO;
+        [self.dotVPosition setMsgCount:positionCount IsSimple:YES];
+    }else{
+        self.dotVPosition.hidden = YES;
     }
     
 }
@@ -395,8 +418,10 @@ UINavigationControllerDelegate>
         }
         selectType =[self.typeData_list objectAtIndex:index];
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-            [self sendOtherMsg:[NSString stringWithFormat:@"选择%@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+            NSDictionary * myInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(myInfo,@"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
             [self changPosition];
+            [self setPositionMsgCount];
         } reError:^(id error) {
             [self showErrorAlertView:error];
         }];
