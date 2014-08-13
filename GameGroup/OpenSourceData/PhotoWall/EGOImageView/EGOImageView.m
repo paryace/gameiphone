@@ -60,7 +60,6 @@
 		self.placeholderImage = anImage;
 		self.delegate = aDelegate;
 	}
-	
 	return self;
 }
 

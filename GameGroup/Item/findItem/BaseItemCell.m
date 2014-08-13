@@ -17,7 +17,8 @@
         // Initialization code
         self.headImg =[[ EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
         [self addSubview:self.headImg];
-        
+        self.headImg.layer.cornerRadius = 5;
+        self.headImg.layer.masksToBounds=YES;
         self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 10, 170, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.titleLabel];
         

@@ -23,7 +23,8 @@
         self.backgroundColor = [UIColor whiteColor];
          self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
-    
+        self.headImgBtn.layer.cornerRadius = 5;
+        self.headImgBtn.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImgBtn];
         
         self.vImageView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 10, 16, 16)];
