@@ -86,8 +86,6 @@
 //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedMyDynamicMsg:)name:@"mydynamicmsg_wx" object:nil];
     //清除离线消息
     
-
-    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(cleanNews) name:@"cleanInfoOffinderPage_wx" object:nil];
     //群公告消息广播接收
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
@@ -99,59 +97,9 @@
     } reError:^(id error) {
         
     }];
-
-    
-    
-//    NSFileManager *fileManager = [NSFileManager defaultManager];
-//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-//    BOOL isTrue = [fileManager fileExistsAtPath:path];
-//    NSDictionary *fileAttr = [fileManager attributesOfItemAtPath:path error:NULL];
-//    
-//    if (isTrue && [[fileAttr objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-//        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-//    }else{
-//        [[GameCommon shareGameCommon]firtOpen];
-//        drawView.tableDic= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-//    }
-    
-//    NSMutableDictionary * userDic = [DataStoreManager getUserInfoFromDbByUserid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//    
-//    NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
-//    
-//    drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
-//    
-//    if (gameidss &&gameidss.count>0) {
-//        for (int i =0; i<drawView.tableArray.count; i++) {
-//            NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
-//            for (int j =0; j<arr.count; j++) {
-//                NSDictionary *dic = arr[j];
-//                if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
-//                    [arr removeObject:dic];
-//                    [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
-//                }
-//            }
-//        }
-//        
-//        NSMutableArray *asr = [NSMutableArray array];
-//        for (int i = 0; i<drawView.tableArray.count; i++) {
-//            NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
-//            NSArray *array = [drawView.tableDic objectForKey:str];
-//            if (!array||array.count<1) {
-//                [drawView.tableDic removeObjectForKey:str];
-//                [asr addObject:str];
-//            }
-//        }
-//        for (NSString *str in asr) {
-//            if ([drawView.tableArray containsObject:str]) {
-//                [drawView.tableArray removeObject:str];
-//            }
-//        }
-//        [drawView.tv reloadData];
-//    }
-  
     [self preferredStatusBarStyle];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-//    [self initMsgCount];
+    [self initMsgCount];
 //    [self initDynamicMsgCount];
 
 }
@@ -356,23 +304,17 @@
         NSMutableDictionary * simpleGroupInfo = [[GroupManager singleton] getGroupInfo:groupId];
         NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
         if ([GameCommon isEmtity:groupImage]) {
-            iconImageView.placeholderImage  = KUIImage(@"find_billboard");
-
             iconImageView.imageURL = nil;
-//             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+             [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
         }else{
-//            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
-//            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
-
         }
         
     }else
     {
-        iconImageView.placeholderImage =KUIImage(@"find_billboard");
-
         iconImageView.imageURL = nil;
-//        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
+        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     }
 }
 -(NSMutableDictionary*)getBillboardGroupInfo
@@ -603,8 +545,6 @@
 -(void)refreshCircle:(id)sender
 {
     DSCircleCount *dsCount = [DataStoreManager querymessageWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    
     int r = dsCount.friendsCount;
     int g = dsCount.mineCount;
     NSString *img = dsCount.img;
@@ -647,8 +587,6 @@
         }
     }
 }
-
-
 - (UIImage *) dealDefaultImage: (UIImage *) image centerInSize: (CGSize) viewsize
 {
 	CGSize size = image.size;
