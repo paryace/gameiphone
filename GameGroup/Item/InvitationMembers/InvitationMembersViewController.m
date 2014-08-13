@@ -426,7 +426,9 @@
     m_rTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_rTableView.delegate = self;
     m_rTableView.dataSource =self;
-    m_rTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    if (KISHighVersion_7) {
+        m_rTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    }
     [GameCommon setExtraCellLineHidden:m_rTableView];
     [self.view addSubview:m_rTableView];
     

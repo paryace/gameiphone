@@ -426,7 +426,6 @@ static GameCommon *my_gameCommon = NULL;
 }
 
 
-
 + (NSString*)getTimeAndDistWithTime:(NSString*)time Dis:(NSString*)distrance
 {
     double dis = [distrance doubleValue];

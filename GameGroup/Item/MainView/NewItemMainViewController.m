@@ -70,6 +70,13 @@
         [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
     }
 }
+-(void)viewDidAppear:(BOOL)animated
+{
+//    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"LoignRefreshPreference_wx"];
+//    if ([str isEqualToString:@"refreshPreference"]) {
+        [self getMyRoomFromNet];
+//    }
+}
 
 - (void)viewDidLoad
 {
@@ -93,7 +100,7 @@
     
     
     UIImageView *segBgImg = [[UIImageView alloc]initWithImage:KUIImage(@"team_seg_black")];
-    segBgImg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
+    segBgImg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 25);
     [self.view addSubview:segBgImg];
 //<<<<<<< HEAD
 //    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
@@ -165,7 +172,6 @@
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
     [customView addSubview:firstView];
-    [self getMyRoomFromNet];
     [self reloadMsgCount];
     [firstView initSearchConditions];//使用上次的搜索条件
 
@@ -199,13 +205,6 @@
     [self.navigationController pushViewController: perf animated:YES];
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
-    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"LoignRefreshPreference_wx"];
-    if ([str isEqualToString:@"refreshPreference"]) {
-        [self getMyRoomFromNet];
-    }
-}
 //获取未读消息数量，刷新消息数量
 -(void)displayTabbarNotification
 {

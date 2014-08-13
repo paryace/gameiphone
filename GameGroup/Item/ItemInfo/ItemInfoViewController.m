@@ -105,7 +105,7 @@
         [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
     }
 }
-
+#pragma mark ---创建选择角色模块
 -(void)buildRoleView
 {
     

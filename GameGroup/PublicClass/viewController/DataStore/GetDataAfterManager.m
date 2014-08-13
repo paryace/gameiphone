@@ -666,6 +666,20 @@ static SystemSoundID shake_sound_male_id = 0;
     }
     markTimeDyMe = [[NSDate date] timeIntervalSince1970];
     dyMeMsgCount++;
+    
+    NSLog(@"+++++++++%@",[[NSString stringWithFormat:@"%@",payload] JSONValue]);
+    
+    NSDictionary *dic =[[NSString stringWithFormat:@"%@",payload] JSONValue];
+    NSString *imgStr;
+    if ([[dic allKeys]containsObject:@"commentObject"]) {
+        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"commentObject"]objectForKey:@"commentUser"]objectForKey:@"img"]];
+    }
+    else if ([[dic allKeys]containsObject:@"zanObject"]){
+        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"zanObject"]objectForKey:@"zanUser"]objectForKey:@"img"]];
+
+    }
+    
+    [DataStoreManager saveCricleCountWithType:1 img:imgStr userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [self saveDyMeMsg:payload];
 }
 

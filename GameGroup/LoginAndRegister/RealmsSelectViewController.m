@@ -51,7 +51,9 @@
     m_realmsTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
     m_realmsTableView.delegate = self;
     m_realmsTableView.dataSource = self;
-    m_realmsTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    if (KISHighVersion_7) {
+        m_realmsTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    }
     [self.view addSubview:m_realmsTableView];
     [self initContentForSearchText];
     

@@ -26,7 +26,12 @@
     
         [self.contentView addSubview:self.headImgBtn];
         
-        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 8, 120, 20)];
+        self.vImageView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 10, 16, 16)];
+        self.vImageView.hidden = YES;
+        self.vImageView.image = KUIImage(@"v_auth");;
+        [self.contentView addSubview:self.vImageView];
+        
+        self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(80, 8, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
         self.nickNameLabel.font = [UIFont systemFontOfSize:12];
@@ -50,7 +55,6 @@
         self.delBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [self.delBtn addTarget:self action:@selector(delCell:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.delBtn];
-        
         
         self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
@@ -174,6 +178,22 @@
     }
     return self;
 }
+-(void)showVimageViewWithAuth:(BOOL)auth
+{
+    if (auth) {
+        self.vImageView.hidden = NO;
+        self.nickNameLabel.textColor = [UIColor greenColor];
+        self.nickNameLabel.frame = CGRectMake(80, 8, 120, 20);
+
+    }else{
+        self.vImageView.hidden = YES;
+        self.nickNameLabel.textColor =UIColorFromRGBA(0x455ca8, 1);
+        self.nickNameLabel.frame = CGRectMake(60, 8, 120, 20);
+    }
+}
+
+
+
 -(void)getImgWithArray:(NSArray *)array
 {
     self.collArray = array;
