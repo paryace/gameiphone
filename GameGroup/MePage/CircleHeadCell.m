@@ -183,7 +183,7 @@
 {
     if (auth) {
         self.vImageView.hidden = NO;
-        self.nickNameLabel.textColor = [UIColor greenColor];
+        self.nickNameLabel.textColor = UIColorFromRGBA(0x68c60e, 1);
         self.nickNameLabel.frame = CGRectMake(80, 8, 120, 20);
 
     }else{

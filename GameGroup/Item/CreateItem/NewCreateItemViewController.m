@@ -338,6 +338,10 @@
         if ([m_RoleArray count] != 0) {
             selectCharacter =[m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]];
             m_gameTf.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
+            m_countTf.text = nil;
+            m_miaoshuTV.text = nil;
+            m_tagTf.text = nil;
+            tagList.hidden = YES;
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];
             [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
@@ -351,6 +355,7 @@
             [m_tagTf resignFirstResponder];
             
             m_countTf.text = [NSString stringWithFormat:@"%@人",KISDictionaryHaveKey(selectType,@"mask")];
+            tagList.hidden = NO;
             [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_RoleArray objectAtIndex:[m_rolePickerView selectedRowInComponent:0]], @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
             [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         }

@@ -295,7 +295,7 @@
             [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
             headImgView.imageURL = [ImageService getImageStr:headImage Width:80];
-            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+//            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             
         }
     }
@@ -356,11 +356,12 @@
         NSMutableDictionary * simpleGroupInfo = [[GroupManager singleton] getGroupInfo:groupId];
         NSString * groupImage = KISDictionaryHaveKey(simpleGroupInfo, @"backgroundImg");
         if ([GameCommon isEmtity:groupImage]) {
+            iconImageView.placeholderImage  = KUIImage(@"find_billboard");
+
             iconImageView.imageURL = nil;
-            iconImageView.placeholderImage  = KUIImage(@"placeholder.png");
 //             [iconImageView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
-            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+//            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             iconImageView.imageURL = [ImageService getImageUrl3:groupImage Width:120];
 //            [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
 
@@ -368,8 +369,9 @@
         
     }else
     {
-        iconImageView.imageURL = nil;
         iconImageView.placeholderImage =KUIImage(@"find_billboard");
+
+        iconImageView.imageURL = nil;
 //        [iconImageView setBackgroundImage:KUIImage(@"find_billboard") forState:UIControlStateNormal];
     }
 }
@@ -479,7 +481,9 @@
 
     
     iconImageView = [[EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
-    [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+//    [iconImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterGroupList:)]];
+    [iconImageView addTarget:self action:@selector(enterGroupList:) forControlEvents:UIControlEventTouchUpInside];
+//    iconImageView.backgroundColor = [UIColor redColor];
     iconImageView.placeholderImage =KUIImage(@"find_billboard");
     iconImageView.layer.cornerRadius = 5.0;
     iconImageView.layer.masksToBounds = YES;
@@ -591,6 +595,9 @@
             leaderImage.hidden = NO;
         }
     }
+    
+    [self refreshCircle:nil];
+    
 }
 
 -(void)refreshCircle:(id)sender
@@ -611,7 +618,7 @@
             [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
         }else{
             headImgView.imageURL = [ImageService getImageStr:img Width:80];
-            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
+//            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
             
         }
     }

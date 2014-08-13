@@ -17,7 +17,6 @@
 #define SHAREIMAGE [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"]
 #define SHARETITLE @"我在陌游开启了组队，你快来吧！"
 #define SHAREMESSAGE @"我再陌游里面创建了魔兽世界6.0备战德拉诺的组队,你快来加入吧！"
-#define SHAREURL(x,y)  [NSString stringWithFormat:@"http://221.122.66.243/share/teamroom.html?roomId=%@&gameid=%@",x,y]
 @interface InvitationMembersViewController ()
 {
     UIScrollView                       *  m_mainScroll;
@@ -325,14 +324,16 @@
     
     
 //    NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
-    
+    NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
 //    if (m_shareBtn.tag ==10001) {
     if (sender ==10001) {
-        [[ShareToOther singleton] onTShareImage:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId)];
+        NSLog(@"************%@",SHAREURL(self.roomId,self.gameId,myUserid));
+
+        [[ShareToOther singleton] onTShareImage:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId,myUserid)];
     }else{
         
-        NSLog(@"%@",SHAREURL(self.roomId,self.gameId));
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr]] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId)];
+        NSLog(@"************%@",SHAREURL(self.roomId,self.gameId,myUserid));
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,imgStr]] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId,myUserid)];
     }
     [self clanceToShare:nil];
 

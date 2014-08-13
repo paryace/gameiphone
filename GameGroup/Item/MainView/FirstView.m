@@ -175,6 +175,7 @@
     }
     if (self.selectType) {
         [self.dropDownView setTitle:KISDictionaryHaveKey(self.selectType, @"value") inSection:1];
+        NSLog(@"%@",[self.selectType objectForKey:@"value"]);
     }else{
         [self.dropDownView setTitle:@"选择分类" inSection:1];
     }
@@ -295,7 +296,14 @@
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section==0) {//选择角色
+        
+        NSLog(@"%@",self.selectCharacter);
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectCharacter, @"gameid") ] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.firstDataArray objectAtIndex:index], @"gameid")]]) {
+            self.selectType =nil;
+        }
+        
         self.selectCharacter = [self.firstDataArray objectAtIndex:index];
+
         [self reloInfo:YES];
     }
     else if (section == 1){//选择分类

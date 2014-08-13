@@ -5265,8 +5265,11 @@
             circleCo = [DSCircleCount MR_createInContext:localContext];
         if (type==1) {
             circleCo.mineCount +=1;
+            NSLog(@"与我相关（%d）",circleCo.mineCount);
         }else{
             circleCo.friendsCount+=1;
+            NSLog(@"好友动态（%d）",circleCo.friendsCount);
+
         }
         circleCo.img = [GameCommon getHeardImgId:img];
         circleCo.userid = userid;

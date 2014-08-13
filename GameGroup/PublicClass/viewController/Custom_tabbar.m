@@ -220,6 +220,7 @@ static Custom_tabbar *s_tabbar = NULL;
 {
     UIButton * btn = [tab_btn objectAtIndex:index];
     for (UIView * view in btn.subviews) {
+        NSLog(@"view.tag==%d",view.tag);
         if(view.tag==999)
             [view removeFromSuperview];
     }
