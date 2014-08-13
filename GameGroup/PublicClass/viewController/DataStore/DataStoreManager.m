@@ -4664,7 +4664,6 @@
 +(NSString*)getTeamUserState:(NSString*)userId groupId:(NSString*)groupId{
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
     DSTeamUser * teamUserInfo = [DSTeamUser MR_findFirstWithPredicate:predicate];
-    NSLog(@"state--->>>%@",[GameCommon getNewStringWithId:teamUserInfo.state]);
        return [GameCommon getNewStringWithId:teamUserInfo.state];
 }
 

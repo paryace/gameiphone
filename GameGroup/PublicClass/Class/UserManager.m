@@ -74,7 +74,12 @@ static UserManager *userManager = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"201" forKey:@"method"];//新接口
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]) {
+        [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    }else{
+        [postDict setObject:@"" forKey:@"token"];
+    }
+    
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheUserids removeObject:userId];

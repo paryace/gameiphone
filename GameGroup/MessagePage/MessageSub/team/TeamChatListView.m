@@ -15,14 +15,15 @@
 #import "TestViewController.h"
 #import "ChineseString.h"
 #import "pinyin.h"
+#import "InplaceTimer.h"
 
 #define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
 #define RADIANS_TO_DEGREES(radians) ((radians)*(180.0/M_PI))
 #define bottomHight 55
 #define bottomPadding 10
 
-@implementation TeamChatListView
 
+@implementation TeamChatListView
 
 - (id)initWithFrame:(CGRect)frame dataSource:(id)datasource delegate:(id) delegate SuperView:(UIView*)supView GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType
 {
@@ -33,7 +34,11 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)
+                                                     name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)
+                                                     name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
@@ -42,9 +47,7 @@
         self.teamUsershipType = teamUsershipType;
         self.roomId = roomId;
         self.gameId = gameId;
-        
-        MBProgressHUD *hud =[[ MBProgressHUD alloc]initWithView:self];
-        [self addSubview:hud];
+
         
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
@@ -85,8 +88,6 @@
     }
     return self;
 }
-
-
 
 
 -(void)sectionBtnTouch:(UIButton *)btn
@@ -165,6 +166,9 @@
 -  (void)hideExtendedChooseView
 {
     if (currentExtendSection != -1) {
+        if (currentExtendSection==1) {
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
         currentExtendSection = -1;
         [self.mBgView removeFromSuperview];
         [self.mTableBaseView removeFromSuperview];
@@ -173,6 +177,11 @@
 
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
+    if (section==1) {
+        [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+    }else{
+        [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+    }
     float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
@@ -458,6 +467,7 @@
     [hud show:YES];
     [[ItemManager singleton] sendTeamPreparedUserSelect:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
         [hud hide:YES];
+        [[InplaceTimer singleton] startTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
     } reError:^(id error) {
         [hud hide:YES];
         [self showErrorAlertView:error];
@@ -954,6 +964,7 @@
 -(void)resetChangInplaceState:(NSNotification*)notification{
 //    [self resetPState];
 //    [self.mTableView reloadData];
+    [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
      [self clearNorReadMsg];
     [self setBtnState];
 }
@@ -991,6 +1002,29 @@
         return @"3";
     }
     return @"1";
+}
+
+- (void)applicationWillResignActive:(NSNotification *)notification
+{
+    if ([self isShow]) {
+        if (currentExtendSection==1) {
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
+    }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    if ([self isShow]) {
+        if (currentExtendSection==1) {
+            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+        }
+    }
+}
+//计时
+- (void)timingTime:(long long )time{
+    [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
+    NSLog(@"计时时间---->>>>>>%lld",time);
 }
 - (void)dealloc
 {
