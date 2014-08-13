@@ -64,6 +64,7 @@
 #define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
 #define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
 #define BaseLolRoleDetail @ "http://www.momotalk.com/share/"
+#define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
 #define SHAREURL(x,y,z)  [NSString stringWithFormat:@" http://www.momotalk.com/share/teamroom.html?roomId=%@&gameid=%@&inviterid=%@",x,y,z]
 
 

@@ -322,15 +322,13 @@
     
     NSString *description = [NSString stringWithFormat:@"%@-%@邀请你加入在陌游的队伍",simpleRealm,roleName];
     
-//    NSString *img = KISDictionaryHaveKey([[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]], @"img");
     NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-//    if (m_shareBtn.tag ==10001) {
+    NSString * shareUrl = [NSString stringWithFormat:@"%@roomId=%@&gameid=%@&inviterid=%@",ShareUrl,self.roomId,self.gameId,myUserid];
+    
     if (sender ==10001) {
-        NSLog(@"************%@",SHAREURL(self.roomId,self.gameId,myUserid));
-        [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId,myUserid)];
+        [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:self.descriptionStr Description:description Url:shareUrl];
     }else{
-        NSLog(@"************%@",SHAREURL(self.roomId,self.gameId,myUserid));
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[ImageService getImgUrl:imgStr]] Title:self.descriptionStr Description:description Url:SHAREURL(self.roomId,self.gameId,myUserid)];
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[ImageService getImgUrl:imgStr]] Title:self.descriptionStr Description:description Url:shareUrl];
     }
     [self clanceToShare:nil];
 
