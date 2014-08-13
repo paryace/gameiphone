@@ -3480,7 +3480,7 @@
     
     NSMutableArray *titlesArray = [NSMutableArray array];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and hide==[c]%@",userId,hide];
-    NSArray *array = [DSTitle MR_findAllWithPredicate:predicate];
+    NSArray * array = [DSTitle MR_findAllSortedBy:@"sortnum" ascending:NO withPredicate:predicate];
     for (DSTitle *title in array) {
         NSMutableDictionary * titleDic = [NSMutableDictionary dictionary];
         NSMutableDictionary * titleObjectDic = [self queryDSTitleObject:title.titleId];
@@ -3495,6 +3495,7 @@
         [titleDic setObject:title.ids forKey:@"id"];
         [titleDic setObject:title.userid forKey:@"userid"];
         [titleDic setObject:title.userimg forKey:@"userimg"];
+        [titleDic setObject:title.sortnum forKey:@"sortnum"];
         [titleDic setObject:titleObjectDic forKey:@"titleObj"];
         [titlesArray addObject:titleDic];
     }

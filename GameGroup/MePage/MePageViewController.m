@@ -341,11 +341,12 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
         {
+            NSDictionary * myInfoDic = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
              cell.headImageV.hidden = NO;
-            NSString * userImages=KISDictionaryHaveKey(m_hostInfo.state, @"userimg");
-            cell.headImageV.imageURL = [ImageService getImageStr2:userImages];
-            cell.titleLabel.text = @"我发表了该内容";
-            cell.titleLabel.text = [NSString stringWithFormat:@"%@",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"alias")] isEqualToString:@""] ? KISDictionaryHaveKey(m_hostInfo.state, @"nickname") : KISDictionaryHaveKey(m_hostInfo.state, @"alias")];
+            NSString * userImages = [GameCommon getNewStringWithId:KISDictionaryHaveKey(myInfoDic, @"img")];
+            NSString * nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(myInfoDic, @"nickname")];
+            cell.headImageV.imageURL = [ImageService getImageStr:userImages Width:80];
+            cell.titleLabel.text = nickName?nickName:@"";
             NSString* tit = [GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"msg")]];
             cell.nameLabel.text = tit;
             cell.timeLabel.text = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_hostInfo.state, @"createDate")]];
@@ -519,7 +520,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     if (indexPath.section == 0) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         
