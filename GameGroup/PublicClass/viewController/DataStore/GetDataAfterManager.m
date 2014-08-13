@@ -432,15 +432,18 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    NSString * userid = KISDictionaryHaveKey(payloadDic, @"userid");
     [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:[DataStoreManager getMemberPosition:groupId UserId:userid] forKey:@"teamPosition"];
     [[TeamManager singleton] updateTeamUserState:payloadDic];//更新就位确认的状态
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
       
     }];
-    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+    [DataStoreManager saveDSGroupMsgOKCancel:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
             [[MessageSetting singleton] setSoundOrVibrationopen];
+            [msgDic setValue:userid forKey:@"sender"];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
     }];

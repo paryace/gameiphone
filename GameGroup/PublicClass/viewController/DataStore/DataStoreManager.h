@@ -295,6 +295,8 @@
 //更新群通知表的信息
 -(void)upDataDSGroupApplyMsgByGroupId:(NSString*)groupId GroupName:(NSString*)groupName GroupBackgroundImg:(NSString*)backgroundImg;
 
++(void)saveDSGroupMsgOKCancel:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
 //保存最后一条动态
 +(void)saveDSlatestDynamic:(NSDictionary *)characters;
 
@@ -491,5 +493,8 @@
 +(DSCircleCount*)querymessageWithUserid:(NSString *)userid;
 
 +(void)clearCircleCountWithUserid:(NSString *)userid;
+
+//查询用户位置
++(NSString*)getMemberPosition:(NSString*)groupId UserId:(NSString*)userId;
 
 @end

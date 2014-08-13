@@ -48,7 +48,6 @@
         self.roomId = roomId;
         self.gameId = gameId;
 
-        
         NSInteger sectionNum =0;
         if ([self.dropDownDataSource respondsToSelector:@selector(numberOfSections)] ) {
             sectionNum = [self.dropDownDataSource numberOfSections];

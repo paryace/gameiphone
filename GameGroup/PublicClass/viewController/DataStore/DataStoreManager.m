@@ -295,12 +295,39 @@
         groupMsg.status = @"1";
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
     }
 //     completion:^(BOOL success, NSError *error) {
 //         if (block) {
 //             block(msg);
 //         }
 //     }
+     ];
+    
+    if (block) {
+        block(msg);
+    }
+}
+
+
+
+#pragma mark - 保存就位确认历史消息
++(void)saveDSGroupMsgOKCancel:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
+{
+    NSDictionary * payloadDic = [KISDictionaryHaveKey(msg, @"payload") JSONValue];
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
+        groupMsg.sender = KISDictionaryHaveKey(payloadDic, @"userid");
+        groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+        groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+        groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+        groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+        groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+        groupMsg.status = @"1";
+        groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
+        groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
+        }
      ];
     
     if (block) {
@@ -4517,6 +4544,19 @@
             successcompletion(success,error);
         }
     }];
+}
+
+
++(NSString*)getMemberPosition:(NSString*)groupId UserId:(NSString*)userId{
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userId];
+    DSMemberUserInfo * commonMsgTeamUser = [DSMemberUserInfo MR_findFirstWithPredicate:predicate];
+    if (commonMsgTeamUser) {
+        if ([GameCommon isEmtity:commonMsgTeamUser.positionValue]) {
+            return @"未选";
+        }
+        return commonMsgTeamUser.positionValue;
+    }
+    return @"未选";
 }
 
 //保存状态
