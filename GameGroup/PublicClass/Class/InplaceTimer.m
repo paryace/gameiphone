@@ -103,7 +103,9 @@ static InplaceTimer *inplaceTimer = NULL;
         [self.delegate timingTime:timerCount];
     }
     if(timerCount==0){
-        NSLog(@"finishTime--->>");
+        if (self.delegate) {
+            [self.delegate finishTiming];
+        }
         NSDictionary * infoDic = timer.userInfo;
         [self resetTimer:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"gameId")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"roomId")]];
         [[TeamManager singleton] resetTeamUserState:[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"groupId")]]];

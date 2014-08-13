@@ -477,6 +477,9 @@ static SystemSoundID shake_sound_male_id = 0;
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     NSString * userid = KISDictionaryHaveKey(payloadDic, @"userid");
     NSString * teamPosition = KISDictionaryHaveKey(payloadDic, @"teamPosition");
+    if ([GameCommon isEmtity:teamPosition]||[teamPosition isEqualToString:@"null"]) {
+        teamPosition = @"未选";
+    }
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:teamPosition forKey:@"teamPosition"];
     [[TeamManager singleton] updateTeamUserState:payloadDic];//更新就位确认的状态

@@ -1025,6 +1025,9 @@
     [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
     NSLog(@"计时时间---->>>>>>%lld",time);
 }
+- (void)finishTiming{
+    NSLog(@"倒计时结束");
+}
 - (void)dealloc
 {
     if (self.mTableView) {

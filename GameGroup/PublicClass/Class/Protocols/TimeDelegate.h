@@ -12,4 +12,5 @@
 
 @optional
 - (void)timingTime:(long long )time;
+- (void)finishTiming;
 @end
