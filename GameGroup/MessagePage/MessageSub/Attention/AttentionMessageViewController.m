@@ -167,6 +167,7 @@
     if (editingStyle==UITableViewCellEditingStyleDelete)
     {
             [DataStoreManager deleteThumbMsgWithSender:[NSString stringWithFormat:@"%@",[[self.dataArray objectAtIndex:indexPath.row]sender]] Successcompletion:^(BOOL success, NSError *error) {
+                [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
                 [self initTableList];
             }];
     }

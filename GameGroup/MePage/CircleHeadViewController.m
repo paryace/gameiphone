@@ -210,7 +210,7 @@ typedef enum : NSUInteger {
     headImageView.layer.masksToBounds=YES;
     [headImageView addTarget:self action:@selector(enterPersonViewController:) forControlEvents:UIControlEventTouchDown];
     NSString * headImageIds=KISDictionaryHaveKey(user, @"img");
-    headImageView.imageURL = [ImageService getImageStr2:headImageIds];
+    headImageView.imageURL = [ImageService getImageStr:headImageIds Width:160];
     
     [topVIew addSubview:headImageView];
 
