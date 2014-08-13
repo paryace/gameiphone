@@ -20,6 +20,17 @@
 
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent;//创建群，审核群...
 
+
+-(void)disbandGroupMessageReceived:(NSDictionary *)messageContent;//解散群
+
+-(void)kickOffGroupMessageReceived:(NSDictionary *)messageContent;//被踢出群
+
+-(void)joinGroupApplicationAcceptMessageReceived:(NSDictionary *)messageContent;//入群申请被通过
+
+
+
+
+
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent;//加入或者退出群
 
 -(void)groupBillBoardMessageReceived:(NSDictionary *)messageContent;//群公告消息

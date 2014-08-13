@@ -151,8 +151,14 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             [dict setObject:title?title:@"" forKey:@"title"];
             [self.chatDelegate dailynewsReceived:dict];
         }
-        else if([msgtype isEqualToString:@"inGroupSystemMsgJoinGroup"]//好友加入群
-                ||[msgtype isEqualToString:@"inGroupSystemMsgQuitGroup"])//好友退出群
+        else if([msgtype isEqualToString:@"inGroupSystemMsgJoinGroup"])//好友加入群
+        {
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate changGroupMessageReceived:dict];
+        }
+        else if([msgtype isEqualToString:@"inGroupSystemMsgQuitGroup"])//好友退出群
         {
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
@@ -160,15 +166,12 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             [self.chatDelegate changGroupMessageReceived:dict];
         }
         else if([msgtype isEqualToString:@"joinGroupApplication"]//申请加入群
-                ||[msgtype isEqualToString:@"joinGroupApplicationAccept"]//入群申请通过
                 ||[msgtype isEqualToString:@"joinGroupApplicationReject"]//入群申请拒绝
                 ||[msgtype isEqualToString:@"groupApplicationUnderReview"]//群审核已提交
                 ||[msgtype isEqualToString:@"groupApplicationAccept"]///群审核通过
                 ||[msgtype isEqualToString:@"groupApplicationReject"]//群审核被拒绝
                 ||[msgtype isEqualToString:@"groupLevelUp"]//群等级提升disbandGroup
-                ||[msgtype isEqualToString:@"disbandGroup"]//解散群
                 ||[msgtype isEqualToString:@"groupUsershipTypeChange"]//群成员身份变化
-                ||[msgtype isEqualToString:@"kickOffGroup"]//被踢出群的消息
                 ||[msgtype isEqualToString:@"groupRecommend"]//群推荐
                 ||[msgtype isEqualToString:@"friendJoinGroup"]){//好友加入了新的群组
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
@@ -176,6 +179,27 @@ static RecceiveMessageService *recceiveMessageService = NULL;
                 [dict setObject:payload forKey:@"payload"];
             }
             [self.chatDelegate JoinGroupMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"disbandGroup"]){//解散群
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate disbandGroupMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"kickOffGroup"]){//被踢出群的消息
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate kickOffGroupMessageReceived:dict];
+        }
+        else if ([msgtype isEqualToString:@"joinGroupApplicationAccept"]){//入群申请通过
+            [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
+            if (payload.length>0) {
+                [dict setObject:payload forKey:@"payload"];
+            }
+            [self.chatDelegate joinGroupApplicationAcceptMessageReceived:dict];
         }
         else if ([msgtype isEqualToString:@"groupBillboard"]){//群组公告消息
             [dict setObject:[self getMsgTitle:msgtype] forKey:@"msgTitle"];
