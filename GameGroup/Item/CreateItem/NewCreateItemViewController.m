@@ -432,7 +432,7 @@
     NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
     if (menCount.count>0) {
         [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
-        [m_countPickView reloadInputViews];
+        [m_countPickView reloadAllComponents];
 //        selectPeopleCount = [m_countArray objectAtIndex:0];
 
         BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
@@ -454,7 +454,7 @@
 -(void)setPersonle:(NSArray*)personArray{
     [m_countArray removeAllObjects];
     [m_countArray addObjectsFromArray:personArray];
-    [m_countPickView reloadInputViews];
+    [m_countPickView reloadAllComponents];
 //    if (m_countArray.count>0) {
 //        selectPeopleCount = [m_countArray objectAtIndex:0];
 //        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")]];
@@ -651,7 +651,7 @@
             [responseObject removeObjectAtIndex:0];
             [m_tagsArray removeAllObjects];
             [m_tagsArray addObjectsFromArray:responseObject];
-            [m_tagsPickView reloadInputViews];
+            [m_tagsPickView reloadAllComponents];
         }
     } reError:^(id error) {
         
@@ -660,7 +660,7 @@
                 [responseObject removeObjectAtIndex:0];
                 [m_tagsArray removeAllObjects];
                 [m_tagsArray addObjectsFromArray:responseObject];
-                [m_tagsPickView reloadInputViews];
+                [m_tagsPickView reloadAllComponents];
             }
 
         } reError:^(id error) {
