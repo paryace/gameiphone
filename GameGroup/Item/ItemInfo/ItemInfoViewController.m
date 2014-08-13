@@ -435,7 +435,7 @@
     if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
         cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
     }else{
-        cell.value3Lb.text = @"未知";
+        cell.value3Lb.text = @"未选";
     }
     return cell;
 }

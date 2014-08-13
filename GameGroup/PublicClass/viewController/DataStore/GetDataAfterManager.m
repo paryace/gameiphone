@@ -146,8 +146,9 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 申请加入群消息
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString* msgType = KISDictionaryHaveKey(messageContent, @"msgType");
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     if ([msgType isEqualToString:@"disbandGroup"])
     {//解散群
@@ -212,7 +213,8 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 加入群，退出群，解散群
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent
 {
-    NSString * groupId = [self getGroupIdFromPayload:messageContent];
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -224,14 +226,16 @@ static SystemSoundID shake_sound_male_id = 0;
     }];
 }
 
+
+//------------------------------------------------------------------------组队消息
 #pragma mark 申请加入组队
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent
 {
+    //申请加入组队通知的消息
     [DataStoreManager saveTeamNotifityMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
        
     }];
-    NSString * payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
-    NSDictionary *payloadDic = [payloadStr JSONValue];
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
     [payloadDic setValue:@"inGroupSystemMsg" forKey:@"type"];
@@ -251,6 +255,7 @@ static SystemSoundID shake_sound_male_id = 0;
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出
@@ -260,8 +265,7 @@ static SystemSoundID shake_sound_male_id = 0;
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
-    }else {
-        [messageContent setValue:@"1" forKey:@"sayHiType"];
+    }else {//否则是别人被踢出了
         [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             
         }];
@@ -290,14 +294,14 @@ static SystemSoundID shake_sound_male_id = 0;
     [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"4"];//把该组队的所有未读消息设置为0
     [DataStoreManager blankGroupMsgUnreadCountForUser:groupId];//把所有未读消息标记为0
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
-    if ([teamUsershipType intValue]==0) {
+    if ([teamUsershipType intValue]==0) {//如果解散的是自己的队伍
         [[TeamManager singleton] clearTeamMessage:groupId];
         [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         NSDictionary * dic = @{@"groupId":groupId};
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
         });
-    }else{
+    }else{//如果是别人的队伍解散了
         [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             
         }];
@@ -319,7 +323,7 @@ static SystemSoundID shake_sound_male_id = 0;
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [[TeamManager singleton] saveMemberUserInfo:payloadDic GroupId:groupId];//组队添加新成员
-    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, @"teamUser"), @"userid") State:@"1" GroupId:groupId];
+    [DataStoreManager updateTeamNotifityMsgState:KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, @"teamUser"), @"userid") State:@"1" GroupId:groupId];//把所有的通知消息状态标记为1
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
        
     }];
@@ -348,7 +352,7 @@ static SystemSoundID shake_sound_male_id = 0;
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
         });
-    }else {
+    }else {//否则是他人退出
         [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             
         }];
@@ -450,7 +454,7 @@ static SystemSoundID shake_sound_male_id = 0;
 }
 #pragma mark 就位确认结果
 -(void)teamPreparedConfirmResultMessageReceived:(NSDictionary *)messageContent{
-     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -470,18 +474,6 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)otherAnyMessageReceived:(NSDictionary *)messageContent{
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
-
--(NSString*)getGroupIdFromPayload:(NSDictionary *)messageContent{
-    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
-    NSDictionary *payloadDic = [payloadStr JSONValue];
-    return [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
-}
--(NSString*)getUserIdFromPayload:(NSDictionary *)messageContent{
-    NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];
-    NSDictionary *payloadDic = [payloadStr JSONValue];
-    return [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"userid")];
-}
-
 
 -(NSMutableDictionary*)getPayloadDic:(NSDictionary *)messageContent{
     NSString* payloadStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(messageContent, @"payload")];

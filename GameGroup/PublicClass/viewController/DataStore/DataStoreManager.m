@@ -4304,7 +4304,7 @@
 }
 
 
-#pragma mark - 保存申请加入群的消息
+#pragma mark - 保存就位确认消息
 +(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
     NSString * fromid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"sender")];
