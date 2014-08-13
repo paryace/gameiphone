@@ -2119,7 +2119,7 @@ typedef enum : NSUInteger {
     self.commentInputType = CommentInputTypeEmoji;
     [self.textView resignFirstResponder];
     self.theEmojiView.hidden = NO;
-    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+//    self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
     [self autoMovekeyBoard:253];
 }
 
