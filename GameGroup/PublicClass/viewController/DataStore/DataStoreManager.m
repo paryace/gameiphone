@@ -3481,17 +3481,8 @@
     NSMutableArray *titlesArray = [NSMutableArray array];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and hide==[c]%@",userId,hide];
     NSArray * array = [DSTitle MR_findAllSortedBy:@"sortnum" ascending:NO withPredicate:predicate];
+
     
-    
-//    NSArray *array2 = [array sortedArrayUsingComparator:
-//                       ^NSComparisonResult(DSTitle *obj1, DSTitle *obj2) {
-//                           NSComparisonResult result = [obj1.sortnum compare:obj2.sortnum];
-//                           if (result == NSOrderedSame) {
-//                               result = [obj1.sortnum compare:obj2.sortnum];
-//                           }
-//                           return result;
-//                       }];
-//    
     for (DSTitle *title in array) {
         NSLog(@"sortnum-->>>,%@",title.sortnum);
         NSMutableDictionary * titleDic = [NSMutableDictionary dictionary];
