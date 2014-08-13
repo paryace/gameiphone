@@ -536,6 +536,7 @@
     lb = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
     [lb setBackgroundColor:[UIColor clearColor]];
     [lb setTextAlignment:NSTextAlignmentCenter];
+    lb.adjustsFontSizeToFitWidth = YES;
     [lb setTextColor:[UIColor whiteColor]];
     lb.font = [UIFont systemFontOfSize:14.0];
     [m_notibgInfoImageView addSubview:lb];
@@ -554,6 +555,7 @@
     commentLabel.backgroundColor = [UIColor clearColor];
     commentLabel.textAlignment = NSTextAlignmentRight;
     commentLabel.adjustsFontSizeToFitWidth = YES;
+    commentLabel.text = @"暂无新动态";
     commentLabel.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     commentLabel.font = [UIFont systemFontOfSize:11];
     [circleView addSubview:commentLabel];
@@ -614,7 +616,11 @@
         }
     }
     if (g>0) {
+        if (g>99) {
+            lb.text = @"99+";
+        }else{
         lb.text = [NSString stringWithFormat:@"%d",g];
+        }
         m_notibgInfoImageView.hidden = NO;
         commentLabel.text = [NSString stringWithFormat:@"%d条与我相关",g];
         if (r>0) {

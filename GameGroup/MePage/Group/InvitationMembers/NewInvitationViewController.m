@@ -640,6 +640,8 @@
     }
     else if (tableView ==m_gTableView)
     {
+//        cell.titleLabel.frame = CGRectMake(0, 0, 0, 0);
+        
         tempDict = m_gArray[indexPath.row];
         cell.disLabel.hidden = NO;
         NSString *distance = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"distance")];

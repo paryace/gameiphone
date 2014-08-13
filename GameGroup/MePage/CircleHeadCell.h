@@ -42,6 +42,7 @@
 @property(nonatomic,assign)NSInteger  commentCount;
 @property(nonatomic,strong)UIButton *commentMoreBtn;
 @property(nonatomic,strong)NSString *destUserStr;
+@property(nonatomic,strong)UIImageView *vImageView;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
 
@@ -49,7 +50,7 @@
 
 -(void)getCommentArray:(NSArray *)array;
 
-
+-(void)showVimageViewWithAuth:(BOOL)auth;
 
 
 //- (void)refreshCell:(NSInteger)hieght;

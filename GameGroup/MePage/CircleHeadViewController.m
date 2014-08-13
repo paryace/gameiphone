@@ -1081,12 +1081,14 @@ typedef enum : NSUInteger {
         }
     }
     
+    [cell showVimageViewWithAuth:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"superstar")]boolValue]];
+    
     NSMutableDictionary *userD=KISDictionaryHaveKey(dict, @"user");
     NSString * nickName=KISDictionaryHaveKey(userD, @"alias");
     if ([GameCommon isEmtity:nickName]) {
         nickName=KISDictionaryHaveKey(userD, @"nickname");
     }
-    
+
     cell.nickNameLabel.text =nickName;
     m_currmagY += cell.nickNameLabel.frame.size.height+cell.nickNameLabel.frame.origin.y;//加上nickName的高度
     cell.commentCount = [KISDictionaryHaveKey(dict, @"commentNum")intValue];
