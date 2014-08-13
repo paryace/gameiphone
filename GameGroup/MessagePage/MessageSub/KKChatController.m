@@ -316,7 +316,8 @@ UINavigationControllerDelegate>
         }
         self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.dropDownView.mSuperView = self.view;
-        [self.dropDownView setTitle:@"位置" inSection:0];
+        
+        [self.dropDownView setTitle:@"申请" inSection:2];
         
         [self.view addSubview:self.dropDownView];
         self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
@@ -334,7 +335,7 @@ UINavigationControllerDelegate>
         if (selectType) {
             [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
         }else{
-            [self.dropDownView setTitle:@"申请" inSection:2];
+            [self.dropDownView setTitle:@"位置" inSection:0];
         }
         [self setPositionMsgCount];
         [self changPosition];
@@ -416,9 +417,9 @@ UINavigationControllerDelegate>
         if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
             return;
         }
-        selectType =[self.typeData_list objectAtIndex:index];
-        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:selectType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
+        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
             NSDictionary * myInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+            selectType = clickType;
             [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(myInfo,@"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
             [self changPosition];
             [self setPositionMsgCount];
