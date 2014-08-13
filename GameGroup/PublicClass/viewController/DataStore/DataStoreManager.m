@@ -127,6 +127,9 @@
             [thumbMsgs MR_deleteInContext:localContext];
         }
     }];
+    if (successcompletion) {
+        successcompletion(nil,nil);
+    }
 }
 
 
