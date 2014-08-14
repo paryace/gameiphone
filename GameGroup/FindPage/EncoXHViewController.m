@@ -721,6 +721,11 @@
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
     clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
     clazzLabel.text =KISDictionaryHaveKey(dic, @"name");
+    NSInteger i = [[GameCommon shareGameCommon] unicodeLengthOfString:clazzLabel.text];
+    if (i>10) {
+        clazzLabel.text = [NSString stringWithFormat:@"%@...",[clazzLabel.text substringWithRange:NSMakeRange(0,8)]];
+    }
+    
     clazzLabel.frame = CGRectMake(260-clazzLabel.text.length*3, 53, 10+clazzLabel.text.length *12, 20);
     clazzLabel.center = CGPointMake(280, 63);
 }
