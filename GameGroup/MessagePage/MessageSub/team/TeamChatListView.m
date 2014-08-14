@@ -985,7 +985,7 @@
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
-    [self clearNorReadApplyMsg];
+//    [self clearNorReadApplyMsg];
     [self getZU];
     [self.mTableView reloadData];
     NSLog(@"申请加入组队消息--->>%@",notification.userInfo);

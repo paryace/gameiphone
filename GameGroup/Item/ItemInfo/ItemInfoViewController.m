@@ -482,9 +482,8 @@
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
         cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
         
-//        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")]];
+        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")]];
         
-        cell.value1Lb.text = @"服务器名-角色名";
         cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"msg")];
         cell.value3Lb.text = @"";
         return cell;

@@ -95,6 +95,7 @@ typedef enum : NSUInteger {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"mydynamicmsg_wx" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"refreshCircleCount" object:nil];
     [super viewWillDisappear:animated];
 }
 
@@ -105,6 +106,7 @@ typedef enum : NSUInteger {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showAboutMePage:) name:@"mydynamicmsg_wx" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshCircle:) name:@"refreshCircleCount" object:nil];
 }
 
 - (void)viewDidLoad
@@ -249,35 +251,44 @@ typedef enum : NSUInteger {
     aboutMeLabel.font = [UIFont boldSystemFontOfSize:13];
     [abobtMeImageView addSubview:aboutMeLabel];
     
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-        ishaveAboutMe =YES;
-        //改变HeadView的高度 以容纳aboutMeImageView
-        CGRect frame = m_myTableView.tableHeaderView.frame;
-        frame.size.height =430;
-        UIView *view = m_myTableView. tableHeaderView;
-        view.frame = frame;
-        m_myTableView.tableHeaderView = view;
-        NSDictionary *dic = [self getDynamicInfo];
-        abobtMeImageView.hidden =NO;
-        if (dic) {
-            NSString * cusUserImageIds=KISDictionaryHaveKey(dic,@"img");
-            if ([GameCommon isEmtity:cusUserImageIds]) {
-                aboutMeHeadImgView.imageURL =nil;
-            }else
-            {
-                aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
-                
-            }
-        }else{
-            aboutMeHeadImgView.imageURL =nil;
-        }
-        m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
-        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
-
-    }else
-    {
-        abobtMeImageView.hidden = YES;
-    }
+    
+    [self setAboutMe];
+    
+    
+//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
+//        ishaveAboutMe =YES;
+//        //改变HeadView的高度 以容纳aboutMeImageView
+//        CGRect frame = m_myTableView.tableHeaderView.frame;
+//        frame.size.height =430;
+//        UIView *view = m_myTableView. tableHeaderView;
+//        view.frame = frame;
+//        m_myTableView.tableHeaderView = view;
+//        NSDictionary *dic = [self getDynamicInfo];
+//        abobtMeImageView.hidden =NO;
+//        if (dic) {
+//            NSString * cusUserImageIds=KISDictionaryHaveKey(dic,@"img");
+//            if ([GameCommon isEmtity:cusUserImageIds]) {
+//                aboutMeHeadImgView.imageURL =nil;
+//            }else
+//            {
+//                aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
+//                
+//            }
+//        }else{
+//            aboutMeHeadImgView.imageURL =nil;
+//        }
+//        m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
+//        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
+//
+//    }else
+//    {
+//        abobtMeImageView.hidden = YES;
+//    }
+    
+    
+    
+    
+    
     
     [self setTopViewWithTitle:@"朋友圈" withBackButton:NO];
     
@@ -331,6 +342,36 @@ typedef enum : NSUInteger {
         [self getInfoFromNet];
     }
 }
+
+-(void)setAboutMe{
+    DSCircleCount *dsCount = [DataStoreManager querymessageWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    int g = dsCount.mineCount;
+    NSString *img = dsCount.img;
+    if (g>0) {
+        ishaveAboutMe =YES;
+        //改变HeadView的高度 以容纳aboutMeImageView
+        CGRect frame = m_myTableView.tableHeaderView.frame;
+        frame.size.height =430;
+        UIView *view = m_myTableView. tableHeaderView;
+        view.frame = frame;
+        m_myTableView.tableHeaderView = view;
+        abobtMeImageView.hidden =NO;
+        aboutMeHeadImgView.imageURL =nil;
+        if ([GameCommon isEmtity:img]) {
+            aboutMeHeadImgView.imageURL =nil;
+        }else{
+            aboutMeHeadImgView.imageURL = [ImageService getImageStr:img Width:60];
+        }
+        m_commentAboutMeCount =g;
+        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
+    }else
+    {
+        abobtMeImageView.hidden = YES;
+    }
+
+}
+
+
 -(void)backButtonClick:(UIButton*)sender
 {
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:2];
@@ -584,6 +625,9 @@ typedef enum : NSUInteger {
     [inPutView addSubview:senderBnt];
 }
 
+-(void)refreshCircle:(NSNotification *)info{
+    [self setAboutMe];
+}
 
 //显示与我相关
 -(void)showAboutMePage:(NSNotification *)info
@@ -615,16 +659,12 @@ typedef enum : NSUInteger {
     }
     
     NSString * userImageids=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img");
-    
-    
     if ([GameCommon isEmtity:userImageids]) {
         aboutMeHeadImgView.imageURL =nil;
     }else
     {
        aboutMeHeadImgView.imageURL = [ImageService getImageStr:userImageids Width:60];
     }
-    
-    
     aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
     
 }
@@ -649,8 +689,7 @@ typedef enum : NSUInteger {
     cir.userId = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [DataStoreManager clearCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
+    [DataStoreManager clearMeCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [self.navigationController pushViewController:cir animated:YES];
 }
 

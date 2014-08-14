@@ -399,6 +399,23 @@ static SystemSoundID shake_sound_male_id = 0;
 }
 #pragma mark 占坑
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent{
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
+        });
+    }];
+    
+    
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 填坑
@@ -577,7 +594,14 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)dyMessageReceived:(NSDictionary *)info
 {
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
-    [self saveDyMessage:payload];
+//    [self saveDyMessage:payload];//原来保存到缓存文件的方法()
+    
+    
+    NSDictionary *dic = [NSDictionary dictionaryWithDictionary:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    [DataStoreManager saveCricleCountWithType:2 img:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    });
     [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 与我相关动态消息
@@ -585,9 +609,10 @@ static SystemSoundID shake_sound_male_id = 0;
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
     [self newdynamicAboutMe:[payload JSONValue]];
     
+//     [self saveAboutDyMessage:payload];//原来保存到缓存文件的方法
+    
     
    //保存与我相关数量~~凑
-    
     NSDictionary *dic =[payload JSONValue];
     NSString *imgStr;
     if ([[dic allKeys]containsObject:@"commentObject"]) {
@@ -597,9 +622,9 @@ static SystemSoundID shake_sound_male_id = 0;
         imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"zanObject"]objectForKey:@"zanUser"]objectForKey:@"img"]];
     }
     [DataStoreManager saveCricleCountWithType:1 img:imgStr userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    
-    [self saveAboutDyMessage:payload];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    });
      [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 群动态消息
@@ -650,10 +675,7 @@ static SystemSoundID shake_sound_male_id = 0;
 //        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
 //    }
 //    dyMsgCount = 0;
-    NSLog(@"-----%@",[[NSString stringWithFormat:@"%@",payload] JSONValue]);
-    NSDictionary *dic = [NSDictionary dictionaryWithDictionary:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
-    [DataStoreManager saveCricleCountWithType:2 img:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
        [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
     });
@@ -714,7 +736,6 @@ static SystemSoundID shake_sound_male_id = 0;
     [[NSUserDefaults standardUserDefaults] synchronize];
     dyMeMsgCount=0;
     dispatch_async(dispatch_get_main_queue(), ^{
-
        [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
     });
 }

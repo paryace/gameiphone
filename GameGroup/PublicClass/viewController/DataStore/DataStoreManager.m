@@ -5329,19 +5329,32 @@
     }else
         return NULL;
 }
-+(void)clearCircleCountWithUserid:(NSString *)userid
++(void)clearMeCircleCountWithUserid:(NSString *)userid
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
         if (circleCo) {
-            circleCo.mineCount =0;
+            circleCo.mineCount = 0;
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
+    }];
+}
+
++(void)clearFriendCircleCountWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (circleCo) {
             circleCo.friendsCount = 0;
         }
     }
     completion:^(BOOL success, NSError *error) {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
     }];
-
 }
 
 @end

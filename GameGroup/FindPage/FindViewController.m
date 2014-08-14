@@ -548,45 +548,103 @@
     int r = dsCount.friendsCount;
     int g = dsCount.mineCount;
     NSString *img = dsCount.img;
-    if (!img) {
-        headImgView.imageURL = nil;
-        [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
-    }else{
-        if([GameCommon isEmtity:img])
-        {
-            headImgView.imageURL = nil;
-            [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
-        }else{
-            headImgView.imageURL = [ImageService getImageStr:img Width:80];
-//            [iconImageView setBackgroundImage:nil forState:UIControlStateNormal];
-            
-        }
-    }
-    if (g>0) {
-        if (g>99) {
-            lb.text = @"99+";
-        }else{
-        lb.text = [NSString stringWithFormat:@"%d",g];
-        }
-        m_notibgInfoImageView.hidden = NO;
-        commentLabel.text = [NSString stringWithFormat:@"%d条与我相关",g];
-        if (r>0) {
-            m_notibgCircleNewsImageView.hidden =NO;
-        }else{
-            m_notibgCircleNewsImageView.hidden =YES;
-        }
-    }else{
-        m_notibgInfoImageView.hidden = YES;
-        if (r>0) {
-            m_notibgCircleNewsImageView.hidden =NO;
-            commentLabel.text = [NSString stringWithFormat:@"%d条好友动态",r];
+    [self setHeadImage:img];
+    [self setFriendCricleDot:r];
+    [self setAboutMeDot:g];
+    [self setMsgText:g R:r];
+    
+    
+    
+    
+//    if (!img) {
+//        headImgView.imageURL = nil;
+//        [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+//    }else{
+//        if([GameCommon isEmtity:img])
+//        {
+//            headImgView.imageURL = nil;
+//            [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+//        }else{
+//            headImgView.imageURL = [ImageService getImageStr:img Width:80];
+//        }
+//    }
+//    
+//    if (g>0) {
+//        if (g>99) {
+//            lb.text = @"99+";
+//        }else{
+//            lb.text = [NSString stringWithFormat:@"%d",g];
+//        }
+//        m_notibgInfoImageView.hidden = NO;
+//        commentLabel.text = [NSString stringWithFormat:@"%d条与我相关",g];
+//        if (r>0) {
+//            m_notibgCircleNewsImageView.hidden =NO;
+//        }else{
+//            m_notibgCircleNewsImageView.hidden =YES;
+//        }
+//    }else{
+//        m_notibgInfoImageView.hidden = YES;
+//        if (r>0) {
+//            m_notibgCircleNewsImageView.hidden =NO;
+//            commentLabel.text = [NSString stringWithFormat:@"%d条好友动态",r];
+//
+//        }else{
+//            m_notibgCircleNewsImageView.hidden =YES;
+//            commentLabel.text = @"暂无新动态";
+//        }
+//    }
+}
 
+-(void)setMsgText:(NSInteger)g R:(NSInteger)r{
+    if (g>0) {
+        commentLabel.text = [NSString stringWithFormat:@"%d条与我相关",g];
+    }else {
+        if (r>0) {
+            commentLabel.text = [NSString stringWithFormat:@"%d条好友动态",r];
         }else{
-            m_notibgCircleNewsImageView.hidden =YES;
             commentLabel.text = @"暂无新动态";
         }
     }
 }
+
+
+
+-(void)setHeadImage:(NSString*)imageId{
+    if ([GameCommon isEmtity:imageId]) {
+        headImgView.imageURL = nil;
+        [headImgView setBackgroundImage:KUIImage(@"placeholder.png") forState:UIControlStateNormal];
+    }else{
+       headImgView.imageURL = [ImageService getImageStr:imageId Width:80];
+    }
+}
+
+
+-(void)setFriendCricleDot:(NSInteger)msgCount{
+    if (msgCount>0) {
+        m_notibgCircleNewsImageView.hidden =NO;
+    }else{
+        m_notibgCircleNewsImageView.hidden =YES;
+    }
+}
+
+-(void)setAboutMeDot:(NSInteger)msgCount{
+    if (msgCount>0) {
+        m_notibgInfoImageView.hidden = NO;
+        if (msgCount>99) {
+            lb.text = @"99+";
+        }else{
+            lb.text = [NSString stringWithFormat:@"%d",msgCount];
+        }
+    }else{
+        m_notibgInfoImageView.hidden = YES;
+    }
+}
+
+
+
+
+
+
 - (UIImage *) dealDefaultImage: (UIImage *) image centerInSize: (CGSize) viewsize
 {
 	CGSize size = image.size;
@@ -932,7 +990,7 @@
     friendDunamicmsgCount = 0;
     m_notibgInfoImageView.hidden = YES;
     m_notibgCircleNewsImageView.hidden = YES;
-    [DataStoreManager clearCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    [DataStoreManager clearFriendCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
     //清除tabbar红点 以前是上面方法 综合发现和我的动态通知
     [[Custom_tabbar showTabBar]removeNotificatonOfIndex:3];
