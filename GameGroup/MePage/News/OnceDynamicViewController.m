@@ -604,10 +604,12 @@
         if ([GameCommon isEmtity:title]) {
             title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
         }
-        NSString * shareUrl = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"urlLink")];
-        if ([GameCommon isEmtity:shareUrl]) {
-            shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
-        }
+//        NSString * shareUrl = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"urlLink")];
+//        if ([GameCommon isEmtity:shareUrl]) {
+//                shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
+//        }
+        
+         NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         
         if (buttonIndex ==0) {
             if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
