@@ -293,30 +293,24 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
-    [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
-        NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
-        [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
-        });
-    }else {//否则是别人被踢出了
-        [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-            
-        }];
-        [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-            [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[MessageSetting singleton] setSoundOrVibrationopen];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
-            });
-        }];
     }
-}
+    [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+        });
+    }];}
 
 #pragma mark 解散组队
 -(void)teamTissolveTypeMessageReceived:(NSDictionary*)messageContent{
