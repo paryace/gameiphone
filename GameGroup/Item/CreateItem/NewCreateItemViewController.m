@@ -341,6 +341,8 @@
             m_countTf.text = nil;
             m_miaoshuTV.text = nil;
             m_tagTf.text = nil;
+            m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",0,@"/",m_maxZiShu];
+
             tagList.hidden = YES;
             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             [m_gameTf resignFirstResponder];

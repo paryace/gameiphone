@@ -174,6 +174,9 @@
     [customView addSubview:firstView];
     [self reloadMsgCount];
     [firstView initSearchConditions];//使用上次的搜索条件
+    
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
 
 }
 
