@@ -4755,7 +4755,9 @@
         NSPredicate * predicatesMemberUserInfo = [NSPredicate predicateWithFormat:@"memberTeamUserId==[c]%@ and gameid==[c]%@",memberTeamUserId,gameId];
         //删除memberUser
         DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicatesMemberUserInfo inContext:localContext];
-        [commonMsg MR_deleteInContext:localContext];
+        if (commonMsg) {
+            [commonMsg MR_deleteInContext:localContext];
+        }
     }
     completion:^(BOOL success, NSError *error) {
         if (successcompletion) {
@@ -5284,6 +5286,8 @@
 
 +(void)saveCricleCountWithType:(NSInteger)type img:(NSString*)img userid:(NSString *)userid
 {
+    NSLog(@"消息过来了---%d",type);
+    
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
@@ -5305,7 +5309,14 @@
         if (success) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
         }else{
-            [self saveCricleCountWithType:type img:img userid:userid];
+//            [self saveCricleCountWithType:type img:img userid:userid];
+            
+            if (type ==1) {
+                NSLog(@"与我相关保存失败");
+            }else{
+                 NSLog(@"好友动态保存失败");
+            }
+            
         }
     }];
 }

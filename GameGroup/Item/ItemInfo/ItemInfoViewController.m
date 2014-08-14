@@ -92,7 +92,6 @@
     [self.view addSubview:roleTabView];
     [roleTabView setDate:coreArray];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
-    hud.labelText = @"获取中...";
     [self.view addSubview:hud];
     [self GETInfoWithNet:NO];
 }
@@ -150,7 +149,10 @@
 {
     if (alertView.tag ==10000001) {
         if (buttonIndex==1) {
+            hud.labelText = @"解散中...";
+            [hud show:YES];
             [[ItemManager singleton] dissoTeam:self.itemId GameId:self.gameid reSuccess:^(id responseObject) {
+                [hud hide:YES];
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"解散成功" imageType:0];
             } reError:^(id error) {
@@ -161,7 +163,10 @@
 
     }else if(alertView.tag ==10000002){
         if (buttonIndex==1) {
+            hud.labelText = @"退出中...";
+            [hud show:YES];
             [[ItemManager singleton] exitTeam:self.itemId GameId:self.gameid MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"myMemberId")] reSuccess:^(id responseObject) {
+                [hud hide:YES];
                 [self.navigationController popToRootViewControllerAnimated:YES];
                 [self showMessageWindowWithContent:@"退出成功" imageType:1];
             } reError:^(id error) {
@@ -553,13 +558,25 @@
     [hud show:YES];
     [[ItemManager singleton] removeFromTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:self.gameid] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] MemberTeamUserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] reSuccess:^(id responseObject) {
         [hud hide:YES];
-        [m_dataArray removeObjectAtIndex:row];
+        [self deleteMember:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] GameId:[GameCommon getNewStringWithId:self.gameid]];
+//        [m_dataArray removeObjectAtIndex:row];
         [m_myTableView reloadData];
+        
+        
+        
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
     } reError:^(id error) {
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+
+-(void)deleteMember:(NSString*)memberTeamUserId GameId:(NSString*)gameId{
+    for (NSDictionary * dic in m_dataArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]&& [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] isEqualToString:memberTeamUserId]) {
+            [m_dataArray removeObject:dic];
+        }
+    }
 }
 
 //-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section

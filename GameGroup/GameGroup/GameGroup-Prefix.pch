@@ -81,7 +81,7 @@
 #define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
 #define BaseLolRoleDetail @ "http://221.122.66.243/share/"
 #define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
-//#define SHAREURL(x,y,z)  [NSString stringWithFormat:@"http://221.122.66.243/share/teamroom.html?roomId=%@&gameid=%@&inviterid=%@",x,y,z]
+#define SHAREURL(x,y,z)  [NSString stringWithFormat:@"http://221.122.66.243/share/teamroom.html?roomId=%@&gameid=%@&inviterid=%@",x,y,z]
 
 #define NormalRequestTimeout  30.0f//联网最长时间
 

@@ -375,18 +375,26 @@
 
 #pragma mark --解散队伍
 -(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic{
+    hud.labelText = @"解散中...";
+    [hud show:YES];
     [[ItemManager singleton] dissoTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] reSuccess:^(id responseObject) {
+        [hud hide: YES];
         [self showMessageWindowWithContent:@"解散成功" imageType:0];
     } reError:^(id error) {
+        [hud hide:YES];
         [self showAlertDialog:error];
     }];
     
 }
 #pragma mark --退出队伍
 -(void)exitTeam:(MyRoomView *)view dic:(NSDictionary *)dic{
+    hud.labelText = @"退出中...";
+    [hud show:YES];
     [[ItemManager singleton] exitTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")] reSuccess:^(id responseObject) {
+        [hud hide:YES];
         [self showMessageWindowWithContent:@"退出成功" imageType:1];
     } reError:^(id error) {
+        [hud hide:YES];
         [self showAlertDialog:error];
     }];
 }

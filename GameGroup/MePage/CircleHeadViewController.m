@@ -649,7 +649,8 @@ typedef enum : NSUInteger {
     cir.userId = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
+    [DataStoreManager clearCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
     [self.navigationController pushViewController:cir animated:YES];
 }
 

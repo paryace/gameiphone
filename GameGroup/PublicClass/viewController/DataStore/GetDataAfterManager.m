@@ -586,6 +586,21 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)dyMeMessageReceived:(NSDictionary *)info{
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
     [self newdynamicAboutMe:[payload JSONValue]];
+    
+    
+   //保存与我相关数量~~凑
+    
+    NSDictionary *dic =[payload JSONValue];
+    NSString *imgStr;
+    if ([[dic allKeys]containsObject:@"commentObject"]) {
+        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"commentObject"]objectForKey:@"commentUser"]objectForKey:@"img"]];
+    }
+    else if ([[dic allKeys]containsObject:@"zanObject"]){
+        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"zanObject"]objectForKey:@"zanUser"]objectForKey:@"img"]];
+    }
+    [DataStoreManager saveCricleCountWithType:1 img:imgStr userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
+    
     [self saveAboutDyMessage:payload];
      [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
@@ -649,6 +664,8 @@ static SystemSoundID shake_sound_male_id = 0;
 //---------------------------------------与我相关
 -(void)saveAboutDyMessage:(NSString *)payload
 {
+    
+
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     if ((nowTime - markTimeDyMe)*100<0.5*1000) {
         markTimeDyMe = [[NSDate date] timeIntervalSince1970];
@@ -681,17 +698,7 @@ static SystemSoundID shake_sound_male_id = 0;
         self.cellTimerDyMe = nil;
     }
     [self saveLastFriendDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]FileName:@"mydynamicmsg_huancun_wx"];
-    NSDictionary *dic =[[NSString stringWithFormat:@"%@",payload] JSONValue];
-    NSString *imgStr;
-    if ([[dic allKeys]containsObject:@"commentObject"]) {
-        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"commentObject"]objectForKey:@"commentUser"]objectForKey:@"img"]];
-    }
-    else if ([[dic allKeys]containsObject:@"zanObject"]){
-        imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"zanObject"]objectForKey:@"zanUser"]objectForKey:@"img"]];
-        
-    }
-    
-    [DataStoreManager saveCricleCountWithType:1 img:imgStr userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+
 
     [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
     
@@ -709,6 +716,7 @@ static SystemSoundID shake_sound_male_id = 0;
     [[NSUserDefaults standardUserDefaults] synchronize];
     dyMeMsgCount=0;
     dispatch_async(dispatch_get_main_queue(), ^{
+
        [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
     });
 }
