@@ -165,7 +165,7 @@
 -  (void)hideExtendedChooseView
 {
     if (currentExtendSection != -1) {
-        if (currentExtendSection==1) {
+        if (self.teamUsershipType&&currentExtendSection==1) {
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
         currentExtendSection = -1;
@@ -176,10 +176,12 @@
 
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
-    if (section==1) {
-        [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
-    }else{
-        [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+    if (self.teamUsershipType) {
+        if (section==1) {
+            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+        }else{
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
     }
     float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
@@ -964,8 +966,10 @@
 -(void)resetChangInplaceState:(NSNotification*)notification{
 //    [self resetPState];
 //    [self.mTableView reloadData];
-    [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
-     [self clearNorReadMsg];
+    if (self.teamUsershipType) {
+        [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
+    }
+    [self clearNorReadMsg];
     [self setBtnState];
 }
 
@@ -1007,7 +1011,7 @@
 - (void)applicationWillResignActive:(NSNotification *)notification
 {
     if ([self isShow]) {
-        if (currentExtendSection==1) {
+        if (self.teamUsershipType && currentExtendSection==1) {
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
@@ -1016,7 +1020,7 @@
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     if ([self isShow]) {
-        if (currentExtendSection==1) {
+        if (self.teamUsershipType && currentExtendSection==1) {
             [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
         }
     }

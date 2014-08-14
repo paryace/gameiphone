@@ -494,12 +494,12 @@ UINavigationControllerDelegate>
 }
 
 - (void)buttonOnClick{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+//    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+//    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
         [self readNoreadMsg];
         [self setNoreadMsgView];
         [self setInplaceMsgCount];
-    }];
+//    }];
 }
 
 -(void)showDialog{
