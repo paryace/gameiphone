@@ -467,11 +467,17 @@ static ItemManager *itemManager = NULL;
     [postDict setObject:@"268" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [DataStoreManager deleteMenberUserInfo:memberTeamUserId GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
+        if (![GameCommon isEmtity:memberTeamUserId]) {
+            [DataStoreManager deleteMenberUserInfo:memberTeamUserId GameId:gameId Successcompletion:^(BOOL success, NSError *error) {
+                if (resuccess) {
+                    resuccess(responseObject);
+                }
+            }];
+        }else{
             if (resuccess) {
                 resuccess(responseObject);
             }
-        }];
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if (refailure) {
             refailure(error);

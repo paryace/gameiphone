@@ -424,7 +424,7 @@
         NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
-        cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
+        cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
         cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
@@ -464,10 +464,10 @@
         }
         cell.tag= indexPath.row;
         cell.delegate = self;
-        NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+        NSDictionary *dict = [claimedList_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
-        cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
+        cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
         cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
@@ -478,26 +478,15 @@
             cell.genderImgView.image = KUIImage(@"gender_girl");
             cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
         }
-        if ([KISDictionaryHaveKey(dict, @"teamUsershipType") integerValue]==0) {
-            cell.MemberLable.hidden = NO;
-            cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
-            cell.MemberLable.text = @"队长";
-        }else{
-            cell.MemberLable.hidden = YES;
-        }
-        
+        cell.MemberLable.hidden = YES;
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
         cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
         
-        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"characterName")]];
-        cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"memberInfo")];
+//        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")]];
         
-        NSDictionary *tempdict = KISDictionaryHaveKey(dict, @"position");
-        if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
-            cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
-        }else{
-            cell.value3Lb.text = @"未选";
-        }
+        cell.value1Lb.text = @"服务器名-角色名";
+        cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"msg")];
+        cell.value3Lb.text = @"";
         return cell;
     }
 }
@@ -587,7 +576,7 @@
         label.font = [UIFont systemFontOfSize:12];
         label.backgroundColor = [UIColor clearColor];
         label.textAlignment = NSTextAlignmentLeft;
-        label.text = @"占坑";
+        label.text = @"位置预约";
         [view addSubview:label];
         return view;
     }
@@ -622,39 +611,66 @@
 {
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
          tableView.editing = NO;
-        [self removeItemerFromNetWithIndexPath:indexPath.row];
+        if (indexPath.section == 0) {
+            [self removeItemer:indexPath.row];
+        }else{
+            [self removeClaimed:indexPath.row];
+        }
+        
     }
 }
+
+
 #pragma mark ---删除成员
--(void)removeItemerFromNetWithIndexPath:(NSInteger)row
+-(void)removeClaimed:(NSInteger)row
 {
-    
+    NSDictionary *dic = claimedList_dataArray[row];
+    [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:nil];
+}
+
+#pragma mark ---删除成员
+-(void)removeItemer:(NSInteger)row
+{
     NSDictionary *dic = m_dataArray[row];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
         return;
     }
+    [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:KISDictionaryHaveKey(dic, @"memberTeamUserId")];
+}
+
+
+-(void)deleteMenberFromList:(NSString*)roomId GameId:(NSString*)gameId MemberId:(NSString*)memberId MemberTeamUserId:(NSString*)memberTeamUserId{
     [hud show:YES];
-    [[ItemManager singleton] removeFromTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:self.gameid] MemberId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] MemberTeamUserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] reSuccess:^(id responseObject) {
+    [[ItemManager singleton] removeFromTeam:[GameCommon getNewStringWithId:roomId] GameId:[GameCommon getNewStringWithId:gameId] MemberId:[GameCommon getNewStringWithId:memberId] MemberTeamUserId:[GameCommon getNewStringWithId:memberTeamUserId] reSuccess:^(id responseObject) {
         [hud hide:YES];
-        [self deleteMember:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] GameId:[GameCommon getNewStringWithId:self.gameid]];
-//        [m_dataArray removeObjectAtIndex:row];
+        [self deleteMember:[GameCommon getNewStringWithId:memberId] GameId:[GameCommon getNewStringWithId:gameId] RoomId:[GameCommon getNewStringWithId:roomId] MemberTeamUserId:memberTeamUserId];
         [m_myTableView reloadData];
-        
-        
-        
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
     } reError:^(id error) {
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+
 }
 
--(void)deleteMember:(NSString*)memberTeamUserId GameId:(NSString*)gameId{
-    for (NSDictionary * dic in m_dataArray) {
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]&& [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberTeamUserId")] isEqualToString:memberTeamUserId]) {
-            [m_dataArray removeObject:dic];
+-(void)deleteMember:(NSString*)memberId GameId:(NSString*)gameId RoomId:(NSString*)roomId MemberTeamUserId:(NSString*)memberTeamUserId{
+    if ([GameCommon isEmtity:memberTeamUserId]) {
+        for (NSDictionary * dic in m_dataArray) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
+                [m_dataArray removeObject:dic];
+            }
+        }
+    }else{
+        for (NSDictionary * dic in claimedList_dataArray) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
+                [claimedList_dataArray removeObject:dic];
+            }
         }
     }
 }
