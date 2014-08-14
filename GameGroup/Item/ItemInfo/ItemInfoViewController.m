@@ -23,6 +23,7 @@
     UILabel *titleLable;
     NSMutableDictionary *m_mainDict;
     NSMutableArray *m_dataArray;
+    NSMutableArray *claimedList_dataArray;
     BOOL isJoinIn;
     ItemRoleButton *itemRoleBtn;
     RoleTabView *roleTabView;
@@ -71,6 +72,7 @@
     isJoinIn = YES;
     m_mainDict = [NSMutableDictionary dictionary];
     m_dataArray = [NSMutableArray array];
+    claimedList_dataArray = [NSMutableArray array];
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
     m_myTableView.delegate = self;
@@ -332,6 +334,8 @@
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
             [self setTitleMsg:responseObject];
+            [claimedList_dataArray removeAllObjects];
+            [claimedList_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"claimedList")];
             [m_dataArray removeAllObjects];
             [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"memberList")];
             [m_myTableView reloadData];
@@ -392,68 +396,129 @@
 }
 
 #pragma mark ----tableview delegate  datasourse
-
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    if (claimedList_dataArray&&[claimedList_dataArray isKindOfClass:[NSArray class]]&&claimedList_dataArray.count>0) {
+        return 2;
+    }
+    return 1;
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return m_dataArray.count;
+    if (section==0) {
+        return m_dataArray.count;
+    }
+    return claimedList_dataArray.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *indifience = @"cell";
-    ItemInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
-    if (!cell) {
-        cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
-    }
-    cell.tag= indexPath.row;
-    cell.delegate = self;
-    NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    cell.headImageView.placeholderImage = KUIImage(@"placeholder");
-    NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
-    cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
-    cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
-    [cell refreshViewFrameWithText:cell.nickLabel.text];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-        cell.genderImgView.image = KUIImage(@"gender_boy");
-        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-    }
-    else{
-        cell.genderImgView.image = KUIImage(@"gender_girl");
-        cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-    }
-    
-    
-    if ([KISDictionaryHaveKey(dict, @"teamUsershipType") integerValue]==0) {
-        cell.MemberLable.hidden = NO;
-        cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
-        cell.MemberLable.text = @"队长";
+    if (indexPath.section==0) {
+        static NSString *indifience = @"cell";
+        ItemInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+        if (!cell) {
+            cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+        }
+        cell.tag= indexPath.row;
+        cell.delegate = self;
+        NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+        cell.headImageView.placeholderImage = KUIImage(@"placeholder");
+        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
+        cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
+        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
+        [cell refreshViewFrameWithText:cell.nickLabel.text];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+            cell.genderImgView.image = KUIImage(@"gender_boy");
+            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+        }
+        else{
+            cell.genderImgView.image = KUIImage(@"gender_girl");
+            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+        }
+        if ([KISDictionaryHaveKey(dict, @"teamUsershipType") integerValue]==0) {
+            cell.MemberLable.hidden = NO;
+            cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
+            cell.MemberLable.text = @"队长";
+        }else{
+            cell.MemberLable.hidden = YES;
+        }
+        
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
+        cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
+        
+        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"characterName")]];
+        cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"memberInfo")];
+        
+        NSDictionary *tempdict = KISDictionaryHaveKey(dict, @"position");
+        if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
+            cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
+        }else{
+            cell.value3Lb.text = @"未选";
+        }
+        return cell;
     }else{
-        cell.MemberLable.hidden = YES;
+        static NSString *indifience = @"cell2";
+        ItemInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+        if (!cell) {
+            cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+        }
+        cell.tag= indexPath.row;
+        cell.delegate = self;
+        NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
+        cell.headImageView.placeholderImage = KUIImage(@"placeholder");
+        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
+        cell.headImageView.imageURL =[ImageService getImageStr2:imageids] ;
+        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
+        [cell refreshViewFrameWithText:cell.nickLabel.text];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+            cell.genderImgView.image = KUIImage(@"gender_boy");
+            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+        }
+        else{
+            cell.genderImgView.image = KUIImage(@"gender_girl");
+            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+        }
+        if ([KISDictionaryHaveKey(dict, @"teamUsershipType") integerValue]==0) {
+            cell.MemberLable.hidden = NO;
+            cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
+            cell.MemberLable.text = @"队长";
+        }else{
+            cell.MemberLable.hidden = YES;
+        }
+        
+        NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
+        cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
+        
+        cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"characterName")]];
+        cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"memberInfo")];
+        
+        NSDictionary *tempdict = KISDictionaryHaveKey(dict, @"position");
+        if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
+            cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
+        }else{
+            cell.value3Lb.text = @"未选";
+        }
+        return cell;
     }
-    
-    NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
-    cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
-
-    cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"characterName")]];
-    cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"teamUser"), @"memberInfo")];
-    
-    NSDictionary *tempdict = KISDictionaryHaveKey(dict, @"position");
-    if ([tempdict isKindOfClass:[NSDictionary class]]&&[[tempdict allKeys]containsObject:@"value"]) {
-        cell.value3Lb.text = [GameCommon getNewStringWithId: KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"position"), @"value")];
-    }else{
-        cell.value3Lb.text = @"未选";
-    }
-    return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-    VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
-    [self.navigationController pushViewController:VC animated:YES];
+    if (indexPath.section==0) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+        VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
+        [self.navigationController pushViewController:VC animated:YES];
+    }else {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
+        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+        VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];
+        [self.navigationController pushViewController:VC animated:YES];
+    }
 }
 
 - (void)headImgClick:(ItemInfoCell*)Sender{
@@ -465,53 +530,67 @@
 
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section == 0) {
+        return 87;
+    }
+    return 29;
+}
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
-    view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
-    
-    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
-    [view addSubview:view1];
-    
-    
-    [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
-    
-    UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
-//    view3.backgroundColor =UIColorFromRGBA(0x24272e, 1);
-    view3.image = KUIImage(@"team_detail_topImage");
-
-    
-    
-    UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
-    lb1.backgroundColor =[ UIColor clearColor];
-    lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
-    lb1.font = [UIFont boldSystemFontOfSize:16];
-    
-    if ([[m_mainDict allKeys]containsObject:@"type"]) {
-        lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+    if (section==0) {
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
+        view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
+        
+        UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
+        [view addSubview:view1];
+        [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
+        
+        UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
+        //    view3.backgroundColor =UIColorFromRGBA(0x24272e, 1);
+        view3.image = KUIImage(@"team_detail_topImage");
+        
+        UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
+        lb1.backgroundColor =[ UIColor clearColor];
+        lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
+        lb1.font = [UIFont boldSystemFontOfSize:16];
+        
+        if ([[m_mainDict allKeys]containsObject:@"type"]) {
+            lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+        }else{
+            lb1.text = @"";
+        }
+        
+        CGSize size = [lb1.text sizeWithFont:lb1.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
+        lb1.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
+        
+        lb1.textAlignment = NSTextAlignmentCenter;
+        [view3 addSubview:lb1];
+        
+        NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
+        NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
+        
+        UILabel *lb2 = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
+        lb2.backgroundColor =[ UIColor clearColor];
+        lb2.textColor = UIColorFromRGBA(0x6e737e, 1);
+        lb2.font = [UIFont boldSystemFontOfSize:10];
+        lb2.text = lb2Str;
+        lb2.textAlignment = NSTextAlignmentLeft;
+        [view3 addSubview:lb2];
+        [view addSubview:view3];
+        return view;
     }else{
-        lb1.text = @"";
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
+        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        UILabel *label  =[[UILabel alloc]initWithFrame:CGRectMake(10, 0, 300, 29)];
+        label.font = [UIFont systemFontOfSize:12];
+        label.backgroundColor = [UIColor clearColor];
+        label.textAlignment = NSTextAlignmentLeft;
+        label.text = @"占坑";
+        [view addSubview:label];
+        return view;
     }
-    
-    CGSize size = [lb1.text sizeWithFont:lb1.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
-    lb1.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
-    
-    lb1.textAlignment = NSTextAlignmentCenter;
-    [view3 addSubview:lb1];
-    
-    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
-    NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
-    
-    UILabel *lb2 = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
-    lb2.backgroundColor =[ UIColor clearColor];
-    lb2.textColor = UIColorFromRGBA(0x6e737e, 1);
-    lb2.font = [UIFont boldSystemFontOfSize:10];
-    lb2.text = lb2Str;
-    lb2.textAlignment = NSTextAlignmentLeft;
-    [view3 addSubview:lb2];
-    
-    [view addSubview:view3];
-    return view;
 }
 -(void)changeInfo1
 {
@@ -594,16 +673,6 @@
 //    [view addSubview:Button];
 //    return view;
 //}
-
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 87;
-}
-//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    return 70;
-//}
-
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
