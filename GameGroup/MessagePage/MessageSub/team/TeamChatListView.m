@@ -375,7 +375,8 @@
         [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
         self.sendBtn.selected = YES;
         self.sendBtn.enabled = NO;
-
+        self.agreeBtn.hidden = YES;
+        self.refusedBtn.hidden = YES;
     }else{
         self.agreeBtn.hidden = NO;
         self.agreeBtn.frame = CGRectMake(15, bottomPadding, (320-40)/2, 35);
@@ -1022,12 +1023,14 @@
 }
 //计时
 - (void)timingTime:(long long )time{
-    [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
     NSLog(@"计时时间---->>>>>>%lld",time);
+    self.sendBtn.selected = NO;
+    self.sendBtn.enabled = YES;
+    [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
+    self.sendBtn.selected = YES;
+    self.sendBtn.enabled = NO;
 }
-- (void)finishTiming{
-    NSLog(@"倒计时结束");
-}
+
 - (void)dealloc
 {
     if (self.mTableView) {

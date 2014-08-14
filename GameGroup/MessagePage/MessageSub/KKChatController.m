@@ -30,6 +30,7 @@
 #import "KKTeamInviteCell.h"
 #import "H5CharacterDetailsViewController.h"
 #import "KKSimpleMsgCell.h"
+#import "InplaceTimer.h"
 
 #ifdef NotUseSimulator
 #import "amrFileCodec.h"
@@ -140,7 +141,7 @@ UINavigationControllerDelegate>
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     }
-
+    [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             
@@ -418,9 +419,8 @@ UINavigationControllerDelegate>
             return;
         }
         [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-            NSDictionary * myInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
             selectType = clickType;
-            [self sendOtherMsg:[NSString stringWithFormat:@"%@ 选择了位置 %@",KISDictionaryHaveKey(myInfo,@"nickname"),KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+            [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
             [self changPosition];
             [self setPositionMsgCount];
         } reError:^(id error) {

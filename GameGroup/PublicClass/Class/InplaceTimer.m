@@ -28,11 +28,16 @@ static InplaceTimer *inplaceTimer = NULL;
 	}
 	return inplaceTimer;
 }
-
+//重启计时
 -(void)reStartTimer:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId timeDeleGate:(id<TimeDelegate>) timedeleGate{
+    if (countDownTimer&&[countDownTimer isValid]) {
+        return;
+    }
      NSLog(@"reStartTimer--->>");
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"inplace_time_%@_%@_%@",userId,gameId,roomId]];
+    long long offsetTime =secondsCount - ([self getCurrentTime] - [time longLongValue]);
+    NSLog(@"currentTIme-->--%@",time);
     if (!time) {
         return;
     }
@@ -41,8 +46,6 @@ static InplaceTimer *inplaceTimer = NULL;
         [self resetTimer:gameId RoomId:roomId];
         return;
     }
-    NSLog(@"currentTIme-->--%@",time);
-    long long offsetTime =secondsCount - ([self getCurrentTime] - [time longLongValue]);
     NSLog(@"offsetTime-->>%lld",offsetTime);
     if (offsetTime<0) {
         [self resetTimer:gameId RoomId:roomId];
@@ -55,15 +58,18 @@ static InplaceTimer *inplaceTimer = NULL;
     NSLog(@"startTimeCount--->>>%lld",timerCount);
     countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timeFireMethod:) userInfo:dic repeats:YES];
 }
-
+//开始计时
 -(void)startTimer:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId timeDeleGate:(id<TimeDelegate>) timedeleGate{
+    if (countDownTimer&&[countDownTimer isValid]) {
+        return;
+    }
      self.delegate = timedeleGate;
     NSLog(@"startTimer--->>");
     NSDictionary * dic = @{@"gameId":gameId,@"roomId":roomId,@"groupId":groupId};
     timerCount = secondsCount;
     countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timeFireMethod:) userInfo:dic repeats:YES];
 }
-
+//停止计时
 -(void)stopTimer:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId{
     NSLog(@"StopTimer--->>");
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
@@ -83,7 +89,7 @@ static InplaceTimer *inplaceTimer = NULL;
     }
 }
 
-
+//重置时间
 -(void)resetTimer:(NSString*)gameId RoomId:(NSString*)roomId{
      NSLog(@"resetTimer--->>");
     if (countDownTimer&&[countDownTimer isValid]) {
@@ -96,16 +102,13 @@ static InplaceTimer *inplaceTimer = NULL;
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"inplace_time_%@_%@_%@",userId,gameId,roomId]];
 }
-
+//计时
 -(void)timeFireMethod:(NSTimer*)timer{
     timerCount--;
     if (self.delegate) {
         [self.delegate timingTime:timerCount];
     }
     if(timerCount==0){
-        if (self.delegate) {
-            [self.delegate finishTiming];
-        }
         NSDictionary * infoDic = timer.userInfo;
         [self resetTimer:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"gameId")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"roomId")]];
         [[TeamManager singleton] resetTeamUserState:[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(infoDic, @"groupId")]]];
