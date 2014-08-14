@@ -32,9 +32,9 @@
     NSInteger           m_totalPage;
     NSInteger           m_currentPage;
     
-    NSArray *arrayTag;
-    NSArray *arrayType;
-    NSArray *arrayFilter;
+    NSMutableArray *arrayTag;
+    NSMutableArray *arrayType;
+    NSMutableArray *arrayFilter;
     NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
 //    NSMutableArray *m_charaArray;
@@ -56,9 +56,9 @@
         m_dataArray = [NSMutableArray array];
 //        m_charaArray = [NSMutableArray array];
         roleDict = [NSMutableDictionary dictionary];
-        arrayTag = [NSArray array];
-        arrayType = [NSArray array];
-        arrayFilter = [NSArray array];
+        arrayTag = [NSMutableArray array];
+        arrayType = [NSMutableArray array];
+        arrayFilter = [NSMutableArray array];
         //菜单
         self.dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,0, 320, 40) dataSource:self delegate:self];
         self.dropDownView.mSuperView = self;

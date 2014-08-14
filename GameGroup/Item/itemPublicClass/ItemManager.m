@@ -84,6 +84,7 @@ static ItemManager *itemManager = NULL;
     if (arrayType) {
         if (![self getUpdate:[NSString stringWithFormat:@"%@_updateTime_%@",@"TeamType",gameId]]) {
             if (resuccess) {
+                [tempArrayType removeAllObjects];
                 [tempArrayType addObject:[self createType]];
                 [tempArrayType addObjectsFromArray:arrayType];
                 resuccess(tempArrayType);
@@ -91,6 +92,7 @@ static ItemManager *itemManager = NULL;
             return;
         }
         if (resuccess) {
+            [tempArrayType removeAllObjects];
             [tempArrayType addObject:[self createType]];
             [tempArrayType addObjectsFromArray:arrayType];
             resuccess(tempArrayType);
@@ -108,6 +110,7 @@ static ItemManager *itemManager = NULL;
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@",@"TeamType",gameId]];
             if (resuccess) {
+                [tempArrayType removeAllObjects];
                 [tempArrayType addObject:[self createType]];
                 [tempArrayType addObjectsFromArray:responseObject];
                 resuccess(tempArrayType);

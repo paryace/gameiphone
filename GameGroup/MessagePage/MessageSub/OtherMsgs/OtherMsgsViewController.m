@@ -28,7 +28,7 @@
     [super viewDidLoad];
     
     [self setTopViewWithTitle:@"角色动态" withBackButton:YES];
-    
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     m_tableData = (NSMutableArray*)[DataStoreManager queryAllOtherMsg];
     
     UIButton *deleteButton=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -41,6 +41,8 @@
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-(KISHighVersion_7?0:20))];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
+    m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
 
 }
