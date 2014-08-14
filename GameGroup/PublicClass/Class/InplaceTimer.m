@@ -36,6 +36,7 @@ static InplaceTimer *inplaceTimer = NULL;
      NSLog(@"reStartTimer--->>");
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"inplace_time_%@_%@_%@",userId,gameId,roomId]];
+    NSLog(@"[self getCurrentTime]-->>%lld",[self getCurrentTime]);
     long long offsetTime =secondsCount - ([self getCurrentTime] - [time longLongValue]);
     NSLog(@"currentTIme-->--%@",time);
     if (!time) {
