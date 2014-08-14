@@ -163,6 +163,9 @@ static TeamManager *teamManager = NULL;
 //收到确认或者取消消息，更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo
 {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+            [DataStoreManager updateDSTeamNotificationMsgCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] SayHightType:@"4"];//
+    }
     [DataStoreManager updateTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")] OnClickState:[self getOnClickState:KISDictionaryHaveKey(memberUserInfo, @"type")] Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangInplaceState object:nil userInfo:memberUserInfo];
     }];

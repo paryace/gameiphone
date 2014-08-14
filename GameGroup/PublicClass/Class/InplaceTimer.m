@@ -36,6 +36,7 @@ static InplaceTimer *inplaceTimer = NULL;
      NSLog(@"reStartTimer--->>");
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"inplace_time_%@_%@_%@",userId,gameId,roomId]];
+    NSLog(@"[self getCurrentTime]-->>%lld",[self getCurrentTime]);
     long long offsetTime =secondsCount - ([self getCurrentTime] - [time longLongValue]);
     NSLog(@"currentTIme-->--%@",time);
     if (!time) {
@@ -68,6 +69,9 @@ static InplaceTimer *inplaceTimer = NULL;
     NSDictionary * dic = @{@"gameId":gameId,@"roomId":roomId,@"groupId":groupId};
     timerCount = secondsCount;
     countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timeFireMethod:) userInfo:dic repeats:YES];
+    
+    
+    
 }
 //停止计时
 -(void)stopTimer:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId{

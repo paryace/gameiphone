@@ -181,7 +181,6 @@ static SystemSoundID shake_sound_male_id = 0;
              NSDictionary * dic = @{@"groupId":groupId};
             [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
         });
         
     }];
@@ -206,7 +205,6 @@ static SystemSoundID shake_sound_male_id = 0;
             [[MessageSetting singleton] setSoundOrVibrationopen];
             NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
             [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
         });
         
     }];
@@ -283,7 +281,7 @@ static SystemSoundID shake_sound_male_id = 0;
          [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[MessageSetting singleton] setSoundOrVibrationopen];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinTeamMessage object:nil userInfo:msgDic];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
     }];

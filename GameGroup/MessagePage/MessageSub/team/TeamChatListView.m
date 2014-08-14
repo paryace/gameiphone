@@ -34,6 +34,9 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
+        //申请加入组队通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)
                                                      name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         
@@ -476,15 +479,20 @@
     }];
 }
 
--(void)clearNorReadMsg{
+-(void)clearNorReadInpaceMsg{
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick)] ) {
         [self.dropDownDataSource buttonOnClick];
     }
 }
 
+-(void)clearNorReadApplyMsg{
+    if ([self.dropDownDataSource respondsToSelector:@selector(refreJoinApplyMsgCount)] ) {
+        [self.dropDownDataSource refreJoinApplyMsgCount];
+    }
+}
+
 //确定就位
 -(void)agreeButton:(UIButton*)sender{
-    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
@@ -495,7 +503,6 @@
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
-    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
@@ -751,6 +758,8 @@
         cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
         if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]) {
             if (self.teamUsershipType) {
+                [cell.agreeButton setUserInteractionEnabled:YES];
+                [cell.refuseButton setUserInteractionEnabled:YES];
                 cell.detailLable.hidden=YES;
             }else {
                 [cell.agreeButton setUserInteractionEnabled:NO];
@@ -952,6 +961,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
+        [self clearNorReadInpaceMsg];//清除消息
         [self setBtnState];
     }
 }
@@ -969,10 +979,17 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearNorReadMsg];
+    [self clearNorReadInpaceMsg];//清楚消息
     [self setBtnState];
 }
-
+#pragma mark 申请加入组队消息
+-(void)joinTeamReceived:(NSNotification *)notification
+{
+    [self clearNorReadApplyMsg];
+    [self getZU];
+    [self.mTableView reloadData];
+    NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
+}
 //改变列表就位确认状态
 -(void)changPState:(NSString*)userId GroupId:(NSString*)groupId State:(NSString *)state{
     for (NSMutableDictionary * clickDic in self.memberList) {
@@ -1012,6 +1029,9 @@
 {
     if ([self isShow]) {
         if (self.teamUsershipType && currentExtendSection==1) {
+            NSLog(@"从应用退到桌面");
+            self.sendBtn.selected = NO;
+            self.sendBtn.enabled = YES;
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
@@ -1021,6 +1041,9 @@
 {
     if ([self isShow]) {
         if (self.teamUsershipType && currentExtendSection==1) {
+            NSLog(@"从桌面回到应用");
+            self.sendBtn.selected = YES;
+            self.sendBtn.enabled = NO;
             [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
         }
     }

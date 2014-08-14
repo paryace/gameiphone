@@ -138,6 +138,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
     //申请加入群完成通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
+    
+    //申请加入组队通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+    
     //群信息更新完成通知
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
     //
@@ -259,6 +263,12 @@
 }
 //加入群
 -(void)joinGroupReceived:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
+
+//申请加入组队消息
+-(void)joinTeamReceived:(NSNotification *)notification
 {
     [self displayMsgsForDefaultView];
 }

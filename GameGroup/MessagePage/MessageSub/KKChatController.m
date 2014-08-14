@@ -439,12 +439,7 @@ UINavigationControllerDelegate>
     }else if(section == 1){
         return YES;
     }else if(section==2){
-        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
-        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-            [self readNoreadMsg];
-            [self setNoreadMsgView];
-            [self setNotifyMsgCount];
-        }];
+        [self refreJoinApplyMsgCount];
         return YES;
     }
     return NO;
@@ -492,14 +487,20 @@ UINavigationControllerDelegate>
     VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
     [self.navigationController pushViewController:VC animated:YES];
 }
-
+//刷新就位确认消息数量
 - (void)buttonOnClick{
-//    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
-//    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+    [self readNoreadMsg];
+    [self setNoreadMsgView];
+    [self setInplaceMsgCount];
+}
+//刷新申请加入组队消息的数量
+-(void)refreJoinApplyMsgCount{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
         [self readNoreadMsg];
         [self setNoreadMsgView];
-        [self setInplaceMsgCount];
-//    }];
+        [self setNotifyMsgCount];
+    }];
 }
 
 -(void)showDialog{
@@ -1853,6 +1854,22 @@ UINavigationControllerDelegate>
 }
 
 
+
+-(void)hideTopView{
+    self.dropDownView.hidden = YES;
+    self.dotVApp.hidden = YES;
+    self.dotVInplace.hidden = YES;
+    self.dotVPosition.hidden = YES;
+}
+
+-(void)showTopView{
+    self.dropDownView.hidden = NO;
+    self.dotVApp.hidden = NO;
+    self.dotVInplace.hidden = NO;
+    self.dotVPosition.hidden = NO;
+}
+
+
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     if (!myActive) {
@@ -1868,9 +1885,7 @@ UINavigationControllerDelegate>
         self.textView.hidden = NO;
         [self showEmojiScrollView];
         if (self.isTeam) {
-            self.dropDownView.hidden = YES;
-            self.dotVApp.hidden = YES;
-            self.dotVInplace.hidden = YES;
+            [self hideTopView];
         }
         
     }
@@ -1900,9 +1915,7 @@ UINavigationControllerDelegate>
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
         if (self.isTeam) {
-            self.dropDownView.hidden = YES;
-            self.dotVApp.hidden = YES;
-            self.dotVInplace.hidden = YES;
+            [self hideTopView];
         }
         
     }else{//点击切回键盘
@@ -2004,9 +2017,7 @@ UINavigationControllerDelegate>
         if (self.kkchatInputType != KKChatInputTypeNone) {
             [self autoMovekeyBoard:0];
             if (self.isTeam) {
-                self.dropDownView.hidden = NO;
-                self.dotVApp.hidden = NO;
-                self.dotVInplace.hidden = NO;
+                [self showTopView];
             }
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
@@ -2246,9 +2257,7 @@ UINavigationControllerDelegate>
     
     [self autoMovekeyBoard:keyboardRect.size.height];
     if (self.isTeam) {
-        self.dropDownView.hidden = YES;
-        self.dotVApp.hidden = YES;
-        self.dotVInplace.hidden = YES;
+        [self hideTopView];
     }
 }
 
@@ -2270,9 +2279,7 @@ UINavigationControllerDelegate>
         [self autoMovekeyBoard:0];
     }
     if (self.isTeam) {
-        self.dropDownView.hidden = NO;
-        self.dotVApp.hidden = NO;
-        self.dotVInplace.hidden = NO;
+        [self showTopView];
     }
     
     

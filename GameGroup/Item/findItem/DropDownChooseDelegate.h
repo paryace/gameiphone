@@ -26,6 +26,7 @@
 - (void)headImgClick:(NSString*)userId;
 - (void)itemOnClick:(NSMutableDictionary*)dic;
 - (void)buttonOnClick;
+-(void)refreJoinApplyMsgCount;
 
 -(void)showDialog;
 -(void)hideDialog;
