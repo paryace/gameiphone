@@ -5305,7 +5305,7 @@
         if (success) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
         }else{
-            
+            [self saveCricleCountWithType:type img:img userid:userid];
         }
     }];
 }
