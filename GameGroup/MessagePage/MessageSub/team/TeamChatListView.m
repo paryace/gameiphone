@@ -1012,6 +1012,9 @@
 {
     if ([self isShow]) {
         if (self.teamUsershipType && currentExtendSection==1) {
+            NSLog(@"从应用退到桌面");
+            self.sendBtn.selected = NO;
+            self.sendBtn.enabled = YES;
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
@@ -1021,6 +1024,9 @@
 {
     if ([self isShow]) {
         if (self.teamUsershipType && currentExtendSection==1) {
+            NSLog(@"从桌面回到应用");
+            self.sendBtn.selected = YES;
+            self.sendBtn.enabled = NO;
             [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
         }
     }

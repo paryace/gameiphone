@@ -69,6 +69,9 @@ static InplaceTimer *inplaceTimer = NULL;
     NSDictionary * dic = @{@"gameId":gameId,@"roomId":roomId,@"groupId":groupId};
     timerCount = secondsCount;
     countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timeFireMethod:) userInfo:dic repeats:YES];
+    
+    
+    
 }
 //停止计时
 -(void)stopTimer:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId{
