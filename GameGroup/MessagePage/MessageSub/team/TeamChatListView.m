@@ -484,7 +484,6 @@
 
 //确定就位
 -(void)agreeButton:(UIButton*)sender{
-    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
@@ -495,7 +494,6 @@
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
-    [self clearNorReadMsg];
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
@@ -952,6 +950,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
+        [self clearNorReadMsg];//清除消息
         [self setBtnState];
     }
 }
@@ -969,7 +968,7 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearNorReadMsg];
+    [self clearNorReadMsg];//清楚消息
     [self setBtnState];
 }
 
