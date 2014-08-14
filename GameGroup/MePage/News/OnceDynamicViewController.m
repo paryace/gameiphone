@@ -573,7 +573,7 @@
 {
     
     UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"分享到" delegate:self cancelButtonTitle:@"取消"destructiveButtonTitle:Nil
-                                  otherButtonTitles:@"好友",@"新浪微博",@"微信好友",@"微信朋友圈",nil];
+                                  otherButtonTitles:@"好友",@"新浪微博",@"QQ",@"微信朋友圈",nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
 }
@@ -599,7 +599,16 @@
                 break;
         }
     }else{
-         NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
+        
+       NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
+        if ([GameCommon isEmtity:title]) {
+            title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
+        }
+        NSString * shareUrl = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"urlLink")];
+        if ([GameCommon isEmtity:shareUrl]) {
+            shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
+        }
+        
         if (buttonIndex ==0) {
             if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
                 UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
@@ -621,7 +630,11 @@
         else if(buttonIndex ==2)
         {
             [[ShareToOther singleton]changeScene:WXSceneSession];
-             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+            [[ShareToOther singleton] onShareToQQ:[ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")] Title:title Description:_dataDic[@"msg"] Url:shareUrl IsZone:NO];
+            
+            
+            
+//             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==3)
         {
