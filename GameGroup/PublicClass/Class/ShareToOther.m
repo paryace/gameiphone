@@ -139,12 +139,26 @@ static ShareToOther *userManager = NULL;
 //QQ,带链接分享
 - (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
 {
+    [self onShareToQQ:imageUrl Title:title Description:des Url:uri IsZone:NO];
+}
+
+
+-(void)onShareToQQ:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri IsZone:(BOOL)isZone{
+    
     app.bSinaWB = YES;
     QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageURL:[NSURL URLWithString:imageUrl]];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:newsObj];
-    QQApiSendResultCode sent = [QQApiInterface sendReq:req];
+    QQApiSendResultCode sent = 0;
+    if (isZone){//分享到QZone
+        sent = [QQApiInterface SendReqToQZone:req];
+    }else{//分享到QQ
+        sent = [QQApiInterface sendReq:req];
+    }
     [self handleSendResult:sent];
 }
+
+
+
 - (void)handleSendResult:(QQApiSendResultCode)sendResult
 {
     switch (sendResult)
