@@ -34,6 +34,9 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
+        //申请加入组队通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)
                                                      name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         
@@ -476,9 +479,15 @@
     }];
 }
 
--(void)clearNorReadMsg{
+-(void)clearNorReadInpaceMsg{
     if ([self.dropDownDataSource respondsToSelector:@selector(buttonOnClick)] ) {
         [self.dropDownDataSource buttonOnClick];
+    }
+}
+
+-(void)clearNorReadApplyMsg{
+    if ([self.dropDownDataSource respondsToSelector:@selector(refreJoinApplyMsgCount)] ) {
+        [self.dropDownDataSource refreJoinApplyMsgCount];
     }
 }
 
@@ -749,6 +758,8 @@
         cell.pveLable.text = KISDictionaryHaveKey(msgDic, @"value2");
         if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]) {
             if (self.teamUsershipType) {
+                [cell.agreeButton setUserInteractionEnabled:YES];
+                [cell.refuseButton setUserInteractionEnabled:YES];
                 cell.detailLable.hidden=YES;
             }else {
                 [cell.agreeButton setUserInteractionEnabled:NO];
@@ -950,7 +961,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        [self clearNorReadMsg];//清除消息
+        [self clearNorReadInpaceMsg];//清除消息
         [self setBtnState];
     }
 }
@@ -968,10 +979,17 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearNorReadMsg];//清楚消息
+    [self clearNorReadInpaceMsg];//清楚消息
     [self setBtnState];
 }
-
+#pragma mark 申请加入组队消息
+-(void)joinTeamReceived:(NSNotification *)notification
+{
+    [self clearNorReadApplyMsg];
+    [self getZU];
+    [self.mTableView reloadData];
+    NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
+}
 //改变列表就位确认状态
 -(void)changPState:(NSString*)userId GroupId:(NSString*)groupId State:(NSString *)state{
     for (NSMutableDictionary * clickDic in self.memberList) {

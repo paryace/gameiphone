@@ -14,14 +14,15 @@
 #define kNewsMessage @"newsMessage"
 #define kDeleteAttention @"deleteAttentionReceived"
 #define kOtherMessage    @"otherMessage"
-#define kJoinGroupMessage    @"joinGroupMessage"
+#define kJoinGroupMessage    @"joinGroupMessage"//申请加入群组
 #define kRecommendMessage    @"recommend"
 #define kDisbandGroup    @"disbandGroup"//解散群组
-#define kKickOffGroupGroup    @"kickOffGroupGroup"//解散群组
+#define kKickOffGroupGroup    @"kickOffGroupGroup"//离开群组
 #define kMessageAck @"messageAck"
 #define kteamMessage    @"teamMessage"
 #define kteamRecommend    @"teamRecommend"
 #define kUpdateMsgCount    @"updateMsgCount"
+#define kJoinTeamMessage    @"joinTeamMessage"//申请加入组队
 
 @interface GetDataAfterManager : NSObject
 
