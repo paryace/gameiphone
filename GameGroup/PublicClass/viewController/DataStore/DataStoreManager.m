@@ -3399,6 +3399,17 @@
     NSMutableArray *charactersArray = [NSMutableArray array];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
     NSArray *array = [DSCharacters MR_findAllWithPredicate:predicate];
+    
+//    NSArray *array222 = [array sortedArrayUsingComparator:^NSComparisonResult(DSCharacters * obj1, DSCharacters * obj2) {
+//        if ([obj1.charactersId integerValue] > [obj2.charactersId integerValue]) {
+//            return (NSComparisonResult)NSOrderedDescending;
+//        }
+//        if ([obj1.charactersId integerValue] < [obj2.charactersId integerValue]) {
+//            return (NSComparisonResult)NSOrderedAscending;
+//        }
+//        return (NSComparisonResult)NSOrderedSame;
+//    }];
+    
     for (DSCharacters *character in array) {
         [charactersArray addObject:[self getCharacter:character]];
     }
@@ -3483,11 +3494,18 @@
     
     NSMutableArray *titlesArray = [NSMutableArray array];
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@ and hide==[c]%@",userId,hide];
-    NSArray * array = [DSTitle MR_findAllSortedBy:@"sortnum" ascending:NO withPredicate:predicate];
+    NSArray * array = [DSTitle MR_findAllWithPredicate:predicate];
 
-    
-    for (DSTitle *title in array) {
-        NSLog(@"sortnum-->>>,%@",title.sortnum);
+     NSArray *array222 = [array sortedArrayUsingComparator:^NSComparisonResult(DSTitle * obj1, DSTitle * obj2) {
+         if ([obj1.sortnum integerValue] > [obj2.sortnum integerValue]) {
+             return (NSComparisonResult)NSOrderedDescending;
+         }
+         if ([obj1.sortnum integerValue] < [obj2.sortnum integerValue]) {
+             return (NSComparisonResult)NSOrderedAscending;
+         }
+         return (NSComparisonResult)NSOrderedSame;
+     }];
+    for (DSTitle *title in array222) {
         NSMutableDictionary * titleDic = [NSMutableDictionary dictionary];
         NSMutableDictionary * titleObjectDic = [self queryDSTitleObject:title.titleId];
         [titleDic setObject:title.characterid forKey:@"characterid"];
