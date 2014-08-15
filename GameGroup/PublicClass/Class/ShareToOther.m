@@ -139,14 +139,21 @@ static ShareToOther *userManager = NULL;
 //QQ,带链接分享
 - (void)onTShareImage:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri
 {
-    [self onShareToQQ:imageUrl Title:title Description:des Url:uri IsZone:NO];
+    [self onShareToQQ:title Description:des Url:uri previewImageURL:imageUrl IsZone:NO];
 }
 
+-(void)onShareToQQ:(NSString*)title Description:(NSString*)des Url:(NSString*)uri previewImageURL:(NSString*)previewURL IsZone:(BOOL)isZone{
+    QQApiNewsObject * newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageURL:[NSURL URLWithString:previewURL]];
+    [self onShareToQQ:newsObj IsZone:isZone];
+}
 
--(void)onShareToQQ:(NSString*)imageUrl Title:(NSString*)title Description:(NSString*)des Url:(NSString*)uri IsZone:(BOOL)isZone{
-    
+-(void)onShareToQQ:(NSString*)title Description:(NSString*)des Url:(NSString*)uri previewImageData:(NSData*)data IsZone:(BOOL)isZone{
+    QQApiNewsObject * newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageData:data];
+    [self onShareToQQ:newsObj IsZone:isZone];
+}
+
+-(void)onShareToQQ:(QQApiNewsObject*)newsObj IsZone:(BOOL)isZone{
     app.bSinaWB = YES;
-    QQApiNewsObject *newsObj = [QQApiNewsObject objectWithURL:[NSURL URLWithString:uri]title:title description:des previewImageURL:[NSURL URLWithString:imageUrl]];
     SendMessageToQQReq *req = [SendMessageToQQReq reqWithContent:newsObj];
     QQApiSendResultCode sent = 0;
     if (isZone){//分享到QZone
