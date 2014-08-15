@@ -1699,13 +1699,27 @@
 
 +(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type
 {
-        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
-            DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate inContext:localContext];
-            if (dUser) {
-                dUser.shiptype = type;
-            }
-        }];
+//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+//        }];
+    NSLog(@"%@---%@",userId,type);
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+        DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (dUser) {
+            dUser.shiptype = [NSString stringWithFormat:@"%@",type];
+        }
+        NSLog(@"duser====%@----sht-%@",dUser.userId,dUser.shiptype);
+        
+    } completion:^(BOOL success, NSError *error) {
+        if (success) {
+            NSLog(@"成员修改成功。。。");
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+
+        }else{
+            NSLog(@"成员修改失败");
+        }
+    }];
+    
 }
 
 + (BOOL)ifIsAttentionWithUserId:(NSString*)userId
@@ -2858,7 +2872,11 @@
     }
     }
      completion:^(BOOL success, NSError *error) {
-         
+         if (!success) {
+             NSLog(@"修改失败");
+         }else{
+             NSLog(@"修改成功");
+         }
      }];
 }
 

@@ -1190,13 +1190,14 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
-        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:type];
+//        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"shiptype")]];
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
         [hud hide:YES];
         dispatch_queue_t queue = dispatch_queue_create("com.living.game.", NULL);
         dispatch_async(queue, ^{
             NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
-            [self updateDb:shipT];
+            NSLog(@"--------%@--%@",shipT,self.hostInfo.userId);
+//            [self updateDb:shipT];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([type isEqualToString:@"1"]) {
                     if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
@@ -1207,7 +1208,7 @@
                     [self refreFansNum:@"0"];
                     [self showMessageWindowWithContent:@"删除成功" imageType:0];
                 }
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
                 [self.navigationController popViewControllerAnimated:YES];
             });
         });

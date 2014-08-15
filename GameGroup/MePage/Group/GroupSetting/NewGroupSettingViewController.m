@@ -551,6 +551,7 @@ typedef enum : NSUInteger {
 //解散群
 -(void)dissolveGroup
 {
+    [hud show:YES];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.groupId forKey:@"groupId"];
@@ -559,6 +560,7 @@ typedef enum : NSUInteger {
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
         [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
         [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
@@ -567,6 +569,7 @@ typedef enum : NSUInteger {
         alert.tag = 789;
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
     }];
 }
 
@@ -574,6 +577,7 @@ typedef enum : NSUInteger {
 //离开群
 -(void)leaveGroup
 {
+    [hud show:YES];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.groupId forKey:@"groupId"];
@@ -582,6 +586,7 @@ typedef enum : NSUInteger {
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         NSLog(@"%@",responseObject);
         [self changGroupState];
         
@@ -589,6 +594,7 @@ typedef enum : NSUInteger {
         alert.tag = 789;
         [alert show];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
     }];
 }
 //

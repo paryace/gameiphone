@@ -194,6 +194,19 @@
     }
     
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
+    
+    NSString *str = [tempDict objectForKey:@"shiptype"];
+    if ([str isEqualToString:@"1"]||[str isEqualToString:@"2"]) {
+        
+    }else{
+        NSString *strr= [tempDict objectForKey:@"nickname"];
+        NSString * userid  = KISDictionaryHaveKey(tempDict, @"userid");
+        NSString *tit = [NSString stringWithFormat:@"昵称为%@ userid=%@出现了",strr,userid];
+        [self showAlertViewWithTitle:@"提示" message:tit buttonTitle:@"确定"];
+    }
+    
+    
+    
     NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
     cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
     NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");

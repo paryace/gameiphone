@@ -107,7 +107,6 @@
 #pragma mark ---创建选择角色模块
 -(void)buildRoleView
 {
-    
     NSDictionary *dic = roleTabView.coreArray[0];
     self.infoDict = roleTabView.coreArray[0];
     itemRoleBtn =[[ItemRoleButton alloc]initWithFrame:CGRectMake(85, kScreenHeigth-startX -50-(KISHighVersion_7?0:20), 150, 35)];
