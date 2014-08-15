@@ -408,7 +408,7 @@
     }
     [self refreshCircle:nil];
 }
-
+#pragma mark 动态消息通知
 -(void)refreshCircle:(id)sender
 {
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
