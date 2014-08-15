@@ -478,13 +478,16 @@
             cell.genderImgView.image = KUIImage(@"gender_girl");
             cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
         }
-        cell.MemberLable.hidden = YES;
+        cell.MemberLable.hidden = NO;
+        cell.MemberLable.backgroundColor = UIColorFromRGBA(0xfdcd12, 1);
+        cell.MemberLable.text = @"预约";
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
         cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
         
         cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")]];
         
         cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"msg")];
+        cell.value2Lb.frame = CGRectMake(70, 41, 320-75, 15);
         cell.value3Lb.text = @"";
         return cell;
     }
