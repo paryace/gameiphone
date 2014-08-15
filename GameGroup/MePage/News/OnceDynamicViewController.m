@@ -669,12 +669,9 @@
 
 -(UIImage*)getShareImage
 {
-    if ([self.urlLink isEqualToString:@""]) {
-        NSString * imageUrl = [ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")];
-        if (![GameCommon isEmtity:imageUrl]) {
-            return [self getImageFromURL:imageUrl];
-        }
-        return KUIImage(@"icon");
+    NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];
+    if (![GameCommon isEmtity:imageUrl]) {
+        return [self getImageFromURL:imageUrl];
     }
     return KUIImage(@"icon");
 }
