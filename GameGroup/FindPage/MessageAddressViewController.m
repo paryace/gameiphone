@@ -470,9 +470,16 @@
 -(void)DodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-        NSMutableDictionary * dic = self.addressArray[indexPath.row];
-        [dic setObject:@"1" forKey:@"iCare"];
-        [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        NSMutableDictionary * dic;
+        if (_tableView == searchController.searchResultsTableView) {
+            dic = self.addressArray[indexPath.row];
+            [dic setObject:@"1" forKey:@"iCare"];
+            [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }else{
+            dic = self.searchAddressArray[indexPath.row];
+            [dic setObject:@"1" forKey:@"iCare"];
+             [searchController.searchResultsTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
         NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
