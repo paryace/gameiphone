@@ -1173,10 +1173,9 @@
     attentionOffBtn.userInteractionEnabled = YES;
 }
 
-//取消关注或者删除好友
+//取消关注或者删除好友1，取消关注 2,删除好友
 -(void)cancelFriend:(NSString*)type
 {
-    NSLog(@"取消关注或者删除好友请求－－－》》");
     [self begin];
     [hud show:YES];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
@@ -1190,28 +1189,23 @@
     [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
-//        [DataStoreManager changRecommendStateWithUserid:self.hostInfo.userId state:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"shiptype")]];
-        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:KISDictionaryHaveKey(responseObject, @"shiptype")];
         [hud hide:YES];
-        dispatch_queue_t queue = dispatch_queue_create("com.living.game.", NULL);
-        dispatch_async(queue, ^{
-            NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
-            NSLog(@"--------%@--%@",shipT,self.hostInfo.userId);
-//            [self updateDb:shipT];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([type isEqualToString:@"1"]) {
-                    if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-                        [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
-                    }
+        NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
+        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT Successcompletion:^(BOOL success, NSError *error) {
+            DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+            [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+            if ([type isEqualToString:@"1"]) {
+                if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
+                    [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
                 }
-                if ([type isEqualToString:@"2"]) {
-                    [self refreFansNum:@"0"];
-                    [self showMessageWindowWithContent:@"删除成功" imageType:0];
-                }
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-                [self.navigationController popViewControllerAnimated:YES];
-            });
-        });
+            }
+            if ([type isEqualToString:@"2"]) {
+                [self refreFansNum:@"0"];
+                [self showMessageWindowWithContent:@"删除成功" imageType:0];
+            }
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self end];
         [hud hide:YES];
@@ -1227,10 +1221,15 @@
 
 -(void)updateDb:(NSString*)shiptype
 {
-    [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shiptype];
-    [DataStoreManager updateRecommendStatus:@"0" ForPerson:self.hostInfo.userId];
-    DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
-    [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
+    [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shiptype Successcompletion:^(BOOL success, NSError *error) {
+        if (success) {
+            DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
+            [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+        }else{
+            
+        }
+    }];
 }
 
 - (void)startChat:(id)sender
@@ -1257,17 +1256,15 @@
     [self addFriend:@"1"];
 }
 
-//添加关注或者加好友
+//添加关注或者加好友1，添加好友 2.添加关注
 -(void)addFriend:(NSString*)type
 {
-    NSLog(@"添加好友或者添加关注请求－－－》》");
     [self DetectNetwork];
     MBProgressHUD *hudadd = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hudadd];
     [self.view bringSubviewToFront:hudadd];
     [hudadd show:YES];
     [self begin];
-    
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:self.hostInfo.userId forKey:@"frienduserid"];
@@ -1279,40 +1276,40 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
-        [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
-        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType];
-        if ([type isEqualToString:@"2"]) {
-            [self refreFansNum:@"1"];
-        }
-        [wxSDArray removeAllObjects];
-        [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
-        if (![wxSDArray containsObject:self.hostInfo.userId]) {
-            [self getSayHello];
-        }
-        if ([type isEqualToString:@"1"]) {
-            if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
-                [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
+        [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType Successcompletion:^(BOOL success, NSError *error) {
+            [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
+            if ([type isEqualToString:@"2"]) {
+                [self refreFansNum:@"1"];
             }
-            NSArray *array = [DataStoreManager queryAllBlackListUserid];
-            
-            if ([array containsObject:self.hostInfo.userId]) {
-                [DataStoreManager deletePersonFromBlackListWithUserid:self.hostInfo.userId];
+            [wxSDArray removeAllObjects];
+            [wxSDArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"sayHello_wx_info_id"]];
+            if (![wxSDArray containsObject:self.hostInfo.userId]) {
+                [self getSayHello];
             }
-            
-            [self showMessageWindowWithContent:@"关注成功" imageType:0];
-        }
-        [hudadd hide:YES];
-        if ([type isEqualToString:@"2"]) {
-            if (self.isFansPage) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
+            if ([type isEqualToString:@"1"]) {
+                if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
+                    [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"on"];
+                }
+                NSArray *array = [DataStoreManager queryAllBlackListUserid];
+                
+                if ([array containsObject:self.hostInfo.userId]) {
+                    [DataStoreManager deletePersonFromBlackListWithUserid:self.hostInfo.userId];
+                }
+                [self showMessageWindowWithContent:@"关注成功" imageType:0];
+            }
+            [hudadd hide:YES];
+            if ([type isEqualToString:@"2"]) {
+                if (self.isFansPage) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadFansKey object:[NSString stringWithFormat: @"%d",self.fansTestRow]];
+                }else{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+                }
             }else{
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
             }
-        }else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
-        }
-        [self.navigationController popViewControllerAnimated:YES];
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self end];

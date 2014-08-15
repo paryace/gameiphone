@@ -497,4 +497,6 @@
 //查询用户位置
 +(NSString*)getMemberPosition:(NSString*)groupId UserId:(NSString*)userId;
 
++(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
 @end

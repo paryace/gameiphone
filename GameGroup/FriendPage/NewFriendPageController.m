@@ -348,24 +348,11 @@
     }
 }
 
-////保存用户列表信息
-//-(void)saveFriendsList:(NSDictionary*)result
-//{
-//    NSMutableArray* keys = [NSMutableArray arrayWithArray:[result allKeys]];
-//    [keys sortUsingSelector:@selector(compare:)];
-//    if (result.count>0) {
-//        for (int i=0; i<[keys count]; i++) {
-//            NSString *key=[keys objectAtIndex:i];
-//            [DataStoreManager newSaveFriendList:[result objectForKey:key] withshiptype:key];
-//        }
-//    }
-//}
-
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
-    dispatch_async(queueselect, ^{
+//    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
+//    dispatch_async(queueselect, ^{
         NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
         NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
         NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
@@ -375,11 +362,11 @@
         [keyArr addObjectsFromArray:keys];
         resultArray = result;
         fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
-        dispatch_async(dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
             [m_myTableView reloadData];
             [self setFansNum];
-        });
-    });
+//        });
+//    });
 }
 
 //刷新title
@@ -424,7 +411,6 @@
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
     };
     header.refreshStateChangeBlock = ^(MJRefreshBaseView *refreshView, MJRefreshState state) {
-        
     };
     m_header = header;
 }
@@ -432,7 +418,6 @@
 -(void)enterPhoneAddress:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-
     MessageAddressViewController *mas = [[MessageAddressViewController alloc]init];
     [self.navigationController pushViewController:mas animated:YES];
 }

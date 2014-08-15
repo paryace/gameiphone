@@ -1699,11 +1699,25 @@
         return NO;
 }
 
-+(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type
++(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
-//        [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        }];
-    NSLog(@"%@---%@",userId,type);
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
+        DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (dUser) {
+            dUser.shiptype = [NSString stringWithFormat:@"%@",type];
+        }
+        NSLog(@"duser====%@----sht-%@",dUser.userId,dUser.shiptype);
+    } completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success,error);
+        }
+    }];
+}
+
+
++(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type 
+{
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId==[c]%@",userId];
         DSuser * dUser = [DSuser MR_findFirstWithPredicate:predicate inContext:localContext];
@@ -1721,7 +1735,6 @@
             NSLog(@"成员修改失败");
         }
     }];
-    
 }
 
 + (BOOL)ifIsAttentionWithUserId:(NSString*)userId
