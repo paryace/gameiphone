@@ -559,9 +559,7 @@ typedef enum : NSUInteger {
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
-        [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
-        [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
+       [[TeamManager singleton] clearTeamMessage:self.groupId];
         [[GroupManager singleton] changGroupState:self.groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已经解散该群"delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         alert.tag = 789;
@@ -595,10 +593,7 @@ typedef enum : NSUInteger {
 -(void)changGroupState
 {
     NSDictionary * dic = @{@"groupId":self.groupId,@"state":@"2"};
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:self.groupId];//删除聊天记录
-//    [DataStoreManager deleteGroupInfoByGoupId:self.groupId];//删除群信息
-    [DataStoreManager deleteJoinGroupApplicationByGroupId:self.groupId];// 删除群通知
-    [DataStoreManager deleteThumbMsgWithGroupId:self.groupId];//删除消息列表
+     [[TeamManager singleton] clearTeamMessage:self.groupId];
     [[GroupManager singleton] changGroupState:self.groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
     [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
 }

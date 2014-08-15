@@ -154,6 +154,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMsgUploaded:) name:kteamMessage object:nil];
     //偏好消息
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
+    //被剔出该群
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
@@ -263,6 +265,12 @@
 }
 //加入群
 -(void)joinGroupReceived:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
+
+#pragma mark 被剔出该群通知或者收到同意加入群的消息通知
+- (void)onkickOffGroupGroup:(NSNotification*)notification
 {
     [self displayMsgsForDefaultView];
 }
@@ -674,11 +682,6 @@
         else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:@"groupchat"]){
             NSString * groupId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"groupId")];
             [[TeamManager singleton] clearTeamMessage:groupId];
-            
-//            [DataStoreManager deleteThumbMsgWithGroupId:groupId];
-//            [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
-//            [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
-//            [DataStoreManager deleteDSPreparedByGroupId:groupId];
             
         }else if([KISDictionaryHaveKey([allMsgArray objectAtIndex:indexPath.row],@"msgType") isEqual:GROUPAPPLICATIONSTATE])
         {

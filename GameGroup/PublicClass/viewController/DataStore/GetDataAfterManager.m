@@ -147,7 +147,7 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -164,15 +164,12 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 解散群
 -(void)disbandGroupMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         
     }];
-    [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
@@ -190,15 +187,10 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 被踢出群
 -(void)kickOffGroupMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
-    
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
     [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
-
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -212,7 +204,7 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 入群申请被通过
 -(void)joinGroupApplicationAcceptMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];

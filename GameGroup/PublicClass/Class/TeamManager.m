@@ -200,10 +200,11 @@ static TeamManager *teamManager = NULL;
 
 
 -(void)clearTeamMessage:(NSString*)groupId{
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];
-    [DataStoreManager deleteTeamNotifityMsgStateByGroupId:groupId];
-    [DataStoreManager deleteDSPreparedByGroupId:groupId];
+    [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//根据GroupId删除通知表的消息
+    [DataStoreManager deleteThumbMsgWithGroupId:[GameCommon getNewStringWithId:groupId]];//删除回话列表该群的消息
+    [DataStoreManager deleteGroupMsgWithSenderAndSayType:[GameCommon getNewStringWithId:groupId]];//删除历史记录
+    [DataStoreManager deleteTeamNotifityMsgStateByGroupId:[GameCommon getNewStringWithId:groupId]];
+    [DataStoreManager deleteDSPreparedByGroupId:[GameCommon getNewStringWithId:groupId]];//删除偏好页面消息
 }
 
 -(NSString*)getState:(NSString*)result{

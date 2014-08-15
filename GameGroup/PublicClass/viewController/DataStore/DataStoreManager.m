@@ -137,9 +137,11 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-        if (thumbMsgs) {
-            [thumbMsgs MR_deleteInContext:localContext];
+        NSArray * thumbMsgs = [DSThumbMsgs MR_findAllWithPredicate:predicate];
+        for (DSThumbMsgs * thumbMsg in thumbMsgs) {
+            if (thumbMsgs) {
+                [thumbMsg MR_deleteInContext:localContext];
+            }
         }
     }];
     NSArray * m_applyArray = [DataStoreManager queryDSGroupApplyMsg];
