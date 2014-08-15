@@ -147,7 +147,7 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)JoinGroupMessageReceived:(NSDictionary *)messageContent
 {
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -164,15 +164,12 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 解散群
 -(void)disbandGroupMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         
     }];
-    [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
     [[GroupManager singleton] changGroupState:groupId GroupState:@"1" GroupShipType:@"3"];//改变本地群的状态
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
@@ -190,15 +187,10 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 被踢出群
 -(void)kickOffGroupMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
-    
-    [DataStoreManager deleteGroupMsgWithSenderAndSayType:groupId];//删除历史记录
-    [DataStoreManager deleteJoinGroupApplicationByGroupId:groupId];//删除群通知
-    [DataStoreManager deleteThumbMsgWithGroupId:groupId];//删除回话列表该群的消息
     [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
-
     [DataStoreManager saveDSGroupApplyMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -212,7 +204,7 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 入群申请被通过
 -(void)joinGroupApplicationAcceptMessageReceived:(NSDictionary *)messageContent{
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"0"];
@@ -399,6 +391,23 @@ static SystemSoundID shake_sound_male_id = 0;
 }
 #pragma mark 占坑
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent{
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
+        });
+    }];
+    
+    
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 填坑
@@ -577,17 +586,19 @@ static SystemSoundID shake_sound_male_id = 0;
 -(void)dyMessageReceived:(NSDictionary *)info
 {
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
-    [self saveDyMessage:payload];
+    NSDictionary *dic = [NSDictionary dictionaryWithDictionary:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    [DataStoreManager saveCricleCountWithType:2 img:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    });
     [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 与我相关动态消息
 -(void)dyMeMessageReceived:(NSDictionary *)info{
     NSString * payload = KISDictionaryHaveKey(info, @"payLoad");
     [self newdynamicAboutMe:[payload JSONValue]];
-    
-    
+
    //保存与我相关数量~~凑
-    
     NSDictionary *dic =[payload JSONValue];
     NSString *imgStr;
     if ([[dic allKeys]containsObject:@"commentObject"]) {
@@ -597,9 +608,9 @@ static SystemSoundID shake_sound_male_id = 0;
         imgStr = [NSString stringWithFormat:@"%@",[[[dic objectForKey:@"zanObject"]objectForKey:@"zanUser"]objectForKey:@"img"]];
     }
     [DataStoreManager saveCricleCountWithType:1 img:imgStr userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    
-    [self saveAboutDyMessage:payload];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
+    });
      [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
 #pragma mark 群动态消息
@@ -608,117 +619,6 @@ static SystemSoundID shake_sound_male_id = 0;
     [self saveGroupDyMessage:payload];
      [self comeBackDelivered:KISDictionaryHaveKey(info, @"sender") msgId:KISDictionaryHaveKey(info, @"msgId") Type:@"normal"];//反馈消息
 }
-
-//---------------------------------------好友动态
-
--(void)saveDyMessage:(NSString *)payload
-{
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    if ((nowTime - markTimeDy)*100<0.5*1000) {
-        markTimeDy = [[NSDate date] timeIntervalSince1970];
-        dyMsgCount++;
-        if ([self.cellTimerDy isValid]) {
-            [self.cellTimerDy invalidate];
-            self.cellTimerDy = nil;
-        }
-        self.cellTimerDy = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(saveDyMsgTimer:) userInfo:payload repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerDy forMode:NSRunLoopCommonModes];
-        return;
-    }
-    markTimeDy = [[NSDate date] timeIntervalSince1970];
-    dyMsgCount++;
-    [self saveDyMsg:payload];
-}
--(void)saveDyMsgTimer:(NSTimer*)timer
-{
-    [self saveDyMsg:timer.userInfo];
-}
--(void)saveDyMsg:(NSString *)payload
-{
-    if ([self.cellTimerDy isValid]) {
-        [self.cellTimerDy invalidate];
-        self.cellTimerDy = nil;
-    }
-    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]) {
-//        int i =[[[NSUserDefaults standardUserDefaults]objectForKey:@"dongtaicount_wx"]intValue];
-//        i+=dyMsgCount;
-//        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"dongtaicount_wx"];
-//    }else{
-//        int i = 0;
-//        i+=dyMsgCount;
-//        [[NSUserDefaults standardUserDefaults]setObject:@(i)forKey:@"dongtaicount_wx"];
-//    }
-//    dyMsgCount = 0;
-    NSLog(@"-----%@",[[NSString stringWithFormat:@"%@",payload] JSONValue]);
-    NSDictionary *dic = [NSDictionary dictionaryWithDictionary:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
-    [DataStoreManager saveCricleCountWithType:2 img:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] userid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-       [[NSNotificationCenter defaultCenter] postNotificationName:@"frienddunamicmsgChange_WX" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
-    });
-}
-
-//---------------------------------------与我相关
--(void)saveAboutDyMessage:(NSString *)payload
-{
-    
-
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    if ((nowTime - markTimeDyMe)*100<0.5*1000) {
-        markTimeDyMe = [[NSDate date] timeIntervalSince1970];
-        dyMeMsgCount++;
-        if ([self.cellTimerDyMe isValid]) {
-            [self.cellTimerDyMe invalidate];
-            self.cellTimerDyMe = nil;
-        }
-        self.cellTimerDyMe = [NSTimer scheduledTimerWithTimeInterval:mTime target:self selector:@selector(saveDyMeMsgTimer:) userInfo:payload repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.cellTimerDyMe forMode:NSRunLoopCommonModes];
-        return;
-    }
-    markTimeDyMe = [[NSDate date] timeIntervalSince1970];
-    dyMeMsgCount++;
-    
-    NSLog(@"+++++++++%@",[[NSString stringWithFormat:@"%@",payload] JSONValue]);
-    
-    [self saveDyMeMsg:payload];
-}
-
--(void)saveDyMeMsgTimer:(NSTimer*)timer
-{
-    [self saveDyMeMsg:timer.userInfo];
-}
-
--(void)saveDyMeMsg:(NSString *)payload
-{
-    if ([self.cellTimerDyMe isValid]) {
-        [self.cellTimerDyMe invalidate];
-        self.cellTimerDyMe = nil;
-    }
-    [self saveLastFriendDynimacUserImage:[self getMyDynimacImageInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]]FileName:@"mydynamicmsg_huancun_wx"];
-
-
-    [self saveLastFriendDynimacUserImage:[[NSString stringWithFormat:@"%@",payload] JSONValue] FileName:@"frienddynamicmsg_huancun_wx"];
-    
-    if (![[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]) {
-        int i = 0;
-        i+=dyMeMsgCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
-    }else{
-        int i =[[[NSUserDefaults standardUserDefaults]objectForKey: @"mydynamicmsg_huancunCount_wx"]intValue];
-        
-        i+=dyMeMsgCount;
-        [[NSUserDefaults standardUserDefaults]setObject:@(i) forKey:@"mydynamicmsg_huancunCount_wx"];
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:@"1" forKey:haveMyNews];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    dyMeMsgCount=0;
-    dispatch_async(dispatch_get_main_queue(), ^{
-
-       [[NSNotificationCenter defaultCenter]postNotificationName:@"mydynamicmsg_wx" object:nil userInfo:[[NSString stringWithFormat:@"%@",payload] JSONValue]];
-    });
-}
-
 //---------------------------------------群动态
 -(void)saveGroupDyMessage:(NSString *)payload
 {
@@ -765,35 +665,6 @@ static SystemSoundID shake_sound_male_id = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter]postNotificationName:GroupDynamic_msg object:nil userInfo:msgDic];
     });
-}
-//---------------------------------------
-
-//保存最后一条动态消息
--(NSDictionary*)getMyDynimacImageInfo:(NSDictionary*)payloadDic
-{
-    NSString *customObject;
-    NSString *customUser;
-    if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==4) {
-        customObject = @"zanObject";
-        customUser = @"zanUser";
-    }
-    else if ([KISDictionaryHaveKey(payloadDic, @"type")intValue]==5||[KISDictionaryHaveKey(payloadDic, @"type")intValue]==7)
-    {
-        customObject =@"commentObject";
-        customUser = @"commentUser";
-    }
-    NSString * cusUserImageIds=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(payloadDic, customObject),customUser), @"img");
-    NSDictionary * imageDic = @{@"img":cusUserImageIds};
-    return imageDic;
-}
--(void)saveLastFriendDynimacUserImage:(NSDictionary*)payloadDic FileName:(NSString*)fileName
-{
-    NSMutableData *data= [[NSMutableData alloc]init];
-    NSKeyedArchiver *archiver= [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-    [archiver encodeObject:payloadDic forKey: @"getDatat"];
-    [archiver finishEncoding];
-    [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"frienddynamicmsg_huancun_wx"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 //--------------------------------------反馈消息

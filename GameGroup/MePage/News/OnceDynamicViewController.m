@@ -602,7 +602,7 @@
         
        NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
         if ([GameCommon isEmtity:title]) {
-            title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
+            title = _dataDic[@"msg"];
         }
 //        NSString * shareUrl = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"urlLink")];
 //        if ([GameCommon isEmtity:shareUrl]) {
@@ -632,11 +632,14 @@
         else if(buttonIndex ==2)
         {
             [[ShareToOther singleton]changeScene:WXSceneSession];
-            [[ShareToOther singleton] onShareToQQ:[ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")] Title:title Description:_dataDic[@"msg"] Url:shareUrl IsZone:NO];
             
-            
-            
-//             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(self.dataDic, @"img")]) {
+                NSData * data = [self getNSDataFromURL:@"icon"];
+                [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageData:data IsZone:NO];
+            }else{
+                [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageURL:[ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")] IsZone:NO];
+            }
+//          [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==3)
         {
@@ -659,14 +662,16 @@
     return result;
 }
 
+//请求网络图片
+-(NSData *) getNSDataFromURL:(NSString *)imageName {
+    return UIImageJPEGRepresentation(KUIImage(imageName),0.8);
+}
+
 -(UIImage*)getShareImage
 {
-    if ([self.urlLink isEqualToString:@""]) {
-        NSString * imageUrl = [ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")];
-        if (![GameCommon isEmtity:imageUrl]) {
-            return [self getImageFromURL:imageUrl];
-        }
-        return KUIImage(@"icon");
+    NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];
+    if (![GameCommon isEmtity:imageUrl]) {
+        return [self getImageFromURL:imageUrl];
     }
     return KUIImage(@"icon");
 }

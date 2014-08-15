@@ -137,9 +137,11 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@",groupId];
-        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
-        if (thumbMsgs) {
-            [thumbMsgs MR_deleteInContext:localContext];
+        NSArray * thumbMsgs = [DSThumbMsgs MR_findAllWithPredicate:predicate];
+        for (DSThumbMsgs * thumbMsg in thumbMsgs) {
+            if (thumbMsgs) {
+                [thumbMsg MR_deleteInContext:localContext];
+            }
         }
     }];
     NSArray * m_applyArray = [DataStoreManager queryDSGroupApplyMsg];
@@ -5347,19 +5349,32 @@
     }else
         return NULL;
 }
-+(void)clearCircleCountWithUserid:(NSString *)userid
++(void)clearMeCircleCountWithUserid:(NSString *)userid
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
         DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
         if (circleCo) {
-            circleCo.mineCount =0;
+            circleCo.mineCount = 0;
+        }
+    }
+    completion:^(BOOL success, NSError *error) {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
+    }];
+}
+
++(void)clearFriendCircleCountWithUserid:(NSString *)userid
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"userid==[c]%@",userid];
+        DSCircleCount * circleCo = [DSCircleCount MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
+        if (circleCo) {
             circleCo.friendsCount = 0;
         }
     }
     completion:^(BOOL success, NSError *error) {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshCircleCount" object:nil];
     }];
-
 }
 
 @end

@@ -492,8 +492,8 @@
 
 +(DSCircleCount*)querymessageWithUserid:(NSString *)userid;
 
-+(void)clearCircleCountWithUserid:(NSString *)userid;
-
++(void)clearMeCircleCountWithUserid:(NSString *)userid;
++(void)clearFriendCircleCountWithUserid:(NSString *)userid;//
 //查询用户位置
 +(NSString*)getMemberPosition:(NSString*)groupId UserId:(NSString*)userId;
 
