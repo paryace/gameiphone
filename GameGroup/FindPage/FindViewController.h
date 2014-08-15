@@ -10,5 +10,5 @@
 #import "TvView.h"
 
 @interface FindViewController : BaseViewController<UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,TvViewDelegate>
-
+@property (nonatomic, retain) NSTimer* cellTimer;
 @end

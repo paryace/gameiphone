@@ -57,7 +57,6 @@ typedef enum : NSUInteger {
     NSString *methodStr;
     BOOL isfriendCircle;
     UIButton *senderBnt;
-    int m_commentAboutMeCount;
     
     UIAlertView *delCellAlertView;
     int  delCellCount;//删除动态的cell行数（位置）
@@ -102,10 +101,8 @@ typedef enum : NSUInteger {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showAboutMePage:) name:@"mydynamicmsg_wx" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshCircle:) name:@"refreshCircleCount" object:nil];
 }
 
@@ -160,11 +157,7 @@ typedef enum : NSUInteger {
     
     NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
-        
-        
-//        topImageView.image = [UIImage imageWithData:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageData_wx_%@",userid]]];
         topImageView.imageURL =[ImageService getImageStr2:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]];
-        
     }else{
             topImageView.backgroundColor = UIColorFromRGBA(0x262930, 1);
             topImageView.imageURL = nil;
@@ -182,9 +175,7 @@ typedef enum : NSUInteger {
     [topVIew addSubview:topunderBgImageView];
     
 //    昵称
-//    NSString * strNickName = KISDictionaryHaveKey(user, @"nickname");
     CGSize nickLabelsize =[nickName sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-    
     UILabel *underNickLabel = [[UILabel alloc]initWithFrame:CGRectMake(221-nickLabelsize.width, 291, nickLabelsize.width, 30)];
     underNickLabel.text =self.nickNmaeStr;
     underNickLabel.text = nickName;
@@ -250,48 +241,8 @@ typedef enum : NSUInteger {
     aboutMeLabel.backgroundColor =[UIColor clearColor];
     aboutMeLabel.font = [UIFont boldSystemFontOfSize:13];
     [abobtMeImageView addSubview:aboutMeLabel];
-    
-    
     [self setAboutMe];
-    
-    
-//    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]) {
-//        ishaveAboutMe =YES;
-//        //改变HeadView的高度 以容纳aboutMeImageView
-//        CGRect frame = m_myTableView.tableHeaderView.frame;
-//        frame.size.height =430;
-//        UIView *view = m_myTableView. tableHeaderView;
-//        view.frame = frame;
-//        m_myTableView.tableHeaderView = view;
-//        NSDictionary *dic = [self getDynamicInfo];
-//        abobtMeImageView.hidden =NO;
-//        if (dic) {
-//            NSString * cusUserImageIds=KISDictionaryHaveKey(dic,@"img");
-//            if ([GameCommon isEmtity:cusUserImageIds]) {
-//                aboutMeHeadImgView.imageURL =nil;
-//            }else
-//            {
-//                aboutMeHeadImgView.imageURL = [ImageService getImageStr:cusUserImageIds Width:60];
-//                
-//            }
-//        }else{
-//            aboutMeHeadImgView.imageURL =nil;
-//        }
-//        m_commentAboutMeCount =[[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancunCount_wx"]intValue];
-//        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
-//
-//    }else
-//    {
-//        abobtMeImageView.hidden = YES;
-//    }
-    
-    
-    
-    
-    
-    
     [self setTopViewWithTitle:@"朋友圈" withBackButton:NO];
-    
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
@@ -362,13 +313,11 @@ typedef enum : NSUInteger {
         }else{
             aboutMeHeadImgView.imageURL = [ImageService getImageStr:img Width:60];
         }
-        m_commentAboutMeCount =g;
-        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
+        aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",g];
     }else
     {
         abobtMeImageView.hidden = YES;
     }
-
 }
 
 
@@ -378,20 +327,6 @@ typedef enum : NSUInteger {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-//获取缓存的动态消息内容
--(NSDictionary*)getDynamicInfo
-{
-    NSMutableData *data= [NSMutableData data];
-    NSDictionary *dic = [NSDictionary dictionary];
-    data =[[NSUserDefaults standardUserDefaults]objectForKey:@"mydynamicmsg_huancun_wx"];
-    if(!data){
-        return nil;
-    }
-    NSKeyedUnarchiver *unarchiver= [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    dic = [unarchiver decodeObjectForKey: @"getDatat"];
-    [unarchiver finishDecoding];
-    return dic;
-}
 
 -(void)buildBottomView
 {
@@ -629,45 +564,6 @@ typedef enum : NSUInteger {
     [self setAboutMe];
 }
 
-//显示与我相关
--(void)showAboutMePage:(NSNotification *)info
-{
-    NSString *customObject;
-    NSString *customUser;
-    
-    if ([KISDictionaryHaveKey(info.userInfo, @"type")intValue]==4) {
-        customObject = @"zanObject";
-        customUser = @"zanUser";
-    }
-    else if ([KISDictionaryHaveKey(info.userInfo, @"type")intValue]==5||[KISDictionaryHaveKey(info.userInfo, @"type")intValue]==7)
-    {
-        customObject =@"commentObject";
-        customUser = @"commentUser";
-    }
-    
-    m_commentAboutMeCount++;
-    
-    //改变HeadView的高度 以容纳aboutMeImageView
-    if(abobtMeImageView.hidden)
-    {
-        CGRect frame = m_myTableView.tableHeaderView.frame;
-        frame.size.height =430;
-        UIView *view = m_myTableView. tableHeaderView;
-        view.frame = frame;
-        m_myTableView.tableHeaderView = view;
-        abobtMeImageView.hidden =NO;
-    }
-    
-    NSString * userImageids=KISDictionaryHaveKey(KISDictionaryHaveKey(KISDictionaryHaveKey(info.userInfo, customObject),customUser), @"img");
-    if ([GameCommon isEmtity:userImageids]) {
-        aboutMeHeadImgView.imageURL =nil;
-    }else
-    {
-       aboutMeHeadImgView.imageURL = [ImageService getImageStr:userImageids Width:60];
-    }
-    aboutMeLabel.text = [NSString stringWithFormat:@"%d条新消息",m_commentAboutMeCount];
-    
-}
 
 #pragma mark --进入与我相关界面
 -(void)enterAboutMePage:(id)sender
@@ -681,10 +577,6 @@ typedef enum : NSUInteger {
     UIView *view = m_myTableView. tableHeaderView;
     view.frame = frame;
     m_myTableView.tableHeaderView = view;
-    
-    m_commentAboutMeCount=0;
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"mydynamicmsg_huancunCount_wx"];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"mydynamicmsg_huancun_wx"];
     CircleWithMeViewController *cir = [[CircleWithMeViewController alloc]init];
     cir.userId = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:haveMyNews];
@@ -757,10 +649,7 @@ typedef enum : NSUInteger {
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
             
             if (m_currPageCount==0) {
-                [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"dongtaicount_wx"];
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"cleanInfoOffinderPage_wx" object:nil];
                 [m_dataArray removeAllObjects];
-                
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 
 //                if (m_dataArray.count>0) {
