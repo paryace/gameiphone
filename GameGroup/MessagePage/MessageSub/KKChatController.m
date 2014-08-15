@@ -2060,9 +2060,15 @@ UINavigationControllerDelegate>
 }
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    
 }
 
--(void) autoMovekeyBoard: (float) h{
+-(void) autoMovekeyBoard:(float) h{
+    [self hideOrShowInputView:h];
+}
+
+
+-(void)hideOrShowInputView:(float) h{
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
     CGRect containerFrame = self.inPutView.frame;
@@ -2098,6 +2104,9 @@ UINavigationControllerDelegate>
         [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
     }
 }
+
+
+
 #pragma mark HPExpandingTextView delegate
 - (BOOL)growingTextViewShouldBeginEditing:(HPGrowingTextView *)growingTextView
 {
@@ -2257,6 +2266,7 @@ UINavigationControllerDelegate>
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     
     [self autoMovekeyBoard:keyboardRect.size.height];
+    
     if (self.isTeam) {
         [self hideTopView];
     }
