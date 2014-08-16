@@ -798,6 +798,11 @@
 {
     if (currentExtendSection==1) {
         if (self.teamUsershipType) {
+            NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+            NSString *itemShipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")] ;
+            if ([itemShipType intValue] == 0) {
+                return @"解散";
+            }
             return @"删除";
         }
         return @"";
@@ -822,7 +827,9 @@
             tableView.editing = NO;
             NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
-                 [self showToastAlertView:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍"];
+                UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+                alert.tag = 10000001;
+                [alert show];
                 return;
             }
             [hud show:YES];
@@ -846,6 +853,27 @@
         }
     }
 }
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag ==10000001) {
+        if (buttonIndex==1) {
+            hud.labelText = @"解散中...";
+            [hud show:YES];
+            [[ItemManager singleton] dissoTeam:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
+                [hud hide:YES];
+                [self showOrHideView:currentExtendSection];
+                [self showToastAlertView:@"解散成功"];
+            } reError:^(id error) {
+                [hud hide:YES];
+                [self showErrorAlertView:error];
+            }];
+        }
+        
+    }
+}
+
+
 //头像默认图片
 -(NSString*)headPlaceholderImage:(NSString*)gender
 {

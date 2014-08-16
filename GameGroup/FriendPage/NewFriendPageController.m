@@ -359,7 +359,7 @@
     [keyArr addObject:@"^"];
     [keyArr addObjectsFromArray:keys];
     resultArray = result;
-    fansNum = [NSString stringWithFormat:@"%@%@",FansCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    fansNum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",FansCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [m_myTableView reloadData];
     [self setFansNum];
 }

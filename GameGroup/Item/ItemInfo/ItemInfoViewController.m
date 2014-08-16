@@ -528,6 +528,7 @@
     }
     return 29;
 }
+
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section==0) {
@@ -585,7 +586,6 @@
 }
 -(void)changeInfo1
 {
-    
     if (self.isCaptain) {
         EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
         editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
@@ -618,8 +618,19 @@
         }else{
             [self removeClaimed:indexPath.row];
         }
-        
     }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section ==0) {
+        NSString *itemShipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")] ;
+        if ([itemShipType intValue] == 0) {
+            return @"解散";
+        }
+        return  @"删除";
+    }
+    return @"删除";
 }
 
 
@@ -635,7 +646,8 @@
 {
     NSDictionary *dic = m_dataArray[row];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
-        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您不能踢出自己,如果想撤销队伍,点击择队伍设置,进入设置页面后解散队伍" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+       UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+        alert.tag = 10000001;
         [alert show];
         return;
     }
@@ -676,21 +688,6 @@
         }
     }
 }
-
-//-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 70)];
-//    view.backgroundColor = [UIColor whiteColor];
-//    UIButton *Button = [[UIButton alloc]initWithFrame:CGRectMake(10, 30, 300, 40)];
-//    Button.backgroundColor = [UIColor grayColor];
-//    if (self.isCaptain) {
-//        [Button setTitle:@"解散队伍" forState:UIControlStateNormal];
-//    }else{
-//        [Button setTitle:@"申请加入" forState:UIControlStateNormal];
-//    }
-//    [view addSubview:Button];
-//    return view;
-//}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
