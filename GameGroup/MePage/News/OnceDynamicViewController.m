@@ -604,11 +604,9 @@
         if ([GameCommon isEmtity:title]) {
             title = _dataDic[@"msg"];
         }
-//        NSString * shareUrl = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"urlLink")];
-//        if ([GameCommon isEmtity:shareUrl]) {
-//                shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
-//        }
-        
+        if (title.length>100) {
+           title = [title substringFromIndex:100];
+        }
          NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         
         if (buttonIndex ==0) {

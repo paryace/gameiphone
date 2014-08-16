@@ -235,13 +235,15 @@
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         self.imageId = [[NSMutableString alloc]init];
-        for (int i=0; i<reponseStrArray.count; i++) {
+        for (int i=0; i<uploadImagePathArray.count; i++) {
             NSString * a=[uploadImagePathArray objectAtIndex:i];
             [_imageId appendFormat:@"%@,",[reponseStrArray objectForKey:a]];
         }
         [self publishWithImageString:_imageId];
     }else{
-        [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        if (imageImdex+1<uploadImagePathArray.count) {
+            [self uploadPicture:[uploadImagePathArray objectAtIndex:imageImdex+1]];
+        }
     }
     imageImdex++;
 }
@@ -259,19 +261,13 @@
     
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
-//    [paramDict setObject:@"3" forKey:@"type"];
-    
-    NSString *trimmedString = [self.dynamicTV.text stringByTrimmingCharactersInSet:
-                               [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    
+    NSString *trimmedString = [self.dynamicTV.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     [paramDict setObject:trimmedString forKey:@"msg"];
     [paramDict setObject:imageID forKey:@"img"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"184" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     hud.labelText = @"发表中...";
     [hud show:YES];
     
@@ -401,7 +397,7 @@
     
     UIImageView* imageV = [[UIImageView alloc]initWithFrame:PhotoB.frame];
     imageV.userInteractionEnabled = YES;
-    imageV.image = selectImage;
+    imageV.image = [NetManager image2:selectImage centerInSize:CGSizeMake(160,160)];
     [self.view addSubview:imageV];
     if (PhotoB.frame.origin.x < PhotoB.frame.size.width*3) {
         PhotoB.frame = CGRectMake(PhotoB.frame.origin.x+ PhotoB.frame.size.width +5, PhotoB.frame.origin.y, PhotoB.frame.size.width, PhotoB.frame.size.height);
