@@ -38,14 +38,14 @@
     [self setTopViewWithTitle:@"兑换码" withBackButton:YES];
     
     charaArray = [NSMutableArray array];
-    [charaArray removeAllObjects];
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]&&[[[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"] isKindOfClass:[NSArray class]]) {
-            [charaArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]];
+    NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    if (coreArray&&coreArray.count>0) {
+        [charaArray removeAllObjects];
+         [charaArray addObjectsFromArray:coreArray];
     }else{
         alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色,不能使用兑换码" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
         alertView1.tag = 10001;
         [alertView1 show];
-
     }
     
     UITableView *tableView =[[ UITableView alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, 300, 200)style:UITableViewStylePlain];

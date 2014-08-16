@@ -62,7 +62,9 @@ static UserManager *userManager = NULL;
     if ([userId hasPrefix:@"sys"]) {
         return ;
     }
-    [self.userCache removeObjectForKey:userId];
+    if (![GameCommon isEmtity:userId]) {
+         [self.userCache removeObjectForKey:userId];
+    }
     if ([self.cacheUserids containsObject:userId]) {
         return;
     }

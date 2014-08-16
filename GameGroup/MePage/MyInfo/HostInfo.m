@@ -35,7 +35,7 @@
                 NSLog(@"字典为空");
             }
         }
-        [[NSUserDefaults standardUserDefaults]setObject:self.charactersArr forKey:@"CharacterArrayOfAllForYou"];
+        
         NSDictionary* userInfo = KISDictionaryHaveKey(info, @"user");
         if (![userInfo isKindOfClass:[NSDictionary class]]) {
             return self;
