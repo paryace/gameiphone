@@ -17,6 +17,7 @@
     NSArray *results;
     NSMutableArray *tempKeys;
     
+    UIView * mSearchView;
     UISearchBar * mSearchBar;
     UISearchDisplayController *searchController;
 }
@@ -57,19 +58,21 @@
     [self.view addSubview:m_realmsTableView];
     [self initContentForSearchText];
     
-    
+    mSearchView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    mSearchView.backgroundColor = [UIColor clearColor];
     //初始化搜索条
-    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 340, 44)];
     [mSearchBar setPlaceholder:@"关键字搜索服务器"];
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];
+    [mSearchView addSubview:mSearchBar];
     //初始化UISearchDisplayController
     searchController = [[UISearchDisplayController alloc] initWithSearchBar:mSearchBar contentsController:self];
     [searchController setDelegate:self];
     [searchController setSearchResultsDataSource:self];
     [searchController setSearchResultsDelegate:self];
-    searchController.searchResultsTableView.tableHeaderView = mSearchBar;
-    m_realmsTableView.tableHeaderView = mSearchBar;
+    searchController.searchResultsTableView.tableHeaderView = mSearchView;
+    m_realmsTableView.tableHeaderView = mSearchView;
 }
 #pragma mark 表格
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
