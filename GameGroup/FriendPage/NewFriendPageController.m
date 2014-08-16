@@ -351,22 +351,17 @@
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
-//    dispatch_queue_t queueselect = dispatch_queue_create("com.living.game.NewFriendControllerSelect", NULL);
-//    dispatch_async(queueselect, ^{
-        NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
-        NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
-        NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
-        [keyArr removeAllObjects];
-        [resultArray removeAllObjects];
-        [keyArr addObject:@"^"];
-        [keyArr addObjectsFromArray:keys];
-        resultArray = result;
-        fansNum = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults] objectForKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]]];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-            [m_myTableView reloadData];
-            [self setFansNum];
-//        });
-//    });
+    NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
+    NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
+    NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
+    [keyArr removeAllObjects];
+    [resultArray removeAllObjects];
+    [keyArr addObject:@"^"];
+    [keyArr addObjectsFromArray:keys];
+    resultArray = result;
+    fansNum = [NSString stringWithFormat:@"%@%@",FansCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    [m_myTableView reloadData];
+    [self setFansNum];
 }
 
 //刷新title
