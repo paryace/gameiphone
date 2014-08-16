@@ -1717,7 +1717,7 @@ UINavigationControllerDelegate>
 //点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
     
-    if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
+    if ([[GameCommon getNewStringWithId:available] isEqualToString:@"2"]&&[[GameCommon getNewStringWithId:groupUsershipType] isEqualToString:@"3"]) {//已被踢出该群
         [self showOutDialog];
         return ;
     }
@@ -2412,7 +2412,7 @@ UINavigationControllerDelegate>
         [alertView show];
         return ;
     }
-    if ([available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {//已被踢出该群
+    if ([[GameCommon getNewStringWithId:available] isEqualToString:@"2"]&&[[GameCommon getNewStringWithId:groupUsershipType] isEqualToString:@"3"]) {//已被踢出该群
         [self showOutDialog];
         return ;
     }
@@ -2563,14 +2563,14 @@ UINavigationControllerDelegate>
 //群是否可用
 -(BOOL)isGroupAvaitable
 {
-    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"1"]&&[groupUsershipType isEqualToString:@"3"]) {
+    if ([self.type isEqualToString:@"group"]&&[[GameCommon getNewStringWithId:available] isEqualToString:@"1"]&&[[GameCommon getNewStringWithId:groupUsershipType] isEqualToString:@"3"]) {
         return NO;
     }
     return YES;
 }
 //是否在群里面
 -(BOOL)isOut{
-    if ([self.type isEqualToString:@"group"]&&[available isEqualToString:@"2"]&&[groupUsershipType isEqualToString:@"3"]) {
+    if ([self.type isEqualToString:@"group"]&&[[GameCommon getNewStringWithId:available] isEqualToString:@"2"]&&[[GameCommon getNewStringWithId:groupUsershipType] isEqualToString:@"3"]) {
         return YES;
     }
     return NO;

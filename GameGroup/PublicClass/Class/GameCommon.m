@@ -713,51 +713,31 @@ static GameCommon *my_gameCommon = NULL;
             return;
         }
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-        
-        if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
-            if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken])//本地没有token的情况下不需要请求登陆失败的原因
+            if (![KISDictionaryHaveKey(responseObject, @"tokenValid")boolValue]) {
+                if ([[NSUserDefaults standardUserDefaults] objectForKey:kMyToken])//本地没有token的情况下不需要请求登陆失败的原因
+                {
+                    [NetManager  getTokenStatusMessage];
+                }
+                [GameCommon loginOut];
+            }
+            else
             {
-                [NetManager  getTokenStatusMessage];
+                NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
+                if (!arr||![arr isKindOfClass:[NSArray class]]) {
+                    [[TempData sharedInstance]isBindingRolesWithBool:NO];
+                }else{
+                    if (arr.count>0) {
+                        [[TempData sharedInstance]isBindingRolesWithBool:YES];
+                    }else{
+                        [[TempData sharedInstance]isBindingRolesWithBool:NO];
+                    }
+                }
             }
-            [GameCommon loginOut];
-        }
-        else
-        {
-        NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
-        if (!arr||![arr isKindOfClass:[NSArray class]]) {
-            [[TempData sharedInstance]isBindingRolesWithBool:NO];
-        }else{
-            if (arr.count>0) {
-                [[TempData sharedInstance]isBindingRolesWithBool:YES];
-            }else{
-                [[TempData sharedInstance]isBindingRolesWithBool:NO];  
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
+                NSLog(@"111--OPen接口的用户信息");
+                [[UserManager singleton]saveUserInfo:responseObject];
             }
-        }
-        }
-        
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
-            NSLog(@"111--OPen接口的用户信息");
-            [[UserManager singleton]saveUserInfo:responseObject];
-        }
-
-        
-//        NSArray *charachers = [responseObject objectForKey:@"characters"];
-//        
-//        for (NSMutableDictionary *characher in charachers) {
-//            [DataStoreManager saveDSCharacters:characher UserId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"user"), @"id")];
-        
-//            [[UserManager singleton]saveUserInfo:responseObject];
-        
-            
-//            NSMutableArray *array = [NSMutableArray array];
-//            if (![array containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characher, @"gameid")]]) {
-//                [array addObject:[characher objectForKey:@"gameid"]];
-//            }
-//
-//            [[NSUserDefaults standardUserDefaults]setObject:array forKey:[NSString stringWithFormat:@"findpageGameList_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
-      //  }
-
-        [self openSuccessWithInfo:responseObject From:@"firstOpen"];
+            [self openSuccessWithInfo:responseObject From:@"firstOpen"];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
