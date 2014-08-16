@@ -1440,9 +1440,10 @@ typedef enum : NSUInteger {
     if (buttonIndex==0) {
         return;
     }
-    NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount-100)];
-    NSLog(@"dic---%@",dic);
-    [self delCellWithMsgId:KISDictionaryHaveKey(dic, @"id")];
+    if (delCellCount-100<m_dataArray.count) {
+        NSDictionary *dic =[m_dataArray objectAtIndex:(delCellCount-100)];
+        [self delCellWithMsgId:KISDictionaryHaveKey(dic, @"id")];
+    }
 }
 
 

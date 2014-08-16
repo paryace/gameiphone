@@ -161,7 +161,11 @@
     if (section==0) {
         return 1;
     }
-    return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
+    if (keyArr.count>section) {
+        return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
+    }
+    return 1;
+    
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {

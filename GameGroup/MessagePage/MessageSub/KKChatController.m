@@ -2447,8 +2447,9 @@ UINavigationControllerDelegate>
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value")forKey:@"teamPosition"];
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
-    [[MessageAckService singleton] addMessage:messageDict];
+    
     [self addNewMessageToTable:messageDict];
+    [[MessageAckService singleton] addMessage:messageDict];
 }
 
 
@@ -2499,9 +2500,9 @@ UINavigationControllerDelegate>
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value") forKey:@"teamPosition"];
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
+    [self addNewMessageToTable:messageDict];
     [[MessageAckService singleton] addMessage:messageDict];
     [self sendMessage:message NowTime:[GameCommon getCurrentTime] UUid:uuid From:from To:to MsgType:[self getMsgType] FileType:@"text" Type:@"chat" Payload:payloadStr];
-    [self addNewMessageToTable:messageDict];
     [self refreWX];
 }
 

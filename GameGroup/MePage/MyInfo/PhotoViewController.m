@@ -16,7 +16,6 @@
 
 @property (nonatomic,retain)UIScrollView* sc;
 @property (nonatomic,retain)UIImage* myimage;
-@property (nonatomic,retain)NSArray* smallImageArray;
 @end
 
 @implementation PhotoViewController
@@ -34,23 +33,10 @@
 {
     self = [super init];
     if (self) {
-        self.smallImageArray = [self imageToURL:images];
         self.imgIDArray = images;
         self.indext = indext;
     }
     return self;
-}
-
-#pragma mark -创建界面
--(NSArray *)imageToURL:(NSArray *)imageArray;
-{
-    NSMutableArray * temp = [NSMutableArray array];
-    for (id headID in imageArray) {
-        if (![GameCommon isEmtity:headID]) {
-            [temp addObject:[ImageService getImageUrlString:headID Width:160 Height:160]];
-        }
-    }
-    return temp;
 }
 
 - (void)viewDidLoad
@@ -79,9 +65,8 @@
         
         //为每张图片imageV建立单独的Scorllview
         imageV = [[EGOImageView alloc]initWithFrame:CGRectMake(110,(_sc.frame.size.height-100)/2 , 100, 100)];
-        imageV.placeholderImage = _smallImageArray[i];
         EGOImageView *imgview = [[EGOImageView alloc]init];
-        imgview.imageURL =[NSURL URLWithString: _smallImageArray[i]];
+        imgview.imageURL =[ImageService getImageUrl:self.imgIDArray[i] Width:160 Height:160];
         imageV.placeholderImage = imgview.image;
         imageV.userInteractionEnabled = YES;
         imageV.delegate = self;
@@ -117,7 +102,6 @@
                 [self imageViewLoadedImage:imageV]; //读取图片
             }
             else{
-//                imageV.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: self.imgIDArray[i]]];
                 imageV.imageURL = [ImageService getImageUrl4:self.imgIDArray[i]];
             }
         }
