@@ -56,8 +56,8 @@
 }
 - (void)inviteFriend
 {
-    if (self.delegate&& [_delegate respondsToSelector:@selector(DodeAddressCellTouchButtonWithIndexPath:)]) {
-        [_delegate DodeAddressCellTouchButtonWithIndexPath:self.indexPath];
+    if (self.delegate&& [_delegate respondsToSelector:@selector(DodeAddressCellTouchButtonWithIndexPath:IsSearch:)]) {
+        [_delegate DodeAddressCellTouchButtonWithIndexPath:self.indexPath IsSearch:self.isSearch];
     }
 }
 @end

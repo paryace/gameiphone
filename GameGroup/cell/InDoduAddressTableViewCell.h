@@ -9,11 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "DodeAddressCellDelegate.h"
 #import "EGOImageView.h"
+@protocol DetailDelegate;
+
 @interface InDoduAddressTableViewCell : UITableViewCell
-@property (nonatomic,assign) id<DodeAddressCellDelegate>delegate;
+@property (nonatomic,assign) id<DetailDelegate>delegate;
 @property (nonatomic,retain) NSIndexPath * indexPath;
 @property (nonatomic,retain) UILabel * nameL;
 @property (nonatomic,retain) UILabel * photoNoL;
 @property (nonatomic,retain) UIButton * addFriendB;
 @property (nonatomic,retain) EGOImageView * headerImage;
+@property (assign, nonatomic) BOOL isSearch;
+@end
+
+@protocol DetailDelegate <NSObject>
+-(void)DodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch;
 @end

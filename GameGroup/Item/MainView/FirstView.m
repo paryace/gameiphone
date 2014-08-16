@@ -86,7 +86,7 @@
         tableheadView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
         mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0,320, 44)];
         mSearchBar.backgroundColor = kColorWithRGB(27, 29, 35, 1);
-        [mSearchBar setPlaceholder:@"请输入你想找得队伍信息"];
+        [mSearchBar setPlaceholder:@"请输入你想找的队伍信息"];
         if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
             [[[mSearchBar subviews] objectAtIndex:0] removeFromSuperview];
         }

@@ -21,8 +21,7 @@
     BOOL systemAllowGetAddress;
     BOOL appAllowGetAddress;
     UITableView * _tableView;
-    
-    
+
     UISearchBar * mSearchBar;
     UISearchDisplayController *searchController;
 }
@@ -221,6 +220,7 @@
                 cell = [[InDoduAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
             }
             cell.indexPath = indexPath;
+            cell.isSearch = YES;
             cell.delegate = self;
             cell.nameL.text = [self.searchAddressArray[indexPath.row] objectForKey:@"nickname"];
             cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[self.searchAddressArray[indexPath.row] objectForKey:@"addressName"]];
@@ -280,6 +280,7 @@
                 cell = [[InDoduAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
             }
             cell.indexPath = indexPath;
+            cell.isSearch = NO;
             cell.delegate = self;
             cell.nameL.text = [self.addressArray[indexPath.row] objectForKey:@"nickname"];
             cell.photoNoL.text = [NSString stringWithFormat:@"手机联系人:%@",[self.addressArray[indexPath.row] objectForKey:@"addressName"]];
@@ -467,19 +468,37 @@
     }
     [_tableView reloadData];
 }
--(void)DodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath
+
+
+-(void)reloadTableView:(NSString*)userId{
+    for (NSMutableDictionary * dic in self.searchAddressArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:userId]) {
+            [dic setObject:@"1" forKey:@"iCare"];
+        }
+    }
+    [searchController.searchResultsTableView reloadData];
+    for (NSMutableDictionary * dic in self.addressArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:userId]) {
+            [dic setObject:@"1" forKey:@"iCare"];
+        }
+    }
+    [_tableView reloadData];
+}
+
+-(void)DodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch
 {
     if (indexPath.section == 0) {
         NSMutableDictionary * dic;
-        if (_tableView == searchController.searchResultsTableView) {
-            dic = self.addressArray[indexPath.row];
-            [dic setObject:@"1" forKey:@"iCare"];
-            [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        }else{
+        if (isSearch) {
             dic = self.searchAddressArray[indexPath.row];
-            [dic setObject:@"1" forKey:@"iCare"];
-             [searchController.searchResultsTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }else{
+            dic = self.addressArray[indexPath.row];
         }
+        [self reloadTableView:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+        
+        
+        
+        
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
         NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
         NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
