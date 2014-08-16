@@ -166,7 +166,6 @@
     NSDictionary* tempDict = [m_tabelData objectAtIndex:indexPath.row];
 
     cell.nameLabel.text = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"alias")] isEqualToString:@""] ? [tempDict objectForKey:@"nickname"] : KISDictionaryHaveKey(tempDict, @"alias");
-//    cell.gameImg_one.image = KUIImage(@"wow");
     
 
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")] isEqualToString:@"0"]) {//男♀♂
@@ -181,27 +180,9 @@
         cell.headImageV.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
     }
     
-    
-    
-//    if ([KISDictionaryHaveKey(tempDict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "]) {
-//        cell.headImageV.imageURL = nil;
-//        
-//    }else{
-//        NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
-//        if (heardImgArray.count>0) {
-//            cell.headImageV.imageURL = [NSURL URLWithString:[[BaseImageUrl stringByAppendingString:[heardImgArray objectAtIndex:0]] stringByAppendingString:@"/80/80"]];
-//        }else
-//        {
-//            cell.headImageV.imageURL = nil;
-//        }
-//    }
     NSString * imageIds= KISDictionaryHaveKey(tempDict, @"img");
     cell.headImageV.imageURL = [ImageService getImageStr:imageIds Width:80];
-    
-    
     NSString * title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"titleName")];
-    
-    
     if ([GameCommon isEmtity:title]) {
         cell.distLabel.text = @"暂无头衔";
         cell.distLabel.textColor = [UIColor grayColor];

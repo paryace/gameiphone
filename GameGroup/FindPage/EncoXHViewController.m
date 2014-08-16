@@ -680,13 +680,13 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *tempDic =[m_characterArray objectAtIndex:indexPath.row];
-    if ([KISDictionaryHaveKey(tempDic, @"failedmsg") isEqualToString:@"404"])//角色不存在
-    {
-    }
-    else{
-
     
-     tableView.hidden = YES;
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    tableView.hidden = YES;
     tf.hidden = YES;
     headImageView.hidden = NO;
     clazzImageView.hidden = NO;
@@ -698,12 +698,8 @@
     sayHelloBtn.hidden =NO;
     promptLabel .hidden = NO;
     promptView.hidden =NO;
-
     charaterId = KISDictionaryHaveKey([m_characterArray objectAtIndex:indexPath.row], @"id");
-        
     [self getEncoXhinfoWithNet:[m_characterArray objectAtIndex:indexPath.row]];
-    }
-
 }
 -(void)getEncoXhinfoWithNet:(NSDictionary *)dic
 {
@@ -714,12 +710,15 @@
     [paramDict setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
     NSString * imageId=KISDictionaryHaveKey(dic, @"img");
     clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
-    clazzLabel.text =KISDictionaryHaveKey(dic, @"name");
+    NSString * charaName = KISDictionaryHaveKey(dic, @"name");
+    if (charaName.length>5) {
+        charaName = [charaName substringFromIndex:5];
+    }
+    clazzLabel.text =charaName;
     NSInteger i = [[GameCommon shareGameCommon] unicodeLengthOfString:clazzLabel.text];
     if (i>10) {
         clazzLabel.text = [NSString stringWithFormat:@"%@...",[clazzLabel.text substringWithRange:NSMakeRange(0,8)]];
     }
-    
     clazzLabel.frame = CGRectMake(260-clazzLabel.text.length*3, 53, 10+clazzLabel.text.length *12, 20);
     clazzLabel.center = CGPointMake(280, 63);
 }
