@@ -129,7 +129,7 @@
             cell.glazzImgView.placeholderImage = KUIImage(@"clazz_0");
         }
         
-        cell.glazzImgView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dict, @"img") Width:30];
+        cell.glazzImgView.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(dict, @"img") Width:80];
         cell.roleLabel.text =KISDictionaryHaveKey(dict, @"name");
         if ([KISDictionaryHaveKey(dict,@"user")isKindOfClass:[NSDictionary class]]) {
             NSDictionary *dic = KISDictionaryHaveKey(dict, @"user");
