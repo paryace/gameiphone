@@ -160,6 +160,9 @@ static TeamManager *teamManager = NULL;
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
 }
+
+
+
 //收到确认或者取消消息，更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo
 {

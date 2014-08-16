@@ -315,6 +315,7 @@
         }
     }
 }
+
 #pragma mark - 根据存储初始化界面
 - (void)displayMsgsForDefaultView
 {

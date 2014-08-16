@@ -4482,6 +4482,9 @@
     NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(dic, @"createTeamUser");
     NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
+        
+        [self detailList:userList RoomId:roomId GameId:gameId];
+        
         for (NSMutableDictionary * user in userList) {
             [self saveMemberUserInfo:user GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
                 
@@ -4519,6 +4522,26 @@
             successcompletion(success,error);
         }
     }];
+}
+
+
++(void)detailList:(NSMutableArray*)userList RoomId:(NSString*)roomId GameId:(NSString*)gameId{
+    NSMutableArray * array = [self getMemberList:roomId GameId:gameId];
+    NSMutableArray * teamList = [array mutableCopy];
+    for (NSMutableDictionary * user in userList) {
+        for (NSMutableDictionary * user2 in array) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(user, @"userid")]
+                 isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(user2, @"userid")]]) {
+                [teamList removeObject:user2];
+            }
+        }
+    }
+    if (teamList && teamList.count>0) {
+        for (NSMutableDictionary * dic in array) {
+            [[TeamManager singleton] deleteMenberUserInfo:dic GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")]];
+        }
+    }
+    
 }
 
 

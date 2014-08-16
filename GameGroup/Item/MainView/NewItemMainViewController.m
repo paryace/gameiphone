@@ -26,7 +26,8 @@
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
 //    UISegmentedControl *seg ;
-    UIButton* sortingBtn;
+    UIButton* sortingBtn;//排序
+    UIButton* createBtn;//创建
     MsgNotifityView * dotV;
     
     NSString *userid;
@@ -63,11 +64,6 @@
     }
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 
-    if (m_button1.selected ==NO) {
-        [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
-    }else{
-        [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
-    }
 }
 -(void)viewDidAppear:(BOOL)animated
 {
@@ -92,37 +88,9 @@
     topImageView.image = KUIImage(@"nav_bg");
     [self.view addSubview:topImageView];
     
-    
-    
-    
-    
-    
-    
     UIImageView *segBgImg = [[UIImageView alloc]initWithImage:KUIImage(@"team_seg_black")];
     segBgImg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 25);
     [self.view addSubview:segBgImg];
-//<<<<<<< HEAD
-//    seg = [[UISegmentedControl alloc]initWithItems:[NSArray arrayWithObjects:@"搜索",@"队伍", nil]];
-//    seg.frame = CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 171, 30);
-//    seg.selectedSegmentIndex = 0;
-//    
-//    if (KISHighVersion_7) {
-//        seg.backgroundColor = [UIColor clearColor];
-//        //    seg.segmentedControlStyle = UISegmentedControlStyleBezeled;
-//        seg.tintColor = [UIColor whiteColor];
-//        
-//        
-//        [seg setBackgroundImage:KUIImage(@"team_seg_black") forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-//        [seg setBackgroundImage:KUIImage(@"team_seg_white") forState:UIControlStateSelected barMetrics:UIBarMetricsDefault];
-//    }
-//
-//
-//    [seg addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
-//    [self.view addSubview:seg];
-    
-//    UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(74, KISHighVersion_7 ? 26 : 6, 162, 32)];
-//    imgView.image = KUIImage(@"team_seg_bg");
-//    [self.view addSubview:imgView];
     
     m_button1 = [[UIButton alloc]initWithFrame:CGRectMake(74.5f, KISHighVersion_7 ? 27 : 7, 85.5f, 25)];
     [m_button1 setBackgroundImage:KUIImage(@"team_seg_search_click") forState:UIControlStateNormal];
@@ -137,22 +105,28 @@
     [m_button2 addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:m_button2];
 
-    
-    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    //排序
+    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, KISHighVersion_7?20:0, 65, 44)];
     [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
-    
-//    [sortingBtn setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
     sortingBtn.backgroundColor = [UIColor clearColor];
     [sortingBtn addTarget:self action:@selector(sortingList:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sortingBtn];
+    
+    //创建
+    createBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [createBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
+    createBtn.backgroundColor = [UIColor clearColor];
+    [createBtn addTarget:self action:@selector(create:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:createBtn];
+    
 
     //收藏提示
-    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"team_notifation") forState:UIControlStateNormal];
-    createBtn.backgroundColor = [UIColor clearColor];
-    createBtn.hidden = YES;
-    [createBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:createBtn];
+    UIButton *collectionBtn = [[UIButton alloc]initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [collectionBtn setBackgroundImage:KUIImage(@"team_notifation") forState:UIControlStateNormal];
+    collectionBtn.backgroundColor = [UIColor clearColor];
+    collectionBtn.hidden = YES;
+    [collectionBtn addTarget:self action:@selector(tishiing:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:collectionBtn];
     //数字红点
     dotV = [[MsgNotifityView alloc] initWithFrame:CGRectMake(40, KISHighVersion_7 ? 25 : 5, 22, 18)];
 //    [self.view addSubview:dotV];
@@ -199,25 +173,29 @@
 //    NSLog(@"dic.count--%d/n---%@",firstView.firstDataArray.count,firstView.firstDataArray);
 //}
 
+
+//排序
 -(void)sortingList:(id)sender
 {
-    if (m_button1.selected == YES) {
-        [firstView hideDrowList];
-        [firstView didClickScreen];//排序
-    }else{
-        NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
-        if (arr.count==2) {
-            [self showAlertViewWithTitle:@"提示" message:@"您的队伍已达到创建上限" buttonTitle:@"确定"];
-            return;
-        }
-        [[Custom_tabbar showTabBar] hideTabBar:YES];
-        NewCreateItemViewController *cretItm =[[NewCreateItemViewController alloc]init];
-        cretItm.selectRoleDict = firstView. selectCharacter;
-        cretItm.selectTypeDict = firstView.selectType;
-
-        [self.navigationController pushViewController: cretItm animated:YES];
-    }
+    [firstView hideDrowList];
+    [firstView didClickScreen];
 }
+
+//创建
+-(void)create:(id)sender{
+    NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
+    if (arr.count==2) {
+        [self showAlertViewWithTitle:@"提示" message:@"您的队伍已达到创建上限" buttonTitle:@"确定"];
+        return;
+    }
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    NewCreateItemViewController *cretItm =[[NewCreateItemViewController alloc]init];
+    cretItm.selectRoleDict = firstView. selectCharacter;
+    cretItm.selectTypeDict = firstView.selectType;
+    
+    [self.navigationController pushViewController: cretItm animated:YES];
+}
+
 //进入偏好
 -(void)tishiing:(id)sender
 {
@@ -300,9 +278,9 @@
         if (!m_button1.selected) {
             m_button1.selected = YES;
             m_button2.selected = NO;
+            sortingBtn.hidden = NO;
             [UIView beginAnimations:@"animation" context:nil];
             [UIView setAnimationDuration:1.0f];
-            [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
             [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
             [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:customView cache:YES];
             [customView exchangeSubviewAtIndex:1 withSubviewAtIndex:0];
@@ -313,15 +291,14 @@
         if (!m_button2.selected) {
             m_button2.selected = YES;
             m_button1.selected = NO;
-
-        [UIView beginAnimations:@"animation1" context:nil];
-        [UIView setAnimationDuration:1.0f];
-        [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
-        [UIView commitAnimations];
-        [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
-        [customView bringSubviewToFront:room];
+            sortingBtn.hidden = YES;
+            [UIView beginAnimations:@"animation1" context:nil];
+            [UIView setAnimationDuration:1.0f];
+            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
+            [UIView commitAnimations];
+            [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
+            [customView bringSubviewToFront:room];
         }
     }
 }
