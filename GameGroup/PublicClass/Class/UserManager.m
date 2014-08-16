@@ -69,7 +69,6 @@ static UserManager *userManager = NULL;
     [self.cacheUserids addObject:userId];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
     [paramDict setObject:userId forKey:@"userid"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
@@ -79,16 +78,12 @@ static UserManager *userManager = NULL;
     }else{
         [postDict setObject:@"" forKey:@"token"];
     }
-    
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.cacheUserids removeObject:userId];
         NSLog(@"111--个人详情UserManager的用户信息");
         [self saveUserInfo:responseObject];
-        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [self.cacheUserids removeObject:userId];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"userInfoUpdatedFail" object:nil];
     }];
 }
 

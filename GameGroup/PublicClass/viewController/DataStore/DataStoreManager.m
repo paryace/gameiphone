@@ -1426,7 +1426,7 @@
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         [self saveUserInfo:userInfo withshiptype:shiptype Loco:localContext];
     }
-     completion:^(BOOL success, NSError *error) {
+    completion:^(BOOL success, NSError *error) {
          
      }];
 }
@@ -3160,7 +3160,6 @@
     NSString * value1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value1")];
     NSString * value2 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value2")];
     NSString * value3 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"value3")];
-    //    NSString * simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(characters, @"simpleRealm")];
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@ and userid==[c]%@",charactersId,userid];
         DSCharacters * dscharacters = [DSCharacters MR_findFirstWithPredicate:predicate inContext:localContext];
@@ -3177,7 +3176,6 @@
         dscharacters.value1=value1;
         dscharacters.value2=value2;
         dscharacters.value3=value3;
-        //    dscharacters.simpleRealm=[NSString stringWithFormat:@"%@",simpleRealm] ;
     }
      completion:^(BOOL success, NSError *error) {
          

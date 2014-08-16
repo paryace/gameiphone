@@ -66,7 +66,6 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManagerFail) name:@"userInfoUpdatedFail" object:nil];
     wxSDArray = [NSMutableArray array];
     littleImgArray = [NSMutableArray array];
     NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
@@ -131,11 +130,7 @@
     m_titleLabel.text = [[GameCommon getNewStringWithId:self.hostInfo.alias] isEqualToString:@""] ? self.nickName : self.hostInfo.alias;
     [self buildMainView];
 }
-//用户信息获取失败接收到的广播
--(void)getInfoFromUserManagerFail
-{
-    NSLog(@"获取失败");
-}
+
 -(void)setInfoViewType:(HostInfo*)hostInfo
 {
     if ([self.hostInfo.relation isEqualToString:@"1"]) {

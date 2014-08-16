@@ -112,8 +112,7 @@
 
     mainDic = [NSMutableDictionary dictionary];
     
-    //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"]==NULL) {
-    //        NSLog(@"空走不走");
+
     NSMutableDictionary *paramDict = [[NSMutableDictionary alloc]init];
     [paramDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] forKey:@"userid"];
     AppDelegate *app = (AppDelegate *)[[UIApplication sharedApplication]delegate];
@@ -125,10 +124,6 @@
 
     [self getSayHelloForNetWithDictionary:paramDict method:@"202" prompt:@"获取中..." type:3];
     }
-    //}else{
-    //  m_characterArray = [[NSUserDefaults standardUserDefaults]objectForKey:@"CharacterArrayOfAllForYou"];
-    //  }
-
     
     
     
@@ -565,7 +560,6 @@
                 }
 
         
-        //  [[NSUserDefaults standardUserDefaults]setObject:m_characterArray forKey:@"CharacterArrayOfAllForYou"];
 
         }
             else{
