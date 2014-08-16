@@ -605,7 +605,7 @@
             title = _dataDic[@"msg"];
         }
         if (title.length>100) {
-           title = [title substringFromIndex:100];
+           title = [title substringToIndex:100];
         }
          NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         

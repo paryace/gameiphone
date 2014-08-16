@@ -1722,10 +1722,18 @@ UINavigationControllerDelegate>
 //点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
     
-    if ([[GameCommon getNewStringWithId:available] isEqualToString:@"2"]&&[[GameCommon getNewStringWithId:groupUsershipType] isEqualToString:@"3"]) {//已被踢出该群
-        [self showOutDialog];
-        return ;
+
+    
+    if (![self isGroupAvaitable]) {
+        [self showInVisableDialog];
+        return;
+    }else {
+        if ([self isOut]) {
+            [self showOutDialog];
+            return;
+        }
     }
+
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
 
@@ -2410,6 +2418,15 @@ UINavigationControllerDelegate>
 //发送消息
 - (void)sendButton:(id)sender {
     //本地输入框中的信息
+    if (![self isGroupAvaitable]) {
+        [self showInVisableDialog];//该群组或者组队已经解散
+        return;
+    }else {
+        if ([self isOut]) {//已经不再该群组或者组队里面
+            [self showOutDialog];
+            return;
+        }
+    }
     NSString *message = self.textView.text;
     if (message.length==0||[[message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]length]==0) {
         //如果发送信息为空或者为空格的时候弹框提示

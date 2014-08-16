@@ -634,9 +634,9 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section ==0) {
-        NSString *itemShipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")] ;
-        if ([itemShipType intValue] == 0) {
-            return @"解散";
+         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+             return @"解散";
         }
         return  @"删除";
     }
@@ -680,7 +680,7 @@
 }
 
 -(void)deleteMember:(NSString*)memberId GameId:(NSString*)gameId RoomId:(NSString*)roomId MemberTeamUserId:(NSString*)memberTeamUserId{
-    if ([GameCommon isEmtity:memberTeamUserId]) {
+    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:memberTeamUserId]]) {
         for (NSDictionary * dic in m_dataArray) {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]

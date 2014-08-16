@@ -799,9 +799,9 @@
     if (currentExtendSection==1) {
         if (self.teamUsershipType) {
             NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
-            NSString *itemShipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")] ;
-            if ([itemShipType intValue] == 0) {
-                return @"解散";
+            NSString *userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")] ;
+            if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+                 return @"解散";
             }
             return @"删除";
         }

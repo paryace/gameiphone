@@ -712,7 +712,7 @@
     clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
     NSString * charaName = KISDictionaryHaveKey(dic, @"name");
     if (charaName.length>5) {
-        charaName = [charaName substringFromIndex:5];
+        charaName = [charaName substringToIndex:5];
     }
     clazzLabel.text =charaName;
     NSInteger i = [[GameCommon shareGameCommon] unicodeLengthOfString:clazzLabel.text];
