@@ -783,28 +783,20 @@
 //点击角色
 -(void)tapMyCharacter:(UIButton *)sender
 {
-    
-    NSLog(@"点击角色%d",sender.tag);
     NSArray* characterArray = self.hostInfo.charactersArr;
     NSDictionary *dic = [characterArray objectAtIndex:sender.tag-1000];
     NSString *gameId = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];
-    if ([gameId intValue]==1||[gameId intValue]==2) {
-//        CharacterDetailsViewController *CVC = [[CharacterDetailsViewController alloc]init];
-//        CVC.characterId = KISDictionaryHaveKey(dic, @"id");
-//        CVC.gameId = gameId;
-//        CVC.myViewType = CHARA_INFO_PERSON;
-//        [self.navigationController pushViewController:CVC animated:YES];
-        
-        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-        VC.characterId = KISDictionaryHaveKey(dic, @"id");
-        VC.gameId = gameId;
-        VC.characterName = KISDictionaryHaveKey(dic, @"name");
-        [self.navigationController pushViewController:VC animated:YES];
-        
-    }else{
-        [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
-    }
     
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = KISDictionaryHaveKey(dic, @"id");
+    VC.gameId = gameId;
+    VC.characterName = KISDictionaryHaveKey(dic, @"name");
+    [self.navigationController pushViewController:VC animated:YES];
 }
 - (void)setAchievementView
 {

@@ -533,31 +533,23 @@
     }
     else if(indexPath.section == 2)
     {//
-         NSArray* characterArray = m_hostInfo.charactersArr;//魔兽世界
+         NSArray* characterArray = m_hostInfo.charactersArr;
         if ([characterArray count]>0){
             NSDictionary *dic = [characterArray objectAtIndex:indexPath.row];
             NSString* gameId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"gameid")];//游戏Id
             NSString* chatId=[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(dic, @"id")];//角色Id
-            
             NSString *fileMsg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")];
-
-            if(![fileMsg isEqualToString:@"notSupport"])
-            {
-                if ([fileMsg intValue] ==404) {
-                    [self showMessageWithContent:@"暂无此角色信息" point:CGPointMake(self.view.center.x,self.view.center.y)];
-                    return;
-                }
-                [[Custom_tabbar showTabBar] hideTabBar:YES];
-                
-                H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-                VC.characterId = chatId;
-                VC.gameId = gameId;
-                VC.characterName = KISDictionaryHaveKey(dic, @"name");
-                [self.navigationController pushViewController:VC animated:YES];
-            }else{
-                [self showMessageWithContent:@"该游戏暂不支持此功能" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            if ([[GameCommon getNewStringWithId:fileMsg] isEqualToString:@"404"]
+                ||[[GameCommon getNewStringWithId:fileMsg] isEqualToString:@"notSupport"]) {
+                [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+                return;
             }
-            NSLog(@"角色详情");
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
+            H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+            VC.characterId = chatId;
+            VC.gameId = gameId;
+            VC.characterName = KISDictionaryHaveKey(dic, @"name");
+            [self.navigationController pushViewController:VC animated:YES];
         }
         else
         {

@@ -7,7 +7,7 @@
 //
 
 #import "InplaceTimer.h"
-#define secondsCount 45//秒
+#define secondsCount 180//秒
 
 
 static InplaceTimer *inplaceTimer = NULL;

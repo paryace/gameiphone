@@ -466,18 +466,19 @@
         cell.delegate = self;
         NSDictionary *dict = [claimedList_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
-        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"img")];
+        NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterImg")];
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
-        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
+//        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
+         cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-            cell.genderImgView.image = KUIImage(@"gender_boy");
-            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-        }
-        else{
-            cell.genderImgView.image = KUIImage(@"gender_girl");
-            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-        }
+//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
+//            cell.genderImgView.image = KUIImage(@"gender_boy");
+//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
+//        }
+//        else{
+//            cell.genderImgView.image = KUIImage(@"gender_girl");
+//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
+//        }
         cell.MemberLable.hidden = NO;
         cell.MemberLable.backgroundColor = UIColorFromRGBA(0xfdcd12, 1);
         cell.MemberLable.text = @"预约";
@@ -485,7 +486,6 @@
         cell.gameIconImgView.imageURL = [ImageService getImageUrl4:gameImageId];
         
         cell.value1Lb.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")]];
-        
         cell.value2Lb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"msg")];
         cell.value2Lb.frame = CGRectMake(70, 41, 320-75, 15);
         cell.value3Lb.text = @"";
@@ -498,6 +498,11 @@
     if (indexPath.section==0) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+            [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            return;
+        }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
         VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
         VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
@@ -505,6 +510,11 @@
     }else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+            [self showMessageWindowWithContent:@"角色不存在或者暂不支持" imageType:1];
+            return;
+        }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
         VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
         VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];

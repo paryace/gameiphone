@@ -173,13 +173,7 @@
     }
     if ([KISDictionaryHaveKey(tempDict, @"msgType") isEqualToString:@"pveScore"])
     {
-//        CharacterDetailsViewController *charVC = [[CharacterDetailsViewController alloc]init];
-//        NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
-//        charVC.characterId = dic[@"characterid"];
-//        charVC.gameId = dic[@"gameid"];
-//        charVC.myViewType = CHARA_INFO_MYSELF;
-//        [self.navigationController pushViewController:charVC animated:YES];
-        
+
         NSDictionary * dic = [tempDict[@"msgContent"] JSONValue];
         NSMutableDictionary * charaInfo = [DataStoreManager queryCharacter:dic[@"characterid"]];
         NSString * charaName ;

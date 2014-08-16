@@ -749,11 +749,11 @@
 
 -(void)showChararcter:(UIGestureRecognizer *)sender
 {
-//    CharacterDetailsViewController *cv =[[CharacterDetailsViewController alloc]init];
-//    cv.characterId = charaterId;
-//    cv.gameId = KISDictionaryHaveKey(mainDic, @"gameid");
-//    [self.navigationController pushViewController:cv animated:YES];
-    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(mainDic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(mainDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = charaterId;
     VC.gameId = KISDictionaryHaveKey(mainDic, @"gameid");
