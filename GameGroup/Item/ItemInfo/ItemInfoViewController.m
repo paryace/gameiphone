@@ -326,11 +326,12 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
+            NSString *requested = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"requested")];
             roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
 
             [self queryMyRoleWithArr:KISDictionaryHaveKey(responseObject, @"memberList")];
             descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
-            [self setGetOutBtn:teamUsershipType];
+            [self setGetOutBtn:teamUsershipType Requested:requested];
             [self setCaptain:teamUsershipType];
             [self setRightBtn];
             [self setTitleMsg:responseObject];
@@ -361,7 +362,7 @@
     }
 }
 
--(void)setGetOutBtn:(NSString*)teamUsershipType
+-(void)setGetOutBtn:(NSString*)teamUsershipType Requested:(NSString*)requested
 {
     NSArray *arr = [NSArray array] ;
     NSArray *titlearr = [NSArray array] ;
@@ -376,10 +377,9 @@
         titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
     }
-    else
-    {
+    else{
         m_getOutBtn.hidden = YES;
-        titlearr = @[@"",@"申请加入"];
+        titlearr = @[@"",([requested intValue]==1)?@"再次申请":@"申请加入"];
         arr = @[@"",@"team_join_low"];
     }
     [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
