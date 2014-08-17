@@ -389,12 +389,15 @@
 
 
 -(void)DisbandTeam:(NSString*)groupId{
-    for (NSMutableDictionary * dic in self.myCreateRoomList) {
+    
+    NSMutableArray * teamArray = [self.myCreateRoomList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
             [self.myCreateRoomList removeObject:dic];
         }
     }
-    for (NSMutableDictionary * dic in self.myJoinRoomList) {
+    NSMutableArray * teamArray2 = [self.myCreateRoomList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray2) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
             [self.myJoinRoomList removeObject:dic];
         }
