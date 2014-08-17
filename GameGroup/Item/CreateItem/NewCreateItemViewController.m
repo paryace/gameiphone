@@ -591,13 +591,10 @@
             invc.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")];
             invc.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")];
             invc.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")];
-            invc.imgStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"img")];
-            invc.descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
+            invc.roomInfoDic = responseObject;
             invc.isRegister = YES;
             [self.navigationController pushViewController:invc animated:YES];
-        }
-        
-//        [self.navigationController popToRootViewControllerAnimated:YES];
+        }        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlert:error];
         [hud hide:YES];

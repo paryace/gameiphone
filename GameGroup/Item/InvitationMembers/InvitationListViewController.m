@@ -63,6 +63,7 @@
         InvitationMembersViewController *invMeb = [[InvitationMembersViewController alloc]init];
         invMeb.gameId =self.gameId;
         invMeb.roomId = self.roomId;
+//        invMeb.roomInfoDic =
         [self.navigationController pushViewController:invMeb animated:YES];
     }else{
         InviationGroupViewController *invGrp =[[ InviationGroupViewController alloc]init];

@@ -60,8 +60,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     [self setTopViewWithTitle:@"添加成员" withBackButton:NO];
+    
+    NSLog(@"roomInfoDic-->>>%@",self.roomInfoDic);
+    
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
     [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
     [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
@@ -237,11 +239,11 @@
         [self.view addSubview:m_shareView];
         [self.view bringSubviewToFront:m_shareView];
         
-        NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+//        NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
         
         EGOImageView *headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 70, 70)];
         headImageView.placeholderImage = KUIImage(@"placeholder");
-        headImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
+        headImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")]];
         [m_shareView addSubview:headImageView];
         
         titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(90, 10, 145, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
@@ -294,8 +296,6 @@
 }
 
 #pragma mark ---分享方法
-//-(void)shareToqq:(UIButton *)sender
-
 -(void)shareToView:(UIGestureRecognizer*)sender
 {
     if (sender.view.tag==100) {
@@ -314,24 +314,18 @@
 
 -(void)shareToQQ:(NSInteger)sender
 {
-    NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
-
-    NSString *imgStr = [GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")]];
-    NSString *roleName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterName")];
-    NSString *simpleRealm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"realm")];
-    
-    NSString *description = [NSString stringWithFormat:@"%@-%@邀请你加入在陌游的队伍",simpleRealm,roleName];
-    
+    NSString *imgStr = [GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")]];
+    NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
+    NSString *description = [NSString stringWithFormat:@"%@邀请你加入在陌游的队伍",roomName];
     NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     NSString * shareUrl = [NSString stringWithFormat:@"%@roomId=%@&gameid=%@&inviterid=%@",ShareUrl,self.roomId,self.gameId,myUserid];
     
     if (sender ==10001) {
-        [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:self.descriptionStr Description:description Url:shareUrl];
+        [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")] Description:description Url:shareUrl];
     }else{
-        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[ImageService getImgUrl:imgStr]] Title:self.descriptionStr Description:description Url:shareUrl];
+        [[ShareToOther singleton] sendAppExtendContent_friend:[self getImageFromURL:[ImageService getImgUrl:imgStr]] Title:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")] Description:description Url:shareUrl];
     }
     [self clanceToShare:nil];
-
 }
 -(UIImage *) getImageFromURL:(NSString *)fileURL {
     
