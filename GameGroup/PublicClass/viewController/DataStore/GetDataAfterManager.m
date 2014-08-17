@@ -260,13 +260,17 @@ static SystemSoundID shake_sound_male_id = 0;
 #pragma mark 申请加入组队
 -(void)TeamNotifityMessageReceived:(NSDictionary *)messageContent
 {
+    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
+    if ([GameCommon isEmtity:groupId]) {
+        return;
+    }
     //申请加入组队通知的消息
     [DataStoreManager saveTeamNotifityMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
        
     }];
-    NSDictionary * payloadDic = [self getPayloadDic:messageContent];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
-    [messageContent setValue:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")] forKey:@"groupId"];
+    [messageContent setValue:groupId forKey:@"groupId"];
     [payloadDic setValue:@"inGroupSystemMsg" forKey:@"type"];
     [messageContent setValue:[payloadDic JSONFragment] forKey:@"payload"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
