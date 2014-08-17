@@ -53,26 +53,22 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    switch (section) {
-        case 0:
-            if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
-                return [self.myCreateRoomList count];
-            }else{
-                return 1;
-            }
-            
-            break;
-        case 1:
-            if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
-                return [self.myJoinRoomList count];
-            }else{
-                return 1;
-            }
-            
-            break;
-            
-        default:
-            break;
+    
+    
+    if(section==0){
+        if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
+            return [self.myCreateRoomList count];
+        }else{
+            return 1;
+        }
+    }else if (section==1){
+        if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
+            return [self.myJoinRoomList count];
+        }else{
+            return 1;
+        }
+    }else if (section==2){
+    
     }
     return 0;
 }
@@ -109,11 +105,10 @@
             cell.contentLabel.text = nil;
             cell.timeLabel.text = nil;
         }
-
         return cell;
         
-    }else{
-        static NSString *indifience = @"cell";
+    }else if(indexPath.section==1){
+        static NSString *indifience = @"cell2";
         BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
@@ -143,11 +138,9 @@
             cell.contentLabel.text = nil;
             cell.timeLabel.text = nil;
         }
-        
-        
         return cell;
-        
     }
+    return nil;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -163,15 +156,16 @@
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
         }
-    }else{
+    }else if(indexPath.section ==1){
         if (self.myJoinRoomList&&self.myJoinRoomList.count>0) {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
             dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
-            
         }
+    }else if(indexPath.section == 2){
+        //TODO
     }
 }
 
@@ -189,17 +183,18 @@
     if (section ==0) {
         label.text =@"我创建的队伍";
         img.image = KUIImage(@"team_mine");
-//        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCreatePage:)]];
-    }else{
+    }else if(section == 1){
         img.image = KUIImage(@"team_join");
         label.text = @"我加入的队伍";
+    }else if(section == 2){
+        img.image = KUIImage(@"team_join");
+        label.text = @"我申请的队伍";
     }
     [view addSubview:label];
     
     UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, 29, 320, 1)];
     lineView.backgroundColor = UIColorFromRGBA(0xd8d8d8, 1);
     [view addSubview:lineView];
-    
     return view;
 }
 
@@ -246,9 +241,6 @@
 //    }
     return 60;
 }
-//-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//}
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     if (section ==1) {
@@ -262,7 +254,6 @@
         [view addSubview:label];
         [self setOneLineWithY:0 view:view];
         [self setOneLineWithY:59 view:view];
-
         [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHistoryReamList:)]];
         return view;
     }else{
@@ -271,11 +262,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    if (section==0) {
-        return 0;
-    }else{
-        return 0;
-    }
+    return 0;
 }
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -290,24 +277,30 @@
     
     if (indexPath.section==0) {
         NSArray *arr=[self.listDict objectForKey:@"OwnedRooms"];
-        
         if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
             return YES;
         }
         else{
             return NO;
         }
-    }else{
+    }else if(indexPath.section == 1){
         NSArray *arr=[self.listDict objectForKey:@"joinedRooms"];
-        
         if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
             return YES;
         }
         else{
             return NO;
         }
-  
+    }else if(indexPath.section == 2){//我申请的队伍
+        NSArray *arr=[self.listDict objectForKey:@"requestedRooms"];
+        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
+            return YES;
+        }
+        else{
+            return NO;
+        }
     }
+    return NO;
     
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -319,11 +312,14 @@
             UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
             jiesanAlert.tag = 10000001;
             [jiesanAlert show];
-        }else{
+        }else if (indexPath.section ==1){
             tableView.editing = NO;
             UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
             jiesanAlert.tag =10000002;
             [jiesanAlert show];
+        }
+        else if (indexPath.section ==2){
+            //TODO
         }
     }
 }
