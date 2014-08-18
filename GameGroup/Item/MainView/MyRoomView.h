@@ -19,6 +19,7 @@
 @property(nonatomic,assign)id<MyroomDelegate>myDelegate;
 
 -(void)initMyRoomListData:(NSMutableDictionary*)dic;
+-(void)stopRefre;
 @end
 
 @protocol MyroomDelegate <NSObject>
@@ -30,4 +31,6 @@
 -(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//解散队伍
 
 -(void)exitTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//退出队伍
+
+-(void)reloadRoomList;//刷新
 @end

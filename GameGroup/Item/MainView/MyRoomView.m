@@ -9,9 +9,11 @@
 #import "MyRoomView.h"
 #import "BaseItemCell.h"
 #import "ICreatedCell.h"
+#import "MJRefresh.h"
 
 @implementation MyRoomView{
     NSInteger actionIndex;
+    MJRefreshHeaderView *m_header;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -28,7 +30,7 @@
         self.myListTableView.dataSource = self;
         [self addSubview:self.myListTableView];
         [GameCommon setExtraCellLineHidden:self.myListTableView];
-
+        [self addHeader];
     }
     return self;
 }
@@ -38,6 +40,10 @@
     self.myCreateRoomList = [dic objectForKey:@"OwnedRooms"];
     self.myJoinRoomList = [dic objectForKey:@"joinedRooms"];
     [self.myListTableView reloadData];
+}
+
+-(void)stopRefre{
+    [m_header endRefreshing];
 }
 
 -(void)enterCreatePage:(id)sender
@@ -406,7 +412,21 @@
     }
     [self.myListTableView reloadData];
 }
-
+- (void)addHeader
+{
+    MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    CGRect headerRect = header.arrowImage.frame;
+    headerRect.size = CGSizeMake(30, 30);
+    header.arrowImage.frame = headerRect;
+    header.activityView.center = header.arrowImage.center;
+    header.scrollView = self.myListTableView;
+    header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        if (self.myDelegate) {
+            [self.myDelegate reloadRoomList];
+        }
+    };
+    m_header = header;
+}
 - (void)dealloc
 {
     self.myListTableView.delegate=nil;

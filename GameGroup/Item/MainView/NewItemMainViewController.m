@@ -283,20 +283,20 @@
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
-//    NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [room stopRefre];
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:[NSString stringWithFormat:@"item_myRoom_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
             
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"LoignRefreshPreference_wx"];
-            
             [room initMyRoomListData:responseObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [room stopRefre];
         [self showAlertDialog:error];
     }];
     
@@ -425,6 +425,10 @@
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+#pragma mark --退出队伍
+-(void)reloadRoomList{
+    [self getMyRoomFromNet];
 }
 
 -(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc
