@@ -197,13 +197,13 @@
             }
         }
     }else if(indexPath.section == 2){
-        if (self.myRequestedRoomsList&&self.myRequestedRoomsList.count>0) {
-            [[Custom_tabbar showTabBar] hideTabBar:YES];
-            dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
-            if ([self.myDelegate respondsToSelector:@selector(didClickRoomInfoWithView: dic:)]) {
-                [self.myDelegate didClickRoomInfoWithView:self dic:dic];
-            }
-        }
+//        if (self.myRequestedRoomsList&&self.myRequestedRoomsList.count>0) {
+//            [[Custom_tabbar showTabBar] hideTabBar:YES];
+//            dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
+//            if ([self.myDelegate respondsToSelector:@selector(didClickRoomInfoWithView: dic:)]) {
+//                [self.myDelegate didClickRoomInfoWithView:self dic:dic];
+//            }
+//        }
     }
 }
 
