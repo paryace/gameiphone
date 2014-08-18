@@ -15,6 +15,7 @@
 @property(nonatomic,strong)NSMutableDictionary *listDict;
 @property(nonatomic,strong)NSMutableArray *myCreateRoomList;
 @property(nonatomic,strong)NSMutableArray *myJoinRoomList;
+@property(nonatomic,strong)NSMutableArray *myRequestedRoomsList;
 
 @property(nonatomic,assign)id<MyroomDelegate>myDelegate;
 
@@ -25,6 +26,8 @@
 @protocol MyroomDelegate <NSObject>
 
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic;
+
+-(void)didClickRoomInfoWithView:(MyRoomView*)view dic:(NSDictionary *)dic;
 
 -(void)didClickCreateTeamWithView:(MyRoomView *)view ;
 

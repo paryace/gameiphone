@@ -393,6 +393,20 @@
     [self.navigationController pushViewController:kkchat animated:YES];
 }
 
+-(void)didClickRoomInfoWithView:(MyRoomView*)view dic:(NSDictionary *)dic{
+    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
+//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
+//        itemInfo.isCaptain = YES;
+//    }else{
+//        itemInfo.isCaptain =NO;
+//    }
+    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
+    [self.navigationController pushViewController:itemInfo animated:YES];
+
+}
+
 -(void)didClickCreateTeamWithView:(MyRoomView *)view
 {
     NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];

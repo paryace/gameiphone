@@ -39,6 +39,7 @@
     self.listDict = [NSMutableDictionary dictionaryWithDictionary:dic];
     self.myCreateRoomList = [dic objectForKey:@"OwnedRooms"];
     self.myJoinRoomList = [dic objectForKey:@"joinedRooms"];
+    self.myRequestedRoomsList = [dic objectForKey:@"requestedRooms"];
     [self.myListTableView reloadData];
 }
 
@@ -74,7 +75,12 @@
             return 1;
         }
     }else if (section==2){
-    
+        if ([self.myRequestedRoomsList isKindOfClass:[NSArray class]]&&self.myRequestedRoomsList.count>0) {
+            return [self.myRequestedRoomsList count];
+        }else{
+            return 1;
+        }
+
     }
     return 0;
 }
@@ -87,7 +93,6 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
-        
         if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -99,12 +104,10 @@
             cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
             NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
-
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
         }else{
             cell.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
-
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
             cell.titleLabel.text = nil;
@@ -119,15 +122,12 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
-        
         if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
             cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
-            
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
-
             cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
             cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
@@ -145,6 +145,33 @@
             cell.timeLabel.text = nil;
         }
         return cell;
+    }else if(indexPath.section==2){
+        static NSString *indifience = @"cell3";
+        BaseItemCell *cell = [tableView dequeueReusableCellWithIdentifier:indifience];
+        if (!cell) {
+            cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
+        }
+        if ([self.myRequestedRoomsList isKindOfClass:[NSArray class]]&&self.myRequestedRoomsList.count>0) {
+            NSDictionary * dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
+            cell.headImg.placeholderImage = KUIImage(@"placeholder");
+            NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
+            cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
+            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
+            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
+            NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
+            cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
+            cell.bgImageView.hidden = YES;
+        }else{
+            cell.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
+            cell.bgImageView.hidden = NO;
+            cell.headImg.imageURL = nil;
+            cell.titleLabel.text = nil;
+            cell.contentLabel.text = nil;
+            cell.timeLabel.text = nil;
+        }
+        return cell;
     }
     return nil;
 }
@@ -152,7 +179,6 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     NSDictionary *dic;
     if (indexPath.section ==0) {
         if (self.myCreateRoomList&&self.myCreateRoomList.count>0) {
@@ -171,7 +197,13 @@
             }
         }
     }else if(indexPath.section == 2){
-        //TODO
+        if (self.myRequestedRoomsList&&self.myRequestedRoomsList.count>0) {
+            [[Custom_tabbar showTabBar] hideTabBar:YES];
+            dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
+//            if ([self.myDelegate respondsToSelector:@selector(didClickRoomInfoWithView: dic:)]) {
+//                [self.myDelegate didClickRoomInfoWithView:self dic:dic];
+//            }
+        }
     }
 }
 
@@ -298,13 +330,7 @@
             return NO;
         }
     }else if(indexPath.section == 2){//我申请的队伍
-        NSArray *arr=[self.listDict objectForKey:@"requestedRooms"];
-        if ([arr isKindOfClass:[NSArray class]]&&arr.count>0) {
-            return YES;
-        }
-        else{
-            return NO;
-        }
+        return NO;
     }
     return NO;
     
@@ -373,6 +399,12 @@
             [self.myJoinRoomList removeObject:dic];
         }
     }
+    NSMutableArray * teamArray3 = [self.myRequestedRoomsList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray3) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
+            [self.myRequestedRoomsList removeObject:dic];
+        }
+    }
     [self.myListTableView reloadData];
 }
 
@@ -408,6 +440,12 @@
     for (NSMutableDictionary * dic in teamArray2) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
             [self.myJoinRoomList removeObject:dic];
+        }
+    }
+    NSMutableArray * teamArray3 = [self.myRequestedRoomsList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray3) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
+            [self.myRequestedRoomsList removeObject:dic];
         }
     }
     [self.myListTableView reloadData];
