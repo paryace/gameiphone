@@ -85,8 +85,8 @@ SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
     NSMutableArray * animationOne;
     NSMutableArray * animationTwo;
     UIMenuController * menu;
-    NSString * available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
-    NSString * groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
+//    NSString * available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
+//    NSString * groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
 }
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题
@@ -101,7 +101,6 @@ SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
 @property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
 @property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
 @property (strong,nonatomic) MsgNotifityView * dotVPosition;//位置
-
 @property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  NSString* myNickName; //我的昵称
@@ -119,10 +118,8 @@ SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
 @property (assign, nonatomic)  BOOL isTeam;//是否是组队消息
 @property(nonatomic, retain)   NSString *gameId;
 @property(nonatomic, retain)   NSString *roomId;
-
-
-
-
+@property (nonatomic, copy)  NSString* available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
+@property (nonatomic, copy)  NSString* groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
 @property (strong,nonatomic) AppDelegate * appDel;
 @property (strong,nonatomic) HPGrowingTextView *textView;
 

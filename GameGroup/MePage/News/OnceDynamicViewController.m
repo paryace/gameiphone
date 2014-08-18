@@ -600,13 +600,7 @@
         }
     }else{
         
-       NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
-        if ([GameCommon isEmtity:title]) {
-            title = _dataDic[@"msg"];
-        }
-        if (title.length>100) {
-           title = [title substringToIndex:100];
-        }
+       
          NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         
         if (buttonIndex ==0) {
@@ -624,13 +618,25 @@
             }
         }
         else if (buttonIndex ==1)
-        {
+        {//分享到微博
+            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+                title = @"";
+            }else{
+                title = [NSString stringWithFormat:@"《%@》",title];
+            }
             [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
-        {
+        {//分享到QQ
             [[ShareToOther singleton]changeScene:WXSceneSession];
-            
+            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+               title = [NSString stringWithFormat:@"分享自%@的动态",_dataDic[@"nickname"]];
+            }
+            if (title.length>100) {
+                title = [title substringToIndex:100];
+            }
             if ([GameCommon isEmtity:KISDictionaryHaveKey(self.dataDic, @"img")]) {
                 NSData * data = [self getNSDataFromURL:@"icon"];
                 [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageData:data IsZone:NO];
@@ -640,7 +646,14 @@
 //          [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==3)
-        {
+        {//分享到微信
+            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+                title = _dataDic[@"msg"];
+            }
+            if (title.length>100) {
+                title = [title substringToIndex:100];
+            }
             [[ShareToOther singleton] changeScene:WXSceneTimeline];
             [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
