@@ -355,12 +355,14 @@
 }
 
 -(void)didRoleRomeve:(NSString*)characterId{
-    for (NSMutableDictionary * dic in self.myCreateRoomList) {
+    NSMutableArray * teamArray = [self.myCreateRoomList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
             [self.myCreateRoomList removeObject:dic];
         }
     }
-    for (NSMutableDictionary * dic in self.myJoinRoomList) {
+    NSMutableArray * teamArray2 = [self.myJoinRoomList mutableCopy];
+    for (NSMutableDictionary * dic in teamArray2) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")] isEqualToString:[GameCommon getNewStringWithId:characterId]]) {
             [self.myJoinRoomList removeObject:dic];
         }
@@ -396,7 +398,7 @@
             [self.myCreateRoomList removeObject:dic];
         }
     }
-    NSMutableArray * teamArray2 = [self.myCreateRoomList mutableCopy];
+    NSMutableArray * teamArray2 = [self.myJoinRoomList mutableCopy];
     for (NSMutableDictionary * dic in teamArray2) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:groupId]]) {
             [self.myJoinRoomList removeObject:dic];

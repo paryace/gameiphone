@@ -37,7 +37,7 @@ static TeamManager *teamManager = NULL;
     if (teamDic) {
         return teamDic;
     }
-    NSMutableDictionary * dict = [DataStoreManager queryDSTeamInfo:gameId RoomId:roomId];
+    NSMutableDictionary * dict = [DataStoreManager queryDSTeamInfo:[GameCommon getNewStringWithId:gameId] RoomId:[GameCommon getNewStringWithId:roomId]];
     if (dict) {
         [self.teamCache setObject:dict forKey:[NSString stringWithFormat:@"%@%@",gameId,roomId]];
         return dict;
