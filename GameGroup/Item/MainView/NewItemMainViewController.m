@@ -181,27 +181,6 @@
 
 }
 
-
-//-(void)getCharacter
-//{
-//    NSArray *arr = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-////    for (NSDictionary *dic in firstView.firstDataArray) {
-////        if ([KISDictionaryHaveKey(dic, @"failedmsg")isEqualToString:@"404"]||[KISDictionaryHaveKey(dic, @"failedmsg")isEqualToString:@"notSupport"]) {
-////            [firstView.firstDataArray removeObject:dic];
-////        }
-////    }
-//
-//    for (int i =0; i<arr.count; i++) {
-//        NSDictionary *dic = [arr objectAtIndex:i];
-//        if (![KISDictionaryHaveKey(dic, @"failedmsg")isEqualToString:@"404"]&&![KISDictionaryHaveKey(dic, @"failedmsg")isEqualToString:@"notSupport"]) {
-//            [firstView.firstDataArray addObject:dic];
-//        }
-//
-//    }
-//    NSLog(@"dic.count--%d/n---%@",firstView.firstDataArray.count,firstView.firstDataArray);
-//}
-
-
 //排序
 -(void)sortingList:(id)sender
 {
