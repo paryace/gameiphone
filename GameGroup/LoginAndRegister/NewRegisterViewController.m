@@ -531,6 +531,7 @@
     m_parssWordTf.returnKeyType = UIReturnKeyDone;
     m_parssWordTf.placeholder = @"密码6位以上";
     m_parssWordTf.delegate = self;
+    m_parssWordTf.secureTextEntry = YES;//显示密文
     m_parssWordTf.font = [UIFont boldSystemFontOfSize:15.0];
     m_parssWordTf.textAlignment = NSTextAlignmentRight;
     m_parssWordTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
