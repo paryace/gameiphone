@@ -95,7 +95,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newPreferMsgReceive:) name:kNewPreferMsg object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
-    //    topImageView.image = KUIImage(@"top");
     topImageView.userInteractionEnabled = YES;
     topImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
     topImageView.image = KUIImage(@"nav_bg");
@@ -119,14 +118,14 @@
     [self.view addSubview:m_button2];
 
     //排序
-    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, KISHighVersion_7?20:0, 65, 44)];
+    sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, KISHighVersion_7?18:0, 65, 44)];
     [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
     sortingBtn.backgroundColor = [UIColor clearColor];
     [sortingBtn addTarget:self action:@selector(sortingList:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sortingBtn];
     
     //创建
-    createBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    createBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?17:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(create:) forControlEvents:UIControlEventTouchUpInside];
