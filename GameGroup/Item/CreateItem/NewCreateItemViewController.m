@@ -156,49 +156,11 @@
     placeholderL.backgroundColor = [UIColor clearColor];
     [mainScroll addSubview:placeholderL];
 
-    
-    
-    
-    
-    
-    
-//    UIImageView *imgVc = [[UIImageView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
-//    imgVc.image = KUIImage(@"group_info");
-//    [mainScroll addSubview:imgVc];
-//    
-//    m_miaoshuTV = [[UITextView alloc]initWithFrame:CGRectMake(10, 160, 300, 80)];
-//    m_miaoshuTV.backgroundColor = [UIColor clearColor];
-//    m_miaoshuTV.layer.borderWidth = 1;
-//    m_miaoshuTV.layer.borderColor = [[UIColor whiteColor]CGColor];
-//    m_miaoshuTV.layer.cornerRadius = 5;
-//    m_miaoshuTV.layer.masksToBounds=YES;
-//    m_miaoshuTV.delegate = self;
-//    [mainScroll addSubview:m_miaoshuTV];
-    
-//<<<<<<< HEAD
-//    placeholderL = [[UILabel alloc]init];
-//    if (KISHighVersion_7) {
-//        placeholderL.frame = CGRectMake(15,165, 200, 20);
-//    }else{
-//        placeholderL.frame = CGRectMake(12,160, 200, 20);
-//    }
-//=======
-//    placeholderL = [[UILabel alloc]initWithFrame:CGRectMake(18,170, 200, 20)];
-//>>>>>>> FETCH_HEAD
-//    placeholderL.backgroundColor = [UIColor clearColor];
-//    placeholderL.textColor = UIColorFromRGBA(0x9b9b9b, 1);
-//    placeholderL.text = @"填写组队描述……";
-//    placeholderL.font = [UIFont systemFontOfSize:13.0];
-//    [mainScroll addSubview:placeholderL];
-
     m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 245, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     [mainScroll addSubview:m_ziNumLabel];
-
-//    [self buildSwitchView];
-    
     tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15.0f, 250.0f,310.0f, 100.0f)];
     tagList.tagDelegate=self;
     [mainScroll addSubview:tagList];
@@ -243,6 +205,9 @@
 {
     if (selectCharacter&&selectType) {
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] isEqualToString:@"0"]) {
+            m_gameTf.text =[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(selectCharacter, @"simpleRealm"),KISDictionaryHaveKey(selectCharacter, @"name")];
+             gameIconImg.imageURL =[ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
+            [self getfenleiFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
             return;
         }
         selectPeopleCount = [[ItemManager singleton] createMaxVols];
