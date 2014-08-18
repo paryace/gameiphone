@@ -219,15 +219,20 @@
 {
     if (isTeam) {
         self.levelLable.hidden=NO;
-        
         if (![GameCommon isEmtity:teamPosition]) {
-            self.levelLable.text = teamPosition;
-            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
-            self.levelLable.textColor = [UIColor whiteColor];
+            if ([teamPosition isEqualToString:@"未选"]) {
+                self.levelLable.text = @"未选";
+                self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
+                self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
+            }else{
+                self.levelLable.text = teamPosition;
+                self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+                self.levelLable.textColor = [UIColor whiteColor];
+            }
         }else{
             self.levelLable.text = @"未选";
             self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
-            self.levelLable.textColor = kColorWithRGB(155, 155, 155, 1.0);
+            self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
         }
     }else{
         self.levelLable.hidden=YES;
@@ -239,9 +244,15 @@
     if (isTeam) {
         self.levelLable.hidden=NO;
         if (![GameCommon isEmtity:teamPosition]) {
-            self.levelLable.text = teamPosition;
-            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
-            self.levelLable.textColor = [UIColor whiteColor];
+            if ([teamPosition isEqualToString:@"未选"]) {
+                self.levelLable.text = @"未选";
+                self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
+                self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
+            }else{
+                self.levelLable.text = teamPosition;
+                self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+                self.levelLable.textColor = [UIColor whiteColor];
+            }
         }else{
             self.levelLable.text = @"未选";
             self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);

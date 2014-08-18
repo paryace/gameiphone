@@ -1656,14 +1656,11 @@ UINavigationControllerDelegate>
     }
     //系统消息
     else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]//选择位置
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"]//解散组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
-//             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectCancel"]//拒绝就位确认
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]//就位确认成功
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"]//就位确认失败
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamClaimAddType"])//占坑消息

@@ -706,7 +706,7 @@
     NSString* messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
     NSString * payloadStr = KISDictionaryHaveKey(message, @"payload");
     NSString * groupId = KISDictionaryHaveKey(message, @"groupId");
-     NSString * msgState = KISDictionaryHaveKey(message, @"status");
+    NSString * msgState = KISDictionaryHaveKey(message, @"status");
     
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId, @"groupchat",@"1"];
