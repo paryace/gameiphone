@@ -625,7 +625,7 @@
         }
         else if (buttonIndex ==1)
         {
-            [[ShareToOther singleton]shareTosinass:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
+            [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
         {
@@ -665,6 +665,14 @@
     return UIImageJPEGRepresentation(KUIImage(imageName),0.8);
 }
 
+-(UIImage*)getShareImageToSima
+{
+    NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];
+    if (![GameCommon isEmtity:imageUrl]) {
+        return [self getImageFromURL:imageUrl];
+    }
+    return nil;
+}
 -(UIImage*)getShareImage
 {
     NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];

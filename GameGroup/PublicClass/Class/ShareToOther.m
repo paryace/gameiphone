@@ -61,11 +61,12 @@ static ShareToOther *userManager = NULL;
 //   webpage.thumbnailData =  UIImageJPEGRepresentation([NetManager compressImage:imageV targetSizeX:200 targetSizeY:200], 0.7);
 //    webpage.webpageUrl = uri;
 
-    
-    WBImageObject *wbimage = [WBImageObject object];
-    wbimage.imageData = UIImageJPEGRepresentation([NetManager compressImage:imageV targetSizeX:200 targetSizeY:200], 0.7);
     WBMessageObject *message = [WBMessageObject message];
-    message.imageObject = wbimage;
+    if (imageV) {
+        WBImageObject *wbimage = [WBImageObject object];
+        wbimage.imageData = UIImageJPEGRepresentation([NetManager compressImage:imageV targetSizeX:200 targetSizeY:200], 0.7);
+        message.imageObject = wbimage;
+    }
     message.text = [NSString stringWithFormat:@"%@%@",title,uri];
     
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message];
