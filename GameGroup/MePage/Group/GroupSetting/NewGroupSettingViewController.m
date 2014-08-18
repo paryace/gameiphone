@@ -87,7 +87,7 @@ typedef enum : NSUInteger {
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"操作中...";
-    hud.mode = MBProgressHUDModeDeterminate;
+//    hud.mode = MBProgressHUDModeDeterminate;
     [self.view addSubview:hud];
 }
 

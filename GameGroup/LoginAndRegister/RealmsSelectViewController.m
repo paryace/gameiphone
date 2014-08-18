@@ -71,7 +71,9 @@
     [searchController setDelegate:self];
     [searchController setSearchResultsDataSource:self];
     [searchController setSearchResultsDelegate:self];
-    searchController.searchResultsTableView.tableHeaderView = mSearchView;
+    if (KISHighVersion_7) {
+       searchController.searchResultsTableView.tableHeaderView = mSearchView;
+    }
     m_realmsTableView.tableHeaderView = mSearchView;
 }
 #pragma mark 表格

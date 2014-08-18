@@ -13,6 +13,9 @@
 #import "TestViewController.h"
 #import "InviationGroupViewController.h"
 #import "ShareToOther.h"
+#import "InvitationBtn.h"
+
+
 
 #define SHAREIMAGE [NSURL URLWithString:@"http://a.hiphotos.baidu.com/image/w%3D1366%3Bcrop%3D0%2C0%2C1366%2C768/sign=6a0ff0ec0ed79123e0e090779b0262e1/3c6d55fbb2fb4316cdadda9e22a4462308f7d3a0.jpg"]
 #define SHARETITLE @"我在陌游开启了组队，你快来吧！"
@@ -296,19 +299,24 @@
 }
 
 #pragma mark ---分享方法
--(void)shareToView:(UIGestureRecognizer*)sender
+-(void)changeBgColor:(UIButton *)sender
 {
-    if (sender.view.tag==100) {
+    sender.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
+}
+
+-(void)shareToView:(UIButton*)sender
+{
+    sender.backgroundColor = [UIColor whiteColor];
+
+    if (sender.tag==100) {
         [self shareToQQ:10001];
-    }else if (sender.view.tag ==101)
+    }else if (sender.tag ==101)
     {
         [self shareToQQ:10002];
     }else{
-        
         InviationGroupViewController *invgro = [[InviationGroupViewController alloc]init];  invgro.gameId = self.gameId;
         invgro.roomId = self.roomId;
         [self.navigationController pushViewController:invgro animated:YES];
-
     }
 }
 
@@ -456,27 +464,36 @@
     headView.backgroundColor =UIColorFromRGBA(0xc8c7cc, 1);
     
     for (int i =0; i<3; i++) {
-        UIView *view =[[ UIView alloc]initWithFrame:CGRectMake(0,50*i+i*.5f , 320, 50)
-                       ];
-        view.backgroundColor  = [UIColor whiteColor];
-        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 40, 40)];
-        headImg.image =KUIImage(imgArr[i]);
-        [view addSubview:headImg];
+        InvitationBtn *btn = [[InvitationBtn alloc]initWithFrame:CGRectMake(0,50*i+i*.5f , 320, 50)];
         
-        UILabel *titleLb = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 5, 200, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-        titleLb.text = array[i];
-        [view addSubview:titleLb];
-        view.tag = 100+i;
-            UITapGestureRecognizer *tap  = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(shareToView:)];
-            [view addGestureRecognizer:tap];
-
+        btn.titleLb.text =array[i];
+        btn.headImg.image = KUIImage(imgArr[i]);
+        btn.tag = 100+i;
+        [btn addTarget:self action:@selector(changeBgColor:) forControlEvents:UIControlEventTouchDown];
+        [btn addTarget:self action:@selector(shareToView:) forControlEvents:UIControlEventTouchUpInside];
+        [headView addSubview:btn];
         
-        
-        UIImageView *right = [[UIImageView alloc]initWithFrame:CGRectMake(280, 20, 10, 10)];
-        right.image = KUIImage(@"right");
-        [view addSubview:right];
-        
-        [headView addSubview:view];
+//        UIView *view =[[ UIView alloc]initWithFrame:CGRectMake(0,50*i+i*.5f , 320, 50)
+//                       ];
+//        view.backgroundColor  = [UIColor whiteColor];
+//        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 5, 40, 40)];
+//        headImg.image =KUIImage(imgArr[i]);
+//        [view addSubview:headImg];
+//        
+//        UILabel *titleLb = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 5, 200, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//        titleLb.text = array[i];
+//        [view addSubview:titleLb];
+//        view.tag = 100+i;
+//            UITapGestureRecognizer *tap  = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(shareToView:)];
+//            [view addGestureRecognizer:tap];
+//
+//        
+//        
+//        UIImageView *right = [[UIImageView alloc]initWithFrame:CGRectMake(280, 20, 10, 10)];
+//        right.image = KUIImage(@"right");
+//        [view addSubview:right];
+//        
+//        [headView addSubview:view];
         
     }
     m_rTableView.tableHeaderView = headView;

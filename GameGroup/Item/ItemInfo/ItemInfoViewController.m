@@ -91,6 +91,30 @@
     roleTabView.hidden = YES;
     roleTabView.mydelegate  =self;
     NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    /*
+     去除角色列表中的404 和notSupport 的角色
+     */
+
+    
+    NSMutableArray *arr = [NSMutableArray array];
+    for (NSDictionary *dic  in coreArray) {
+        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+            NSLog(@"++++++++%@",dic);
+        }else{
+            
+            NSLog(@"%@",[dic objectForKey:@""]);
+            
+            [arr addObject:dic];
+            
+            
+        }
+    }
+    [coreArray removeAllObjects];
+    
+    [coreArray  addObjectsFromArray:arr];
+
+    
+    
     [self.view addSubview:roleTabView];
     [roleTabView setDate:coreArray];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
@@ -321,7 +345,28 @@
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             NSString *requested = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"requested")];
+            
+            /*
+             去除角色列表中的404 和notSupport 的角色
+             */
+            
+            
+            
             roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
+            NSMutableArray *arr = [NSMutableArray array];
+            for (NSDictionary *dic  in roleTabView.coreArray) {
+                if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+                    NSLog(@"++++++++%@",dic);
+                }else{
+                    
+                    NSLog(@"%@",[dic objectForKey:@""]);
+                    [arr addObject:dic];
+                }
+            }
+            [roleTabView.coreArray removeAllObjects];
+            
+            [roleTabView.coreArray  addObjectsFromArray:arr];
+
 
             [self queryMyRoleWithArr:KISDictionaryHaveKey(responseObject, @"memberList")];
             descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];

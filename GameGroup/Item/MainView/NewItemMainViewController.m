@@ -63,6 +63,19 @@
         [firstView initSearchConditions];
     }
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
+    NSMutableArray *arr = [NSMutableArray array];
+    for (NSDictionary *dic  in firstView.firstDataArray) {
+        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+            NSLog(@"++++++++%@",dic);
+        }else{
+            [arr addObject:dic];
+        }
+    }
+    [firstView.firstDataArray removeAllObjects];
+    [firstView.firstDataArray  addObjectsFromArray:arr];
+    
+    
 
 }
 -(void)viewDidAppear:(BOOL)animated
@@ -143,6 +156,22 @@
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    
+    /*
+     去除角色列表中的404 和notSupport 的角色
+     */
+
+    
+    NSMutableArray *arr = [NSMutableArray array];
+    for (NSDictionary *dic  in firstView.firstDataArray) {
+        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+            NSLog(@"++++++++%@",dic);
+        }else{
+            [arr addObject:dic];
+        }
+    }
+    [firstView.firstDataArray removeAllObjects];
+    [firstView.firstDataArray  addObjectsFromArray:arr];
 
     [customView addSubview:firstView];
     [self reloadMsgCount];
