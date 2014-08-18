@@ -353,6 +353,7 @@ UINavigationControllerDelegate>
         self.dotVApp.hidden = NO;
         [self.dotVApp setMsgCount:msgC];
     }else{
+        [self.dotVApp setMsgCount:0];
         self.dotVApp.hidden = YES;
     }
     
@@ -365,6 +366,7 @@ UINavigationControllerDelegate>
         self.dotVInplace.hidden = NO;
         [self.dotVInplace setMsgCount:msgC IsSimple:YES];
     }else{
+        [self.dotVInplace setMsgCount:0 IsSimple:YES];
         self.dotVInplace.hidden = YES;
     }
     
@@ -381,6 +383,7 @@ UINavigationControllerDelegate>
         self.dotVPosition.hidden = NO;
         [self.dotVPosition setMsgCount:positionCount IsSimple:YES];
     }else{
+        [self.dotVPosition setMsgCount:0 IsSimple:YES];
         self.dotVPosition.hidden = YES;
     }
     

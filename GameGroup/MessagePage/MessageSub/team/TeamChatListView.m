@@ -36,12 +36,8 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
         //申请加入组队通知
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)
-                                                     name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)
-                                                     name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         
         currentExtendSection = -1;
         self.dropDownDataSource = datasource;
@@ -168,6 +164,7 @@
 -  (void)hideExtendedChooseView
 {
     if (currentExtendSection != -1) {
+        [self clearInpaceMsg];
         if (self.teamUsershipType&&currentExtendSection==1) {
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
@@ -989,7 +986,11 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        [self clearNorReadInpaceMsg];//清除消息
+        if (![self isShow]) {
+           [self clearInpaceMsg];
+        }else{
+            [self clearNorReadInpaceMsg];//清除消息
+        }
         [self setBtnState];
     }
 }
@@ -1007,13 +1008,31 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearNorReadInpaceMsg];//清楚消息
+    if (![self isShow]) {
+        [self clearInpaceMsg];
+    }else{
+        [self clearNorReadInpaceMsg];//清除消息
+    }
+    
     [self setBtnState];
+}
+
+
+
+-(void)clearInpaceMsg{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+        [self clearNorReadInpaceMsg];//清除消息
+    }];
 }
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
-//    [self clearNorReadApplyMsg];
+    if ([self isShow]) {
+        if (currentExtendSection==2) {
+            [self clearNorReadApplyMsg];
+        }
+    }
     [self getZU];
     [self.mTableView reloadData];
     NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
