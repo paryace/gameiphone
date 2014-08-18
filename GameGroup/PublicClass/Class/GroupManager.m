@@ -37,9 +37,12 @@ static GroupManager *groupManager = NULL;
         return groupDic;
     }
      NSMutableDictionary * groupInfo = [DataStoreManager queryGroupInfoByGroupId:groupId];
-
     if (groupInfo) {
-        [self.groupCache setObject:groupInfo forKey:groupId];
+        if ([GameCommon isEmtity:KISDictionaryHaveKey(groupDic, @"groupName")]) {
+            [self getGroupInfoWithNet:groupId];
+        }else{
+            [self.groupCache setObject:groupInfo forKey:groupId];
+        }
         return groupInfo;
     }
     else{

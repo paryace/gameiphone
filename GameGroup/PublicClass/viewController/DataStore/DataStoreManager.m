@@ -3735,23 +3735,23 @@
         return nil;
     }
     NSMutableDictionary * groupInfo = [NSMutableDictionary dictionary];
-    [groupInfo setObject:group.backgroundImg forKey:@"backgroundImg"];
+    [groupInfo setObject:group.backgroundImg?group.backgroundImg:@"" forKey:@"backgroundImg"];
     [groupInfo setObject:group.groupId forKey:@"groupId"];
-    [groupInfo setObject:group.groupName forKey:@"groupName"];
-    [groupInfo setObject:group.state forKey:@"state"];
-    [groupInfo setObject:group.currentMemberNum forKey:@"currentMemberNum"];
-    [groupInfo setObject:group.gameid forKey:@"gameid"];
-    [groupInfo setObject:group.level forKey:@"level"];
-    [groupInfo setObject:group.maxMemberNum forKey:@"maxMemberNum"];
-    [groupInfo setObject:group.createDate forKey:@"createDate"];
-    [groupInfo setObject:group.distance forKey:@"distance"];
-    [groupInfo setObject:group.experience forKey:@"experience"];
-    [groupInfo setObject:group.gameRealm forKey:@"gameRealm"];
-    [groupInfo setObject:group.groupUsershipType forKey:@"groupUsershipType"];
-    [groupInfo setObject:group.info forKey:@"info"];
-    [groupInfo setObject:group.infoImg forKey:@"infoImg"];
-    [groupInfo setObject:group.location forKey:@"location"];
-    [groupInfo setObject:group.available forKey:@"available"];
+    [groupInfo setObject:group.groupName?group.groupName:@"" forKey:@"groupName"];
+    [groupInfo setObject:group.state?group.state:@"" forKey:@"state"];
+    [groupInfo setObject:group.currentMemberNum?group.currentMemberNum:@"" forKey:@"currentMemberNum"];
+    [groupInfo setObject:group.gameid?group.gameid:@"" forKey:@"gameid"];
+    [groupInfo setObject:group.level?group.level:@"" forKey:@"level"];
+    [groupInfo setObject:group.maxMemberNum?group.maxMemberNum:@"" forKey:@"maxMemberNum"];
+    [groupInfo setObject:group.createDate?group.createDate:@"" forKey:@"createDate"];
+    [groupInfo setObject:group.distance?group.distance:@"" forKey:@"distance"];
+    [groupInfo setObject:group.experience?group.experience:@"" forKey:@"experience"];
+    [groupInfo setObject:group.gameRealm?group.gameRealm:@"" forKey:@"gameRealm"];
+    [groupInfo setObject:group.groupUsershipType?group.groupUsershipType:@"" forKey:@"groupUsershipType"];
+    [groupInfo setObject:group.info?group.info:@"" forKey:@"info"];
+    [groupInfo setObject:group.infoImg?group.infoImg:@"" forKey:@"infoImg"];
+    [groupInfo setObject:group.location?group.location:@"" forKey:@"location"];
+    [groupInfo setObject:group.available?group.available:@"" forKey:@"available"];
     [groupInfo setObject:group.groupType?group.groupType:@"" forKey:@"type"];
     return groupInfo;
 }
@@ -3768,11 +3768,12 @@
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate  predicateWithFormat:@"groupId==[c]%@",groupId];
-        DSGroupList * group = [DSGroupList MR_findFirstWithPredicate:predicate inContext:localContext];
-        if (group) {
-            group.available = groupState;
-            group.groupUsershipType = groupShipType;
-        }
+        DSGroupList * groupInfo = [DSGroupList MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!groupInfo)
+            groupInfo = [DSGroupList MR_createInContext:localContext];
+        groupInfo.groupId = groupId;
+        groupInfo.available = groupState;
+        groupInfo.groupUsershipType = groupShipType;
     }];
 }
 //根据groupId 删除群信息
