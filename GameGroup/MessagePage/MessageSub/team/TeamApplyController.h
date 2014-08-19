@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JoinTeamCell.h"
+#import "H5CharacterDetailsViewController.h"
 
 @interface TeamApplyController : BaseViewController<UITableViewDataSource,UITableViewDelegate,TeamDetailDelegate>
 @property (nonatomic, strong) NSString *groipId;

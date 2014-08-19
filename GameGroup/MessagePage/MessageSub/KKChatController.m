@@ -615,7 +615,7 @@ UINavigationControllerDelegate>
 //{
 //    return 0;
 //}
-////头像点击进入个人详情
+//头像点击进入个人详情
 //- (void)headImgClick:(NSString*)userId {
 //    NSString *userid = [GameCommon getNewStringWithId:userId];
 //    TestViewController *itemInfo = [[TestViewController alloc]init];

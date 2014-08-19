@@ -8,6 +8,7 @@
 
 #import "TeamApplyController.h"
 #import "JoinTeamCell.h"
+#import "TestViewController.h"
 
 @interface TeamApplyController (){
     UITableView * m_TableView;
@@ -30,6 +31,7 @@
     m_TableView.delegate = self;
     m_TableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [GameCommon setExtraCellLineHidden:m_TableView];
+    m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [self.view addSubview:m_TableView];
 }
 #pragma mark 表格
@@ -111,6 +113,22 @@
     return [GameCommon getTimeWithChatStyle:strNowTime AndMessageTime:strTime];
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSMutableDictionary *dic = [teamNotifityMsg objectAtIndex:indexPath.row];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
+    VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
+    [self.navigationController pushViewController:VC animated:YES];
+
+
+}
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return @"删除";
@@ -171,15 +189,15 @@
         return @"gender_girl";
     }
 }
-//-(void)headImgClick:(JoinTeamCell*)Sender{
-//    NSMutableDictionary *dic = [self.teamNotifityMsg objectAtIndex:Sender.tag];
-//    [self.dropDownDataSource headImgClick:KISDictionaryHaveKey(dic, @"userid")];
-//}
-//- (void)userHeadImgClick:(id)Sender{
-//    InplaceCell * iCell = (InplaceCell*)Sender;
-//    NSMutableDictionary *dic = [self.memberList objectAtIndex:iCell.tag];
-//    [self.dropDownDataSource headImgClick:KISDictionaryHaveKey(dic, @"userid")];
-//}
+//跳转个人详情
+-(void)headImgClick:(JoinTeamCell*)Sender{
+    NSMutableDictionary *dic = [teamNotifityMsg objectAtIndex:Sender.tag];
+    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userid;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
+
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
@@ -255,13 +273,8 @@
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
-//    if ([self isShow]) {
-//        if (currentExtendSection==2) {
-//            [self clearNorReadApplyMsg];
-//        }
-//    }
-//    [self getZU];
-//    [self.mTableView reloadData];
+    [self getZU];
+    [m_TableView reloadData];
     NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
 }
 
