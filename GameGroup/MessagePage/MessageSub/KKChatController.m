@@ -417,18 +417,22 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
-        NSMutableDictionary * clickType = [self.typeData_list objectAtIndex:index];
-        if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
-            return;
+        if (index<self.typeData_list.count) {
+            NSMutableDictionary * clickType = [self.typeData_list objectAtIndex:index];
+            if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
+                return;
+            }
+            [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
+                selectType = clickType;
+                [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+                [self changPosition];
+                [self setPositionMsgCount];
+            } reError:^(id error) {
+                [self showErrorAlertView:error];
+            }];
+        }else{
+            [self showAlertViewWithTitle:@"提示" message:@"选择出错" buttonTitle:@"确定"];
         }
-        [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-            selectType = clickType;
-            [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-            [self changPosition];
-            [self setPositionMsgCount];
-        } reError:^(id error) {
-            [self showErrorAlertView:error];
-        }];
     }
 }
 -(BOOL) clickAtSection:(NSInteger)section
