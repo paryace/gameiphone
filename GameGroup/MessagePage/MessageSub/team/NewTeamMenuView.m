@@ -275,12 +275,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40);
+    self.mTableView.frame = CGRectMake(0, 60, 320,kScreenHeigth-60);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40-bottomHight);
+    self.mTableView.frame = CGRectMake(0, 60, 320,kScreenHeigth-60-bottomHight);
 }
 
 //发起就位确认
