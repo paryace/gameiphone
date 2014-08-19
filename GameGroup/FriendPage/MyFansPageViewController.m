@@ -152,6 +152,7 @@
 {
     NSString *fansNum=[NSString stringWithFormat: @"%d",fansInteger];
     if (fansInteger ==0) {
+        
         m_noFansLabel.hidden = NO;
     }else{
         m_noFansLabel.hidden = YES;

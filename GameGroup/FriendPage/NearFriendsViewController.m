@@ -47,7 +47,7 @@
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
