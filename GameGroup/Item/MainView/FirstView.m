@@ -497,17 +497,31 @@
     cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImage];
     
     NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")]];
-    
     cell.titleLabel.text = title;
-    
-    
+    NSString * myRankStr = [self getMyRank:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myRank")]];
+    if ([GameCommon isEmtity:myRankStr]) {
+        cell.MemberLable.hidden = YES;
+    }else{
+        cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
+        cell.MemberLable.text = myRankStr;
+        cell.MemberLable.hidden = NO;
+    }
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
-    //NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
-    
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
     NSString *timeStr = [GameCommon getShowTime:sendTime];
     cell.timeLabel.text = timeStr;
     return cell;
+}
+
+-(NSString*)getMyRank:(NSString*)myRank{
+    if ([myRank intValue]==1) {
+        return @"申请";
+    }else if ([myRank intValue]==2){
+        return @"队员";
+    }else if ([myRank intValue]==3){
+        return @"队长";
+    }
+    return @"";
 }
 
 

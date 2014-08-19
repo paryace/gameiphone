@@ -26,7 +26,6 @@
         [self addSubview:self.gameIconImg];
         
         self.contentLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 26.0f, 230, 30) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-//        self.contentLabel.numberOfLines = 0;
         [self addSubview:self.contentLabel];
         
         self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(220, 5, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
@@ -35,6 +34,15 @@
         self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
         self.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
         [self addSubview:self.bgImageView];
+        
+        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(320-10-26, 49/2+5, 26, 11)];
+        self.MemberLable.layer.cornerRadius = 3;
+        self.MemberLable.layer.masksToBounds=YES;
+        self.MemberLable.textAlignment = NSTextAlignmentCenter;
+        self.MemberLable.font = [UIFont systemFontOfSize:10];
+        self.MemberLable.textColor = [UIColor whiteColor];
+        [self addSubview:self.MemberLable];
+
     }
     return self;
 }
