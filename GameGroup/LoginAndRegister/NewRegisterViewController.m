@@ -69,7 +69,7 @@
     [self setTopViewWithTitle:@"" withBackButton:YES];
 
     m_topImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, startX, 320, 28)];
-    m_topImage.image = KUIImage(@"registerStep1");
+//    m_topImage.image = KUIImage(@"registerStep1");
     [self.view addSubview:m_topImage];
     
     [self setTopViewWithTitle:@"" withBackButton:YES];
@@ -271,7 +271,7 @@
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
             [hud hide:YES];
             self.scrollView.contentOffset = CGPointMake(kScreenWidth*2, 0);
-            m_topImage.image = KUIImage(@"registerStep2");
+//            m_topImage.image = KUIImage(@"registerStep2");
             m_titleLabel.text = @"个人信息";
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
@@ -896,7 +896,7 @@
         if (buttonIndex != alertView.cancelButtonIndex){
             m_step2Scroll.hidden = YES;
             m_step3Scroll.hidden = NO;
-            m_topImage.image = KUIImage(@"register_step_3");
+//            m_topImage.image = KUIImage(@"register_step_3");
             //    m_userNameText.text = m_roleNameText.text;
             m_titleLabel.text = @"个人信息";
             [[TempData sharedInstance] setPassBindingRole:YES];
