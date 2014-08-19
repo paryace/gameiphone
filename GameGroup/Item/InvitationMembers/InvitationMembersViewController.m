@@ -24,7 +24,6 @@
 {
     UIScrollView                       *  m_mainScroll;
     UITableView                        *  m_rTableView;//好友界面
-    NSMutableArray                     *  m_rArray;//好友数据
     NSMutableArray                     *  addMemArray;//邀请人数数据
     UIButton                           *  m_button;
     UICollectionView                   *  m_customCollView;//邀请人员列表
@@ -86,7 +85,6 @@
     
     dataDict  = [NSMutableDictionary dictionary];
     keysArr = [NSMutableArray array];
-    m_rArray = [NSMutableArray array];
     m_tabTag = 1;
     addMemArray = [NSMutableArray array];
     
@@ -624,10 +622,10 @@
     }
     
     cell.tag = 100+indexPath.row;
+    cell.indexPath = indexPath;
     cell.myDelegate = self;
     
     NSDictionary * tempDict ;
-//        tempDict = m_rArray[indexPath.row];
         cell.disLabel.hidden = YES;
     
     NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
@@ -723,9 +721,12 @@
 
 -(void)enterMembersInfoPageWithCell:(AddGroupMemberCell*)cell
 {
-    NSDictionary * tempDict =[NSDictionary dictionary];
- 
-            tempDict = m_rArray[cell.tag-100];
+    NSIndexPath * indexPath = cell.indexPath;
+    NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
+    if (indexPath.row>=arr.count) {
+        return;
+    }
+    NSDictionary * tempDict = arr[indexPath.row];
     TestViewController *test =[[ TestViewController alloc]init];
     test.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"userid")];
     test.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"nickname")];

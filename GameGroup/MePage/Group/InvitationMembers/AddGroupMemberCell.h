@@ -16,6 +16,7 @@
 @property(nonatomic,strong)EGOImageButton *headImg;
 @property(nonatomic,strong)UILabel *nameLabel;
 @property(nonatomic,strong)UILabel *disLabel;
+@property(nonatomic,strong)NSIndexPath *indexPath;
 @property(nonatomic,assign)id<addGroupMemberDelegate>myDelegate;
 
 @end
