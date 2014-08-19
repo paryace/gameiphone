@@ -22,7 +22,7 @@
     NSInteger        m_allcurrentPage;
     MJRefreshHeaderView *m_fansheader;
     MJRefreshFooterView *m_fansfooter;
-    
+    UILabel *m_noFansLabel;
 }
 @end
 
@@ -65,6 +65,14 @@
     [self addHeader];
 
     [self addFooter];
+    
+    m_noFansLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(0, 0, 250, 40) font:[UIFont systemFontOfSize:13] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
+    m_noFansLabel.hidden = YES;
+    m_noFansLabel.text = @"您现在还没有粉丝哟";
+    m_noFansLabel.center = self.view .center;
+    [self.view addSubview:m_noFansLabel];
+
+    
     [m_fansheader beginRefreshing];
 //    [m_fansfooter endRefreshing];
 }
@@ -100,12 +108,19 @@
         [hud hide:YES];
         
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
             if (m_currentPage == 0) {//默认展示存储的
                 m_allcurrentPage = [KISDictionaryHaveKey(responseObject, @"totalResults") intValue];
                 [self refreFansNum:m_allcurrentPage];
                 [self refreTitle:[NSString stringWithFormat:@"%d",m_allcurrentPage]];
                 NSMutableArray *fans=KISDictionaryHaveKey(responseObject, @"users");
                 m_otherSortFansArray=fans;
+                if (m_otherSortFansArray.count<=0) {
+                    m_noFansLabel.hidden = NO;
+                }else
+                {
+                    m_noFansLabel.hidden = YES;
+                }
                 [self endLoad];
             }
             else{
@@ -136,6 +151,11 @@
 -(void)refreFansNum:(NSInteger)fansInteger
 {
     NSString *fansNum=[NSString stringWithFormat: @"%d",fansInteger];
+    if (fansInteger ==0) {
+        m_noFansLabel.hidden = NO;
+    }else{
+        m_noFansLabel.hidden = YES;
+    }
     [[NSUserDefaults standardUserDefaults] setObject:fansNum forKey:[FansCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

@@ -64,7 +64,7 @@
     m_maxZiShu = 30;
     selectCharacter = self.selectRoleDict;
     selectType = self.selectTypeDict;
-    
+    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
