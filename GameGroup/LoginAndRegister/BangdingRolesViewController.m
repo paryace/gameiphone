@@ -51,7 +51,7 @@
 
     
     UIImageView *iageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 28)];
-    iageView.image = KUIImage(@"registerStep3");
+//    iageView.image = KUIImage(@"registerStep3");
     [self.view addSubview:iageView];
     
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
