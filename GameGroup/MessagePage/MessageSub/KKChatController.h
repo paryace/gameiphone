@@ -48,7 +48,8 @@ QiniuUploadDelegate,
 SendMsgDeleGate,
 DropDownChooseDelegate,
 DropDownChooseDataSource,
-DetailDelegate>
+DetailDelegate,
+LocationViewDelegate>
 {
     NSString * userName;
     NSUserDefaults * uDefault;

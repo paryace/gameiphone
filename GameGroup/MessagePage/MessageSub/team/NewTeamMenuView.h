@@ -46,4 +46,7 @@
 -(void)headImgClick:(NSString*)userId;
 -(void)btnAction:(UIButton*)sender;
 -(void)positionAction;
+-(void)doShowView;
+-(void)doHideView;
+-(void)doShowOrHideViewControl;
 @end

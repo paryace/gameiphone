@@ -453,6 +453,7 @@ UINavigationControllerDelegate>
 }
 //选择位置
 -(void)returnChooseInfoFrom:(UIViewController *)vc info:(NSDictionary *)info{
+    [self showOrHideControl];
     NSMutableDictionary * clickType = [info mutableCopy];
     if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
         return;
@@ -471,8 +472,13 @@ UINavigationControllerDelegate>
 -(void)positionAction{
     LocationViewController *itemInfo = [[LocationViewController alloc]init];
     itemInfo.gameid = self.gameId;
+    itemInfo.mydelegate = self;
     [self.navigationController pushViewController:itemInfo animated:YES];
 
+}
+//隐藏显示
+-(void)doShowOrHideViewControl{
+    [self showOrHideControl];
 }
 
 /////

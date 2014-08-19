@@ -36,14 +36,20 @@
         self.teamUsershipType = teamUsershipType;
         self.roomId = roomId;
         self.gameId = gameId;
+        NSArray *normalimagearr = [NSArray array] ;
+        NSArray *clickimagearr = [NSArray array] ;
+        NSArray *titlearr = [NSArray array] ;
+        normalimagearr = @[@"new_friend_normal_1",@"new_friend_normal_2",@"new_friend_normal_3",@"new_friend_normal_4" ];
+        clickimagearr = @[@"new_friend_click_1",@"new_friend_click_2",@"new_friend_click_3",@"new_friend_click_4"];
+        titlearr = @[@"邀请",@"提醒",@"详情",@"申请"];
         UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 60)];
         UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
         bgImageView.image = bgImage;
         bgImageView.userInteractionEnabled = YES;
         for (int i = 0; i <4; i++) {
-            UIButton *sectionBtn = [self getUIBtn:i NormalImage:@"new_friend_normal_1" ClickImage:@"new_friend_click_1"];
+            UIButton *sectionBtn = [self getUIBtn:i NormalImage:normalimagearr[i] ClickImage:clickimagearr[i]];
             [bgImageView addSubview:sectionBtn];
-            UILabel * titlelable=[self getUILable:i TitleText:@"邀请"];
+            UILabel * titlelable=[self getUILable:i TitleText:titlearr[i]];
             [bgImageView addSubview:titlelable];
         }
         [self addSubview:bgImageView];
@@ -103,6 +109,7 @@
             }
         }
         [self getmemberList];
+        [self setBtnState];
         [self.mTableView reloadData];
     }
     return self;
@@ -438,9 +445,11 @@
     }
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        self.refusedBtn.enabled = YES;
         cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
     }else{
+        self.refusedBtn.enabled = NO;
         cell.positionLable.textColor = [UIColor grayColor];
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
     }
@@ -536,6 +545,7 @@
             [hud show:YES];
             [[ItemManager singleton] dissoTeam:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
                 [hud hide:YES];
+                [self.detaildelegate doShowOrHideViewControl];
                 [self showToastAlertView:@"解散成功"];
             } reError:^(id error) {
                 [hud hide:YES];
