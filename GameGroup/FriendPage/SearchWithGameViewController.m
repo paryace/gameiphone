@@ -20,6 +20,7 @@
     NSMutableArray *m_dataArray;
     int m_infoNum;
     UIAlertView *alertView1;
+    UITableView *m_myTableView;
 }
 @end
 
@@ -47,11 +48,12 @@
     }else{
     m_dataArray =[self.dataDic objectForKey:@"characters"];
     }
-    UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-30) style:UITableViewStylePlain];
-    tableView.delegate = self;
-    tableView.dataSource = self;
-    tableView.rowHeight = 60;
-    [self.view addSubview:tableView];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-30) style:UITableViewStylePlain];
+    m_myTableView.delegate = self;
+    m_myTableView.dataSource = self;
+    m_myTableView.rowHeight = 60;
+    [self.view addSubview:m_myTableView];
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     
     if ([KISDictionaryHaveKey(self.dataDic, @"characterTotalNum")intValue]>50) {
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
@@ -60,7 +62,7 @@
         titleLabel.text = [NSString stringWithFormat:@"共查询到%@条数据,建议输入更具体的信息查询",KISDictionaryHaveKey(self.dataDic,@"characterTotalNum")];
         titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.font = [UIFont systemFontOfSize:12];
-        tableView.tableHeaderView = titleLabel;
+        m_myTableView.tableHeaderView = titleLabel;
     }
 
     UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(0,kScreenHeigth-30, 320, 30)];

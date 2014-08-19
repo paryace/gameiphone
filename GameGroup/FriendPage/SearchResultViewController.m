@@ -67,7 +67,7 @@
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
     [self.view addSubview:m_myTableView];
-    
+    [GameCommon setExtraCellLineHidden:m_myTableView];
    
     m_pageNum = 0;
 

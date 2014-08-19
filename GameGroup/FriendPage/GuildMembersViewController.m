@@ -49,6 +49,7 @@
     m_myTableView.dataSource = self;
     m_myTableView.rowHeight = 60;
     [self.view addSubview:m_myTableView];
+    [GameCommon setExtraCellLineHidden:m_myTableView];
     UIImageView *topImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 176)];
     topImg.image = KUIImage(@"guildTop.jpg");
     m_myTableView.tableHeaderView = topImg;

@@ -124,6 +124,8 @@
     m_myTableView.scrollEnabled = NO;
     m_myTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [m_roleView addSubview:m_myTableView];
+    [GameCommon setExtraCellLineHidden:m_myTableView];
+    
     
     m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
     m_serverNamePick.dataSource = self;
