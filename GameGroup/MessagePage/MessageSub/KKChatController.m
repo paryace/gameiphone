@@ -466,6 +466,15 @@ UINavigationControllerDelegate>
         [self showErrorAlertView:error];
     }];
 }
+
+//跳转位置页面
+-(void)positionAction{
+    LocationViewController *itemInfo = [[LocationViewController alloc]init];
+    itemInfo.gameid = self.gameId;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+
+}
+
 /////
 
 //设置组队未读消息数量

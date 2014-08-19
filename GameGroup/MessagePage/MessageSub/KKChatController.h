@@ -25,6 +25,7 @@
 #import "DropDownChooseDelegate.h"
 #import "TeamApplyController.h"
 #import "NewTeamMenuView.h"
+#import "LocationViewController.h"
 
 @class AppDelegate, XMPPHelper;
 

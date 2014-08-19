@@ -415,6 +415,7 @@
     }
     cell.tag = indexPath.row;
     cell.headCkickDelegate = self;
+    cell.onclickdelegate = self;
     NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
     NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
     cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
@@ -470,7 +471,11 @@
     cell.genderImageV.frame = CGRectMake(80+w, 9, 20, 20);
     cell.MemberLable.frame = CGRectMake(80+w+20+2, 13, 26, 13);
     
-    return cell;}
+    return cell;
+}
+-(void)positionOnClick:(InplaceCell*)sender{
+    [self.detaildelegate positionAction];
+}
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
 {

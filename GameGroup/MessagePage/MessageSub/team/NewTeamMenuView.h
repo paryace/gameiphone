@@ -12,12 +12,13 @@
 #import "JoinTeamCell.h"
 #import "TagCell.h"
 #import "TimeDelegate.h"
+#import "InplaceCell.h"
 #define SECTION_BTN_TAG_BEGIN   1000
 #define SECTION_IV_TAG_BEGIN    3000
 
 @protocol DetailDelegate;
 
-@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate>{
+@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate,OnClickDelegate>{
     MBProgressHUD* hud;//提示框
 }
 @property(nonatomic,assign)id<DetailDelegate>detaildelegate;
@@ -44,4 +45,5 @@
 -(void)itemOnClick:(NSDictionary*)charaDic;
 -(void)headImgClick:(NSString*)userId;
 -(void)btnAction:(UIButton*)sender;
+-(void)positionAction;
 @end

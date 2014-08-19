@@ -79,7 +79,13 @@
         self.positionLable.font =[ UIFont systemFontOfSize:14];
         [self.contentView addSubview:self.positionLable];
         
-        
+        self.positionBtn = [[UIButton alloc]initWithFrame:CGRectMake(15, 10, 70, 60)];
+        self.positionBtn.layer.cornerRadius = 5;
+        self.positionBtn.layer.masksToBounds=YES;
+        [self.positionBtn  addTarget:self action:@selector(positionOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.positionBtn setBackgroundImage:nil forState:UIControlStateNormal];
+        [self.contentView addSubview:self.bgImageView];
+
 
     }
     return self;
@@ -88,6 +94,12 @@
 -(void)headOnClick:(UIButton*)sender{
     if ([self.headCkickDelegate respondsToSelector:@selector(userHeadImgClick:)]) {
         [self.headCkickDelegate userHeadImgClick:self];
+    }
+}
+
+-(void)positionOnClick:(UIButton*)sender{
+    if ([self.onclickdelegate respondsToSelector:@selector(positionOnClick:)]) {
+        [self.onclickdelegate positionOnClick:self];
     }
 }
 
