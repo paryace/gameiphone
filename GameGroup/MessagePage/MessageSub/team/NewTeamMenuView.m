@@ -108,9 +108,6 @@
                 [self.bottomView addSubview:self.refusedBtn];
             }
         }
-        [self getmemberList];
-        [self setBtnState];
-        [self.mTableView reloadData];
     }
     return self;
 }
@@ -650,6 +647,9 @@
 }
 //显示
 -(void)showView{
+    [self getmemberList];
+    [self.mTableView reloadData];
+    [self setBtnState];
     self.isShow = YES;
     [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
 }
