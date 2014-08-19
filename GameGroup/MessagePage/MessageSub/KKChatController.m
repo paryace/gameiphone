@@ -417,7 +417,7 @@ UINavigationControllerDelegate>
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section == 0){
-        if (index<self.typeData_list.count) {
+        if (self.typeData_list&&index<self.typeData_list.count) {
             NSMutableDictionary * clickType = [self.typeData_list objectAtIndex:index];
             if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
                 return;
@@ -431,7 +431,7 @@ UINavigationControllerDelegate>
                 [self showErrorAlertView:error];
             }];
         }else{
-            [self showAlertViewWithTitle:@"提示" message:@"选择出错" buttonTitle:@"确定"];
+            [self showAlertViewWithTitle:@"提示" message:@"选择位置出错" buttonTitle:@"确定"];
         }
     }
 }

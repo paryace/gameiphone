@@ -7,7 +7,7 @@
 //
 
 #import "ItemManager.h"
-
+#define cacheTime 6//标签，分类缓存6小时
 
 static ItemManager *itemManager = NULL;
 @implementation ItemManager
@@ -36,7 +36,7 @@ static ItemManager *itemManager = NULL;
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:fileName];
     long long nowTime = [self getCurrentTime];
     long long oldTime = [time longLongValue];
-    if ((nowTime-oldTime)>6*60*60*1000) {
+    if ((nowTime-oldTime)>cacheTime*60*60*1000) {
         NSString *alltimeString=[NSString stringWithFormat:@"%lld",nowTime];
         [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:fileName];
         [[NSUserDefaults standardUserDefaults] synchronize];
