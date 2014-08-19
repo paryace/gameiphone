@@ -34,8 +34,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
-        //申请加入组队通知
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         
@@ -153,7 +152,7 @@
     UIButton *btn = (id)[self viewWithTag:SECTION_BTN_TAG_BEGIN +section];
     [btn setTitle:title forState:UIControlStateNormal];
 }
-
+//列表是否正在显示
 - (BOOL)isShow
 {
     if (currentExtendSection == -1) {
@@ -161,10 +160,16 @@
     }
     return YES;
 }
+//收起列表
 -  (void)hideExtendedChooseView
 {
     if (currentExtendSection != -1) {
-        [self clearInpaceMsg];
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
+        [self clearNorReadInpaceMsg];//清除消息
+        if (currentExtendSection == 2) {
+            //申请加入组队通知
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+        }
         if (self.teamUsershipType&&currentExtendSection==1) {
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
@@ -173,7 +178,7 @@
         [self.mTableBaseView removeFromSuperview];
     }
 }
-
+//显示列表
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
     if (self.teamUsershipType) {
@@ -183,6 +188,9 @@
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
+    
+    
+    
     float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
         self.mTableBaseView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y + self.frame.size.height , self.frame.size.width, self.mSuperView.frame.size.height - self.frame.origin.y - self.frame.size.height)];
@@ -192,15 +200,6 @@
         self.mBgView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.origin.y + self.frame.size.height, 320, tableHight)];
         self.mBgView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     }
-    
-//    if (!self.bottomMenuView){
-//        self.bottomMenuView = [[UIImageView alloc] initWithFrame:CGRectMake(0, tableHight-15, 320, 15)];
-//        self.bottomMenuView.image = KUIImage(@"bottom_memu.png");
-//        self.bottomMenuView.userInteractionEnabled = YES;
-//        UITapGestureRecognizer *menuTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(menuOnCLick:)];
-//        [self.bottomMenuView addGestureRecognizer:menuTap];
-//        [self.mBgView addSubview:self.bottomMenuView];
-//    }
     
     if (section == 0) {
         if (self.bottomView) {
@@ -284,6 +283,9 @@
                     [self.bottomView addSubview:self.refusedBtn];
                 }
             }
+        }else{
+            //申请加入组队通知
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
         }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
@@ -326,20 +328,22 @@
 
 //设置按钮状态
 -(void)setBtnState{
-    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    [self setButtonTitle:onClickState];
-    if(onClickState == 0){
-        [self reset];
-        [self normal];
-    }else if(onClickState == 1){
-        [self showButton];
-        [self send];
-    }else if(onClickState == 2){
-        [self showButton];
-        [self ok];
-    }else if(onClickState == 3){
-        [self showButton];
-        [self cancel];
+    if (currentExtendSection==1) {
+        NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+        [self setButtonTitle:onClickState];
+        if(onClickState == 0){
+            [self reset];
+            [self normal];
+        }else if(onClickState == 1){
+            [self showButton];
+            [self send];
+        }else if(onClickState == 2){
+            [self showButton];
+            [self ok];
+        }else if(onClickState == 3){
+            [self showButton];
+            [self cancel];
+        }
     }
 }
 
