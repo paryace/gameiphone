@@ -740,7 +740,6 @@
 }
 
 
-
 #pragma mark 个人信息更新完毕通知
 -(void) onUserUpdate:(NSNotification*)notification{
     [m_messageTable reloadData];

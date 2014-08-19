@@ -683,6 +683,16 @@
 - (void)dealloc
 {
     backAlert.delegate = nil;
+    m_rolePickerView.delegate = nil;
+    m_countPickView.delegate = nil;
+    m_tagsPickView.delegate = nil;
+    m_tagsPickView.dataSource = nil;
+    m_countPickView.dataSource = nil;
+    m_rolePickerView.dataSource = nil;
+    [m_rolePickerView removeFromSuperview];
+    [m_countPickView removeFromSuperview];
+    [m_tagsPickView removeFromSuperview];
+    
 }
 - (void)didReceiveMemoryWarning
 {
