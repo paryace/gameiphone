@@ -20,7 +20,6 @@
 @implementation FirstView
 {
     UITableView *m_myTabelView;
-//    DropDownListView * dropDownView;
     UITextField *roleTextf;
     UISearchBar * mSearchBar;
     UIView *tagView;
@@ -37,8 +36,6 @@
     NSMutableArray *arrayFilter;
     NSMutableArray *m_dataArray;
     NSMutableDictionary *roleDict;
-//    NSMutableArray *m_charaArray;
-    
     
     NSString * selectDescription;
     MBProgressHUD * hud;
@@ -54,7 +51,6 @@
     if (self) {
         
         m_dataArray = [NSMutableArray array];
-//        m_charaArray = [NSMutableArray array];
         roleDict = [NSMutableDictionary dictionary];
         arrayTag = [NSMutableArray array];
         arrayType = [NSMutableArray array];
@@ -296,20 +292,25 @@
 -(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
 {
     if (section==0) {//选择角色
-        
         NSLog(@"%@",self.selectCharacter);
-        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectCharacter, @"gameid") ] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.firstDataArray objectAtIndex:index], @"gameid")]]) {
-            self.selectType =nil;
+        if (self.selectCharacter) {//判断是否切换了游戏
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.selectCharacter, @"gameid") ] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey([self.firstDataArray objectAtIndex:index], @"gameid")]]) {
+                [self resetSelectConditions];
+            }
         }
-        
         self.selectCharacter = [self.firstDataArray objectAtIndex:index];
-
         [self reloInfo:YES];
     }
     else if (section == 1){//选择分类
         self.selectType =[arrayType objectAtIndex:index];
         [self reloInfo:YES];
     }
+}
+
+//切换游戏重置搜索条件
+-(void)resetSelectConditions{
+    self.selectType = nil;
+    self.selectFilter = nil;
 }
 
 //点击选项
