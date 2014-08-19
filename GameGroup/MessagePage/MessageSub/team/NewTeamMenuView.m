@@ -445,11 +445,11 @@
     }
     
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        self.refusedBtn.enabled = YES;
+        cell.positionBtn.enabled = YES;
         cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
     }else{
-        self.refusedBtn.enabled = NO;
+        cell.positionBtn.enabled = NO;
         cell.positionLable.textColor = [UIColor grayColor];
         cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
     }
