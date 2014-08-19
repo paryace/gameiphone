@@ -207,15 +207,8 @@
 //显示列表
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
-//    if (self.teamUsershipType) {
-//        if (section==1) {
-//            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
-//        }else{
-//            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
-//        }
-//    }
+
     [self showListViewDetail:section];
-    
     
     float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
     if (!self.customPhotoCollectionView&&!self.mTableView) {
@@ -228,9 +221,6 @@
     }
     
     if (section == 0) {
-//        if (self.bottomView) {
-//            [self hideButton];
-//        }
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
@@ -310,10 +300,6 @@
                 }
             }
         }
-//        else{
-//            //申请加入组队通知
-//            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
-//        }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         [self.mTableView reloadData];
@@ -332,8 +318,6 @@
         [self.mSuperView addSubview:hud];
     }
 }
-
-
 
 -(void)initButtonTitle{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
