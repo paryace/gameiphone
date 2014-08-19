@@ -25,9 +25,6 @@
 #import "JoinApplyViewController.h"
 #import "OpenImgViewController.h"
 #import "WQPlaySound.h"
-
-#import "LocationViewController.h"
-
 #define mTime 0.5
 @interface MessagePageViewController ()<NewRegisterViewControllerDelegate>
 {
@@ -301,12 +298,9 @@
 #pragma mark -清空
 - (void)cleanBtnClick:(id)sender
 {
-    LocationViewController *loc =[[LocationViewController alloc]init];
-    [self.navigationController pushViewController:loc animated:YES];
-    
-//    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"将会清除所有的聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-//    alert.tag = 345;
-//    [alert show];
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"将会清除所有的聊天消息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    alert.tag = 345;
+    [alert show];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -759,6 +753,7 @@
 -(void)teamMemberCountChang:(NSNotification*)notification{
     [m_messageTable reloadData];
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
