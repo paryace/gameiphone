@@ -273,6 +273,7 @@
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"readApplyMsg" object:nil userInfo:nil];
     [self getZU];
     [m_TableView reloadData];
     NSLog(@"申请加入组队消息--->>%@",notification.userInfo);

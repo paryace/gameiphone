@@ -279,25 +279,25 @@
 //    }
     return 60;
 }
--(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    if (section ==1) {
-        UIView *view =[[ UIView alloc]init];
-        view.backgroundColor = [UIColor whiteColor];
-        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
-        headImg.image =KUIImage(@"team_history");
-        [view addSubview:headImg];
-        UILabel *label =[GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 200, 60) font:[UIFont boldSystemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-        label.text = @"历史组队";
-        [view addSubview:label];
-        [self setOneLineWithY:0 view:view];
-        [self setOneLineWithY:59 view:view];
-        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHistoryReamList:)]];
-        return view;
-    }else{
-        return nil;
-    }
-}
+//-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    if (section ==1) {
+//        UIView *view =[[ UIView alloc]init];
+//        view.backgroundColor = [UIColor whiteColor];
+//        UIImageView *headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+//        headImg.image =KUIImage(@"team_history");
+//        [view addSubview:headImg];
+//        UILabel *label =[GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 200, 60) font:[UIFont boldSystemFontOfSize:15] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//        label.text = @"历史组队";
+//        [view addSubview:label];
+//        [self setOneLineWithY:0 view:view];
+//        [self setOneLineWithY:59 view:view];
+//        [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterHistoryReamList:)]];
+//        return view;
+//    }else{
+//        return nil;
+//    }
+//}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     return 0;

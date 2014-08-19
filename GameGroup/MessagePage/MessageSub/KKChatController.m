@@ -212,7 +212,6 @@ UINavigationControllerDelegate>
 }
 
 -(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
-    
     return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
 }
 
@@ -238,6 +237,9 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
     //发送系统消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
+    //
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readApplyMsg:) name:@"readApplyMsg" object:nil];
+
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
     self.typeData_list = [NSArray array];
@@ -329,23 +331,23 @@ UINavigationControllerDelegate>
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
         [self.view addSubview:self.newTeamMenuView];
-        [self hideExtendedChooseView];
         
         
 //        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
 //        self.dropDownView.mSuperView = self.view;
 //        [self.dropDownView setTitle:@"申请" inSection:2];
 //        [self.view addSubview:self.dropDownView];
-//        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
-//        [self.view addSubview:self.dotVApp];
-//        [self setNotifyMsgCount];
+        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25, startX+5, 22, 18)];
+        [self.view addSubview:self.dotVApp];
+        
 //        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/2+20, startX+5, 22, 18)];
 //        [self.view addSubview:self.dotVInplace];
 //        [self setInplaceMsgCount];
-//        
-//        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/3-30, startX+2, 22, 18)];
-//        [self.view addSubview:self.dotVPosition];
-//        
+//
+        //左上角消息数
+        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30, KISHighVersion_7 ? 20 : 0, 22, 18)];
+        [self.view addSubview:self.dotVPosition];
+//
 //        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
 //        
 //        if (selectType) {
@@ -353,14 +355,14 @@ UINavigationControllerDelegate>
 //        }else{
 //            [self.dropDownView setTitle:@"位置" inSection:0];
 //        }
-//        [self setPositionMsgCount];
-//        [self changPosition];
+        [self setRightMsgCount];
+        [self changPosition];
+        [self hideExtendedChooseView];
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
-
 
 ////
 //显示或者隐藏控制
@@ -369,9 +371,9 @@ UINavigationControllerDelegate>
 }
 //显示或者隐藏布局
 -(void)showOrHideView{
-    [self hideView];
     if (isMenuShow) {
         isMenuShow = NO;
+        [self hideView];
         [self hideExtendedChooseView];
     }else{
         isMenuShow = YES;
@@ -382,22 +384,18 @@ UINavigationControllerDelegate>
 //隐藏列表
 - (void)hideExtendedChooseView
 {
-    [UIView animateWithDuration:0.2 animations:^(void) {
-        self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,0);
-    } completion:^(BOOL finished) {
-        self.newTeamMenuView.hidden = YES;
-        [self.newTeamMenuView hideView];
-    }];
+    self.dotVApp.hidden = YES;
+    self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,0);
+    self.newTeamMenuView.hidden = YES;
+    [self.newTeamMenuView hideView];
 }
 //显示列表
 -(void)showChooseListViewInSection
 {
-    [UIView animateWithDuration:0.2 animations:^(void) {
-       self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,kScreenHeigth);
-    } completion:^(BOOL finished) {
-        self.newTeamMenuView.hidden = NO;
-        [self.newTeamMenuView showView];
-    }];
+    self.dotVApp.hidden = NO;
+    self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,kScreenHeigth);
+    self.newTeamMenuView.hidden = NO;
+    [self.newTeamMenuView showView];
 }
 -(void)hideView{
     [UIView animateWithDuration:0.3 animations:^{
@@ -413,7 +411,8 @@ UINavigationControllerDelegate>
 -(void)buttonOnClick{
     [self readNoreadMsg];
     [self setNoreadMsgView];
-    [self setInplaceMsgCount];
+//    [self setInplaceMsgCount];
+    [self setRightMsgCount];
 }
 -(void)itemOnClick:(NSDictionary*)charaDic{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
@@ -452,6 +451,7 @@ UINavigationControllerDelegate>
         itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
         [self.navigationController pushViewController:itemInfo animated:YES];
     }else if (index==3) {
+        [self refreJoinApplyMsgCount];
         TeamApplyController *itemInfo = [[TeamApplyController alloc]init];
         itemInfo.groipId = self.chatWithUser;
         itemInfo.roomId = self.roomId;
@@ -495,6 +495,10 @@ UINavigationControllerDelegate>
 //设置组队未读消息数量
 -(void)setNotifyMsgCount{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
+    [self setNotifyMsgCount:msgC];
+}
+
+-(void)setNotifyMsgCount:(NSInteger)msgC{
     if (msgC>0) {
         self.dotVApp.hidden = NO;
         [self.dotVApp setMsgCount:msgC];
@@ -507,6 +511,10 @@ UINavigationControllerDelegate>
 //设置就位确认未读消息数量
 -(void)setInplaceMsgCount{
    NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
+    [self setInplaceMsgCount:msgC];
+}
+
+-(void)setInplaceMsgCount:(NSInteger)msgC{
     if (msgC>0) {
         self.dotVInplace.hidden = NO;
         [self.dotVInplace setMsgCount:msgC IsSimple:YES];
@@ -514,8 +522,29 @@ UINavigationControllerDelegate>
         [self.dotVInplace setMsgCount:0 IsSimple:YES];
         self.dotVInplace.hidden = YES;
     }
-    
 }
+
+
+//设置右上角消息
+-(void)setRightMsgCount{
+    NSInteger msgC1 = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
+    NSInteger msgC2 = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
+    [self setNotifyMsgCount:msgC1];
+    NSInteger positionCount=msgC1+msgC2;
+    [self setRightMsgCount:positionCount];
+}
+
+-(void)setRightMsgCount:(NSInteger)positionCount{
+    if (positionCount>0) {
+        self.dotVPosition.hidden = NO;
+        [self.dotVPosition setMsgCount:positionCount IsSimple:NO];
+    }else{
+        [self.dotVPosition setMsgCount:0 IsSimple:YES];
+        self.dotVPosition.hidden = YES;
+    }
+}
+
+
 //设置就位确认未读消息数量
 -(void)setPositionMsgCount{
     NSInteger positionCount;
@@ -531,7 +560,6 @@ UINavigationControllerDelegate>
         [self.dotVPosition setMsgCount:0 IsSimple:YES];
         self.dotVPosition.hidden = YES;
     }
-    
 }
 
 #pragma mark -- 分类请求成功通知
@@ -656,10 +684,19 @@ UINavigationControllerDelegate>
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
         [self readNoreadMsg];
         [self setNoreadMsgView];
-        [self setNotifyMsgCount];
+//        [self setNotifyMsgCount];
+        [self setRightMsgCount];
     }];
 }
 
+-(void)readApplyMsg:(NSNotification*)notification{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
+        [self setRightMsgCount];
+    }];
+}
 //------------------------------------------------------------------------------------------------------------
 
 
@@ -2041,9 +2078,9 @@ UINavigationControllerDelegate>
         [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         self.textView.hidden = NO;
         [self showEmojiScrollView];
-        if (self.isTeam) {
-            [self hideTopView];
-        }
+//        if (self.isTeam) {
+//            [self hideTopView];
+//        }
         
     }
     else
@@ -2071,9 +2108,9 @@ UINavigationControllerDelegate>
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
-        if (self.isTeam) {
-            [self hideTopView];
-        }
+//        if (self.isTeam) {
+//            [self hideTopView];
+//        }
         
     }else{//点击切回键盘
         [self.textView.internalTextView becomeFirstResponder];
@@ -2175,9 +2212,9 @@ UINavigationControllerDelegate>
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
             [self autoMovekeyBoard:0];
-            if (self.isTeam) {
-                [self showTopView];
-            }
+//            if (self.isTeam) {
+//                [self showTopView];
+//            }
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
@@ -2424,9 +2461,9 @@ UINavigationControllerDelegate>
     
     [self autoMovekeyBoard:keyboardRect.size.height];
     
-    if (self.isTeam) {
-        [self hideTopView];
-    }
+//    if (self.isTeam) {
+//        [self hideTopView];
+//    }
 }
 
 
@@ -2446,11 +2483,9 @@ UINavigationControllerDelegate>
     {
         [self autoMovekeyBoard:0];
     }
-    if (self.isTeam) {
-        [self showTopView];
-    }
-    
-    
+//    if (self.isTeam) {
+//        [self showTopView];
+//    }
 }
 -(NSString *)selectedEmoji:(NSString *)ssss
 {
@@ -3120,11 +3155,13 @@ UINavigationControllerDelegate>
             }else if ([msgType isEqualToString:@"requestJoinTeam"]) {//申请加入组队
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
-                [self setNotifyMsgCount];
+//                [self setNotifyMsgCount];
+                [self setRightMsgCount];
             }else if ([msgType isEqualToString:@"startTeamPreparedConfirm"]) {//发起就位确认
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
-                [self setInplaceMsgCount];
+//                [self setInplaceMsgCount];
+                [self setRightMsgCount];
             }
         }
     }else{
