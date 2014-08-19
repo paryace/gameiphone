@@ -23,6 +23,8 @@
 #import "KKImgCell.h"
 #import "QiniuUploadDelegate.h"
 #import "DropDownChooseDelegate.h"
+#import "TeamApplyController.h"
+#import "NewTeamMenuView.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -42,7 +44,10 @@ HPGrowingTextViewDelegate,
 KKChatCellDelegate,
 EmojiViewDelegate,
 QiniuUploadDelegate,
-SendMsgDeleGate,DropDownChooseDelegate,DropDownChooseDataSource>
+SendMsgDeleGate,
+DropDownChooseDelegate,
+DropDownChooseDataSource,
+DetailDelegate>
 {
     NSString * userName;
     NSUserDefaults * uDefault;

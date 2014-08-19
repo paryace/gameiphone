@@ -35,12 +35,10 @@
 @property (nonatomic, strong) UIButton *sendBtn ;
 @property (nonatomic, strong) UIButton *agreeBtn ;
 @property (nonatomic, strong) UIButton *refusedBtn ;
-
 @property (nonatomic, strong) NSString *groipId;
 @property (nonatomic, strong) NSString *roomId;
 @property (nonatomic, strong) NSString *gameId;
 @property (nonatomic, nonatomic)  BOOL teamUsershipType;
-
 @property (strong, nonatomic)  NSMutableArray * teamNotifityMsg;
 @property (strong, nonatomic)  NSMutableArray * memberList;
 
