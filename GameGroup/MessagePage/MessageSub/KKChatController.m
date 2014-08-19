@@ -379,16 +379,25 @@ UINavigationControllerDelegate>
         [self showChooseListViewInSection];
     }
 }
+//隐藏列表
 - (void)hideExtendedChooseView
 {
-    self.newTeamMenuView.hidden = YES;
-    [self.newTeamMenuView hideView];
+    [UIView animateWithDuration:0.2 animations:^(void) {
+        self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,0);
+    } completion:^(BOOL finished) {
+        self.newTeamMenuView.hidden = YES;
+        [self.newTeamMenuView hideView];
+    }];
 }
 //显示列表
 -(void)showChooseListViewInSection
 {
-     self.newTeamMenuView.hidden = NO;
-    [self.newTeamMenuView showView];
+    [UIView animateWithDuration:0.2 animations:^(void) {
+       self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,kScreenHeigth);
+    } completion:^(BOOL finished) {
+        self.newTeamMenuView.hidden = NO;
+        [self.newTeamMenuView showView];
+    }];
 }
 -(void)hideView{
     [UIView animateWithDuration:0.3 animations:^{
