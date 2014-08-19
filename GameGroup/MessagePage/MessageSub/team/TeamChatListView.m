@@ -164,31 +164,57 @@
 -  (void)hideExtendedChooseView
 {
     if (currentExtendSection != -1) {
-        [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
-        [self clearNorReadInpaceMsg];//清除消息
-        if (currentExtendSection == 2) {
-            //申请加入组队通知
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
-        }
-        if (self.teamUsershipType&&currentExtendSection==1) {
-            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
-        }
+        [self hideListViewDetail];
         currentExtendSection = -1;
         [self.mBgView removeFromSuperview];
         [self.mTableBaseView removeFromSuperview];
     }
 }
+
+
+-(void)hideListViewDetail{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
+    [self clearNorReadInpaceMsg];//清除消息
+    if (currentExtendSection==1) {
+        if (self.teamUsershipType) {//停止计时
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
+    }else if (currentExtendSection == 2) {
+        //申请加入组队通知
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+    }
+}
+
+-(void)showListViewDetail:(NSInteger)section{
+    if (section == 0) {
+        if (self.bottomView) {
+            [self hideButton];
+        }
+        if (self.teamUsershipType) {
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
+    }else if (section == 1){
+        [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+    }else if (section == 2){
+        if (self.teamUsershipType) {
+            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+        }
+        //申请加入组队通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+    }
+}
+
 //显示列表
 -(void)showChooseListViewInSection:(NSInteger)section choosedIndex:(NSInteger)index
 {
-    if (self.teamUsershipType) {
-        if (section==1) {
-            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
-        }else{
-            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
-        }
-    }
-    
+//    if (self.teamUsershipType) {
+//        if (section==1) {
+//            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+//        }else{
+//            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
+//        }
+//    }
+    [self showListViewDetail:section];
     
     
     float tableHight = self.superview.frame.size.height-(KISHighVersion_7 ? 64 : 44)-40;
@@ -202,9 +228,9 @@
     }
     
     if (section == 0) {
-        if (self.bottomView) {
-            [self hideButton];
-        }
+//        if (self.bottomView) {
+//            [self hideButton];
+//        }
         if (!self.customPhotoCollectionView){
             self.layout = [[UICollectionViewFlowLayout alloc]init];
             self.layout.minimumInteritemSpacing = 10;
@@ -283,10 +309,11 @@
                     [self.bottomView addSubview:self.refusedBtn];
                 }
             }
-        }else{
-            //申请加入组队通知
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
         }
+//        else{
+//            //申请加入组队通知
+//            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+//        }
         [self.mSuperView addSubview:self.mTableBaseView];
         [self.mSuperView addSubview:self.mBgView];
         [self.mTableView reloadData];
