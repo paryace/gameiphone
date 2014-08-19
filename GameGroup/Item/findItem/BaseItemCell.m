@@ -25,7 +25,7 @@
         self.gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(60, 33, 15, 15)];
         [self addSubview:self.gameIconImg];
         
-        self.contentLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 26.0f, 230, 30) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.contentLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 26.0f, 320-80-10-26-2, 30) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.contentLabel];
         
         self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(220, 5, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
