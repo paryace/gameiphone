@@ -435,7 +435,15 @@
         cell.realmLable.text = @"";
         cell.pveLable.text = @"";
     }
-    cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
+        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
+    }else{
+        cell.positionLable.textColor = [UIColor grayColor];
+        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+    }
+    
     if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
         cell.stateView.hidden = YES;
     }else{
@@ -529,7 +537,6 @@
                 [self showErrorAlertView:error];
             }];
         }
-        
     }
 }
 

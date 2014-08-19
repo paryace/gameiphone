@@ -451,7 +451,21 @@ UINavigationControllerDelegate>
         [self.navigationController pushViewController:itemInfo animated:YES];
     }
 }
-
+//选择位置
+-(void)returnChooseInfoFrom:(UIViewController *)vc info:(NSDictionary *)info{
+    NSMutableDictionary * clickType = [info mutableCopy];
+    if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
+        return;
+    }
+    [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
+        selectType = clickType;
+        [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+        [self changPosition];
+        [self setPositionMsgCount];
+    } reError:^(id error) {
+        [self showErrorAlertView:error];
+    }];
+}
 /////
 
 //设置组队未读消息数量
@@ -464,7 +478,6 @@ UINavigationControllerDelegate>
         [self.dotVApp setMsgCount:0];
         self.dotVApp.hidden = YES;
     }
-    
 }
 
 //设置就位确认未读消息数量
