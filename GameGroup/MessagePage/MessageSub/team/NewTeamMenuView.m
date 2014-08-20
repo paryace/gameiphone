@@ -26,7 +26,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor grayColor];
+        self.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
@@ -49,17 +49,18 @@
         [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         
-//        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2, 320, 20)];
-//        pveLable.backgroundColor = [UIColor clearColor];
-//        pveLable.textAlignment = NSTextAlignmentCenter;
-//        pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-//        pveLable.text = @"向左滑动操作";
-//        pveLable.font =[ UIFont systemFontOfSize:12];
-//        [self addSubview:pveLable];
+        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2, 320, 20)];
+        pveLable.backgroundColor = [UIColor clearColor];
+        pveLable.textAlignment = NSTextAlignmentCenter;
+        pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
+        pveLable.text = @"向左滑动操作";
+        pveLable.font =[ UIFont systemFontOfSize:12];
+        [self addSubview:pveLable];
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];
-            self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+//            self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+            self.mTableView.backgroundColor = [UIColor clearColor];
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
