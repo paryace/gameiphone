@@ -563,19 +563,23 @@
         [[GroupManager singleton] getGroupInfoWithNet:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
         
-        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"您已经成功创建了队伍" GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] roomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")] team:@"teamchat" UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"userid")]];
+        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"创建队伍成功，您可以通过邀请好友快速的组建队伍" GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] roomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")] team:@"teamchat" UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"userid")]];
         
         
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
-            invc.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")];
-            invc.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")];
-            invc.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")];
-            invc.roomInfoDic = responseObject;
-            invc.isRegister = YES;
-            [self.navigationController pushViewController:invc animated:YES];
-        }        
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+        
+        
+//        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+//            InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
+//            invc.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")];
+//            invc.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")];
+//            invc.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")];
+//            invc.roomInfoDic = responseObject;
+//            invc.isRegister = YES;
+//            [self.navigationController pushViewController:invc animated:YES];
+//        }        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlert:error];
         [hud hide:YES];

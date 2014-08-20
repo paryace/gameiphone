@@ -115,7 +115,7 @@ static TeamManager *teamManager = NULL;
 -(void)roomFull:(NSString*)gameId RoomId:(NSString*)roomId GroupId:(NSString*)groupId UserId:(NSString*)userId{
     NSMutableDictionary * teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:gameId] RoomId:[GameCommon getNewStringWithId:roomId]];
     if ([KISDictionaryHaveKey(teamInfo, @"memberCount") intValue]==[KISDictionaryHaveKey(teamInfo, @"maxVol") intValue]) {
-        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"您的组队人数已满" GroupId:groupId gameid:gameId roomId:roomId team:@"teamchat" UserId:userId];
+        [MessageService groupNotAvailable:@"inTeamSystemMsg" Message:@"队伍人数已满，在队员列表中发起就位确认吧" GroupId:groupId gameid:gameId roomId:roomId team:@"teamchat" UserId:userId];
     }
 }
 

@@ -106,6 +106,10 @@
                 [self.bottomView addSubview:self.refusedBtn];
             }
         }
+        
+        hud = [[MBProgressHUD alloc] initWithView:self];
+        hud.labelText = @"加载中...";
+        [self addSubview:hud];
     }
     return self;
 }
@@ -724,7 +728,7 @@
 }
 
 -(void)deallocContro{
-    [self clearInpaceMsg];
+//    [self clearInpaceMsg];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];

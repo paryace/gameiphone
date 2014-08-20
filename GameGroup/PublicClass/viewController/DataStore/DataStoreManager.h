@@ -408,7 +408,7 @@
 +(void)deletePreferenceInfoByCharacterId:(NSString*)characterId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //查询创建组队者的信息
-+(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId;
++(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId UserId:(NSString*)userId;
 
 //删除创建组队者的信息
 +(void)deletePreferenceInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId Successcompletion:(MRSaveCompletionHandler)successcompletion;

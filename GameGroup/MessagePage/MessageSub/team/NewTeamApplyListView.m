@@ -38,13 +38,18 @@
         [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         
-        m_TableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight,kScreenWidth, kScreenHeigth-topHight) style:UITableViewStylePlain];
-        m_TableView.dataSource = self;
-        m_TableView.delegate = self;
-        m_TableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-        [GameCommon setExtraCellLineHidden:m_TableView];
-        m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
-        [self addSubview:m_TableView];
+        if (!m_TableView) {
+            m_TableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight,kScreenWidth, kScreenHeigth-topHight) style:UITableViewStylePlain];
+            m_TableView.dataSource = self;
+            m_TableView.delegate = self;
+            m_TableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+            [GameCommon setExtraCellLineHidden:m_TableView];
+            m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+            [self addSubview:m_TableView];
+        }
+        hud = [[MBProgressHUD alloc] initWithView:self];
+        hud.labelText = @"加载中...";
+        [self addSubview:hud];
     }
     return self;
 }
@@ -160,13 +165,13 @@
 {
     if (alertView.tag ==10000001) {
         if (buttonIndex==1) {
-//            hud.labelText = @"解散中...";
-//            [hud show:YES];
+            hud.labelText = @"解散中...";
+            [hud show:YES];
             [[ItemManager singleton] dissoTeam:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
-//                [hud hide:YES];
+                [hud hide:YES];
                 [self showToastAlertView:@"解散成功"];
             } reError:^(id error) {
-//                [hud hide:YES];
+                [hud hide:YES];
                 [self showErrorAlertView:error];
             }];
         }
@@ -206,30 +211,30 @@
 //同意288
 -(void)onAgreeClick:(JoinTeamCell*)sender
 {
-//    [hud show:YES];
+    [hud show:YES];
     NSMutableDictionary * msgDic = [teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-//        [hud hide:YES];
+        [hud hide:YES];
         [self changState:msgDic State:@"1"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-//        [hud hide:YES];
+        [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
 //拒绝273
 -(void)onDisAgreeClick:(JoinTeamCell*)sender
 {
-//    [hud show:YES];
+    [hud show:YES];
     NSMutableDictionary * msgDic = [teamNotifityMsg objectAtIndex:sender.tag];
     [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
-//        [hud hide:YES];
+        [hud hide:YES];
         [self changState:msgDic State:@"2"];
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
-//        [hud hide:YES];
+        [hud hide:YES];
         [self showErrorAlertView:error];
     }];
 }
@@ -309,7 +314,7 @@
 }
 
 -(void)deallocContro{
-    [self.detaildelegate readAppMsgAction];
+//    [self.detaildelegate readAppMsgAction];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
 }
 -(void)addContro{

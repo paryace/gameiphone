@@ -4956,6 +4956,7 @@
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
+    [msgDic setObject:[self queryCreateTeamUserInfo:commonMsg.gameId UserId:@""] forKey:@""];
     return msgDic;
 }
 
@@ -5187,8 +5188,8 @@
 }
 //
 
-+(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId{
-    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and teamUserId==[c]%@",gameId, teamUserId];
++(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId UserId:(NSString*)userId{
+    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and userid==[c]%@",gameId, userId];
     DSCreateTeamUserInfo * commonMsg = [DSCreateTeamUserInfo MR_findFirstWithPredicate:predicates];
     return [self queryCreateTeamUserInfo:commonMsg];
 }

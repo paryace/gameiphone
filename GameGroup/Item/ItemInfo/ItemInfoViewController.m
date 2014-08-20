@@ -420,8 +420,9 @@
         m_getOutBtn.hidden = YES;
         titlearr = @[@"",([requested intValue]==1)?@"再次申请":@"申请加入"];
         arr = @[@"",@"team_join_low"];
+        [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
     }
-    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
+//    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
 
 -(void)setCaptain:(NSString*)shipType

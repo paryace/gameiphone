@@ -427,7 +427,7 @@ UINavigationControllerDelegate>
 -(void)showFilterMenu
 {
     NSArray * menuarry = [NSArray array];
-    menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请"];
+    menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请",@"队伍详情"];
     NSMutableArray *menuItems = [NSMutableArray array];
     for (int i = 0; i<menuarry.count; i++) {
         KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:nil target:self action:@selector(pushMenuItem:)];
@@ -452,6 +452,8 @@ UINavigationControllerDelegate>
         [self invitationAtion];
     }else if (index == 3){
         [self showOrHideApplyListControl];
+    }else if (index == 4){
+        [self teamInfoAction];
     }
 }
 
@@ -1631,7 +1633,7 @@ UINavigationControllerDelegate>
 
 - (UITableView *)tView{
     if(!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+topViewHight,320,self.view.frame.size.height-startX-topViewHight-55)style:UITableViewStylePlain];
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+offsetTopHight,320,self.view.frame.size.height-startX-offsetTopHight-55)style:UITableViewStylePlain];
         [tView setBackgroundColor:[UIColor clearColor]];
         tView.delegate = self;
         tView.dataSource = self;

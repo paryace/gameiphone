@@ -10,7 +10,9 @@
 #import "JoinTeamCell.h"
 #import "H5CharacterDetailsViewController.h"
 @protocol ApplyDetailDelegate;
-@interface NewTeamApplyListView : UIView<UITableViewDataSource,UITableViewDelegate,TeamDetailDelegate>
+@interface NewTeamApplyListView : UIView<UITableViewDataSource,UITableViewDelegate,TeamDetailDelegate>{
+     MBProgressHUD* hud;//提示框
+}
 @property(nonatomic,assign)id<ApplyDetailDelegate>detaildelegate;
 @property (nonatomic, strong) UIView * mSuperView;
 @property (nonatomic, strong) NSString *groipId;
