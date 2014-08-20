@@ -49,8 +49,13 @@
         [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         
-        
-        
+//        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2, 320, 20)];
+//        pveLable.backgroundColor = [UIColor clearColor];
+//        pveLable.textAlignment = NSTextAlignmentCenter;
+//        pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
+//        pveLable.text = @"向左滑动操作";
+//        pveLable.font =[ UIFont systemFontOfSize:12];
+//        [self addSubview:pveLable];
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];

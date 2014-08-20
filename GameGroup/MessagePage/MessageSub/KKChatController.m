@@ -427,7 +427,12 @@ UINavigationControllerDelegate>
 -(void)showFilterMenu
 {
     NSArray * menuarry = [NSArray array];
-    menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请",@"队伍详情"];
+    
+    if (teamUsershipType) {
+        menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请",@"队伍详情"];
+    }else{
+        menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"队伍详情"];
+    }
     NSMutableArray *menuItems = [NSMutableArray array];
     for (int i = 0; i<menuarry.count; i++) {
         KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:nil target:self action:@selector(pushMenuItem:)];
@@ -444,18 +449,31 @@ UINavigationControllerDelegate>
 - (void) pushMenuItem:(KxMenuItem*)sender
 {
     NSInteger index = sender.tag;
-    NSLog(@"---index--%d",index);
-    if (index == 0) {
-        [self positionAction];
-    }else if(index == 1){
-        [self showOrHideControl];
-    }else if (index == 2){
-        [self invitationAtion];
-    }else if (index == 3){
-        [self showOrHideApplyListControl];
-    }else if (index == 4){
-        [self teamInfoAction];
+    if (teamUsershipType) {
+        if (index == 0) {
+            [self positionAction];
+        }else if(index == 1){
+            [self showOrHideControl];
+        }else if (index == 2){
+            [self invitationAtion];
+        }else if (index == 3){
+            [self showOrHideApplyListControl];
+        }else if (index == 4){
+            [self teamInfoAction];
+        }
+    }else {
+        if (index == 0) {
+            [self positionAction];
+        }else if(index == 1){
+            [self showOrHideControl];
+        }else if (index == 2){
+            [self invitationAtion];
+        }else if (index == 3){
+            [self teamInfoAction];
+        }
     }
+    NSLog(@"---index--%d",index);
+  
 }
 
 //////队员列表
