@@ -432,6 +432,7 @@ UINavigationControllerDelegate>
     for (int i = 0; i<menuarry.count; i++) {
         KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:nil target:self action:@selector(pushMenuItem:)];
         menuItem.tag =i;
+        menuItem.alignment = NSTextAlignmentCenter;
         [menuItems addObject:menuItem];
     }
     KxMenuItem *first = [KxMenuItem menuItem:@"组队菜单" image:nil target:nil action:NULL];
