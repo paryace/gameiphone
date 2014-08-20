@@ -343,14 +343,15 @@ UINavigationControllerDelegate>
         [self.view addSubview:self.topItemView];
         
         
-        
+        //就位确认
         self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
         [self.view addSubview:self.newTeamMenuView];
         [self hideExtendedChooseView];
-        [self.newTeamMenuView showOrHideListView];
-        
+        if (!teamUsershipType) {
+            [self initOrHideListView];
+        }
         
         self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamApplyListView.mSuperView = self.view;
@@ -358,41 +359,16 @@ UINavigationControllerDelegate>
         [self.view addSubview:self.newTeamApplyListView];
         [self hideApplyListExtendedChooseView];
         if (teamUsershipType) {
-            [self showOrHideApplyListView];
+            [self initOrHideApplyListView];
         }
-        
-        
-//        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
-//        self.dropDownView.mSuperView = self.view;
-//        [self.dropDownView setTitle:@"申请" inSection:2];
-//        [self.view addSubview:self.dropDownView];
-//        
-//        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
-//        [self.view addSubview:self.dotVApp];
-//        [self setNotifyMsgCount];
-//        
-//        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/2+20, startX+5, 22, 18)];
-//        [self.view addSubview:self.dotVInplace];
-//        [self setInplaceMsgCount];
-//        
-//        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/3-30, startX+2, 22, 18)];
-//        [self.view addSubview:self.dotVPosition];
-//        
-//        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
-//        if (selectType) {
-//            [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
-//        }else{
-//            [self.dropDownView setTitle:@"位置" inSection:0];
-//        }
-//        [self setPositionMsgCount];
-//        [self changPosition];
-        
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
--(void)showOrHideApplyListView{
+
+//
+-(void)initOrHideApplyListView{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
     if (msgC>0) {
         [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
@@ -400,6 +376,20 @@ UINavigationControllerDelegate>
         [self hideTopItemView];
     }
 }
+
+-(void)initOrHideListView{
+    NSInteger onClickState = [DataStoreManager getTeamUser:self.chatWithUser UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    if(onClickState == 0){
+        if (!teamUsershipType) {
+            [self mHideTopMenuView];
+        }
+    }else if(onClickState == 1){
+        if (!teamUsershipType) {
+            [self mShowTopMenuView:@"就位确认消息"];
+        }
+    }
+}
+
 #pragma mark 用户详情
 -(void)userInfoClick
 {
@@ -465,9 +455,7 @@ UINavigationControllerDelegate>
     }
 }
 
-//////
-
-
+//////队员列表
 //显示或者隐藏控制
 -(void)showOrHideControl{
     [self showOrHideView];
@@ -550,7 +538,7 @@ UINavigationControllerDelegate>
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
 #pragma mark -- 清除消息
--(void)buttonOnClick{
+-(void)readInpaceAction{
     [self readNoreadMsg];
     [self setNoreadMsgView];
     [self setInplaceMsgCount];
@@ -560,14 +548,19 @@ UINavigationControllerDelegate>
     [self showOrHideControl];
 }
 
+
+#pragma mark -- 隐藏头部消息提示view
 -(void)mHideTopMenuView{
     [self hideTopItemView];
 }
+#pragma mark -- 显示头部消息提示view
 -(void)mShowTopMenuView:(NSString*)titleText{
     [self showTopItemView:titleText];
 }
 /////
-//////
+
+
+//////申请列表
 //显示或者隐藏控制
 -(void)showOrHideApplyListControl{
     [self showApplyListOrHideView];
@@ -625,7 +618,7 @@ UINavigationControllerDelegate>
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
 #pragma mark -- 清除消息
--(void)buttonApplyListOnClick{
+-(void)readAppMsgAction{
     [self readTeamApplyMsg];
 }
 #pragma mark -- 显示隐藏View
@@ -638,9 +631,10 @@ UINavigationControllerDelegate>
 }
 #pragma mark -- 显示View
 -(void)mShowApplyListTopMenuView{
-    [self showOrHideApplyListView];
+    [self initOrHideApplyListView];
 }
 
+//
 -(void)readTeamApplyMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
@@ -650,7 +644,7 @@ UINavigationControllerDelegate>
         [self hideTopItemView];
     }];
 }
-
+//
 -(void)readInpaceMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
@@ -661,8 +655,6 @@ UINavigationControllerDelegate>
     }];
 }
 /////
-
-
 
 
 //选择位置

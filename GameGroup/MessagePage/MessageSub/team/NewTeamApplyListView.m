@@ -278,10 +278,18 @@
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+    if (![groupId isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
+        return;
+    }
     if (self.isShow) {
-         [self.detaildelegate buttonApplyListOnClick];
+         [self.detaildelegate readAppMsgAction];
     }else{
-        [self.detaildelegate mShowApplyListTopMenuView];
+        if (self.teamUsershipType) {
+            [self.detaildelegate mShowApplyListTopMenuView];
+        }else{
+            
+        }
     }
     [self getZU];
     [m_TableView reloadData];

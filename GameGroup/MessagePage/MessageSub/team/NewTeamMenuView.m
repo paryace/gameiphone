@@ -283,8 +283,8 @@
 }
 //清除未读的就位确认消息
 -(void)clearNorReadInpaceMsg{
-    if ([self.detaildelegate respondsToSelector:@selector(buttonOnClick)] ) {
-        [self.detaildelegate buttonOnClick];
+    if ([self.detaildelegate respondsToSelector:@selector(readInpaceAction)] ) {
+        [self.detaildelegate readInpaceAction];
     }
 }
 
@@ -409,7 +409,6 @@
     }
     cell.tag = indexPath.row;
     cell.headCkickDelegate = self;
-    cell.onclickdelegate = self;
     NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
     NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
     cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
@@ -469,9 +468,7 @@
     
     return cell;
 }
--(void)positionOnClick:(InplaceCell*)sender{
-//    [self.detaildelegate positionAction];
-}
+
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
 {

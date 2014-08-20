@@ -19,15 +19,16 @@
 @property (nonatomic, nonatomic)  BOOL teamUsershipType;
 @property (nonatomic, nonatomic)  BOOL isShow;
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
--(void)showView;
--(void)hideView;
+-(void)showView;//显示视图view
+-(void)hideView;//隐藏视图view
 @end
 
 @protocol ApplyDetailDelegate <NSObject>
--(void)buttonApplyListOnClick;
--(void)itemApplyListOnClick:(NSDictionary*)charaDic;
--(void)headImgApplyListClick:(NSString*)userId;
--(void)doApplyListShowOrHideViewControl;
--(void)mHideApplyListTopMenuView;
--(void)mShowApplyListTopMenuView;
+-(void)readAppMsgAction;
+-(void)itemApplyListOnClick:(NSDictionary*)charaDic;//点击item
+-(void)headImgApplyListClick:(NSString*)userId;//点击头像
+-(void)doApplyListShowOrHideViewControl;//显示或者隐藏视图view
+
+-(void)mHideApplyListTopMenuView;//隐藏头部消息通知view
+-(void)mShowApplyListTopMenuView;//显示头部消息通知view
 @end

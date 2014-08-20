@@ -10,10 +10,8 @@
 #import "EGOImageView.h"
 #import "JoinTeamCell.h"
 #import "HeadClickDelegate.h"
-@protocol OnClickDelegate;
 @interface InplaceCell : UITableViewCell
 @property (nonatomic, assign) id<HeadClickDelegate> headCkickDelegate;
-@property(nonatomic,assign)id<OnClickDelegate>onclickdelegate;
 @property(nonatomic,strong)EGOImageView * headImageV;//群头像
 @property(nonatomic,strong)UIButton *bgImageView;
 @property(nonatomic,strong)UILabel * groupNameLable;//群名
@@ -26,8 +24,5 @@
 @property(nonatomic,strong)UIView * stateView;//状态
 @property(nonatomic,strong)UILabel *MemberLable;
 @property(nonatomic,strong)UIButton * positionBtn;
-@end
-@protocol OnClickDelegate <NSObject>
--(void)positionOnClick:(InplaceCell*)sender;
 @end
 

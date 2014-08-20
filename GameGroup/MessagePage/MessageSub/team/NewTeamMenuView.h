@@ -18,7 +18,7 @@
 
 @protocol DetailDelegate;
 
-@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate,OnClickDelegate>{
+@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate>{
     MBProgressHUD* hud;//提示框
 }
 @property(nonatomic,assign)id<DetailDelegate>detaildelegate;
@@ -34,22 +34,17 @@
 @property (nonatomic, nonatomic)  BOOL teamUsershipType;
 @property (nonatomic, nonatomic)  BOOL isShow;
 @property (strong, nonatomic)  NSMutableArray * memberList;
+
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
--(void)showView;
--(void)hideView;
--(void)showOrHideListView;
+-(void)showView;//显示视图view
+-(void)hideView;//隐藏视图view
 @end
 
 @protocol DetailDelegate <NSObject>
-
--(void)buttonOnClick;
--(void)itemOnClick:(NSDictionary*)charaDic;
--(void)headImgClick:(NSString*)userId;
--(void)btnAction:(UIButton*)sender;
--(void)positionAction;
--(void)doShowOrHideViewControl;
-
-
--(void)mHideTopMenuView;
--(void)mShowTopMenuView:(NSString*)titleText;
+-(void)readInpaceAction;//读就位确认消息
+-(void)itemOnClick:(NSDictionary*)charaDic;//点击item
+-(void)headImgClick:(NSString*)userId;//点击头像
+-(void)doShowOrHideViewControl;//显示或者隐藏视图view
+-(void)mHideTopMenuView;//隐藏头部消息提示view
+-(void)mShowTopMenuView:(NSString*)titleText;//显示头部消息提示view
 @end
