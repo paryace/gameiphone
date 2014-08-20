@@ -32,8 +32,7 @@
 @property(nonatomic,copy)NSString * selectPreferenceId;
 -(void)receiveMsg:(NSDictionary *)msg;
 -(void)readMsg:(NSString *)gameId PreferenceId:(NSString*)preferenceId;
-
-
+-(void)updateRoomList:(NSString*)roomId GameId:(NSString*)gameId;//更新标签状态
 -(void)showFilterMenu;
 -(void)hideFilterMenu;
 -(void)updateFilterId:(id)responseObject;

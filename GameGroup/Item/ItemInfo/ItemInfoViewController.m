@@ -801,6 +801,8 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        NSDictionary * msgDic = @{@"roomId":self.itemId,@"gameid":[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"gameid")]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateRoomState" object:nil userInfo:msgDic];
         [self showMessageWindowWithContent:@"申请成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
