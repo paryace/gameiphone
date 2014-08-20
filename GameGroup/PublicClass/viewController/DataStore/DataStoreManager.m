@@ -4852,6 +4852,12 @@
     }
     return memberList;
 }
+//获取成员信息
++(NSMutableDictionary*)getMemberInfo:(NSString*)groupId UserId:(NSString*)userid{
+    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userid];
+    DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicates];
+    return [self getmemberInfo:commonMsg];
+}
 
 +(NSMutableDictionary*)getmemberInfo:(DSMemberUserInfo*)commonMsg{
     NSMutableDictionary * dic = [NSMutableDictionary dictionary];

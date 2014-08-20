@@ -452,6 +452,9 @@
 //保存组队成员列表信息
 +(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//获取成员信息
++(NSMutableDictionary*)getMemberInfo:(NSString*)groupId UserId:(NSString*)userid;
+
 //保存就位确认消息
 +(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
