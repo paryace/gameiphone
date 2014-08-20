@@ -29,9 +29,6 @@
         self.backgroundColor = [UIColor grayColor];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         self.groipId = groupId;
@@ -604,11 +601,7 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        if (![self isShow]) {
-            [self clearInpaceMsg];
-        }else{
-            [self clearNorReadInpaceMsg];//清除消息
-        }
+        [self clearInpaceMsg];
         [self setBtnState];
         [self showOrHideListView];
     }
@@ -627,16 +620,13 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    if (!self.isShow) {
-        [self clearInpaceMsg];
-    }else{
-        [self clearNorReadInpaceMsg];//清除消息
-    }
+    [self clearInpaceMsg];
     [self setBtnState];
     [self showOrHideListView];
 }
 //显示
 -(void)showView{
+    [self addContro];
     [self getmemberList];
     [self.mTableView reloadData];
     [self setBtnState];
@@ -647,6 +637,7 @@
 }
 //隐藏
 -(void)hideView{
+    [self deallocContro];
     self.isShow = NO;
     if (self.teamUsershipType) {//停止计时
         [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
@@ -655,6 +646,11 @@
 -(void)clearInpaceMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+        [self clearNorReadInpaceMsg];//清除消息
+    }];
+}
+-(void)clearInpaceThumbMsg{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
         [self clearNorReadInpaceMsg];//清除消息
     }];
 }
@@ -725,6 +721,18 @@
     [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
     self.sendBtn.selected = YES;
     self.sendBtn.enabled = NO;
+}
+
+-(void)deallocContro{
+    [self clearInpaceMsg];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];
+}
+-(void)addContro{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
 }
 
 - (void)dealloc

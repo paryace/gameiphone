@@ -288,7 +288,7 @@
         if (self.teamUsershipType) {
             [self.detaildelegate mShowApplyListTopMenuView];
         }else{
-            
+            [self.detaildelegate readAppMsgAction];
         }
     }
     [self getZU];
@@ -297,13 +297,23 @@
 }
 //显示
 -(void)showView{
+   [self addContro];
     [self getZU];
     [m_TableView reloadData];
     self.isShow = YES;
 }
 //隐藏
 -(void)hideView{
+    [self deallocContro];
     self.isShow = NO;
+}
+
+-(void)deallocContro{
+    [self.detaildelegate readAppMsgAction];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+}
+-(void)addContro{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
 }
 
 @end

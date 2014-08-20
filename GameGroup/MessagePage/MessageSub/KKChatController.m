@@ -644,6 +644,7 @@ UINavigationControllerDelegate>
         [self hideTopItemView];
     }];
 }
+
 //
 -(void)readInpaceMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
@@ -651,9 +652,9 @@ UINavigationControllerDelegate>
         [self readNoreadMsg];
         [self setNoreadMsgView];
         [self setInplaceMsgCount];
-        [self hideTopItemView];
     }];
 }
+
 /////
 
 
