@@ -36,11 +36,8 @@
     NSDictionary *   selectCharacter;
     NSDictionary *  selectType;
     NSDictionary *  selectPeopleCount;
-    NSString * selectCrossServer;
     
-    UISwitch *switchView;
     EGOImageView *gameIconImg;
-    
     UIAlertView *backAlert;
     
 }
@@ -170,28 +167,6 @@
     [self.view addSubview:hud];
     [self isHaveInfo];
 }
--(void)buildSwitchView
-{
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(170, startX+110, 140, 40)];
-    view.backgroundColor = [UIColor whiteColor];
-    view.layer.borderWidth = 1;
-    view.layer.borderColor = [[UIColor whiteColor]CGColor];
-    view.layer.cornerRadius = 5;
-    view.layer.masksToBounds=YES;
-    [self.view addSubview:view];
-    
-    UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 60, 40)];
-    lb.text = @"跨服";
-    lb.backgroundColor = [UIColor clearColor];
-    lb.font = [UIFont boldSystemFontOfSize:14];
-    lb.textColor = [UIColor blackColor];
-    lb.textAlignment = NSTextAlignmentCenter;
-    [view addSubview:lb];
-    
-    switchView = [[UISwitch alloc]initWithFrame:CGRectMake(60, 5, 80, 30)];
-    [switchView addTarget:self action:@selector(changeValue:) forControlEvents:UIControlEventValueChanged];
-    [view addSubview:switchView];
-}
 
 -(void)initText
 {
@@ -229,16 +204,6 @@
     }
 }
 
--(void)changeValue:(UISwitch*)sender
-{
-
-    BOOL isButtonOn = [sender isOn];
-    if (isButtonOn) {
-        selectCrossServer = @"1";
-    }else {
-        selectCrossServer = @"0";
-    }
-}
 -(void)buildPickView
 {
     m_rolePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
@@ -418,34 +383,10 @@
 {
     NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
     if (menCount.count>0) {
+        [m_countArray removeAllObjects];
         [m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
         [m_countPickView reloadAllComponents];
-//        selectPeopleCount = [m_countArray objectAtIndex:0];
-
-        BOOL isOpen = [KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask")boolValue];
-        switch (isOpen) {
-            case YES:
-                [switchView setOn:YES] ;
-                break;
-            case NO:
-                [switchView setOn:NO] ;
-                break;
-            default:
-                break;
-        }
-        selectCrossServer = KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"crossServer"), @"mask");
-        [self setPersonle:menCount];
     }
-}
-//设置人数
--(void)setPersonle:(NSArray*)personArray{
-    [m_countArray removeAllObjects];
-    [m_countArray addObjectsFromArray:personArray];
-    [m_countPickView reloadAllComponents];
-//    if (m_countArray.count>0) {
-//        selectPeopleCount = [m_countArray objectAtIndex:0];
-//        m_countTf.text =[NSString stringWithFormat:@"%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectPeopleCount, @"mask")]];
-//    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -455,15 +396,13 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
 {
     [UIView animateWithDuration:0.3 animations:^{
-
-    mainScroll.contentOffset = CGPointMake(0, 150);
+        mainScroll.contentOffset = CGPointMake(0, 150);
     }];
     return YES;
 }
 -(BOOL)textViewShouldEndEditing:(UITextView *)textView
 {
     [UIView animateWithDuration:0.3 animations:^{
-        
         mainScroll.contentOffset = CGPointMake(0, 0);
     }];
     return YES;
@@ -473,13 +412,10 @@
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    
-
     if ([text isEqualToString:@"\n"]) {
         [textView resignFirstResponder];
         return NO;
     }
-
     if (textView.text.length>0 || text.length != 0) {
         placeholderL.text = @"";
     }else{
@@ -528,10 +464,6 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-//    if (!selectPeopleCount) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请选择人数" buttonTitle:@"OK"];
-//        return;
-//    }
     if ([GameCommon isEmtity:m_miaoshuTV.text]) {
         [self showAlertViewWithTitle:@"提示" message:@"组队描述内容不能为空" buttonTitle:@"OK"];
         return;
@@ -550,7 +482,6 @@
     
     [paramDict setObject:[NSString stringWithFormat:@"%@%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"simpleRealm")],@"-",[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"name")]] forKey:@"roomName"];
     [paramDict setObject:m_miaoshuTV.text forKey:@"description"];
-//    [paramDict setObject:[GameCommon getNewStringWithId:selectCrossServer] forKey:@"crossServer"];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -568,8 +499,6 @@
         
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
         [self.navigationController popToRootViewControllerAnimated:YES];
-        
-        
         
 //        if ([responseObject isKindOfClass:[NSDictionary class]]) {
 //            InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
@@ -678,9 +607,7 @@
 {
     if (buttonIndex==1) {
         [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil];
-        
         [self.navigationController popViewControllerAnimated:YES];
-
     }
 }
 
@@ -696,7 +623,6 @@
     [m_rolePickerView removeFromSuperview];
     [m_countPickView removeFromSuperview];
     [m_tagsPickView removeFromSuperview];
-    
 }
 - (void)didReceiveMemoryWarning
 {

@@ -728,7 +728,7 @@
 }
 
 -(void)deallocContro{
-//    [self clearInpaceMsg];
+    [self clearInpaceMsg];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];
