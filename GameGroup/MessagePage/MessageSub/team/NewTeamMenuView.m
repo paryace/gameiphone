@@ -17,6 +17,7 @@
 #import "pinyin.h"
 #import "InplaceTimer.h"
 #define bottomHight 55
+#define topHight 30
 #define bottomPadding 10
 
 @implementation NewTeamMenuView
@@ -25,6 +26,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor grayColor];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
@@ -36,26 +38,25 @@
         self.teamUsershipType = teamUsershipType;
         self.roomId = roomId;
         self.gameId = gameId;
-        NSArray *normalimagearr = [NSArray array] ;
-        NSArray *clickimagearr = [NSArray array] ;
-        NSArray *titlearr = [NSArray array] ;
-        normalimagearr = @[@"new_friend_normal_1",@"new_friend_normal_2",@"new_friend_normal_3",@"new_friend_normal_4" ];
-        clickimagearr = @[@"new_friend_click_1",@"new_friend_click_2",@"new_friend_click_3",@"new_friend_click_4"];
-        titlearr = @[@"邀请",@"提醒",@"详情",@"申请"];
-        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 60)];
+        
+        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, topHight)];
         UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
         bgImageView.image = bgImage;
         bgImageView.userInteractionEnabled = YES;
-        for (int i = 0; i <4; i++) {
-            UIButton *sectionBtn = [self getUIBtn:i NormalImage:normalimagearr[i] ClickImage:clickimagearr[i]];
-            [bgImageView addSubview:sectionBtn];
-            UILabel * titlelable=[self getUILable:i TitleText:titlearr[i]];
-            [bgImageView addSubview:titlelable];
-        }
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CGRectMake(320-25-5, 2.5, 25, 25);
+        [button addTarget:self action:@selector(closeViewAction:)
+        forControlEvents:UIControlEventTouchUpInside];
+        [button setBackgroundImage:[UIImage imageNamed:@"news_report.png"]forState:UIControlStateNormal];
+        [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         
+        
+        
+        
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 60, 320,kScreenHeigth-60) style:UITableViewStylePlain];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -65,8 +66,8 @@
         }
         
         if (!self.bottomView){
-            self.bottomView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kScreenHeigth-60-bottomHight, 320, bottomHight)];
-            self.bottomView.backgroundColor = [UIColor whiteColor];
+            self.bottomView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kScreenHeigth-bottomHight-18, 320, bottomHight)];
+            self.bottomView.backgroundColor = [UIColor greenColor];
             self.bottomView.image =KUIImage(@"bottom_bg");
             self.bottomView.userInteractionEnabled = YES;
             [self addSubview:self.bottomView];
@@ -112,33 +113,9 @@
     return self;
 }
 
--(UIButton *)getUIBtn:(NSInteger)index NormalImage:(NSString*)normalImage ClickImage:(NSString*)clickImage{
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.tag = index;
-    button.frame = CGRectMake(index*80, 0, 80, 60);
-    [button addTarget:self action:@selector(buttonAction:)
-     forControlEvents:UIControlEventTouchUpInside];
-    [button setImage:[UIImage imageNamed:normalImage]forState:UIControlStateNormal];
-    [button setImage:[UIImage imageNamed:clickImage]forState:UIControlStateHighlighted];
-    [button setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-    return button;
-}
--(UILabel *)getUILable:(NSInteger)i TitleText:(NSString*)titleText{
-    UILabel *titleLable = [[UILabel alloc] init];
-    CGSize textSize =[titleText sizeWithFont:[UIFont systemFontOfSize:12] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-    CGFloat textWidth = textSize.width;
-    titleLable.frame=CGRectMake(i*80+((80-textWidth)/2),40, 80 ,20);
-    titleLable.font = [UIFont systemFontOfSize:11];
-    titleLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
-    titleLable.backgroundColor=[UIColor clearColor];
-    titleLable.text=titleText;
-    return titleLable;
-}
-
--(void)buttonAction:(UIButton*)sender{
-    if ([self.detaildelegate respondsToSelector:@selector(btnAction:)] ) {
-        [self.detaildelegate btnAction:sender];
-    }
+//关闭页面
+-(void)closeViewAction:(UIButton*)sender{
+    [self.detaildelegate doShowOrHideViewControl];
 }
 
 //设置按钮状态
@@ -156,6 +133,20 @@
     }else if(onClickState == 3){
         [self showButton];
         [self cancel];
+    }
+}
+
+
+-(void)showOrHideListView{
+    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    if(onClickState == 0){
+        if (!self.teamUsershipType) {
+            [self.detaildelegate mHideTopMenuView];
+        }
+    }else if(onClickState == 1){
+        if (!self.teamUsershipType) {
+            [self.detaildelegate mShowTopMenuView:@"就位确认消息"];
+        }
     }
 }
 
@@ -247,7 +238,6 @@
     }
 }
 
-
 //已经取消
 -(void)cancel{
     if (self.teamUsershipType) {
@@ -272,12 +262,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden=YES;
-    self.mTableView.frame = CGRectMake(0, 60, 320,kScreenHeigth-60);
+    self.mTableView.frame = CGRectMake(0, topHight, 320,kScreenHeigth-topHight);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, 60, 320,kScreenHeigth-60-bottomHight);
+    self.mTableView.frame = CGRectMake(0, topHight, 320,kScreenHeigth-topHight-bottomHight);
 }
 
 //发起就位确认
@@ -480,7 +470,7 @@
     return cell;
 }
 -(void)positionOnClick:(InplaceCell*)sender{
-    [self.detaildelegate positionAction];
+//    [self.detaildelegate positionAction];
 }
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
@@ -623,6 +613,7 @@
             [self clearNorReadInpaceMsg];//清除消息
         }
         [self setBtnState];
+        [self showOrHideListView];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
@@ -631,6 +622,7 @@
     [self changPState:@"1"];
     [self.mTableView reloadData];
     [self setBtnState];
+    [self showOrHideListView];
 }
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
@@ -644,6 +636,7 @@
         [self clearNorReadInpaceMsg];//清除消息
     }
     [self setBtnState];
+    [self showOrHideListView];
 }
 //显示
 -(void)showView{
@@ -651,7 +644,9 @@
     [self.mTableView reloadData];
     [self setBtnState];
     self.isShow = YES;
-    [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+    if (self.teamUsershipType) {
+         [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+    }
 }
 //隐藏
 -(void)hideView{

@@ -47,6 +47,7 @@
 #define maxWight 200
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
+#define topViewHight 50
 
 typedef enum : NSUInteger {
     KKChatInputTypeNone,
@@ -79,11 +80,13 @@ UINavigationControllerDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     NSInteger screenHeigth;
+    
+    NSInteger offsetTopHight;
     BOOL endOfTable;
     BOOL oTherPage;
     BOOL teamUsershipType;
-    
     BOOL isMenuShow;
+    BOOL isApplyShow;
     NSMutableDictionary * selectType;
 }
 
@@ -98,6 +101,8 @@ UINavigationControllerDelegate>
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 @property (nonatomic, strong) TeamChatListView * dropDownView;
 @property (nonatomic,strong) NewTeamMenuView * newTeamMenuView;
+@property (nonatomic,strong) NewTeamApplyListView * newTeamApplyListView;
+@property (nonatomic,strong) UIButton * topItemView;
 @end
 
 @implementation KKChatController
@@ -237,8 +242,6 @@ UINavigationControllerDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
     //发送系统消息
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
-    //
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(readApplyMsg:) name:@"readApplyMsg" object:nil];
 
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
@@ -327,44 +330,144 @@ UINavigationControllerDelegate>
             teamUsershipType = YES;
         }
         
-        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        
+        self.topItemView=[UIButton buttonWithType:UIButtonTypeCustom];
+        self.topItemView.frame=CGRectMake(0,startX, 320, 0);
+        [self.topItemView setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
+        [self.topItemView setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.topItemView.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
+        [self.topItemView addTarget:self action:@selector(showTeamInfoView) forControlEvents:UIControlEventTouchUpInside];
+        self.topItemView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        [self.topItemView setTitleColor:UIColorFromRGBA(0x339adf, 1) forState:UIControlStateNormal];
+        [self.view addSubview:self.topItemView];
+        
+        
+        
+        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
         [self.view addSubview:self.newTeamMenuView];
+        [self hideExtendedChooseView];
+        [self.newTeamMenuView showOrHideListView];
+        
+        
+        self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        self.newTeamApplyListView.mSuperView = self.view;
+        self.newTeamApplyListView.detaildelegate = self;
+        [self.view addSubview:self.newTeamApplyListView];
+        [self hideApplyListExtendedChooseView];
+        if (teamUsershipType) {
+            [self showOrHideApplyListView];
+        }
         
         
 //        self.dropDownView = [[TeamChatListView alloc] initWithFrame:CGRectMake(0,startX, self.view.frame.size.width, 40) dataSource:self delegate:self SuperView:self.view GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
 //        self.dropDownView.mSuperView = self.view;
 //        [self.dropDownView setTitle:@"申请" inSection:2];
 //        [self.view addSubview:self.dropDownView];
-        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25, startX+5, 22, 18)];
-        [self.view addSubview:self.dotVApp];
-        
+//        
+//        self.dotVApp = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-40, startX+5, 22, 18)];
+//        [self.view addSubview:self.dotVApp];
+//        [self setNotifyMsgCount];
+//        
 //        self.dotVInplace = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/2+20, startX+5, 22, 18)];
 //        [self.view addSubview:self.dotVInplace];
 //        [self setInplaceMsgCount];
-//
-        //左上角消息数
-        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30, KISHighVersion_7 ? 20 : 0, 22, 18)];
-        [self.view addSubview:self.dotVPosition];
-//
-//        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
 //        
+//        self.dotVPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320/3-30, startX+2, 22, 18)];
+//        [self.view addSubview:self.dotVPosition];
+//        
+//        selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
 //        if (selectType) {
 //            [self.dropDownView setTitle:KISDictionaryHaveKey(selectType, @"value") inSection:0];
 //        }else{
 //            [self.dropDownView setTitle:@"位置" inSection:0];
 //        }
-        [self setRightMsgCount];
-        [self changPosition];
-        [self hideExtendedChooseView];
+//        [self setPositionMsgCount];
+//        [self changPosition];
+        
     }
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
+-(void)showOrHideApplyListView{
+    NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
+    if (msgC>0) {
+        [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
+    }else{
+        [self hideTopItemView];
+    }
+}
+#pragma mark 用户详情
+-(void)userInfoClick
+{
+    oTherPage = YES;
+    if ([self.type isEqualToString:@"normal"]) {
+        TestViewController *detailV = [[TestViewController alloc]init];
+        detailV.userId = self.chatWithUser;
+        detailV.nickName = self.nickName;
+        detailV.isChatPage = YES;
+        [self.navigationController pushViewController:detailV animated:YES];
+    }else if([self.type isEqualToString:@"group"])
+    {
+        if (self.isTeam) {//队伍详情
+            [self showFilterMenu];
+            return;
+        }
+        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
+        gr.groupId =[GameCommon getNewStringWithId:self.chatWithUser];
+        [self.navigationController pushViewController:gr animated:YES];
+    }
+}
 
-////
+#pragma mark 显示组队详情View
+-(void)showTeamInfoView{
+    if (teamUsershipType) {
+        [self showOrHideApplyListControl];
+        [self readTeamApplyMsg];
+    }else{
+        [self showOrHideControl];
+        [self readInpaceMsg];
+    }
+}
+
+//显示房间过滤菜单
+-(void)showFilterMenu
+{
+    NSArray * menuarry = [NSArray array];
+    menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请"];
+    NSMutableArray *menuItems = [NSMutableArray array];
+    for (int i = 0; i<menuarry.count; i++) {
+        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:nil target:self action:@selector(pushMenuItem:)];
+        menuItem.tag =i;
+        [menuItems addObject:menuItem];
+    }
+    KxMenuItem *first = [KxMenuItem menuItem:@"组队菜单" image:nil target:nil action:NULL];
+    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+    first.alignment = NSTextAlignmentCenter;
+    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX-40, 50, 25) menuItems:menuItems];
+}
+#pragma mark -- 筛选
+- (void) pushMenuItem:(KxMenuItem*)sender
+{
+    NSInteger index = sender.tag;
+    NSLog(@"---index--%d",index);
+    if (index == 0) {
+        [self positionAction];
+    }else if(index == 1){
+        [self showOrHideControl];
+    }else if (index == 2){
+        [self invitationAtion];
+    }else if (index == 3){
+        [self showOrHideApplyListControl];
+    }
+}
+
+//////
+
+
 //显示或者隐藏控制
 -(void)showOrHideControl{
     [self showOrHideView];
@@ -373,47 +476,60 @@ UINavigationControllerDelegate>
 -(void)showOrHideView{
     if (isMenuShow) {
         isMenuShow = NO;
-        [self hideView];
         [self hideExtendedChooseView];
     }else{
         isMenuShow = YES;
-        [self showView];
         [self showChooseListViewInSection];
     }
 }
-//隐藏列表
+//隐藏队员列表
 - (void)hideExtendedChooseView
 {
-    self.dotVApp.hidden = YES;
-    self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,0);
-    self.newTeamMenuView.hidden = YES;
-    [self.newTeamMenuView hideView];
-}
-//显示列表
--(void)showChooseListViewInSection
-{
-    self.dotVApp.hidden = NO;
-    self.newTeamMenuView.frame = CGRectMake(0, startX, kScreenWidth,kScreenHeigth);
-    self.newTeamMenuView.hidden = NO;
-    [self.newTeamMenuView showView];
-}
--(void)hideView{
     [UIView animateWithDuration:0.3 animations:^{
-        profileButton.transform = CGAffineTransformRotate(profileButton.transform, DEGREES_TO_RADIANS(180));
-    }];
-}
--(void)showView{
-    [UIView animateWithDuration:0.3 animations:^{
-        profileButton.transform = CGAffineTransformRotate(profileButton.transform, DEGREES_TO_RADIANS(180));
+        self.newTeamMenuView.frame = CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth);
+    }completion:^(BOOL finished) {
+        self.newTeamMenuView.hidden = YES;
+        [self.newTeamMenuView hideView];
     }];
     
 }
--(void)buttonOnClick{
-    [self readNoreadMsg];
-    [self setNoreadMsgView];
-//    [self setInplaceMsgCount];
-    [self setRightMsgCount];
+//显示队员列表
+-(void)showChooseListViewInSection
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.newTeamMenuView.hidden = NO;
+        [self.newTeamMenuView showView];
+        self.newTeamMenuView.frame = CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth);
+    }completion:^(BOOL finished) {
+    }];
 }
+
+
+//显示头部View
+-(void)showTopItemView:(NSString*)titleText{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.topItemView.hidden = NO;
+        [self.topItemView setTitle:titleText forState:UIControlStateNormal];
+        self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
+         tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
+    }completion:^(BOOL finished) {
+        
+    }];
+    offsetTopHight = topViewHight;
+   
+}
+//隐藏头部View
+-(void)hideTopItemView{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.topItemView.frame = CGRectMake(0, startX, 320, 0);
+        tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+    }completion:^(BOOL finished) {
+         self.topItemView.hidden = YES;
+    }];
+    offsetTopHight = 0;
+    
+}
+#pragma mark -- 跳转角色详情
 -(void)itemOnClick:(NSDictionary*)charaDic{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
         ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
@@ -426,43 +542,131 @@ UINavigationControllerDelegate>
     VC.characterName = KISDictionaryHaveKey(charaDic, @"characterName");
     [self.navigationController pushViewController:VC animated:YES];
 }
+#pragma mark -- 头像点击
 -(void)headImgClick:(NSString*)userId{
     NSString *userid = [GameCommon getNewStringWithId:userId];
     TestViewController *itemInfo = [[TestViewController alloc]init];
     itemInfo.userId = userid;
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
+#pragma mark -- 清除消息
+-(void)buttonOnClick{
+    [self readNoreadMsg];
+    [self setNoreadMsgView];
+    [self setInplaceMsgCount];
+}
+#pragma mark -- 显示隐藏View
+-(void)doShowOrHideViewControl{
+    [self showOrHideControl];
+}
 
--(void)btnAction:(UIButton*)sender{
-    NSInteger index = sender.tag;
-    if (index==0) {
-        NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
-        InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
-        invc.gameId = [GameCommon getNewStringWithId:self.gameId];
-        invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
-        invc.roomId = [GameCommon getNewStringWithId:self.roomId];
-        invc.roomInfoDic = teamInfo;
-        [self.navigationController pushViewController:invc animated:YES];
-    }else if (index==1){
-        
-    }else if (index==2){
-        ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-        itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
-        itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
-        [self.navigationController pushViewController:itemInfo animated:YES];
-    }else if (index==3) {
-        [self refreJoinApplyMsgCount];
-        TeamApplyController *itemInfo = [[TeamApplyController alloc]init];
-        itemInfo.groipId = self.chatWithUser;
-        itemInfo.roomId = self.roomId;
-        itemInfo.gameId = self.gameId;
-        itemInfo.teamUsershipType = teamUsershipType;
-        [self.navigationController pushViewController:itemInfo animated:YES];
+-(void)mHideTopMenuView{
+    [self hideTopItemView];
+}
+-(void)mShowTopMenuView:(NSString*)titleText{
+    [self showTopItemView:titleText];
+}
+/////
+//////
+//显示或者隐藏控制
+-(void)showOrHideApplyListControl{
+    [self showApplyListOrHideView];
+}
+//显示或者隐藏布局
+-(void)showApplyListOrHideView{
+    if (isApplyShow) {
+        isApplyShow = NO;
+        [self hideApplyListExtendedChooseView];
+    }else{
+        isApplyShow = YES;
+        [self showApplyListViewInSection];
     }
 }
+//隐藏队员列表
+- (void)hideApplyListExtendedChooseView
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.newTeamApplyListView.frame = CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth);
+    }completion:^(BOOL finished) {
+        self.newTeamApplyListView.hidden = YES;
+        [self.newTeamApplyListView hideView];
+    }];
+    
+}
+//显示队员列表
+-(void)showApplyListViewInSection
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.newTeamApplyListView.hidden = NO;
+        [self.newTeamApplyListView showView];
+        self.newTeamApplyListView.frame = CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth);
+    }completion:^(BOOL finished) {
+    }];
+}
+
+#pragma mark -- 跳转角色详情
+-(void)itemApplyListOnClick:(NSDictionary*)charaDic{
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"characterId")];
+    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")];
+    VC.characterName = KISDictionaryHaveKey(charaDic, @"characterName");
+    [self.navigationController pushViewController:VC animated:YES];
+}
+#pragma mark -- 头像点击
+-(void)headImgApplyListClick:(NSString*)userId{
+    NSString *userid = [GameCommon getNewStringWithId:userId];
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userid;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
+#pragma mark -- 清除消息
+-(void)buttonApplyListOnClick{
+    [self readTeamApplyMsg];
+}
+#pragma mark -- 显示隐藏View
+-(void)doApplyListShowOrHideViewControl{
+    [self showOrHideApplyListControl];
+}
+#pragma mark -- 隐藏View
+-(void)mHideApplyListTopMenuView{
+    [self hideTopItemView];
+}
+#pragma mark -- 显示View
+-(void)mShowApplyListTopMenuView{
+    [self showOrHideApplyListView];
+}
+
+-(void)readTeamApplyMsg{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
+        [self setNotifyMsgCount];
+        [self hideTopItemView];
+    }];
+}
+
+-(void)readInpaceMsg{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
+        [self setInplaceMsgCount];
+        [self hideTopItemView];
+    }];
+}
+/////
+
+
+
+
 //选择位置
 -(void)returnChooseInfoFrom:(UIViewController *)vc info:(NSDictionary *)info{
-    [self showOrHideControl];
     NSMutableDictionary * clickType = [info mutableCopy];
     if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
         return;
@@ -483,13 +687,34 @@ UINavigationControllerDelegate>
     itemInfo.gameid = self.gameId;
     itemInfo.mydelegate = self;
     [self.navigationController pushViewController:itemInfo animated:YES];
-
 }
-//隐藏显示
--(void)doShowOrHideViewControl{
-    [self showOrHideControl];
+//邀请好友页面
+-(void)invitationAtion{
+    NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
+    InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
+    invc.gameId = [GameCommon getNewStringWithId:self.gameId];
+    invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
+    invc.roomId = [GameCommon getNewStringWithId:self.roomId];
+    invc.roomInfoDic = teamInfo;
+    [self.navigationController pushViewController:invc animated:YES];
 }
-
+//入队申请
+-(void)applyAction{
+    [self refreJoinApplyMsgCount];
+    TeamApplyController *itemInfo = [[TeamApplyController alloc]init];
+    itemInfo.groipId = self.chatWithUser;
+    itemInfo.roomId = self.roomId;
+    itemInfo.gameId = self.gameId;
+    itemInfo.teamUsershipType = teamUsershipType;
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
+//组队详情
+-(void)teamInfoAction{
+    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
+    itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
+    itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
+    [self.navigationController pushViewController:itemInfo animated:YES];
+}
 /////
 
 //设置组队未读消息数量
@@ -523,28 +748,6 @@ UINavigationControllerDelegate>
         self.dotVInplace.hidden = YES;
     }
 }
-
-
-//设置右上角消息
--(void)setRightMsgCount{
-    NSInteger msgC1 = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
-    NSInteger msgC2 = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
-    [self setNotifyMsgCount:msgC1];
-    NSInteger positionCount=msgC1+msgC2;
-    [self setRightMsgCount:positionCount];
-}
-
--(void)setRightMsgCount:(NSInteger)positionCount{
-    if (positionCount>0) {
-        self.dotVPosition.hidden = NO;
-        [self.dotVPosition setMsgCount:positionCount IsSimple:NO];
-    }else{
-        [self.dotVPosition setMsgCount:0 IsSimple:YES];
-        self.dotVPosition.hidden = YES;
-    }
-}
-
-
 //设置就位确认未读消息数量
 -(void)setPositionMsgCount{
     NSInteger positionCount;
@@ -553,6 +756,9 @@ UINavigationControllerDelegate>
     }else {
         positionCount = 1;
     }
+    [self setPositionMsgCount:positionCount];
+}
+-(void)setPositionMsgCount:(NSInteger)positionCount{
     if (positionCount>0) {
         self.dotVPosition.hidden = NO;
         [self.dotVPosition setMsgCount:positionCount IsSimple:YES];
@@ -684,19 +890,10 @@ UINavigationControllerDelegate>
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
         [self readNoreadMsg];
         [self setNoreadMsgView];
-//        [self setNotifyMsgCount];
-        [self setRightMsgCount];
+        [self setNotifyMsgCount];
     }];
 }
 
--(void)readApplyMsg:(NSNotification*)notification{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-        [self readNoreadMsg];
-        [self setNoreadMsgView];
-        [self setRightMsgCount];
-    }];
-}
 //------------------------------------------------------------------------------------------------------------
 
 
@@ -1441,7 +1638,7 @@ UINavigationControllerDelegate>
 
 - (UITableView *)tView{
     if(!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-(startX)-55)style:UITableViewStylePlain];
+        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+topViewHight,320,self.view.frame.size.height-startX-topViewHight-55)style:UITableViewStylePlain];
         [tView setBackgroundColor:[UIColor clearColor]];
         tView.delegate = self;
         tView.dataSource = self;
@@ -2165,32 +2362,6 @@ UINavigationControllerDelegate>
 {
     [self sendButton:nil];
 }
-#pragma mark 用户详情
--(void)userInfoClick
-{
-    [self showOrHideControl];
-    
-//    oTherPage = YES;
-//    if ([self.type isEqualToString:@"normal"]) {
-//        TestViewController *detailV = [[TestViewController alloc]init];
-//        detailV.userId = self.chatWithUser;
-//        detailV.nickName = self.nickName;
-//        detailV.isChatPage = YES;
-//        [self.navigationController pushViewController:detailV animated:YES];
-//    }else if([self.type isEqualToString:@"group"])
-//    {
-//        if (self.isTeam) {//队伍详情
-//            ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-//            itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
-//            itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
-//            [self.navigationController pushViewController:itemInfo animated:YES];
-//            return;
-//        }
-//        GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
-//        gr.groupId =[GameCommon getNewStringWithId:self.chatWithUser];
-//        [self.navigationController pushViewController:gr animated:YES];
-//    }
-}
 
 -(void)toContactProfile:(NSString*)userId
 {
@@ -2271,7 +2442,7 @@ UINavigationControllerDelegate>
 	self.inPutView.frame = containerFrame;
     if (messages.count<4) {
         CGRect cgmm = self.tView.frame;
-        cgmm.size.height=self.view.frame.size.height-startX-55-h;
+        cgmm.size.height=self.view.frame.size.height-startX-55-h-(self.isTeam?offsetTopHight:0);
         self.tView.frame=cgmm;
     }else{
         CGRect cgmm = self.tView.frame;
@@ -2281,7 +2452,8 @@ UINavigationControllerDelegate>
         if (self.inPutView.frame.size.height>50) {
             h+=(self.inPutView.frame.size.height-50);
         }
-        cgmm.origin.y = startX-h;
+        cgmm.origin.y = startX-h+(self.isTeam?offsetTopHight:0);
+        cgmm.size.height = self.isTeam?cgmm.size.height-offsetTopHight:cgmm.size.height;
         self.tView.frame=cgmm;
     }
     [UIView commitAnimations];
@@ -3155,13 +3327,11 @@ UINavigationControllerDelegate>
             }else if ([msgType isEqualToString:@"requestJoinTeam"]) {//申请加入组队
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
-//                [self setNotifyMsgCount];
-                [self setRightMsgCount];
+                [self setNotifyMsgCount];
             }else if ([msgType isEqualToString:@"startTeamPreparedConfirm"]) {//发起就位确认
                 [self readNoreadMsg];
                 [self setNoreadMsgView];
-//                [self setInplaceMsgCount];
-                [self setRightMsgCount];
+                [self setInplaceMsgCount];
             }
         }
     }else{

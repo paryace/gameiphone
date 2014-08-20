@@ -37,6 +37,7 @@
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
 -(void)showView;
 -(void)hideView;
+-(void)showOrHideListView;
 @end
 
 @protocol DetailDelegate <NSObject>
@@ -47,4 +48,8 @@
 -(void)btnAction:(UIButton*)sender;
 -(void)positionAction;
 -(void)doShowOrHideViewControl;
+
+
+-(void)mHideTopMenuView;
+-(void)mShowTopMenuView:(NSString*)titleText;
 @end
