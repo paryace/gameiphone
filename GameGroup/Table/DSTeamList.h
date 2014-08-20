@@ -28,5 +28,14 @@
 @property (nonatomic, retain) NSString * teamUsershipType;
 @property (nonatomic, retain) NSString * typeId;
 @property (nonatomic, retain) NSString * gameId;
+@property (nonatomic, retain) NSString * characterId;
+@property (nonatomic, retain) NSString * characterImg;
+@property (nonatomic, retain) NSString * characterName;
+@property (nonatomic, retain) NSString * memberInfo;
+@property (nonatomic, retain) NSString * realm;
+@property (nonatomic, retain) NSString * teamUserId;
+@property (nonatomic, retain) NSString * userid;
+@property (nonatomic, retain) NSString * gender;
+@property (nonatomic, retain) NSString * img;
 
 @end

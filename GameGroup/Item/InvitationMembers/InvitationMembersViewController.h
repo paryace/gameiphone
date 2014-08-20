@@ -21,6 +21,8 @@ UISearchDisplayDelegate
 @property(nonatomic,copy)NSString     *     roomId;
 @property(nonatomic,copy)NSString     *     gameId;
 @property(nonatomic,copy)NSString     *     groupId;
+@property(nonatomic,copy)NSString     *     characterId;
+@property(nonatomic,copy)NSString     *     realm;
 @property (strong, nonatomic)  NSMutableDictionary *roomInfoDic;
 @property(nonatomic,assign) BOOL isRegister;
 @end

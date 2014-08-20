@@ -4517,6 +4517,15 @@
         commonMsg.teamUsershipType = teamUsershipType;
         commonMsg.typeId = typeId;
         commonMsg.gameId = [GameCommon getNewStringWithId:gameId];
+        commonMsg.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
+        commonMsg.characterImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterImg")];
+        commonMsg.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterName")];
+        commonMsg.memberInfo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"memberInfo")];
+        commonMsg.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"realm")];
+        commonMsg.teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"teamUserId")];
+        commonMsg.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
+        commonMsg.gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gender")];
+        commonMsg.img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"img")];
     }
     completion:^(BOOL success, NSError *error) {
         if (successcompletion) {
@@ -4871,7 +4880,7 @@
     return dic;
 }
 
-//查询eamUserInfo
+//查询teamUserInfo
 +(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId{
     NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"teamUserId==[c]%@ and gameid==[c]%@",teamUserId,gameId];
     DSTeamUserInfo * commonMsgTeamUser = [DSTeamUserInfo MR_findFirstWithPredicate:predicatesTeamUser];
@@ -4943,7 +4952,7 @@
     NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
     [msgDic setObject:commonMsg.createDate forKey:@"createDate"];
     [msgDic setObject:commonMsg.crossServer forKey:@"crossServer"];
-    [msgDic setObject:commonMsg.descriptions forKey:@"descriptions"];
+    [msgDic setObject:commonMsg.descriptions forKey:@"description"];
     [msgDic setObject:commonMsg.dismissDate forKey:@"dismissDate"];
     [msgDic setObject:commonMsg.groupId forKey:@"groupId"];
     [msgDic setObject:commonMsg.maxVol forKey:@"maxVol"];
@@ -4956,7 +4965,19 @@
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
-    [msgDic setObject:[self queryCreateTeamUserInfo:commonMsg.gameId UserId:@""] forKey:@""];
+    
+    
+    [msgDic setObject:commonMsg.characterId forKey:@"characterId"];
+    [msgDic setObject:commonMsg.characterImg forKey:@"characterImg"];
+    [msgDic setObject:commonMsg.characterName forKey:@"characterName"];
+    [msgDic setObject:commonMsg.memberInfo forKey:@"memberInfo"];
+    [msgDic setObject:commonMsg.realm forKey:@"realm"];
+    [msgDic setObject:commonMsg.teamUserId forKey:@"teamUserId"];
+    [msgDic setObject:commonMsg.userid forKey:@"userid"];
+    [msgDic setObject:commonMsg.gender forKey:@"gender"];
+    [msgDic setObject:commonMsg.img forKey:@"img"];
+    
+    
     return msgDic;
 }
 

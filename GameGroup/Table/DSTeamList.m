@@ -27,5 +27,14 @@
 @dynamic teamUsershipType;
 @dynamic typeId;
 @dynamic gameId;
+@dynamic characterId;
+@dynamic characterImg;
+@dynamic characterName;
+@dynamic memberInfo;
+@dynamic realm;
+@dynamic teamUserId;
+@dynamic userid;
+@dynamic gender;
+@dynamic img;
 
 @end
