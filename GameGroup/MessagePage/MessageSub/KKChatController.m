@@ -1378,27 +1378,29 @@ static double endRecordTime=0;
         cell.mydelegate = self;
         cell.tag = indexPath.row+100;
         if ([sender isEqualToString:@"you"]) {
+            cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
-//            [cell.voiceImageView setAnimationImages:gifArray1];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+10,size.height+20)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-            cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15-10-25, padding*2-4,size.width,size.height);
+            cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
             
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
-
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
-            
-            
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
-//            [cell.voiceImageView setAnimationImages:nil];
-//            [cell.voiceImageView setAnimationImages:gifArray2];
-            cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-4+offHight,17,size.height);
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
+            cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-2+offHight,20,20);
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+10,size.height+20)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
         }
@@ -1796,7 +1798,7 @@ static double endRecordTime=0;
         }
     }
     if (curAudio.length >0) {
-        [self sendAudioMsgD:[NSString stringWithFormat:@"%@%@.amr",RootDocPath,uuid] UUID:uuid Body:@""];
+        [self sendAudioMsgD:[NSString stringWithFormat:@"%@%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
         
         NSInteger imageIndex = [self getMsgRowWithId:uuid];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
@@ -2093,10 +2095,6 @@ static double endRecordTime=0;
             }
         }
         return height;
-//        return 47;
-    }
-    if (kkChatMsgType ==kkchatMsgAudio) {
-        return 70;
     }
     NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
     CGFloat theH = hight;
@@ -2294,12 +2292,12 @@ static double endRecordTime=0;
         {
             CGSize msgLabletextSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(maxWight, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:msgLabletextSize.width],[NSNumber numberWithFloat:msgLabletextSize.height], nil];
-//            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
             break;
         }
             case kkchatMsgAudio:
         {
-            array = [NSArray arrayWithObjects:[NSNumber numberWithFloat:100],[NSNumber numberWithFloat:40], nil];
+            array = [NSArray arrayWithObjects:[NSNumber numberWithFloat:100],[NSNumber numberWithFloat:25], nil];
+            break;
         }
         case KKChatMsgSimple:
         {
