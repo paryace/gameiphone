@@ -81,7 +81,7 @@ static SystemSoundID shake_sound_male_id = 0;
 
 //--------------------------------------------正常聊天消息
 #pragma mark 收到聊天消息
--(void)newMessageReceived:(NSDictionary *)messageContent
+-(void)newMessageReceived:(NSMutableDictionary *)messageContent
 {
     NSString * sender = [messageContent objectForKey:@"sender"];
     //黑名单
@@ -89,6 +89,16 @@ static SystemSoundID shake_sound_male_id = 0;
          [self comeBackDelivered:sender msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         return;
     }
+    
+    
+    if ([[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"type"]isEqualToString:@"audio"]) {
+        NSString *title =[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"messageid"];
+        NSString *filePath = [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,title];
+        [NetManager downloadAudioWithBaseURLStr:filePath audioId:title completion:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+      
+        }];
+    }
+    
     //账号激活
     if ([KISDictionaryHaveKey(messageContent, @"payload") JSONValue][@"active"]){//发送通知 判断账号是否激活
         [[NSNotificationCenter defaultCenter] postNotificationName:@"wxr_myActiveBeChanged" object:nil userInfo:[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]];

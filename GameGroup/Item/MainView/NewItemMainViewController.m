@@ -233,7 +233,6 @@
 {
 //    if (m_button1.selected ==YES) {
 //    }else{
-    
         [self changeView:m_button2];
 //    }
     [self getMyRoomFromNet];

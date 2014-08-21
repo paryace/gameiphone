@@ -38,6 +38,14 @@
                            @"type":@"img"};
     return [dic JSONFragment];
 }
+#pragma mark 创建发送正常声音消息的payload
+
++(NSString*)createPayLoadAudioStr:(NSString*)audioId
+{
+    NSDictionary * dic = @{@"messageid":audioId,
+                           @"type":@"audio"};
+    return [dic JSONFragment];
+}
 
 
 #pragma mark 创建发送组队图片消息的payload
@@ -62,6 +70,23 @@
                            @"team":team};
     return [dic JSONFragment];
 }
+
+#pragma mark 创建组队发送正常声音消息的payload
+
++(NSString*)createPayLoadAudioStr:(NSString*)audioId TeamPosition:(NSString *)teamPosition gameid:(NSString *)gameid roomId:(NSString *)roomId team:(NSString *)team
+{
+    NSDictionary * dic = @{@"teamPosition":teamPosition,
+                           @"gameid":gameid,
+                           @"roomId": roomId,
+                           @"team":team,
+                           @"messageid":audioId,
+                           @"type":@"audio"};
+    return [dic JSONFragment];
+}
+
+
+
+
 #pragma mark 创建发送系统消息的payload
 +(NSString*)createPayLoadStr:(NSString*)msgType{
     NSDictionary * dic = @{@"type":msgType};

@@ -33,6 +33,10 @@
 
 +(void)downloadImageWithBaseURLStr:(NSString *)url ImageId:(NSString *)imgId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion;//下载文件
 
+#pragma mark ---下载声音
++(void)downloadAudioWithBaseURLStr:(NSString *)url audioId:(NSString *)audioId completion:(void(^)(NSURLResponse *response, NSURL *filePath, NSError *error))completion;
+
+
 //+(void)downloadAudioFileWithURL:(NSString *)downloadURL FileName:(NSString *)audioName TheController:(UIViewController *)controller Success:(void (^)(AFHTTPRequestOperation *operation,  id responseObject))success
 //                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 //#pragma mark 上传单张妹子图片

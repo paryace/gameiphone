@@ -26,6 +26,11 @@
 #import "TeamApplyController.h"
 #import "NewTeamMenuView.h"
 #import "LocationViewController.h"
+#import <AVFoundation/AVFoundation.h>
+#import <CoreVideo/CoreVideo.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import "RecordAudio.h"
+#import "PlayVoiceCell.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -49,7 +54,9 @@ SendMsgDeleGate,
 DropDownChooseDelegate,
 DropDownChooseDataSource,
 DetailDelegate,
-LocationViewDelegate>
+LocationViewDelegate,
+RecordAudioDelegate,
+SendAudioMsgDeleGate>
 {
     NSString * userName;
     NSUserDefaults * uDefault;
@@ -95,6 +102,9 @@ LocationViewDelegate>
 //    NSString * available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
 //    NSString * groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
 }
+
+@property (nonatomic, strong) UIButton * audioBtn;   //声音按钮
+@property (nonatomic, strong) UIButton *startRecordBtn;//录音btn
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮
 @property (nonatomic, strong) UILabel *titleLabel;  //导航条标题
 @property (nonatomic, strong) UIButton *groupCircleBtn;  //群动态

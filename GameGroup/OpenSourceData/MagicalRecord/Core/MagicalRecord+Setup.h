@@ -7,7 +7,6 @@
 //
 
 #import "MagicalRecord.h"
-
 @interface MagicalRecord (Setup)
 
 + (void) setupCoreDataStack;
