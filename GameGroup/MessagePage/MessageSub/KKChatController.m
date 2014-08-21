@@ -435,7 +435,7 @@ UINavigationControllerDelegate>
     }
     NSMutableArray *menuItems = [NSMutableArray array];
     for (int i = 0; i<menuarry.count; i++) {
-        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:nil target:self action:@selector(pushMenuItem:)];
+        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:KUIImage(@"close_receive") target:self action:@selector(pushMenuItem:)];
         menuItem.tag =i;
         menuItem.alignment = NSTextAlignmentCenter;
         [menuItems addObject:menuItem];

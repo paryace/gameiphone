@@ -49,7 +49,7 @@
         [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         
-        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2, 320, 20)];
+        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
         pveLable.backgroundColor = [UIColor clearColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
