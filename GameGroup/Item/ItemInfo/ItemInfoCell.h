@@ -22,6 +22,7 @@
 @property(nonatomic,strong)UILabel *value2Lb;
 @property(nonatomic,strong)UILabel *value3Lb;
 @property(assign,nonatomic)id<HeadClickDelegate> delegate;
+@property(nonatomic)NSIndexPath* indexPath;
 
 -(void)refreshViewFrameWithText:(NSString *)text;
 @end

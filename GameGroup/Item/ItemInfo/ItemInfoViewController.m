@@ -468,6 +468,7 @@
             cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
         cell.tag= indexPath.row;
+        cell.indexPath = indexPath;
         cell.delegate = self;
         NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
@@ -511,22 +512,14 @@
             cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
         cell.tag= indexPath.row;
+        cell.indexPath = indexPath;
         cell.delegate = self;
         NSDictionary *dict = [claimedList_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterImg")];
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
-//        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
          cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
-//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-//            cell.genderImgView.image = KUIImage(@"gender_boy");
-//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-//        }
-//        else{
-//            cell.genderImgView.image = KUIImage(@"gender_girl");
-//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-//        }
         cell.MemberLable.hidden = NO;
         cell.MemberLable.backgroundColor = UIColorFromRGBA(0xfdcd12, 1);
         cell.MemberLable.text = @"预约";
@@ -571,12 +564,27 @@
 }
 
 - (void)headImgClick:(ItemInfoCell*)Sender{
-    NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-    TestViewController *itemInfo = [[TestViewController alloc]init];
-    itemInfo.userId = userid;
-    [self.navigationController pushViewController:itemInfo animated:YES];
-
+    NSIndexPath * indexPath = Sender.indexPath;
+    if (indexPath.section == 0) {
+        if (Sender.tag<m_dataArray.count) {
+            NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
+            NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            TestViewController *itemInfo = [[TestViewController alloc]init];
+            itemInfo.userId = userid;
+            [self.navigationController pushViewController:itemInfo animated:YES];
+        }
+    }else if (indexPath.section == 1) {
+        if (Sender.tag<claimedList_dataArray.count) {
+            NSDictionary *dic = [claimedList_dataArray objectAtIndex:Sender.tag];
+            NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            TestViewController *itemInfo = [[TestViewController alloc]init];
+            itemInfo.userId = userid;
+            [self.navigationController pushViewController:itemInfo animated:YES];
+        }
+    }
+    
+    
+   
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
