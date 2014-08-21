@@ -7,7 +7,7 @@
 //
 
 #import "NewTeamApplyListView.h"
-#define topHight 30
+#define topHight 44
 
 @implementation NewTeamApplyListView{
     UITableView * m_TableView;
@@ -25,16 +25,26 @@
         self.roomId = roomId;
         self.gameId = gameId;
         
-        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, topHight)];
-        UIImage * bgImage = [[UIImage imageNamed:@"chat_bg_image.png"]stretchableImageWithLeftCapWidth:1 topCapHeight:10];
-        bgImageView.image = bgImage;
+        UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320,topHight)];
         bgImageView.userInteractionEnabled = YES;
+        bgImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+        bgImageView.image = KUIImage(@"nav_bg");
+        [self addSubview:bgImageView];
+        
+        
+        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,0, 200, 44)];
+        titleLabel.textColor = [UIColor whiteColor];
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.text = @"组队申请";
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        [bgImageView addSubview:titleLabel];
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(320-25-5, 2.5, 25, 25);
-        [button addTarget:self action:@selector(closeViewAction:)
-         forControlEvents:UIControlEventTouchUpInside];
-        [button setBackgroundImage:[UIImage imageNamed:@"news_report.png"]forState:UIControlStateNormal];
+        button.frame = CGRectMake(260, 0, 60, 44);
+        [button addTarget:self action:@selector(closeViewAction:)forControlEvents:UIControlEventTouchUpInside];
+        [button setTitle:@"关闭" forState:UIControlStateNormal];
+        button.backgroundColor = [UIColor clearColor];
         [bgImageView addSubview:button];
         [self addSubview:bgImageView];
         

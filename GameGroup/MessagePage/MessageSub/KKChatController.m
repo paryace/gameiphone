@@ -47,7 +47,7 @@
 #define maxWight 200
 #define LocalMessage @"localMessage"
 #define NameKeys @"namekeys"
-#define topViewHight 50
+#define topViewHight 52
 
 typedef enum : NSUInteger {
     KKChatInputTypeNone,
@@ -103,6 +103,8 @@ UINavigationControllerDelegate>
 @property (nonatomic,strong) NewTeamMenuView * newTeamMenuView;
 @property (nonatomic,strong) NewTeamApplyListView * newTeamApplyListView;
 @property (nonatomic,strong) UIButton * topItemView;
+@property (nonatomic,strong) UIImageView * leftImage;
+@property (nonatomic,strong) UIImageView * rightImage;
 @end
 
 @implementation KKChatController
@@ -333,14 +335,22 @@ UINavigationControllerDelegate>
         
         self.topItemView=[UIButton buttonWithType:UIButtonTypeCustom];
         self.topItemView.frame=CGRectMake(0,startX, 320, 0);
-        [self.topItemView setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateNormal];
-        [self.topItemView setBackgroundImage:KUIImage(@"line_btn_click") forState:UIControlStateHighlighted];
+        [self.topItemView setBackgroundImage:KUIImage([self getBgImage]) forState:UIControlStateNormal];
         [self.topItemView.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
         [self.topItemView addTarget:self action:@selector(showTeamInfoView) forControlEvents:UIControlEventTouchUpInside];
         self.topItemView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        [self.topItemView setTitleColor:UIColorFromRGBA(0x339adf, 1) forState:UIControlStateNormal];
+        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;//UIColorFromRGBA(0x339adf, 1)
+        [self.topItemView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.view addSubview:self.topItemView];
+        
+        
+        self.leftImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 52/4, 52/2, 52/2)];
+        self.leftImage.image = KUIImage([self getleftIcon]);
+        [self.topItemView addSubview:self.leftImage];
+        
+        self.rightImage = [[UIImageView alloc] initWithFrame:CGRectMake(320-22-10, (52-22)/2, 22, 22)];
+        self.rightImage.image = KUIImage(@"team_right_top");
+        [self.topItemView addSubview:self.rightImage];
         
         
         //就位确认
@@ -365,6 +375,18 @@ UINavigationControllerDelegate>
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
+}
+-(NSString*)getBgImage{
+    if (!teamUsershipType) {
+        return @"team_inpace_top";
+    }
+    return @"team_apply_top";
+}
+-(NSString*)getleftIcon{
+    if (!teamUsershipType) {
+        return @"team_inpace_icon";
+    }
+    return @"team_apply_icon_chat";
 }
 
 //
@@ -427,15 +449,18 @@ UINavigationControllerDelegate>
 -(void)showFilterMenu
 {
     NSArray * menuarry = [NSArray array];
+    NSArray * iconarry = [NSArray array];
     
     if (teamUsershipType) {
         menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"入队申请",@"队伍详情"];
+        iconarry = @[@"team_position_icon",@"team_memberlist_icon",@"team_invitation_icon",@"team_apply_icon",@"team_detail_icon"];
     }else{
         menuarry = @[@"选择位置",@"队员列表",@"邀请好友",@"队伍详情"];
+        iconarry = @[@"team_position_icon",@"team_memberlist_icon",@"team_invitation_icon",@"team_detail_icon"];
     }
     NSMutableArray *menuItems = [NSMutableArray array];
     for (int i = 0; i<menuarry.count; i++) {
-        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:KUIImage(@"close_receive") target:self action:@selector(pushMenuItem:)];
+        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:KUIImage(iconarry[i]) target:self action:@selector(pushMenuItem:)];
         menuItem.tag =i;
         menuItem.alignment = NSTextAlignmentCenter;
         [menuItems addObject:menuItem];

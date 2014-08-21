@@ -431,10 +431,10 @@ typedef enum {
     contentView.autoresizingMask = UIViewAutoresizingNone;
     contentView.userInteractionEnabled = YES;
 //    contentView.backgroundColor = [UIColor grayColor];
-    contentView.image = KUIImage(@"team_join_low");
+    contentView.image = KUIImage(@"team_chat_menu_bg");
     contentView.opaque = NO;
     
-    CGFloat itemY = 0;
+    CGFloat itemY = 10;
     NSUInteger itemNum = 0;
         
     for (KxMenuItem *menuItem in _menuItems) {
@@ -485,12 +485,12 @@ typedef enum {
             [itemView addSubview:titleLabel];
         }
         if (menuItem.image) {
-            const CGRect imageFrame = {kMarginX, kMarginY, maxImageWidth, maxImageWidth};
+            const CGRect imageFrame = {kMarginX, kMarginY+(maxImageWidth/2)/2, maxImageWidth/2, maxImageWidth/2};
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageFrame];
             imageView.image = menuItem.image;
-            imageView.clipsToBounds = YES;
-            imageView.contentMode = UIViewContentModeCenter;
-            imageView.autoresizingMask = UIViewAutoresizingNone;
+//            imageView.clipsToBounds = YES;
+//            imageView.contentMode = UIViewContentModeCenter;
+//            imageView.autoresizingMask = UIViewAutoresizingNone;
             [itemView addSubview:imageView];
         }
         if (itemNum < _menuItems.count - 1) {
