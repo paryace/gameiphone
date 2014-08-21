@@ -102,7 +102,8 @@ UINavigationControllerDelegate>
     BOOL isRecording;
     ShowRecordView *showRecordView;
     BOOL saveAudioSuccess;
-    
+    NSMutableArray *gifArray1;
+    NSMutableArray *gifArray2;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -287,6 +288,20 @@ static double endRecordTime=0;
     recordAudio.delegate = self;
     curAudio = [[NSData alloc]init];
 
+    gifArray1 = [NSMutableArray array];
+    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying001")];
+    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying002")];
+    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying003")];
+    
+    gifArray2 = [NSMutableArray array];
+    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying001")];
+    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying002")];
+    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying003")];
+    
+//    gifArray1 = [NSMutableArray arrayWithObjects:@"SenderVoiceNodePlaying001",@"SenderVoiceNodePlaying002",@"SenderVoiceNodePlaying003", nil];
+
+//    gifArray2 = [NSMutableArray arrayWithObjects:@"ReceiverVoiceNodePlaying001",@"ReceiverVoiceNodePlaying002",@"ReceiverVoiceNodePlaying003", nil];
+    
     
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -403,7 +418,7 @@ static double endRecordTime=0;
         }
     }
     
-    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
+    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
     showRecordView.center = self.view.center;
     showRecordView.hidden = YES;
     [self.view addSubview:showRecordView];
@@ -1359,12 +1374,14 @@ static double endRecordTime=0;
         if (!cell) {
             cell = [[PlayVoiceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
+        ;
         cell.mydelegate = self;
         cell.tag = indexPath.row+100;
         if ([sender isEqualToString:@"you"]) {
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
+//            [cell.voiceImageView setAnimationImages:gifArray1];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15-10-25, padding*2-4,size.width,size.height);
@@ -1378,6 +1395,8 @@ static double endRecordTime=0;
             
             
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
+//            [cell.voiceImageView setAnimationImages:nil];
+//            [cell.voiceImageView setAnimationImages:gifArray2];
             cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-4+offHight,17,size.height);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
@@ -1704,6 +1723,10 @@ static double endRecordTime=0;
     
     NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
     
+//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i-100) inSection:0];
+//
+//    PlayVoiceCell *cell = (PlayVoiceCell*)[self.tView cellForRowAtIndexPath:indexPath];
+//    [cell.voiceImageView startAnimating];
     
     if ([self isFileExist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]) {
         
@@ -1788,18 +1811,6 @@ static double endRecordTime=0;
 
 }
 
-#pragma mark ---声音代理
--(void)RecordStatus:(int)status {
-    if (status==0){
-        //播放中
-    } else if(status==1){
-        //完成
-        NSLog(@"播放完成");
-    }else if(status==2){
-        //出错
-        NSLog(@"播放出错");
-    }
-}
 //-(void)playAudioWithCell:(PlayVoiceCell*)cell
 //{
 //    NSDictionary *dic = [messages objectAtIndex:cell.tag];

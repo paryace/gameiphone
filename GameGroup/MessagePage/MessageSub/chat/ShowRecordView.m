@@ -21,7 +21,7 @@
         imageView.image = KUIImage(@"third_xiemessage_record_icon");
         [self addSubview:imageView];
         
-        m_bodongImg = [[UIImageView alloc]initWithFrame:CGRectMake(130, 60, 60, 100)];
+        m_bodongImg = [[UIImageView alloc]initWithFrame:CGRectMake(85, 35, 35, 80)];
         m_bodongImg.image = KUIImage(@"");
         [self addSubview:m_bodongImg];
         

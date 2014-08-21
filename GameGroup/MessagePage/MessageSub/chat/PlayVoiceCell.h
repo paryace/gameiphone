@@ -8,14 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "KKChatCell.h"
+#import "RecordAudio.h"
 @protocol SendAudioMsgDeleGate;
 
-@interface PlayVoiceCell : KKChatCell<QiniuUploadDelegate>
+@interface PlayVoiceCell : KKChatCell<QiniuUploadDelegate,RecordAudioDelegate>
 @property (nonatomic,strong)UIButton * button;
 @property (nonatomic,strong)UIImageView  * voiceImageView;
 @property (nonatomic,assign)id<SendAudioMsgDeleGate>mydelegate;
 
 -(void)uploadAudio:(NSString*)audioPath cellIndex:(NSInteger)index;
+-(void)setIMGAnimationWithArray:(NSMutableArray *)array; //设置动画img
 -(void)startPaly;
 -(void)stopPlay;
 @end

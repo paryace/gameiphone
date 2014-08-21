@@ -12,6 +12,14 @@
 {
     NSInteger cellIndex;
     BOOL isPlay;
+    RecordAudio *recordAudio;
+}
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+    }
+    return self;
 }
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -19,13 +27,24 @@
     if (self) {
         // Initialization code
         isPlay = NO;
+       NSMutableArray*  gifArray1 = [NSMutableArray array];
+        [gifArray1 addObject:KUIImage(@"ReceiverVoiceNodePlaying001")];
+        [gifArray1 addObject:KUIImage(@"ReceiverVoiceNodePlaying002")];
+        [gifArray1 addObject:KUIImage(@"ReceiverVoiceNodePlaying003")];
+        
+
+//        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(startPaly:) name:@"playingAudio" object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(stopPlay:) name:@"StopPlayingAudio" object:nil];
+        recordAudio = [[RecordAudio alloc]init];
+        recordAudio.delegate = self;
+        
+
 //        self.backgroundColor = [UIColor greenColor];
-//        NSMutableArray *gifArray = [NSMutableArray arrayWithObjects:@"SenderVoiceNodePlaying001",@"SenderVoiceNodePlaying002",@"SenderVoiceNodePlaying003", nil];
         self.voiceImageView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 10, 10)];
         self.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
-//        self.voiceImageView.animationImages = gifArray; //动画图片数组
-        self.voiceImageView.animationDuration = 3; //执行一次完整动画所需的时长
-        self.voiceImageView.animationRepeatCount = 10;  //动画重复次数
+        [self.voiceImageView setAnimationImages:gifArray1];
+        self.voiceImageView.animationDuration = 1; //执行一次完整动画所需的时长
+        self.voiceImageView.animationRepeatCount = 10000;  //动画重复次数
 //        [self.voiceImageView startAnimating];
         [self addSubview:self.voiceImageView];
         
@@ -34,7 +53,11 @@
     }
     return self;
 }
-
+-(void)setIMGAnimationWithArray:(NSMutableArray *)array
+{
+//    self.voiceImageView.animationImages = array; //动画图片数组
+    [self.voiceImageView setAnimationImages:array];
+}
 -(void)playAudio:(id)sender
 {
     if (!isPlay) {
@@ -47,11 +70,11 @@
     }
 }
 
--(void)startPaly
+-(void)startPaly:(id)sender
 {
     [self.voiceImageView startAnimating];
 }
--(void)stopPlay
+-(void)stopPlay:(id)sender
 {
     [self.voiceImageView stopAnimating];
 }
@@ -86,6 +109,20 @@
     }
 }
 
+#pragma mark ---声音代理
+-(void)RecordStatus:(int)status {
+    if (status==0){
+        //播放中
+        [self startPaly];
+    } else if(status==1){
+        //完成
+        [self stopPlay];
+        NSLog(@"播放完成");
+    }else if(status==2){
+        //出错
+        NSLog(@"播放出错");
+    }
+}
 
 - (void)awakeFromNib
 {
