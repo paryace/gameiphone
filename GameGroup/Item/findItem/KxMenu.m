@@ -394,7 +394,7 @@ typedef enum {
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
     const CGFloat kMarginX = 20.f;
-    const CGFloat kMarginY = 5.f;
+    const CGFloat kMarginY = 10.f;
     const CGFloat kMarginTitleImage = 5.f;
     
     UIFont *titleFont = [KxMenu titleFont];
