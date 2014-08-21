@@ -22,7 +22,7 @@
 @property(nonatomic,strong)UILabel * pveLable;//战斗力
 @property(nonatomic,strong)UIView * lineView;//竖线
 @property(nonatomic,strong)UIView * stateView;//状态
-@property(nonatomic,strong)UILabel *MemberLable;
+@property(nonatomic,strong)UIImageView *MemberLable;
 @property(nonatomic,strong)UIButton * positionBtn;
 @end
 
