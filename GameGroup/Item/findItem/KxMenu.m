@@ -393,7 +393,7 @@ typedef enum {
  
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
-    const CGFloat kMarginX = 10.f;
+    const CGFloat kMarginX = 20.f;
     const CGFloat kMarginY = 5.f;
     const CGFloat kMarginTitleImage = 5.f;
     
@@ -427,9 +427,11 @@ typedef enum {
     const CGFloat titleX = kMarginX + maxImageWidth+kMarginTitleImage;
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX;
     UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    UIImageView *contentView = [[UIImageView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
-    contentView.backgroundColor = [UIColor clearColor];
+    contentView.userInteractionEnabled = YES;
+//    contentView.backgroundColor = [UIColor grayColor];
+    contentView.image = KUIImage(@"team_join_low");
     contentView.opaque = NO;
     
     CGFloat itemY = 0;
@@ -582,8 +584,8 @@ typedef enum {
 
 - (void) drawRect:(CGRect)rect
 {
-    [self drawBackground:self.bounds
-               inContext:UIGraphicsGetCurrentContext()];
+//    [self drawBackground:self.bounds
+//               inContext:UIGraphicsGetCurrentContext()];
 }
 
 - (void)drawBackground:(CGRect)frame
