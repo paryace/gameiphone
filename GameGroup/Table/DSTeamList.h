@@ -38,4 +38,10 @@
 @property (nonatomic, retain) NSString * gender;
 @property (nonatomic, retain) NSString * img;
 
+@property (nonatomic, retain) NSString * typeConstId;
+@property (nonatomic, retain) NSString * typeMask;
+@property (nonatomic, retain) NSString * typeOrder;
+@property (nonatomic, retain) NSString * typeType;
+@property (nonatomic, retain) NSString * typeValue;
+
 @end

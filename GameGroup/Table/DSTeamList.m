@@ -36,5 +36,10 @@
 @dynamic userid;
 @dynamic gender;
 @dynamic img;
+@dynamic typeConstId;
+@dynamic typeMask;
+@dynamic typeOrder;
+@dynamic typeType;
+@dynamic typeValue;
 
 @end

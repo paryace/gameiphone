@@ -283,9 +283,6 @@
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         editInfo.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
-         editInfo.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"characterId")];
-         editInfo.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"realm")];
-        editInfo.roomInfoDic = m_mainDict;
         [self.navigationController pushViewController:editInfo animated:YES];
    
     }
@@ -307,11 +304,8 @@
     {
         InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
-         editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
+        editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
-        editInfo.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"characterId")];
-        editInfo.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"realm")];
-        editInfo.roomInfoDic = m_mainDict;
         [self.navigationController pushViewController:editInfo animated:YES];
 
     }

@@ -4510,11 +4510,11 @@
     NSString * teamUsershipType =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
     NSString * typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
     NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(dic, @"createTeamUser");
+    NSMutableDictionary * typeDic = KISDictionaryHaveKey(dic, @"type");
     NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
         
         [self detailList:userList RoomId:roomId GameId:gameId];
-        
         for (NSMutableDictionary * user in userList) {
             [self saveMemberUserInfo:user GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
                 
@@ -4555,6 +4555,12 @@
         commonMsg.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
         commonMsg.gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gender")];
         commonMsg.img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"img")];
+        
+        commonMsg.typeConstId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")];
+        commonMsg.typeMask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
+        commonMsg.typeOrder = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"order")];
+        commonMsg.typeType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"type")];
+        commonMsg.typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
     }
     completion:^(BOOL success, NSError *error) {
         if (successcompletion) {
@@ -5000,8 +5006,6 @@
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
-    
-    
     [msgDic setObject:commonMsg.characterId forKey:@"characterId"];
     [msgDic setObject:commonMsg.characterImg forKey:@"characterImg"];
     [msgDic setObject:commonMsg.characterName forKey:@"characterName"];
@@ -5011,8 +5015,11 @@
     [msgDic setObject:commonMsg.userid forKey:@"userid"];
     [msgDic setObject:commonMsg.gender forKey:@"gender"];
     [msgDic setObject:commonMsg.img forKey:@"img"];
-    
-    
+    [msgDic setObject:commonMsg.typeConstId forKey:@"constId"];
+    [msgDic setObject:commonMsg.typeMask forKey:@"mask"];
+    [msgDic setObject:commonMsg.typeOrder forKey:@"order"];
+    [msgDic setObject:commonMsg.typeType forKey:@"type"];
+    [msgDic setObject:commonMsg.typeValue forKey:@"value"];
     return msgDic;
 }
 

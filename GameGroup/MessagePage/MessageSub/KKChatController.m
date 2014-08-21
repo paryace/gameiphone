@@ -704,14 +704,10 @@ UINavigationControllerDelegate>
 }
 //邀请好友页面
 -(void)invitationAtion{
-    NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
     InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
     invc.gameId = [GameCommon getNewStringWithId:self.gameId];
     invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
     invc.roomId = [GameCommon getNewStringWithId:self.roomId];
-    invc.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"characterId")];
-    invc.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"realm")];
-    invc.roomInfoDic = teamInfo;
     [self.navigationController pushViewController:invc animated:YES];
 }
 //入队申请

@@ -499,16 +499,7 @@
         
         [self showMessageWindowWithContent:@"创建成功" imageType:0];
         [self.navigationController popToRootViewControllerAnimated:YES];
-        
-//        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-//            InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
-//            invc.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")];
-//            invc.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")];
-//            invc.roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"roomId")];
-//            invc.roomInfoDic = responseObject;
-//            invc.isRegister = YES;
-//            [self.navigationController pushViewController:invc animated:YES];
-//        }        
+       
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self showErrorAlert:error];
         [hud hide:YES];
