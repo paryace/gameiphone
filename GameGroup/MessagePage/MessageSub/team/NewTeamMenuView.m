@@ -59,7 +59,6 @@
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];
-//            self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
             self.mTableView.backgroundColor = [UIColor clearColor];
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -436,16 +435,7 @@
         cell.realmLable.text = @"";
         cell.pveLable.text = @"";
     }
-    
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-        cell.positionBtn.enabled = YES;
-        cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
-        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
-    }else{
-        cell.positionBtn.enabled = NO;
-        cell.positionLable.textColor = [UIColor grayColor];
-        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
-    }
+    cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
     
     if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
         cell.stateView.hidden = YES;
