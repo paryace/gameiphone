@@ -54,7 +54,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -73,32 +72,26 @@
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backButton];
 
-    
-    
-    
     chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [chooseAllBtn setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
     [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateSelected];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
-    
     dataDict  = [NSMutableDictionary dictionary];
     keysArr = [NSMutableArray array];
     m_tabTag = 1;
     addMemArray = [NSMutableArray array];
-    
     [addMemArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"find_billboard",@"img", nil]];
-    
+    NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
+    self.roomInfoDic = teamInfo;
     [self buildMainView];
     [self buildlistView];
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"获取中...";
-    
-    ;
-    
+    NSLog(@"--roomInfoDic--%@",self.roomInfoDic);
     [self getInfo];
 
 }
@@ -119,8 +112,6 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
                               if ([responseObject isKindOfClass:[NSDictionary class]]) {
-//                                  [self dealResponse:responseObject];
-//                                  [m_header endRefreshing];
                                   NSMutableDictionary* result = [responseObject objectForKey:@"userList"];
                                   NSMutableArray* keys = [responseObject objectForKey:@"nameKey"];
                                   [dataDict removeAllObjects];
@@ -199,7 +190,6 @@
             [dataDict removeAllObjects];
             dataDict = result;
             [keysArr addObjectsFromArray:keys];
-            
             for (int i =0; i<keysArr.count; i++) {
                 NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
                 for (int j=0;j<arr.count;j++) {
@@ -208,10 +198,8 @@
                     [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
                     [dic setValue:@"1" forKey:@"choose"];
                     [dic setValue:@"friends" forKeyPath:@"tabType"];
-                    
                 }
             }
-
         }else{
             [self getFriendListFromNet];
         }
@@ -239,8 +227,6 @@
 
         [self.view addSubview:m_shareView];
         [self.view bringSubviewToFront:m_shareView];
-        
-//        NSDictionary *dic =[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"myRole_%@",[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
         
         EGOImageView *headImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 70, 70)];
         headImageView.placeholderImage = KUIImage(@"placeholder");
@@ -314,6 +300,8 @@
     }else{
         InviationGroupViewController *invgro = [[InviationGroupViewController alloc]init];  invgro.gameId = self.gameId;
         invgro.roomId = self.roomId;
+        invgro.gameId = self.gameId;
+        invgro.roomInfoDic = self.roomInfoDic;
         [self.navigationController pushViewController:invgro animated:YES];
     }
 }
@@ -324,7 +312,7 @@
     NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
     NSString *description = [NSString stringWithFormat:@"%@邀请你加入在陌游的队伍",roomName];
     NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-    NSString * shareUrl = [NSString stringWithFormat:@"%@roomId=%@&gameid=%@&inviterid=%@",ShareUrl,self.roomId,self.gameId,myUserid];
+    NSString * shareUrl = [NSString stringWithFormat:@"%@roomId=%@&gameid=%@&inviterid=%@&realm=%@&characterId=%@",ShareUrl,self.roomId,self.gameId,myUserid,[[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"realm")] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"characterId")]];
     
     if (sender ==10001) {
         [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")] Description:description Url:shareUrl];
@@ -500,39 +488,25 @@
 
 -(void)enterOtherInvitationPage:(UIButton *)sender
 {
-    NSString *str;
-    InviationGroupViewController *invgro;
-    if (!invgro) {
-        invgro = [[InviationGroupViewController alloc]init];
-    }
     switch (sender.tag) {
         case 100:
-//            str=@"qq";
             [self shareToQQ:10001];
-//            [self buildShareViewWithWhere:YES];
             break;
         case 101:
-//            str=@"微信";
             [self shareToQQ:10002];
-//            [self buildShareViewWithWhere:NO];
             break;
-        case 102:
-            str=@"群组";
+        case 102:{
+            InviationGroupViewController * invgro = [[InviationGroupViewController alloc]init];
             invgro.gameId = self.gameId;
             invgro.roomId = self.roomId;
+            invgro.roomInfoDic = self.roomInfoDic;
             [self.navigationController pushViewController:invgro animated:YES];
+        }
             break;
-            
         default:
             break;
     }
-//    [self showMessageWithContent:str point:self.view.center];
 }
-
-
-
-
-
 -(void)addMembers:(id)sender
 {
     if (addMemArray.count>1) {
@@ -549,7 +523,7 @@
             }
         }
         
-        [self updataInfoWithId:[self getImageIdsStr:arr]];
+        [self updataInfoWithId:arr];
     }
     
 }
@@ -563,8 +537,9 @@
     }
     return headImgStr;
 }
--(void)updataInfoWithId:(NSString *)str
+-(void)updataInfoWithId:(NSArray *)arr
 {
+    NSString * str = [self getImageIdsStr:arr];
     [hud show:YES];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
@@ -578,6 +553,9 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        for (NSString * userid in  arr) {
+            [self saveMyMsg:userid];
+        }
         if (self.isRegister) {
             [self.navigationController popToRootViewControllerAnimated:YES];
         }else{
@@ -595,8 +573,55 @@
         }
         [hud hide:YES];
     }];
-    
 }
+
+
+-(void)saveMyMsg:(NSString*)userId{
+    NSString * typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"value")];
+    NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
+    NSString * msgType = @"normalchat";
+    NSString * body = [NSString stringWithFormat:@"[%@] %@",typeValue,[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")]];
+    NSString * targetGroupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"groupId")];
+    NSString * description = [NSString stringWithFormat:@"邀请您加入%@的组队",roomName];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"gameId")];
+    NSString * msg = [NSString stringWithFormat:@"[%@] %@",typeValue,[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")]];
+    NSDictionary * payloadDic = [self createPayload:targetGroupId Description:description Img:img RoomId:roomId Type:@"teamInvite" Msg:msg Gameid:gameid];
+    
+    [self sendNormalMessage:userId msgType:msgType Body:body PayloadStr:[payloadDic JSONFragment]];
+}
+
+-(void)sendNormalMessage:(NSString*)toUserid msgType:(NSString*)msgType Body:(NSString*)body PayloadStr:(NSString*)payloadStr{
+    NSMutableDictionary * messageContent = [NSMutableDictionary dictionary];
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    [messageContent setObject:toUserid forKey:@"sender"];
+    [messageContent setObject:msgType forKey:@"msgType"];
+    [messageContent setObject:body forKey:@"msg"];
+    [messageContent setObject:uuid forKey:@"msgId"];
+    [messageContent setObject:body forKey:@"payload"];
+    [messageContent setObject:@"1" forKey:@"sayHiType"];
+    [messageContent setObject:nowTime forKey:@"time"];
+    [messageContent setObject:@"you" forKey:@"toId"];
+    [messageContent setObject:payloadStr forKey:@"payload"];
+    [DataStoreManager storeTeamInviteMsgs:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+       [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+    }];
+
+}
+
+-(NSDictionary*)createPayload:(NSString*)targetGroupId Description:(NSString*)description Img:(NSString*)img RoomId:(NSString*)roomId Type:(NSString*)type Msg:(NSString*)msg Gameid:(NSString*)gameid{
+    NSDictionary * dic = @{@"targetGroupId":targetGroupId,
+                           @"description":description,
+                           @"img": img,
+                           @"roomId":roomId,
+                           @"type":type,
+                           @"msg":msg,
+                           @"gameid":gameid};
+    return dic;
+}
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return keysArr.count;
@@ -743,16 +768,8 @@
     if (indexPath.row ==addMemArray.count-1) {
         return;
     }
-    
     NSDictionary * tempDict =[addMemArray objectAtIndex:indexPath.row];
-    
-    
-//    int row = [KISDictionaryHaveKey(tempDict, @"row")intValue];
-    
-    
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
-    
-    
     NSMutableDictionary *dic;
     
     NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
@@ -804,18 +821,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

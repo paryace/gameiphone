@@ -393,8 +393,9 @@ typedef enum {
  
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
-    const CGFloat kMarginX = 10.f;
-    const CGFloat kMarginY = 5.f;
+    const CGFloat kMarginX = 20.f;
+    const CGFloat kMarginY = 10.f;
+    const CGFloat kMarginTitleImage = 5.f;
     
     UIFont *titleFont = [KxMenu titleFont];
     if (!titleFont) titleFont = [UIFont boldSystemFontOfSize:16];
@@ -404,61 +405,46 @@ typedef enum {
     CGFloat maxItemWidth = 0;
     
     for (KxMenuItem *menuItem in _menuItems) {
-        
-        const CGSize imageSize = menuItem.image.size;        
+        const CGSize imageSize = menuItem.image.size;
         if (imageSize.width > maxImageWidth)
             maxImageWidth = imageSize.width;        
     }
-    
-    if (maxImageWidth) {
-        maxImageWidth += kMarginX;
-    }
-    
-    for (KxMenuItem *menuItem in _menuItems) {
 
+    for (KxMenuItem *menuItem in _menuItems) {
         const CGSize titleSize = [menuItem.title sizeWithFont:titleFont];
         const CGSize imageSize = menuItem.image.size;
-
         const CGFloat itemHeight = MAX(titleSize.height, imageSize.height) + kMarginY * 2;
-        const CGFloat itemWidth = ((!menuItem.enabled && !menuItem.image) ? titleSize.width : maxImageWidth + titleSize.width) + kMarginX * 4;
-        
+        const CGFloat itemWidth = ((!menuItem.enabled && !menuItem.image) ? titleSize.width : maxImageWidth + titleSize.width) + kMarginX * 2+((!menuItem.enabled && !menuItem.image) ?0:kMarginTitleImage);
         if (itemHeight > maxItemHeight)
             maxItemHeight = itemHeight;
         
         if (itemWidth > maxItemWidth)
             maxItemWidth = itemWidth;
     }
-       
     maxItemWidth  = MAX(maxItemWidth, kMinMenuItemWidth);
     maxItemHeight = MAX(maxItemHeight, kMinMenuItemHeight);
 
-    const CGFloat titleX = kMarginX * 2 + maxImageWidth;
-    const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
-    
+    const CGFloat titleX = kMarginX + maxImageWidth+kMarginTitleImage;
+    const CGFloat titleWidth = maxItemWidth - titleX - kMarginX;
     UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
-    UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
-    
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    UIImageView *contentView = [[UIImageView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
-    contentView.backgroundColor = [UIColor clearColor];
+    contentView.userInteractionEnabled = YES;
+//    contentView.backgroundColor = [UIColor grayColor];
+    contentView.image = KUIImage(@"team_chat_menu_bg");
     contentView.opaque = NO;
     
-    CGFloat itemY = kMarginY * 2;
+    CGFloat itemY = 10;
     NSUInteger itemNum = 0;
         
     for (KxMenuItem *menuItem in _menuItems) {
-                
         const CGRect itemFrame = (CGRect){0, itemY, maxItemWidth, maxItemHeight};
-        
         UIView *itemView = [[UIView alloc] initWithFrame:itemFrame];
         itemView.autoresizingMask = UIViewAutoresizingNone;
         itemView.backgroundColor = [UIColor clearColor];        
         itemView.opaque = NO;
-                
         [contentView addSubview:itemView];
-        
         if (menuItem.enabled) {
-        
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = itemNum;
             button.frame = itemView.bounds;
@@ -466,31 +452,21 @@ typedef enum {
             button.backgroundColor = [UIColor clearColor];
             button.opaque = NO;
             button.autoresizingMask = UIViewAutoresizingNone;
-            
-            [button addTarget:self
-                       action:@selector(performAction:)
+            [button addTarget:self action:@selector(performAction:)
              forControlEvents:UIControlEventTouchUpInside];
-            
             [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
-            
             [itemView addSubview:button];
         }
-        
         if (menuItem.title.length) {
-            
             CGRect titleFrame;
-            
             if (!menuItem.enabled && !menuItem.image) {
-                
                 titleFrame = (CGRect){
                     kMarginX * 2,
                     kMarginY,
                     maxItemWidth - kMarginX * 4,
                     maxItemHeight - kMarginY * 2
                 };
-                
             } else {
-                
                 titleFrame = (CGRect){
                     titleX,
                     kMarginY,
@@ -506,37 +482,28 @@ typedef enum {
             titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.autoresizingMask = UIViewAutoresizingNone;
-            //titleLabel.backgroundColor = [UIColor greenColor];
-            [itemView addSubview:titleLabel];            
+            [itemView addSubview:titleLabel];
         }
-        
         if (menuItem.image) {
-            
-            const CGRect imageFrame = {kMarginX * 2, kMarginY, maxImageWidth, maxItemHeight - kMarginY * 2};
+            const CGRect imageFrame = {kMarginX, kMarginY+(maxImageWidth/2)/2, maxImageWidth/2, maxImageWidth/2};
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageFrame];
             imageView.image = menuItem.image;
-            imageView.clipsToBounds = YES;
-            imageView.contentMode = UIViewContentModeCenter;
-            imageView.autoresizingMask = UIViewAutoresizingNone;
+//            imageView.clipsToBounds = YES;
+//            imageView.contentMode = UIViewContentModeCenter;
+//            imageView.autoresizingMask = UIViewAutoresizingNone;
             [itemView addSubview:imageView];
         }
-        
         if (itemNum < _menuItems.count - 1) {
-            
-            UIImageView *gradientView = [[UIImageView alloc] initWithImage:gradientLine];
-            gradientView.frame = (CGRect){kMarginX * 2, maxItemHeight + 1, gradientLine.size};
+            UIImageView *gradientView = [[UIImageView alloc] init];
+            gradientView.backgroundColor = UIColorFromRGBA(0x2d313a, 1);
+            gradientView.frame = (CGRect){0 , maxItemHeight + 1, maxItemWidth,1};
             gradientView.contentMode = UIViewContentModeLeft;
             [itemView addSubview:gradientView];
-            
-            itemY += 2;
         }
-        
         itemY += maxItemHeight;
         ++itemNum;
-    }    
-    
-    contentView.frame = (CGRect){0, 0, maxItemWidth, itemY + kMarginY * 2};
-    
+    }
+    contentView.frame = (CGRect){0, 0, maxItemWidth, itemY};
     return contentView;
 }
 
@@ -617,8 +584,8 @@ typedef enum {
 
 - (void) drawRect:(CGRect)rect
 {
-    [self drawBackground:self.bounds
-               inContext:UIGraphicsGetCurrentContext()];
+//    [self drawBackground:self.bounds
+//               inContext:UIGraphicsGetCurrentContext()];
 }
 
 - (void)drawBackground:(CGRect)frame
@@ -629,7 +596,6 @@ typedef enum {
     
     UIColor *tintColor = [KxMenu tintColor];
     if (tintColor) {
-        
         CGFloat a;
         [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
     }
@@ -640,7 +606,7 @@ typedef enum {
     CGFloat Y1 = frame.origin.y + frame.size.height;
     
     // render arrow
-    
+    //显示箭头
     UIBezierPath *arrowPath = [UIBezierPath bezierPath];
     
     // fix the issue with gap of arrow's base if on the edge
@@ -715,14 +681,13 @@ typedef enum {
         X1 -= kArrowSize;
     }
     
-    [arrowPath fill];
+//    [arrowPath fill];//设置箭头
 
     // render body
     
     const CGRect bodyFrame = {X0, Y0, X1 - X0, Y1 - Y0};
     
-    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:bodyFrame
-                                                          cornerRadius:8];
+    UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:bodyFrame cornerRadius:0];
         
     const CGFloat locations[] = {0, 1};
     const CGFloat components[] = {
@@ -731,15 +696,9 @@ typedef enum {
     };
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,
-                                                                 components,
-                                                                 locations,
-                                                                 sizeof(locations)/sizeof(locations[0]));
+    CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,components,locations,sizeof(locations)/sizeof(locations[0]));
     CGColorSpaceRelease(colorSpace);
-    
-    
     [borderPath addClip];
-    
     CGPoint start, end;
     
     if (_arrowDirection == KxMenuViewArrowDirectionLeft ||
@@ -753,10 +712,8 @@ typedef enum {
         start = (CGPoint){X0, Y0};
         end = (CGPoint){X0, Y1};
     }
-    
     CGContextDrawLinearGradient(context, gradient, start, end, 0);
-    
-    CGGradientRelease(gradient);    
+    CGGradientRelease(gradient);
 }
 
 @end

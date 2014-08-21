@@ -42,12 +42,8 @@
         [self.contentView addSubview:self.genderImageV];
         
         
-        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(195, 6, 26, 11)];
-        self.MemberLable.layer.cornerRadius = 3;
-        self.MemberLable.layer.masksToBounds=YES;
-        self.MemberLable.textAlignment = NSTextAlignmentCenter;
-        self.MemberLable.font = [UIFont systemFontOfSize:10];
-        self.MemberLable.textColor = [UIColor whiteColor];
+        self.MemberLable = [[UIImageView alloc]initWithFrame:CGRectMake(195, 6, 26, 12.5)];
+        self.MemberLable.image = KUIImage(@"team_captain_icon.png");
         [self addSubview:self.MemberLable];
         
         self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 15, 15)];
@@ -80,7 +76,6 @@
         [self.contentView addSubview:self.positionLable];
         
         self.positionBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-70, 0, 70, 60)];
-        [self.positionBtn  addTarget:self action:@selector(pOnClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.positionBtn setBackgroundImage:nil forState:UIControlStateNormal];
         [self.contentView addSubview:self.positionBtn];
     }
@@ -91,24 +86,6 @@
     if ([self.headCkickDelegate respondsToSelector:@selector(userHeadImgClick:)]) {
         [self.headCkickDelegate userHeadImgClick:self];
     }
-}
-
--(void)pOnClick:(UIButton*)sender{
-    if ([self.onclickdelegate respondsToSelector:@selector(positionOnClick:)]) {
-        [self.onclickdelegate positionOnClick:self];
-    }
-}
-
-- (void)awakeFromNib
-{
-    // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

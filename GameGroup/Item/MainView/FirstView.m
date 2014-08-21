@@ -650,9 +650,6 @@
     }else{
         [self reloadView:40 offWidth:0 offWidth2:40];
     }
-    
-
-    
     return YES;
 }
 
@@ -790,6 +787,15 @@
         [self reloInfo:NO];
     };
     m_header = header;
+}
+
+-(void)updateRoomList:(NSString*)roomId GameId:(NSString*)gameId {
+    for (NSMutableDictionary * dic in m_dataArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:[GameCommon getNewStringWithId:roomId]] && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:[GameCommon getNewStringWithId:gameId]]) {
+            [dic setObject:@"1" forKey:@"myRank"];
+        }
+    }
+    [m_myTabelView reloadData];
 }
 
 @end

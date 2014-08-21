@@ -1,38 +1,71 @@
 //
-//  TeamApplyController.m
+//  NewTeamApplyListView.m
 //  GameGroup
 //
-//  Created by Apple on 14-8-19.
+//  Created by Apple on 14-8-20.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
 
-#import "TeamApplyController.h"
-#import "JoinTeamCell.h"
-#import "TestViewController.h"
+#import "NewTeamApplyListView.h"
+#define topHight 44
 
-@interface TeamApplyController (){
+@implementation NewTeamApplyListView{
     UITableView * m_TableView;
     NSMutableArray * teamNotifityMsg;
 }
 
-@end
-
-@implementation TeamApplyController
-
-- (void)viewDidLoad
+- (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType
 {
-    [super viewDidLoad];
-    [self setTopViewWithTitle:@"加入申请" withBackButton:YES];
-    //申请加入组队通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
-    [self getZU];
-    m_TableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX,kScreenWidth, kScreenHeigth) style:UITableViewStylePlain];
-    m_TableView.dataSource = self;
-    m_TableView.delegate = self;
-    m_TableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    [GameCommon setExtraCellLineHidden:m_TableView];
-    m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
-    [self.view addSubview:m_TableView];
+    self = [super initWithFrame:frame];
+    if (self) {
+        //申请加入组队通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+        self.groipId = groupId;
+        self.teamUsershipType = teamUsershipType;
+        self.roomId = roomId;
+        self.gameId = gameId;
+        
+        UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320,topHight)];
+        bgImageView.userInteractionEnabled = YES;
+        bgImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+        bgImageView.image = KUIImage(@"nav_bg");
+        [self addSubview:bgImageView];
+        
+        
+        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,0, 200, 44)];
+        titleLabel.textColor = [UIColor whiteColor];
+        titleLabel.backgroundColor = [UIColor clearColor];
+        titleLabel.text = @"组队申请";
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        [bgImageView addSubview:titleLabel];
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.frame = CGRectMake(260, 0, 60, 44);
+        [button addTarget:self action:@selector(closeViewAction:)forControlEvents:UIControlEventTouchUpInside];
+        [button setTitle:@"关闭" forState:UIControlStateNormal];
+        button.backgroundColor = [UIColor clearColor];
+        [bgImageView addSubview:button];
+        [self addSubview:bgImageView];
+        
+        if (!m_TableView) {
+            m_TableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight,kScreenWidth, kScreenHeigth-topHight) style:UITableViewStylePlain];
+            m_TableView.dataSource = self;
+            m_TableView.delegate = self;
+            m_TableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+            [GameCommon setExtraCellLineHidden:m_TableView];
+            m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+            [self addSubview:m_TableView];
+        }
+        hud = [[MBProgressHUD alloc] initWithView:self];
+        hud.labelText = @"加载中...";
+        [self addSubview:hud];
+    }
+    return self;
+}
+//关闭页面
+-(void)closeViewAction:(UIButton*)sender{
+    [self.detaildelegate doApplyListShowOrHideViewControl];
 }
 #pragma mark 表格
 
@@ -116,18 +149,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSMutableDictionary *dic = [teamNotifityMsg objectAtIndex:indexPath.row];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
-        return;
-    }
-    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
-    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-    VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
-    [self.navigationController pushViewController:VC animated:YES];
-
-
+    [self.detaildelegate itemApplyListOnClick:dic];
 }
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -193,9 +215,7 @@
 -(void)headImgClick:(JoinTeamCell*)Sender{
     NSMutableDictionary *dic = [teamNotifityMsg objectAtIndex:Sender.tag];
     NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-    TestViewController *itemInfo = [[TestViewController alloc]init];
-    itemInfo.userId = userid;
-    [self.navigationController pushViewController:itemInfo animated:YES];
+    [self.detaildelegate headImgApplyListClick:userid];
 }
 
 //同意288
@@ -273,15 +293,42 @@
 #pragma mark 申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"readApplyMsg" object:nil userInfo:nil];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+    if (![groupId isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
+        return;
+    }
+    if (self.isShow) {
+         [self.detaildelegate readAppMsgAction];
+    }else{
+        if (self.teamUsershipType) {
+            [self.detaildelegate mShowApplyListTopMenuView];
+        }else{
+            [self.detaildelegate readAppMsgAction];
+        }
+    }
     [self getZU];
     [m_TableView reloadData];
     NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
 }
+//显示
+-(void)showView{
+   [self addContro];
+    [self getZU];
+    [m_TableView reloadData];
+    self.isShow = YES;
+}
+//隐藏
+-(void)hideView{
+    [self deallocContro];
+    self.isShow = NO;
+}
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
+-(void)deallocContro{
+//    [self.detaildelegate readAppMsgAction];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+}
+-(void)addContro{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
 }
 
 @end

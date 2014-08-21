@@ -93,6 +93,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshPreference:) name:@"shuaxinRefreshPreference_wxx" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newPreferMsgReceive:) name:kNewPreferMsg object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRoomState:) name:@"updateRoomState" object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     topImageView.userInteractionEnabled = YES;
@@ -446,6 +447,13 @@
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
 //    [self displayTabbarNotification];
+}
+
+-(void)updateRoomState:(NSNotification*)notification{
+    NSDictionary * dic = notification.userInfo;
+    NSString * gamdid = KISDictionaryHaveKey(dic, @"gameid");
+    NSString * roomId = KISDictionaryHaveKey(dic, @"roomId");
+    [firstView updateRoomList:roomId GameId:gamdid];
 }
 
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag

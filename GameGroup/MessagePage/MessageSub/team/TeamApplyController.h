@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "JoinTeamCell.h"
 #import "H5CharacterDetailsViewController.h"
-
 @interface TeamApplyController : BaseViewController<UITableViewDataSource,UITableViewDelegate,TeamDetailDelegate>
 @property (nonatomic, strong) NSString *groipId;
 @property (nonatomic, strong) NSString *roomId;
 @property (nonatomic, strong) NSString *gameId;
 @property (nonatomic, nonatomic)  BOOL teamUsershipType;
 @end
+
+

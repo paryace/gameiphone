@@ -74,7 +74,7 @@
     m_dataArray = [NSMutableArray array];
     claimedList_dataArray = [NSMutableArray array];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStyleGrouped];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [GameCommon setExtraCellLineHidden:m_myTableView];
@@ -83,7 +83,6 @@
     
 
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
-
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.7];
@@ -284,7 +283,6 @@
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         editInfo.groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
-        editInfo.roomInfoDic = m_mainDict;
         [self.navigationController pushViewController:editInfo animated:YES];
    
     }
@@ -306,9 +304,8 @@
     {
         InvitationMembersViewController *editInfo = [[InvitationMembersViewController alloc]init];
         editInfo.roomId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
-         editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
+        editInfo.groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"groupId")];
         editInfo.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"createTeamUser"), @"gameid")];
-        editInfo.roomInfoDic = m_mainDict;
         [self.navigationController pushViewController:editInfo animated:YES];
 
     }
@@ -406,22 +403,34 @@
     NSArray *arr = [NSArray array] ;
     NSArray *titlearr = [NSArray array] ;
     if ([teamUsershipType intValue]==0) {
-        arr = @[@"sendMsg_normal",@"groupEdit"];
-        titlearr = @[@"",@""];
+//        arr = @[@"sendMsg_normal",@"groupEdit"];
+//        titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
+        [self noHaveBottomView];
     }
     else if([teamUsershipType intValue]==1)
     {
-        arr = @[@"sendMsg_normal",@"groupEdit"];
-        titlearr = @[@"",@""];
+//        arr = @[@"sendMsg_normal",@"groupEdit"];
+//        titlearr = @[@"",@""];
         m_getOutBtn.hidden = NO;
+        [self noHaveBottomView];
     }
     else{
         m_getOutBtn.hidden = YES;
         titlearr = @[@"",([requested intValue]==1)?@"再次申请":@"申请加入"];
         arr = @[@"",@"team_join_low"];
+        [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
+        [self noHaveBottomView];
     }
-    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
+//    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
+}
+//带底部按钮
+-(void)haveBottomView{
+    m_myTableView .frame=CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50);
+}
+//不带底部按钮
+-(void)noHaveBottomView{
+    m_myTableView .frame=CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX);
 }
 
 -(void)setCaptain:(NSString*)shipType
@@ -459,6 +468,7 @@
             cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
         cell.tag= indexPath.row;
+        cell.indexPath = indexPath;
         cell.delegate = self;
         NSDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
@@ -502,22 +512,14 @@
             cell = [[ItemInfoCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
         cell.tag= indexPath.row;
+        cell.indexPath = indexPath;
         cell.delegate = self;
         NSDictionary *dict = [claimedList_dataArray objectAtIndex:indexPath.row];
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterImg")];
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
-//        cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"nickname")];
          cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
-//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gender")] isEqualToString:@"0"]) {//男♀♂
-//            cell.genderImgView.image = KUIImage(@"gender_boy");
-//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_man.png"];
-//        }
-//        else{
-//            cell.genderImgView.image = KUIImage(@"gender_girl");
-//            cell.headImageView.placeholderImage = [UIImage imageNamed:@"people_woman.png"];
-//        }
         cell.MemberLable.hidden = NO;
         cell.MemberLable.backgroundColor = UIColorFromRGBA(0xfdcd12, 1);
         cell.MemberLable.text = @"预约";
@@ -562,12 +564,27 @@
 }
 
 - (void)headImgClick:(ItemInfoCell*)Sender{
-    NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
-    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-    TestViewController *itemInfo = [[TestViewController alloc]init];
-    itemInfo.userId = userid;
-    [self.navigationController pushViewController:itemInfo animated:YES];
-
+    NSIndexPath * indexPath = Sender.indexPath;
+    if (indexPath.section == 0) {
+        if (Sender.tag<m_dataArray.count) {
+            NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
+            NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            TestViewController *itemInfo = [[TestViewController alloc]init];
+            itemInfo.userId = userid;
+            [self.navigationController pushViewController:itemInfo animated:YES];
+        }
+    }else if (indexPath.section == 1) {
+        if (Sender.tag<claimedList_dataArray.count) {
+            NSDictionary *dic = [claimedList_dataArray objectAtIndex:Sender.tag];
+            NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
+            TestViewController *itemInfo = [[TestViewController alloc]init];
+            itemInfo.userId = userid;
+            [self.navigationController pushViewController:itemInfo animated:YES];
+        }
+    }
+    
+    
+   
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -581,46 +598,7 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section==0) {
-        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
-        view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
-        
-        UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
-        [view addSubview:view1];
-        [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
-        
-        UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
-        //    view3.backgroundColor =UIColorFromRGBA(0x24272e, 1);
-        view3.image = KUIImage(@"team_detail_topImage");
-        
-        UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
-        lb1.backgroundColor =[ UIColor clearColor];
-        lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
-        lb1.font = [UIFont boldSystemFontOfSize:16];
-        
-        if ([[m_mainDict allKeys]containsObject:@"type"]) {
-            lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
-        }else{
-            lb1.text = @"";
-        }
-        
-        CGSize size = [lb1.text sizeWithFont:lb1.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
-        lb1.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
-        
-        lb1.textAlignment = NSTextAlignmentCenter;
-        [view3 addSubview:lb1];
-        
-        NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
-        NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
-        
-        UILabel *lb2 = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
-        lb2.backgroundColor =[ UIColor clearColor];
-        lb2.textColor = UIColorFromRGBA(0x6e737e, 1);
-        lb2.font = [UIFont boldSystemFontOfSize:10];
-        lb2.text = lb2Str;
-        lb2.textAlignment = NSTextAlignmentLeft;
-        [view3 addSubview:lb2];
-        [view addSubview:view3];
-        return view;
+        return  [self getHeadView];
     }else{
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -633,6 +611,52 @@
         return view;
     }
 }
+
+
+-(UIView*)getHeadView{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
+    view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
+    
+    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
+    [view addSubview:view1];
+    [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
+    
+    UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
+    view3.image = KUIImage(@"team_detail_topImage");
+    
+    UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
+    lb1.backgroundColor =[ UIColor clearColor];
+    lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
+    lb1.font = [UIFont boldSystemFontOfSize:16];
+    
+    if ([[m_mainDict allKeys]containsObject:@"type"]) {
+        lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+    }else{
+        lb1.text = @"";
+    }
+    
+    CGSize size = [lb1.text sizeWithFont:lb1.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
+    lb1.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
+    
+    lb1.textAlignment = NSTextAlignmentCenter;
+    [view3 addSubview:lb1];
+    
+    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
+    NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
+    
+    UILabel *lb2 = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
+    lb2.backgroundColor =[ UIColor clearColor];
+    lb2.textColor = UIColorFromRGBA(0x6e737e, 1);
+    lb2.font = [UIFont boldSystemFontOfSize:10];
+    lb2.text = lb2Str;
+    lb2.textAlignment = NSTextAlignmentLeft;
+    [view3 addSubview:lb2];
+    [view addSubview:view3];
+    return view;
+}
+
+
+
 -(void)changeInfo1
 {
     if (self.isCaptain) {
@@ -796,6 +820,8 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        NSDictionary * msgDic = @{@"roomId":self.itemId,@"gameid":[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"gameid")]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateRoomState" object:nil userInfo:msgDic];
         [self showMessageWindowWithContent:@"申请成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {

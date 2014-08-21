@@ -345,13 +345,7 @@
 {
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveNewNormalChatMsgs:msg LoCon:localContext];
-        }
-//     completion:^(BOOL success, NSError *error) {
-//         if (block) {
-//             block(msg);
-//         }
-//     }
-    ];
+    }];
     if (block) {
         block(msg);
     }
@@ -363,15 +357,7 @@
         for (NSDictionary * msg in msgs) {
             [self saveNewNormalChatMsgs:msg LoCon:localContext];
         }
-    }
-//     completion:^(BOOL success, NSError *error) {
-//         for (NSDictionary * msg in msgs) {
-//             if (block) {
-//                 block(msg);
-//             }
-//         }
-//     }
-     ];
+    }];
     for (NSDictionary * msg in msgs) {
         if (block) {
             block(msg);
@@ -396,7 +382,7 @@
         }else{
             unread = [thumbMsgs.unRead intValue];
         }
-        thumbMsgs.sender = sender;
+        thumbMsgs.sender =sender;
         thumbMsgs.senderNickname = @"";
         thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
         thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
@@ -441,18 +427,63 @@
 }
 
 
+//保存正常聊天的消息
++(void)storeTeamInviteMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
+{
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        [self saveTeamInviteMsgs:msg LoCon:localContext];
+    }];
+    if (block) {
+        block(msg);
+    }
+}
+
+//保存组队邀请消息
++(void)saveTeamInviteMsgs:(NSDictionary *)msg LoCon:(NSManagedObjectContext *)localContext
+{
+    NSString * sender = [msg objectForKey:@"sender"];
+    NSString * toId = [msg objectForKey:@"toId"];
+    NSString *sayhiType = KISDictionaryHaveKey(msg, @"sayHiType")?KISDictionaryHaveKey(msg, @"sayHiType"):@"1";
+    NSPredicate * hasedpredicate = [NSPredicate predicateWithFormat:@"messageuuid==[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
+    DSCommonMsgs * commonMsg = [DSCommonMsgs MR_findFirstWithPredicate:hasedpredicate inContext:localContext];
+    if (!commonMsg) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"sender==[c]%@ and msgType==[c]%@",sender,KISDictionaryHaveKey(msg, @"msgType")];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender =sender;
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = KISDictionaryHaveKey(msg, @"msg");
+        thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+        thumbMsgs.senderType = COMMONUSER;
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
+        thumbMsgs.msgType = KISDictionaryHaveKey(msg, @"msgType");
+        thumbMsgs.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+        thumbMsgs.status = @"1";//已发送
+        thumbMsgs.sayHiType = sayhiType;
+        thumbMsgs.senderimg = @"";
+        thumbMsgs.receiveTime=[GameCommon getCurrentTime];
+        //
+        commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+        commonMsg.sender = toId;
+        commonMsg.receiver = sender;
+        commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+        commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+        commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+        commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+        commonMsg.status = @"1";
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+    }
+}
+
+
 //保存接收到群组的消息
 +(void)storeNewGroupMsgs:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         [self saveGroupChatMsgs:msg LoCon:localContext];
-    }
-//     completion:^(BOOL success, NSError *error) {
-//         if (block) {
-//             block(msg);
-//         }
-//     }
-     ];
+    }];
     if (block) {
         block(msg);
     }
@@ -625,9 +656,7 @@
 +(void)storeMyGroupThumbMessage:(NSDictionary *)message
 {
     NSString* groupId = KISDictionaryHaveKey(message, @"groupId");
-    
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId,@"groupchat",@"1"];
         DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
         if (!thumbMsgs)
@@ -665,6 +694,52 @@
      completion:^(BOOL success, NSError *error) {
          
      }];
+}
+
+
+
+
++(void)storeTeamInviteInGroupMessage:(NSDictionary *)message
+{
+    NSString* groupId = KISDictionaryHaveKey(message, @"groupId");
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId,@"groupchat",@"1"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = KISDictionaryHaveKey(message, @"msg");
+        thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
+        thumbMsgs.senderType = GROUPMSG;
+        thumbMsgs.msgType = KISDictionaryHaveKey(message, @"msgType");
+        thumbMsgs.senderimg = @"";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
+        thumbMsgs.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+        thumbMsgs.status = @"2";//发送中
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.payLoad = KISDictionaryHaveKey(message, @"payload");
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        
+        //
+        DSGroupMsgs * commonMsg = [DSGroupMsgs MR_createInContext:localContext];
+        commonMsg.sender = KISDictionaryHaveKey(message, @"sender");
+        commonMsg.senderNickname = @"";
+        commonMsg.msgContent = KISDictionaryHaveKey(message, @"msg")?KISDictionaryHaveKey(message, @"msg"):@"";
+        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
+        commonMsg.receiver = KISDictionaryHaveKey(message, @"receiver");
+        commonMsg.msgType = KISDictionaryHaveKey(message, @"msgType");
+        commonMsg.payload = KISDictionaryHaveKey(message, @"payload");
+        commonMsg.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+        commonMsg.status = KISDictionaryHaveKey(message, @"status");
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        commonMsg.groupId = groupId;
+        commonMsg.teamPosition = KISDictionaryHaveKey(message, @"teamPosition");
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
 }
 
 
@@ -4481,11 +4556,11 @@
     NSString * teamUsershipType =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
     NSString * typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
     NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(dic, @"createTeamUser");
+    NSMutableDictionary * typeDic = KISDictionaryHaveKey(dic, @"type");
     NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
         
         [self detailList:userList RoomId:roomId GameId:gameId];
-        
         for (NSMutableDictionary * user in userList) {
             [self saveMemberUserInfo:user GroupId:groupId Successcompletion:^(BOOL success, NSError *error) {
                 
@@ -4517,6 +4592,21 @@
         commonMsg.teamUsershipType = teamUsershipType;
         commonMsg.typeId = typeId;
         commonMsg.gameId = [GameCommon getNewStringWithId:gameId];
+        commonMsg.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
+        commonMsg.characterImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterImg")];
+        commonMsg.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterName")];
+        commonMsg.memberInfo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"memberInfo")];
+        commonMsg.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"realm")];
+        commonMsg.teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"teamUserId")];
+        commonMsg.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
+        commonMsg.gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gender")];
+        commonMsg.img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"img")];
+        
+        commonMsg.typeConstId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")];
+        commonMsg.typeMask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
+        commonMsg.typeOrder = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"order")];
+        commonMsg.typeType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"type")];
+        commonMsg.typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
     }
     completion:^(BOOL success, NSError *error) {
         if (successcompletion) {
@@ -4843,6 +4933,12 @@
     }
     return memberList;
 }
+//获取成员信息
++(NSMutableDictionary*)getMemberInfo:(NSString*)groupId UserId:(NSString*)userid{
+    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userid];
+    DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicates];
+    return [self getmemberInfo:commonMsg];
+}
 
 +(NSMutableDictionary*)getmemberInfo:(DSMemberUserInfo*)commonMsg{
     NSMutableDictionary * dic = [NSMutableDictionary dictionary];
@@ -4871,7 +4967,7 @@
     return dic;
 }
 
-//查询eamUserInfo
+//查询teamUserInfo
 +(NSMutableDictionary*)getTeamUserInfo:(NSString*)teamUserId GameId:(NSString*)gameId{
     NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"teamUserId==[c]%@ and gameid==[c]%@",teamUserId,gameId];
     DSTeamUserInfo * commonMsgTeamUser = [DSTeamUserInfo MR_findFirstWithPredicate:predicatesTeamUser];
@@ -4943,7 +5039,7 @@
     NSMutableDictionary * msgDic = [NSMutableDictionary dictionary];
     [msgDic setObject:commonMsg.createDate forKey:@"createDate"];
     [msgDic setObject:commonMsg.crossServer forKey:@"crossServer"];
-    [msgDic setObject:commonMsg.descriptions forKey:@"descriptions"];
+    [msgDic setObject:commonMsg.descriptions forKey:@"description"];
     [msgDic setObject:commonMsg.dismissDate forKey:@"dismissDate"];
     [msgDic setObject:commonMsg.groupId forKey:@"groupId"];
     [msgDic setObject:commonMsg.maxVol forKey:@"maxVol"];
@@ -4956,6 +5052,20 @@
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
+    [msgDic setObject:commonMsg.characterId forKey:@"characterId"];
+    [msgDic setObject:commonMsg.characterImg forKey:@"characterImg"];
+    [msgDic setObject:commonMsg.characterName forKey:@"characterName"];
+    [msgDic setObject:commonMsg.memberInfo forKey:@"memberInfo"];
+    [msgDic setObject:commonMsg.realm forKey:@"realm"];
+    [msgDic setObject:commonMsg.teamUserId forKey:@"teamUserId"];
+    [msgDic setObject:commonMsg.userid forKey:@"userid"];
+    [msgDic setObject:commonMsg.gender forKey:@"gender"];
+    [msgDic setObject:commonMsg.img forKey:@"img"];
+    [msgDic setObject:commonMsg.typeConstId forKey:@"constId"];
+    [msgDic setObject:commonMsg.typeMask forKey:@"mask"];
+    [msgDic setObject:commonMsg.typeOrder forKey:@"order"];
+    [msgDic setObject:commonMsg.typeType forKey:@"type"];
+    [msgDic setObject:commonMsg.typeValue forKey:@"value"];
     return msgDic;
 }
 
@@ -5187,8 +5297,8 @@
 }
 //
 
-+(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId{
-    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and teamUserId==[c]%@",gameId, teamUserId];
++(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId UserId:(NSString*)userId{
+    NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and userid==[c]%@",gameId, userId];
     DSCreateTeamUserInfo * commonMsg = [DSCreateTeamUserInfo MR_findFirstWithPredicate:predicates];
     return [self queryCreateTeamUserInfo:commonMsg];
 }

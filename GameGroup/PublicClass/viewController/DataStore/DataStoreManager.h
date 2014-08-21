@@ -325,6 +325,10 @@
 
 +(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
++(void)storeTeamInviteMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
++(void)storeTeamInviteInGroupMessage:(NSDictionary *)message;
+
 +(void)deleteDSlatestDynamic:(NSString*)userid;
 
 +(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias;
@@ -408,7 +412,7 @@
 +(void)deletePreferenceInfoByCharacterId:(NSString*)characterId Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //查询创建组队者的信息
-+(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId;
++(NSMutableDictionary*)queryCreateTeamUserInfo:(NSString*)gameId UserId:(NSString*)userId;
 
 //删除创建组队者的信息
 +(void)deletePreferenceInfo:(NSString*)gameId TeamUserId:(NSString*)teamUserId Successcompletion:(MRSaveCompletionHandler)successcompletion;
@@ -451,6 +455,9 @@
 
 //保存组队成员列表信息
 +(void)saveMemberUserInfo:(NSMutableDictionary*)memberUserInfo GroupId:(NSString*)groupId Successcompletion:(MRSaveCompletionHandler)successcompletion;
+
+//获取成员信息
++(NSMutableDictionary*)getMemberInfo:(NSString*)groupId UserId:(NSString*)userid;
 
 //保存就位确认消息
 +(void)saveTeamPreparedMsg:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;

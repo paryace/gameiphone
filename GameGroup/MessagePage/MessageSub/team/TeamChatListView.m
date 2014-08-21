@@ -723,16 +723,14 @@
             if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
                 cell.stateView.backgroundColor = [UIColor grayColor];
             }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
-                cell.stateView.backgroundColor = [UIColor greenColor];
+                cell.stateView.backgroundColor = UIColorFromRGBA(0x45d232, 1);
             }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
-                cell.stateView.backgroundColor = [UIColor redColor];
+                cell.stateView.backgroundColor = UIColorFromRGBA(0xd55656, 1);
             }
         }
         NSInteger shipType = [KISDictionaryHaveKey(msgDic, @"teamUsershipType") integerValue];
         if (shipType==0) {
             cell.MemberLable.hidden = NO;
-            cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
-            cell.MemberLable.text = @"队长";
         }else{
             cell.MemberLable.hidden = YES;
         }
