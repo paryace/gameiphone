@@ -199,7 +199,6 @@
             [dataDict removeAllObjects];
             dataDict = result;
             [keysArr addObjectsFromArray:keys];
-            
             for (int i =0; i<keysArr.count; i++) {
                 NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
                 for (int j=0;j<arr.count;j++) {
@@ -208,10 +207,8 @@
                     [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
                     [dic setValue:@"1" forKey:@"choose"];
                     [dic setValue:@"friends" forKeyPath:@"tabType"];
-                    
                 }
             }
-
         }else{
             [self getFriendListFromNet];
         }

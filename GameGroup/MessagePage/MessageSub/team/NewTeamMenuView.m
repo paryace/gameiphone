@@ -53,7 +53,7 @@
         pveLable.backgroundColor = [UIColor clearColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-        pveLable.text = @"向左滑动操作";
+        pveLable.text = @"队长可以滑动名单进行管理";
         pveLable.font =[ UIFont systemFontOfSize:12];
         [self addSubview:pveLable];
         
