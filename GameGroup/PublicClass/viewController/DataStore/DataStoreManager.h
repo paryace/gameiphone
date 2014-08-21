@@ -327,6 +327,8 @@
 
 +(void)storeTeamInviteMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
++(void)storeTeamInviteInGroupMessage:(NSDictionary *)message;
+
 +(void)deleteDSlatestDynamic:(NSString*)userid;
 
 +(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias;

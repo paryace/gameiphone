@@ -121,7 +121,10 @@
     [postDict setObject:@"287" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self saveGroupMsg:groupId];
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
@@ -151,21 +154,57 @@
     }
     return nil;
 }
+
+-(void)saveGroupMsg:(NSString*)groupId{
+    NSString * typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"value")];
+    NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
+    NSString * msgType = @"groupchat";
+    NSString * body = [NSString stringWithFormat:@"[%@] %@",typeValue,[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")]];
+    NSString * targetGroupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"groupId")];
+    NSString * description = [NSString stringWithFormat:@"邀请您加入%@的组队",roomName];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")];
+    NSString * roomId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"gameId")];
+    NSString * msg = [NSString stringWithFormat:@"[%@] %@",typeValue,[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")]];
+    NSDictionary * payloadDic = [self createPayload:targetGroupId Description:description Img:img RoomId:roomId Type:@"teamInviteInGroup" Msg:msg Gameid:gameid];
+    NSMutableDictionary * msgDIc = [payloadDic mutableCopy];
+    
+    [msgDIc setValue:[GameCommon getNewStringWithId:groupId] forKey:@"groupId"];
+    
+    [self sendGroupMessage:groupId msgType:msgType Body:body PayloadStr:[msgDIc JSONFragment]];
+}
+
+-(void)sendGroupMessage:(NSString*)groupId msgType:(NSString*)msgType Body:(NSString*)body PayloadStr:(NSString*)payloadStr{
+    NSMutableDictionary * messageContent = [NSMutableDictionary dictionary];
+    NSString* nowTime = [GameCommon getCurrentTime];
+    NSString* uuid = [[GameCommon shareGameCommon] uuid];
+    [messageContent setObject:@"you" forKey:@"sender"];
+    [messageContent setObject:msgType forKey:@"msgType"];
+    [messageContent setObject:body forKey:@"msg"];
+    [messageContent setObject:uuid forKey:@"msgId"];
+    [messageContent setObject:body forKey:@"payload"];
+    [messageContent setObject:@"1" forKey:@"sayHiType"];
+    [messageContent setObject:nowTime forKey:@"time"];
+    [messageContent setObject:groupId forKey:@"groupId"];
+    [messageContent setObject:groupId forKey:@"receiver"];
+    [messageContent setObject:payloadStr forKey:@"payload"];
+    [DataStoreManager storeTeamInviteInGroupMessage:messageContent];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:messageContent];
+}
+
+-(NSDictionary*)createPayload:(NSString*)targetGroupId Description:(NSString*)description Img:(NSString*)img RoomId:(NSString*)roomId Type:(NSString*)type Msg:(NSString*)msg Gameid:(NSString*)gameid{
+    NSDictionary * dic = @{@"targetGroupId":targetGroupId,
+                           @"description":description,
+                           @"img": img,
+                           @"roomId":roomId,
+                           @"type":type,
+                           @"msg":msg,
+                           @"gameid":gameid};
+    return dic;
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

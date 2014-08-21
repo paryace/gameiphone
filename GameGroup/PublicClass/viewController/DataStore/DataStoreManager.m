@@ -697,6 +697,52 @@
 }
 
 
+
+
++(void)storeTeamInviteInGroupMessage:(NSDictionary *)message
+{
+    NSString* groupId = KISDictionaryHaveKey(message, @"groupId");
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and msgType==[c]%@ and sayHiType==[c]%@",groupId,@"groupchat",@"1"];
+        DSThumbMsgs * thumbMsgs = [DSThumbMsgs MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (!thumbMsgs)
+            thumbMsgs = [DSThumbMsgs MR_createInContext:localContext];
+        thumbMsgs.sender = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+        thumbMsgs.senderNickname = @"";
+        thumbMsgs.msgContent = KISDictionaryHaveKey(message, @"msg");
+        thumbMsgs.sendTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
+        thumbMsgs.senderType = GROUPMSG;
+        thumbMsgs.msgType = KISDictionaryHaveKey(message, @"msgType");
+        thumbMsgs.senderimg = @"";
+        thumbMsgs.sayHiType = @"1";
+        thumbMsgs.unRead = [NSString stringWithFormat:@"%d",0];
+        thumbMsgs.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+        thumbMsgs.status = @"2";//发送中
+        thumbMsgs.groupId = groupId;
+        thumbMsgs.payLoad = KISDictionaryHaveKey(message, @"payload");
+        thumbMsgs.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        
+        //
+        DSGroupMsgs * commonMsg = [DSGroupMsgs MR_createInContext:localContext];
+        commonMsg.sender = KISDictionaryHaveKey(message, @"sender");
+        commonMsg.senderNickname = @"";
+        commonMsg.msgContent = KISDictionaryHaveKey(message, @"msg")?KISDictionaryHaveKey(message, @"msg"):@"";
+        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[KISDictionaryHaveKey(message, @"time") doubleValue]];
+        commonMsg.receiver = KISDictionaryHaveKey(message, @"receiver");
+        commonMsg.msgType = KISDictionaryHaveKey(message, @"msgType");
+        commonMsg.payload = KISDictionaryHaveKey(message, @"payload");
+        commonMsg.messageuuid = KISDictionaryHaveKey(message, @"messageuuid");
+        commonMsg.status = KISDictionaryHaveKey(message, @"status");
+        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+        commonMsg.groupId = groupId;
+        commonMsg.teamPosition = KISDictionaryHaveKey(message, @"teamPosition");
+    }
+    completion:^(BOOL success, NSError *error) {
+                                                   
+    }];
+}
+
+
 +(void)storeMyNormalMessage:(NSDictionary *)message
 {
     NSString * receicer = KISDictionaryHaveKey(message, @"receiver");

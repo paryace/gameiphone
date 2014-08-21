@@ -11,4 +11,5 @@
 @interface InviationGroupViewController : BaseViewController<UITableViewDelegate,UITableViewDataSource>
 @property(nonatomic,copy)NSString *gameId;
 @property(nonatomic,copy)NSString *roomId;
+@property (strong, nonatomic)  NSMutableDictionary *roomInfoDic;
 @end
