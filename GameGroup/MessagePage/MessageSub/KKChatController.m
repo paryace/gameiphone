@@ -1362,6 +1362,7 @@ static double endRecordTime=0;
         cell.mydelegate = self;
         cell.tag = indexPath.row+100;
         if ([sender isEqualToString:@"you"]) {
+            cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
@@ -1372,11 +1373,15 @@ static double endRecordTime=0;
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
-
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
             [cell setHeadImgByChatUser:userImage];
-            
-            
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
             cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-4+offHight,17,size.height);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+25,size.height+20)];
