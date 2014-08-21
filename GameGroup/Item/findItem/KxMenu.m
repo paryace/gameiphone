@@ -493,15 +493,14 @@ typedef enum {
         }
         if (itemNum < _menuItems.count - 1) {
             UIImageView *gradientView = [[UIImageView alloc] init];
-            gradientView.backgroundColor = [UIColor grayColor];
+            gradientView.backgroundColor = UIColorFromRGBA(0x2d313a, 1);
             gradientView.frame = (CGRect){0 , maxItemHeight + 1, maxItemWidth,1};
             gradientView.contentMode = UIViewContentModeLeft;
             [itemView addSubview:gradientView];
-            itemY += 2;
         }
         itemY += maxItemHeight;
         ++itemNum;
-    }    
+    }
     contentView.frame = (CGRect){0, 0, maxItemWidth, itemY};
     return contentView;
 }
