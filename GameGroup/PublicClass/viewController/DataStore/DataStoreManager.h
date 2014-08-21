@@ -325,6 +325,8 @@
 
 +(void)saveNewGroupChatMsg:(NSArray *)msgs SaveSuccess:(void (^)(NSDictionary *msgDic))block;
 
++(void)storeTeamInviteMsgs:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block;
+
 +(void)deleteDSlatestDynamic:(NSString*)userid;
 
 +(void)updateDSlatestDynamic:(NSString*)userid NickName:(NSString*)nickname Image:(NSString*)userimg Alias:(NSString*)alias;
