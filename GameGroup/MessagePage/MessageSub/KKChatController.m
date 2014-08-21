@@ -1773,7 +1773,7 @@ static double endRecordTime=0;
         }
     }
     if (curAudio.length >0) {
-        [self sendAudioMsgD:[NSString stringWithFormat:@"%@%@.amr",RootDocPath,uuid] UUID:uuid Body:@""];
+        [self sendAudioMsgD:[NSString stringWithFormat:@"%@%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
         
         NSInteger imageIndex = [self getMsgRowWithId:uuid];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
@@ -2082,10 +2082,6 @@ static double endRecordTime=0;
             }
         }
         return height;
-//        return 47;
-    }
-    if (kkChatMsgType ==kkchatMsgAudio) {
-        return 70;
     }
     NSString * senderId = KISDictionaryHaveKey(msgDic, @"sender");
     CGFloat theH = hight;
@@ -2283,12 +2279,12 @@ static double endRecordTime=0;
         {
             CGSize msgLabletextSize = [message sizeWithFont:[UIFont boldSystemFontOfSize:10] constrainedToSize:CGSizeMake(maxWight, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:msgLabletextSize.width],[NSNumber numberWithFloat:msgLabletextSize.height], nil];
-//            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:320],[NSNumber numberWithFloat:47], nil];
             break;
         }
             case kkchatMsgAudio:
         {
-            array = [NSArray arrayWithObjects:[NSNumber numberWithFloat:100],[NSNumber numberWithFloat:40], nil];
+            array = [NSArray arrayWithObjects:[NSNumber numberWithFloat:100],[NSNumber numberWithFloat:25], nil];
+            break;
         }
         case KKChatMsgSimple:
         {
