@@ -621,7 +621,7 @@
         {//分享到微博
             NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
             if ([GameCommon isEmtity:title]) {
-                title = @"";
+                title = KISDictionaryHaveKey(self.dataDic, @"msg");
             }else{
                 title = [NSString stringWithFormat:@"《%@》",title];
             }

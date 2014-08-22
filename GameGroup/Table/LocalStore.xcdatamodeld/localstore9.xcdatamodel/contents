@@ -63,6 +63,7 @@
         <attribute name="friendsCount" optional="YES" attributeType="Integer 32" defaultValueString="0.0" syncable="YES"/>
         <attribute name="img" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mineCount" optional="YES" attributeType="Integer 32" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="myImg" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSCircleWithMe" representedClassName="DSCircleWithMe" syncable="YES">
@@ -545,7 +546,7 @@
         <element name="DSBillboard" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSBlackList" positionX="-72" positionY="-36" width="128" height="120"/>
         <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="210"/>
-        <element name="DSCircleCount" positionX="-81" positionY="-45" width="128" height="105"/>
+        <element name="DSCircleCount" positionX="-81" positionY="-45" width="128" height="120"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
         <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
         <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>

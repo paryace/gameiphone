@@ -297,7 +297,7 @@ typedef enum : NSUInteger {
 -(void)setAboutMe{
     DSCircleCount *dsCount = [DataStoreManager querymessageWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     int g = dsCount.mineCount;
-    NSString *img = dsCount.img;
+    NSString *img = dsCount.myImg;
     if (g>0) {
         ishaveAboutMe =YES;
         //改变HeadView的高度 以容纳aboutMeImageView
@@ -649,6 +649,7 @@ typedef enum : NSUInteger {
             [[NSUserDefaults standardUserDefaults]setObject:KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch") forKey:@"aboutFriendSwitch_friendCircle_netTitle_wx"];
             
             if (m_currPageCount==0) {
+                [DataStoreManager clearFriendCircleCountWithUserid:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
                 [m_dataArray removeAllObjects];
                 [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];
                 

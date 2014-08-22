@@ -1127,7 +1127,7 @@
                     [self updateDb:@"unknow"];
 //                    dispatch_async(dispatch_get_main_queue(), ^{
 //                        [self refreFansNum:@"0"];
-                        [self showAlertViewWithTitle:@"提示" message:@"拉黑成功" buttonTitle:@"确定"];
+                [self showMessageWindowWithContent:@"拉黑成功" imageType:0];
                 [self.navigationController popViewControllerAnimated:YES];
 //                    });
 //                });

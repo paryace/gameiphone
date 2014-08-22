@@ -681,11 +681,11 @@
 {
     NSDictionary *tempDic =[m_characterArray objectAtIndex:indexPath.row];
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
-        return;
-    }
+//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"404"]
+//        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+//        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+//        return;
+//    }
     tableView.hidden = YES;
     tf.hidden = YES;
     headImageView.hidden = NO;
@@ -698,7 +698,7 @@
     sayHelloBtn.hidden =NO;
     promptLabel .hidden = NO;
     promptView.hidden =NO;
-    charaterId = KISDictionaryHaveKey([m_characterArray objectAtIndex:indexPath.row], @"id");
+    charaterId = KISDictionaryHaveKey(tempDic, @"id");
     [self getEncoXhinfoWithNet:[m_characterArray objectAtIndex:indexPath.row]];
 }
 -(void)getEncoXhinfoWithNet:(NSDictionary *)dic

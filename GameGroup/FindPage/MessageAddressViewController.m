@@ -162,6 +162,12 @@
     _tableView.tableHeaderView = mSearchBar;
 }
 
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self setLocalAddressBook];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -312,7 +318,7 @@
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
             }
-            if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
+            else if ([[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]||[[self.addressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"3"]) {
                 if ([[self.addressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
                     [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
                     cell.addFriendB.userInteractionEnabled = YES;
@@ -369,8 +375,8 @@
             }else{
                 testVC.viewType = VIEW_TYPE_STRANGER1;
             }
-            
             [self.navigationController pushViewController:testVC animated:YES];
+            
         }else{
             PuthMessageViewController * puthmsgVC = [[PuthMessageViewController alloc]init];
             puthmsgVC.addressDic = self.searchOutAddressArray[indexPath.row];

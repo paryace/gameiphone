@@ -110,7 +110,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     Row =indexPath.row;
-    m_alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"确定邀请该群组成员么" delegate:self cancelButtonTitle:@"再看看" otherButtonTitles:@"就这个了", nil];
+    m_alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"确定邀请该群组成员么" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     [m_alert show];
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

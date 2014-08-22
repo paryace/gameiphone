@@ -15,4 +15,5 @@
 @dynamic mineCount;
 @dynamic userid;
 @dynamic img;
+@dynamic myImg;
 @end
