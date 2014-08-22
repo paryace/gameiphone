@@ -38,6 +38,7 @@
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
 -(void)showView;//显示视图view
 -(void)hideView;//隐藏视图view
+-(void)deallocContro;
 @end
 
 @protocol DetailDelegate <NSObject>

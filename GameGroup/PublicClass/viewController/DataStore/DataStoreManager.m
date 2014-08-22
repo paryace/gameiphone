@@ -5071,20 +5071,20 @@
     [msgDic setObject:commonMsg.teamUsershipType forKey:@"teamUsershipType"];
     [msgDic setObject:commonMsg.typeId forKey:@"typeId"];
     [msgDic setObject:commonMsg.gameId forKey:@"gameId"];
-    [msgDic setObject:commonMsg.characterId forKey:@"characterId"];
-    [msgDic setObject:commonMsg.characterImg forKey:@"characterImg"];
-    [msgDic setObject:commonMsg.characterName forKey:@"characterName"];
-    [msgDic setObject:commonMsg.memberInfo forKey:@"memberInfo"];
-    [msgDic setObject:commonMsg.realm forKey:@"realm"];
-    [msgDic setObject:commonMsg.teamUserId forKey:@"teamUserId"];
-    [msgDic setObject:commonMsg.userid forKey:@"userid"];
-    [msgDic setObject:commonMsg.gender forKey:@"gender"];
-    [msgDic setObject:commonMsg.img forKey:@"img"];
-    [msgDic setObject:commonMsg.typeConstId forKey:@"constId"];
-    [msgDic setObject:commonMsg.typeMask forKey:@"mask"];
-    [msgDic setObject:commonMsg.typeOrder forKey:@"order"];
-    [msgDic setObject:commonMsg.typeType forKey:@"type"];
-    [msgDic setObject:commonMsg.typeValue forKey:@"value"];
+    [msgDic setObject:commonMsg.characterId?commonMsg.characterId:@"" forKey:@"characterId"];
+    [msgDic setObject:commonMsg.characterImg?commonMsg.characterImg:@"" forKey:@"characterImg"];
+    [msgDic setObject:commonMsg.characterName?commonMsg.characterName:@"" forKey:@"characterName"];
+    [msgDic setObject:commonMsg.memberInfo?commonMsg.memberInfo:@"" forKey:@"memberInfo"];
+    [msgDic setObject:commonMsg.realm?commonMsg.realm:@"" forKey:@"realm"];
+    [msgDic setObject:commonMsg.teamUserId?commonMsg.teamUserId:@"" forKey:@"teamUserId"];
+    [msgDic setObject:commonMsg.userid?commonMsg.userid:@"" forKey:@"userid"];
+    [msgDic setObject:commonMsg.gender?commonMsg.gender:@"" forKey:@"gender"];
+    [msgDic setObject:commonMsg.img?commonMsg.img:@"" forKey:@"img"];
+    [msgDic setObject:commonMsg.typeConstId?commonMsg.typeConstId:@"" forKey:@"constId"];
+    [msgDic setObject:commonMsg.typeMask?commonMsg.typeMask:@"" forKey:@"mask"];
+    [msgDic setObject:commonMsg.typeOrder?commonMsg.typeOrder:@"" forKey:@"order"];
+    [msgDic setObject:commonMsg.typeType?commonMsg.typeType:@"" forKey:@"type"];
+    [msgDic setObject:commonMsg.typeValue?commonMsg.typeValue:@""  forKey:@"value"];
     return msgDic;
 }
 

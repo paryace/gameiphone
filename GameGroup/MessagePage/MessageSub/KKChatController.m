@@ -172,6 +172,8 @@ static double endRecordTime=0;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
+        [self.newTeamMenuView deallocContro];
+        [self.newTeamApplyListView deallocContro];
     }
     [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {
@@ -361,7 +363,7 @@ static double endRecordTime=0;
     profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
     profileButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     if (self.isTeam) {
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close.png"] forState:UIControlStateNormal];
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
     }else{
         [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
         [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
@@ -493,7 +495,9 @@ static double endRecordTime=0;
         [self readTeamApplyMsg];
     }else{
         [self showOrHideControl];
-        [self readInpaceMsg];
+        [self readNoreadMsg];
+        [self setNoreadMsgView];
+        [self setInplaceMsgCount];
     }
 }
 
