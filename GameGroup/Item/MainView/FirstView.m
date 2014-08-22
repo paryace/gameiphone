@@ -521,7 +521,7 @@
         return @"申请";
     }else if ([myRank intValue]==2){
         return @"队员";
-    }else if ([myRank intValue]==3){
+    }else if ([myRank intValue]==9){
         return @"队长";
     }
     return @"";
