@@ -4556,7 +4556,26 @@
     NSString * teamUsershipType =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"teamUsershipType")];
     NSString * typeId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"typeId")];
     NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(dic, @"createTeamUser");
+    
+    NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
+    NSString * characterImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterImg")];
+    NSString * characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterName")];
+    NSString * memberInfo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"memberInfo")];
+    NSString * realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"realm")];
+    NSString * teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"teamUserId")];
+    NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
+    NSString * gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gender")];
+    NSString * img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"img")];
+
+    
     NSMutableDictionary * typeDic = KISDictionaryHaveKey(dic, @"type");
+    
+     NSString * typeConstId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")];
+     NSString * typeMask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
+     NSString * typeOrder = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"order")];
+     NSString * typeType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"type")];
+     NSString * typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
+    
     NSMutableArray * userList = KISDictionaryHaveKey(dic, @"memberList");
     if ([userList isKindOfClass:[NSMutableArray class]] && userList.count>0) {
         
@@ -4592,21 +4611,21 @@
         commonMsg.teamUsershipType = teamUsershipType;
         commonMsg.typeId = typeId;
         commonMsg.gameId = [GameCommon getNewStringWithId:gameId];
-        commonMsg.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
-        commonMsg.characterImg = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterImg")];
-        commonMsg.characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterName")];
-        commonMsg.memberInfo = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"memberInfo")];
-        commonMsg.realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"realm")];
-        commonMsg.teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"teamUserId")];
-        commonMsg.userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"userid")];
-        commonMsg.gender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gender")];
-        commonMsg.img = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"img")];
+        commonMsg.characterId = characterId;
+        commonMsg.characterImg = characterImg;
+        commonMsg.characterName = characterName;
+        commonMsg.memberInfo = memberInfo;
+        commonMsg.realm = realm;
+        commonMsg.teamUserId = teamUserId;
+        commonMsg.userid = userid;
+        commonMsg.gender = gender;
+        commonMsg.img = img;
         
-        commonMsg.typeConstId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"constId")];
-        commonMsg.typeMask = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"mask")];
-        commonMsg.typeOrder = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"order")];
-        commonMsg.typeType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"type")];
-        commonMsg.typeValue = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
+        commonMsg.typeConstId = typeConstId;
+        commonMsg.typeMask = typeMask;
+        commonMsg.typeOrder = typeOrder;
+        commonMsg.typeType = typeType;
+        commonMsg.typeValue = typeValue;
     }
     completion:^(BOOL success, NSError *error) {
         if (successcompletion) {
