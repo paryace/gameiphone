@@ -1619,7 +1619,7 @@ static double endRecordTime=0;
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(50, 7, 185, 35);
+        entryImageView.frame = CGRectMake(10, 7, 225, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -1629,7 +1629,7 @@ static double endRecordTime=0;
         
         [_inPutView addSubview:imageView];
         [_inPutView addSubview:entryImageView];
-        [_inPutView addSubview:self.audioBtn];
+//        [_inPutView addSubview:self.audioBtn];
         [_inPutView addSubview:self.textView];
         [_inPutView addSubview:self.kkChatAddButton];
         [_inPutView addSubview:self.emojiBtn];
@@ -1963,7 +1963,7 @@ static double endRecordTime=0;
 
 - (HPGrowingTextView *)textView{
     if(!_textView){
-        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 7, 185, 35)];
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 225, 35)];
         _textView.isScrollable = NO;
         _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         _textView.minNumberOfLines = 1;
