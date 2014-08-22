@@ -16,4 +16,5 @@
 @property (nonatomic, assign) int  mineCount;
 @property (nonatomic, retain) NSString * userid;
 @property (nonatomic, retain) NSString * img;
+@property (nonatomic, retain) NSString * myImg;
 @end

@@ -32,6 +32,9 @@
     BottomView *bView;
     UIAlertView * backAlert;
     NSString *descriptionStr;
+    UILabel *titleLabel1;
+    UILabel *m_typeLabel;
+    UILabel *m_timeLabel;
 }
 @end
 
@@ -74,12 +77,12 @@
     m_dataArray = [NSMutableArray array];
     claimedList_dataArray = [NSMutableArray array];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStyleGrouped];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX-50) style:UITableViewStylePlain];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [GameCommon setExtraCellLineHidden:m_myTableView];
     [self.view addSubview:m_myTableView];
-    
+    m_myTableView.tableHeaderView = [self getHeadView];
     
 
     roleTabView = [[RoleTabView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
@@ -158,12 +161,12 @@
 -(void)didClickShareItem:(id)sender
 {
     if (self.isCaptain) {
-        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"解散", nil];
         jiesanAlert.tag = 10000001;
         [jiesanAlert show];
   
     }else{
-        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
+        jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"退出", nil];
         jiesanAlert.tag =10000002;
         [jiesanAlert show];
     }
@@ -343,6 +346,21 @@
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             NSString *requested = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"requested")];
             
+            
+            
+            if ([[m_mainDict allKeys]containsObject:@"type"]) {
+                m_typeLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+            }else{
+                m_typeLabel.text = @"";
+            }
+            titleLabel1.text = KISDictionaryHaveKey(m_mainDict, @"description");
+            NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
+            NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
+            m_timeLabel.text = lb2Str;
+            CGSize size = [m_typeLabel.text sizeWithFont:m_typeLabel.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
+            m_typeLabel.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
+            m_timeLabel.frame =CGRectMake(165+size.width/2, 0, 110, 25);
+
             /*
              去除角色列表中的404 和notSupport 的角色
              */
@@ -542,6 +560,7 @@
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
             [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            
             return;
         }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
@@ -553,7 +572,8 @@
         NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-            [self showMessageWindowWithContent:@"角色不存在或者暂不支持" imageType:1];
+//            [self showMessageWindowWithContent:@"角色不存在或者暂不支持" imageType:1];
+            [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             return;
         }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
@@ -590,7 +610,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == 0) {
-        return 87;
+        return 0;
     }
     return 29;
 }
@@ -598,7 +618,7 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section==0) {
-        return  [self getHeadView];
+        return nil; //[self getHeadView];
     }else{
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -617,40 +637,44 @@
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 87)];
     view.backgroundColor = UIColorFromRGBA(0x6f7478, 1);
     
-    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" title:KISDictionaryHaveKey(m_mainDict, @"description")];
-    [view addSubview:view1];
+    UIView *view1 =  [self buildViewWithFrame:CGRectMake(0, 25, 320, 62)backgroundColor:[UIColor colorWithRed:92/255.0f green:96/255.0f blue:99/255.0f alpha:1] leftImg:@"item_list1" /*title:*/];
     [view1 addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeInfo1)]];
+
+    [view addSubview:view1];
+    
+    
+    
+    titleLabel1 = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 250, 62) font:[UIFont systemFontOfSize:14] textColor:[UIColor whiteColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+    titleLabel1.numberOfLines = 0;
+    titleLabel1.adjustsFontSizeToFitWidth = YES;
+    [view1 addSubview:titleLabel1];
+
+    
     
     UIImageView *view3 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 25)];
     view3.image = KUIImage(@"team_detail_topImage");
     
-    UILabel *lb1 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
-    lb1.backgroundColor =[ UIColor clearColor];
-    lb1.textColor = UIColorFromRGBA(0x3eacf5, 1);
-    lb1.font = [UIFont boldSystemFontOfSize:16];
     
-    if ([[m_mainDict allKeys]containsObject:@"type"]) {
-        lb1.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
-    }else{
-        lb1.text = @"";
-    }
+    m_typeLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 200, 25)];
+    m_typeLabel.backgroundColor =[ UIColor clearColor];
+    m_typeLabel.textColor = UIColorFromRGBA(0x3eacf5, 1);
+    m_typeLabel.font = [UIFont boldSystemFontOfSize:16];
     
-    CGSize size = [lb1.text sizeWithFont:lb1.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
-    lb1.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
+
     
-    lb1.textAlignment = NSTextAlignmentCenter;
-    [view3 addSubview:lb1];
+    CGSize size = [m_typeLabel.text sizeWithFont:m_typeLabel.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
+    m_typeLabel.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
     
-    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
-    NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
+    m_typeLabel.textAlignment = NSTextAlignmentCenter;
+    [view3 addSubview:m_typeLabel];
     
-    UILabel *lb2 = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
-    lb2.backgroundColor =[ UIColor clearColor];
-    lb2.textColor = UIColorFromRGBA(0x6e737e, 1);
-    lb2.font = [UIFont boldSystemFontOfSize:10];
-    lb2.text = lb2Str;
-    lb2.textAlignment = NSTextAlignmentLeft;
-    [view3 addSubview:lb2];
+    
+    m_timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(165+size.width/2, 0, 110, 25)];
+    m_timeLabel.backgroundColor =[ UIColor clearColor];
+    m_timeLabel.textColor = UIColorFromRGBA(0x6e737e, 1);
+    m_timeLabel.font = [UIFont boldSystemFontOfSize:10];
+    m_timeLabel.textAlignment = NSTextAlignmentLeft;
+    [view3 addSubview:m_timeLabel];
     [view addSubview:view3];
     return view;
 }
@@ -766,7 +790,7 @@
 {
     return 60;
 }
--(UIView *)buildViewWithFrame:(CGRect)frame backgroundColor:(UIColor *)backgroundColor leftImg:(NSString *)leftImg title:(NSString *)title
+-(UIView *)buildViewWithFrame:(CGRect)frame backgroundColor:(UIColor *)backgroundColor leftImg:(NSString *)leftImg
 {
     UIView *customView = [[UIView alloc]initWithFrame:frame];
     customView.backgroundColor =backgroundColor;
@@ -779,11 +803,6 @@
 //    titleLabel.text = title;
 //    [customView addSubview:titleLabel];
     
-    UILabel *titleLabel1 = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 0, 250, 62) font:[UIFont systemFontOfSize:14] textColor:[UIColor whiteColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-    titleLabel1.text = title;
-    titleLabel1.numberOfLines = 0;
-    titleLabel1.adjustsFontSizeToFitWidth = YES;
-    [customView addSubview:titleLabel1];
     
     return customView;
 }

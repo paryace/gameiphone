@@ -354,7 +354,7 @@
             [jiesanAlert show];
         }else if (indexPath.section ==1){
             tableView.editing = NO;
-            UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须退出", nil];
+            UIAlertView *jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"退出", nil];
             jiesanAlert.tag =10000002;
             [jiesanAlert show];
         }

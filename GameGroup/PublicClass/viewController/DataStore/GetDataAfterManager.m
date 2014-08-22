@@ -91,13 +91,13 @@ static SystemSoundID shake_sound_male_id = 0;
     }
     
     
-    if ([[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"type"]isEqualToString:@"audio"]) {
-        NSString *title =[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"messageid"];
-        NSString *filePath = [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,title];
-        [NetManager downloadAudioWithBaseURLStr:filePath audioId:title completion:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-      
-        }];
-    }
+//    if ([[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"type"]isEqualToString:@"audio"]) {
+//        NSString *title =[[KISDictionaryHaveKey(messageContent, @"payload") JSONValue]objectForKey:@"messageid"];
+//        NSString *filePath = [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,title];
+//        [NetManager downloadAudioWithBaseURLStr:filePath audioId:title completion:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+//      
+//        }];
+//    }
     
     //账号激活
     if ([KISDictionaryHaveKey(messageContent, @"payload") JSONValue][@"active"]){//发送通知 判断账号是否激活

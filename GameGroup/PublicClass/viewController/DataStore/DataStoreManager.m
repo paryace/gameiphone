@@ -5480,6 +5480,7 @@
         if (type==1) {
             circleCo.mineCount +=1;
             NSLog(@"与我相关（%d）",circleCo.mineCount);
+            circleCo.myImg =[GameCommon getHeardImgId:img];
         }else{
             circleCo.friendsCount+=1;
             NSLog(@"好友动态（%d）",circleCo.friendsCount);
