@@ -361,7 +361,7 @@ static double endRecordTime=0;
     profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
     profileButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     if (self.isTeam) {
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon.png"] forState:UIControlStateNormal];
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close.png"] forState:UIControlStateNormal];
     }else{
         [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
         [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];

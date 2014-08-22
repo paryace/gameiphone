@@ -217,7 +217,7 @@ typedef enum {
         
         _arrowPosition = rectXM - point.x;
         //_arrowPosition = MAX(16, MIN(_arrowPosition, contentSize.width - 16));        
-        _contentView.frame = (CGRect){0, kArrowSize, contentSize};
+        _contentView.frame = (CGRect){0, kArrowSize+5, contentSize};
                 
         self.frame = (CGRect) {
             
@@ -394,7 +394,7 @@ typedef enum {
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
     const CGFloat kMarginX = 20.f;
-    const CGFloat kMarginY = 10.f;
+    const CGFloat kMarginY = 5.f;
     const CGFloat kMarginTitleImage = 5.f;
     
     UIFont *titleFont = [KxMenu titleFont];
@@ -452,8 +452,7 @@ typedef enum {
             button.backgroundColor = [UIColor clearColor];
             button.opaque = NO;
             button.autoresizingMask = UIViewAutoresizingNone;
-            [button addTarget:self action:@selector(performAction:)
-             forControlEvents:UIControlEventTouchUpInside];
+            [button addTarget:self action:@selector(performAction:)forControlEvents:UIControlEventTouchUpInside];
             [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
             [itemView addSubview:button];
         }
@@ -503,7 +502,7 @@ typedef enum {
         itemY += maxItemHeight;
         ++itemNum;
     }
-    contentView.frame = (CGRect){0, 0, maxItemWidth, itemY};
+    contentView.frame = (CGRect){0, 10, maxItemWidth, itemY};
     return contentView;
 }
 
