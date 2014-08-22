@@ -258,7 +258,7 @@
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateNormal];
                 [cell.addFriendB setBackgroundImage:nil forState:UIControlStateHighlighted];
             }
-            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]) {
+            if ([[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"unkown"]||[[self.searchAddressArray[indexPath.row] objectForKey:@"friendShipType"] isEqualToString:@"3"]) {
                 if ([[self.searchAddressArray[indexPath.row] objectForKey:@"iCare"] integerValue] == 0) {
                     [cell.addFriendB setTitle:@"加为好友" forState:UIControlStateNormal];
                     cell.addFriendB.userInteractionEnabled = YES;
@@ -351,7 +351,11 @@
     }
     
 }
-
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+    return YES;
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -375,6 +379,7 @@
             }else{
                 testVC.viewType = VIEW_TYPE_STRANGER1;
             }
+            
             [self.navigationController pushViewController:testVC animated:YES];
             
         }else{

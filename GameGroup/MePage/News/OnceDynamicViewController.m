@@ -625,6 +625,13 @@
             }else{
                 title = [NSString stringWithFormat:@"《%@》",title];
             }
+            
+            if (title.length>140) {
+                [self showAlertViewWithTitle:@"提示" message:@"消息文本内容长度必须小于140个汉字" buttonTitle:@"确定"];
+                return;
+            }
+            
+            
             [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
