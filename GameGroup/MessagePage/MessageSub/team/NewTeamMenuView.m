@@ -131,7 +131,14 @@
     }
     return self;
 }
-
+//----
+-(void)readdd{
+     NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
+    if (msgC>0) {
+        [self clearInpaceMsg];
+    }
+}
+//----
 //关闭页面
 -(void)closeViewAction:(UIButton*)sender{
     [self.detaildelegate doShowOrHideViewControl];
@@ -160,6 +167,7 @@
     NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if(onClickState == 0){
         if (!self.teamUsershipType) {
+            [self readdd];
             [self.detaildelegate mHideTopMenuView];
         }
     }else if(onClickState == 1){

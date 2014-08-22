@@ -601,7 +601,10 @@ static double endRecordTime=0;
         self.topItemView.hidden = NO;
         [self.topItemView setTitle:titleText forState:UIControlStateNormal];
         self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
-         tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
+        tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
+        if (messages.count>0) {
+            [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
     }completion:^(BOOL finished) {
         
     }];
