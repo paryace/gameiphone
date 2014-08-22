@@ -13,9 +13,10 @@
 #import "DWTagList.h"
 #import "SortingView.h"
 #import "DropDownListView.h"
+#import "BaseItemCell.h"
 
 @protocol firstViewDelegate;
-@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource,DWTagDelegate,sortingDelegate>
+@interface FirstView : UIView<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,DropDownChooseDelegate,DropDownChooseDataSource,DWTagDelegate,sortingDelegate,teamlistCellDelegate>
 {
     DWTagList *tagList;
 }

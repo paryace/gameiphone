@@ -84,7 +84,8 @@
 {
     cellIndex=index;
     UpLoadFileService * up = [[UpLoadFileService alloc] init];
-    [up simpleUpload:audioPath UpDeleGate:self];
+//    [up simpleUploadAudio:audioPath UpDeleGate:self];
+    [up simpleUploadAudio:audioPath upDeleGate:self];
 }
 
 // 上传进度

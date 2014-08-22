@@ -7,8 +7,8 @@
 //
 
 #import "BaseViewController.h"
-
-@interface AddressListViewController : BaseViewController
+#import "InDoduAddressTableViewCell.h"
+@interface AddressListViewController : BaseViewController<DetailDelegate>
 @property (nonatomic,retain)NSArray * inDudeArray;
 @property (nonatomic,retain)NSArray * outDudeArray;
 @end

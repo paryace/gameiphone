@@ -15,4 +15,5 @@
 +(UpLoadFileService *)singleton;
 
 - (void)simpleUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate;
+-(void)simpleUploadAudio:(NSString *)filePath upDeleGate:(id<QiniuUploadDelegate>)updeleGate;
 @end

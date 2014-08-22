@@ -74,6 +74,8 @@
         self.searchOutAddressArray = [NSMutableArray array];
         self.keysAddressArray = [NSMutableArray array];
         self.keysOutAddressArray = [NSMutableArray array];
+        
+        
     }
     return self;
 }
@@ -82,6 +84,15 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"手机通讯录" withBackButton:YES];
+    
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"addressArray"]) {
+        self.addressArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"addressArray"];
+    }
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"keysAddressArray"]) {
+        self.keysAddressArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"keysAddressArray"];
+    }
+
+    
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - startX)];
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableView.delegate = self;
@@ -651,15 +662,30 @@
     [body setObject:@"162" forKey:@"method"];
     [body setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+       
+
+        NSMutableArray *arr1 = [NSMutableArray array];
+        NSMutableArray *arr2 = [NSMutableArray array];
         for (NSDictionary * dic in responseObject) {
             NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithDictionary:dic];
             [dict setObject:@"0" forKey:@"iCare"];
-            [self.addressArray addObject:dict];
-            [self.keysAddressArray addObject:[dic objectForKey:@"nickname"]];
+            [arr1 addObject:dict];
+            [arr2 addObject:[dic objectForKey:@"nickname"]];
+            
         }
-      self.outAddressArray =  [self detail:arr JoinedMoyou:self.addressArray];
+//        [self.keysAddressArray removeAllObjects];
+//        [self.addressArray removeAllObjects];
+        self.addressArray  = arr1;
+        self.keysAddressArray =arr2;
+        
+        self.outAddressArray =  [self detail:arr JoinedMoyou:self.addressArray];
+
+
         [self.keysOutAddressArray removeAllObjects];
         [self getKeys];
+        [[NSUserDefaults standardUserDefaults]setObject:self.addressArray forKey:@"addressArray"];
+        [[NSUserDefaults standardUserDefaults]setObject:self.keysAddressArray forKey:@"keysAddressArray"];
+        [[NSUserDefaults standardUserDefaults]setObject:self.keysOutAddressArray forKey:@"keysOutAddressArray"];
         [_tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

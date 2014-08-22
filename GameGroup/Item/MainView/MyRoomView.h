@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseItemCell.h"
 
 @protocol MyroomDelegate;
 
-@interface MyRoomView : UIView<UITableViewDataSource,UITableViewDelegate>
+@interface MyRoomView : UIView<UITableViewDataSource,UITableViewDelegate,teamlistCellDelegate>
 @property(nonatomic,strong)UITableView *myListTableView;
 @property(nonatomic,strong)NSMutableDictionary *listDict;
 @property(nonatomic,strong)NSMutableArray *myCreateRoomList;
@@ -34,6 +35,9 @@
 -(void)dissTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//解散队伍
 
 -(void)exitTeam:(MyRoomView *)view dic:(NSDictionary *)dic;//退出队伍
+
+-(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc;
+
 
 -(void)reloadRoomList;//刷新
 @end

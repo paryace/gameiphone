@@ -15,10 +15,11 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.headImg =[[ EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+        self.headImg =[[ EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
         [self addSubview:self.headImg];
         self.headImg.layer.cornerRadius = 5;
         self.headImg.layer.masksToBounds=YES;
+        [self.headImg addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
         self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 10, 170, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.titleLabel];
         
@@ -47,6 +48,12 @@
     return self;
 }
 
+-(void)enterPersonInfoPage:(id)sender
+{
+    if ([self.mydelegate respondsToSelector:@selector(enterPersonInfoPageWithCell:)]) {
+        [self.mydelegate enterPersonInfoPageWithCell:self];
+    }
+}
 - (void)awakeFromNib
 {
     // Initialization code

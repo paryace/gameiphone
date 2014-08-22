@@ -7,13 +7,14 @@
 //
 
 #import "MyRoomView.h"
-#import "BaseItemCell.h"
 #import "ICreatedCell.h"
 #import "MJRefresh.h"
+#import "TestViewController.h"
 
 @implementation MyRoomView{
     NSInteger actionIndex;
     MJRefreshHeaderView *m_header;
+    BOOL isMyRoom;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -93,6 +94,9 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
+        cell.mydelegate = self;
+        cell.tag = indexPath.section*10000+indexPath.row;
+        
         if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -122,6 +126,8 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
+        cell.tag = indexPath.section*10000+indexPath.row;
+        cell.mydelegate =self;
         if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -151,6 +157,8 @@
         if (!cell) {
             cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
         }
+        cell.mydelegate = self;
+        cell.tag =indexPath.section*10000+indexPath.row;
         if ([self.myRequestedRoomsList isKindOfClass:[NSArray class]]&&self.myRequestedRoomsList.count>0) {
             NSDictionary * dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -355,6 +363,28 @@
         }
     }
 }
+#pragma mark ---celldelegate ---J进入个人资料页面
+-(void)enterPersonInfoPageWithCell:(BaseItemCell*)cell
+{
+    NSInteger i = cell.tag;
+    int r = i/10000;
+    NSDictionary *dic;
+    if (r==0) {
+        dic = [self.myCreateRoomList objectAtIndex:cell.tag%10000];
+    }else if (r==1){
+        dic = [self.myJoinRoomList objectAtIndex:cell.tag%10000];
+    }else{
+        dic = [self.myRequestedRoomsList objectAtIndex:cell.tag%10000];
+ 
+    }
+    
+    TestViewController *testView = [[TestViewController alloc]init];
+    testView.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"userid")];
+    testView.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+    [self.myDelegate didClickTableViewCellEnterNextPageWithController:testView];
+    
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag ==10000001) {//解散队伍

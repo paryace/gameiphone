@@ -36,18 +36,36 @@ static UpLoadFileService *upload = NULL;
         [self getUploadImageToken:filePath UpDeleGate:updeleGate];
     }
 }
-
+#pragma mark ---上传图片
 - (void)simpleUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
     NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
     NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
     long long expireSeconds = [time longLongValue];
     if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
-//        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
+        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
+//        [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
+    }else{//token处于无效状态
+//        [self getUploadAudioToken:filePath UpDeleGate:updeleGate];
+        [self getUploadImageToken:filePath UpDeleGate:updeleGate];
+    }
+}
+
+#pragma mark---上传声音
+-(void)simpleUploadAudio:(NSString *)filePath upDeleGate:(id<QiniuUploadDelegate>)updeleGate
+{
+    NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
+    NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
+    long long expireSeconds = [time longLongValue];
+    if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
         [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
     }else{//token处于无效状态
         [self getUploadAudioToken:filePath UpDeleGate:updeleGate];
     }
+
 }
+
+
+
 -(void)resumableUpload:(NSString *)token FilePath:(NSString *)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
 {
     QiniuResumableUploader *rUploader = [[QiniuResumableUploader alloc] initWithToken:token];

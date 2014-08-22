@@ -7,7 +7,6 @@
 //
 
 #import "FirstView.h"
-#import "BaseItemCell.h"
 #import "CreateItemViewController.h"
 #import "NewCreateItemViewController.h"
 #import "ItemInfoViewController.h"
@@ -486,10 +485,12 @@
     if (!cell) {
         cell = [[BaseItemCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:indifience];
     }
+    cell.tag = indexPath.row+100;
+    cell.mydelegate= self;
     cell.bgImageView.hidden = YES;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
-    cell.headImg.image = KUIImage(@"wow");
+//    cell.headImg.image = KUIImage(@"wow");
     
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
     cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
@@ -513,6 +514,7 @@
     cell.timeLabel.text = timeStr;
     return cell;
 }
+
 
 -(NSString*)getMyRank:(NSString*)myRank{
     if ([myRank intValue]==1) {
@@ -570,11 +572,21 @@
     
 }
 
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60;
 }
-
+#pragma mark ---celldelegate ---J进入个人资料页面
+-(void)enterPersonInfoPageWithCell:(BaseItemCell*)cell
+{
+    NSDictionary *dic = [m_dataArray objectAtIndex:cell.tag-100];
+    TestViewController *testView = [[TestViewController alloc]init];
+    testView.userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"userid")];
+    testView.nickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"nickname")];
+    [self.myDelegate didClickTableViewCellEnterNextPageWithController:testView];
+    
+}
 #pragma mark ----取消按钮
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
 //    [self doSearch:searchBar];

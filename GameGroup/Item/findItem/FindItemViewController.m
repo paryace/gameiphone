@@ -476,7 +476,7 @@
     }
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
-    cell.headImg.image = KUIImage(@"wow");
+    [cell.headImg setImage:KUIImage(@"wow") forState:UIControlStateNormal] ;
 
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
     cell.headImg.imageURL =[ImageService getImageStr2:imageids] ;

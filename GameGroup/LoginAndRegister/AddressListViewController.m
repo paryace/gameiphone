@@ -8,7 +8,7 @@
 
 #import "AddressListViewController.h"
 #import "MyHeadView.h"
-#import "InDoduAddressTableViewCell.h"
+//#import "InDoduAddressTableViewCell.h"
 #import "OutDodeAddressTableViewCell.h"
 //#import "AddSameServerListViewController.h"
 #import <MessageUI/MessageUI.h>
