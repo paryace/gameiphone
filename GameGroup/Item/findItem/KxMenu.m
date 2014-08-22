@@ -430,7 +430,6 @@ typedef enum {
     UIImageView *contentView = [[UIImageView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
     contentView.userInteractionEnabled = YES;
-//    contentView.backgroundColor = [UIColor grayColor];
     contentView.image = KUIImage(@"team_chat_menu_bg");
     contentView.opaque = NO;
     
@@ -487,9 +486,6 @@ typedef enum {
             const CGRect imageFrame = {kMarginX, kMarginY+(maxImageWidth/2)/2, maxImageWidth/2, maxImageWidth/2};
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageFrame];
             imageView.image = menuItem.image;
-//            imageView.clipsToBounds = YES;
-//            imageView.contentMode = UIViewContentModeCenter;
-//            imageView.autoresizingMask = UIViewAutoresizingNone;
             [itemView addSubview:imageView];
         }
         if (itemNum < _menuItems.count - 1) {
@@ -537,9 +533,7 @@ typedef enum {
 + (UIImage *) selectedImage: (CGSize) size
 {
     const CGFloat locations[] = {0,1};
-    const CGFloat components[] = {
-        0.216, 0.471, 0.871, 1,
-        0.059, 0.353, 0.839, 1,
+    const CGFloat components[] = { 0.216, 0.471, 0.871, 1,0.059, 0.353, 0.839, 1,
     };
     
     return [self gradientImageWithSize:size locations:locations components:components count:2];
