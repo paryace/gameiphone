@@ -94,6 +94,8 @@
             cell.detailLable.text=@"已同意";
         }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){
             cell.detailLable.text=@"已拒绝";
+        }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"5"]){
+            cell.detailLable.text=@"申请已经过期";
         }else {
             cell.detailLable.text=@"已处理";
         }
@@ -118,7 +120,7 @@
     NSMutableDictionary *dic = [teamNotifityMsg objectAtIndex:indexPath.row];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
         ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
@@ -209,6 +211,7 @@
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
+        [self changState:msgDic State:@"5"];
         [hud hide:YES];
         [self showErrorAlertView:error];
     }];
@@ -224,6 +227,7 @@
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
     } reError:^(id error) {
+        [self changState:msgDic State:@"5"];
         [hud hide:YES];
         [self showErrorAlertView:error];
     }];

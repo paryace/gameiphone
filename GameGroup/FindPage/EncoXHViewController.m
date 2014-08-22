@@ -683,7 +683,7 @@
     
 //    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"404"]
 //        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-//        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+//        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
 //        return;
 //    }
     tableView.hidden = YES;
@@ -750,7 +750,7 @@
 {
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(mainDic, @"failedmsg")] isEqualToString:@"404"]
         ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(mainDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-        [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];

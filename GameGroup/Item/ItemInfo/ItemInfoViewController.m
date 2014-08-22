@@ -559,7 +559,7 @@
         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-            [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             
             return;
         }
@@ -572,8 +572,8 @@
         NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-//            [self showMessageWindowWithContent:@"角色不存在或者暂不支持" imageType:1];
-            [self showMessageWithContent:@"角色不存在或者暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+//            [self showMessageWindowWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" imageType:1];
+            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             return;
         }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
