@@ -283,15 +283,6 @@ static double endRecordTime=0;
     recordAudio.delegate = self;
     curAudio = [[NSData alloc]init];
 
-    gifArray1 = [NSMutableArray array];
-    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying001")];
-    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying002")];
-    [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying003")];
-    
-    gifArray2 = [NSMutableArray array];
-    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying001")];
-    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying002")];
-    [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying003")];
     
 //    gifArray1 = [NSMutableArray arrayWithObjects:@"SenderVoiceNodePlaying001",@"SenderVoiceNodePlaying002",@"SenderVoiceNodePlaying003", nil];
 
@@ -1234,7 +1225,9 @@ static double endRecordTime=0;
         ;
         cell.mydelegate = self;
         cell.tag = indexPath.row+100;
+        cell.sendType = sender;
         if ([sender isEqualToString:@"you"]) {
+           
             cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
@@ -1476,7 +1469,7 @@ static double endRecordTime=0;
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(10, 7, 225, 35);
+        entryImageView.frame = CGRectMake(50, 7, 185, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -1486,7 +1479,7 @@ static double endRecordTime=0;
         
         [_inPutView addSubview:imageView];
         [_inPutView addSubview:entryImageView];
-//        [_inPutView addSubview:self.audioBtn];
+        [_inPutView addSubview:self.audioBtn];
         [_inPutView addSubview:self.textView];
         [_inPutView addSubview:self.kkChatAddButton];
         [_inPutView addSubview:self.emojiBtn];
@@ -1577,15 +1570,17 @@ static double endRecordTime=0;
 -(void)playAudio:(UIButton *)sender
 {
     NSInteger i = sender.tag;
+    
     NSDictionary *dic = [messages objectAtIndex:i-100];
     NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     
     NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
     
-//    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i-100) inSection:0];
-//
-//    PlayVoiceCell *cell = (PlayVoiceCell*)[self.tView cellForRowAtIndexPath:indexPath];
-//    [cell.voiceImageView startAnimating];
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i-100) inSection:0];
+
+    PlayVoiceCell *cell = (PlayVoiceCell*)[self.tView cellForRowAtIndexPath:indexPath];
+    cell.cellCount = i;
+//    [cell startPaly:nil];
     
     if ([self isFileExist:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]) {
         
@@ -1655,7 +1650,7 @@ static double endRecordTime=0;
         }
     }
     if (curAudio.length >0) {
-        [self sendAudioMsgD:[NSString stringWithFormat:@"%@%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
+        [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
         
         NSInteger imageIndex = [self getMsgRowWithId:uuid];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
@@ -1824,7 +1819,7 @@ static double endRecordTime=0;
 
 - (HPGrowingTextView *)textView{
     if(!_textView){
-        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 225, 35)];
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(50, 7, 185, 35)];
         _textView.isScrollable = NO;
         _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         _textView.minNumberOfLines = 1;
@@ -3030,7 +3025,7 @@ static double endRecordTime=0;
         return;
     }
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
-    NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
+//    NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
 //    NSString* messageid = KISDictionaryHaveKey(pay, @"messageid");
 //    NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
     NSString * payloadStr;
@@ -3046,10 +3041,13 @@ static double endRecordTime=0;
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value") forKey:@"teamPosition"];
     }
     [messageDict setObject:payloadStr forKey:@"payload"]; //将图片地址替换为已经上传的网络地址
-    [self reSendMsg:messageDict];
+    [self reSendAudioMsg:messageDict];
     [self refreWX];
     
     [[AudioManager singleton]RewriteTheAddressWithAddress:[NSString stringWithFormat:@"%@.amr",uuid] name2:audioMsg];
+    
+    NSLog(@"%@",[[[messages lastObject]objectForKey:@"payload"]JSONValue]);
+    
 }
 
 
@@ -3217,6 +3215,28 @@ static double endRecordTime=0;
     [self refreMessageStatus2:messageDict Status:@"2"];
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"text" Type:@"chat" Payload:payloadStr];
 }
+#pragma mark ---重新发送声音消息
+- (void)reSendAudioMsg:(NSMutableDictionary*)messageDict
+{
+    //添加新消息
+    NSString* message = KISDictionaryHaveKey(messageDict, @"msg");
+    NSString* uuid = KISDictionaryHaveKey(messageDict, @"messageuuid");
+    NSString* sendtime = [GameCommon getCurrentTime];
+    NSString* msgType = KISDictionaryHaveKey(messageDict, @"msgType");
+    NSString* payloadStr = KISDictionaryHaveKey(messageDict, @"payload");
+    NSString* domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
+    NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSString *from=[fromUserId stringByAppendingString:domain];
+    NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:domain]];
+    
+    [messageDict setObject:@"2" forKey:@"status"];
+    if (payloadStr!=nil&&![payloadStr isEqualToString:@""]) {
+        [messageDict setObject:payloadStr forKey:@"payload"];
+    }
+    [[MessageAckService singleton] addMessage:messageDict];
+    [self refreMessageStatus2:messageDict Status:@"2"];
+    [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"audio" Type:@"chat" Payload:payloadStr];
+}
 
 #pragma mark 重发图片消息
 - (void)reSendimageMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
@@ -3267,6 +3287,7 @@ static double endRecordTime=0;
     }
     NSLog(@"发送出去的msg--->>>%@",mes);
     [self.appDel.xmppHelper sendMessage:mes];
+    
 }
 
 #pragma mark 更新消息再数据库的状态

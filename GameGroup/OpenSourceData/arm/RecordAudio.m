@@ -104,6 +104,7 @@
     //在播放时，只停止
     if (avPlayer!=nil) {
         [self stopPlay];
+        [[NSNotificationCenter defaultCenter]postNotificationName:STOPPLAYAUDIO object:nil];
         return;
     } 
     NSLog(@"start decode");
@@ -115,17 +116,21 @@
     [avPlayer setVolume:1.0];
 	if(![avPlayer play]){
         [self sendStatus:1];
+        [[NSNotificationCenter defaultCenter]postNotificationName:STOPPLAYAUDIO object:nil];
     } else {
         [self sendStatus:0];
+        [[NSNotificationCenter defaultCenter]postNotificationName:STARTPLAYAUDIO object:nil];
     }
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     [self sendStatus:1];
+    [[NSNotificationCenter defaultCenter]postNotificationName:STOPPLAYAUDIO object:nil];
 }
 
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error{
     [self sendStatus:2];
+    [[NSNotificationCenter defaultCenter]postNotificationName:PLAYAUDIOERROR object:nil];
 }
 
 -(void) startRecord {
@@ -153,7 +158,6 @@
 //     [NSNumber numberWithInt:AVAudioQualityMax], AVEncoderAudioQualityKey,
 //     
 //     nil];
-    
         NSDictionary *recordSetting = [NSDictionary dictionaryWithObjectsAndKeys:
                                        [NSNumber numberWithInt:kAudioFormatLinearPCM], AVFormatIDKey, 
                                        //[NSNumber numberWithFloat:44100.0], AVSampleRateKey,
@@ -165,8 +169,6 @@
                                        [NSNumber numberWithBool:NO],AVLinearPCMIsFloatKey,
                                        [NSNumber numberWithBool:NO], AVLinearPCMIsBigEndianKey,
                                        nil];
-   timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(detectionVoice) userInfo:nil repeats:YES];
-
     //Now that we have our settings we are going to instanciate an instance of our recorder instance.
     //Generate a temp file for use by the recording.
     //This sample was one I found online and seems to be a good choice for making a tmp file that
@@ -190,6 +192,11 @@
     //Start the actual Recording
     [recorder record];
         NSLog(@"3");
+    recorder.meteringEnabled = YES;
+    
+    timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(detectionVoice) userInfo:nil repeats:YES];
+    
+
     //There is an optional method for doing the recording for a limited time see 
     //[recorder recordForDuration:(NSTimeInterval) 10]
 }
@@ -204,7 +211,6 @@
     
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%f",lowPassResults],@"low", nil];
     [[NSNotificationCenter defaultCenter]postNotificationName:RECORDAUDIOBD object:nil userInfo:dic];
-    
     //最大50  0
     //图片 小-》大
 }

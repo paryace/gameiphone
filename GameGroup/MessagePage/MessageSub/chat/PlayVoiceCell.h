@@ -15,6 +15,8 @@
 @property (nonatomic,strong)UIButton * button;
 @property (nonatomic,strong)UIImageView  * voiceImageView;
 @property (nonatomic,assign)id<SendAudioMsgDeleGate>mydelegate;
+@property (nonatomic,copy)NSString * sendType;
+@property (nonatomic,assign)int cellCount;
 
 -(void)uploadAudio:(NSString*)audioPath cellIndex:(NSInteger)index;
 -(void)setIMGAnimationWithArray:(NSMutableArray *)array; //设置动画img

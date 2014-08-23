@@ -53,35 +53,35 @@
 
 
 ////常量
-#define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
-#define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
-#define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"
-#define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
-#define monvbangURL @"http://58.83.193.120/h5/index.html"
-#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
-#define BaseHelpUrl @"http://58.83.193.120/faq/"
-#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
-#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
-#define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
-#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
-#define BaseLolRoleDetail @ "http://www.momotalk.com/share/"
-#define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
-
-
-
-//#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
-//#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
-//#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"
-//#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
-//#define monvbangURL @"http://221.122.66.243/h5/index.html"
-//#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
-//#define BaseHelpUrl @"http://211.122.66.243/faq/"
-//#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
+//#define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
+//#define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
+//#define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"
+//#define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
+//#define monvbangURL @"http://58.83.193.120/h5/index.html"
+//#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
+//#define BaseHelpUrl @"http://58.83.193.120/faq/"
+//#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
 //#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
-//#define BaseAuthRoleUrl @"http://221.122.66.243/share/certificate.html?"//角色认证
+//#define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
 //#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
-//#define BaseLolRoleDetail @ "http://221.122.66.243/share/"
+//#define BaseLolRoleDetail @ "http://www.momotalk.com/share/"
 //#define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
+
+
+
+#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
+#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
+#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"
+#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
+#define monvbangURL @"http://221.122.66.243/h5/index.html"
+#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
+#define BaseHelpUrl @"http://211.122.66.243/faq/"
+#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
+#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
+#define BaseAuthRoleUrl @"http://221.122.66.243/share/certificate.html?"//角色认证
+#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
+#define BaseLolRoleDetail @ "http://221.122.66.243/share/"
+#define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
 
 
 
@@ -180,6 +180,13 @@
 #define kResetChangInplaceState @"resetChangInplaceState"//初始化就位确认状态
 #define kSendSystemMessage @"sendSystemMessage"//发送系统消息
 #define kNewPreferMsg    @"newPreferMsg"
+
+
+#pragma mark --播放声音
+#define STARTPLAYAUDIO @"wx_playAudio"//开始播放
+#define STOPPLAYAUDIO @"wx_stopPalyAudio"//播放停止
+#define PLAYAUDIOERROR @"WX_playAudioError"//播放出错
+
 
 //常用方法
 #define KUIImage(name) ([UIImage imageNamed:name])
