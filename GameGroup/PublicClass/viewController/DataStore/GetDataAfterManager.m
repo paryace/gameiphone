@@ -30,7 +30,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
     int dyMeMsgCount;
     int dyGroupMsgCount;
 }
-static SystemSoundID shake_sound_male_id = 0;
+//static SystemSoundID shake_sound_male_id = 0;
 + (GetDataAfterManager*)shareManageCommon
 {
     @synchronized(self)
@@ -488,8 +488,9 @@ static SystemSoundID shake_sound_male_id = 0;
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
         });
     }];
-
 }
+
+
 
 #pragma mark 确定就位确认
 -(void)teamPreparedUserSelectMessageReceived:(NSDictionary *)messageContent{
@@ -746,12 +747,18 @@ static SystemSoundID shake_sound_male_id = 0;
 }
 
 -(void)initSound{
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"inplace_sound" ofType:@"mp3"];
+    SystemSoundID shake_sound_male_id = [self getSound:@"inplace_sound" ofType:@"mp3"];
+    AudioServicesPlaySystemSound(shake_sound_male_id);
+}
+
+-(SystemSoundID)getSound:(NSString*)pathForResource ofType:(NSString*)ofType{
+    SystemSoundID shake_sound_male_id = 0;
+    NSString *path = [[NSBundle mainBundle] pathForResource:pathForResource ofType:ofType];
     if (path) {
         AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:path],&shake_sound_male_id);
-        AudioServicesPlaySystemSound(shake_sound_male_id);
+        
     }
-    AudioServicesPlaySystemSound(shake_sound_male_id);
+    return shake_sound_male_id;
 }
 
 @end
