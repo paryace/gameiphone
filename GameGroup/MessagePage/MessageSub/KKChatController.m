@@ -33,6 +33,12 @@
 #import "InplaceTimer.h"
 #import "NewTeamMenuView.h"
 #import "InvitationMembersViewController.h"
+#import "MessagePageViewController.h"
+#import "NewFriendPageController.h"
+#import "NewItemMainViewController.h"
+#import "NewFriendPageController.h"
+#import "FindViewController.h"
+#import "MePageViewController.h"
 
 #import "AudioManager.h"
 #import "ShowRecordView.h"
@@ -412,7 +418,7 @@ static double endRecordTime=0;
             [self initApplyTopMenuIsSHow];
         }
     }
-    
+    [self goBack];
     showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
     showRecordView.center = self.view.center;
     showRecordView.hidden = YES;
@@ -423,6 +429,7 @@ static double endRecordTime=0;
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
+
 -(NSString*)getBgImage{
     if (!teamUsershipType) {
         return @"team_inpace_top";
@@ -3659,6 +3666,22 @@ static double endRecordTime=0;
         {
             UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
             [alert show];
+        }
+    }
+}
+//移除堆栈的试图控制器
+-(void)goBack{
+    NSArray *currentControllers = self.navigationController.viewControllers;//获得视图控制器堆栈数组
+    for(int i=0;i<currentControllers.count-1;i++)
+    {
+        UIViewController *tempVC = [currentControllers objectAtIndex:i];
+        if(![tempVC isKindOfClass:[MessagePageViewController class]]
+           &&![tempVC isKindOfClass:[NewFriendPageController class]]
+           &&![tempVC isKindOfClass:[FindViewController class]]
+           &&![tempVC isKindOfClass:[MePageViewController class]]
+           &&![tempVC isKindOfClass:[NewItemMainViewController class]])
+        {
+            [tempVC removeFromParentViewController];
         }
     }
 }
