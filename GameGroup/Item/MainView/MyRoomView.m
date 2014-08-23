@@ -22,10 +22,10 @@
     if (self) {
         //删除角色
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
-        //解散该群
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
-        //被剔出该群
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
+        //我的组队解散该群
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandMyTeam object:nil];
+        //我被剔出该群
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffMyTeam object:nil];
         self.myListTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, frame.size.height) style:UITableViewStylePlain];
         self.myListTableView.delegate = self;
         self.myListTableView.dataSource = self;
@@ -61,8 +61,6 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
-    
     if(section==0){
         if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
             return [self.myCreateRoomList count];
@@ -444,13 +442,13 @@
     [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
 }
 
-#pragma mark 该群组解散通知
+#pragma mark 我的群组解散通知
 - (void)onDisbandGroup:(NSNotification*)notification
 {
     NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");
     [self DisbandTeam:groupId];
 }
-#pragma mark 被剔出该组队
+#pragma mark 我被剔出该组队
 - (void)onkickOffGroupGroup:(NSNotification*)notification
 {
     NSString * groupId = KISDictionaryHaveKey(notification.userInfo, @"groupId");

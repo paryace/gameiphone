@@ -7,6 +7,7 @@
 //
 
 #import "MessageAckService.h"
+#define mTime 20//20秒之内没接受到反馈，置为失败状态
 
 static MessageAckService *messageAck = NULL;
 
@@ -40,7 +41,7 @@ static MessageAckService *messageAck = NULL;
     for (NSString * timeKey in keyArray) {
         NSDictionary * message = [self.cacheMessages objectForKey:timeKey];
         long long beforeTime =([timeKey longLongValue]);
-        if ([self getCurrentTime] - beforeTime>20*1000) {
+        if ([self getCurrentTime] - beforeTime>mTime*1000) {
             NSString* uuid = KISDictionaryHaveKey(message, @"messageuuid");
             NSDictionary* dic = [NSDictionary dictionaryWithObjectsAndKeys:uuid,@"src_id",@"true", @"received",@"0",@"msgState",nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:kMessageAck object:nil userInfo:dic];
