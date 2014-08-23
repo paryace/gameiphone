@@ -120,10 +120,9 @@ ApplyDetailDelegate>
 @property (nonatomic, strong) UILabel* noReadLable;  //
 @property (nonatomic, strong) UIButton * titleImageV;
 @property (nonatomic, strong) UIButton *titleButton;  //
-@property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
-@property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
-@property (strong,nonatomic) MsgNotifityView * dotVPosition;//位置
-@property (assign, nonatomic)  NSInteger unreadNo;  //未读消息的现实数量
+//@property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
+//@property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
+//@property (strong,nonatomic) MsgNotifityView * dotVPosition;//位置
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  NSString* myNickName; //我的昵称
 @property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像

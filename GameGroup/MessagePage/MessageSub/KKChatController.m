@@ -131,14 +131,7 @@ static double endRecordTime=0;
 @synthesize chatWithUser;
 
 
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        _unreadNo = 0;
-    }
-    return self;
-}
+
 - (void)loadView
 {
     [super loadView];
@@ -181,7 +174,7 @@ static double endRecordTime=0;
             
         }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
             
         }];
     }
@@ -407,7 +400,7 @@ static double endRecordTime=0;
         [self.view addSubview:self.newTeamMenuView];
         [self hideExtendedChooseView];
         if (!teamUsershipType) {
-            [self initOrHideListView];
+            [self initInpaceTopMenuIsShow];
         }
         
         self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
@@ -416,7 +409,7 @@ static double endRecordTime=0;
         [self.view addSubview:self.newTeamApplyListView];
         [self hideApplyListExtendedChooseView];
         if (teamUsershipType) {
-            [self initOrHideApplyListView];
+            [self initApplyTopMenuIsSHow];
         }
     }
     
@@ -443,8 +436,8 @@ static double endRecordTime=0;
     return @"team_apply_icon_chat";
 }
 
-//
--(void)initOrHideApplyListView{
+#pragma mark 决定申请加入头部导航条是否显示
+-(void)initApplyTopMenuIsSHow{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
     if (msgC>0) {
         [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
@@ -452,16 +445,16 @@ static double endRecordTime=0;
         [self hideTopItemView];
     }
 }
-
--(void)initOrHideListView{
+#pragma mark 决定就位确认头部导航条是否显示
+-(void)initInpaceTopMenuIsShow{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.chatWithUser UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     if(onClickState == 0){
         if (!teamUsershipType) {
-            [self mHideTopMenuView];
+            [self hideTopItemView];
         }
     }else if(onClickState == 1){
         if (!teamUsershipType) {
-            [self mShowTopMenuView:@"就位确认消息"];
+            [self showTopItemView:@"就位确认消息"];
         }
     }
 }
@@ -492,12 +485,10 @@ static double endRecordTime=0;
 -(void)showTeamInfoView{
     if (teamUsershipType) {
         [self showOrHideApplyListControl];
-        [self readTeamApplyMsg];
+        [self readTeamApplyMsg];//点击申请组队的导航条，把申请消息清零，并且初始化导航条的显示状态
     }else{
         [self showOrHideControl];
-        [self getNoreadMsg];
-        [self setNoreadMsgView];
-        [self setInplaceMsgCount];
+        [self setBackButtonNoreadMsg];
     }
 }
 
@@ -643,25 +634,19 @@ static double endRecordTime=0;
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
 #pragma mark -- 清除消息
--(void)readInpaceAction{
-    [self getNoreadMsg];
-    [self setNoreadMsgView];
-    [self setInplaceMsgCount];
+-(void)readInpaceMsgAction{
+    [self readInpaceMsg];
 }
-#pragma mark -- 显示隐藏View
--(void)doShowOrHideViewControl{
+#pragma mark -- 就位确认视图的关闭按钮，隐藏View
+-(void)doCloseInpacePageAction{
     [self showOrHideControl];
 }
 
-
 #pragma mark -- 隐藏头部消息提示view
--(void)mHideTopMenuView{
-    [self hideTopItemView];
+-(void)mHideOrShowTopMenuView{
+    [self initInpaceTopMenuIsShow];
 }
-#pragma mark -- 显示头部消息提示view
--(void)mShowTopMenuView:(NSString*)titleText{
-    [self showTopItemView:titleText];
-}
+
 /////
 
 
@@ -722,48 +707,47 @@ static double endRecordTime=0;
     itemInfo.userId = userid;
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
-#pragma mark -- 清除消息
+#pragma mark -- 把申请加入的消息清零，重新初始化头部的导航条的显示状态
 -(void)readAppMsgAction{
     [self readTeamApplyMsg];
 }
-#pragma mark -- 显示隐藏View
--(void)doApplyListShowOrHideViewControl{
+#pragma mark -- 申请列表视图的关闭按钮，隐藏View
+-(void)doCloseApplyPage{
     [self showOrHideApplyListControl];
 }
-#pragma mark -- 隐藏View
--(void)mHideApplyListTopMenuView{
-    [self hideTopItemView];
-}
-#pragma mark -- 显示View
+
+#pragma mark -- 当组队申请消息来时，显示头部导航条View
 -(void)mShowApplyListTopMenuView{
-    [self initOrHideApplyListView];
+    [self initApplyTopMenuIsSHow];
 }
 
-//
+//入队申请消息
 -(void)readTeamApplyMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-        [self getNoreadMsg];
-        [self setNoreadMsgView];
-        [self setNotifyMsgCount];
-        [self hideTopItemView];
+        [self setBackButtonNoreadMsg];
+        [self initApplyTopMenuIsSHow];
     }];
 }
 
-//
+//就位确认消息
 -(void)readInpaceMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
-        [self getNoreadMsg];
-        [self setNoreadMsgView];
-        [self setInplaceMsgCount];
+        [self setBackButtonNoreadMsg];
+    }];
+}
+//Thumb的消息
+-(void)clearThumbMsg{
+    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
+        [self setBackButtonNoreadMsg];
     }];
 }
 
 /////
 
 
-//选择位置
+#pragma mark -- 选择位置之后的回调
 -(void)returnChooseInfoFrom:(UIViewController *)vc info:(NSDictionary *)info{
     NSMutableDictionary * clickType = [info mutableCopy];
     if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
@@ -773,7 +757,6 @@ static double endRecordTime=0;
         selectType = clickType;
         [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         [self changPosition];
-        [self setPositionMsgCount];
     } reError:^(id error) {
         [self showErrorAlertView:error];
     }];
@@ -794,16 +777,7 @@ static double endRecordTime=0;
     invc.roomId = [GameCommon getNewStringWithId:self.roomId];
     [self.navigationController pushViewController:invc animated:YES];
 }
-//入队申请
--(void)applyAction{
-    [self refreJoinApplyMsgCount];
-    TeamApplyController *itemInfo = [[TeamApplyController alloc]init];
-    itemInfo.groipId = self.chatWithUser;
-    itemInfo.roomId = self.roomId;
-    itemInfo.gameId = self.gameId;
-    itemInfo.teamUsershipType = teamUsershipType;
-    [self.navigationController pushViewController:itemInfo animated:YES];
-}
+
 //组队详情
 -(void)teamInfoAction{
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
@@ -812,57 +786,6 @@ static double endRecordTime=0;
     [self.navigationController pushViewController:itemInfo animated:YES];
 }
 /////
-
-//设置组队未读消息数量
--(void)setNotifyMsgCount{
-    NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
-    [self setNotifyMsgCount:msgC];
-}
-
--(void)setNotifyMsgCount:(NSInteger)msgC{
-    if (msgC>0) {
-        self.dotVApp.hidden = NO;
-        [self.dotVApp setMsgCount:msgC];
-    }else{
-        [self.dotVApp setMsgCount:0];
-        self.dotVApp.hidden = YES;
-    }
-}
-
-//设置就位确认未读消息数量
--(void)setInplaceMsgCount{
-   NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4"];
-    [self setInplaceMsgCount:msgC];
-}
-
--(void)setInplaceMsgCount:(NSInteger)msgC{
-    if (msgC>0) {
-        self.dotVInplace.hidden = NO;
-        [self.dotVInplace setMsgCount:msgC IsSimple:YES];
-    }else{
-        [self.dotVInplace setMsgCount:0 IsSimple:YES];
-        self.dotVInplace.hidden = YES;
-    }
-}
-//设置就位确认未读消息数量
--(void)setPositionMsgCount{
-    NSInteger positionCount;
-    if (selectType) {
-        positionCount = 0;
-    }else {
-        positionCount = 1;
-    }
-    [self setPositionMsgCount:positionCount];
-}
--(void)setPositionMsgCount:(NSInteger)positionCount{
-    if (positionCount>0) {
-        self.dotVPosition.hidden = NO;
-        [self.dotVPosition setMsgCount:positionCount IsSimple:YES];
-    }else{
-        [self.dotVPosition setMsgCount:0 IsSimple:YES];
-        self.dotVPosition.hidden = YES;
-    }
-}
 
 #pragma mark -- 分类请求成功通知
 -(void)updateTeamType:(id)responseObject
@@ -901,7 +824,6 @@ static double endRecordTime=0;
                 selectType = clickType;
                 [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
                 [self changPosition];
-                [self setPositionMsgCount];
             } reError:^(id error) {
                 [self showErrorAlertView:error];
             }];
@@ -927,15 +849,6 @@ static double endRecordTime=0;
     return NO;
 }
 
-//刷新申请加入组队消息的数量
--(void)refreJoinApplyMsgCount{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-        [self getNoreadMsg];
-        [self setNoreadMsgView];
-        [self setNotifyMsgCount];
-    }];
-}
 
 //------------------------------------------------------------------------------------------------------------
 
@@ -947,13 +860,11 @@ static double endRecordTime=0;
     }
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
-            [self getNoreadMsg];
-            [self setNoreadMsgView];
+            [self setBackButtonNoreadMsg];
         }];
     }else if ([self.type isEqualToString:@"group"]){
-        [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
-            [self getNoreadMsg];
-            [self setNoreadMsgView];
+        [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
+             [self setBackButtonNoreadMsg];
         }];
     }
     
@@ -975,7 +886,6 @@ static double endRecordTime=0;
 {
     myActive = YES;
     DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-//    myActive = [friend.action boolValue];
     self.myNickName = friend.nickName;
     self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
 }
@@ -983,12 +893,6 @@ static double endRecordTime=0;
 - (void)changeMyActive:(NSNotification*)notification
 {
      myActive = YES;
-//    if ([notification.userInfo[@"active"] intValue] == 2) {
-//        myActive = YES;
-//    }else
-//    {
-//        myActive = NO;
-//    }
 }
 
 #pragma mark ---TabView 显示方法
@@ -1774,10 +1678,27 @@ static double endRecordTime=0;
 //}
 
 
--(void)getNoreadMsg
+//设置返回按钮上面的消息数量
+-(void)setBackButtonNoreadMsg
 {
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
-    _unreadNo  = [GameCommon getNoreadMsgCount:array];
+    NSInteger msgCount  = [GameCommon getNoreadMsgCount:array];
+    [self setNoreadMsgView:msgCount];
+}
+
+-(void)setNoreadMsgView:(NSInteger)msgCount
+{
+    if (msgCount>0) {
+        _unReadL.hidden = NO;
+        if (msgCount>99) {
+            _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
+            _unReadL.text = [NSString stringWithFormat:@"%@",@"N+"];
+        }else{
+            _unReadL.text = [NSString stringWithFormat:@"%d",msgCount];
+        }
+    }else{
+        _unReadL.hidden = YES;
+    }
 }
 
 //未读消息数红点
@@ -1797,20 +1718,7 @@ static double endRecordTime=0;
     return _unReadL;
 }
 
--(void)setNoreadMsgView
-{
-    if (_unreadNo>0) {
-         _unReadL.hidden = NO;
-        if (_unreadNo>99) {
-            _unReadL.frame = CGRectMake(35, KISHighVersion_7 ? 20 : 0, 20, 20);
-            _unReadL.text = [NSString stringWithFormat:@"%@",@"N+"];
-        }else{
-             _unReadL.text = [NSString stringWithFormat:@"%d",_unreadNo];
-        }
-    }else{
-         _unReadL.hidden = YES;
-    }
-}
+
 
 
 //群动态入口
@@ -2518,23 +2426,6 @@ static double endRecordTime=0;
     [self refreMessageStatus:index Status:status];
 }
 
-
-
--(void)hideTopView{
-    self.dropDownView.hidden = YES;
-    self.dotVApp.hidden = YES;
-    self.dotVInplace.hidden = YES;
-    self.dotVPosition.hidden = YES;
-}
-
--(void)showTopView{
-    self.dropDownView.hidden = NO;
-    self.dotVApp.hidden = NO;
-    self.dotVInplace.hidden = NO;
-    self.dotVPosition.hidden = NO;
-}
-
-
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     if (!myActive) {
@@ -2551,10 +2442,6 @@ static double endRecordTime=0;
         [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         self.textView.hidden = NO;
         [self showEmojiScrollView];
-//        if (self.isTeam) {
-//            [self hideTopView];
-//        }
-        
     }
     else
     {
@@ -2583,10 +2470,6 @@ static double endRecordTime=0;
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
-//        if (self.isTeam) {
-//            [self hideTopView];
-//        }
-        
     }else{//点击切回键盘
         [self.textView.internalTextView becomeFirstResponder];
         ifEmoji = NO;
@@ -2661,9 +2544,6 @@ static double endRecordTime=0;
         [self.textView resignFirstResponder];
         if (self.kkchatInputType != KKChatInputTypeNone) {
             [self autoMovekeyBoard:0];
-//            if (self.isTeam) {
-//                [self showTopView];
-//            }
             self.kkchatInputType = KKChatInputTypeNone;
             [UIView animateWithDuration:0.2 animations:^{
                 self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
@@ -2797,17 +2677,6 @@ static double endRecordTime=0;
     [self sendButton:nil];
     return YES;
 }
-
-//#pragma mark -消息发送成功
-//- (void)messageAck:(NSNotification *)notification
-//{
-//    NSDictionary* tempDic = notification.userInfo;
-//    NSString * msgId = KISDictionaryHaveKey(tempDic, @"src_id");
-//    NSInteger changeRow = [self getMsgRowWithId:msgId];
-//    [self refreMessageStatus:changeRow Status:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgState")]];
-//}
-
-
 #pragma mark -消息发送成功
 - (void)messageAck:(NSNotification *)notification
 {
@@ -2910,10 +2779,6 @@ static double endRecordTime=0;
     // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     
     [self autoMovekeyBoard:keyboardRect.size.height];
-    
-//    if (self.isTeam) {
-//        [self hideTopView];
-//    }
 }
 
 
@@ -2933,9 +2798,6 @@ static double endRecordTime=0;
     {
         [self autoMovekeyBoard:0];
     }
-//    if (self.isTeam) {
-//        [self showTopView];
-//    }
 }
 -(NSString *)selectedEmoji:(NSString *)ssss
 {
@@ -3655,14 +3517,6 @@ static double endRecordTime=0;
             if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {//位置选择
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
-            }else if ([msgType isEqualToString:@"requestJoinTeam"]) {//申请加入组队
-                [self getNoreadMsg];
-                [self setNoreadMsgView];
-                [self setNotifyMsgCount];
-            }else if ([msgType isEqualToString:@"startTeamPreparedConfirm"]) {//发起就位确认
-                [self getNoreadMsg];
-                [self setNoreadMsgView];
-                [self setInplaceMsgCount];
             }
         }
     }else{
@@ -3701,11 +3555,8 @@ static double endRecordTime=0;
                 [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
         }
-    }
-    else
-    {
-        _unreadNo++;
-        [self setNoreadMsgView];
+    }else{
+        [self setBackButtonNoreadMsg];
     }
 }
 

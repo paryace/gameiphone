@@ -42,10 +42,9 @@
 @end
 
 @protocol DetailDelegate <NSObject>
--(void)readInpaceAction;//读就位确认消息
+-(void)readInpaceMsgAction;//读就位确认消息
 -(void)itemOnClick:(NSDictionary*)charaDic;//点击item
 -(void)headImgClick:(NSString*)userId;//点击头像
--(void)doShowOrHideViewControl;//显示或者隐藏视图view
--(void)mHideTopMenuView;//隐藏头部消息提示view
--(void)mShowTopMenuView:(NSString*)titleText;//显示头部消息提示view
+-(void)doCloseInpacePageAction;//关闭页面
+-(void)mHideOrShowTopMenuView;//隐藏头部消息提示view
 @end

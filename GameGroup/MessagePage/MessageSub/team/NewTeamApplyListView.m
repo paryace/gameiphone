@@ -65,7 +65,7 @@
 }
 //关闭页面
 -(void)closeViewAction:(UIButton*)sender{
-    [self.detaildelegate doApplyListShowOrHideViewControl];
+    [self.detaildelegate doCloseApplyPage];
 }
 #pragma mark 表格
 

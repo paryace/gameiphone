@@ -30,8 +30,7 @@
 -(void)readAppMsgAction;
 -(void)itemApplyListOnClick:(NSDictionary*)charaDic;//点击item
 -(void)headImgApplyListClick:(NSString*)userId;//点击头像
--(void)doApplyListShowOrHideViewControl;//显示或者隐藏视图view
+-(void)doCloseApplyPage;//关闭页面
 
--(void)mHideApplyListTopMenuView;//隐藏头部消息通知view
 -(void)mShowApplyListTopMenuView;//显示头部消息通知view
 @end

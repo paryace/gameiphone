@@ -131,17 +131,10 @@
     }
     return self;
 }
-//----
--(void)readdd{
-     NSInteger msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.groipId SayHightType:@"4"];
-    if (msgC>0) {
-        [self clearInpaceMsg];
-    }
-}
-//----
+
 //关闭页面
 -(void)closeViewAction:(UIButton*)sender{
-    [self.detaildelegate doShowOrHideViewControl];
+    [self.detaildelegate doCloseInpacePageAction];
 }
 
 //设置按钮状态
@@ -159,21 +152,6 @@
     }else if(onClickState == 3){
         [self showButton];
         [self cancel];
-    }
-}
-
-
--(void)showOrHideListView{
-    NSInteger onClickState = [DataStoreManager getTeamUser:self.groipId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    if(onClickState == 0){
-        if (!self.teamUsershipType) {
-            [self readdd];
-            [self.detaildelegate mHideTopMenuView];
-        }
-    }else if(onClickState == 1){
-        if (!self.teamUsershipType) {
-            [self.detaildelegate mShowTopMenuView:@"就位确认消息"];
-        }
     }
 }
 
@@ -310,8 +288,8 @@
 }
 //清除未读的就位确认消息
 -(void)clearNorReadInpaceMsg{
-    if ([self.detaildelegate respondsToSelector:@selector(readInpaceAction)] ) {
-        [self.detaildelegate readInpaceAction];
+    if ([self.detaildelegate respondsToSelector:@selector(readInpaceMsgAction)] ) {
+        [self.detaildelegate readInpaceMsgAction];
     }
 }
 
@@ -545,7 +523,7 @@
             [hud show:YES];
             [[ItemManager singleton] dissoTeam:self.roomId GameId:self.gameId reSuccess:^(id responseObject) {
                 [hud hide:YES];
-                [self.detaildelegate doShowOrHideViewControl];
+                [self.detaildelegate doCloseInpacePageAction];
                 [self showToastAlertView:@"解散成功"];
             } reError:^(id error) {
                 [hud hide:YES];
@@ -620,9 +598,9 @@
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
         [self.mTableView reloadData];
-        [self clearInpaceMsg];
+        [self clearNorReadInpaceMsg];
         [self setBtnState];
-        [self showOrHideListView];
+        [self.detaildelegate mHideOrShowTopMenuView];
     }
 }
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
@@ -631,7 +609,7 @@
     [self changPState:@"1"];
     [self.mTableView reloadData];
     [self setBtnState];
-    [self showOrHideListView];
+    [self.detaildelegate mHideOrShowTopMenuView];
 }
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
@@ -639,9 +617,9 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearInpaceMsg];
+    [self clearNorReadInpaceMsg];
     [self setBtnState];
-    [self showOrHideListView];
+    [self.detaildelegate mHideOrShowTopMenuView];
 }
 //显示
 -(void)showView{
@@ -659,17 +637,6 @@
     if (self.teamUsershipType) {//停止计时
         [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
     }
-}
--(void)clearInpaceMsg{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1"];
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
-        [self clearNorReadInpaceMsg];//清除消息
-    }];
-}
--(void)clearInpaceThumbMsg{
-    [DataStoreManager updateDSTeamNotificationMsgCount:self.groipId SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
-        [self clearNorReadInpaceMsg];//清除消息
-    }];
 }
 
 //改变列表就位确认状态
