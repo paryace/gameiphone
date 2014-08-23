@@ -303,6 +303,10 @@ static SystemSoundID shake_sound_male_id = 0;
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];//清除位置信息
+        NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffMyTeam object:nil userInfo:dic];
+        });
     }
     [[TeamManager singleton] deleteMenberUserInfo:payloadDic GroupId:groupId];//删除组队成员
     [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
@@ -337,11 +341,10 @@ static SystemSoundID shake_sound_male_id = 0;
         [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         NSDictionary * dic = @{@"groupId":groupId};
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandGroup object:nil userInfo:dic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kDisbandMyTeam object:nil userInfo:dic];
         });
     }else{//如果是别人的队伍解散了
         [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-            
         }];
         [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
             NSDictionary * dic = @{@"groupId":groupId};
@@ -389,7 +392,7 @@ static SystemSoundID shake_sound_male_id = 0;
         [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
+            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffMyTeam object:nil userInfo:dic];
         });
     }else {//否则是他人退出
         [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
