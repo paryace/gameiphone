@@ -485,7 +485,6 @@ static double endRecordTime=0;
 -(void)showTeamInfoView{
     if (teamUsershipType) {
         [self showOrHideApplyListControl];
-        [self readTeamApplyMsg];//点击申请组队的导航条，把申请消息清零，并且初始化导航条的显示状态
     }else{
         [self showOrHideControl];
         [self setBackButtonNoreadMsg];

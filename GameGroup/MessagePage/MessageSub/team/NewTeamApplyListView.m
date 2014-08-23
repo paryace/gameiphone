@@ -313,6 +313,7 @@
 //显示
 -(void)showView{
     [self getZU];
+    [self.detaildelegate readAppMsgAction];
     [m_TableView reloadData];
     self.isShow = YES;
 }

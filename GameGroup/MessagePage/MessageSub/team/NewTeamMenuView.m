@@ -60,7 +60,6 @@
         [button setTitle:@"关闭" forState:UIControlStateNormal];
         button.backgroundColor = [UIColor clearColor];
         [bgImageView addSubview:button];
-        [self addSubview:bgImageView];
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
         pveLable.backgroundColor = [UIColor clearColor];
@@ -68,7 +67,6 @@
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
         pveLable.font =[ UIFont systemFontOfSize:12];
-        [self addSubview:pveLable];
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];
@@ -76,6 +74,8 @@
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
+//            self.mTableView.backgroundView = pveLable;
+            self.mTableView.tableFooterView = pveLable;
             [GameCommon setExtraCellLineHidden:self.mTableView];
             [self addSubview:self.mTableView];
         }
@@ -374,6 +374,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 0) {
         [self.mTableView deselectRowAtIndexPath:indexPath animated:YES];
         NSMutableDictionary *dic = [self.memberList objectAtIndex:indexPath.row];
         if ([[dic allKeys]containsObject:@"teamUser"]) {
@@ -384,6 +385,7 @@
             [hud show:YES];
             [hud hide:YES afterDelay:2];
         }
+    }
 }
 
 -(NSDictionary*)createCharaDic:(NSMutableDictionary*)dic{
@@ -397,70 +399,97 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 2;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section==1) {
+        return 0;
+    }
     return self.memberList.count;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (section == 1) {
+        return 50;
+    }
+    return 0;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (section == 1) {
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        
+        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 50)];
+        pveLable.backgroundColor = [UIColor clearColor];
+        pveLable.textAlignment = NSTextAlignmentCenter;
+        pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
+        pveLable.text = @"队长可以滑动名单进行管理";
+        pveLable.font =[ UIFont systemFontOfSize:16];
+        [view addSubview:pveLable];
+        return view;
+    }
+    return nil;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    static NSString *identifier = @"simpleInplaceCell";
-    InplaceCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell = [[InplaceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-    }
-    cell.tag = indexPath.row;
-    cell.headCkickDelegate = self;
-    NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
-    NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
-    cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
-    cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
-    cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
-    NSString * gameImageId=[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(msgDic, @"gameid")];
-    if ([GameCommon isEmtity:gameImageId]) {
-        cell.gameImageV.image=KUIImage(@"clazz_0");
-    }else{
-        cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
-    }
-    cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
-    if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
-        cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
-        cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
-        
-    }else{
-        cell.realmLable.text = @"";
-        cell.pveLable.text = @"";
-    }
-    cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
-    
-    if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
-        cell.stateView.hidden = YES;
-    }else{
-        cell.stateView.hidden = NO;
-        if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
-            cell.stateView.backgroundColor = [UIColor grayColor];
-        }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
-            cell.stateView.backgroundColor = UIColorFromRGBA(0x45d232, 1);
-        }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
-            cell.stateView.backgroundColor = UIColorFromRGBA(0xd55656, 1);
+    if (indexPath.section == 0) {
+        static NSString *identifier = @"simpleInplaceCell";
+        InplaceCell *cell =[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[InplaceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
+        cell.tag = indexPath.row;
+        cell.headCkickDelegate = self;
+        NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
+        NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
+        cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+        cell.headImageV.imageURL=[ImageService getImageStr:KISDictionaryHaveKey(msgDic, @"img") Width:80];
+        cell.genderImageV.image = KUIImage([self genderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
+        NSString * gameImageId=[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(msgDic, @"gameid")];
+        if ([GameCommon isEmtity:gameImageId]) {
+            cell.gameImageV.image=KUIImage(@"clazz_0");
+        }else{
+            cell.gameImageV.imageURL= [ImageService getImageUrl4:gameImageId];
+        }
+        cell.groupNameLable.text = KISDictionaryHaveKey(msgDic, @"nickname");
+        if ([teamUserDic isKindOfClass:[NSDictionary class]]) {
+            cell.realmLable.text = [NSString stringWithFormat:@"%@%@%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),@"-",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
+            cell.pveLable.text = KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"memberInfo");
+            
+        }else{
+            cell.realmLable.text = @"";
+            cell.pveLable.text = @"";
+        }
+        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+        
+        if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
+            cell.stateView.hidden = YES;
+        }else{
+            cell.stateView.hidden = NO;
+            if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
+                cell.stateView.backgroundColor = [UIColor grayColor];
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
+                cell.stateView.backgroundColor = UIColorFromRGBA(0x45d232, 1);
+            }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
+                cell.stateView.backgroundColor = UIColorFromRGBA(0xd55656, 1);
+            }
+        }
+        NSInteger shipType = [KISDictionaryHaveKey(msgDic, @"teamUsershipType") integerValue];
+        if (shipType==0) {
+            cell.MemberLable.hidden = NO;
+        }else{
+            cell.MemberLable.hidden = YES;
+        }
+        CGSize size = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
+        float w = size.width>((shipType==0)?119:145)?((shipType==0)?119:145):size.width;
+        cell.groupNameLable.frame = CGRectMake(80, 9, w, 20);
+        cell.genderImageV.frame = CGRectMake(80+w, 9, 20, 20);
+        cell.MemberLable.frame = CGRectMake(80+w+20+2, 13, 26, 13);
+        return cell;
     }
-    NSInteger shipType = [KISDictionaryHaveKey(msgDic, @"teamUsershipType") integerValue];
-    if (shipType==0) {
-        cell.MemberLable.hidden = NO;
-    }else{
-        cell.MemberLable.hidden = YES;
-    }
-    CGSize size = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
-    float w = size.width>((shipType==0)?119:145)?((shipType==0)?119:145):size.width;
-    cell.groupNameLable.frame = CGRectMake(80, 9, w, 20);
-    cell.genderImageV.frame = CGRectMake(80+w, 9, 20, 20);
-    cell.MemberLable.frame = CGRectMake(80+w+20+2, 13, 26, 13);
-    
-    return cell;
+    return nil;
 }
 
 //格式化时间
@@ -475,6 +504,9 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 1) {
+        return @"";
+    }
     if (self.teamUsershipType) {
         NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
         NSString *userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")] ;
@@ -487,13 +519,20 @@
 }
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 1) {
+        return NO;
+    }
     if (self.teamUsershipType) {
         return YES;
     }
     return NO;
+    
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section==1) {
+        return;
+    }
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         tableView.editing = NO;
         NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
