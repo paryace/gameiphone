@@ -175,6 +175,14 @@
     self.view.backgroundColor=UIColorFromRGBA(0xf7f7f7, 1);
     
     allMsgArray = [NSMutableArray array];
+    
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+    
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
@@ -295,6 +303,11 @@
     self.titleLabel.text = @"消息(未连接)";
 }
 
+-(void)backButtonClick:(id)sender{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    TemporaryFriendController *detailVC = [[TemporaryFriendController alloc]init];
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
 #pragma mark -清空
 - (void)cleanBtnClick:(id)sender
 {

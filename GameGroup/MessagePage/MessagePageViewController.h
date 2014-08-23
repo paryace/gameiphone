@@ -10,6 +10,7 @@
 #import "NotConnectDelegate.h"
 #import "AppDelegate.h"
 #import "NewRegisterViewController.h"
+#import "TemporaryFriendController.h"
 @interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,NewRegisterViewControllerDelegate>
 
 @property (assign,nonatomic) AppDelegate * appDel;

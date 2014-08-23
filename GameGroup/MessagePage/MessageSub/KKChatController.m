@@ -495,7 +495,7 @@ static double endRecordTime=0;
         [self readTeamApplyMsg];
     }else{
         [self showOrHideControl];
-        [self readNoreadMsg];
+        [self getNoreadMsg];
         [self setNoreadMsgView];
         [self setInplaceMsgCount];
     }
@@ -644,7 +644,7 @@ static double endRecordTime=0;
 }
 #pragma mark -- 清除消息
 -(void)readInpaceAction{
-    [self readNoreadMsg];
+    [self getNoreadMsg];
     [self setNoreadMsgView];
     [self setInplaceMsgCount];
 }
@@ -743,7 +743,7 @@ static double endRecordTime=0;
 -(void)readTeamApplyMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-        [self readNoreadMsg];
+        [self getNoreadMsg];
         [self setNoreadMsgView];
         [self setNotifyMsgCount];
         [self hideTopItemView];
@@ -754,7 +754,7 @@ static double endRecordTime=0;
 -(void)readInpaceMsg{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"4" Successcompletion:^(BOOL success, NSError *error) {
-        [self readNoreadMsg];
+        [self getNoreadMsg];
         [self setNoreadMsgView];
         [self setInplaceMsgCount];
     }];
@@ -926,65 +926,12 @@ static double endRecordTime=0;
     }
     return NO;
 }
-//#pragma mark -- dropdownList DataSource
-//-(NSInteger)numberOfSections
-//{
-//    return 3;
-//}
-//-(NSInteger)numberOfRowsInSection:(NSInteger)section
-//{
-//    if (section==0) {
-//        return self.typeData_list.count;
-//    }
-//    return 0;
-//}
-//-(NSString *)titleInSection:(NSInteger)section index:(NSInteger) index
-//{
-//    if (section==0) {
-//        if (self.typeData_list.count>0) {
-//            return KISDictionaryHaveKey([self.typeData_list objectAtIndex:index], @"value");
-//        }
-//    }else if (section==1){
-//        return @"";
-//    }
-//    return @"申请";
-//}
-//
-//-(NSInteger)defaultShowSection:(NSInteger)section
-//{
-//    return 0;
-//}
-//头像点击进入个人详情
-//- (void)headImgClick:(NSString*)userId {
-//    NSString *userid = [GameCommon getNewStringWithId:userId];
-//    TestViewController *itemInfo = [[TestViewController alloc]init];
-//    itemInfo.userId = userid;
-//    [self.navigationController pushViewController:itemInfo animated:YES];
-//}
-////cell点击进入角色详情
-//- (void)itemOnClick:(NSMutableDictionary*)dic{
-//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-//        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-//        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
-//        return;
-//    }
-//    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-//    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
-//    VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-//    VC.characterName = KISDictionaryHaveKey(dic, @"characterName");
-//    [self.navigationController pushViewController:VC animated:YES];
-//}
-////刷新就位确认消息数量
-//- (void)buttonOnClick{
-//    [self readNoreadMsg];
-//    [self setNoreadMsgView];
-//    [self setInplaceMsgCount];
-//}
+
 //刷新申请加入组队消息的数量
 -(void)refreJoinApplyMsgCount{
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1"];
     [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3" Successcompletion:^(BOOL success, NSError *error) {
-        [self readNoreadMsg];
+        [self getNoreadMsg];
         [self setNoreadMsgView];
         [self setNotifyMsgCount];
     }];
@@ -1000,12 +947,12 @@ static double endRecordTime=0;
     }
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
-            [self readNoreadMsg];
+            [self getNoreadMsg];
             [self setNoreadMsgView];
         }];
     }else if ([self.type isEqualToString:@"group"]){
         [DataStoreManager blankGroupMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
-            [self readNoreadMsg];
+            [self getNoreadMsg];
             [self setNoreadMsgView];
         }];
     }
@@ -1827,7 +1774,7 @@ static double endRecordTime=0;
 //}
 
 
--(void)readNoreadMsg
+-(void)getNoreadMsg
 {
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
     _unreadNo  = [GameCommon getNoreadMsgCount:array];
@@ -3709,11 +3656,11 @@ static double endRecordTime=0;
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
                 [self.tView reloadData];
             }else if ([msgType isEqualToString:@"requestJoinTeam"]) {//申请加入组队
-                [self readNoreadMsg];
+                [self getNoreadMsg];
                 [self setNoreadMsgView];
                 [self setNotifyMsgCount];
             }else if ([msgType isEqualToString:@"startTeamPreparedConfirm"]) {//发起就位确认
-                [self readNoreadMsg];
+                [self getNoreadMsg];
                 [self setNoreadMsgView];
                 [self setInplaceMsgCount];
             }
