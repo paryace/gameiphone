@@ -591,6 +591,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [hud hide:YES];
             [_tableView reloadData];
+            [searchController.searchResultsTableView reloadData];
             [self uploadContacts:self.outAddressArray];
         });
     });

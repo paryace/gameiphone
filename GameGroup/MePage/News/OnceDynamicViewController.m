@@ -626,9 +626,11 @@
                 title = [NSString stringWithFormat:@"《%@》",title];
             }
             
-            if (title.length>140) {
-                [self showAlertViewWithTitle:@"提示" message:@"消息文本内容长度必须小于140个汉字" buttonTitle:@"确定"];
-                return;
+            if (title.length>100) {
+//                [self showAlertViewWithTitle:@"提示" message:@"消息文本内容长度必须小于140个汉字" buttonTitle:@"确定"];
+                title = [title substringToIndex:100];
+                NSLog(@"%d",title.length);
+//                return;
             }
             
             

@@ -77,16 +77,16 @@
      去除角色列表中的404 和notSupport 的角色
      */
 
-    NSMutableArray *arr = [NSMutableArray array];
-    for (NSDictionary *dic  in m_RoleArray) {
-        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-            NSLog(@"++++++++%@",dic);
-        }else{
-            [arr addObject:dic];
-        }
-    }
-    [m_RoleArray removeAllObjects];
-    [m_RoleArray  addObjectsFromArray:arr];
+//    NSMutableArray *arr = [NSMutableArray array];
+//    for (NSDictionary *dic  in m_RoleArray) {
+//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+//            NSLog(@"++++++++%@",dic);
+//        }else{
+//            [arr addObject:dic];
+//        }
+//    }
+//    [m_RoleArray removeAllObjects];
+//    [m_RoleArray  addObjectsFromArray:arr];
 
     m_flArray  = [NSMutableArray array];
     m_countArray  = [NSMutableArray array];
