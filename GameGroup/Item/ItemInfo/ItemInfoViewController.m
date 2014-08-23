@@ -69,6 +69,7 @@
     m_getOutBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     m_getOutBtn.backgroundColor = [UIColor clearColor];
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
+    m_getOutBtn.hidden = YES;
     [self.view addSubview:m_getOutBtn];
     [self setRightBtn];
     
@@ -98,22 +99,22 @@
      */
 
     
-    NSMutableArray *arr = [NSMutableArray array];
-    for (NSDictionary *dic  in coreArray) {
-        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-            NSLog(@"++++++++%@",dic);
-        }else{
-            
-            NSLog(@"%@",[dic objectForKey:@""]);
-            
-            [arr addObject:dic];
-            
-            
-        }
-    }
-    [coreArray removeAllObjects];
-    
-    [coreArray  addObjectsFromArray:arr];
+//    NSMutableArray *arr = [NSMutableArray array];
+//    for (NSDictionary *dic  in coreArray) {
+//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+//            NSLog(@"++++++++%@",dic);
+//        }else{
+//            
+//            NSLog(@"%@",[dic objectForKey:@""]);
+//            
+//            [arr addObject:dic];
+//            
+//            
+//        }
+//    }
+//    [coreArray removeAllObjects];
+//    
+//    [coreArray  addObjectsFromArray:arr];
 
     
     
@@ -337,10 +338,12 @@
 {
     if (!isRefre) {
         hud.labelText = @"请求中...";
+        hud.mode = MBProgressHUDModeIndeterminate;
         [hud show:YES];
     }
     [[TeamManager singleton] GETInfoWithNet:[GameCommon getNewStringWithId:self.gameid] RoomId:[GameCommon getNewStringWithId:self.itemId] reSuccess:^(id responseObject) {
         [hud hide:YES];
+        m_getOutBtn .hidden = NO;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
@@ -438,7 +441,7 @@
         titlearr = @[@"",([requested intValue]==1)?@"再次申请":@"申请加入"];
         arr = @[@"",@"team_join_low"];
         [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
-        [self noHaveBottomView];
+        [self haveBottomView];
     }
 //    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
@@ -559,7 +562,14 @@
         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            
+            hud.mode = MBProgressHUDModeText;
+            hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
+            hud.labelText = nil;
+            [hud show:YES];
+            [hud hide:YES afterDelay:2];
+            
+//            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             
             return;
         }
@@ -573,7 +583,11 @@
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
             ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
 //            [self showMessageWindowWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" imageType:1];
-            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            hud.mode = MBProgressHUDModeText;
+            hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
+            hud.labelText = nil;
+            [hud show:YES];
+            [hud hide:YES afterDelay:2];
             return;
         }
         H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];

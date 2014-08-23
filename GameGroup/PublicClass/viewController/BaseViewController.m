@@ -146,6 +146,7 @@
     showLabel.center = point;
     showLabel.backgroundColor = [UIColor blackColor];
     showLabel.alpha = 0.8;
+    showLabel.numberOfLines = 0;
     showLabel.font = [UIFont boldSystemFontOfSize:15.0];
     showLabel.textColor = [UIColor whiteColor];
     showLabel.layer.cornerRadius = 5;
