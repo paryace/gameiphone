@@ -1239,7 +1239,6 @@ static double endRecordTime=0;
         cell.tag = indexPath.row;
         cell.sendType = sender;
         if ([sender isEqualToString:@"you"]) {
-           
             cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
@@ -1249,11 +1248,8 @@ static double endRecordTime=0;
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+10,size.height+20)];
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
-
-            
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
-        
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60-15,(size.height+20)/2 + padding*2-15)status:status];
             [cell uploadAudio:indexPath.row];
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
@@ -1274,8 +1270,7 @@ static double endRecordTime=0;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
         }
         [cell.bgImageView addTarget:self action:@selector(playAudio:) forControlEvents:UIControlEventTouchUpInside];
-        cell.bgImageView.tag = indexPath.row;
-
+        cell.bgImageView.tag = indexPath.row+1;
         return cell;
     }
     
@@ -1324,7 +1319,6 @@ static double endRecordTime=0;
             [cell.messageContentView setFrame:CGRectMake(320-size.width - padding-15-10-25, padding*2-4,size.width,size.height)];
             cell.messageContentView.hidden = NO;
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
-          
         }else { //不是你，是对方
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
@@ -1589,7 +1583,7 @@ static double endRecordTime=0;
 #pragma mark --播放
 -(void)playAudio:(UIButton *)sender
 {
-    NSInteger i = sender.tag;
+    NSInteger i = sender.tag-1;
     
     NSDictionary *dic = [messages objectAtIndex:i];
     NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
@@ -3200,6 +3194,7 @@ static double endRecordTime=0;
     [messages addObject:dictionary];
     [self newMsgToArray:dictionary];
     [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    [self.tView reloadData];
     
     if (messages.count>0) {//定位到列表最后
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];

@@ -168,7 +168,7 @@
         self.statusLabel.hidden = YES;
         [self.activityView startAnimating];
     }
-    if ([status isEqualToString:@"8"]) {//上传文件失败
+    else if ([status isEqualToString:@"8"]) {//上传文件失败
         self.failImage.hidden = NO;
         self.statusLabel.hidden = YES;
         [self.activityView stopAnimating];
@@ -192,6 +192,7 @@
 -(void)hideStateView{
     self.failImage.hidden = YES;
     self.statusLabel.hidden = YES;
+    self.activityView.hidden = YES;
     [self.activityView stopAnimating];
 }
 
