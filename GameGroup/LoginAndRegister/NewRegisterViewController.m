@@ -31,7 +31,7 @@
     
     NSString *imagePath;
     UITextField *m_parssWordTf;
-    UITextField *m_emailTf;
+//    UITextField *m_emailTf;
     UIButton *m_photoButton;
 }
 @property(nonatomic,retain)NSString *imgID;
@@ -511,7 +511,7 @@
     table_top.image = KUIImage(@"table_top");
     [m_step2Scroll addSubview:table_top];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 160, 300, 40)];
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 121, 300, 40)];
     table_bottom.image = KUIImage(@"table_bottom");
     [m_step2Scroll addSubview:table_bottom];
     
@@ -521,11 +521,11 @@
     table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
     [m_step2Scroll addSubview:table_label_two];
     
-    UILabel* table_label_six = [[UILabel alloc] initWithFrame:CGRectMake(20, 161, 80, 38)];
-    table_label_six.text = @"邮箱";
-    table_label_six.textColor = kColorWithRGB(102, 102, 102, 1.0);
-    table_label_six.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_step2Scroll addSubview:table_label_six];
+//    UILabel* table_label_six = [[UILabel alloc] initWithFrame:CGRectMake(20, 161, 80, 38)];
+//    table_label_six.text = @"邮箱";
+//    table_label_six.textColor = kColorWithRGB(102, 102, 102, 1.0);
+//    table_label_six.font = [UIFont boldSystemFontOfSize:15.0];
+//    [m_step2Scroll addSubview:table_label_six];
 
     m_parssWordTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 120, 180, 40)];
     m_parssWordTf.returnKeyType = UIReturnKeyDone;
@@ -538,15 +538,15 @@
     m_parssWordTf.clearButtonMode = UITextFieldViewModeWhileEditing;
     [m_step2Scroll addSubview:m_parssWordTf];
     
-    m_emailTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 160, 180, 40)];
-    m_emailTf.returnKeyType = UIReturnKeyDone;
-    m_emailTf.textAlignment = NSTextAlignmentRight;
-    m_emailTf.delegate = self;
-    m_emailTf.placeholder = @"用来找回密码";
-    m_emailTf.font = [UIFont boldSystemFontOfSize:15.0];
-    m_emailTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    m_emailTf.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [m_step2Scroll addSubview:m_emailTf];
+//    m_emailTf = [[UITextField alloc] initWithFrame:CGRectMake(100, 160, 180, 40)];
+//    m_emailTf.returnKeyType = UIReturnKeyDone;
+//    m_emailTf.textAlignment = NSTextAlignmentRight;
+//    m_emailTf.delegate = self;
+//    m_emailTf.placeholder = @"用来找回密码";
+//    m_emailTf.font = [UIFont boldSystemFontOfSize:15.0];
+//    m_emailTf.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+//    m_emailTf.clearButtonMode = UITextFieldViewModeWhileEditing;
+//    [m_step2Scroll addSubview:m_emailTf];
     
     
     UIButton* step3Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 220, 300, 40)];
@@ -583,12 +583,12 @@
 {
 
     [m_parssWordTf resignFirstResponder];
-    [m_emailTf resignFirstResponder];
+//    [m_emailTf resignFirstResponder];
     
-    if (KISEmptyOrEnter(m_parssWordTf.text) || KISEmptyOrEnter(m_emailTf.text)) {
-        [self showAlertViewWithTitle:@"提示" message:@"请把信息输入完整！" buttonTitle:@"确定"];
-        return;
-    }
+//    if (KISEmptyOrEnter(m_parssWordTf.text) || KISEmptyOrEnter(m_emailTf.text)) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请把信息输入完整！" buttonTitle:@"确定"];
+//        return;
+//    }
     if (!m_sexManButton.selected && !m_sexWomanButton.selected) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择性别！" buttonTitle:@"确定"];
         return;
@@ -597,11 +597,11 @@
         [self showAlertViewWithTitle:@"提示" message:@"密码最长16个字符,最短6个字符！" buttonTitle:@"确定"];
         return;
     }
-    if (![[GameCommon shareGameCommon] isValidateEmail:m_emailTf.text])
-    {
-        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的邮箱格式！" buttonTitle:@"确定"];
-        return;
-    }
+//    if (![[GameCommon shareGameCommon] isValidateEmail:m_emailTf.text])
+//    {
+//        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的邮箱格式！" buttonTitle:@"确定"];
+//        return;
+//    }
     //    [self upLoadMyPhoto];
     [self uploadImage:imagePath];
 }
@@ -613,7 +613,7 @@
     [params setObject:imageId forKey:@"img"];
     [params setObject:m_parssWordTf.text forKey:@"password"];
     [params setObject:m_sexManButton.selected ? @"0" : @"1" forKey:@"gender"];
-    [params setObject:m_emailTf.text forKey:@"email"];
+//    [params setObject:m_emailTf.text forKey:@"email"];
     // [params setObject:m_verCodeTextField.text forKey:@"xcode"];
     [params setObject:[GameCommon shareGameCommon].deviceToken forKey:@"deviceToken"];
     [params setObject:appType forKey:@"appType"];
@@ -696,7 +696,7 @@
 - (void)photoClick:(id)sender
 {
     [m_parssWordTf resignFirstResponder];
-    [m_emailTf resignFirstResponder];
+//    [m_emailTf resignFirstResponder];
     UIActionSheet* action  = [[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"拍照",@"相册", nil];
     action.tag = 230;
     [action showInView:self.view];

@@ -301,13 +301,7 @@
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
-    }
-//     completion:^(BOOL success, NSError *error) {
-//         if (block) {
-//             block(msg);
-//         }
-//     }
-     ];
+    }];
     
     if (block) {
         block(msg);

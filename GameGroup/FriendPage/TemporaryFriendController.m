@@ -51,7 +51,7 @@
 -(void)cleanBtnClick:(id)sender
 {
     UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"选择性别" delegate:self cancelButtonTitle:@"取消"
-                                  destructiveButtonTitle:nil otherButtonTitles:@"先生",@"女士",nil];
+                                  destructiveButtonTitle:nil otherButtonTitles:@"先生",@"女士",@"未知",nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
 }
@@ -64,6 +64,10 @@
     else if (buttonIndex ==1)
     {
         [self getFriendListFromNet:@"1"];
+    }
+    else if (buttonIndex ==2)
+    {
+        [self getFriendListFromNet:@""];
     }
 }
 //返回组的数量

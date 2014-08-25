@@ -192,6 +192,10 @@
         [self getcardFromNetWithGameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         [self getPersonCountFromNetWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"constId")]];
     }
+    [m_gameTf becomeFirstResponder];
+//    if([m_gameTf isFirstResponder]){
+//        [m_gameTf resignFirstResponder];
+//    }
 }
 
 #pragma mark -- 标签请求成功通知
@@ -564,24 +568,12 @@
             [m_tagsArray removeAllObjects];
             [m_tagsArray addObjectsFromArray:responseObject];
             [m_tagsPickView reloadAllComponents];
+            [m_tagTf becomeFirstResponder];
         }
     } reError:^(id error) {
-        
-        [[ItemManager singleton]getTeamType:gameid reSuccess:^(id responseObject) {
-            if ([responseObject isKindOfClass:[NSArray class]]) {
-                [responseObject removeObjectAtIndex:0];
-                [m_tagsArray removeAllObjects];
-                [m_tagsArray addObjectsFromArray:responseObject];
-                [m_tagsPickView reloadAllComponents];
-            }
-
-        } reError:^(id error) {
-            [self showErrorAlert:error];
-            m_gameTf.text = @"";
-            gameIconImg.imageURL = nil;
-
-        }];
-        
+        [self showErrorAlert:error];
+        m_gameTf.text = @"";
+        gameIconImg.imageURL = nil;
     }];
 }
 #pragma mark --- 联网获取人数列表
