@@ -31,20 +31,27 @@
 -(void)changeBDimgWithimg:(double)lowPassResults
 {
     
-    if (0<lowPassResults<=0.06) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani8"]];
-    }else if (0.06<lowPassResults<=0.13) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani9"]];
-    }else if (0.13<lowPassResults<=0.55) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani10"]];
-    }else if (0.55<lowPassResults<=0.62) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani11"]];
-    }else if (0.62<lowPassResults<=0.76) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani12"]];
-    }else if (0.76<lowPassResults<=0.9) {
-        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani13"]];
-    }else {
+    if (0<lowPassResults<=0.14) {
         [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani14"]];
+        NSLog(@"111");
+    }else if (0.14<lowPassResults<=0.28) {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani13"]];
+        NSLog(@"222");
+    }else if (0.28<lowPassResults<=0.42) {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani12"]];
+        NSLog(@"333");
+    }else if (0.42<lowPassResults<=0.56) {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani11"]];
+        NSLog(@"444");
+    }else if (0.56<lowPassResults<=0.7) {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani10"]];
+        NSLog(@"555");
+    }else if (0.7<lowPassResults<=0.84) {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani9"]];
+        NSLog(@"666");
+    }else {
+        [m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani8"]];
+        NSLog(@"777");
     }
 
 }
