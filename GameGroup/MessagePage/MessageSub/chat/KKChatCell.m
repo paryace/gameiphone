@@ -162,6 +162,17 @@
         self.statusLabel.hidden = YES; //这种情况不显示状态
         [self.activityView stopAnimating];
     }
+    else if([status isEqualToString:@"9"])//上传文件中
+    {
+        self.failImage.hidden = YES;
+        self.statusLabel.hidden = YES;
+        [self.activityView startAnimating];
+    }
+    if ([status isEqualToString:@"8"]) {//上传文件失败
+        self.failImage.hidden = NO;
+        self.statusLabel.hidden = YES;
+        [self.activityView stopAnimating];
+    }
     else
     {
         self.failImage.hidden = YES;

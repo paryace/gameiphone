@@ -1057,6 +1057,7 @@ static double endRecordTime=0;
         }
         cell.sendMsgDeleGate = self;
         cell.myChatCellDelegate = self;
+        cell.uploaddelegate = self;
         [cell setMessageDictionary:dict];
         cell.progressView.hidden=YES;
         if (indexPath.row==0) {
@@ -1102,6 +1103,7 @@ static double endRecordTime=0;
             [cell.msgImageView addGestureRecognizer:longPress];
             //刷新状态
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
+            [cell uploadImage:indexPath.row];
         }
         else{
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
@@ -1231,19 +1233,28 @@ static double endRecordTime=0;
         }
         ;
         cell.mydelegate = self;
-        cell.tag = indexPath.row+100;
+        cell.uploaddelegate = self;
+        [cell setMessageDictionary:dict];
+        cell.myChatCellDelegate = self;
+        cell.tag = indexPath.row;
         cell.sendType = sender;
         if ([sender isEqualToString:@"you"]) {
            
             cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell setHeadImgByMe:self.myHeadImg];
+            [cell.bgImageView setTag:(indexPath.row+1)];
+            [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+10,size.height+20)];
-           UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
+            UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+
+            
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
-
+        
+            [cell uploadAudio:indexPath.row];
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
@@ -1263,7 +1274,7 @@ static double endRecordTime=0;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
         }
         [cell.bgImageView addTarget:self action:@selector(playAudio:) forControlEvents:UIControlEventTouchUpInside];
-        cell.bgImageView.tag = 100+indexPath.row;
+        cell.bgImageView.tag = indexPath.row;
 
         return cell;
     }
@@ -1580,12 +1591,12 @@ static double endRecordTime=0;
 {
     NSInteger i = sender.tag;
     
-    NSDictionary *dic = [messages objectAtIndex:i-100];
+    NSDictionary *dic = [messages objectAtIndex:i];
     NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     
     NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
     
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i-100) inSection:0];
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
 
     PlayVoiceCell *cell = (PlayVoiceCell*)[self.tView cellForRowAtIndexPath:indexPath];
     cell.cellCount = i;
@@ -1666,13 +1677,6 @@ static double endRecordTime=0;
     }
     if (curAudio.length >0) {
         [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
-        
-        NSInteger imageIndex = [self getMsgRowWithId:uuid];
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        NSString *str =[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid];
-        
-        [cell uploadAudio:str cellIndex:imageIndex];
     } else {
         
     }
@@ -2371,10 +2375,10 @@ static double endRecordTime=0;
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
-        NSInteger imageIndex = [self getMsgRowWithId:uuid];
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        [cell uploadImage:upImagePath cellIndex:(imageIndex)];
+//        NSInteger imageIndex = [self getMsgRowWithId:uuid];
+//        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
+//        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+//        [cell uploadImage:upImagePath cellIndex:(imageIndex)];
     }
     else
     {
@@ -2883,9 +2887,12 @@ static double endRecordTime=0;
         NSInteger cellIndex = tempBtn.tag-1;
         NSMutableDictionary* dict = [messages objectAtIndex:cellIndex];
         KKChatMsgType kkChatMsgType=[self msgType:dict];
-        if (kkChatMsgType==KKChatMsgTypeImage) {
+        if (kkChatMsgType == KKChatMsgTypeImage) {
             [self reSendimageMsg:dict cellIndex:cellIndex];
-        }else{
+        }else if (kkChatMsgType == kkchatMsgAudio){
+            [self reSendAudioMsg:dict cellIndex:cellIndex];
+        }
+        else{
             [self reSendMsg:dict]; //重发普通消息
         }
     }
@@ -2963,7 +2970,7 @@ static double endRecordTime=0;
     }else{
        payloadStr=[MessageService createPayLoadStr:@"" ThumbImage:imageMsg BigImagePath:bigimagePath];
     }
-     NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+     NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"10" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     if (self.isTeam) {
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value")forKey:@"teamPosition"];
     }
@@ -3039,11 +3046,7 @@ static double endRecordTime=0;
         return;
     }
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
-//    NSDictionary* pay = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
-//    NSString* messageid = KISDictionaryHaveKey(pay, @"messageid");
-//    NSString* srtBigImage= KISDictionaryHaveKey(pay, @"title");
     NSString * payloadStr;
-    
     if (self.isTeam) {
         payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
         
@@ -3059,13 +3062,12 @@ static double endRecordTime=0;
     [self refreWX];
     
     [[AudioManager singleton]RewriteTheAddressWithAddress:[NSString stringWithFormat:@"%@.amr",uuid] name2:audioMsg];
-    
     NSLog(@"%@",[[[messages lastObject]objectForKey:@"payload"]JSONValue]);
     
 }
 
 
-
+//10：上传之前 9上传中
 #pragma mark 发送声音消息
 - (void)sendAudioMsgD:(NSString *)audioMsg UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
@@ -3075,14 +3077,12 @@ static double endRecordTime=0;
     }else{
         payloadStr=[MessageService createPayLoadAudioStr:audioMsg];
     }
-    NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"2" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
+    NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"10" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     if (self.isTeam) {
         [messageDict setObject:KISDictionaryHaveKey(selectType, @"value")forKey:@"teamPosition"];
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
-    
     [self addNewMessageToTable:messageDict];
-    [[MessageAckService singleton] addMessage:messageDict];
 }
 -(NSString*)getDomain:(NSString*)domain
 {
@@ -3225,8 +3225,8 @@ static double endRecordTime=0;
     if (payloadStr!=nil&&![payloadStr isEqualToString:@""]) {
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
-    [[MessageAckService singleton] addMessage:messageDict];
     [self refreMessageStatus2:messageDict Status:@"2"];
+    [[MessageAckService singleton] addMessage:messageDict];
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"text" Type:@"chat" Payload:payloadStr];
 }
 #pragma mark ---重新发送声音消息
@@ -3242,23 +3242,25 @@ static double endRecordTime=0;
     NSString* fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSString *from=[fromUserId stringByAppendingString:domain];
     NSString *to=[self.chatWithUser stringByAppendingString:[self getDomain:domain]];
-    
     [messageDict setObject:@"2" forKey:@"status"];
     if (payloadStr!=nil&&![payloadStr isEqualToString:@""]) {
         [messageDict setObject:payloadStr forKey:@"payload"];
     }
-    [[MessageAckService singleton] addMessage:messageDict];
     [self refreMessageStatus2:messageDict Status:@"2"];
+    [[MessageAckService singleton] addMessage:messageDict];
     [self sendMessage:message NowTime:sendtime UUid:uuid From:from To:to MsgType:msgType FileType:@"audio" Type:@"chat" Payload:payloadStr];
 }
 
 #pragma mark 重发图片消息
 - (void)reSendimageMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
 {
+    NSString *messageState = KISDictionaryHaveKey(messageDict, @"status");
     NSDictionary *payloads = [KISDictionaryHaveKey(messageDict, @"payload") JSONValue];
     NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
-    NSString *thumb = KISDictionaryHaveKey(payloads, @"title");
-    if ([self isReUploadImage:thumb]==YES) {//如果已经成功 ，把message再发一遍
+    if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
+        [self refreMessageStatus2:messageDict Status:@"10"];
+        [tView reloadData];
+    }else{//如果已经成功 ，把message再发一遍
         if (imageUrl.length==0)
         {
             return;
@@ -3266,11 +3268,17 @@ static double endRecordTime=0;
         [messageDict setObject:@"2" forKey:@"status"];
         [self reSendMsg:messageDict];
     }
-    else{//如果之前没上传成功,读取本地图片，再次上传
-        [self refreMessageStatus2:messageDict Status:@"2"];
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-         [cell uploadImage:thumb cellIndex:cellIndex];
+}
+#pragma mark 重发语音消息
+- (void)reSendAudioMsg:(NSMutableDictionary*)messageDict cellIndex:(NSInteger)cellIndex
+{
+    NSString *messageState = KISDictionaryHaveKey(messageDict, @"status");
+    if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
+        [self refreMessageStatus2:messageDict Status:@"10"];
+        [tView reloadData];
+    }else{//如果已经成功 ，把message再发一遍
+        [messageDict setObject:@"2" forKey:@"status"];
+        [self reSendAudioMsg:messageDict];
     }
 }
 
@@ -3664,20 +3672,28 @@ static double endRecordTime=0;
     [menu setMenuVisible:YES animated:YES];
 }
 
-//发送消息
+//发送图片消息
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
 {
     [self sendImageMsg:imageId UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];//改图片地址，并发送消息
 }
+
+//发送语音消息
 -(void)sendAudioMsg:(NSString *)audio Index:(NSInteger)index
 {
     [self sendAudioMsg:audio UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];
 }
-
- // 刷新状态
--(void)refreStatus:(NSInteger)cellIndex
-{
-    [self refreMessageStatus:cellIndex Status:@"0"];
+//上传中
+-(void)uploading:(NSInteger)cellIndex{//上传中
+    [self refreMessageStatus:cellIndex Status:@"9"];
+}
+//上传完成
+-(void)uploadFinish:(NSInteger)cellIndex{//完成
+    [self refreMessageStatus:cellIndex Status:@"2"];
+}
+//上传失败
+-(void)uploadFail:(NSInteger)cellIndex{//上传失败
+    [self refreMessageStatus:cellIndex Status:@"8"];
 }
 
 - (void)didReceiveMemoryWarning

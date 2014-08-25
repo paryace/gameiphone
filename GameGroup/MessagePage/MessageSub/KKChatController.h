@@ -35,6 +35,7 @@
 
 #import "KxMenu.h"
 #import "NewTeamApplyListView.h"
+#import "SendFileMessageDelegate.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -62,7 +63,8 @@ LocationViewDelegate,
 
 RecordAudioDelegate,
 SendAudioMsgDeleGate,
-ApplyDetailDelegate>
+ApplyDetailDelegate,
+SendFileMessageDelegate>
 
 {
     NSString * userName;
