@@ -1242,7 +1242,8 @@ static double endRecordTime=0;
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
-            
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
+
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
@@ -1567,13 +1568,14 @@ static double endRecordTime=0;
     [recordAudio startRecord];
     startRecordTime = [NSDate timeIntervalSinceReferenceDate];
     
-    [curAudio release],
+//    [curAudio release],
     curAudio=nil;
     showRecordView.hidden = NO;
 //    [self showMsg:@"开始录音。。。"];
 ;
 }
 
+#pragma mark --播放
 -(void)playAudio:(UIButton *)sender
 {
     NSInteger i = sender.tag;
@@ -1600,7 +1602,13 @@ static double endRecordTime=0;
         NSURL *url  =[NSURL URLWithString:filePath];
         NSData *data = [NSData dataWithContentsOfURL:url];
         [self PlayVoice:data];
-
+      
+        dispatch_queue_t queue = dispatch_queue_create("com.living.game.saveAudio", NULL);
+        dispatch_async(queue, ^{
+//            [DataStoreManager saveCommentsWithDic:dict];
+                [NetManager downloadAudioWithBaseURLStr:filePath audioId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] completion:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+                }];
+        });
     }
     
     
@@ -1638,7 +1646,7 @@ static double endRecordTime=0;
         [self showMessageWindowWithContent:@"录音时间过短,应大于2秒" imageType:0];
         return;
     } else if (endRecordTime>30.00f){
-        [self showMessageWindowWithContent:@"录音时间过短,应小于30秒" imageType:0];
+        [self showMessageWindowWithContent:@"录音时间过长,应小于30秒" imageType:0];
         return;
     }
 //    NSDate *date = [NSDate date];
@@ -1652,9 +1660,9 @@ static double endRecordTime=0;
         
         curAudio = EncodeWAVEToAMR([NSData dataWithContentsOfURL:url],1,16,uuid);
         
-        if (curAudio) {
-            [curAudio retain];
-        }
+//        if (curAudio) {
+//            [curAudio retain];
+//        }
     }
     if (curAudio.length >0) {
         [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
@@ -1664,8 +1672,7 @@ static double endRecordTime=0;
         PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
         NSString *str =[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid];
         
-        [cell uploadAudio:str cellIndex:(imageIndex)];
-        NSLog(@"-----------%@----%d",str,imageIndex);
+        [cell uploadAudio:str cellIndex:imageIndex];
     } else {
         
     }
