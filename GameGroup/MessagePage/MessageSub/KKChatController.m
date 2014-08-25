@@ -1504,7 +1504,7 @@ static double endRecordTime=0;
 #pragma mark --创建声音buton
 -(UIButton *)audioBtn
 {
-    _audioBtn = [[UIButton alloc]initWithFrame:CGRectMake(5, 5, 40, 40)];
+    _audioBtn = [[UIButton alloc]initWithFrame:CGRectMake(5, 5, 27.5, 29.5)];
     _audioBtn.backgroundColor = [UIColor clearColor];
     _audioBtn.titleLabel.numberOfLines = 0;
     [_audioBtn setImage:KUIImage(@"audioBtn") forState:UIControlStateNormal];
@@ -1557,10 +1557,12 @@ static double endRecordTime=0;
         sender.selected = YES;
         [self.textView resignFirstResponder];
 //        [_audioBtn setTitle:@"键盘" forState:UIControlStateSelected];
+         _audioBtn.frame =  CGRectMake(5, 5, 40, 40);
         _startRecordBtn.hidden = NO;
     }else{
         sender.selected = NO;
 //        [_audioBtn setTitle:@"录音" forState:UIControlStateNormal];
+       _audioBtn.frame =  CGRectMake(5, 5, 27.5, 29.5);
         _startRecordBtn.hidden = YES;
         [self.textView becomeFirstResponder];
     }
