@@ -3834,14 +3834,15 @@ PlayingDelegate>
     
 //    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
     
-    NSString *uuid = [self getuuidWithNS:filePath];
-    [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ((long long)interval<2) {
+                [self showMessageWindowWithContent:@"录音时间太短" imageType:4];
+                return;
+            }
+            NSString *uuid = [self getuuidWithNS:filePath];
+            [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
+        });
     
-    NSInteger imageIndex = [self getMsgRowWithId:uuid];
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-    [cell uploadAudio:imageIndex];
-
 }
 
 -(NSString *)getuuidWithNS:(NSString *)str
@@ -3852,7 +3853,6 @@ PlayingDelegate>
 
 }
 - (void)recordingTimeout {
-//    self.consoleLabel.text = @"录音超时";
     [self showMessageWindowWithContent:@"录音超时,最长30秒" imageType:4];
     
     

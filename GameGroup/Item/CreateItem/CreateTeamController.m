@@ -192,7 +192,7 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
 {
     [UIView animateWithDuration:0.3 animations:^{
-        mainScroll.contentOffset = CGPointMake(0, 150);
+        mainScroll.contentOffset = CGPointMake(0, 210);
     }];
     return YES;
 }
