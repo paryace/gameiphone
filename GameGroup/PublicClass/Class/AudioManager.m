@@ -39,7 +39,7 @@ static AudioManager *m_audioManager = NULL;
 #pragma mark----重写地址
 -(void)RewriteTheAddressWithAddress:(NSString *)name1 name2:(NSString *)name2
 {
-    [[NSFileManager defaultManager] moveItemAtPath:[NSString stringWithFormat:@"%@/%@",RootDocPath,name1] toPath:[NSString stringWithFormat:@"%@/%@",RootDocPath,[self changeStringWithString:name2]] error:nil];
+    [[NSFileManager defaultManager] moveItemAtPath:[NSString stringWithFormat:@"%@/vocie/%@",RootDocPath,name1] toPath:[NSString stringWithFormat:@"%@/%@",RootDocPath,[self changeStringWithString:name2]] error:nil];
 }
 
 

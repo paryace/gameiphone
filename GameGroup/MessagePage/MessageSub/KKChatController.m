@@ -44,6 +44,11 @@
 #import "ShowRecordView.h"
 #import "amrFileCodec.h"
 
+
+#import "RecorderManager.h"
+#import "PlayerManager.h"
+
+
 #ifdef NotUseSimulator
 #endif
 
@@ -79,7 +84,9 @@ typedef enum : NSUInteger {
 
 @interface KKChatController ()<UIAlertViewDelegate,
 UIImagePickerControllerDelegate,
-UINavigationControllerDelegate>
+UINavigationControllerDelegate,
+RecordingDelegate,
+PlayingDelegate>
 {
     NSMutableArray *messages;   //信息
     UIMenuItem *copyItem;
@@ -127,11 +134,11 @@ UINavigationControllerDelegate>
 @property (nonatomic,strong) UIButton * topItemView;
 @property (nonatomic,strong) UIImageView * leftImage;
 @property (nonatomic,strong) UIImageView * rightImage;
+@property (nonatomic, assign) BOOL isPlaying;
+@property (nonatomic, copy) NSString * filename;// 声音路径
 @end
 
 @implementation KKChatController
-static double startRecordTime=0;
-static double endRecordTime=0;
 
 @synthesize tView;
 @synthesize chatWithUser;
@@ -269,6 +276,10 @@ static double endRecordTime=0;
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
     
+    
+    [self addObserver:self forKeyPath:@"isRecording" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self forKeyPath:@"isPlaying" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
+
     
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
@@ -1564,20 +1575,75 @@ static double endRecordTime=0;
 
 -(void)startRecording:(UIButton *)sender
 {
-    [recordAudio stopPlay];
-    [recordAudio startRecord];
-    startRecordTime = [NSDate timeIntervalSinceReferenceDate];
-    
-//    [curAudio release],
-    curAudio=nil;
-    showRecordView.hidden = NO;
+//    [recordAudio stopPlay];
+//    [recordAudio startRecord];
+//    startRecordTime = [NSDate timeIntervalSinceReferenceDate];
+//    
+////    [curAudio release],
+//    curAudio=nil;
+//    showRecordView.hidden = NO;
 //    [self showMsg:@"开始录音。。。"];
-;
+    [RecorderManager sharedManager].delegate = self;
+    [[RecorderManager sharedManager] startRecording];
+
+}
+
+
+-(void)stopRecording:(UIButton *)sender
+{
+
+    [[RecorderManager sharedManager] stopRecording];
+    
+    /*
+     endRecordTime = [NSDate timeIntervalSinceReferenceDate];
+     showRecordView . hidden = YES;
+     NSURL *url = [recordAudio stopRecord];
+     
+     endRecordTime -= startRecordTime;
+     if (endRecordTime<1.00f) {
+     NSLog(@"录音时间过短");
+     //        [self showMsg:@"录音时间过短,应大于2秒"];
+     [self showMessageWindowWithContent:@"录音时间过短,应大于2秒" imageType:0];
+     return;
+     } else if (endRecordTime>30.00f){
+     [self showMessageWindowWithContent:@"录音时间过长,应小于30秒" imageType:0];
+     return;
+     }
+     //    NSDate *date = [NSDate date];
+     //    NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
+     //    [dateformatter setDateFormat:@"YYYYMMdd"];
+     //    NSString * locationString=[dateformatter stringFromDate:date];
+     NSString* uuid = [[GameCommon shareGameCommon] uuid];
+     
+     
+     if (url != nil) {
+     
+     curAudio = EncodeWAVEToAMR([NSData dataWithContentsOfURL:url],1,16,uuid);
+     
+     //        if (curAudio) {
+     //            [curAudio retain];
+     //        }
+     }
+     if (curAudio.length >0) {
+     [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
+     
+     NSInteger imageIndex = [self getMsgRowWithId:uuid];
+     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
+     PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+     NSString *str =[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid];
+     
+     [cell uploadAudio:str cellIndex:imageIndex];
+     } else {
+     
+     }
+     */
+     
 }
 
 #pragma mark --播放
 -(void)playAudio:(UIButton *)sender
 {
+    /*
     NSInteger i = sender.tag;
     
     NSDictionary *dic = [messages objectAtIndex:i-100];
@@ -1613,6 +1679,31 @@ static double endRecordTime=0;
     
     
     NSLog(@"%@",dict);
+     */
+    
+    if ( ! self.isPlaying) {
+        [PlayerManager sharedManager].delegate = nil;
+        
+//        self.isPlaying = YES;
+        NSInteger i = sender.tag;
+        
+        NSDictionary *dic = [messages objectAtIndex:i-100];
+        NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
+        
+        NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
+
+        NSData *data =[NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
+    
+        NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]];
+        [data writeToFile:ps atomically:YES];
+        
+        [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
+    }
+    else {
+//        self.isPlaying = NO;
+        [[PlayerManager sharedManager] stopPlaying];
+    }
+
 }
 
 - (BOOL) isFileExist:(NSString *)fileName
@@ -1633,51 +1724,6 @@ static double endRecordTime=0;
     saveAudioSuccess =YES;
 }
 
--(void)stopRecording:(UIButton *)sender
-{
-    endRecordTime = [NSDate timeIntervalSinceReferenceDate];
-    showRecordView . hidden = YES;
-    NSURL *url = [recordAudio stopRecord];
-    
-    endRecordTime -= startRecordTime;
-    if (endRecordTime<1.00f) {
-        NSLog(@"录音时间过短");
-//        [self showMsg:@"录音时间过短,应大于2秒"];
-        [self showMessageWindowWithContent:@"录音时间过短,应大于2秒" imageType:0];
-        return;
-    } else if (endRecordTime>30.00f){
-        [self showMessageWindowWithContent:@"录音时间过长,应小于30秒" imageType:0];
-        return;
-    }
-//    NSDate *date = [NSDate date];
-//    NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-//    [dateformatter setDateFormat:@"YYYYMMdd"];
-//    NSString * locationString=[dateformatter stringFromDate:date];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-
-    
-    if (url != nil) {
-        
-        curAudio = EncodeWAVEToAMR([NSData dataWithContentsOfURL:url],1,16,uuid);
-        
-//        if (curAudio) {
-//            [curAudio retain];
-//        }
-    }
-    if (curAudio.length >0) {
-        [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
-        
-        NSInteger imageIndex = [self getMsgRowWithId:uuid];
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        NSString *str =[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid];
-        
-        [cell uploadAudio:str cellIndex:imageIndex];
-    } else {
-        
-    }
-
-}
 
 //-(void)playAudioWithCell:(PlayVoiceCell*)cell
 //{
@@ -3713,5 +3759,61 @@ static double endRecordTime=0;
         }
     }
 }
+
+#pragma mark----各种声音的
+#pragma mark - Recording & Playing Delegate
+
+- (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
+//    self.levelMeter.progress = 0;
+//    self.filename = filePath;
+//    [self.consoleLabel performSelectorOnMainThread:@selector(setText:)
+//                                        withObject:[NSString stringWithFormat:@"录音完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]]
+//                                     waitUntilDone:NO];
+    
+//    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
+    
+    NSString *uuid = [self getuuidWithNS:filePath];
+    [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
+    
+    NSInteger imageIndex = [self getMsgRowWithId:uuid];
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    [cell uploadAudio:filePath cellIndex:imageIndex];
+
+}
+
+-(NSString *)getuuidWithNS:(NSString *)str
+{
+    NSArray* arr = [str componentsSeparatedByString:@"/"];
+    NSArray *ar = [[arr lastObject]componentsSeparatedByString:@"."];
+    return ar[0];
+
+}
+- (void)recordingTimeout {
+//    self.consoleLabel.text = @"录音超时";
+    [self showMessageWindowWithContent:@"录音超时,最长30秒" imageType:4];
+    
+    
+}
+
+- (void)recordingStopped {
+}
+
+- (void)recordingFailed:(NSString *)failureInfoString {
+//    self.consoleLabel.text = @"录音失败";
+    [self showMessageWindowWithContent:@"录音失败" imageType:4];
+}
+
+- (void)levelMeterChanged:(float)levelMeter {
+//    self.levelMeter.progress = levelMeter;
+}
+
+- (void)playingStoped {
+//    self.isPlaying = NO;
+//    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
+}
+
+
+
 
 @end
