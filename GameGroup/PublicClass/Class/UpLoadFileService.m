@@ -70,7 +70,7 @@ static UpLoadFileService *upload = NULL;
     [dateformatter setDateFormat:@"YYYYMMdd"];
     NSString * locationString=[dateformatter stringFromDate:date];
 
-    [sUploader uploadFile:filePath key:[NSString stringWithFormat:@"audio/%@/%@.amr",locationString,[[GameCommon shareGameCommon] uuid]] extra:nil];
+    [sUploader uploadFile:filePath key:[NSString stringWithFormat:@"audio/%@/%@.spx",locationString,[[GameCommon shareGameCommon] uuid]] extra:nil];
 
 }
 

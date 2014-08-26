@@ -1555,6 +1555,7 @@ PlayingDelegate>
 {
     NSDictionary *dic = info.userInfo;
     double cus = [[dic objectForKey:@"low"] doubleValue];
+    showRecordView.hidden  = NO;
     [showRecordView changeBDimgWithimg:cus];
 }
 
@@ -1697,7 +1698,7 @@ PlayingDelegate>
 //        self.isPlaying = YES;
         NSInteger i = sender.tag-1;
         
-        NSDictionary *dic = [messages objectAtIndex:i-100];
+        NSDictionary *dic = [messages objectAtIndex:i];
         NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
         
         NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
@@ -3839,7 +3840,7 @@ PlayingDelegate>
     NSInteger imageIndex = [self getMsgRowWithId:uuid];
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
     PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-    [cell uploadAudio:filePath cellIndex:imageIndex];
+    [cell uploadAudio:imageIndex];
 
 }
 
@@ -3858,6 +3859,8 @@ PlayingDelegate>
 }
 
 - (void)recordingStopped {
+    
+    showRecordView.hidden=YES;
 }
 
 - (void)recordingFailed:(NSString *)failureInfoString {
@@ -3867,6 +3870,10 @@ PlayingDelegate>
 
 - (void)levelMeterChanged:(float)levelMeter {
 //    self.levelMeter.progress = levelMeter;
+    NSLog(@"------%f",levelMeter);
+    showRecordView.hidden  = NO;
+
+    [showRecordView changeBDimgWithimg:levelMeter];
 }
 
 - (void)playingStoped {
