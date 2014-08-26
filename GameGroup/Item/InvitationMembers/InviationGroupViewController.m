@@ -41,16 +41,10 @@
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
-    
     [self.view addSubview:hud];
-    // Do any additional setup after loading the view.
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
     [self getGroupListFromNet];
 }
+
 -(void)getGroupListFromNet
 {
     [hud show:YES];

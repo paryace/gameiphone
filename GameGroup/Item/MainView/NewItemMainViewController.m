@@ -196,7 +196,7 @@
         return;
     }
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    NewCreateItemViewController *cretItm =[[NewCreateItemViewController alloc]init];
+    CreateTeamController *cretItm =[[CreateTeamController alloc]init];
     cretItm.selectRoleDict = firstView. selectCharacter;
     cretItm.selectTypeDict = firstView.selectType;
     
@@ -310,56 +310,10 @@
 }
 
 
-
-//-(void)changeView:(UISegmentedControl*)segment
-//{
-//    switch (segment.selectedSegmentIndex) {
-//        case 0:
-//            [UIView beginAnimations:@"animation" context:nil];
-//            [UIView setAnimationDuration:1.0f];
-//            [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
-//            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-//            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:customView cache:YES];
-//            [customView exchangeSubviewAtIndex:1 withSubviewAtIndex:0];
-//            [UIView commitAnimations];
-//            
-//            //            [customView bringSubviewToFront:firstView];
-//            break;
-//        case 1:
-//            [UIView beginAnimations:@"animation1" context:nil];
-//            [UIView setAnimationDuration:1.0f];
-//            [sortingBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
-//            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-//            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:customView cache:YES];
-//            [UIView commitAnimations];
-//            [customView exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
-//            [customView bringSubviewToFront:room];
-//
-//            break;
-//            
-//        default:
-//            break;
-//    }
-//    //  交换本视图控制器中2个view位置
-//    
-//}
-
-
 -(void)didClickMyRoomWithView:(MyRoomView*)view dic:(NSDictionary *)dic
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    
-//    ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-//        itemInfo.isCaptain = YES;
-//    }else{
-//        itemInfo.isCaptain =NO;
-//    }
-//    itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
-//    itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
-//    [self.navigationController pushViewController:itemInfo animated:YES];
-   
+
     KKChatController *kkchat = [[KKChatController alloc]init];
     kkchat.unreadMsgCount  = 0;
     kkchat.chatWithUser =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"groupId")];
@@ -372,12 +326,6 @@
 
 -(void)didClickRoomInfoWithView:(MyRoomView*)view dic:(NSDictionary *)dic{
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-//    NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-//    if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-//        itemInfo.isCaptain = YES;
-//    }else{
-//        itemInfo.isCaptain =NO;
-//    }
     itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
     [self.navigationController pushViewController:itemInfo animated:YES];
@@ -386,9 +334,7 @@
 
 -(void)didClickCreateTeamWithView:(MyRoomView *)view
 {
-    NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-    //    cretItm.selectRoleDict = selectCharacter;
-    //    cretItm.selectTypeDict = selectType;
+    CreateTeamController *cretItm = [[CreateTeamController alloc]init];
     [self.navigationController pushViewController:cretItm animated:YES];
 }
 

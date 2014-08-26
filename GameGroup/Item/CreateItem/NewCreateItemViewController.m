@@ -71,7 +71,7 @@
     [self.view addSubview:createBtn];
     
     m_maxZiShu = 30;
-    m_tagsArray = [NSMutableArray array];
+    
     m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     /*
      去除角色列表中的404 和notSupport 的角色
@@ -89,6 +89,7 @@
 //    [m_RoleArray  addObjectsFromArray:arr];
 
     m_flArray  = [NSMutableArray array];
+    m_tagsArray = [NSMutableArray array];
     m_countArray  = [NSMutableArray array];
     [self buildPickView];
     

@@ -10,6 +10,7 @@
 #import "MyRoomView.h"
 #import "FirstView.h"
 #import "PreferenceViewController.h"
+#import "CreateTeamController.h"
 
 @interface NewItemMainViewController : BaseViewController<MyroomDelegate,firstViewDelegate,PreferenceDelegate>
 

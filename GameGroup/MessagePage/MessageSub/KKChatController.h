@@ -36,6 +36,7 @@
 #import "KxMenu.h"
 #import "NewTeamApplyListView.h"
 #import "SendFileMessageDelegate.h"
+#import "TeamInvitationController.h"
 
 @class AppDelegate, XMPPHelper;
 

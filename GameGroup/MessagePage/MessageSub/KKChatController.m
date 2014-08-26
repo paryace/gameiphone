@@ -768,7 +768,7 @@ static double endRecordTime=0;
 }
 //邀请好友页面
 -(void)invitationAtion{
-    InvitationMembersViewController *invc = [[InvitationMembersViewController alloc]init];
+    TeamInvitationController *invc = [[TeamInvitationController alloc]init];
     invc.gameId = [GameCommon getNewStringWithId:self.gameId];
     invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
     invc.roomId = [GameCommon getNewStringWithId:self.roomId];
