@@ -86,7 +86,7 @@
     [mainScroll addSubview:m_miaoshuTV];
     
     placeholderL = [[UILabel alloc]init];
-    placeholderL.frame = CGRectMake(12,270, 200, 20);
+    placeholderL.frame = CGRectMake(15,275, 200, 20);
     placeholderL.text = @"请输入或点击下列组队描述";
     placeholderL.enabled = NO;//lable必须设置为不可用
     placeholderL.font = [UIFont systemFontOfSize:14];
