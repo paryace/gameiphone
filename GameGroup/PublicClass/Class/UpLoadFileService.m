@@ -26,16 +26,6 @@ static UpLoadFileService *upload = NULL;
 
 
 
-- (void)resumableUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
-    NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
-    NSString * time=[[NSUserDefaults standardUserDefaults] objectForKey:TokenEfficaciousTime];
-    long long expireSeconds = [time longLongValue];
-    if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
-        [self resumableUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
-    }else{//token处于无效状态
-        [self getUploadImageToken:filePath UpDeleGate:updeleGate];
-    }
-}
 #pragma mark ---上传图片
 - (void)simpleUpload:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate{
     NSString * upToken=[[NSUserDefaults standardUserDefaults] objectForKey:UploadImageToken];
@@ -43,10 +33,8 @@ static UpLoadFileService *upload = NULL;
     long long expireSeconds = [time longLongValue];
     if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
         [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
-//        [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
     }else{//token处于无效状态
-//        [self getUploadAudioToken:filePath UpDeleGate:updeleGate];
-        [self getUploadImageToken:filePath UpDeleGate:updeleGate];
+        [self getUploadImageToken:filePath UpDeleGate:updeleGate Type:0];
     }
 }
 
@@ -59,19 +47,11 @@ static UpLoadFileService *upload = NULL;
     if (upToken && expireSeconds && (expireSeconds>[self getCurrentTime])) {//token处于有效的状态
         [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
     }else{//token处于无效状态
-        [self getUploadAudioToken:filePath UpDeleGate:updeleGate];
+        [self getUploadImageToken:filePath UpDeleGate:updeleGate Type:1];
     }
 
 }
 
-
-
--(void)resumableUpload:(NSString *)token FilePath:(NSString *)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
-{
-    QiniuResumableUploader *rUploader = [[QiniuResumableUploader alloc] initWithToken:token];
-    rUploader.delegate=updeleGate;
-    [rUploader uploadFile:filePath key:[[GameCommon shareGameCommon] uuid] extra:nil];
-}
 
 -(void)simpleUpload:(NSString *)token FilePath:(NSString *)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
 {
@@ -93,36 +73,8 @@ static UpLoadFileService *upload = NULL;
     [sUploader uploadFile:filePath key:[NSString stringWithFormat:@"audio/%@/%@.amr",locationString,[[GameCommon shareGameCommon] uuid]] extra:nil];
 
 }
--(void)getUploadAudioToken:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
-{
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"222" forKey:@"method"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict
-                          success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSLog(@"deviceToken successed:%@",responseObject);
-         NSString * expireSeconds=KISDictionaryHaveKey(responseObject, @"expireSeconds");
-         long long alltime =([expireSeconds longLongValue]*1000)+[self getCurrentTime];
-         NSString *alltimeString=[NSString stringWithFormat:@"%lld",alltime];
-         
-         NSString * upToken=KISDictionaryHaveKey(responseObject, @"uploadToken");
-//         [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
-         [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
-         
-         [[NSUserDefaults standardUserDefaults] setValue:upToken forKey:UploadImageToken];
-         [[NSUserDefaults standardUserDefaults] synchronize];
-         
-         [[NSUserDefaults standardUserDefaults] setValue:alltimeString forKey:TokenEfficaciousTime];
-         [[NSUserDefaults standardUserDefaults] synchronize];
-     }
-                          failure:^(AFHTTPRequestOperation *operation, id error)
-     {
-         NSLog(@"deviceToken fail");
-     }];
-}
 
--(void)getUploadImageToken:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate
+-(void)getUploadImageToken:(NSString*)filePath UpDeleGate:(id<QiniuUploadDelegate>) updeleGate Type:(NSInteger)type
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
@@ -134,11 +86,12 @@ static UpLoadFileService *upload = NULL;
         NSString * expireSeconds=KISDictionaryHaveKey(responseObject, @"expireSeconds");
         long long alltime =([expireSeconds longLongValue]*1000)+[self getCurrentTime];
         NSString *alltimeString=[NSString stringWithFormat:@"%lld",alltime];
-        
         NSString * upToken=KISDictionaryHaveKey(responseObject, @"uploadToken");
-        [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
-        
-        
+        if (type == 0) {
+            [self simpleUpload:upToken FilePath:filePath UpDeleGate:updeleGate];
+        }else if(type == 1){
+            [self simpleUpload:upToken AudioFilePath:filePath UpDeleGate:updeleGate];
+        }
         [[NSUserDefaults standardUserDefaults] setValue:upToken forKey:UploadImageToken];
         [[NSUserDefaults standardUserDefaults] synchronize];
         

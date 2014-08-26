@@ -18,12 +18,12 @@
 @property (nonatomic, strong) UIProgressView *progressView;
 
 @property(nonatomic,assign)id<SendMsgDeleGate>sendMsgDeleGate;
--(void)uploadImage:(NSString*)imagePath cellIndex:(int)index;
+@property (nonatomic,assign)id<SendFileMessageDelegate>uploaddelegate;
+-(void)uploadImage:(int)index;
 @end
 @protocol SendMsgDeleGate <NSObject>
 
 -(void)sendMsg:(NSString *)imageId Index:(NSInteger)index;
--(void)refreStatus:(NSInteger)cellIndex;
 
 @end
 

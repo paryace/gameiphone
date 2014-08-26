@@ -93,23 +93,33 @@
 }
 
 
--(void)uploadAudio:(NSString*)audioPath cellIndex:(NSInteger)index
+-(void)uploadAudio:(NSInteger)index
 {
-    cellIndex=index;
-    UpLoadFileService * up = [[UpLoadFileService alloc] init];
-//    [up simpleUploadAudio:audioPath UpDeleGate:self];
-    [up simpleUploadAudio:audioPath upDeleGate:self];
+    NSString *str =[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,KISDictionaryHaveKey(self.message, @"messageuuid")];
+    NSString * state = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(self.message, @"status")];
+    if ([state isEqualToString:@"10"]) {//假如还没有执行上传操作
+        if (self.uploaddelegate) {
+            [self.uploaddelegate uploading:index];
+        }
+        cellIndex=index;
+        UpLoadFileService * up = [[UpLoadFileService alloc] init];
+        [up simpleUploadAudio:str upDeleGate:self];
+    }
 }
 
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
+    NSLog(@"--uploadpercent--%f",percent);
 }
 //上传成功代理回调
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
     NSLog(@"上传成功");
-    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
+    NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];
+    if (self.uploaddelegate) {
+        [self.uploaddelegate uploadFinish:cellIndex];//上传完成
+    }
     if (self.mydelegate) {
         [self.mydelegate sendAudioMsg:response Index:cellIndex];
     }
@@ -120,8 +130,8 @@
     NSLog(@"上传失败");
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送语音失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
     [alert show];
-    if (self.mydelegate) {
-        [self.mydelegate refreStatus:cellIndex];
+    if (self.uploaddelegate) {
+        [self.uploaddelegate uploadFail:cellIndex];//上传失败
     }
 }
 

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageButton.h"
 #import "EGOImageView.h"
+#import "SendFileMessageDelegate.h"
 
 #define padding 20 //边距常数
 #define mSendTime 20.0 //最长重试时间
