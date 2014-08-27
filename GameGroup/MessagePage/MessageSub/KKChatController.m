@@ -117,6 +117,7 @@ PlayingDelegate>
     BOOL saveAudioSuccess;
     NSMutableArray *gifArray1;
     NSMutableArray *gifArray2;
+    BOOL isPlaying;
 }
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
@@ -134,7 +135,7 @@ PlayingDelegate>
 @property (nonatomic,strong) UIButton * topItemView;
 @property (nonatomic,strong) UIImageView * leftImage;
 @property (nonatomic,strong) UIImageView * rightImage;
-@property (nonatomic, assign) BOOL isPlaying;
+//@property (nonatomic, assign) BOOL isPlaying;
 @property (nonatomic, copy) NSString * filename;// 声音路径
 @property (nonatomic,assign)NSInteger clickCellNum;
 @end
@@ -289,6 +290,7 @@ PlayingDelegate>
     historyMsg = 0;
     endOfTable = YES;
     oTherPage= NO;
+    isPlaying = NO;
     if([self.type isEqualToString:@"normal"]){
         offHight = 0;
     }else if([self.type isEqualToString:@"group"])
@@ -321,7 +323,6 @@ PlayingDelegate>
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
-    ifAudio = NO;
     ifEmoji = NO;
     [self.view addSubview:self.inPutView];  //输入框
     [self setTopViewWithTitle:@"" withBackButton:YES];
@@ -1269,6 +1270,7 @@ PlayingDelegate>
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+10,size.height+20)];
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-55, padding*2-2, 20, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60-15,(size.height+20)/2 + padding*2-15)status:status];
@@ -1291,6 +1293,8 @@ PlayingDelegate>
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+10,size.height+20)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            cell.statusLabel.hidden = YES;
+
         }
         [cell.bgImageView addTarget:self action:@selector(playAudio:) forControlEvents:UIControlEventTouchUpInside];
         cell.bgImageView.tag = indexPath.row+1;
@@ -1443,7 +1447,7 @@ PlayingDelegate>
 
     }
 }
-//Cell长按
+#pragma mark  Cell长按
 -(void)onCellBgLongClick:(UITapGestureRecognizer*)sender
 {
     UIButton* bgBtn = (UIButton*)sender.view;
@@ -1457,8 +1461,13 @@ PlayingDelegate>
     tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
     CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
     
-    [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
-    [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
+    NSDictionary *dic = [[[messages objectAtIndex:indexPathTo.row]objectForKey:@"payload"]JSONValue];
+    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+        [menu setMenuItems:[NSArray arrayWithObjects:delItem,nil]];
+    }else{
+        [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
+    }
+        [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
 #pragma mark - Views
@@ -1579,7 +1588,33 @@ PlayingDelegate>
 {
     if (!sender.selected) {
         sender.selected = YES;
-        [self.textView resignFirstResponder];
+            [self.textView resignFirstResponder];
+            if (self.kkchatInputType != KKChatInputTypeNone) {
+                [self autoMovekeyBoard:0];
+                self.kkchatInputType = KKChatInputTypeNone;
+                [UIView animateWithDuration:0.2 animations:^{
+                    self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
+                    self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
+                    m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
+                    emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
+                    m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
+                } completion:^(BOOL finished) {
+                    self.theEmojiView.hidden = YES;
+                    self.kkChatAddView.hidden = YES;
+                    [m_EmojiScrollView removeFromSuperview];
+                    [emojiBGV removeFromSuperview];
+                    [m_Emojipc removeFromSuperview];
+                }];
+                [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+                [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+            }
+
+//            [clearView removeFromSuperview];
+//            if ([popLittleView superview]) {
+//                [popLittleView removeFromSuperview];
+//            }
+            canAdd = NO;
+        ifEmoji = YES;
 //        [_audioBtn setTitle:@"键盘" forState:UIControlStateSelected];
          _audioBtn.frame =  CGRectMake(5, 5, 40, 40);
         _startRecordBtn.hidden = NO;
@@ -1603,6 +1638,11 @@ PlayingDelegate>
 //    curAudio=nil;
 //    showRecordView.hidden = NO;
 //    [self showMsg:@"开始录音。。。"];
+    _audioBtn.userInteractionEnabled = NO;
+    self.kkChatAddButton. userInteractionEnabled = NO;
+    self.emojiBtn.userInteractionEnabled = NO;
+
+    [[PlayerManager sharedManager]stopPlaying];
     [RecorderManager sharedManager].delegate = self;
     [[RecorderManager sharedManager] startRecording];
 
@@ -1611,6 +1651,9 @@ PlayingDelegate>
 
 -(void)stopRecording:(UIButton *)sender
 {
+    _audioBtn.userInteractionEnabled = YES;
+    self.kkChatAddButton. userInteractionEnabled = YES;
+    self.emojiBtn.userInteractionEnabled = YES;
 
     [[RecorderManager sharedManager] stopRecording];
     
@@ -1661,6 +1704,8 @@ PlayingDelegate>
 }
 
 #pragma mark --播放
+#pragma mark ---播放声音
+
 -(void)playAudio:(UIButton *)sender
 {
     /*
@@ -1704,10 +1749,10 @@ PlayingDelegate>
     NSLog(@"%@",dict);
      */
     
-    if ( ! self.isPlaying) {
+    if ( ! isPlaying) {
         [PlayerManager sharedManager].delegate = nil;
         
-//        self.isPlaying = YES;
+        isPlaying = YES;
         NSInteger i = sender.tag-1;
         self.clickCellNum = i;
         
@@ -1729,7 +1774,7 @@ PlayingDelegate>
         [cell startPaly];
     }
     else {
-//        self.isPlaying = NO;
+        isPlaying = NO;
         [[PlayerManager sharedManager] stopPlaying];
     } 
 }
@@ -1741,16 +1786,15 @@ PlayingDelegate>
     BOOL result = [fileManager fileExistsAtPath:filePath];
     return result;
 }
-#pragma mark ---播放声音
 
-- (void)PlayVoice:(NSData *)data {
-    
-    if(data.length>0)[recordAudio play:data];
-}
--(void)saveAudioSuccessed:(id)sender
-{
-    saveAudioSuccess =YES;
-}
+//- (void)PlayVoice:(NSData *)data {
+//    
+//    if(data.length>0)[recordAudio play:data];
+//}
+//-(void)saveAudioSuccessed:(id)sender
+//{
+//    saveAudioSuccess =YES;
+//}
 
 //-(void)stopRecording:(UIButton *)sender
 //{
@@ -2555,7 +2599,6 @@ PlayingDelegate>
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
         self.kkchatInputType = KKChatInputTypeEmoji;
-        ifAudio = NO;
         _audioBtn.selected = NO;
         _startRecordBtn.hidden = YES;
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
@@ -3481,6 +3524,11 @@ PlayingDelegate>
     //删除聊天消息
     NSString* uuid = KISDictionaryHaveKey(messages[readyIndex], @"messageuuid");
     NSString* userId = KISDictionaryHaveKey(messages[readyIndex], @"sender");
+    NSDictionary *dic =[KISDictionaryHaveKey(messages[readyIndex], @"payload")JSONValue];
+    
+    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+        [[PlayerManager sharedManager]stopPlaying];
+    }
     
     if([self .type isEqualToString:@"normal"]){
         [DataStoreManager deleteMsgInCommentWithUUid:uuid];
@@ -3852,10 +3900,31 @@ PlayingDelegate>
 //                                     waitUntilDone:NO];
     
 //    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
+    
+    
+    
     NSLog(@"interval---%.0f",interval);
         dispatch_async(dispatch_get_main_queue(), ^{
             if ((long long)interval<2) {
+                /*
+                 上传失败 删除本地已创建文件
+                 */
+
+                NSFileManager *fileMgr = [NSFileManager defaultManager];
+                NSError *err;
+                [fileMgr createDirectoryAtPath:filePath withIntermediateDirectories:YES attributes:nil error:&err];
+                BOOL bRet = [fileMgr fileExistsAtPath:filePath];
+                if (bRet) {
+                    //
+                    NSError *err;
+                    [fileMgr removeItemAtPath:filePath error:&err];
+                }
+
                 [self showMessageWindowWithContent:@"录音时间太短" imageType:4];
+//               self performSelector:withObject:afterDelay
+                _startRecordBtn.userInteractionEnabled = NO;
+                self.textView.hidden = YES;
+                [self performSelector:@selector(duduud) withObject:self afterDelay:2];
                 return;
             }
             NSString *uuid = [self getuuidWithNS:filePath];
@@ -3864,7 +3933,11 @@ PlayingDelegate>
         });
     
 }
-
+-(void)duduud
+{
+    _startRecordBtn.userInteractionEnabled = YES;
+    self.textView.hidden = NO;
+}
 -(NSString *)getuuidWithNS:(NSString *)str
 {
     NSArray* arr = [str componentsSeparatedByString:@"/"];
@@ -3873,7 +3946,8 @@ PlayingDelegate>
 
 }
 - (void)recordingTimeout {
-    [self showMessageWindowWithContent:@"录音超时,最长30秒" imageType:4];
+    [[RecorderManager sharedManager]stopRecording];
+    [self showMessageWindowWithContent:@"录音超时,最长60秒" imageType:4];
     
     
 }
@@ -3913,7 +3987,7 @@ PlayingDelegate>
 -(void)viewDidDisappear:(BOOL)animated
 {
     [[PlayerManager sharedManager] stopPlaying];
-    
+    [[RecorderManager sharedManager]stopRecording];
 }
 
 @end

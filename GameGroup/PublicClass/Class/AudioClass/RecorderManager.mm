@@ -54,10 +54,10 @@ AudioQueueLevelMeterState *levelMeterStates;
 }
 
 - (void)startRecording {
+    
+    
     if ( ! mAQRecorder) {
-        
         mAQRecorder = new AQRecorder();
-        
         OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, (__bridge void *)self);
         if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", (int)error);
         else
