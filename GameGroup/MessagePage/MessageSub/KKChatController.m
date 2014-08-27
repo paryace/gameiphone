@@ -3910,6 +3910,10 @@ PlayingDelegate>
 }
 
 
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [[PlayerManager sharedManager] stopPlaying];
+    
+}
 
 @end
