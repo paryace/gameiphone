@@ -136,6 +136,7 @@ PlayingDelegate>
 @property (nonatomic,strong) UIImageView * rightImage;
 @property (nonatomic, assign) BOOL isPlaying;
 @property (nonatomic, copy) NSString * filename;// 声音路径
+@property (nonatomic,assign)NSInteger clickCellNum;
 @end
 
 @implementation KKChatController
@@ -1236,19 +1237,28 @@ PlayingDelegate>
             [cell.messageContentView setFrame:CGRectMake(padding+7+45+14+10-5,padding*2-4+offHight-5,size.width,size.height)];
         }
         return cell;
-    }else if (kkChatMsgType ==kkchatMsgAudio){
+    }
+    /* 
+     声音 CELL
+    */
+    else if (kkChatMsgType ==kkchatMsgAudio)
+    {
+        NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
+        NSDictionary *payload = [payloadStr JSONValue];
+
         static NSString *identifier = @"kkchatMegAudio";
         PlayVoiceCell * cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
             cell = [[PlayVoiceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
-        ;
+        
         cell.mydelegate = self;
         cell.uploaddelegate = self;
         [cell setMessageDictionary:dict];
         cell.myChatCellDelegate = self;
         cell.tag = indexPath.row;
         cell.sendType = sender;
+        cell.audioTimeSizeLb.text = KISDictionaryHaveKey(payload, @"timeSize");
         if ([sender isEqualToString:@"you"]) {
             cell.senderNickName.hidden=YES;
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
@@ -1260,6 +1270,7 @@ PlayingDelegate>
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding-15, padding*2-2,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-55, padding*2-2, 20, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60-15,(size.height+20)/2 + padding*2-15)status:status];
             [cell uploadAudio:indexPath.row];
         }else{
@@ -1276,6 +1287,7 @@ PlayingDelegate>
             }
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
             cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-2+offHight,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(padding+7+45+25, padding*2-2+offHight, 20, 20);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+10,size.height+20)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -1697,6 +1709,8 @@ PlayingDelegate>
         
 //        self.isPlaying = YES;
         NSInteger i = sender.tag-1;
+        self.clickCellNum = i;
+        
         
         NSDictionary *dic = [messages objectAtIndex:i];
         NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
@@ -1709,12 +1723,16 @@ PlayingDelegate>
         [data writeToFile:ps atomically:YES];
         
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        [cell startPaly];
     }
     else {
 //        self.isPlaying = NO;
         [[PlayerManager sharedManager] stopPlaying];
     }
-
+    
+ 
 }
 
 - (BOOL) isFileExist:(NSString *)fileName
@@ -3137,12 +3155,13 @@ PlayingDelegate>
         return;
     }
     NSMutableDictionary* messageDict = [self getMsgWithId:uuid];
+    NSDictionary *payloadDict = [KISDictionaryHaveKey(messageDict, @"payload")JSONValue];
     NSString * payloadStr;
     if (self.isTeam) {
-        payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        payloadStr  = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize") roomId:self.roomId team:@"teamchat"];
         
     }else{
-        payloadStr = [MessageService createPayLoadAudioStr:audioMsg];
+        payloadStr = [MessageService createPayLoadAudioStr:audioMsg timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize")];
     }
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     if (self.isTeam) {
@@ -3160,13 +3179,14 @@ PlayingDelegate>
 
 //10：上传之前 9上传中
 #pragma mark 发送声音消息
-- (void)sendAudioMsgD:(NSString *)audioMsg UUID:(NSString *)uuid Body:(NSString*)body{
+- (void)sendAudioMsgD:(NSString *)audioMsg time:(float)timestr UUID:(NSString *)uuid Body:(NSString*)body{
     NSString* nowTime = [GameCommon getCurrentTime];
+    NSString * timeLength = [NSString stringWithFormat:@"%.0f",timestr];
     NSString* payloadStr;
     if (self.isTeam) {
-        payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId roomId:self.roomId team:@"teamchat"];
+        payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:timeLength roomId:self.roomId team:@"teamchat"];
     }else{
-        payloadStr=[MessageService createPayLoadAudioStr:audioMsg];
+        payloadStr=[MessageService createPayLoadAudioStr:audioMsg timeSize:timeLength];
     }
     NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"10" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     if (self.isTeam) {
@@ -3833,14 +3853,15 @@ PlayingDelegate>
 //                                     waitUntilDone:NO];
     
 //    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
-    
+    NSLog(@"interval---%.0f",interval);
         dispatch_async(dispatch_get_main_queue(), ^{
             if ((long long)interval<2) {
                 [self showMessageWindowWithContent:@"录音时间太短" imageType:4];
                 return;
             }
             NSString *uuid = [self getuuidWithNS:filePath];
-            [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
+//            [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
+            [self sendAudioMsgD:filePath time:interval UUID:uuid Body:@"[语音]"];
         });
     
 }
@@ -3877,6 +3898,11 @@ PlayingDelegate>
 }
 
 - (void)playingStoped {
+    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
+        if ([cell.voiceImageView isAnimating]) {
+            [cell.voiceImageView stopAnimating];
+        }
+    }
 //    self.isPlaying = NO;
 //    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
 }

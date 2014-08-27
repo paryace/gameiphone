@@ -568,7 +568,7 @@
         AttentionMessageViewController * friq = [[AttentionMessageViewController alloc] init];
         [self.navigationController pushViewController:friq animated:YES];
         [self cleanUnReadCountWithType:3 Content:@"" typeStr:@""];
-        
+
         return;
     }
     if([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"recommendfriend"])//好友推荐  推荐的朋友

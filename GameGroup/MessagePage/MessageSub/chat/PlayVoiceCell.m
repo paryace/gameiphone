@@ -51,6 +51,12 @@
 //        [self.voiceImageView startAnimating];
         [self addSubview:self.voiceImageView];
         
+        self.audioTimeSizeLb = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 20, 20)];
+        self.audioTimeSizeLb.backgroundColor = [UIColor clearColor];
+        self.audioTimeSizeLb.textColor = [UIColor blueColor];
+        self.audioTimeSizeLb.font = [UIFont boldSystemFontOfSize:12];
+        self.audioTimeSizeLb.textAlignment =NSTextAlignmentCenter;
+        [self addSubview:self.audioTimeSizeLb];
 //        [self.voiceImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playAudio:)]];
         
     }
@@ -73,7 +79,7 @@
     }
 }
 
--(void)startPaly:(id)sender
+-(void)startPaly
 {
     if (self.cellCount !=self.tag) {
         return;
