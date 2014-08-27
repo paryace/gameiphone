@@ -9,7 +9,7 @@
 #import "CreateTeamController.h"
 
 @interface CreateTeamController (){
-    UIScrollView *mainScroll;
+    UIView * mainView;
     SelectCharacterView * selectCharacterView;
     SelectTypeAndNumberPersonView * selectTypeAndNumberPersonView;
     CharacterView * characterView;
@@ -43,10 +43,16 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    [self setTopViewWithTitle:@"创建队伍" withBackButton:YES];
+    
     m_maxZiShu = 30;
     selectCharacter = self.selectRoleDict;
     selectType = self.selectTypeDict;
+    m_tagArray = [NSMutableArray array];
+    
+    mainView = [[UIView alloc] initWithFrame:CGRectMake(0, startX,self.view.frame.size.width, self.view.frame.size.height-startX)];
+    [self.view addSubview:mainView];
+    
+    [self setTopViewWithTitle:@"创建队伍" withBackButton:YES];
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_normal") forState:UIControlStateNormal];
     [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_click") forState:UIControlStateHighlighted];
@@ -54,23 +60,17 @@
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];
     
-    m_tagArray = [NSMutableArray array];
-    
-    mainScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth)];
-    mainScroll.contentSize = CGSizeMake(0, self.view.bounds.size.height+50);
-    [self.view addSubview:mainScroll];
-    
     selectCharacterView = [[SelectCharacterView alloc] initWithFrame:CGRectMake(0, 0, 320, 80)];
     selectCharacterView.clickDelegate = self;
-    [mainScroll addSubview:selectCharacterView];
+    [mainView addSubview:selectCharacterView];
     
     selectTypeAndNumberPersonView = [[SelectTypeAndNumberPersonView alloc] initWithFrame:CGRectMake(0, 90, 320, 150)];
     selectTypeAndNumberPersonView.selectTypeDelegate = self;
-    [mainScroll addSubview:selectTypeAndNumberPersonView];
+    [mainView addSubview:selectTypeAndNumberPersonView];
     
     UIView *editIV = [[UIView alloc]initWithFrame:CGRectMake(0, 260, 320, kScreenHeigth-250)];
     editIV.backgroundColor=[UIColor whiteColor];
-    [mainScroll addSubview:editIV];
+    [mainView addSubview:editIV];
     
     
     m_miaoshuTV =[[ UITextView alloc]initWithFrame:CGRectMake(10, 270, 300, 80)];
@@ -83,7 +83,7 @@
     m_miaoshuTV.backgroundColor = [UIColor whiteColor];
     m_miaoshuTV.layer.cornerRadius = 5;
     m_miaoshuTV.layer.masksToBounds = YES;
-    [mainScroll addSubview:m_miaoshuTV];
+    [mainView addSubview:m_miaoshuTV];
     
     placeholderL = [[UILabel alloc]init];
     placeholderL.frame = CGRectMake(15,275, 200, 20);
@@ -92,17 +92,17 @@
     placeholderL.font = [UIFont systemFontOfSize:14];
     placeholderL.textColor=kColorWithRGB(240,240, 240, 1);
     placeholderL.backgroundColor = [UIColor clearColor];
-    [mainScroll addSubview:placeholderL];
+    [mainView addSubview:placeholderL];
     
     m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 270+55, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
-    [mainScroll addSubview:m_ziNumLabel];
+    [mainView addSubview:m_ziNumLabel];
     
     tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15, 370,310, 100)];
     tagList.tagDelegate=self;
-    [mainScroll addSubview:tagList];
+    [mainView  addSubview:tagList];
     
     
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
@@ -185,25 +185,7 @@
     [self refreshZiLabelText];
 }
 
-- (void)textViewDidChange:(UITextView *)textView
-{
-    [self refreshZiLabelText];
-}
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
-{
-    [UIView animateWithDuration:0.3 animations:^{
-        mainScroll.contentOffset = CGPointMake(0, 210);
-    }];
-    return YES;
-}
--(BOOL)textViewShouldEndEditing:(UITextView *)textView
-{
-    [UIView animateWithDuration:0.3 animations:^{
-        mainScroll.contentOffset = CGPointMake(0, 0);
-    }];
-    return YES;
-    
-}
+
 
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -316,7 +298,7 @@
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         m_tagArray = responseObject;
         [tagList setTags:responseObject average:YES rowCount:3];
-        tagList.frame = CGRectMake(10.0f, 370, 310, tagList.fittedSize.height);
+        tagList.frame = CGRectMake(10.0f, 360, 310, tagList.fittedSize.height);
     }
 }
 
@@ -356,7 +338,21 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
+- (void)textViewDidChange:(UITextView *)textView
+{
+    [self refreshZiLabelText];
+}
 
+- (void)textViewDidBeginEditing:(UITextView *)textView{
+    CGRect frame = textView.frame;
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDuration:0.3];
+    mainView.frame = CGRectMake(0, -frame.origin.y+5+startX, self.view.frame.size.width, self.view.frame.size.height+frame.origin.y-5);
+    [UIView commitAnimations];
+}
+- (void)textViewDidEndEditing:(UITextView *)textView{
+     mainView.frame =CGRectMake(0, startX, self.view.frame.size.width,self.view.frame.size.height-startX);
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

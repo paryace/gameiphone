@@ -19,7 +19,7 @@
         self.m_typeArray = [NSMutableArray array];
         self.m_countArray = [NSMutableArray array];
         
-        self.m_typePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 160, 150)];
+        self.m_typePickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 160, frame.size.height)];
         self.m_typePickerView.backgroundColor = [UIColor whiteColor];
         self.m_typePickerView.dataSource = self;
         self.m_typePickerView.delegate = self;
@@ -27,7 +27,7 @@
         [self addSubview:self.m_typePickerView];
         
         
-        self.m_countPickView = [[UIPickerView alloc]initWithFrame:CGRectMake(160, 0, 160, 150)];
+        self.m_countPickView = [[UIPickerView alloc]initWithFrame:CGRectMake(160, 0, 160, frame.size.height)];
         self.m_countPickView.backgroundColor = [UIColor whiteColor];
         self.m_countPickView.dataSource = self;
         self.m_countPickView.delegate = self;
