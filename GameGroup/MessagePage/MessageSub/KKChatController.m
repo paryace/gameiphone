@@ -1725,14 +1725,13 @@ PlayingDelegate>
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
         PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        cell.cellCount = indexPath.row;
         [cell startPaly];
     }
     else {
 //        self.isPlaying = NO;
         [[PlayerManager sharedManager] stopPlaying];
-    }
-    
- 
+    } 
 }
 
 - (BOOL) isFileExist:(NSString *)fileName
@@ -3899,9 +3898,12 @@ PlayingDelegate>
 
 - (void)playingStoped {
     for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
-        if ([cell.voiceImageView isAnimating]) {
-            [cell.voiceImageView stopAnimating];
+        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
+            if ([cell.voiceImageView isAnimating]) {
+                [cell.voiceImageView stopAnimating];
+            }
         }
+
     }
 //    self.isPlaying = NO;
 //    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
