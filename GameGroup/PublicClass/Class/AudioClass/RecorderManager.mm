@@ -120,7 +120,7 @@ AudioQueueLevelMeterState *levelMeterStates;
     {
         levelMeterStates = (AudioQueueLevelMeterState *)malloc(sizeof(AudioQueueLevelMeterState) * 1);
     }
-    self.timerLevelMeter = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateLevelMeter:) userInfo:nil repeats:YES];
+    self.timerLevelMeter = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(updateLevelMeter:) userInfo:nil repeats:YES];
     self.timerTimeout = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(timeoutCheck:) userInfo:nil repeats:NO];
 }
 

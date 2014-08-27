@@ -23,7 +23,7 @@
 
 
 #pragma mark 创建发送组队声音消息的payload
-+(NSString*)createPayLoadAudioStr:(NSString*)audioId TeamPosition:(NSString *)teamPosition gameid:(NSString *)gameid roomId:(NSString *)roomId team:(NSString *)team;
++(NSString*)createPayLoadAudioStr:(NSString*)audioId TeamPosition:(NSString *)teamPosition gameid:(NSString *)gameid timeSize:(NSString *)timeSize roomId:(NSString *)roomId team:(NSString *)team;
 #pragma mark 创建发送系统消息的payload
 +(NSString*)createPayLoadStr:(NSString*)msgType;
 
@@ -34,7 +34,7 @@
 +(NSString*)createPayLoadStr:(NSString*)thumb title:(NSString*)title shiptype:(NSString*)shiptype messageid:(NSString*)messageid msg:(NSString*)msg type:(NSString*)type;
 
 #pragma mark ---创建发送声音的payload
-+(NSString*)createPayLoadAudioStr:(NSString*)audioId;
++(NSString*)createPayLoadAudioStr:(NSString*)audioId timeSize:(NSString *)timeSize;
 
 
 +(void)groupNotAvailable:(NSString*)payloadType Message:(NSString*)message GroupId:(NSString*)groupId gameid:(NSString*)gameid roomId:(NSString*)roomId team:(NSString*)team UserId:(NSString*)userid;
