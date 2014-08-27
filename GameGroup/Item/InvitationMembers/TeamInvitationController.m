@@ -84,7 +84,9 @@
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"请稍等...";
-    
+    NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    NSMutableDictionary * myMemberInfo  = [DataStoreManager getMemberInfo:self.groupId UserId:myUserid];
+    self.myMemberInfo = myMemberInfo;
     NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
     if (teamInfo) {
         self.roomInfoDic = teamInfo;
@@ -98,10 +100,10 @@
     NSInteger index = sender.tag;
     switch (index) {
         case 100:
-            [self shareToQQ:10001];//分享到QQ
+            [self getTeamInviteId:10001];
             break;
         case 101:
-             [self shareToQQ:10002];//分享到微信
+            [self getTeamInviteId:10002];
             break;
         case 102:
             //分享到群组
@@ -130,14 +132,12 @@
     }
 }
 
--(void)shareToQQ:(NSInteger)sender
+-(void)shareToQQ:(NSString*)teamInviteId Sender:(NSInteger)sender
 {
     NSString *imgStr = [GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")]];
     NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
     NSString *description = [NSString stringWithFormat:@"%@邀请你加入在陌游的队伍",roomName];
-    NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-    NSString * shareUrl = [NSString stringWithFormat:@"%@roomId=%@&gameid=%@&inviterid=%@&realm=%@&characterId=%@",ShareUrl,self.roomId,self.gameId,myUserid,[[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"realm")] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"characterId")]];
-    
+    NSString * shareUrl = [NSString stringWithFormat:@"%@/t?p=%@",BaseIp,[GameCommon getNewStringWithId:teamInviteId]];
     if (sender ==10001) {
         [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")] Description:description Url:shareUrl];
     }else{
@@ -157,6 +157,29 @@
 }
 -(void)createItem:(UIButton*)sender{
     [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+-(void)getTeamInviteId:(NSInteger)sender{
+    [hud show:YES];
+    NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(self.myMemberInfo, @"teamUser"), @"characterId")];
+    NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.roomId] forKey:@"roomId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameId] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:myUserid] forKey:@"inviterid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"realm")]] forKey:@"realm"];
+    [paramDict setObject:characterId forKey:@"characterId"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"309" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        [self shareToQQ:responseObject Sender:sender];//分享到QQ
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+    }];
 }
 
 - (void)didReceiveMemoryWarning

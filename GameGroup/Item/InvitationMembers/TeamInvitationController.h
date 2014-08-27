@@ -17,6 +17,7 @@
 @property(nonatomic,copy)NSString     *     gameId;
 @property(nonatomic,copy)NSString     *     groupId;
 @property (strong, nonatomic)  NSMutableDictionary *roomInfoDic;
+@property (strong, nonatomic)  NSMutableDictionary *myMemberInfo;
 @property(nonatomic,assign) BOOL createFinish;
 
 @end
