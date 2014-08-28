@@ -1590,32 +1590,58 @@ PlayingDelegate>
     if (!sender.selected) {
         sender.selected = YES;
             [self.textView resignFirstResponder];
-            if (self.kkchatInputType != KKChatInputTypeNone) {
-                [self autoMovekeyBoard:0];
-                self.kkchatInputType = KKChatInputTypeNone;
-                [UIView animateWithDuration:0.2 animations:^{
-                    self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-                    self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-                    m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
-                    emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
-                    m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
-                } completion:^(BOOL finished) {
-                    self.theEmojiView.hidden = YES;
-                    self.kkChatAddView.hidden = YES;
-                    [m_EmojiScrollView removeFromSuperview];
-                    [emojiBGV removeFromSuperview];
-                    [m_Emojipc removeFromSuperview];
-                }];
-                [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-                [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-            }
+        if (self.kkchatInputType ==KKChatInputTypeEmoji) {
+            ifEmoji = NO;
+            [self autoMovekeyBoard:0];
+            self.kkchatInputType = KKChatInputTypeNone;
+            self.theEmojiView.hidden = YES;
+            [m_EmojiScrollView removeFromSuperview];
+            [emojiBGV removeFromSuperview];
+            [m_Emojipc removeFromSuperview];
+            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+
+        }else if (self.kkchatInputType ==KKChatInputTypeAdd)
+        {
+            ifEmoji = NO;
+            [self autoMovekeyBoard:0];
+            self.kkchatInputType = KKChatInputTypeNone;
+            self.theEmojiView.hidden = YES;
+            self.kkChatAddView.hidden = YES;
+            [m_EmojiScrollView removeFromSuperview];
+            [emojiBGV removeFromSuperview];
+            [m_Emojipc removeFromSuperview];
+            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+
+        }
+
+        
+        
+//            if (self.kkchatInputType != KKChatInputTypeNone) {
+//                [self autoMovekeyBoard:0];
+//                self.kkchatInputType = KKChatInputTypeNone;
+//                [UIView animateWithDuration:0.2 animations:^{
+//                    self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
+//                    self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
+//                    m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
+//                    emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
+//                    m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
+//                } completion:^(BOOL finished) {
+//                    self.theEmojiView.hidden = YES;
+//                    self.kkChatAddView.hidden = YES;
+//                    [m_EmojiScrollView removeFromSuperview];
+//                    [emojiBGV removeFromSuperview];
+//                    [m_Emojipc removeFromSuperview];
+//                }];
+//                [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+//                [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+//            }
 
 //            [clearView removeFromSuperview];
 //            if ([popLittleView superview]) {
 //                [popLittleView removeFromSuperview];
 //            }
-            canAdd = NO;
-        ifEmoji = YES;
+            canAdd = YES;
+        ifEmoji = NO;
 //        [_audioBtn setTitle:@"键盘" forState:UIControlStateSelected];
          _audioBtn.frame =  CGRectMake(5, 5, 40, 40);
         _startRecordBtn.hidden = NO;
@@ -1654,13 +1680,8 @@ PlayingDelegate>
     CGPoint moveCenter  = [[[ev allTouches] anyObject] locationInView:self.view];
     NSLog(@"%f-*-*-%f---%f",moveCenter.y,c.frame.size.height,self.view.frame.size.height-50-moveCenter.y);
     if (self.view.frame.size.height-50-moveCenter.y>10) {
-        
         [[RecorderManager sharedManager]cancelRecording];
-        
     }
-    
-    
-    
 }
 
 -(void)stopRecording:(UIButton *)sender
@@ -2306,7 +2327,9 @@ PlayingDelegate>
             }else {
                 cellLong =165+(lon-35)*2;
             }
-            
+            if (cellLong>200) {
+                cellLong =200;
+            }
             array = [NSArray arrayWithObjects:[NSNumber numberWithFloat:cellLong],[NSNumber numberWithFloat:35], nil];
             break;
         }
@@ -2717,7 +2740,6 @@ PlayingDelegate>
         canAdd = YES;
     }
 }
-
 - (void)viewDidUnload
 {
     [self setTView:nil];

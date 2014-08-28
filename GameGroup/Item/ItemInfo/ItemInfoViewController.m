@@ -539,9 +539,11 @@
         cell.headImageView.placeholderImage = KUIImage(@"placeholder");
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterImg")];
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
+        cell.bgImageView.userInteractionEnabled =NO;
          cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
         cell.MemberLable.hidden = NO;
+        
         cell.MemberLable.backgroundColor = UIColorFromRGBA(0xfdcd12, 1);
         cell.MemberLable.text = @"预约";
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")];
