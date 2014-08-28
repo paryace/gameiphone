@@ -114,6 +114,7 @@ static PlayerManager *mPlayerManager = nil;
 }
 
 - (void)stopPlaying {
+    //关闭距离监听
     [self stopProximityMonitering];
 
     if (self.decapsulator) {

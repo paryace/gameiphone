@@ -132,6 +132,7 @@ AudioQueueLevelMeterState *levelMeterStates;
     [self stopRecording:YES];
 }
 
+
 - (void)stopRecording:(BOOL)isCanceled {
     if (self.delegate) {
         [self.delegate recordingStopped];

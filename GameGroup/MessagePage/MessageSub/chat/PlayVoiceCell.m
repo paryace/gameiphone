@@ -93,8 +93,11 @@
     self.voiceImageView.animationRepeatCount = 10000;  //动画重复次数
     [self.voiceImageView startAnimating];
 }
--(void)stopPlay:(id)sender
+-(void)stopPlay
 {
+    if (self.cellCount !=self.tag) {
+        return;
+    }
     [self.voiceImageView stopAnimating];
 }
 
