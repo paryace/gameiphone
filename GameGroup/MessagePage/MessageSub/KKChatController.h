@@ -65,7 +65,8 @@ LocationViewDelegate,
 RecordAudioDelegate,
 SendAudioMsgDeleGate,
 ApplyDetailDelegate,
-SendFileMessageDelegate>
+SendFileMessageDelegate,
+UIGestureRecognizerDelegate>
 
 {
     NSString * userName;
@@ -110,7 +111,8 @@ SendFileMessageDelegate>
     NSMutableArray * animationTwo;
     UIMenuController * menu;
 }
-
+@property (nonatomic, strong) UIView *recordView;
+@property (nonatomic, strong) UIImageView *recordImgView;
 @property (nonatomic, strong) UIButton * audioBtn;   //声音按钮
 @property (nonatomic, strong) UIButton *startRecordBtn;//录音btn
 @property (nonatomic, strong) UIButton *emojiBtn;   //表情按钮

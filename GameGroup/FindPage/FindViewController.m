@@ -969,6 +969,9 @@
     NSLog(@"manDic--%@",manDic);
 }
 
+
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
