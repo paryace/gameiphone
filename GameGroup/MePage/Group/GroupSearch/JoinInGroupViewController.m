@@ -23,7 +23,7 @@
     UILabel *realmLabel;
     EGOImageView *clazzImg;
     EGOImageView *gameImg;
-//    UIImageView *authBg;
+    UIImageView *authBg;
     UILabel *nameLabel;
     UIPickerView *m_gamePickerView;
     UIScrollView *m_baseScrollView;
@@ -139,32 +139,44 @@
     UIButton * myView = [[UIButton alloc]initWithFrame:CGRectMake(0, 70, 320, 60)];
     myView.backgroundColor = [UIColor whiteColor];
     
-    
+    NSDictionary *dic =gameInfoArray[0];
     clazzImg = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 25.0/2, 35, 35)];
     clazzImg.backgroundColor = [UIColor clearColor];
-    if (gameInfoArray.count>0) {
-        clazzImg.imageURL = [ImageService getImageStr2:[gameInfoArray[0]objectForKey:@"img"]];
-    }else
-    {
-        clazzImg.image=KUIImage(@"clazz_0");
-    }
     
     [myView addSubview:clazzImg];
+   
     
-//    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
-//    authBg.backgroundColor = [UIColor clearColor];
-//    NSString *auth;
-//    if (gameInfoArray.count>0) {
-//        auth =[gameInfoArray[0]objectForKey:@"auth"];
-//    }else{
-//        auth = @"0";
-//    }
-//    if ([auth intValue]==0) {
-//        authBg.image = KUIImage(@"chara_auth_2");
-//    }else{
-//        authBg.image = KUIImage(@"chara_auth_1");
-//    }
-//    [myView addSubview:authBg];
+        if (gameInfoArray.count>0) {
+            clazzImg.placeholderImage = KUIImage(@"clazz_icon");
+            clazzImg.imageURL = [ImageService getImageStr2:[dic objectForKey:@"img"]];
+        }else
+        {
+            clazzImg.image=KUIImage(@"clazz_0");
+        }
+
+    authBg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
+    authBg.backgroundColor = [UIColor clearColor];
+    NSString *auth;
+    
+    
+    if (gameInfoArray.count>0) {
+        auth =[gameInfoArray[0]objectForKey:@"auth"];
+    }else{
+        auth = @"0";
+    }
+    
+    if ([KISDictionaryHaveKey(dic, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@""]) {
+        authBg.image  = KUIImage(@"chara_auth_3");
+        }
+    else{
+    
+    if ([auth intValue]==0) {
+        authBg.image = KUIImage(@"chara_auth_2");
+    }else{
+        authBg.image = KUIImage(@"chara_auth_1");
+    }
+    }
+    [myView addSubview:authBg];
     
     nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 120, 20)];
     nameLabel.backgroundColor = [UIColor clearColor];
