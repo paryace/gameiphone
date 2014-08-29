@@ -491,8 +491,8 @@
     NSIndexPath *path = [NSIndexPath indexPathForRow:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"row")]intValue] inSection:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"section")]intValue]];
     NSMutableDictionary *dic;
     
-    NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
-    tempDict = arr[indexPath.row];
+    NSArray *arr= [dataDict objectForKey:keysArr[path.section]];
+    tempDict = arr[path.row];
     cell1 = (AddGroupMemberCell*)[m_rTableView cellForRowAtIndexPath:path];
     
     [dic setObject:@"1" forKey:@"choose"];

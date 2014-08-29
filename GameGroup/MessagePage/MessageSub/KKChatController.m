@@ -335,6 +335,11 @@ PlayingDelegate>
      
      [self BulidCustomInputView];//语音输入框
      self.customInputView.hidden = YES;//语音输入框默认隐藏
+     
+     将 inputview中的 entryImageView.frame --> CGRectMake(50, 7, 185, 35);
+     把Audiobtn add到inputview中
+     更改self。textview的frame 同上
+     
       */
     
     
