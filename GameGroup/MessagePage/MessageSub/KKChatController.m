@@ -344,30 +344,11 @@ PlayingDelegate>
       */
     
     
+    [self setTopViewWithTitle];
     
-    [self setTopViewWithTitle:@"" withBackButton:YES];
-    [self.view addSubview:self.unReadL]; //未读数量
-    [self changMsgToRead];
-    UIButton * titleBtn = self.titleButton;
-    [titleBtn addSubview:self.titleLabel]; //导航条标题
-
-    if ([self.type isEqualToString:@"group"]&&!self.isTeam) {
-        [self.view addSubview:self.groupCircleImage]; //群动态入口
-        if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
-            _titleLabel.hidden = YES;
-            [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
-            
-            CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
-            _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2, 10, textSize.width, 20);
-            _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 13.5, 13, 13)];
-            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_normal") forState:UIControlStateNormal];
-            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_click") forState:UIControlStateHighlighted];
-            [titleBtn addSubview:_titleImageV];
-        }else{
-            _titleLabel.hidden = NO;
-        }
-    }
-    [self.view addSubview:titleBtn];
+    
+    
+     [self changMsgToRead];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
         object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
@@ -382,19 +363,8 @@ PlayingDelegate>
     delItem = [[UIMenuItem alloc] initWithTitle:@"删除"action:@selector(deleteMsg)];
     menu = [UIMenuController sharedMenuController];
     
-    //个人资料按钮
-    profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    profileButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    if (self.isTeam) {
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
-    }else{
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
-    }
-    [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
-    [self.view addSubview:profileButton];
-    [self.view bringSubviewToFront:profileButton];
-    [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
+   
+    
     
     if (self.isTeam) {
        NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
@@ -424,16 +394,17 @@ PlayingDelegate>
         
         
         //就位确认
-        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
+        self.newTeamMenuView.hidden = YES;
         [self.view addSubview:self.newTeamMenuView];
         [self hideExtendedChooseView];
         if (!teamUsershipType) {
             [self initInpaceTopMenuIsShow];
         }
         
-        self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamApplyListView.mSuperView = self.view;
         self.newTeamApplyListView.detaildelegate = self;
         [self.view addSubview:self.newTeamApplyListView];
@@ -453,6 +424,69 @@ PlayingDelegate>
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
 }
+
+-(void)setTopViewWithTitle{
+    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
+    hideImage.userInteractionEnabled = YES;
+    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+    hideImage.image = KUIImage(@"nav_bg");
+    [self.view addSubview:hideImage];
+    //top导航条
+    self.topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
+    self.topImageView.userInteractionEnabled = YES;
+    self.topImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+    self.topImageView.image = KUIImage(@"nav_bg");
+    [self.view addSubview:self.topImageView];
+    //返回按钮
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.topImageView addSubview:backButton];
+    //top标题按钮
+    UIButton * titleBtn = [[UIButton alloc] initWithFrame:CGRectMake(60,KISHighVersion_7 ? 20 : 0,200,KISHighVersion_7 ? 64 : 44)];
+    titleBtn.backgroundColor = [UIColor clearColor];
+    if ([self.type isEqualToString:@"group"]&&self.unreadMsgCount>20) {
+        [titleBtn addTarget:self action:@selector(loadMoreMsg:)forControlEvents:UIControlEventTouchUpInside];
+    }
+    [titleBtn addSubview:self.titleLabel]; //导航条标题
+    
+    if ([self.type isEqualToString:@"group"]&&!self.isTeam) {
+        [self.view addSubview:self.groupCircleImage]; //群动态入口
+        
+        if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
+            _titleLabel.hidden = YES;
+            [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
+            
+            CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
+            _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2, KISHighVersion_7 ? 20 : 0, textSize.width, 20);
+            _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 15.5, 13, 13)];
+            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_normal") forState:UIControlStateNormal];
+            [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_click") forState:UIControlStateHighlighted];
+            [titleBtn addSubview:_titleImageV];
+        }else{
+            _titleLabel.hidden = NO;
+        }
+    }
+    [self.topImageView addSubview:titleBtn];
+    
+    
+    //个人资料按钮
+    profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    profileButton.frame=CGRectMake(320-65, KISHighVersion_7 ? 20 : 0, 65, 44);
+    if (self.isTeam) {
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
+    }else{
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
+    }
+    [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
+    [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.topImageView addSubview:profileButton];
+    [self.topImageView addSubview:self.unReadL]; //未读数量
+}
+
 
 -(NSString*)getBgImage{
     if (!teamUsershipType) {
@@ -489,7 +523,11 @@ PlayingDelegate>
         }
     }
 }
-
+#pragma mark 返回按钮
+- (void)backButtonClick:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 #pragma mark 用户详情
 -(void)userInfoClick
 {
@@ -503,7 +541,8 @@ PlayingDelegate>
     }else if([self.type isEqualToString:@"group"])
     {
         if (self.isTeam) {//队伍详情
-            [self showFilterMenu];
+//            [self showFilterMenu];
+            [self showOrHideControl];
             return;
         }
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
@@ -612,9 +651,13 @@ PlayingDelegate>
 - (void)hideExtendedChooseView
 {
     [UIView animateWithDuration:0.3 animations:^{
-        self.newTeamMenuView.frame = CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth);
+        self.topImageView.hidden = NO;
+        self.newTeamMenuView.alpha = 1;
+        
+        self.newTeamMenuView.alpha = 0;
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
+        
         [self.newTeamMenuView hideView];
     }];
     
@@ -625,8 +668,11 @@ PlayingDelegate>
     [UIView animateWithDuration:0.3 animations:^{
         self.newTeamMenuView.hidden = NO;
         [self.newTeamMenuView showView];
-        self.newTeamMenuView.frame = CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth);
+        self.newTeamMenuView.alpha = 0;
+        
+        self.newTeamMenuView.alpha = 1;
     }completion:^(BOOL finished) {
+        self.topImageView.hidden = YES;
     }];
 }
 
@@ -634,6 +680,7 @@ PlayingDelegate>
 //显示头部View
 -(void)showTopItemView:(NSString*)titleText{
     [UIView animateWithDuration:0.3 animations:^{
+        
         self.topItemView.hidden = NO;
         [self.topItemView setTitle:titleText forState:UIControlStateNormal];
         self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
@@ -714,7 +761,9 @@ PlayingDelegate>
 - (void)hideApplyListExtendedChooseView
 {
     [UIView animateWithDuration:0.3 animations:^{
-        self.newTeamApplyListView.frame = CGRectMake(0, kScreenHeigth, kScreenWidth,kScreenHeigth);
+        self.newTeamApplyListView.alpha = 1;
+        
+        self.newTeamApplyListView.alpha = 0;
     }completion:^(BOOL finished) {
         self.newTeamApplyListView.hidden = YES;
         [self.newTeamApplyListView hideView];
@@ -727,7 +776,9 @@ PlayingDelegate>
     [UIView animateWithDuration:0.3 animations:^{
         self.newTeamApplyListView.hidden = NO;
         [self.newTeamApplyListView showView];
-        self.newTeamApplyListView.frame = CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth);
+        self.newTeamApplyListView.alpha = 0;
+        
+        self.newTeamApplyListView.alpha = 1;
     }completion:^(BOOL finished) {
     }];
 }
@@ -2006,7 +2057,7 @@ PlayingDelegate>
 
 - (UIButton *)titleButton{
     if(!_titleButton){
-        _titleButton = [[UIButton alloc] initWithFrame:CGRectMake(60,startX-40,200,40)];
+        _titleButton = [[UIButton alloc] initWithFrame:CGRectMake(60,KISHighVersion_7 ? 20 : 0,200,KISHighVersion_7 ? 64 : 44)];
         _titleButton.backgroundColor = [UIColor clearColor];
         if ([self.type isEqualToString:@"group"]&&self.unreadMsgCount>20) {
             [_titleButton addTarget:self action:@selector(loadMoreMsg:)forControlEvents:UIControlEventTouchUpInside];
@@ -2029,7 +2080,7 @@ PlayingDelegate>
 //群的未读消息数
 - (UILabel *)groupunReadMsgLable{
     if(!_groupunReadMsgLable){
-        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,10,200,20)];
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,KISHighVersion_7 ? 20 : 0,200,44)];
         _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
         _groupunReadMsgLable.text = [NSString stringWithFormat:@"%@%d%@",@"(未读消息",self.unreadMsgCount,@"条)"];
         _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;

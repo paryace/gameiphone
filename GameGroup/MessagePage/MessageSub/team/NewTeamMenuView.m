@@ -50,7 +50,7 @@
          [self addSubview:uiTableViewBg];
 
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,0, 200, 44)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,-2, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
         self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
@@ -58,10 +58,11 @@
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
         [bgImageView addSubview:self.titleLabel];
         
+        
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(260, 0, 60, 44);
+        button.frame = CGRectMake(320-65, 0, 65, 44);
+        [button setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_open"] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(closeViewAction:)forControlEvents:UIControlEventTouchUpInside];
-        [button setTitle:@"关闭" forState:UIControlStateNormal];
         button.backgroundColor = [UIColor clearColor];
         [bgImageView addSubview:button];
         
@@ -511,12 +512,15 @@
             cell.stateView.hidden = YES;
         }else{
             cell.stateView.hidden = NO;
+            cell.bgV.backgroundColor = [UIColor whiteColor];
             if ([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"1"]) {//未处理
                 cell.stateView.backgroundColor = [UIColor grayColor];
             }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){//确认
                 cell.stateView.backgroundColor = UIColorFromRGBA(0x45d232, 1);
+                cell.bgV.backgroundColor = UIColorFromRGBA(0xecfaea, 1);
             }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"3"]){//取消
                 cell.stateView.backgroundColor = UIColorFromRGBA(0xd55656, 1);
+                cell.bgV.backgroundColor = UIColorFromRGBA(0xfbeeee, 1);
             }
         }
         NSInteger shipType = [KISDictionaryHaveKey(msgDic, @"teamUsershipType") integerValue];
