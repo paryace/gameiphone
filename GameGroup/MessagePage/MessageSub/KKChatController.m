@@ -328,8 +328,17 @@ PlayingDelegate>
     }
     ifEmoji = NO;
     [self.view addSubview:self.inPutView];  //输入框
-    [self BulidCustomInputView];//语音输入框
-    self.customInputView.hidden = YES;//语音输入框默认隐藏
+    
+    /*
+     
+     打开则开启语音界面
+     
+     [self BulidCustomInputView];//语音输入框
+     self.customInputView.hidden = YES;//语音输入框默认隐藏
+      */
+    
+    
+    
     [self setTopViewWithTitle:@"" withBackButton:YES];
     [self.view addSubview:self.unReadL]; //未读数量
     [self changMsgToRead];
@@ -1247,6 +1256,7 @@ PlayingDelegate>
     /* 
      声音 CELL
     */
+    /*
     else if (kkChatMsgType ==kkchatMsgAudio)
     {
         NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
@@ -1317,6 +1327,7 @@ PlayingDelegate>
         cell.msgLable.text =  @"以上是历史消息";
         return cell;
     }
+     */
     //普通消息
     else
     {
@@ -1519,7 +1530,7 @@ PlayingDelegate>
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(50, 7, 185, 35);
+        entryImageView.frame = CGRectMake(10, 7, 225, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -1529,7 +1540,7 @@ PlayingDelegate>
         
         [_inPutView addSubview:imageView];
         [_inPutView addSubview:entryImageView];
-        [_inPutView addSubview:self.audioBtn];
+//        [_inPutView addSubview:self.audioBtn];
         [_inPutView addSubview:self.textView];
         [_inPutView addSubview:self.kkChatAddButton];
         [_inPutView addSubview:self.emojiBtn];
@@ -2013,7 +2024,7 @@ PlayingDelegate>
         _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _kkChatAddButton.frame = CGRectMake(240,self.inPutView.frame.size.height-12-36,45,45);
         [_kkChatAddButton setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
-        [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+        [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal"]forState:UIControlStateNormal];
         [_kkChatAddButton addTarget:self action:@selector(kkChatAddButtonClick:)forControlEvents:UIControlEventTouchUpInside];
     }
     return _kkChatAddButton;
@@ -2045,7 +2056,7 @@ PlayingDelegate>
 
 - (HPGrowingTextView *)textView{
     if(!_textView){
-        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(50, 7, 185, 35)];
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 225, 35)];
         _textView.isScrollable = NO;
         _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         _textView.minNumberOfLines = 1;
