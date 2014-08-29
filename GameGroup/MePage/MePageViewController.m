@@ -406,10 +406,11 @@
             cell.heardImg.placeholderImage = KUIImage(@"clazz_icon.png");
             cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
             cell.authBg.hidden = NO;
-            if ([failedmsg intValue] ==404)//角色不存在
+            if ([failedmsg intValue] ==404||[failedmsg isEqualToString:@"notSupport"])//角色不存在
             {
                 cell.heardImg.image = KUIImage(@"clazz_icon.png");
                 cell.authBg.image= KUIImage(@"chara_auth_3");
+                cell.authBg.hidden =NO;
             }
             else
             {
