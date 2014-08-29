@@ -59,9 +59,17 @@
     [self.view addSubview:createBtn];
     
     
+    UILabel * topTitleLable = [[UILabel alloc] initWithFrame:CGRectMake(0, startX+25, 320, 59.5)];
+    topTitleLable.backgroundColor = [UIColor clearColor];
+    topTitleLable.textColor = [UIColor grayColor];
+    topTitleLable.textAlignment = NSTextAlignmentCenter;
+    topTitleLable.font = [UIFont boldSystemFontOfSize:14];
+    topTitleLable.text = self.createFinish?@"创建成功!赶快呼唤你的小伙伴去尽情的杀戮吧!":@"邀请好友!赶快呼唤你的小伙伴去尽情的杀戮吧!";
+    [self.view addSubview:topTitleLable];
+    
     topImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, startX+36, 320, 59.5)];
     topImage.image = KUIImage(self.createFinish?@"create_finish_top_image":@"invitation_top_image");
-    [self.view addSubview:topImage];
+//    [self.view addSubview:topImage];
     
     
     NSArray * imageArray = @[@"invitation_qq",@"invitation_wx",@"invitation_group",@"invitation_my"];
