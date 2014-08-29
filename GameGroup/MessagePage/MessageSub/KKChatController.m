@@ -665,6 +665,7 @@ PlayingDelegate>
 //显示队员列表
 -(void)showChooseListViewInSection
 {
+    [self hideKeyEmView];
     [UIView animateWithDuration:0.3 animations:^{
         self.newTeamMenuView.hidden = NO;
         [self.newTeamMenuView showView];
@@ -2866,34 +2867,39 @@ PlayingDelegate>
 {
     UITouch * touch = [touches anyObject];
     if ([touch view]==clearView) {
-        [self.textView resignFirstResponder];
-        if (self.kkchatInputType != KKChatInputTypeNone) {
-            [self autoMovekeyBoard:0];
-            self.kkchatInputType = KKChatInputTypeNone;
-            [UIView animateWithDuration:0.2 animations:^{
-                self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-                self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-                m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
-                emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
-                m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
-            } completion:^(BOOL finished) {
-                self.theEmojiView.hidden = YES;
-                self.kkChatAddView.hidden = YES;
-                [m_EmojiScrollView removeFromSuperview];
-                [emojiBGV removeFromSuperview];
-                [m_Emojipc removeFromSuperview];
-            }];
-            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-        }
-        
-        [clearView removeFromSuperview];
-        if ([popLittleView superview]) {
-            [popLittleView removeFromSuperview];
-        }
-        canAdd = YES;
+        [self hideKeyEmView];
     }
 }
+
+-(void)hideKeyEmView{
+    [self.textView resignFirstResponder];
+    if (self.kkchatInputType != KKChatInputTypeNone) {
+        [self autoMovekeyBoard:0];
+        self.kkchatInputType = KKChatInputTypeNone;
+        [UIView animateWithDuration:0.2 animations:^{
+            self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
+            self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
+            m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
+            emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
+            m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
+        } completion:^(BOOL finished) {
+            self.theEmojiView.hidden = YES;
+            self.kkChatAddView.hidden = YES;
+            [m_EmojiScrollView removeFromSuperview];
+            [emojiBGV removeFromSuperview];
+            [m_Emojipc removeFromSuperview];
+        }];
+        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    }
+    
+    [clearView removeFromSuperview];
+    if ([popLittleView superview]) {
+        [popLittleView removeFromSuperview];
+    }
+    canAdd = YES;
+}
+
 - (void)viewDidUnload
 {
     [self setTView:nil];
