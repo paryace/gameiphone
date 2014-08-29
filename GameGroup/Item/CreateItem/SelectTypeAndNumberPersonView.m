@@ -117,13 +117,17 @@
 {
     if (pickerView == self.m_typePickerView)
     {
-        if (self.selectTypeDelegate) {
-            [self.selectTypeDelegate selectType:[self.m_typeArray objectAtIndex:row]];
+        if (row<self.m_typeArray.count) {
+            if (self.selectTypeDelegate) {
+                [self.selectTypeDelegate selectType:[self.m_typeArray objectAtIndex:row]];
+            }
         }
     }else
     {
-        if (self.selectTypeDelegate) {
-            [self.selectTypeDelegate selectCount:[self.m_countArray objectAtIndex:row]];
+        if (row<self.m_countArray.count) {
+             if (self.selectTypeDelegate) {
+                 [self.selectTypeDelegate selectCount:[self.m_countArray objectAtIndex:row]];
+            }
         }
     }
 }
