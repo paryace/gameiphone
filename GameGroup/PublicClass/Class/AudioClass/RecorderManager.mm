@@ -108,7 +108,7 @@ AudioQueueLevelMeterState *levelMeterStates;
         Boolean recordingWillBegin = mAQRecorder->StartRecord(encapsulator);
         if ( ! recordingWillBegin) {
             if ([self.delegate respondsToSelector:@selector(recordingFailed:)]) {
-                [self.delegate recordingFailed:@"程序错误，无法继续录音，请重启程序试试"];
+                [self.delegate recordingFailed:filename];
             }
             return;
         }

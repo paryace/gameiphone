@@ -95,7 +95,7 @@ UIGestureRecognizerDelegate>
     BOOL ifAudio;
     BOOL ifEmoji;
     
-    UIButton * audioBtn;
+//    UIButton * audioBtn;
     UIButton * picBtn;
     
     UIButton * audioplayButton;
