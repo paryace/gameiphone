@@ -30,7 +30,7 @@
         self.titleLable.textColor = [UIColor blackColor];
         self.titleLable.backgroundColor  = [UIColor clearColor];
         self.titleLable.font = [UIFont systemFontOfSize:14.0];
-        self.titleLable.text = @"山沟沟小朋友";
+        self.titleLable.text = @"";
         [self addSubview:self.titleLable];
         
         self.gameImage = [[EGOImageView alloc] initWithFrame:CGRectMake(65, 40, 20, 20)];
@@ -40,12 +40,20 @@
         self.characterNameLable.textColor = [UIColor grayColor];
         self.characterNameLable.backgroundColor  = [UIColor clearColor];
         self.characterNameLable.font = [UIFont systemFontOfSize:12.0];
-        self.characterNameLable.text = @"艾欧尼亚";
+        self.characterNameLable.text = @"";
         [self addSubview:self.characterNameLable];
         
         self.rightImage = [[UIImageView alloc] initWithFrame:CGRectMake(320-20-11.5, (80-18.5)/2, 11.5, 18.5)];
         self.rightImage.image = KUIImage(@"selectCharacter_rightIcon");
         [self addSubview:self.rightImage];
+        
+        self.noSelectLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, frame.size.height)];
+        self.noSelectLable.textColor = [UIColor blackColor];
+        self.noSelectLable.textAlignment = NSTextAlignmentCenter;
+        self.noSelectLable.backgroundColor  = [UIColor clearColor];
+        self.noSelectLable.font = [UIFont systemFontOfSize:14.0];
+        self.noSelectLable.text = @"点击选择角色";
+        [self addSubview:self.noSelectLable];
         
     }
     return self;
@@ -57,11 +65,17 @@
 }
 
 -(void)seTCharacterInfo:(NSMutableDictionary*)characterInfo{
-    self.characterImage.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(characterInfo, @"img") Width:100];
-    self.titleLable.text = KISDictionaryHaveKey(characterInfo, @"name");
-    NSString * gameImage = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(characterInfo, @"gameid")];
-    self.gameImage.imageURL = [ImageService getImageUrl2:gameImage];
-    self.characterNameLable.text = KISDictionaryHaveKey(characterInfo, @"simpleRealm");
+    if (characterInfo) {
+        self.noSelectLable.hidden = YES;
+        self.characterImage.imageURL = [ImageService getImageStr:KISDictionaryHaveKey(characterInfo, @"img") Width:100];
+        self.titleLable.text = KISDictionaryHaveKey(characterInfo, @"name");
+        NSString * gameImage = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(characterInfo, @"gameid")];
+        self.gameImage.imageURL = [ImageService getImageUrl2:gameImage];
+        self.characterNameLable.text = KISDictionaryHaveKey(characterInfo, @"simpleRealm");
+    }else{
+        self.noSelectLable.hidden = NO;
+    }
+    
 }
 
 @end

@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UILabel * titleLable;
 @property (nonatomic, strong) UILabel * characterNameLable;
 @property (nonatomic, strong) UIImageView * rightImage;
+@property (nonatomic, strong) UILabel * noSelectLable;
 @property(nonatomic,assign)id<SelectCharacterDelegate>clickDelegate;
 
 -(void)seTCharacterInfo:(NSMutableDictionary*)characterInfo;
