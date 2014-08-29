@@ -98,17 +98,23 @@
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 {
-    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 160, 30)];
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 160, 30)];
+    UIView *customView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 80, 30)];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 80, 30)];
     label.backgroundColor = [UIColor clearColor];
-    label.textAlignment = NSTextAlignmentCenter;
+    
     [customView addSubview:label];
     
     if (pickerView == self.m_typePickerView)
     {
+        label.textAlignment = NSTextAlignmentRight;
+        customView.frame = CGRectMake(0, 0, 140, 30);
+        label.frame = CGRectMake(0, 0, 140, 30);
         label.text = KISDictionaryHaveKey([self.m_typeArray objectAtIndex:row], @"value");
     }else
     {
+        label.textAlignment = NSTextAlignmentLeft;
+        customView.frame = CGRectMake(20, 0, 140, 30);
+        label.frame = CGRectMake(20, 0, 140, 30);
         label.text = KISDictionaryHaveKey([self.m_countArray objectAtIndex:row], @"value");
     }
     return customView;
