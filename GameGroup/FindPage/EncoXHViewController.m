@@ -160,7 +160,7 @@
 -(void)buildEncounterView
 {
     clazzImageView = [[EGOImageView alloc]initWithFrame:CGRectMake(260,6, 40, 40)];
-    clazzImageView.image = KUIImage(@"ceshi.jpg");
+    clazzImageView.placeholderImage = KUIImage(@"clazz_icon.png");
     clazzImageView.layer.masksToBounds = YES;
     clazzImageView.layer.cornerRadius = 20;
     clazzImageView.layer.borderWidth = 2.0;
@@ -712,13 +712,13 @@
     clazzImageView.imageURL = [ImageService getImageUrl4:imageId];
     NSString * charaName = KISDictionaryHaveKey(dic, @"name");
     if (charaName.length>5) {
-        charaName = [charaName substringToIndex:5];
+        charaName = [NSString stringWithFormat:@"%@...",[charaName substringToIndex:5]];
     }
     clazzLabel.text =charaName;
-    NSInteger i = [[GameCommon shareGameCommon] unicodeLengthOfString:clazzLabel.text];
-    if (i>10) {
-        clazzLabel.text = [NSString stringWithFormat:@"%@...",[clazzLabel.text substringWithRange:NSMakeRange(0,8)]];
-    }
+//    NSInteger i = [[GameCommon shareGameCommon] unicodeLengthOfString:clazzLabel.text];
+//    if (i>10) {
+//        clazzLabel.text = [NSString stringWithFormat:@"%@...",[clazzLabel.text substringWithRange:NSMakeRange(0,8)]];
+//    }
     clazzLabel.frame = CGRectMake(260-clazzLabel.text.length*3, 53, 10+clazzLabel.text.length *12, 20);
     clazzLabel.center = CGPointMake(280, 63);
 }

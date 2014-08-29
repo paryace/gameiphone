@@ -107,7 +107,7 @@
     
     NSString * imageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"img")];
     NSString * fialMsg=[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"name")];
-    NSString* realm = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"simpleRealm")];
+    NSString* realm = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"value1")]];
     NSString * gameid=KISDictionaryHaveKey(tempDic, @"gameid");
     cell.headerImageView.placeholderImage = [UIImage imageNamed:[NSString stringWithFormat:@"clazz_icon.png"]];
     if ([fialMsg isEqualToString:@"404"])//角色不存在

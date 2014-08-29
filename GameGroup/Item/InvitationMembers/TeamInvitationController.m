@@ -27,6 +27,10 @@
     [hud hide:YES];
     NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
     self.roomInfoDic = teamInfo;
+    
+    NSString *myUserid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
+    NSMutableDictionary * myMemberInfo  = [DataStoreManager getMemberInfo:self.groupId UserId:myUserid];
+    self.myMemberInfo = myMemberInfo;
 }
 -(void)onTeamUpdateFaile:(NSNotification*)notification{
     [hud hide:YES];
