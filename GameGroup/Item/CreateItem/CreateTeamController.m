@@ -169,6 +169,10 @@
     if (characterInfo) {
         selectCharacter =characterInfo;
         [self setCharacterInfo:characterInfo];
+        m_maxZiShu = 30;
+        m_miaoshuTV.text = @"";
+        placeholderL.hidden = NO;
+        m_ziNumLabel.text = @"30/30";
         [self getTypes:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterInfo, @"gameid")]];
     }
 }
