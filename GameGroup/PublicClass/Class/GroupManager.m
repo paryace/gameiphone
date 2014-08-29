@@ -96,6 +96,8 @@ static GroupManager *groupManager = NULL;
     }];
 }
 
+
+
 //更新本地该群的可用状态
 -(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state GroupShipType:(NSString*)groupShipType
 {
@@ -107,6 +109,40 @@ static GroupManager *groupManager = NULL;
 -(void)deleteGrpuoInfo:(NSString*)groupId{
     [DataStoreManager deleteGroupInfoByGoupId:groupId];
     [[GroupManager singleton] clearGroupCache:groupId];
+}
+
+-(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId
+{
+    if ([GameCommon isEmtity:[[NSUserDefaults standardUserDefaults] objectForKey:[GameCommon getNewStringWithId:groupId]]]) {
+        return @"0";
+    }
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[GameCommon getNewStringWithId:groupId]];
+}
+
+-(void)setGroupMsgState:(NSString*)groupId MsgState:(NSString*)msgstate{
+    [[NSUserDefaults standardUserDefaults] setObject:msgstate forKey:[GameCommon getNewStringWithId:groupId]];
+}
+//设置群消息提示
+-(void)SettingGroupMsgState:(NSString*)groupId MsgState:(NSString*)state reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailur
+{
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:groupId] forKey:@"groupId"];
+    [paramDict setObject:state forKey:@"state"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"240" forKey:@"method"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:state forKey:[GameCommon getNewStringWithId:groupId]];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if (refailur) {
+            refailur(error);
+        }
+    }];
 }
 
 @end

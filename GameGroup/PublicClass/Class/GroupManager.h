@@ -25,4 +25,11 @@
 -(void)changGroupState:(NSString*)grouoId GroupState:(NSString*)state GroupShipType:(NSString*)groupShipType;//更新该群的本地可用状态
 
 -(void)deleteGrpuoInfo:(NSString*)groupId;//删除群组信息
+
+
+-(NSString*) getMsgSettingStateByGroupId:(NSString*)groupId;
+
+-(void)setGroupMsgState:(NSString*)groupId MsgState:(NSString*)msgstate;
+
+-(void)SettingGroupMsgState:(NSString*)groupId MsgState:(NSString*)state reSuccess:(void (^)(id responseObject))resuccess reError:(void(^)(id error))refailur;
 @end

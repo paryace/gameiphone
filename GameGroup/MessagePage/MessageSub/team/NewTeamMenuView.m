@@ -74,8 +74,13 @@
             float itemWight = 320/texts.count;
             menubutton.frame = CGRectMake(i*itemWight + ((itemWight-54)/2), 50, 54, 54);
             [menubutton addTarget:self action:@selector(btnAction:)forControlEvents:UIControlEventTouchUpInside];
-            [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",i+1]]forState:UIControlStateNormal];
-            [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",i+1]]forState:UIControlStateHighlighted];
+            if (i == 1) {
+                 NSString * msgState = [[GroupManager singleton] getMsgSettingStateByGroupId:self.groipId];
+                [self setMsgStateBg:menubutton State:msgState];
+            }else{
+                [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",i+1]]forState:UIControlStateNormal];
+                [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",i+1]]forState:UIControlStateHighlighted];
+            }
             [menubutton setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
             [bgImageView addSubview:menubutton];
             
@@ -161,10 +166,35 @@
     return self;
 }
 
-
+//0：正常 2：无声
 -(void)btnAction:(UIButton*)sender{
     NSInteger tag = sender.tag;
+    
+    if (tag == 1) {
+        NSString * newstate ;
+        NSString * msgState = [[GroupManager singleton] getMsgSettingStateByGroupId:self.groipId];
+        if ([msgState isEqualToString:@"0"]) {
+            newstate = @"2";
+        }else{
+            newstate = @"0";
+        }
+        [[GroupManager singleton] SettingGroupMsgState:self.groipId MsgState:newstate reSuccess:^(id responseObject) {
+            [self setMsgStateBg:sender State:newstate];
+        } reError:^(id error) {
+            
+        }];
+    }
     [self.detaildelegate menuOnClick:tag];
+}
+
+-(void)setMsgStateBg:(UIButton*)btn State:(NSString*)state{
+    if ([state isEqualToString:@"2"]) {
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",2]]forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",2]]forState:UIControlStateHighlighted];
+    }else{
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",2]]forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",2]]forState:UIControlStateHighlighted];
+    }
 }
 
 
